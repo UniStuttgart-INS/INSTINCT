@@ -25,8 +25,6 @@
 #include "util/Container/KeyedMatrix.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
 
-namespace States = NAV::GNSS::Positioning::SPP::States;
-
 namespace NAV
 {
 /// SPP Algorithm output
@@ -51,10 +49,12 @@ class SppSolution : public PosVel
 
     // --------------------------------------------------------- Public Members ------------------------------------------------------------
 
-    /// Amount of satellites used for the position calculation
-    size_t nSatellitesPosition = 0;
-    /// Amount of satellites used for the velocity calculation
-    size_t nSatellitesVelocity = 0;
+    /// Amount of satellites used for the calculation
+    size_t nSatellites = 0;
+    /// Amount of pseudorange measurements used to calculate the position solution
+    size_t nMeasPsr = 0;
+    /// Amount of doppler measurements used to calculate the velocity solution
+    size_t nMeasDopp = 0;
     /// Amount of Parameters estimated in this epoch
     size_t nParam = 0;
     /// Satellite system used for the estimation besides Reference time satellite system
@@ -81,10 +81,10 @@ class SppSolution : public PosVel
     [[nodiscard]] const Eigen::Vector3d& n_velocityStdev() const { return _n_velocityStdev; }
 
     /// Returns the  Covariance matrix in ECEF frame
-    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& e_CovarianceMatrix() const { return _e_covarianceMatrix; }
+    [[nodiscard]] const KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& e_CovarianceMatrix() const { return _e_covarianceMatrix; }
 
     /// Returns the  Covariance matrix in local navigation frame
-    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& n_CovarianceMatrix() const { return _n_covarianceMatrix; }
+    [[nodiscard]] const KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& n_CovarianceMatrix() const { return _n_covarianceMatrix; }
 
     // ------------------------------------------------------------- Setter ----------------------------------------------------------------
 
@@ -110,32 +110,32 @@ class SppSolution : public PosVel
 
     /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange measurements
     /// @param[in] Q lsq variance
-    void setPositionClockErrorCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
+    void setPositionClockErrorCovarianceMatrix(const KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& Q)
     {
         _e_positionClockErrorCovarianceMatrix = Q;
     }
 
     /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange-rate measurements
     /// @param[in] Q lsq variance
-    void setVelocityClockDriftCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
+    void setVelocityClockDriftCovarianceMatrix(const KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& Q)
     {
         _e_velocityClockDriftCovarianceMatrix = Q;
     }
 
     /// @brief Set the Covariance matrix of Kalman Filter estimation
     /// @param[in] Q Kalman Filter error variance
-    void setCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
+    void setCovarianceMatrix(const KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& Q)
     {
         _e_covarianceMatrix = Q;
-        std::vector<States::StateKeyTypes> interSysErrs;
-        std::vector<States::StateKeyTypes> interSysDrifts;
+        std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> interSysErrs;
+        std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> interSysDrifts;
         for (const auto& key : Q.colKeys())
         {
-            if (std::get_if<States::InterSysErr>(&key))
+            if (std::get_if<GNSS::Positioning::SPP::States::InterSysErr>(&key))
             {
                 interSysErrs.emplace_back(key);
             }
-            if (std::get_if<States::InterSysDrift>(&key))
+            if (std::get_if<GNSS::Positioning::SPP::States::InterSysDrift>(&key))
             {
                 interSysDrifts.emplace_back(key);
             }
@@ -147,19 +147,19 @@ class SppSolution : public PosVel
     /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange and pseudorange-rate measurements
     /// @param[in] interSysErrs Inter-system clock error keys
     /// @param[in] interSysDrifts Inter-system clock drift keys
-    void setCovarianceMatrix(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
+    void setCovarianceMatrix(const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs, const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
     {
-        if (!_e_covarianceMatrix.hasAnyCols(States::PosVelRecvClk)) // creates states for first use
+        if (!_e_covarianceMatrix.hasAnyCols(GNSS::Positioning::SPP::States::PosVelRecvClk)) // creates GNSS::Positioning::SPP::States for first use
         {
-            _e_covarianceMatrix.addRowsCols(States::PosVelRecvClk, States::PosVelRecvClk);
+            _e_covarianceMatrix.addRowsCols(GNSS::Positioning::SPP::States::PosVelRecvClk, GNSS::Positioning::SPP::States::PosVelRecvClk);
             _e_covarianceMatrix.addRowsCols(interSysErrs, interSysErrs);
             _e_covarianceMatrix.addRowsCols(interSysDrifts, interSysDrifts);
         }
-        else // check whether interSys keys and states in _e_covariance are the same and remove or add accordingly (e. g. due to elevation mask)
+        else // check whether interSys keys and GNSS::Positioning::SPP::States in _e_covariance are the same and remove or add accordingly (e. g. due to elevation mask)
         {
             for (const auto& key : _e_covarianceMatrix.colKeys())
             {
-                if (std::get_if<States::InterSysErr>(&key))
+                if (std::get_if<GNSS::Positioning::SPP::States::InterSysErr>(&key))
                 {
                     if (std::find(interSysErrs.begin(), interSysErrs.end(), key) != interSysErrs.end())
                     {
@@ -171,7 +171,7 @@ class SppSolution : public PosVel
             }
             for (const auto& key : _e_covarianceMatrix.colKeys())
             {
-                if (std::get_if<States::InterSysDrift>(&key))
+                if (std::get_if<GNSS::Positioning::SPP::States::InterSysDrift>(&key))
                 {
                     if (std::find(interSysDrifts.begin(), interSysDrifts.end(), key) != interSysDrifts.end())
                     {
@@ -193,17 +193,17 @@ class SppSolution : public PosVel
             }
         }
 
-        _e_covarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr);
+        _e_covarianceMatrix(GNSS::Positioning::SPP::States::PosRecvClkErr, GNSS::Positioning::SPP::States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(GNSS::Positioning::SPP::States::PosRecvClkErr, GNSS::Positioning::SPP::States::PosRecvClkErr);
         _e_covarianceMatrix(interSysErrs, interSysErrs) = _e_positionClockErrorCovarianceMatrix(interSysErrs, interSysErrs);
-        _e_covarianceMatrix(States::PosRecvClkErr, interSysErrs) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, interSysErrs);
-        _e_covarianceMatrix(interSysErrs, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(interSysErrs, States::PosRecvClkErr);
+        _e_covarianceMatrix(GNSS::Positioning::SPP::States::PosRecvClkErr, interSysErrs) = _e_positionClockErrorCovarianceMatrix(GNSS::Positioning::SPP::States::PosRecvClkErr, interSysErrs);
+        _e_covarianceMatrix(interSysErrs, GNSS::Positioning::SPP::States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(interSysErrs, GNSS::Positioning::SPP::States::PosRecvClkErr);
 
         if (_e_velocityClockDriftCovarianceMatrix.cols() > 0)
         {
-            _e_covarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift);
+            _e_covarianceMatrix(GNSS::Positioning::SPP::States::VelRecvClkDrift, GNSS::Positioning::SPP::States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(GNSS::Positioning::SPP::States::VelRecvClkDrift, GNSS::Positioning::SPP::States::VelRecvClkDrift);
             _e_covarianceMatrix(interSysDrifts, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, interSysDrifts);
-            _e_covarianceMatrix(States::VelRecvClkDrift, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, interSysDrifts);
-            _e_covarianceMatrix(interSysDrifts, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, States::VelRecvClkDrift);
+            _e_covarianceMatrix(GNSS::Positioning::SPP::States::VelRecvClkDrift, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(GNSS::Positioning::SPP::States::VelRecvClkDrift, interSysDrifts);
+            _e_covarianceMatrix(interSysDrifts, GNSS::Positioning::SPP::States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, GNSS::Positioning::SPP::States::VelRecvClkDrift);
         }
 
         n_CovarianceMatrix_e(interSysErrs, interSysDrifts);
@@ -212,22 +212,22 @@ class SppSolution : public PosVel
     /// @brief Transforms the covariance matrix from ECEF frame to local navigation frame
     /// @param[in] interSysErrs Inter-system clock error keys
     /// @param[in] interSysDrifts Inter-system clock drift keys
-    void n_CovarianceMatrix_e(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
+    void n_CovarianceMatrix_e(const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs, const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
     {
         _n_covarianceMatrix = _e_covarianceMatrix;
 
-        _n_covarianceMatrix(States::PosVel, States::PosVel).setZero();
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::PosVel, GNSS::Positioning::SPP::States::PosVel).setZero();
         Eigen::Vector3d lla_pos = lla_position();
         Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(lla_pos(0), lla_pos(1));
-        _n_covarianceMatrix(States::Pos, States::Pos) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Pos, States::Pos) * n_Quat_e.conjugate().toRotationMatrix(); // variance of position
-        _n_covarianceMatrix(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Vel, States::Vel) * n_Quat_e.toRotationMatrix();             // variance of velocity
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::Pos, GNSS::Positioning::SPP::States::Pos) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(GNSS::Positioning::SPP::States::Pos, GNSS::Positioning::SPP::States::Pos) * n_Quat_e.conjugate().toRotationMatrix(); // variance of position
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::Vel, GNSS::Positioning::SPP::States::Vel) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(GNSS::Positioning::SPP::States::Vel, GNSS::Positioning::SPP::States::Vel) * n_Quat_e.toRotationMatrix();             // variance of velocity
 
-        _n_covarianceMatrix(States::PosVel, States::RecvClk).setZero();
-        _n_covarianceMatrix(States::RecvClk, States::PosVel).setZero();
-        _n_covarianceMatrix(States::PosVel, interSysErrs).setZero();
-        _n_covarianceMatrix(interSysErrs, States::PosVel).setZero();
-        _n_covarianceMatrix(States::PosVel, interSysDrifts).setZero();
-        _n_covarianceMatrix(interSysDrifts, States::PosVel).setZero();
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::PosVel, GNSS::Positioning::SPP::States::RecvClk).setZero();
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::RecvClk, GNSS::Positioning::SPP::States::PosVel).setZero();
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::PosVel, interSysErrs).setZero();
+        _n_covarianceMatrix(interSysErrs, GNSS::Positioning::SPP::States::PosVel).setZero();
+        _n_covarianceMatrix(GNSS::Positioning::SPP::States::PosVel, interSysDrifts).setZero();
+        _n_covarianceMatrix(interSysDrifts, GNSS::Positioning::SPP::States::PosVel).setZero();
     }
 
     /// Extended data structure
@@ -314,14 +314,14 @@ class SppSolution : public PosVel
     Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
 
     /// Covariance matrix in ECEF coordinates (Position and clock errors from LSE)
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_positionClockErrorCovarianceMatrix;
+    KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> _e_positionClockErrorCovarianceMatrix;
     /// Covariance matrix in ECEF coordinates (Velocity and clock drifts from LSE)
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_velocityClockDriftCovarianceMatrix;
+    KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> _e_velocityClockDriftCovarianceMatrix;
 
     /// Covariance matrix in ECEF coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_covarianceMatrix;
+    KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> _e_covarianceMatrix;
     /// Covariance matrix in local navigation coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _n_covarianceMatrix;
+    KeyedMatrixXd<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> _n_covarianceMatrix;
 };
 
 } // namespace NAV

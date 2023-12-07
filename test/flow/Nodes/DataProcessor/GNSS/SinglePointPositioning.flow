@@ -150,10 +150,7 @@
                                 "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "Number satellites (pos)"
-                            },
-                            {
-                                "displayName": "Number satellites (vel)"
+                                "displayName": "Number satellites"
                             },
                             {
                                 "displayName": "Receiver clock bias [s]"
@@ -877,7 +874,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 16,
-                                "displayName": "Number satellites (pos)",
+                                "displayName": "Number satellites",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {

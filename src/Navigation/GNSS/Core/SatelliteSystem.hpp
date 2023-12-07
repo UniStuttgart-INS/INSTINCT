@@ -339,6 +339,9 @@ constexpr bool operator!=(const SatelliteSystem_& lhs, const SatelliteSystem& rh
 /// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const SatelliteSystem& satSys);
 
+/// All Systems
+constexpr SatelliteSystem_ SatSys_All = GPS | GAL | GLO | BDS | QZSS | IRNSS | SBAS;
+
 } // namespace NAV
 
 namespace std

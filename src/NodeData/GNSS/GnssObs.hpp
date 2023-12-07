@@ -33,9 +33,10 @@ class GnssObs : public NodeData
     /// @brief Observation types
     enum ObservationType
     {
-        Pseudorange, ///< Pseudorange
-        Carrier,     ///< Carrier-Phase
-        Doppler,     ///< Doppler (Pseudorange rate)
+        Pseudorange,           ///< Pseudorange
+        Carrier,               ///< Carrier-Phase
+        Doppler,               ///< Doppler (Pseudorange rate)
+        ObservationType_COUNT, ///< Count
     };
 
     /// @brief Stores the satellites observations
@@ -253,6 +254,8 @@ constexpr const char* to_string(GnssObs::ObservationType obsType)
         return "Carrier";
     case GnssObs::Doppler:
         return "Doppler";
+    case GnssObs::ObservationType_COUNT:
+        return "COUNT";
     }
     return "";
 }

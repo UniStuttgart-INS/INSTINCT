@@ -226,8 +226,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] interSysErrs Inter-system clock error keys
     /// @param[in] interSysDrifts Inter-system clock drift keys
     void initializeKalmanFilter(std::shared_ptr<SppSolution>& sppSolLSE,
-                                const std::vector<States::StateKeyTypes>& interSysErrs,
-                                const std::vector<States::StateKeyTypes>& interSysDrifts);
+                                const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
     /// @brief Performs Single Point Positioning algorithm based on Kalman Filter
     /// @param[in] insTime Epoch time
@@ -249,8 +249,8 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                                                           const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                           double elevationMask,
                                                           bool useDoppler,
-                                                          std::vector<States::StateKeyTypes>& interSysErrs,
-                                                          std::vector<States::StateKeyTypes>& interSysDrifts);
+                                                          std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                                          std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
   private:
     /// @brief Does the Kalman Filter prediction
@@ -269,16 +269,16 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] interSysErrs Inter-system clock error keys
     /// @param[in] interSysDrifts Inter-system clock drift keys
     /// @param[in] insTime Epoch time
-    void kalmanFilterUpdate(const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr,
-                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_psr,
-                            const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psr,
-                            const KeyedVectorXd<Meas::MeasKeyTypes>& dpsr_dot,
-                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& e_H_r,
-                            const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& W_psrRate,
+    void kalmanFilterUpdate(const KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes>& dpsr,
+                            const KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& e_H_psr,
+                            const KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::Meas::MeasKeyTypes>& W_psr,
+                            const KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes>& dpsr_dot,
+                            const KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes>& e_H_r,
+                            const KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::Meas::MeasKeyTypes>& W_psrRate,
                             SatelliteSystem sppSolReferenceTimeSatelliteSystem,
                             bool useDoppler,
-                            const std::vector<States::StateKeyTypes>& interSysErrs,
-                            const std::vector<States::StateKeyTypes>& interSysDrifts,
+                            const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                            const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts,
                             const InsTime& insTime);
 
     /// @brief Sets Process Noise Matrix
@@ -307,7 +307,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     InsTime _lastUpdate;
 
     /// Kalman Filter representation
-    KeyedKalmanFilterD<States::StateKeyTypes, Meas::MeasKeyTypes> _kalmanFilter;
+    KeyedKalmanFilterD<GNSS::Positioning::SPP::States::StateKeyTypes, GNSS::Positioning::SPP::Meas::MeasKeyTypes> _kalmanFilter;
 
     /// Satellite system used as time reference
     SatelliteSystem _refTimeSatSys = SatSys_None;

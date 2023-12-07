@@ -29,9 +29,6 @@
 #include "Navigation/GNSS/Errors.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
 
-namespace States = NAV::GNSS::Positioning::SPP::States;
-namespace Meas = NAV::GNSS::Positioning::SPP::Meas;
-
 namespace NAV::GNSS::Positioning::SPP
 {
 
@@ -130,26 +127,26 @@ ValueWeight<double> calcPsrRateAndWeight(const CalcData& calc,
 struct EstWeightDesignMatrices
 {
     /// e_H_psr Measurement/Geometry matrix for the pseudorange
-    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> e_H_psr;
+    KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> e_H_psr;
     /// psrEst Pseudorange estimates [m]
-    KeyedVectorXd<Meas::MeasKeyTypes> psrEst;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> psrEst;
     /// psrMeas Pseudorange measurements [m]
-    KeyedVectorXd<Meas::MeasKeyTypes> psrMeas;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> psrMeas;
     /// W_psr Pseudorange measurement error weight matrix
-    KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes> W_psr;
+    KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::Meas::MeasKeyTypes> W_psr;
     /// dpsr Difference between Pseudorange measurements and estimates
-    KeyedVectorXd<Meas::MeasKeyTypes> dpsr;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> dpsr;
 
     /// e_H_r Measurement/Geometry matrix for the pseudorange-rate
-    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> e_H_r;
+    KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::States::StateKeyTypes> e_H_r;
     /// psrRateEst Corrected pseudorange-rate estimates [m/s]
-    KeyedVectorXd<Meas::MeasKeyTypes> psrRateEst;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> psrRateEst;
     /// psrRateMeas Corrected pseudorange-rate measurements [m/s]
-    KeyedVectorXd<Meas::MeasKeyTypes> psrRateMeas;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> psrRateMeas;
     /// W_psrRate Pseudorange rate (doppler) measurement error weight matrix
-    KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes> W_psrRate;
+    KeyedMatrixXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes, GNSS::Positioning::SPP::Meas::MeasKeyTypes> W_psrRate;
     /// dpsr_dot Difference between Pseudorange rate measurements and estimates
-    KeyedVectorXd<Meas::MeasKeyTypes> dpsr_dot;
+    KeyedVectorXd<GNSS::Positioning::SPP::Meas::MeasKeyTypes> dpsr_dot;
 };
 
 /// @brief Get Measurements, it's estimates and the corresponding Design-Matrix
@@ -178,8 +175,8 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                 const EstimatorType& estimatorType,
                                                                 bool useDoppler,
-                                                                const std::vector<States::StateKeyTypes>& interSysErrs,
-                                                                const std::vector<States::StateKeyTypes>& interSysDrifts);
+                                                                const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                                                const std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
 /// @brief Prepares data further based on the current estimation and applies elevation mask
 /// @param[out] sppSol SPP solution
@@ -211,7 +208,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
 /// @param[in, out] interSysErrs Inter-system clock error keys
 /// @param[in, out] interSysDrifts Inter-system clock drift keys
 void getInterSysKeys(const std::vector<SatelliteSystem>& satelliteSystems,
-                     std::vector<States::StateKeyTypes>& interSysErrs,
-                     std::vector<States::StateKeyTypes>& interSysDrifts);
+                     std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                     std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
 } // namespace NAV::GNSS::Positioning::SPP

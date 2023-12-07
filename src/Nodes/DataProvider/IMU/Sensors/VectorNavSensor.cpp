@@ -1995,9 +1995,9 @@ void NAV::VectorNavSensor::guiConfig()
             }
 
             std::string messages;
-            for (size_t i = 0; i < _asciiOutputBuffer.size(); i++)
+            for (const auto& msg : _asciiOutputBuffer)
             {
-                messages.append(_asciiOutputBuffer.at(i));
+                messages.append(msg);
             }
             ImGui::TextUnformatted("Async Ascii Messages:");
             ImGui::BeginChild(fmt::format("##Ascii Mesages {}", size_t(id)).c_str(), ImVec2(0, 300), true);

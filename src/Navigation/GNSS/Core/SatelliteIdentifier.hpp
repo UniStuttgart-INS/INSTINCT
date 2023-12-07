@@ -124,8 +124,17 @@ void from_json(const json& j, SatSigId& data);
 
 /// @brief Shows a ComboBox to select satellites
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
-/// @param[in, out] satellites Reference to the satId vector to select
-bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites);
+/// @param[in, out] satellites Reference to the SatId vector to select
+/// @param[in] filterSys Enable/Disable GUI elements according to this filter
+/// @param[in] displayOnlyNumber Display only the number, not the system
+bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, SatelliteSystem filterSys = SatSys_All, bool displayOnlyNumber = false);
+
+/// @brief Shows a ComboBox to select a single satellite
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in, out] satellite Reference to the SatId to select
+/// @param[in] filterSys Enable/Disable GUI elements according to this filter
+/// @param[in] displayOnlyNumber Display only the number, not the system
+bool ShowSatelliteSelector(const char* label, SatId& satellite, SatelliteSystem filterSys = SatSys_All, bool displayOnlyNumber = false);
 
 } // namespace NAV
 

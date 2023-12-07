@@ -426,7 +426,7 @@ void from_json(const json& j, Frequency& data)
     data = Frequency::fromString(j.get<std::string>());
 }
 
-bool ShowFrequencySelector(const char* label, Frequency& frequency)
+bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleSelect)
 {
     bool valueChanged = false;
     if (ImGui::BeginCombo(label, std::string(frequency).c_str(), ImGuiComboFlags_HeightLargest))
@@ -454,11 +454,23 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency)
                     {
                         ImGui::BeginDisabled();
                     }
-                    ImU64 value = Frequency_(frequency);
-                    if (ImGui::CheckboxFlags(text.c_str(), &value, flag))
+                    if (singleSelect)
                     {
-                        frequency = Frequency_(value);
-                        valueChanged = true;
+                        bool selected = flag & Frequency_(frequency);
+                        if (ImGui::Checkbox(text.c_str(), &selected) && frequency != Frequency_(flag))
+                        {
+                            frequency = Frequency_(flag);
+                            valueChanged = true;
+                        }
+                    }
+                    else
+                    {
+                        ImU64 value = Frequency_(frequency);
+                        if (ImGui::CheckboxFlags(text.c_str(), &value, flag))
+                        {
+                            frequency = Frequency_(value);
+                            valueChanged = true;
+                        }
                     }
                     if (c >= 3)
                     {

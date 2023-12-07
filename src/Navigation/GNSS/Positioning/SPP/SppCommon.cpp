@@ -244,9 +244,9 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
                                                                 const std::vector<States::StateKeyTypes>& interSysErrs,
                                                                 const std::vector<States::StateKeyTypes>& interSysDrifts)
 {
-    int nParamFix = 4;                                                // Number of fix LSE parameters (position and receiver clock error or velocity and receiver clock drift respectively)
-    int nMeasPsr = static_cast<int>(sppSol->nSatellitesPosition);     // Number of pseudorange measurements
-    int nMeasDoppler = static_cast<int>(sppSol->nSatellitesVelocity); // Number of doppler/pseudorange rate measurements
+    int nParamFix = 4;                                      // Number of fix LSE parameters (position and receiver clock error or velocity and receiver clock drift respectively)
+    int nMeasPsr = static_cast<int>(sppSol->nMeasPsr);      // Number of pseudorange measurements
+    int nMeasDoppler = static_cast<int>(sppSol->nMeasDopp); // Number of doppler/pseudorange rate measurements
 
     // Get Measurement keys
     std::vector<Meas::MeasKeyTypes> measKeysPsr;
@@ -254,16 +254,24 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
     measKeysPsr.reserve(calcData.size());
     measKeysPsrRate.reserve(calcData.size());
 
+    [[maybe_unused]] std::string measurementsUsed;
+    [[maybe_unused]] std::string measurementsSkipped;
     for (auto& calc : calcData)
     {
-        if (calc.skipped) { continue; }
+        if (calc.skipped)
+        {
+            measurementsSkipped += fmt::format("{}, ", calc.obsData.satSigId);
+            continue;
+        }
+        measurementsUsed += fmt::format("{}, ", calc.obsData.satSigId);
         measKeysPsr.emplace_back(Meas::Psr{ calc.obsData.satSigId });
-
         if (calc.pseudorangeRateMeas)
         {
             measKeysPsrRate.emplace_back(Meas::Doppler{ calc.obsData.satSigId });
         }
     }
+    LOG_DATA("Using   measurement: {}", measurementsUsed);
+    LOG_DATA("Skipped measurement: {}", measurementsSkipped);
 
     EstWeightDesignMatrices retVal;
 
@@ -381,6 +389,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               EstimatorType estimatorType)
 {
     size_t cntSkippedMeas = 0;
+    size_t cntSkippedMeasDoppler = 0;
     SatelliteSystem_ usedSatelliteSystems = SatSys_None;
     for (size_t i = 0; i < calcData.size(); i++)
     {
@@ -429,6 +438,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
         if (!state.e_position.isZero() && calc.satElevation < elevationMask) // Do not check elevation mask when not having a valid position
         {
             cntSkippedMeas++;
+            if (calc.pseudorangeRateMeas) { cntSkippedMeasDoppler++; }
             calc.skipped = true;
             LOG_DATA("         [{}] Measurement is skipped because of elevation {:.1f}° and mask of {}° ({} valid measurements remaining)",
                      obsData.satSigId, rad2deg(calc.satElevation), rad2deg(elevationMask), nMeasPsr - cntSkippedMeas);
@@ -449,21 +459,23 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
 
             if (nMeasPsr - cntSkippedMeas < nParam && (estimatorType == EstimatorType::LEAST_SQUARES || estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES))
             {
-                LOG_ERROR(" Cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
+                LOG_ERROR(" SPP cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
                           insTime, nMeasPsr - cntSkippedMeas, nParam);
                 return false;
             }
             continue;
         }
+        calc.skipped = false;
         solSatData.elevationMaskTriggered = false;
 
         usedSatelliteSystems |= satId.satSys;
     }
 
     // Update the amount of measurements and parameter to take skipped measurements because of elevation mask and not available satellite systems into account
-    sppSol->nSatellitesPosition = nMeasPsr - cntSkippedMeas;
-    nMeasDoppler <= cntSkippedMeas ? sppSol->nSatellitesVelocity = 0 : sppSol->nSatellitesVelocity = nMeasDoppler - cntSkippedMeas;
+    sppSol->nMeasPsr = nMeasPsr - cntSkippedMeas;
+    sppSol->nMeasDopp = nMeasDoppler - cntSkippedMeasDoppler;
     sppSol->nParam = nParam;
+    LOG_DATA(" Skipping {} signals. Left psr {}, doppler {}", cntSkippedMeas, sppSol->nMeasPsr, sppSol->nMeasDopp);
 
     // Choose reference time satellite system
     state.recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();

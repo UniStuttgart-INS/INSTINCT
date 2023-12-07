@@ -449,10 +449,20 @@ constexpr Frequency& operator&=(Frequency& lhs, const SatelliteSystem& rhs)
     return lhs;
 }
 
+/// All Frequencies
+constexpr Frequency_ Freq_All = G01 | G02 | G05
+                                | E01 | E05 | E06 | E07 | E08
+                                | R01 | R02 | R03 | R04 | R06
+                                | B01 | B02 | B05 | B06 | B07 | B08
+                                | J01 | J02 | J05 | J06
+                                | I05 | I09
+                                | S01 | S05;
+
 /// @brief Shows a ComboBox to select GNSS frequencies
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] frequency Reference to the frequency object to select
-bool ShowFrequencySelector(const char* label, Frequency& frequency);
+/// @param[in] singleSelect If true, only one code can be selected at a time
+bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleSelect = false);
 
 } // namespace NAV
 

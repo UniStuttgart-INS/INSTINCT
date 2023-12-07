@@ -32,7 +32,7 @@ double GnssMeasurementErrorModel::gnssMeasErrorVar(const SatelliteSystem& satSys
 
         return std::pow(satSysErrFactor, 2)
                * (std::pow(rtklibParams.carrierPhaseErrorAB[0], 2)
-                  + std::pow(rtklibParams.carrierPhaseErrorAB[1], 2) / std::sin(ele));
+                  + std::pow(rtklibParams.carrierPhaseErrorAB[1], 2) / std::pow(std::sin(ele), 2));
     }
     return 0.0;
 }

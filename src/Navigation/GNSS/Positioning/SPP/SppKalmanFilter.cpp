@@ -593,7 +593,7 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
                                  nParam, nMeasPsr, nDopplerMeas, insTime, lla_pos,
                                  elevationMask, EstimatorType::KF);
 
-        if (sppSol->nSatellitesPosition + sppSol->nSatellitesVelocity == 0)
+        if (sppSol->nMeasPsr + sppSol->nMeasDopp == 0)
         {
             return sppSol; // no update
         }

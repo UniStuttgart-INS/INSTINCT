@@ -49,8 +49,8 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
                                                 bool useDoppler,
-                                                std::vector<States::StateKeyTypes>& interSysErrs,
-                                                std::vector<States::StateKeyTypes>& interSysDrifts)
+                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
 {
     INS_ASSERT_USER_ERROR(estimatorType == EstimatorType::LEAST_SQUARES || estimatorType == EstimatorType::WEIGHTED_LEAST_SQUARES,
                           "This function only works for the estimator types LSE or WLSE.");
@@ -86,10 +86,16 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
     if (nMeasPsr < nParam)
     {
-        LOG_ERROR("[{}] Cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
+        LOG_ERROR("[{}] SPP cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
                   (gnssObs->insTime + std::chrono::seconds(gnssObs->insTime.leapGps2UTC())), nMeasPsr, nParam);
-        sppSol->nSatellitesPosition = nMeasPsr;
-        sppSol->nSatellitesVelocity = nDopplerMeas;
+        {
+            std::set<SatId> uniqueSats;
+            for (const auto& calc : calcData)
+            {
+                if (!calc.skipped) { uniqueSats.insert(calc.obsData.satSigId.toSatId()); }
+            }
+            sppSol->nSatellites = uniqueSats.size();
+        }
         return sppSol;
     }
 
@@ -140,22 +146,28 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
         // ---------------------------------------------------------- Position -------------------------------------------------------------
 
-        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, sppSol->nSatellitesPosition, interSysErrs,
+        bool solAccurate = solveLeastSquaresAndAssignSolution(dpsr, e_H_psr, W_psr, estimatorType, sppSol->nMeasPsr, interSysErrs,
                                                               // Outputs:
-                                                              state.e_position, States::Pos, state.recvClk.bias, States::RecvClkErr,
+                                                              state.e_position, GNSS::Positioning::SPP::States::Pos, state.recvClk.bias, GNSS::Positioning::SPP::States::RecvClkErr,
                                                               state.recvClk.sysTimeDiff,
                                                               sppSol, sppSol->recvClk.bias, sppSol->recvClk.sysTimeDiff,
                                                               &SppSolution::setPositionAndStdDev_e, &SppSolution::setPosition_e,
                                                               &SppSolution::setPositionClockErrorCovarianceMatrix);
+        std::set<SatId> uniqueSats;
+        for (const auto& calc : calcData)
+        {
+            if (!calc.skipped) { uniqueSats.insert(calc.obsData.satSigId.toSatId()); }
+        }
+        sppSol->nSatellites = uniqueSats.size();
 
         // ---------------------------------------------------------- Velocity -------------------------------------------------------------
         if (useDoppler)
         {
-            if (sppSol->nSatellitesVelocity >= sppSol->nParam)
+            if (sppSol->nMeasDopp >= sppSol->nParam)
             {
-                solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, sppSol->nSatellitesVelocity, interSysDrifts,
+                solAccurate &= solveLeastSquaresAndAssignSolution(dpsr_dot, e_H_r, W_psrRate, estimatorType, sppSol->nMeasDopp, interSysDrifts,
                                                                   // Outputs:
-                                                                  state.e_velocity, States::Vel, state.recvClk.drift, States::RecvClkDrift,
+                                                                  state.e_velocity, GNSS::Positioning::SPP::States::Vel, state.recvClk.drift, GNSS::Positioning::SPP::States::RecvClkDrift,
                                                                   state.recvClk.sysDriftDiff,
                                                                   sppSol, sppSol->recvClk.drift, sppSol->recvClk.sysDriftDiff,
                                                                   &SppSolution::setVelocityAndStdDev_e, &SppSolution::setVelocity_e,
@@ -164,7 +176,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
             else
             {
                 LOG_WARN("[{}] Cannot calculate velocity because only {} valid doppler measurements ({} needed). Try changing filter settings or reposition your antenna.",
-                         gnssObs->insTime, sppSol->nSatellitesVelocity, sppSol->nParam);
+                         gnssObs->insTime, sppSol->nMeasDopp, sppSol->nParam);
                 continue;
             }
         }
@@ -191,8 +203,8 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
                                                bool useDoppler,
-                                               std::vector<States::StateKeyTypes>& interSysErrs,
-                                               std::vector<States::StateKeyTypes>& interSysDrifts)
+                                               std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                               std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
 {
     // #####################################################################################################################################
     //                                                          Calculation
@@ -222,7 +234,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
         allSatSysExceptRef.erase(std::find(allSatSysExceptRef.begin(), allSatSysExceptRef.end(), sppSol->recvClk.referenceTimeSatelliteSystem));
         kalmanFilter.setAllSatSysExceptRef(allSatSysExceptRef);
 
-        // Add Kalman Filter States (inter-system clock errors and drifts)
+        // Add Kalman Filter GNSS::Positioning::SPP::States (inter-system clock errors and drifts)
         kalmanFilter.addInterSysStateKeys(sppSol->insTime);
 
         // Initialize Kalman Filter representation

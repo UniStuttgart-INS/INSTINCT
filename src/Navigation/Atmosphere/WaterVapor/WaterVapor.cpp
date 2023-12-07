@@ -48,7 +48,8 @@ double calcWaterVaporPartialPressure(double temp, double humidity_rel, WaterVapo
         return calcWaterVaporPartialPressureStAtm(temp, humidity_rel);
     case WaterVaporModel::GPT2:
     case WaterVaporModel::GPT3:
-        INS_ASSERT_USER_ERROR(false, "GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        INS_ASSERT_USER_ERROR(waterVaporModel != WaterVaporModel::GPT2, "GPT2 Model needs to be called separately because of parameter lookup.");
+        INS_ASSERT_USER_ERROR(waterVaporModel != WaterVaporModel::GPT3, "GPT3 Model needs to be called separately because of parameter lookup.");
         break;
     case WaterVaporModel::None:
     case WaterVaporModel::COUNT:

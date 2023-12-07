@@ -29,9 +29,6 @@
 #include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
 #include "Navigation/GNSS/Errors.hpp"
 
-namespace States = NAV::GNSS::Positioning::SPP::States;
-namespace Meas = NAV::GNSS::Positioning::SPP::Meas;
-
 namespace NAV::GNSS::Positioning::SPP
 {
 
@@ -63,8 +60,8 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
                                                 bool useDoppler,
-                                                std::vector<States::StateKeyTypes>& interSysErrs,
-                                                std::vector<States::StateKeyTypes>& interSysDrifts);
+                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
 /// @brief Calculates the SPP solution with a Kalman Filter
 /// @param[in, out] kalmanFilter Spp Kalman Filter with all settings
@@ -92,7 +89,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
                                                bool useDoppler,
-                                               std::vector<States::StateKeyTypes>& interSysErrs,
-                                               std::vector<States::StateKeyTypes>& interSysDrifts);
+                                               std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
+                                               std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
 
 } // namespace NAV::GNSS::Positioning::SPP

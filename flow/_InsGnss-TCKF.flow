@@ -514,10 +514,7 @@
                                 "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "Number satellites (pos)"
-                            },
-                            {
-                                "displayName": "Number satellites (vel)"
+                                "displayName": "Number satellites"
                             },
                             {
                                 "displayName": "Receiver clock bias [s]"
@@ -1561,10 +1558,7 @@
                                 "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "Number satellites (pos)"
-                            },
-                            {
-                                "displayName": "Number satellites (vel)"
+                                "displayName": "Number satellites"
                             },
                             {
                                 "displayName": "Receiver clock bias [s]"

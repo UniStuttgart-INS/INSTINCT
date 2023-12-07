@@ -447,6 +447,24 @@ class Code
     /// @return Whether the comparison was successful
     friend bool operator!=(const Enum& lhs, const Code& rhs);
 
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Code& lhs, const Code& rhs);
+
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Code& lhs, const Enum& rhs);
+
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Enum& lhs, const Code& rhs);
+
     // #####################################################################################################################################
 
     /// @brief Allows filtering Code with SatelliteSystem.
@@ -649,8 +667,9 @@ const Code Code_Default = Code(Code::Set().set())
 /// @brief Shows a ComboBox to select signal codes
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] code Reference to the code object to select
-/// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be diabled.
-bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq);
+/// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be disabled.
+/// @param[in] singleSelect If true, only one code can be selected at a time
+bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq, bool singleSelect = false);
 
 } // namespace NAV
 

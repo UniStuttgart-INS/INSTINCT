@@ -126,10 +126,10 @@ class SinglePointPositioning : public Node
     GNSS::Positioning::SPP::State _state;
 
     /// @brief All Inter-system clock error keys
-    std::vector<States::StateKeyTypes> _interSysErrs{};
+    std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysErrs{};
     /// @brief All Inter-system clock drift keys
     /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-    std::vector<States::StateKeyTypes> _interSysDrifts{};
+    std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysDrifts{};
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages

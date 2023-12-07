@@ -41,10 +41,21 @@ void from_json(const json& j, SatSigId& data)
     j.at("num").get_to(data.satNum);
 }
 
-bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites)
+bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, SatelliteSystem filterSys, bool displayOnlyNumber)
 {
     bool valueChanged = false;
-    if (ImGui::BeginCombo(label, fmt::format("{}", fmt::join(satellites, ", ")).c_str()))
+    std::string preview;
+    if (displayOnlyNumber)
+    {
+        for (size_t i = 0; i < satellites.size(); i++)
+        {
+            if (i != 0) { preview += " | "; }
+            preview += std::to_string(satellites.at(i).satNum);
+        }
+    }
+    else { preview = fmt::format("{}", fmt::join(satellites, ", ")); }
+
+    if (ImGui::BeginCombo(label, preview.c_str()))
     {
         if (ImGui::BeginTable(fmt::format("{} Table", label).c_str(), 7, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY))
         {
@@ -66,6 +77,8 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites)
                     SatId satId{ satSystem, num };
                     auto iter = std::find(satellites.begin(), satellites.end(), satId);
                     bool isExcluded = iter != satellites.end();
+                    if (!SatelliteSystem_(satSystem & filterSys)) { ImGui::BeginDisabled(); }
+
                     if (ImGui::Checkbox(fmt::format("{}##{} {}", num, satSys, label).c_str(), &isExcluded))
                     {
                         if (isExcluded)
@@ -79,6 +92,7 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites)
                         }
                         valueChanged = true;
                     }
+                    if (!SatelliteSystem_(satSystem & filterSys)) { ImGui::EndDisabled(); }
                 }
             }
 
@@ -87,6 +101,25 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites)
         ImGui::EndCombo();
     }
     return valueChanged;
+}
+
+bool ShowSatelliteSelector(const char* label, SatId& satellite, SatelliteSystem filterSys, bool displayOnlyNumber)
+{
+    std::vector<SatId> vec = { satellite };
+
+    if (ShowSatelliteSelector(label, vec, filterSys, displayOnlyNumber))
+    {
+        for (const auto& s : vec)
+        {
+            if (s != satellite)
+            {
+                satellite = s;
+                return true;
+            }
+        }
+        return false;
+    }
+    return false;
 }
 
 std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId)

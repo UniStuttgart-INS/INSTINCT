@@ -460,7 +460,8 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
                                    _interSysErrs, _interSysDrifts);
     }
 
-    if (sppSol)
+    if (sppSol && !sppSol->e_position().hasNaN() && !sppSol->e_velocity().hasNaN()
+        && !std::isnan(sppSol->recvClk.bias.value) && !std::isnan(sppSol->recvClk.drift.value))
     {
         _state = SPP::State{ .e_position = sppSol->e_position(),
                              .e_velocity = sppSol->e_velocity(),

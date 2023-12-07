@@ -103,7 +103,7 @@ bool NAV::SppSolutionLogger::initialize()
                 << "Pos ECEF X [m],Pos ECEF Y [m],Pos ECEF Z [m],Latitude [deg],Longitude [deg],Altitude [m],"
                 << "North/South [m],East/West [m],"
                 << "Vel ECEF X [m/s],Vel ECEF Y [m/s],Vel ECEF Z [m/s],Vel N [m/s],Vel E [m/s],Vel D [m/s],"
-                << "Number satellites (pos),Number satellites (vel),"
+                << "Number satellites,"
                 << "Receiver clock bias [s],"
                 << "System time reference system,"
                 << "GPS system time difference [s],"
@@ -226,8 +226,7 @@ void NAV::SppSolutionLogger::writeObservation(NAV::InputPin::NodeDataQueue& queu
     if (!std::isnan(obs->n_velocity().z())) { _filestream << obs->n_velocity().z(); } // Vel D [m/s]
     _filestream << ",";
 
-    _filestream << obs->nSatellitesPosition << ","; // Number satellites (pos)
-    _filestream << obs->nSatellitesVelocity << ","; // Number satellites (vel)
+    _filestream << obs->nSatellites << ","; // Number satellites
 
     if (!std::isnan(obs->recvClk.bias.value)) { _filestream << obs->recvClk.bias.value; } // Receiver clock bias [s]
     _filestream << ",";

@@ -1750,8 +1750,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
             // SppSolution
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites (pos)");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites (vel)");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Number satellites");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock bias [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF StDev [m]");
@@ -2911,8 +2910,7 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, obs->n_velocity().y());
     addData(pinIndex, i++, obs->n_velocity().z());
     // SppSolution
-    addData(pinIndex, i++, static_cast<double>(obs->nSatellitesPosition));
-    addData(pinIndex, i++, static_cast<double>(obs->nSatellitesVelocity));
+    addData(pinIndex, i++, static_cast<double>(obs->nSatellites));                                                                                                                 // Number satellites
     addData(pinIndex, i++, obs->recvClk.bias.value);                                                                                                                               // Receiver clock bias [s]
     addData(pinIndex, i++, obs->recvClk.drift.value);                                                                                                                              // Receiver clock drift [s/s]
     addData(pinIndex, i++, obs->e_positionStdev()(0));                                                                                                                             // X-ECEF StDev [m]
