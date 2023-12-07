@@ -236,6 +236,8 @@ class Plot : public Node
         std::mutex mutex;
         /// Dynamic data start index
         int dynamicDataStartIndex = -1;
+        /// Events with relative time, absolute time and tooltip text
+        std::vector<std::tuple<double, InsTime, std::string>> events;
     };
 
     /// @brief Information specifying the look of each plot
@@ -272,6 +274,10 @@ class Plot : public Node
                 /// Amount of points to skip for plotting
                 int stride = 0;
 
+                /// Colormap mask (pair: type and id)
+                std::pair<ColormapMaskType, int64_t> markerColormapMask = { ColormapMaskType::None, -1 };
+                /// Index of the plot data to compare for the color
+                size_t markerColormapMaskDataCmpIdx = 0;
                 /// Display markers for the line plot (no effect for scatter type)
                 bool markers = false;
                 /// Style of the marker to display
@@ -284,6 +290,21 @@ class Plot : public Node
                 ImVec4 markerFillColor = IMPLOT_AUTO_COL;
                 /// Outline/Border color for markers
                 ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
+
+                /// Show events on this data
+                bool eventsEnabled = false;
+                /// Style of the marker to display
+                ImPlotMarker eventMarkerStyle = ImPlotMarker_Cross;
+                /// Size of the markers (makes the marker smaller/bigger)
+                float eventMarkerSize = 1.0F;
+                /// Weight of the markers (increases thickness of marker lines)
+                float eventMarkerWeight = 1.0F;
+                /// Fill color for markers
+                ImVec4 eventMarkerFillColor = IMPLOT_AUTO_COL;
+                /// Outline/Border color for markers
+                ImVec4 eventMarkerOutlineColor = IMPLOT_AUTO_COL;
+                /// Tooltip search regex
+                std::string eventTooltipFilterRegex;
             };
 
             /// @brief Default constructor (needed to make serialization with json working)
@@ -297,6 +318,7 @@ class Plot : public Node
                 : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName))
             {
                 style.colormapMaskDataCmpIdx = dataIndex;
+                style.markerColormapMaskDataCmpIdx = dataIndex;
             }
 
             /// @brief Constructor
@@ -308,6 +330,7 @@ class Plot : public Node
                 : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis)
             {
                 style.colormapMaskDataCmpIdx = dataIndex;
+                style.markerColormapMaskDataCmpIdx = dataIndex;
             }
 
             /// @brief Equal comparison operator (needed to search the vector with std::find)
@@ -327,6 +350,22 @@ class Plot : public Node
             ScrollingBuffer<ImU32> colormapMaskColors = ScrollingBuffer<ImU32>(0);
             /// Colormap version (to track updates of the colormap)
             size_t colormapMaskVersion = 0;
+            /// Buffer for the colormap mask
+            ScrollingBuffer<ImU32> markerColormapMaskColors = ScrollingBuffer<ImU32>(0);
+            /// Colormap version (to track updates of the colormap)
+            size_t markerColormapMaskVersion = 0;
+
+            /// Buffer for event markers
+            ScrollingBuffer<double> eventMarker = ScrollingBuffer<double>(0);
+
+            /// Tooltip info
+            struct Tooltip
+            {
+                InsTime time;                   ///< Time of the event
+                std::vector<std::string> texts; ///< List of event texts
+            };
+            /// List of tooltips (x,y, tooltip)
+            std::vector<std::tuple<double, double, Tooltip>> eventTooltips;
         };
 
         /// @brief Default constructor
@@ -395,6 +434,13 @@ class Plot : public Node
 
     /// @brief Adds/Deletes Plots depending on the variable nPlots
     void updateNumberOfPlots();
+
+    /// @brief Adds a event to a certain point in time
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    /// @param relTime Relative time in [s]
+    /// @param insTime Absolute time
+    /// @param text Text to display
+    void addEvent(size_t pinIndex, double relTime, InsTime insTime, const std::string& text);
 
     /// @brief Add Data to the buffer of the pin
     /// @param[in] pinIndex Index of the input pin where the data was received

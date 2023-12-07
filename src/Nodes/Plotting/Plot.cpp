@@ -20,6 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
+#include "util/StringUtil.hpp"
 
 #include "util/Container/Vector.hpp"
 
@@ -31,6 +32,7 @@ namespace nm = NAV::NodeManager;
 #include <implot_internal.h>
 
 #include <algorithm>
+#include <regex>
 
 namespace NAV
 {
@@ -92,7 +94,7 @@ void from_json(const json& j, Plot::PinData& data)
     {
         j.at("size").get_to(data.size);
     }
-    if (j.contains("plotData"))
+    if (j.contains("plotData") && j.at("plotData").is_array())
     {
         j.at("plotData").get_to(data.plotData);
         for (auto& plotData : data.plotData)
@@ -123,12 +125,21 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem::Style& style)
         { "colormapMask", style.colormapMask },
         { "colormapMaskDataCmpIdx", style.colormapMaskDataCmpIdx },
         { "thickness", style.thickness },
+        { "markerColormapMask", style.markerColormapMask },
+        { "markerColormapMaskDataCmpIdx", style.markerColormapMaskDataCmpIdx },
         { "markers", style.markers },
         { "markerStyle", style.markerStyle },
         { "markerSize", style.markerSize },
         { "markerWeight", style.markerWeight },
         { "markerFillColor", style.markerFillColor },
         { "markerOutlineColor", style.markerOutlineColor },
+        { "eventsEnabled", style.eventsEnabled },
+        { "eventMarkerStyle", style.eventMarkerStyle },
+        { "eventMarkerSize", style.eventMarkerSize },
+        { "eventMarkerWeight", style.eventMarkerWeight },
+        { "eventMarkerFillColor", style.eventMarkerFillColor },
+        { "eventMarkerOutlineColor", style.eventMarkerOutlineColor },
+        { "eventTooltipFilterRegex", style.eventTooltipFilterRegex },
     };
 }
 /// @brief Read info from a json object
@@ -164,6 +175,14 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
     {
         j.at("thickness").get_to(style.thickness);
     }
+    if (j.contains("markerColormapMask"))
+    {
+        j.at("markerColormapMask").get_to(style.markerColormapMask);
+    }
+    if (j.contains("markerColormapMaskDataCmpIdx"))
+    {
+        j.at("markerColormapMaskDataCmpIdx").get_to(style.markerColormapMaskDataCmpIdx);
+    }
     if (j.contains("markers"))
     {
         j.at("markers").get_to(style.markers);
@@ -187,6 +206,34 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
     if (j.contains("markerOutlineColor"))
     {
         j.at("markerOutlineColor").get_to(style.markerOutlineColor);
+    }
+    if (j.contains("eventsEnabled"))
+    {
+        j.at("eventsEnabled").get_to(style.eventsEnabled);
+    }
+    if (j.contains("eventMarkerStyle"))
+    {
+        j.at("eventMarkerStyle").get_to(style.eventMarkerStyle);
+    }
+    if (j.contains("eventMarkerSize"))
+    {
+        j.at("eventMarkerSize").get_to(style.eventMarkerSize);
+    }
+    if (j.contains("eventMarkerWeight"))
+    {
+        j.at("eventMarkerWeight").get_to(style.eventMarkerWeight);
+    }
+    if (j.contains("eventMarkerFillColor"))
+    {
+        j.at("eventMarkerFillColor").get_to(style.eventMarkerFillColor);
+    }
+    if (j.contains("eventMarkerOutlineColor"))
+    {
+        j.at("eventMarkerOutlineColor").get_to(style.eventMarkerOutlineColor);
+    }
+    if (j.contains("eventTooltipFilterRegex"))
+    {
+        j.at("eventTooltipFilterRegex").get_to(style.eventTooltipFilterRegex);
     }
 }
 
@@ -824,6 +871,11 @@ void NAV::Plot::guiConfig()
                                     {
                                         flow::ApplyChanges();
                                         plot.selectedXdata.at(pinIndex) = plotDataIndex;
+                                        for (auto& plotItem : plot.plotItems)
+                                        {
+                                            plotItem.eventMarker.clear();
+                                            plotItem.eventTooltips.clear();
+                                        }
                                     }
                                     if (!plotData.hasData)
                                     {
@@ -1048,6 +1100,7 @@ void NAV::Plot::guiConfig()
 
                     if (pinData.plotData.size() <= plotItem.dataIndex) { continue; } // Dynamic data can not be available yet
                     auto& plotData = pinData.plotData.at(plotItem.dataIndex);
+                    const auto& plotDataX = pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex));
                     if (plotData.displayName != plotItem.displayName)
                     {
                         if (plotItem.displayName.empty())
@@ -1077,7 +1130,7 @@ void NAV::Plot::guiConfig()
                                     && plotItem.style.colormapMaskDataCmpIdx < pinData.plotData.size())
                                 {
                                     plotItem.colormapMaskVersion = cmap->get().version;
-                                    auto cmpData = pinData.plotData.at(plotItem.style.colormapMaskDataCmpIdx);
+                                    const auto& cmpData = pinData.plotData.at(plotItem.style.colormapMaskDataCmpIdx);
 
                                     auto color = plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line
                                                      ? (ImPlot::IsColorAuto(plotItem.style.color) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color)
@@ -1094,6 +1147,74 @@ void NAV::Plot::guiConfig()
                                 plotItem.style.colormapMask.first = ColormapMaskType::None;
                                 plotItem.style.colormapMask.second = -1;
                                 plotItem.colormapMaskColors.clear();
+                            }
+                        }
+                        if (plotItem.style.markers && plotItem.style.markerColormapMask.first != ColormapMaskType::None)
+                        {
+                            if (const auto& cmap = ColormapSearch(plotItem.style.markerColormapMask.first, plotItem.style.markerColormapMask.second))
+                            {
+                                if (plotItem.markerColormapMaskVersion != cmap->get().version) { plotItem.markerColormapMaskColors.clear(); }
+                                if (plotItem.markerColormapMaskColors.size() != plotData.buffer.size()
+                                    && plotItem.style.markerColormapMaskDataCmpIdx < pinData.plotData.size())
+                                {
+                                    plotItem.markerColormapMaskVersion = cmap->get().version;
+                                    const auto& cmpData = pinData.plotData.at(plotItem.style.markerColormapMaskDataCmpIdx);
+
+                                    auto color = plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line
+                                                     ? (ImPlot::IsColorAuto(plotItem.style.color) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color)
+                                                     : (ImPlot::IsColorAuto(plotItem.style.markerFillColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor);
+                                    plotItem.markerColormapMaskColors.reserve(plotData.buffer.size());
+                                    for (size_t i = plotItem.markerColormapMaskColors.size(); i < plotData.buffer.size(); i++)
+                                    {
+                                        plotItem.markerColormapMaskColors.push_back(i >= cmpData.buffer.size() ? ImColor(color) : cmap->get().getColor(cmpData.buffer.at(i), color));
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                plotItem.style.markerColormapMask.first = ColormapMaskType::None;
+                                plotItem.style.markerColormapMask.second = -1;
+                                plotItem.markerColormapMaskColors.clear();
+                            }
+                        }
+                        if (plotItem.style.eventsEnabled)
+                        {
+                            if (plotItem.eventMarker.size() != plotData.buffer.size())
+                            {
+                                auto& plotDataRelTime = pinData.plotData.at(0);
+                                for (size_t i = plotItem.eventMarker.size(); i < plotData.buffer.size(); i++)
+                                {
+                                    double relTime = plotDataRelTime.buffer.at(i);
+                                    PlotInfo::PlotItem::Tooltip tooltip;
+                                    try
+                                    {
+                                        std::regex filter(plotItem.style.eventTooltipFilterRegex,
+                                                          std::regex_constants::ECMAScript | std::regex_constants::icase);
+                                        for (const auto& e : pinData.events)
+                                        {
+                                            if (std::abs(std::get<0>(e) - relTime) <= 1e-6)
+                                            {
+                                                tooltip.time = std::get<1>(e);
+                                                if (plotItem.style.eventTooltipFilterRegex.empty() || std::regex_search(std::get<2>(e), filter))
+                                                {
+                                                    tooltip.texts.push_back(std::get<2>(e));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    catch (...)
+                                    {}
+
+                                    if (!tooltip.texts.empty())
+                                    {
+                                        plotItem.eventMarker.push_back(plotData.buffer.at(i));
+                                        plotItem.eventTooltips.emplace_back(plotDataX.buffer.at(i), plotData.buffer.at(i), tooltip);
+                                    }
+                                    else
+                                    {
+                                        plotItem.eventMarker.push_back(std::nan(""));
+                                    }
+                                }
                             }
                         }
 
@@ -1131,12 +1252,17 @@ void NAV::Plot::guiConfig()
                                 ImPlot::SetNextColorsData(ImPlotCol_Line, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
                                 if (plotItem.style.markers)
                                 {
-                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerFill, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
-                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerFill, plotItem.style.markerColormapMask.first != ColormapMaskType::None ? plotItem.markerColormapMaskColors.data() : plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                    ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.style.markerColormapMask.first != ColormapMaskType::None ? plotItem.markerColormapMaskColors.data() : plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
                                 }
                             }
+                            else if (plotItem.style.markers && plotItem.style.markerColormapMask.first != ColormapMaskType::None)
+                            {
+                                ImPlot::SetNextColorsData(ImPlotCol_MarkerFill, plotItem.markerColormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                                ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.markerColormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
+                            }
                             ImPlot::PlotLine(plotName.c_str(),
-                                             pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
+                                             plotDataX.buffer.data(),
                                              plotData.buffer.data(),
                                              dataPointCount,
                                              ImPlotLineFlags_None,
@@ -1151,12 +1277,72 @@ void NAV::Plot::guiConfig()
                                 ImPlot::SetNextColorsData(ImPlotCol_MarkerOutline, plotItem.colormapMaskColors.data(), stride * static_cast<int>(sizeof(ImU32)));
                             }
                             ImPlot::PlotScatter(plotName.c_str(),
-                                                pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex)).buffer.data(),
+                                                plotDataX.buffer.data(),
                                                 plotData.buffer.data(),
                                                 dataPointCount,
                                                 ImPlotScatterFlags_None,
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
+                        }
+
+                        if (plotItem.style.eventsEnabled)
+                        {
+                            if (const auto* item = ImPlot::GetCurrentPlot()->Items.GetItem(plotName.c_str());
+                                item && item->Show)
+                            {
+                                ImPlot::SetNextMarkerStyle(plotItem.style.eventMarkerStyle,
+                                                           plotItem.style.eventMarkerSize,
+                                                           ImPlot::IsColorAuto(plotItem.style.eventMarkerFillColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.eventMarkerFillColor,
+                                                           plotItem.style.eventMarkerWeight,
+                                                           ImPlot::IsColorAuto(plotItem.style.eventMarkerOutlineColor) ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.eventMarkerOutlineColor);
+                                ImPlot::PlotScatter(fmt::format("##{} - Events", plotName).c_str(),
+                                                    plotDataX.buffer.data(),
+                                                    plotItem.eventMarker.data(),
+                                                    dataPointCount,
+                                                    ImPlotScatterFlags_None,
+                                                    static_cast<int>(std::ceil(static_cast<double>(plotItem.eventMarker.offset()) / static_cast<double>(stride))),
+                                                    stride * static_cast<int>(sizeof(double)));
+
+                                if (ImPlot::IsPlotHovered())
+                                {
+                                    constexpr double HOVER_PIXEL_SIZE = 5.0;
+                                    auto limits = ImPlot::GetPlotLimits(IMPLOT_AUTO, plotItem.axis);
+
+                                    ImVec2 scaling = ImVec2(static_cast<float>(HOVER_PIXEL_SIZE * (limits.X.Max - limits.X.Min) / ImPlot::GetCurrentPlot()->PlotRect.GetWidth()),
+                                                            static_cast<float>(HOVER_PIXEL_SIZE * (limits.Y.Max - limits.Y.Min) / ImPlot::GetCurrentPlot()->PlotRect.GetHeight()));
+                                    ImPlotPoint mouse = ImPlot::GetPlotMousePos();
+
+                                    std::vector<PlotInfo::PlotItem::Tooltip> tooltips;
+                                    for (const auto& e : plotItem.eventTooltips)
+                                    {
+                                        if (std::abs(mouse.x - std::get<0>(e)) < scaling.x
+                                            && std::abs(mouse.y - std::get<1>(e)) < scaling.y)
+                                        {
+                                            tooltips.push_back(std::get<2>(e));
+                                        }
+                                    }
+                                    if (!tooltips.empty())
+                                    {
+                                        ImGui::BeginTooltip();
+                                        ImGui::PushFont(Application::MonoFont());
+                                        for (size_t i = 0; i < tooltips.size(); i++)
+                                        {
+                                            ImGui::SetNextItemOpen(true, ImGuiCond_Always);
+                                            if (ImGui::TreeNode(fmt::format("{} GPST", tooltips.at(i).time.toYMDHMS(GPST)).c_str()))
+                                            {
+                                                for (const auto& text : tooltips.at(i).texts)
+                                                {
+                                                    ImGui::BulletText("%s", text.c_str());
+                                                }
+                                                ImGui::TreePop();
+                                            }
+                                            if (i != tooltips.size() - 1) { ImGui::Separator(); }
+                                        }
+                                        ImGui::PopFont();
+                                        ImGui::EndTooltip();
+                                    }
+                                }
+                            }
                         }
 
                         // allow legend item labels to be DND sources
@@ -1175,12 +1361,12 @@ void NAV::Plot::guiConfig()
                             ImGui::TextUnformatted(fmt::format("Pin {} - {}: {}", plotItem.pinIndex + 1, pinData.dataIdentifier, plotData.displayName).c_str());
                             ImGui::Separator();
 
-                            auto ShowColormapReferenceChooser = [&]() -> bool {
+                            auto ShowColormapReferenceChooser = [&](size_t& colormapMaskDataCmpIdx, const char* label = "") -> bool {
                                 bool changed = false;
-                                const char* preview = plotItem.style.colormapMaskDataCmpIdx < pinData.plotData.size()
-                                                          ? pinData.plotData.at(plotItem.style.colormapMaskDataCmpIdx).displayName.c_str()
+                                const char* preview = colormapMaskDataCmpIdx < pinData.plotData.size()
+                                                          ? pinData.plotData.at(colormapMaskDataCmpIdx).displayName.c_str()
                                                           : "";
-                                if (ImGui::BeginCombo("Colormap Ref", preview))
+                                if (ImGui::BeginCombo(fmt::format("{}Colormap Ref", label).c_str(), preview))
                                 {
                                     for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
                                     {
@@ -1190,11 +1376,11 @@ void NAV::Plot::guiConfig()
                                         {
                                             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                                         }
-                                        const bool is_selected = (plotItem.style.colormapMaskDataCmpIdx == plotDataIndex);
+                                        const bool is_selected = (colormapMaskDataCmpIdx == plotDataIndex);
                                         if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
                                         {
                                             changed = true;
-                                            plotItem.style.colormapMaskDataCmpIdx = plotDataIndex;
+                                            colormapMaskDataCmpIdx = plotDataIndex;
                                         }
                                         if (!plotData.hasData)
                                         {
@@ -1245,11 +1431,8 @@ void NAV::Plot::guiConfig()
                             }
                             if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                             {
-                                bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.color);
-                                auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color;
-                                if (ImGui::ColorEdit4("Line Color", &col.x))
+                                if (ImGui::DragFloat("Line Thickness", &plotItem.style.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
                                 {
-                                    plotItem.style.color = col;
                                     flow::ApplyChanges();
                                 }
                                 if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
@@ -1257,22 +1440,28 @@ void NAV::Plot::guiConfig()
                                     plotItem.colormapMaskColors.clear();
                                     flow::ApplyChanges();
                                 }
-                                if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser())
+                                if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser(plotItem.style.colormapMaskDataCmpIdx))
                                 {
                                     plotItem.colormapMaskColors.clear();
                                     flow::ApplyChanges();
                                 }
-                                if (!isColorAuto)
+                                if (plotItem.style.colormapMask.first == ColormapMaskType::None)
                                 {
-                                    ImGui::SameLine();
-                                    if (ImGui::Button("Auto##Line Color"))
+                                    bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.color);
+                                    auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.color;
+                                    if (ImGui::ColorEdit4("Line Color", &col.x))
                                     {
-                                        plotItem.style.color = IMPLOT_AUTO_COL;
+                                        plotItem.style.color = col;
+                                        flow::ApplyChanges();
                                     }
-                                }
-                                if (ImGui::DragFloat("Line Thickness", &plotItem.style.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
-                                {
-                                    flow::ApplyChanges();
+                                    if (!isColorAuto)
+                                    {
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Auto##Line Color"))
+                                        {
+                                            plotItem.style.color = IMPLOT_AUTO_COL;
+                                        }
+                                    }
                                 }
                                 if (ImGui::Checkbox("Markers", &plotItem.style.markers))
                                 {
@@ -1294,51 +1483,130 @@ void NAV::Plot::guiConfig()
                                 {
                                     flow::ApplyChanges();
                                 }
-                                bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerFillColor);
-                                auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor;
-                                if (ImGui::ColorEdit4("Marker Fill Color", &col.x))
+                                if (!plotItem.style.markers)
                                 {
-                                    plotItem.style.markerFillColor = col;
+                                    if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+                                    {
+                                        plotItem.colormapMaskColors.clear();
+                                        flow::ApplyChanges();
+                                    }
+                                    if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser(plotItem.style.colormapMaskDataCmpIdx))
+                                    {
+                                        plotItem.colormapMaskColors.clear();
+                                        flow::ApplyChanges();
+                                    }
+                                }
+                                if (plotItem.style.markers && plotItem.style.lineType != PlotInfo::PlotItem::Style::LineType::Scatter)
+                                {
+                                    if (ShowColormapSelector(plotItem.style.markerColormapMask.first, plotItem.style.markerColormapMask.second, "Marker "))
+                                    {
+                                        plotItem.markerColormapMaskColors.clear();
+                                        flow::ApplyChanges();
+                                    }
+                                    if (plotItem.style.markerColormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser(plotItem.style.markerColormapMaskDataCmpIdx, "Marker "))
+                                    {
+                                        plotItem.markerColormapMaskColors.clear();
+                                        flow::ApplyChanges();
+                                    }
+                                }
+                                if (plotItem.style.markerColormapMask.first == ColormapMaskType::None
+                                    && (plotItem.style.lineType != PlotInfo::PlotItem::Style::LineType::Scatter
+                                        || plotItem.style.colormapMask.first == ColormapMaskType::None))
+                                {
+                                    bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerFillColor);
+                                    auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerFillColor;
+                                    if (ImGui::ColorEdit4("Marker Fill Color", &col.x))
+                                    {
+                                        plotItem.style.markerFillColor = col;
+                                        flow::ApplyChanges();
+                                    }
+                                    if (!isColorAuto)
+                                    {
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Auto##Marker Fill Color"))
+                                        {
+                                            plotItem.style.markerFillColor = IMPLOT_AUTO_COL;
+                                        }
+                                    }
+
+                                    isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerOutlineColor);
+                                    col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerOutlineColor;
+                                    if (ImGui::ColorEdit4("Marker Outline Color", &col.x))
+                                    {
+                                        plotItem.style.markerOutlineColor = col;
+                                        flow::ApplyChanges();
+                                    }
+                                    if (!isColorAuto)
+                                    {
+                                        ImGui::SameLine();
+                                        if (ImGui::Button("Auto##Marker Outline Color"))
+                                        {
+                                            plotItem.style.markerOutlineColor = IMPLOT_AUTO_COL;
+                                        }
+                                    }
+                                }
+                            }
+
+                            ImGui::Separator();
+                            if (ImGui::Checkbox("Events", &plotItem.style.eventsEnabled))
+                            {
+                                flow::ApplyChanges();
+                            }
+                            if (plotItem.style.eventsEnabled)
+                            {
+                                if (ImGui::Combo("Event Marker Style", &plotItem.style.eventMarkerStyle,
+                                                 "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::DragFloat("Event Marker Size", &plotItem.style.eventMarkerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (ImGui::DragFloat("Event Marker Weight", &plotItem.style.eventMarkerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                bool isColorAuto = ImPlot::IsColorAuto(plotItem.style.eventMarkerFillColor);
+                                auto col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.eventMarkerFillColor;
+                                if (ImGui::ColorEdit4("Event Marker Fill Color", &col.x))
+                                {
+                                    plotItem.style.eventMarkerFillColor = col;
                                     flow::ApplyChanges();
                                 }
                                 if (!isColorAuto)
                                 {
                                     ImGui::SameLine();
-                                    if (ImGui::Button("Auto##Marker Fill Color"))
+                                    if (ImGui::Button("Auto##Event Marker Fill Color"))
                                     {
-                                        plotItem.style.markerFillColor = IMPLOT_AUTO_COL;
+                                        plotItem.style.eventMarkerFillColor = IMPLOT_AUTO_COL;
                                     }
                                 }
 
-                                isColorAuto = ImPlot::IsColorAuto(plotItem.style.markerOutlineColor);
-                                col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.markerOutlineColor;
-                                if (ImGui::ColorEdit4("Marker Outline Color", &col.x))
+                                isColorAuto = ImPlot::IsColorAuto(plotItem.style.eventMarkerOutlineColor);
+                                col = isColorAuto ? ImPlot::GetColormapColor(static_cast<int>(plotElementIdx)) : plotItem.style.eventMarkerOutlineColor;
+                                if (ImGui::ColorEdit4("Event Marker Outline Color", &col.x))
                                 {
-                                    plotItem.style.markerOutlineColor = col;
+                                    plotItem.style.eventMarkerOutlineColor = col;
                                     flow::ApplyChanges();
                                 }
                                 if (!isColorAuto)
                                 {
                                     ImGui::SameLine();
-                                    if (ImGui::Button("Auto##Marker Outline Color"))
+                                    if (ImGui::Button("Auto##Event Marker Outline Color"))
                                     {
-                                        plotItem.style.markerOutlineColor = IMPLOT_AUTO_COL;
+                                        plotItem.style.eventMarkerOutlineColor = IMPLOT_AUTO_COL;
                                     }
                                 }
-                            }
-                            if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Scatter)
-                            {
-                                if (ShowColormapSelector(plotItem.style.colormapMask.first, plotItem.style.colormapMask.second))
+
+                                if (ImGui::InputText("Event Filter Regex", &plotItem.style.eventTooltipFilterRegex))
                                 {
-                                    plotItem.colormapMaskColors.clear();
-                                    flow::ApplyChanges();
-                                }
-                                if (plotItem.style.colormapMask.first != ColormapMaskType::None && ShowColormapReferenceChooser())
-                                {
-                                    plotItem.colormapMaskColors.clear();
+                                    plotItem.eventMarker.clear();
+                                    plotItem.eventTooltips.clear();
                                     flow::ApplyChanges();
                                 }
                             }
+
                             ImPlot::EndLegendPopup();
                         }
 
@@ -1532,12 +1800,16 @@ bool NAV::Plot::initialize()
         {
             pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
         }
+        pinData.events.clear();
     }
     for (auto& plot : _plots)
     {
         for (auto& plotItem : plot.plotItems)
         {
             plotItem.colormapMaskColors.clear();
+            plotItem.markerColormapMaskColors.clear();
+            plotItem.eventMarker.clear();
+            plotItem.eventTooltips.clear();
         }
     }
 
@@ -2387,6 +2659,11 @@ void NAV::Plot::updateNumberOfPlots()
     }
 }
 
+void NAV::Plot::addEvent(size_t pinIndex, double relTime, InsTime insTime, const std::string& text)
+{
+    _pinData.at(pinIndex).events.emplace_back(relTime, insTime, text);
+}
+
 void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 {
     auto& plotData = _pinData.at(pinIndex).plotData.at(dataIndex);
@@ -2412,7 +2689,6 @@ void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
         plotData->isDynamic = true;
 
         // We assume, there is a static item at the front (the time)
-        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
         for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
         {
             plotData->buffer.push_back(std::nan(""));
@@ -2421,7 +2697,6 @@ void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
     else
     {
         // Item was there, but it could have been missing and came again
-        plotData->buffer.reserve(pinData.plotData.front().buffer.size());
         for (size_t i = plotData->buffer.size(); i < pinData.plotData.front().buffer.size() - 1; i++) // Add empty NaN values to shift it to the correct start point
         {
             plotData->buffer.push_back(std::nan(""));
