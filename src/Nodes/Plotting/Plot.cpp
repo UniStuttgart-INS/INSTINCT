@@ -351,6 +351,7 @@ NAV::Plot::Plot()
                         PosVelAtt::type(),
                         LcKfInsGnssErrors::type(),
                         TcKfInsGnssErrors::type(),
+                        GnssObs::type(),
                         SppSolution::type(),
                         RtklibPosObs::type(),
                         UbloxObs::type(),
@@ -1728,6 +1729,14 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock offset [s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Receiver clock drift [s/s]");
         }
+        else if (startPin.dataIdentifier.front() == GnssObs::type())
+        {
+            // NodeData
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // GnssObs
+            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
+        }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
             // NodeData
@@ -2594,6 +2603,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotTcKfInsGnssErrors(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx);
         }
+        else if (sourcePin->dataIdentifier.front() == GnssObs::type())
+        {
+            plotGnssObs(std::static_pointer_cast<const GnssObs>(nodeData), pinIdx);
+        }
         else if (sourcePin->dataIdentifier.front() == SppSolution::type())
         {
             plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx);
@@ -2857,6 +2870,33 @@ void NAV::Plot::plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErr
     addData(pinIndex, i++, obs->recvClkDrift);                // Receiver clock drift in [m/s]
     addData(pinIndex, i++, obs->recvClkOffset / InsConst::C); // Receiver clock offset in [s]
     addData(pinIndex, i++, obs->recvClkDrift / InsConst::C);  // Receiver clock drift in [s/s]
+}
+
+void NAV::Plot::plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pinIndex)
+{
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
+    size_t i = 0;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
+
+    // GnssObs
+    for (const auto& obsData : obs->data)
+    {
+        addData(pinIndex, fmt::format("{} Pseudorange [m]", obsData.satSigId), obsData.pseudorange ? obsData.pseudorange->value : std::nan(""));
+        addData(pinIndex, fmt::format("{} Pseudorange SSI", obsData.satSigId), obsData.pseudorange ? obsData.pseudorange->SSI : std::nan(""));
+
+        addData(pinIndex, fmt::format("{} Carrier-phase [cycles]", obsData.satSigId), obsData.carrierPhase ? obsData.carrierPhase->value : std::nan(""));
+        addData(pinIndex, fmt::format("{} Carrier-phase SSI", obsData.satSigId), obsData.carrierPhase ? obsData.carrierPhase->SSI : std::nan(""));
+        addData(pinIndex, fmt::format("{} Carrier-phase LLI", obsData.satSigId), obsData.carrierPhase ? obsData.carrierPhase->LLI : std::nan(""));
+
+        addData(pinIndex, fmt::format("{} Doppler [Hz]", obsData.satSigId), obsData.doppler ? obsData.doppler.value() : std::nan(""));
+
+        addData(pinIndex, fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId), obsData.CN0 ? obsData.CN0.value() : std::nan(""));
+    }
 }
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)

@@ -27,6 +27,7 @@
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
 #include "NodeData/State/TcKfInsGnssErrors.hpp"
@@ -456,6 +457,11 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErrors>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
