@@ -160,14 +160,16 @@ void NAV::FlowExecutor::execute()
     }
 
     LOG_INFO("=====================================================");
-    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) { return node->_onlyRealTime; });
+    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) {
+        return node && !node->isDisabled() && node->_onlyRealTime;
+    });
     LOG_INFO("Executing in {} mode", realTimeMode ? "real-time" : "post-processing");
 
     util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);
 
     for (Node* node : nm::m_Nodes())
     {
-        if (node == nullptr || !node->isInitialized()) { continue; }
+        if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
         {
             std::lock_guard<std::mutex> lk(_mutex);
@@ -180,7 +182,10 @@ void NAV::FlowExecutor::execute()
             _activeNodes += 1;
             LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
         }
-        node->resetNode();
+        {
+            std::scoped_lock<std::mutex> guard(node->_configWindowMutex);
+            node->resetNode();
+        }
         for (size_t i = 0; i < node->outputPins.size(); i++) // for (auto& outputPin : node->outputPins)
         {
             auto& outputPin = node->outputPins[i];
@@ -225,15 +230,18 @@ void NAV::FlowExecutor::execute()
     _startTime = std::chrono::steady_clock::now();
     LOG_INFO("Execution started");
 
+    bool anyNodeRunning = false;
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node != nullptr && node->isInitialized())
+        if (node != nullptr && node->kind != Node::Kind::GroupBox && node->isInitialized())
         {
+            anyNodeRunning = true;
             LOG_DEBUG("Waking up node {}", node->nameId());
             node->wakeWorker();
         }
     }
 
+    if (anyNodeRunning)
     {
         // Wait for the nodes to finish
         bool timeout = true;
@@ -267,7 +275,7 @@ void NAV::FlowExecutor::execute()
 
     for (Node* node : nm::m_Nodes())
     {
-        if (node == nullptr || !node->isInitialized()) { continue; }
+        if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
         node->_mode = Node::Mode::REAL_TIME;
         for (auto& outputPin : node->outputPins)

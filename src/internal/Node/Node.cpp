@@ -857,7 +857,12 @@ bool NAV::Node::workerInitializeNode()
 
     // Initialize the node itself
     LOG_TRACE("{}: calling initialize()", nameId());
-    if (initialize())
+    bool initSucceeded = false;
+    {
+        std::scoped_lock<std::mutex> guard(_configWindowMutex);
+        initSucceeded = initialize();
+    }
+    if (initSucceeded)
     {
         LOG_TRACE("{}: initialize() was successful", nameId());
 
@@ -869,7 +874,10 @@ bool NAV::Node::workerInitializeNode()
 
         pollEvents.clear();
         LOG_TRACE("{}: calling resetNode()", nameId());
-        resetNode();
+        {
+            std::scoped_lock<std::mutex> guard(_configWindowMutex);
+            resetNode();
+        }
         LOG_TRACE("{}: resetNode() was successful", nameId());
         for (auto& outputPin : outputPins)
         {
@@ -931,7 +939,10 @@ bool NAV::Node::workerDeinitializeNode()
     }
 
     // Deinitialize the node itself
-    deinitialize();
+    {
+        std::scoped_lock<std::mutex> guard(_configWindowMutex);
+        deinitialize();
+    }
 
     std::lock_guard lk(_stateMutex);
     if (_state == State::Deinitializing)

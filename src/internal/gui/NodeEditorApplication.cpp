@@ -1339,37 +1339,40 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("State: %s", Node::toString(node->getState()).c_str());
             ImGui::Text("Mode: %s", node->getMode() == Node::Mode::POST_PROCESSING ? "Post-processing" : "Real-time");
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
-                                false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
+            if (node->kind != Node::Kind::GroupBox)
             {
-                if (node->isInitialized()) { node->doReinitialize(); }
-                else { node->doInitialize(); }
-            }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
-            {
-                node->doDeinitialize();
-            }
-            if (ImGui::MenuItem("Wake Worker"))
-            {
-                node->wakeWorker();
-            }
-            ImGui::Separator();
-            if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
-            {
-                node->_showConfig = true;
-                node->_configWindowFocus = true;
-            }
-            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, !node->isTransient()))
-            {
-                if (node->isDisabled())
+                if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
+                                    false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
                 {
-                    node->doEnable();
+                    if (node->isInitialized()) { node->doReinitialize(); }
+                    else { node->doInitialize(); }
                 }
-                else
+                if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
                 {
-                    node->doDisable();
+                    node->doDeinitialize();
                 }
-                flow::ApplyChanges();
+                if (ImGui::MenuItem("Wake Worker"))
+                {
+                    node->wakeWorker();
+                }
+                ImGui::Separator();
+                if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
+                {
+                    node->_showConfig = true;
+                    node->_configWindowFocus = true;
+                }
+                if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, !node->isTransient()))
+                {
+                    if (node->isDisabled())
+                    {
+                        node->doEnable();
+                    }
+                    else
+                    {
+                        node->doDisable();
+                    }
+                    flow::ApplyChanges();
+                }
             }
             if (ImGui::MenuItem("Rename"))
             {
@@ -1661,7 +1664,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::PushFont(WindowFont());
                 bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
                 if (locked) { ImGui::BeginDisabled(); }
-                node->guiConfig();
+                {
+                    std::scoped_lock<std::mutex> guard(node->_configWindowMutex);
+                    node->guiConfig();
+                }
                 if (locked) { ImGui::EndDisabled(); }
                 ImGui::PopFont();
             }
