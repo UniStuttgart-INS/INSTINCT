@@ -335,6 +335,18 @@ void NAV::NodeManager::DisableAllCallbacks()
     }
 }
 
+void NAV::NodeManager::ClearAllNodeQueues()
+{
+    LOG_TRACE("called");
+    for (auto* node : m_nodes)
+    {
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+        }
+    }
+}
+
 bool NAV::NodeManager::InitializeAllNodes()
 {
     LOG_TRACE("called");

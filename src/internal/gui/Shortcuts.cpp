@@ -46,6 +46,7 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
         else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             nm::DisableAllCallbacks();
+            nm::ClearAllNodeQueues();
             if (FlowExecutor::isRunning())
             {
                 LOG_INFO("Canceling Execution...");

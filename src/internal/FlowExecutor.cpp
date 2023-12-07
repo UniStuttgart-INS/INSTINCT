@@ -263,6 +263,7 @@ void NAV::FlowExecutor::execute()
     // Deinitialize
     LOG_DEBUG("Stopping FlowExecutor...");
     nm::DisableAllCallbacks();
+    nm::ClearAllNodeQueues();
 
     for (Node* node : nm::m_Nodes())
     {
