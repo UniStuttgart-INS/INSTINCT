@@ -16,9 +16,11 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <fmt/ostream.h>
 
 namespace NAV
 {
+
 /// @brief A buffer which is overwriting itself from the start when full
 /// @tparam T Type of data stored in the buffer
 /// @tparam _Padding The padding are empty values at the start of the buffer to prevent overriding the start value in multithreaded applications
@@ -129,6 +131,276 @@ class ScrollingBuffer
     }
 
     // ###########################################################################################################
+    //                                                Iterators
+    // ###########################################################################################################
+
+    /// @brief Iterator
+    class Iterator
+    {
+      public:
+        using iterator_category = std::forward_iterator_tag; ///< To categorize the iteration direction
+        using difference_type = std::ptrdiff_t;              ///< Signed integer type (usually std::ptrdiff_t)
+        using value_type = T;                                ///< T
+        using pointer = T*;                                  ///< value_type*
+        using reference = T&;                                ///< value_type&
+
+        /// @brief Constructor
+        /// @param[in] buffer Mutable reference to the buffer of the iterator
+        /// @param[in] index Iterator index inside the buffer (counted from the start)
+        explicit Iterator(ScrollingBuffer& buffer, size_t index = 0)
+            : buffer(buffer), index(index) {}
+
+        /// @brief Returns a reference to the current element.
+        reference operator*() const { return buffer.at(index); }
+        /// @brief Returns a pointer to the current element.
+        pointer operator->() { return &buffer.at(index); }
+
+        /// @brief Advances the iterator.
+        Iterator& operator++()
+        {
+            if (index == buffer.size()) { return *this; }
+            index++;
+            return *this;
+        }
+        /// @brief Advances the iterator.
+        Iterator operator++(int)
+        {
+            Iterator tmp = *this;
+            operator++();
+            return tmp;
+        }
+
+        /// @brief Equality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return True if elements are equal
+        friend bool operator==(const Iterator& lhs, const Iterator& rhs) { return &lhs.buffer == &rhs.buffer && lhs.index == rhs.index; };
+        /// @brief Inequality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return False if elements are equal
+        friend bool operator!=(const Iterator& lhs, const Iterator& rhs) { return !(lhs == rhs); };
+
+      private:
+        ScrollingBuffer& buffer; ///< Reference to the buffer
+        size_t index;            ///< Iterator index inside the buffer (counted from the start)
+    };
+
+    /// @brief Returns an iterator to the first element of the vector.
+    ///
+    /// If the buffer is empty, the returned iterator will be equal to end().
+    Iterator begin() { return Iterator(*this, 0); }
+    /// @brief Returns an iterator to the element following the last element of the vector.
+    ///
+    /// This element acts as a placeholder; attempting to access it results in undefined behavior.
+    Iterator end() { return Iterator(*this, size()); }
+
+    /// Const iterator
+    class ConstIterator
+    {
+      public:
+        using iterator_category = std::forward_iterator_tag; ///< To categorize the iteration direction
+        using difference_type = std::ptrdiff_t;              ///< Signed integer type (usually std::ptrdiff_t)
+        using value_type = T;                                ///< T
+        using pointer = const T*;                            ///< value_type*
+        using reference = const T&;                          ///< value_type&
+
+        /// @brief Constructor
+        /// @param[in] buffer Immutable reference to the buffer of the iterator
+        /// @param[in] index Iterator index inside the buffer (counted from the start)
+        explicit ConstIterator(const ScrollingBuffer& buffer, size_t index = 0)
+            : buffer(buffer), index(index) {}
+
+        /// @brief Returns a reference to the current element.
+        reference operator*() const { return buffer.at(index); }
+        /// @brief Returns a pointer to the current element.
+        pointer operator->() { return &buffer.at(index); }
+
+        /// @brief Advances the iterator.
+        const ConstIterator& operator++()
+        {
+            if (index == buffer.size()) { return *this; }
+            index++;
+            return *this;
+        }
+        /// @brief Advances the iterator.
+        ConstIterator operator++(int)
+        {
+            ConstIterator tmp = *this;
+            operator++();
+            return tmp;
+        }
+
+        /// @brief Equality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return True if elements are equal
+        friend bool operator==(const ConstIterator& lhs, const ConstIterator& rhs) { return &lhs.buffer == &rhs.buffer && lhs.index == rhs.index; };
+        /// @brief Inequality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return False if elements are equal
+        friend bool operator!=(const ConstIterator& lhs, const ConstIterator& rhs) { return !(lhs == rhs); };
+
+      private:
+        const ScrollingBuffer& buffer; ///< Reference to the buffer
+        size_t index;                  ///< Iterator index inside the buffer (counted from the start)
+    };
+
+    /// @brief Returns an iterator to the first element of the vector.
+    ///
+    /// If the buffer is empty, the returned iterator will be equal to end().
+    [[nodiscard]] ConstIterator begin() const { return ConstIterator(*this, 0); }
+    /// @brief Returns an iterator to the element following the last element of the vector.
+    ///
+    /// This element acts as a placeholder; attempting to access it results in undefined behavior.
+    [[nodiscard]] ConstIterator end() const { return ConstIterator(*this, size()); }
+    /// @brief Returns an iterator to the first element of the vector.
+    ///
+    /// If the buffer is empty, the returned iterator will be equal to end().
+    [[nodiscard]] ConstIterator cbegin() const { return ConstIterator(*this, 0); }
+    /// @brief Returns an iterator to the element following the last element of the vector.
+    ///
+    /// This element acts as a placeholder; attempting to access it results in undefined behavior.
+    [[nodiscard]] ConstIterator cend() const { return ConstIterator(*this, size()); }
+
+    /// Reverse Iterator
+    class ReverseIterator
+    {
+      public:
+        using iterator_category = std::forward_iterator_tag; ///< To categorize the iteration direction
+        using difference_type = std::ptrdiff_t;              ///< Signed integer type (usually std::ptrdiff_t)
+        using value_type = T;                                ///< T
+        using pointer = T*;                                  ///< value_type*
+        using reference = T&;                                ///< value_type&
+
+        /// @brief Constructor
+        /// @param[in] buffer Mutable reference to the buffer of the iterator
+        /// @param[in] index Iterator index inside the buffer (counted from the non-reversed start)
+        explicit ReverseIterator(ScrollingBuffer& buffer, int64_t index = 0)
+            : buffer(buffer), index(index) {}
+
+        /// @brief Returns a reference to the current element.
+        reference operator*() const { return buffer.at(static_cast<size_t>(index)); }
+        /// @brief Returns a pointer to the current element.
+        pointer operator->() { return &buffer.at(static_cast<size_t>(index)); }
+
+        /// @brief Advances the iterator.
+        ReverseIterator& operator++()
+        {
+            if (index < 0) { return *this; }
+            index--;
+            return *this;
+        }
+        /// @brief Advances the iterator.
+        ReverseIterator operator++(int)
+        {
+            ReverseIterator tmp = *this;
+            operator++();
+            return tmp;
+        }
+
+        /// @brief Equality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return True if elements are equal
+        friend bool operator==(const ReverseIterator& lhs, const ReverseIterator& rhs) { return &lhs.buffer == &rhs.buffer && lhs.index == rhs.index; };
+        /// @brief Inequality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return False if elements are equal
+        friend bool operator!=(const ReverseIterator& lhs, const ReverseIterator& rhs) { return !(lhs == rhs); };
+
+      private:
+        ScrollingBuffer& buffer; ///< Reference to the buffer
+        int64_t index;           ///< Iterator index inside the buffer (counted from the non-reversed start)
+    };
+
+    /// @brief Returns a reverse iterator to the first element of the reversed vector.
+    ///
+    /// It corresponds to the last element of the non-reversed vector.
+    /// If the vector is empty, the returned iterator is equal to rend().
+    ReverseIterator rbegin() { return ReverseIterator(*this, static_cast<int64_t>(size()) - 1); }
+    /// @brief Returns a reverse iterator to the element following the last element of the reversed vector.
+    ///
+    /// It corresponds to the element preceding the first element of the non-reversed vector.
+    /// This element acts as a placeholder, attempting to access it results in undefined behavior.
+    ReverseIterator rend() { return ReverseIterator(*this, -1); }
+
+    /// Const reverse iterator
+    class ConstReverseIterator
+    {
+      public:
+        using iterator_category = std::forward_iterator_tag; ///< To categorize the iteration direction
+        using difference_type = std::ptrdiff_t;              ///< Signed integer type (usually std::ptrdiff_t)
+        using value_type = T;                                ///< T
+        using pointer = const T*;                            ///< value_type*
+        using reference = const T&;                          ///< value_type&
+
+        /// @brief Constructor
+        /// @param[in] buffer Immutable reference to the buffer of the iterator
+        /// @param[in] index Iterator index inside the buffer (counted from the non-reversed start)
+        explicit ConstReverseIterator(const ScrollingBuffer& buffer, int64_t index = 0)
+            : buffer(buffer), index(index) {}
+
+        /// @brief Returns a reference to the current element.
+        reference operator*() const { return buffer.at(static_cast<size_t>(index)); }
+        /// @brief Returns a pointer to the current element.
+        pointer operator->() { return &buffer.at(static_cast<size_t>(index)); }
+
+        /// @brief Advances the iterator.
+        const ConstReverseIterator& operator++()
+        {
+            if (index < 0) { return *this; }
+            index--;
+            return *this;
+        }
+        /// @brief Advances the iterator.
+        ConstReverseIterator operator++(int)
+        {
+            ConstReverseIterator tmp = *this;
+            operator++();
+            return tmp;
+        }
+
+        /// @brief Equality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return True if elements are equal
+        friend bool operator==(const ConstReverseIterator& lhs, const ConstReverseIterator& rhs) { return &lhs.buffer == &rhs.buffer && lhs.index == rhs.index; };
+        /// @brief Inequality comparison operator
+        /// @param[in] lhs Left-hand side
+        /// @param[in] rhs Right-hand side
+        /// @return False if elements are equal
+        friend bool operator!=(const ConstReverseIterator& lhs, const ConstReverseIterator& rhs) { return !(lhs == rhs); };
+
+      private:
+        const ScrollingBuffer& buffer; ///< Reference to the buffer
+        int64_t index;                 ///< Iterator index inside the buffer (counted from the non-reversed start)
+    };
+
+    /// @brief Returns a reverse iterator to the first element of the reversed vector.
+    ///
+    /// It corresponds to the last element of the non-reversed vector.
+    /// If the vector is empty, the returned iterator is equal to rend().
+    [[nodiscard]] ConstReverseIterator rbegin() const { return ConstReverseIterator(*this, static_cast<int64_t>(size()) - 1); }
+    /// @brief Returns a reverse iterator to the element following the last element of the reversed vector.
+    ///
+    /// It corresponds to the element preceding the first element of the non-reversed vector.
+    /// This element acts as a placeholder, attempting to access it results in undefined behavior.
+    [[nodiscard]] ConstReverseIterator rend() const { return ConstReverseIterator(*this, -1); }
+    /// @brief Returns a reverse iterator to the first element of the reversed vector.
+    ///
+    /// It corresponds to the last element of the non-reversed vector.
+    /// If the vector is empty, the returned iterator is equal to rend().
+    [[nodiscard]] ConstReverseIterator crbegin() const { return ConstReverseIterator(*this, static_cast<int64_t>(size()) - 1); }
+    /// @brief Returns a reverse iterator to the element following the last element of the reversed vector.
+    ///
+    /// It corresponds to the element preceding the first element of the non-reversed vector.
+    /// This element acts as a placeholder, attempting to access it results in undefined behavior.
+    [[nodiscard]] ConstReverseIterator crend() const { return ConstReverseIterator(*this, -1); }
+
+    // ###########################################################################################################
     //                                                 Capacity
     // ###########################################################################################################
 
@@ -136,6 +408,12 @@ class ScrollingBuffer
     [[nodiscard]] bool empty() const
     {
         return size() == 0;
+    }
+
+    /// @brief Checks if the container is full (never full when infinite buffer)
+    [[nodiscard]] bool full() const
+    {
+        return !_infiniteBuffer && _maxSize - _Padding == size();
     }
 
     /// @brief Returns the number of elements in the container
@@ -180,7 +458,7 @@ class ScrollingBuffer
 
         for (size_t i = 0; i < _Padding; i++)
         {
-            _data.push_back(0);
+            _data.push_back({});
         }
     }
 
@@ -208,6 +486,34 @@ class ScrollingBuffer
                 _dataStart = (_dataStart + 1) % _maxSize;
             }
             _dataEnd = (_dataEnd + 1) % _maxSize;
+        }
+    }
+
+    /// @brief Removes the first element of the container
+    void pop_front()
+    {
+        if (empty())
+        {
+            return;
+        }
+        if (size() == 1)
+        {
+            clear();
+            return;
+        }
+
+        if (_infiniteBuffer)
+        {
+            _data.erase(_data.begin());
+            _maxSize = _data.size();
+        }
+        else
+        {
+            //       se                e     s                 e     s              s               e             se
+            // 5, 6, 2, 3, 4  // 5, 6, _, _, 2, 3, 4  // 5, 6, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, X // 5, 6, 7, 4
+            //       e  s              e        s              e        s              s            e    s        e
+            // 5, 6, _, 3, 4  // 5, 6, _, _, _, 3, 4  // 5, 6, _, X, X, 3, 4  // X, X, 7, 8, 9, 10, _ // 5, 6, 7, _
+            _dataStart = (_dataStart + 1) % _maxSize;
         }
     }
 
@@ -442,11 +748,8 @@ class ScrollingBuffer
         return _infiniteBuffer;
     }
 
-    /// @brief Prints the buffer to the output stream
-    /// @param[in, out] os The output stream to print to
-    /// @param[in] buffer The buffer to print
-    /// @return The output stream given as parameter
-    friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T, _Padding>& buffer)
+    /// @brief Converts the raw buffer to a string
+    [[nodiscard]] std::string getRawString() const
     {
         // Scrolled
         //       e        s
@@ -454,6 +757,9 @@ class ScrollingBuffer
 
         //      se
         // 5, 6, 2, 3, 4
+
+        //    s  e
+        // _, 6, _, _, _
 
         // Not scrolled
         //       s           e
@@ -471,28 +777,41 @@ class ScrollingBuffer
         //       se
         // X, X, _, _, _,
 
-        for (int i = 0; static_cast<size_t>(i) < buffer._maxSize; i++) // X, 6, 7, 8, 9, 10, _, _, X
+        std::string out;
+
+        for (int i = 0; static_cast<size_t>(i) < _maxSize; i++) // X, 6, 7, 8, 9, 10, _, _, X
         {
-            if ((i >= static_cast<int>(buffer._dataStart - _Padding) && static_cast<size_t>(i) < buffer._dataStart)
-                || (static_cast<size_t>(i) >= buffer._dataStart + buffer._maxSize - _Padding))
+            if ((i >= static_cast<int>(_dataStart - _Padding) && static_cast<size_t>(i) < _dataStart)
+                || (static_cast<size_t>(i) >= _dataStart + _maxSize - _Padding))
             {
-                os << "X"; // padding
+                out += "X"; // padding
             }
-            else if (bool scrolled = buffer.isScrolled();
-                     (scrolled && static_cast<size_t>(i) >= buffer._dataEnd && (static_cast<int>(buffer._dataStart - _Padding) < 0 || i < static_cast<int>(buffer._dataStart - _Padding)))
-                     || (!scrolled && static_cast<size_t>(i) >= buffer._dataEnd))
+            else if (bool scrolled = isScrolled();
+                     (scrolled && static_cast<size_t>(i) >= _dataEnd && (static_cast<int>(_dataStart - _Padding) < 0 || i < static_cast<int>(_dataStart - _Padding)))
+                     || (scrolled && _dataStart < _dataEnd && (static_cast<size_t>(i) < _dataStart || static_cast<size_t>(i) >= _dataEnd))
+                     || (!scrolled && static_cast<size_t>(i) >= _dataEnd))
             {
-                os << "_"; // empty
+                out += "_"; // empty
             }
             else
             {
-                os << std::to_string(buffer._data.at(static_cast<size_t>(i)));
+                out += std::to_string(_data.at(static_cast<size_t>(i)));
             }
-            if (static_cast<size_t>(i) != buffer._maxSize - 1)
+            if (static_cast<size_t>(i) != _maxSize - 1)
             {
-                os << ", ";
+                out += ", ";
             }
         }
+        return out;
+    }
+
+    /// @brief Prints the buffer to the output stream
+    /// @param[in, out] os The output stream to print to
+    /// @param[in] buffer The buffer to print
+    /// @return The output stream given as parameter
+    friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T, _Padding>& buffer)
+    {
+        os << fmt::format("{}", fmt::join(buffer, ", "));
         return os;
     }
 
@@ -535,3 +854,11 @@ class ScrollingBuffer
 };
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+template<class T, size_t _Padding>
+struct fmt::formatter<NAV::ScrollingBuffer<T, _Padding>> : ostream_formatter
+{};
+
+#endif
