@@ -185,6 +185,28 @@ class KeyedKalmanFilter
         I = Eigen::MatrixX<Scalar>::Identity(n, n);
     }
 
+    /// @brief Replace the old with the new key
+    /// @param[in] oldKey Old key to replace
+    /// @param[in] newKey New key to use instead
+    void replaceState(const StateKeyType& oldKey, const StateKeyType& newKey)
+    {
+        x.replaceRowKey(oldKey, newKey);
+        P.replaceRowKey(oldKey, newKey);
+        P.replaceColKey(oldKey, newKey);
+        F.replaceRowKey(oldKey, newKey);
+        F.replaceColKey(oldKey, newKey);
+        Phi.replaceRowKey(oldKey, newKey);
+        Phi.replaceColKey(oldKey, newKey);
+        G.replaceRowKey(oldKey, newKey);
+        G.replaceColKey(oldKey, newKey);
+        W.replaceRowKey(oldKey, newKey);
+        W.replaceColKey(oldKey, newKey);
+        Q.replaceRowKey(oldKey, newKey);
+        Q.replaceColKey(oldKey, newKey);
+        H.replaceColKey(oldKey, newKey);
+        K.replaceRowKey(oldKey, newKey);
+    }
+
     /// @brief Sets the measurement keys and initializes matrices z, H, R, S, K with Zero
     /// @param measKeys Measurement keys
     void setMeasurements(const std::vector<MeasKeyType>& measKeys)

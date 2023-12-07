@@ -94,6 +94,19 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
         return std::any_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
     }
 
+    /// @brief Replace the old with the new key
+    /// @param[in] oldKey Old key to replace
+    /// @param[in] newKey New key to use instead
+    void replaceRowKey(const RowKeyType& oldKey, const RowKeyType& newKey)
+    {
+        auto iter = std::find(rowKeysVector.begin(), rowKeysVector.end(), oldKey);
+        INS_ASSERT_USER_ERROR(iter != rowKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
+
+        *iter = newKey;
+        rowIndices[newKey] = rowIndices.at(oldKey);
+        rowIndices.erase(oldKey);
+    }
+
   protected:
     /// RowKey to Row Index mapping
     unordered_map<RowKeyType, Eigen::Index> rowIndices;
@@ -223,6 +236,19 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     bool hasAnyCols(const std::vector<ColKeyType>& keys) const
     {
         return std::any_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+    }
+
+    /// @brief Replace the old with the new key
+    /// @param[in] oldKey Old key to replace
+    /// @param[in] newKey New key to use instead
+    void replaceColKey(const ColKeyType& oldKey, const ColKeyType& newKey)
+    {
+        auto iter = std::find(colKeysVector.begin(), colKeysVector.end(), oldKey);
+        INS_ASSERT_USER_ERROR(iter != colKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
+
+        *iter = newKey;
+        colIndices[newKey] = colIndices.at(oldKey);
+        colIndices.erase(oldKey);
     }
 
   protected:
