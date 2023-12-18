@@ -559,17 +559,8 @@ struct hash<NAV::Frequency>
 
 /// @brief Formatter for Frequency
 template<>
-struct fmt::formatter<NAV::Frequency>
+struct fmt::formatter<NAV::Frequency> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Frequency structs
     /// @param[in] freq Struct to format
     /// @param[in, out] ctx Format context
@@ -577,7 +568,7 @@ struct fmt::formatter<NAV::Frequency>
     template<typename FormatContext>
     auto format(const NAV::Frequency& freq, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", std::string(freq));
+        return fmt::formatter<std::string>::format(std::string(freq), ctx);
     }
 };
 

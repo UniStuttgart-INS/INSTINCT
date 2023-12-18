@@ -694,17 +694,8 @@ struct hash<NAV::Code>
 
 /// @brief Formatter for Code
 template<>
-struct fmt::formatter<NAV::Code>
+struct fmt::formatter<NAV::Code> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Code structs
     /// @param[in] code Struct to format
     /// @param[in, out] ctx Format context
@@ -712,7 +703,7 @@ struct fmt::formatter<NAV::Code>
     template<typename FormatContext>
     auto format(const NAV::Code& code, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", std::string(code));
+        return fmt::formatter<std::string>::format(std::string(code), ctx);
     }
 };
 

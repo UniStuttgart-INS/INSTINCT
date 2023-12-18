@@ -639,17 +639,8 @@ class LooselyCoupledKF : public Node
 #ifndef DOXYGEN_IGNORE
 
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
@@ -660,52 +651,43 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
         switch (st)
         {
         case NAV::LooselyCoupledKF::KFStates::Roll:
-            return fmt::format_to(ctx.out(), "Roll/Psi_eb_1");
+            return fmt::formatter<const char*>::format("Roll/Psi_eb_1", ctx);
         case NAV::LooselyCoupledKF::KFStates::Pitch:
-            return fmt::format_to(ctx.out(), "Pitch/Psi_eb_2");
+            return fmt::formatter<const char*>::format("Pitch/Psi_eb_2", ctx);
         case NAV::LooselyCoupledKF::KFStates::Yaw:
-            return fmt::format_to(ctx.out(), "Yaw/Psi_eb_3");
+            return fmt::formatter<const char*>::format("Yaw/Psi_eb_3", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelN:
-            return fmt::format_to(ctx.out(), "VelN/VelX");
+            return fmt::formatter<const char*>::format("VelN/VelX", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelE:
-            return fmt::format_to(ctx.out(), "VelE/VelY");
+            return fmt::formatter<const char*>::format("VelE/VelY", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelD:
-            return fmt::format_to(ctx.out(), "VelD/VelZ");
+            return fmt::formatter<const char*>::format("VelD/VelZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosLat:
-            return fmt::format_to(ctx.out(), "PosLat/PosX");
+            return fmt::formatter<const char*>::format("PosLat/PosX", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosLon:
-            return fmt::format_to(ctx.out(), "PosLon/PosY");
+            return fmt::formatter<const char*>::format("PosLon/PosY", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosAlt:
-            return fmt::format_to(ctx.out(), "PosAlt/PosZ");
+            return fmt::formatter<const char*>::format("PosAlt/PosZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasX:
-            return fmt::format_to(ctx.out(), "AccBiasX");
+            return fmt::formatter<const char*>::format("AccBiasX", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasY:
-            return fmt::format_to(ctx.out(), "AccBiasY");
+            return fmt::formatter<const char*>::format("AccBiasY", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasZ:
-            return fmt::format_to(ctx.out(), "AccBiasZ");
+            return fmt::formatter<const char*>::format("AccBiasZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasX:
-            return fmt::format_to(ctx.out(), "GyrBiasX");
+            return fmt::formatter<const char*>::format("GyrBiasX", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasY:
-            return fmt::format_to(ctx.out(), "GyrBiasY");
+            return fmt::formatter<const char*>::format("GyrBiasY", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasZ:
-            return fmt::format_to(ctx.out(), "GyrBiasZ");
+            return fmt::formatter<const char*>::format("GyrBiasZ", ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<const char*>::format("ERROR", ctx);
     }
 };
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
@@ -716,20 +698,20 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
         switch (st)
         {
         case NAV::LooselyCoupledKF::KFMeas::dPosLat:
-            return fmt::format_to(ctx.out(), "dPosLat/dPosX");
+            return fmt::formatter<const char*>::format("dPosLat/dPosX", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dPosLon:
-            return fmt::format_to(ctx.out(), "dPosLon/dPosY");
+            return fmt::formatter<const char*>::format("dPosLon/dPosY", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dPosAlt:
-            return fmt::format_to(ctx.out(), "dPosAlt/dPosZ");
+            return fmt::formatter<const char*>::format("dPosAlt/dPosZ", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelN:
-            return fmt::format_to(ctx.out(), "dVelN/dVelX");
+            return fmt::formatter<const char*>::format("dVelN/dVelX", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelE:
-            return fmt::format_to(ctx.out(), "dVelE/dVelY");
+            return fmt::formatter<const char*>::format("dVelE/dVelY", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelD:
-            return fmt::format_to(ctx.out(), "dVelD/dVelZ");
+            return fmt::formatter<const char*>::format("dVelD/dVelZ", ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<const char*>::format("ERROR", ctx);
     }
 };
 

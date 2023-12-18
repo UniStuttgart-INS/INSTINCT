@@ -159,17 +159,8 @@ struct hash<NAV::GNSS::Positioning::SPP::Meas::Doppler>
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::SppStates>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::SppStates> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] state Struct to format
     /// @param[in, out] ctx Format context
@@ -182,42 +173,33 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::SppStates>
         switch (state)
         {
         case PosX:
-            return fmt::format_to(ctx.out(), "PosX");
+            return fmt::formatter<const char*>::format("PosX", ctx);
         case PosY:
-            return fmt::format_to(ctx.out(), "PosY");
+            return fmt::formatter<const char*>::format("PosY", ctx);
         case PosZ:
-            return fmt::format_to(ctx.out(), "PosZ");
+            return fmt::formatter<const char*>::format("PosZ", ctx);
         case VelX:
-            return fmt::format_to(ctx.out(), "VelX");
+            return fmt::formatter<const char*>::format("VelX", ctx);
         case VelY:
-            return fmt::format_to(ctx.out(), "VelY");
+            return fmt::formatter<const char*>::format("VelY", ctx);
         case VelZ:
-            return fmt::format_to(ctx.out(), "VelZ");
+            return fmt::formatter<const char*>::format("VelZ", ctx);
         case RecvClkErr:
-            return fmt::format_to(ctx.out(), "RecvClkErr");
+            return fmt::formatter<const char*>::format("RecvClkErr", ctx);
         case RecvClkDrift:
-            return fmt::format_to(ctx.out(), "RecvClkDrift");
+            return fmt::formatter<const char*>::format("RecvClkDrift", ctx);
         case SppStates_COUNT:
-            return fmt::format_to(ctx.out(), "SppStates_COUNT");
+            return fmt::formatter<const char*>::format("SppStates_COUNT", ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<const char*>::format("ERROR", ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysErr>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysErr> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] interSysErr Struct to format
     /// @param[in, out] ctx Format context
@@ -225,23 +207,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysErr>
     template<typename FormatContext>
     auto format(const NAV::GNSS::Positioning::SPP::States::InterSysErr& interSysErr, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "InterSysErr({})", interSysErr.satSys);
+        return fmt::formatter<std::string>::format(fmt::format("InterSysErr({})", interSysErr.satSys), ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysDrift>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysDrift> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] interSysDrift Struct to format
     /// @param[in, out] ctx Format context
@@ -249,23 +222,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysDrift>
     template<typename FormatContext>
     auto format(const NAV::GNSS::Positioning::SPP::States::InterSysDrift& interSysDrift, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "InterSysDrift({})", interSysDrift.satSys);
+        return fmt::formatter<std::string>::format(fmt::format("InterSysDrift({})", interSysDrift.satSys), ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Psr>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Psr> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] psr Struct to format
     /// @param[in, out] ctx Format context
@@ -273,23 +237,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Psr>
     template<typename FormatContext>
     auto format(const NAV::GNSS::Positioning::SPP::Meas::Psr& psr, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "psr({})", psr.satSigId);
+        return fmt::formatter<std::string>::format(fmt::format("psr({})", psr.satSigId), ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Doppler>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Doppler> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] doppler Struct to format
     /// @param[in, out] ctx Format context
@@ -297,23 +252,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Doppler>
     template<typename FormatContext>
     auto format(const NAV::GNSS::Positioning::SPP::Meas::Doppler& doppler, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "dop({})", doppler.satSigId);
+        return fmt::formatter<std::string>::format(fmt::format("dop({})", doppler.satSigId), ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] state Struct to format
     /// @param[in, out] ctx Format context
@@ -328,51 +274,42 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes>
             switch (*s)
             {
             case PosX:
-                return fmt::format_to(ctx.out(), "PosX");
+                return fmt::formatter<std::string>::format("PosX", ctx);
             case PosY:
-                return fmt::format_to(ctx.out(), "PosY");
+                return fmt::formatter<std::string>::format("PosY", ctx);
             case PosZ:
-                return fmt::format_to(ctx.out(), "PosZ");
+                return fmt::formatter<std::string>::format("PosZ", ctx);
             case VelX:
-                return fmt::format_to(ctx.out(), "VelX");
+                return fmt::formatter<std::string>::format("VelX", ctx);
             case VelY:
-                return fmt::format_to(ctx.out(), "VelY");
+                return fmt::formatter<std::string>::format("VelY", ctx);
             case VelZ:
-                return fmt::format_to(ctx.out(), "VelZ");
+                return fmt::formatter<std::string>::format("VelZ", ctx);
             case RecvClkErr:
-                return fmt::format_to(ctx.out(), "RecvClkErr");
+                return fmt::formatter<std::string>::format("RecvClkErr", ctx);
             case RecvClkDrift:
-                return fmt::format_to(ctx.out(), "RecvClkDrift");
+                return fmt::formatter<std::string>::format("RecvClkDrift", ctx);
             case SppStates_COUNT:
-                return fmt::format_to(ctx.out(), "SppStates_COUNT");
+                return fmt::formatter<std::string>::format("SppStates_COUNT", ctx);
             }
         }
         if (const auto* interSysErr = std::get_if<NAV::GNSS::Positioning::SPP::States::InterSysErr>(&state))
         {
-            return fmt::format_to(ctx.out(), "InterSysErr({})", interSysErr->satSys);
+            return fmt::formatter<std::string>::format(fmt::format("InterSysErr({}))", interSysErr->satSys), ctx);
         }
         if (const auto* interSysDrift = std::get_if<NAV::GNSS::Positioning::SPP::States::InterSysDrift>(&state))
         {
-            return fmt::format_to(ctx.out(), "InterSysDrift({})", interSysDrift->satSys);
+            return fmt::formatter<std::string>::format(fmt::format("InterSysDrift({}))", interSysDrift->satSys), ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<std::string>::format("ERROR", ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::MeasKeyTypes>
+struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::MeasKeyTypes> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] meas Struct to format
     /// @param[in, out] ctx Format context
@@ -382,14 +319,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::MeasKeyTypes>
     {
         if (const auto* psr = std::get_if<NAV::GNSS::Positioning::SPP::Meas::Psr>(&meas))
         {
-            return fmt::format_to(ctx.out(), "psr({})", psr->satSigId);
+            return fmt::formatter<std::string>::format(fmt::format("psr({})", psr->satSigId), ctx);
         }
         if (const auto* doppler = std::get_if<NAV::GNSS::Positioning::SPP::Meas::Doppler>(&meas))
         {
-            return fmt::format_to(ctx.out(), "doppler({})", doppler->satSigId);
+            return fmt::formatter<std::string>::format(fmt::format("doppler({})", doppler->satSigId), ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<std::string>::format("ERROR", ctx);
     }
 };
 

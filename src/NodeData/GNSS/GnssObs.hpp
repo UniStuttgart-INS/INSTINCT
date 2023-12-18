@@ -265,17 +265,8 @@ constexpr const char* to_string(GnssObs::ObservationType obsType)
 #ifndef DOXYGEN_IGNORE
 
 template<>
-struct fmt::formatter<NAV::GnssObs::ObservationType>
+struct fmt::formatter<NAV::GnssObs::ObservationType> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Frequency structs
     /// @param[in] obsType Struct to format
     /// @param[in, out] ctx Format context
@@ -283,7 +274,7 @@ struct fmt::formatter<NAV::GnssObs::ObservationType>
     template<typename FormatContext>
     auto format(const NAV::GnssObs::ObservationType& obsType, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", NAV::to_string(obsType));
+        return fmt::formatter<const char*>::format(to_string(obsType), ctx);
     }
 };
 

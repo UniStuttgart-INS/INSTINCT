@@ -100,24 +100,16 @@ class Polynomial
 
 /// @brief Formatter for Polynomial<Scalar>
 template<typename Scalar>
-struct fmt::formatter<NAV::Polynomial<Scalar>>
+struct fmt::formatter<NAV::Polynomial<Scalar>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    static constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin())
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Polynomial structs
     /// @param[in] poly Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Polynomial<Scalar>& poly, FormatContext& ctx) const -> decltype(ctx.out())
+    auto format(const NAV::Polynomial<Scalar>& poly, FormatContext& ctx) const
     {
-        return fmt::format_to(ctx.out(), "{}", poly.toString());
+        return fmt::formatter<std::string>::format(poly.toString(), ctx);
     }
 };
 

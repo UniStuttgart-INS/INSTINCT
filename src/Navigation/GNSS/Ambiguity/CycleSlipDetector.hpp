@@ -264,17 +264,8 @@ struct hash<NAV::CycleSlipDetector::DualFrequencyCombination>
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::CycleSlipDetector::Result>
+struct fmt::formatter<NAV::CycleSlipDetector::Result> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] cycleSlip Struct to format
     /// @param[in, out] ctx Format context
@@ -282,7 +273,7 @@ struct fmt::formatter<NAV::CycleSlipDetector::Result>
     template<typename FormatContext>
     auto format(const NAV::CycleSlipDetector::Result& cycleSlip, FormatContext& ctx) const
     {
-        return fmt::format_to(ctx.out(), "{}", to_string(cycleSlip));
+        return fmt::formatter<std::string>::format(to_string(cycleSlip), ctx);
     }
 };
 

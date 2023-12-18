@@ -2368,17 +2368,8 @@ using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
-struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>>
+struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedMatrix structs
     /// @param[in] mat Struct to format
     /// @param[in, out] ctx Format context
@@ -2455,23 +2446,14 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename RowKeyType, int Rows>
-struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
+struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedVector structs
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
@@ -2519,23 +2501,14 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename ColKeyType, int Cols>
-struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
+struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedRowVector structs
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
@@ -2589,7 +2562,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 

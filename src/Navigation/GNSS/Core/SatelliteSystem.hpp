@@ -394,17 +394,8 @@ struct hash<NAV::SatelliteSystem>
 
 /// @brief Formatter for SatelliteSystem
 template<>
-struct fmt::formatter<NAV::SatelliteSystem>
+struct fmt::formatter<NAV::SatelliteSystem> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format SatelliteSystem structs
     /// @param[in] satSys Struct to format
     /// @param[in, out] ctx Format context
@@ -412,7 +403,7 @@ struct fmt::formatter<NAV::SatelliteSystem>
     template<typename FormatContext>
     auto format(const NAV::SatelliteSystem& satSys, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", std::string(satSys));
+        return fmt::formatter<std::string>::format(std::string(satSys), ctx);
     }
 };
 
