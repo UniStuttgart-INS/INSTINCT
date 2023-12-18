@@ -24,6 +24,7 @@
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
 #include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
+#include "Navigation/GNSS/SNRMask.hpp"
 
 #include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
@@ -44,6 +45,7 @@ namespace NAV::GNSS::Positioning::SPP
 /// @param[in] filterCode Codes used for calculation (GUI filter)
 /// @param[in] excludedSatellites List of satellites to exclude
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] snrMask Signal-to-Noise ratio mask
 /// @param[in] useDoppler Boolean which enables the use of doppler observations
 /// @param[in, out] interSysErrs Inter-system clock error keys
 /// @param[in, out] interSysDrifts Inter-system clock drift keys
@@ -59,6 +61,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const Code& filterCode,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
+                                                const SNRMask& snrMask,
                                                 bool useDoppler,
                                                 std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
                                                 std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);
@@ -74,6 +77,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 /// @param[in] filterCode Codes used for calculation (GUI filter)
 /// @param[in] excludedSatellites List of satellites to exclude
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] snrMask Signal-to-Noise ratio mask
 /// @param[in] useDoppler Boolean which enables the use of doppler observations
 /// @param[in, out] interSysErrs Inter-system clock error keys
 /// @param[in, out] interSysDrifts Inter-system clock drift keys
@@ -88,6 +92,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const Code& filterCode,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
+                                               const SNRMask& snrMask,
                                                bool useDoppler,
                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);

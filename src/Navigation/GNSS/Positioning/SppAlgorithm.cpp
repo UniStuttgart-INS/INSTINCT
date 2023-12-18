@@ -48,6 +48,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
                                                 const Code& filterCode,
                                                 const std::vector<SatId>& excludedSatellites,
                                                 double elevationMask,
+                                                const SNRMask& snrMask,
                                                 bool useDoppler,
                                                 std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
                                                 std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
@@ -116,7 +117,7 @@ std::shared_ptr<SppSolution> calcSppSolutionLSE(State state,
 
         if (!calcDataBasedOnEstimates(sppSol, satelliteSystems, calcData, state,
                                       nParam, nMeasPsr, nDopplerMeas, gnssObs->insTime, lla_pos,
-                                      elevationMask, estimatorType))
+                                      elevationMask, snrMask, estimatorType))
         {
             return sppSol;
         }
@@ -202,6 +203,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                                const Code& filterCode,
                                                const std::vector<SatId>& excludedSatellites,
                                                double elevationMask,
+                                               const SNRMask& snrMask,
                                                bool useDoppler,
                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
                                                std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts)
@@ -225,6 +227,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
                                          filterCode,
                                          excludedSatellites,
                                          elevationMask,
+                                         snrMask,
                                          useDoppler,
                                          interSysErrs,
                                          interSysDrifts);
@@ -251,7 +254,7 @@ std::shared_ptr<SppSolution> calcSppSolutionKF(SppKalmanFilter& kalmanFilter,
     std::vector<CalcData> calcData = selectObservations(gnssObs, gnssNavInfos, filterFreq, filterCode, excludedSatellites);
 
     auto sppSol = kalmanFilter.estimateSppSolution(gnssObs->insTime, calcData, ionosphericCorrections, ionosphereModel,
-                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, useDoppler,
+                                                   troposphereModels, gnssMeasurementErrorModel, elevationMask, snrMask, useDoppler,
                                                    interSysErrs, interSysDrifts);
 
     return sppSol;

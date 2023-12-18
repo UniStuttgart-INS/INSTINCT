@@ -24,6 +24,7 @@
 #include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
 #include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
+#include "Navigation/GNSS/SNRMask.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 
@@ -103,6 +104,8 @@ class SinglePointPositioning : public Node
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
     double _elevationMask = static_cast<double>(15.0_deg);
+    /// SNR Mask
+    SNRMask _snrMask;
 
     /// Boolean which enables the use of doppler observations
     bool _useDoppler = true;

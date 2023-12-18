@@ -546,6 +546,7 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
                                                                        const TroposphereModelSelection& troposphereModels,
                                                                        const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                                        double elevationMask,
+                                                                       const SNRMask& snrMask,
                                                                        bool useDoppler,
                                                                        std::vector<States::StateKeyTypes>& interSysErrs,
                                                                        std::vector<States::StateKeyTypes>& interSysDrifts)
@@ -591,7 +592,7 @@ std::shared_ptr<NAV::SppSolution> SppKalmanFilter::estimateSppSolution(const Ins
 
         calcDataBasedOnEstimates(sppSol, availableSatelliteSystems, calcData, state,
                                  nParam, nMeasPsr, nDopplerMeas, insTime, lla_pos,
-                                 elevationMask, EstimatorType::KF);
+                                 elevationMask, snrMask, EstimatorType::KF);
 
         if (sppSol->nMeasPsr + sppSol->nMeasDopp == 0)
         {

@@ -834,7 +834,7 @@ NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line,
 {
     auto gpsCycleIter = std::find(description.begin(), description.end(), "GpsCycle");
     auto gpsWeekIter = std::find(description.begin(), description.end(), "GpsWeek");
-    auto gpsTowIter = std::find(description.begin(), description.end(), "GpsTow [s]");
+    auto gpsTowIter = std::find(description.begin(), description.end(), "GpsToW [s]");
     if (gpsCycleIter != description.end() && gpsWeekIter != description.end() && gpsTowIter != description.end())
     {
         auto gpsCycle = static_cast<int32_t>(std::get<double>(line.at(static_cast<size_t>(gpsCycleIter - description.begin()))));

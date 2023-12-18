@@ -28,6 +28,7 @@
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "Navigation/GNSS/Errors.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
+#include "Navigation/GNSS/SNRMask.hpp"
 
 namespace NAV::GNSS::Positioning::SPP
 {
@@ -189,6 +190,7 @@ EstWeightDesignMatrices calcMeasurementEstimatesAndDesignMatrix(const std::share
 /// @param[in] insTime Epoch time
 /// @param[in] lla_pos Position in latitude, longitude, altitude in [rad, rad, m]
 /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+/// @param[in] snrMask Signal-to-Noise ratio mask
 /// @param[in] estimatorType Estimator type
 /// @return False if no calculation is possible
 bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
@@ -201,6 +203,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               const InsTime& insTime,
                               const Eigen::Vector3d& lla_pos,
                               double elevationMask,
+                              const SNRMask& snrMask,
                               EstimatorType estimatorType);
 
 /// @brief Gets keys for inter-system clock errors and drifts

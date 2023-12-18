@@ -237,6 +237,10 @@ void NAV::SinglePointPositioning::guiConfig()
         LOG_DEBUG("{}: Elevation mask changed to {}°", nameId(), elevationMaskDeg);
         flow::ApplyChanges();
     }
+    if (_snrMask.ShowGuiWidgets(fmt::format("SNR Mask").c_str()))
+    {
+        flow::ApplyChanges();
+    }
 
     // ###########################################################################################################
 
@@ -313,6 +317,7 @@ void NAV::SinglePointPositioning::guiConfig()
     j["codes"] = _filterCode;
     j["excludedSatellites"] = _excludedSatellites;
     j["elevationMask"] = rad2deg(_elevationMask);
+    j["snrMask"] = _snrMask;
     j["useDoppler"] = _useDoppler;
 
     // ###########################################################################################################
@@ -354,6 +359,10 @@ void NAV::SinglePointPositioning::restore(json const& j)
     {
         j.at("elevationMask").get_to(_elevationMask);
         _elevationMask = deg2rad(_elevationMask);
+    }
+    if (j.contains("snrMask"))
+    {
+        j.at("snrMask").get_to(_snrMask);
     }
     if (j.contains("useDoppler"))
     {
@@ -449,14 +458,14 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     {
         sppSol = calcSppSolutionLSE(_state, gnssObs, gnssNavInfos,
                                     _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel, _estimatorType,
-                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                    _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _snrMask, _useDoppler,
                                     _interSysErrs, _interSysDrifts);
     }
     else // if (_estimatorType == NAV::GNSS::Positioning::SPP::EstimatorType::KF)
     {
         sppSol = calcSppSolutionKF(_kalmanFilter, gnssObs, gnssNavInfos,
                                    _ionosphereModel, _troposphereModels, _gnssMeasurementErrorModel,
-                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _useDoppler,
+                                   _filterFreq, _filterCode, _excludedSatellites, _elevationMask, _snrMask, _useDoppler,
                                    _interSysErrs, _interSysDrifts);
     }
 

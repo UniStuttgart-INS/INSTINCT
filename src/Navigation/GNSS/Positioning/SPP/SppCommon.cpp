@@ -386,6 +386,7 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
                               const InsTime& insTime,
                               const Eigen::Vector3d& lla_pos,
                               double elevationMask,
+                              const SNRMask& snrMask,
                               EstimatorType estimatorType)
 {
     size_t cntSkippedMeas = 0;
@@ -465,6 +466,16 @@ bool calcDataBasedOnEstimates(const std::shared_ptr<SppSolution>& sppSol,
             }
             continue;
         }
+        if (calc.obsData.CN0 // If no CN0 available, we use the signal
+            && !snrMask.checkSNRMask(obsData.satSigId.freq(), calc.satElevation, calc.obsData.CN0.value()))
+        {
+            cntSkippedMeas++;
+            if (calc.pseudorangeRateMeas) { cntSkippedMeasDoppler++; }
+            calc.skipped = true;
+            LOG_DATA("         [{}] Measurement is skipped because of SNR mask", obsData.satSigId);
+            continue;
+        }
+
         calc.skipped = false;
         solSatData.elevationMaskTriggered = false;
 

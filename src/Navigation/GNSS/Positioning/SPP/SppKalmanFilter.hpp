@@ -24,6 +24,7 @@
 #include "Navigation/GNSS/Core/ReceiverClock.hpp"
 #include "Navigation/GNSS/Positioning/SPP/SppCommon.hpp"
 #include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
+#include "Navigation/GNSS/SNRMask.hpp"
 
 #include "util/Eigen.hpp"
 
@@ -237,6 +238,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] troposphereModels Troposphere Models used for the calculation
     /// @param[in] gnssMeasurementErrorModel GNSS measurement error model to use
     /// @param[in] elevationMask Elevation cut-off angle for satellites in [rad]
+    /// @param[in] snrMask Signal-to-Noise ratio mask
     /// @param[in] useDoppler Boolean which enables the use of doppler observations
     /// @param[in, out] interSysErrs Inter-system clock error keys
     /// @param[in, out] interSysDrifts Inter-system clock drift keys
@@ -248,6 +250,7 @@ class SppKalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                                                           const TroposphereModelSelection& troposphereModels,
                                                           const GnssMeasurementErrorModel& gnssMeasurementErrorModel,
                                                           double elevationMask,
+                                                          const SNRMask& snrMask,
                                                           bool useDoppler,
                                                           std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysErrs,
                                                           std::vector<GNSS::Positioning::SPP::States::StateKeyTypes>& interSysDrifts);

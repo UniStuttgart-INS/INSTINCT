@@ -136,7 +136,16 @@ class Frequency
     [[nodiscard]] size_t count() const;
 
     /// @brief Returns a list with all possible frequencies
-    static std::vector<Frequency> GetAll();
+    constexpr static std::array<Frequency, 27> GetAll()
+    {
+        return { G01, G02, G05,
+                 E01, E05, E06, E07, E08,
+                 R01, R02, R03, R04, R06,
+                 B01, B02, B05, B06, B07, B08,
+                 J01, J02, J05, J06,
+                 I05, I09,
+                 S01, S05 };
+    }
 
   private:
     /// @brief Internal value
