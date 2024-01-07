@@ -11,26 +11,46 @@
 #include "util/Eigen.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Logger.hpp"
+#include <string.h>
 
 #include "util/Time/TimeBase.hpp"
+
+// void NAV::vendor::espressif::decryptEspressifObs(const std::shared_ptr<NAV::EspressifObs>& obs, uart::protocol::Packet& packet)
+// {
+//     obs->insTime = util::time::GetCurrentInsTime();
+//     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
+//     {
+//         obs->payloadLength = packet.extractUint16();                                           // TODO remove
+//         size_t measurementLength = 14;                                                         // TODO irgendwo anders definieren
+//         size_t numOfMeasurement = static_cast<size_t>(obs->payloadLength) / measurementLength; // TODO checksum length = 2U
+//         for (size_t i = 0; i < numOfMeasurement; i++)
+//         {
+//             std::string macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
+//             std::transform(macAddress.begin(), macAddress.end(), macAddress.begin(), ::toupper); // Convert to uppercase
+//             double measuredDistance = packet.extractDouble();
+//             obs->data.push_back({ macAddress, measuredDistance });
+//             // Log the measurement details
+//             LOG_DATA("EspressifObs mac Address: {}, measured distance: {}", macAddress, measuredDistance);
+//         }
+//     }
+//     else
+//     {
+//         LOG_DEBUG("Received non-binary packet. Ignoring.");
+//     }
+// }
 
 void NAV::vendor::espressif::decryptEspressifObs(const std::shared_ptr<NAV::EspressifObs>& obs, uart::protocol::Packet& packet)
 {
     obs->insTime = util::time::GetCurrentInsTime();
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        obs->payloadLength = packet.extractUint16();                                           // TODO remove
-        size_t measurementLength = 14;                                                         // TODO irgendwo anders definieren
-        size_t numOfMeasurement = static_cast<size_t>(obs->payloadLength) / measurementLength; // TODO checksum length = 2U
-        for (size_t i = 0; i < numOfMeasurement; i++)
-        {
-            std::array<uint8_t, 6> macAdress{ packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8() };
-            double measuredDistance = packet.extractDouble();
-            obs->data.push_back({ macAdress, measuredDistance });
-            // Log the measurement details
-            LOG_DATA("EspressifObs Measurement {}: RouterID {}, Position ({}, {}, {}), Distance {}",
-                     i + 1, routerId, routerPosition[0], routerPosition[1], routerPosition[2], measuredDistance);
-        }
+        obs->payloadLength = packet.extractUint16(); // TODO remove
+        std::string macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
+        std::transform(macAddress.begin(), macAddress.end(), macAddress.begin(), ::toupper); // Convert to uppercase
+        double measuredDistance = packet.extractDouble();
+        obs->data.push_back({ macAddress, util::time::GetCurrentInsTime(), measuredDistance });
+        // Log the measurement details
+        LOG_DATA("EspressifObs mac Address: {}, measured distance: {}", macAddress, measuredDistance);
     }
     else
     {

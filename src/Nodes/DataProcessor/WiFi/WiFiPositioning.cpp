@@ -330,19 +330,18 @@ void NAV::WiFiPositioning::recvEspressifObs(NAV::InputPin::NodeDataQueue& queue,
 
     for (auto const& obs : espressifObs->data)
     {
-        std::string macAddressString = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", obs.macAddress[0], obs.macAddress[1], obs.macAddress[2], obs.macAddress[3], obs.macAddress[4], obs.macAddress[5]);
-        auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), macAddressString);
+        auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs.macAddress);
         if (it != _deviceMacAddresses.end()) // Device already exists
         {
             // Get the index of the found element
             size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
             if (_frame == Frame::LLA)
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.measuredDistance });
+                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.measuredDistance });
             }
             else if (_frame == Frame::ECEF)
             {
-                _devices.push_back({ _devicePositions.at(index), obs.measuredDistance });
+                _devices.push_back({ _devicePositions.at(index), obs.time, obs.measuredDistance });
             }
         }
     }
@@ -361,11 +360,11 @@ void NAV::WiFiPositioning::recvArubaObs(NAV::InputPin::NodeDataQueue& queue, siz
             size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
             if (_frame == Frame::LLA)
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.measuredDistance });
+                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.measuredDistance });
             }
             else if (_frame == Frame::ECEF)
             {
-                _devices.push_back({ _devicePositions.at(index), obs.measuredDistance });
+                _devices.push_back({ _devicePositions.at(index), obs.time, obs.measuredDistance });
             }
         }
     }

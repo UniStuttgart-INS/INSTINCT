@@ -107,6 +107,7 @@ class WiFiPositioning : public Node
     struct Device
     {
         Eigen::Vector3d position;
+        InsTime time;
         double distance;
     };
     std::vector<Device> _devices;

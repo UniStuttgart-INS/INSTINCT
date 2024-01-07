@@ -40,7 +40,8 @@ class EspressifObs : public NodeData
 
     struct FtmObs
     {
-        std::array<uint8_t, 6> macAddress;
+        std::string macAddress;
+        InsTime time;
         double measuredDistance;
     };
 
