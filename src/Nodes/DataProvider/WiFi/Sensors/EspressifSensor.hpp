@@ -6,41 +6,35 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file UartPacketConverter.hpp
-/// @brief Decrypts Uart packets
+/// @file EspressifSensor.hpp
+/// @brief Espressif Sensor Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-06-13
+/// @date 2020-03-19
 
 #pragma once
 
 #include "internal/Node/Node.hpp"
-
-#include "NodeData/General/UartPacket.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/EmlidObs.hpp"
-#include "NodeData/WiFi/EspressifObs.hpp"
-
-#include <array>
-#include <memory>
+#include "Nodes/DataProvider/Protocol/UartSensor.hpp"
+#include "util/Vendor/Espressif/EspressifUartSensor.hpp"
 
 namespace NAV
 {
-/// Decrypts Uart packets
-class UartPacketConverter : public Node
+/// Espressif Sensor Class
+class EspressifSensor : public Node, public UartSensor
 {
   public:
     /// @brief Default constructor
-    UartPacketConverter();
+    EspressifSensor();
     /// @brief Destructor
-    ~UartPacketConverter() override;
+    ~EspressifSensor() override;
     /// @brief Copy constructor
-    UartPacketConverter(const UartPacketConverter&) = delete;
+    EspressifSensor(const EspressifSensor&) = delete;
     /// @brief Move constructor
-    UartPacketConverter(UartPacketConverter&&) = delete;
+    EspressifSensor(EspressifSensor&&) = delete;
     /// @brief Copy assignment operator
-    UartPacketConverter& operator=(const UartPacketConverter&) = delete;
+    EspressifSensor& operator=(const EspressifSensor&) = delete;
     /// @brief Move assignment operator
-    UartPacketConverter& operator=(UartPacketConverter&&) = delete;
+    EspressifSensor& operator=(EspressifSensor&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -62,28 +56,26 @@ class UartPacketConverter : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
+
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;  ///< @brief Flow
-    constexpr static size_t INPUT_PORT_INDEX_UART_PACKET = 0; ///< @brief Flow (UartPacket)
-
-    /// Enum specifying the type of the output message
-    enum OutputType
-    {
-        OutputType_UbloxObs,     ///< Extract UbloxObs data
-        OutputType_EmlidObs,     ///< Extract EmlidObs data
-        OutputType_EspressifObs, ///< Extract EspressifObs data
-    };
-
-    /// The selected output type in the GUI
-    OutputType _outputType = OutputType_UbloxObs;
+    constexpr static size_t OUTPUT_PORT_INDEX_Espressif_OBS = 0; ///< @brief Flow (EspressifObs)
 
     /// @brief Initialize the node
     bool initialize() override;
 
-    /// @brief Converts the UartPacket to the selected message type
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
+    /// @brief Callback handler for notifications of new asynchronous data packets received
+    /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
+    /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
+    /// @param[in] index Advanced usage item and can be safely ignored for now
+    static void binaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
+
+    /// Sensor Object
+    vendor::espressif::EspressifUartSensor _sensor;
 };
 
 } // namespace NAV

@@ -19,6 +19,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Vendor/Ublox/UbloxUtilities.hpp"
 #include "util/Vendor/Emlid/EmlidUtilities.hpp"
+#include "util/Vendor/Espressif/EspressifUtilities.hpp"
 
 NAV::UartPacketConverter::UartPacketConverter()
     : Node(typeStatic())
@@ -54,9 +55,22 @@ std::string NAV::UartPacketConverter::category()
 
 void NAV::UartPacketConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0\0"))
+    if (ImGui::Combo(fmt::format("Output Type ##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0EspressifObs\0\0"))
     {
-        LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType == OutputType_UbloxObs ? "UbloxObs" : "EmlidObs");
+        std::string outputTypeString;
+        switch (_outputType)
+        {
+        case OutputType_UbloxObs:
+            outputTypeString = "UbloxObs";
+            break;
+        case OutputType_EmlidObs:
+            outputTypeString = "EmlidObs";
+            break;
+        default:
+            outputTypeString = "EspressifObs";
+        }
+
+        LOG_DEBUG("{}: Output Type changed to {}", nameId(), outputTypeString);
 
         if (_outputType == OutputType_UbloxObs)
         {
@@ -67,6 +81,11 @@ void NAV::UartPacketConverter::guiConfig()
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
+        }
+        else if (_outputType == OutputType_EspressifObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EspressifObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EspressifObs::type();
         }
 
         for (auto& link : outputPins.front().links)
@@ -112,6 +131,11 @@ void NAV::UartPacketConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
             }
+            else if (_outputType == OutputType_EspressifObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EspressifObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EspressifObs::type();
+            }
         }
     }
 }
@@ -134,6 +158,13 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         auto obs = std::make_shared<UbloxObs>();
         auto packet = uartPacket->raw;
         vendor::ublox::decryptUbloxObs(obs, packet);
+        convertedData = obs;
+    }
+    else if (_outputType == OutputType_EspressifObs)
+    {
+        auto obs = std::make_shared<EspressifObs>();
+        auto packet = uartPacket->raw;
+        vendor::espressif::decryptEspressifObs(obs, packet);
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */

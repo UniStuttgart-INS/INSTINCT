@@ -6,41 +6,36 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file UartPacketConverter.hpp
-/// @brief Decrypts Uart packets
+/// @file ArubaSensor.hpp
+/// @brief Aruba Sensor Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-06-13
+/// @date 2020-03-19
 
 #pragma once
 
 #include "internal/Node/Node.hpp"
 
-#include "NodeData/General/UartPacket.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/EmlidObs.hpp"
-#include "NodeData/WiFi/EspressifObs.hpp"
-
-#include <array>
-#include <memory>
+#include "util/CallbackTimer.hpp"
+#include <libssh/libssh.h>
 
 namespace NAV
 {
-/// Decrypts Uart packets
-class UartPacketConverter : public Node
+/// Aruba Sensor Class
+class ArubaSensor : public Node
 {
   public:
     /// @brief Default constructor
-    UartPacketConverter();
+    ArubaSensor();
     /// @brief Destructor
-    ~UartPacketConverter() override;
+    ~ArubaSensor() override;
     /// @brief Copy constructor
-    UartPacketConverter(const UartPacketConverter&) = delete;
+    ArubaSensor(const ArubaSensor&) = delete;
     /// @brief Move constructor
-    UartPacketConverter(UartPacketConverter&&) = delete;
+    ArubaSensor(ArubaSensor&&) = delete;
     /// @brief Copy assignment operator
-    UartPacketConverter& operator=(const UartPacketConverter&) = delete;
+    ArubaSensor& operator=(const ArubaSensor&) = delete;
     /// @brief Move assignment operator
-    UartPacketConverter& operator=(UartPacketConverter&&) = delete;
+    ArubaSensor& operator=(ArubaSensor&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -62,28 +57,37 @@ class UartPacketConverter : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
+
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;  ///< @brief Flow
-    constexpr static size_t INPUT_PORT_INDEX_UART_PACKET = 0; ///< @brief Flow (UartPacket)
-
-    /// Enum specifying the type of the output message
-    enum OutputType
-    {
-        OutputType_UbloxObs,     ///< Extract UbloxObs data
-        OutputType_EmlidObs,     ///< Extract EmlidObs data
-        OutputType_EspressifObs, ///< Extract EspressifObs data
-    };
-
-    /// The selected output type in the GUI
-    OutputType _outputType = OutputType_UbloxObs;
+    constexpr static size_t OUTPUT_PORT_INDEX_Aruba_OBS = 0; ///< @brief Flow (ArubaObs)
 
     /// @brief Initialize the node
     bool initialize() override;
 
-    /// @brief Converts the UartPacket to the selected message type
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
+    /// @brief Function which performs the async data reading
+    /// @param[in] userData Pointer to the object
+    static void readSensorDataThread(void* userData);
+
+    ssh_channel _channel; ///< @brief SSH channel
+    ssh_session _session; ///< @brief SSH session
+
+    /// Timer object to handle async data requests
+    CallbackTimer _timer;
+
+    /// Ssh options
+    std::string _sshHost;
+    std::string _sshUser;
+    std::string _sshHostkeys;
+    std::string _sshKeyExchange;
+    std::string _sshPublickeyAcceptedTypes;
+
+    /// Output interval in ms
+    int _outputInterval;
 };
 
 } // namespace NAV

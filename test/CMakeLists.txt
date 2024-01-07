@@ -50,6 +50,7 @@ target_link_libraries(
           implot
           application
           libvncxx
+          ssh
           libUartSensor)
 
 if(NOT APPLE AND NOT WIN32)

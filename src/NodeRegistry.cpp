@@ -197,6 +197,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
+#include "Nodes/DataProcessor/WiFi/WiFiPositioning.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
@@ -216,6 +217,8 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/UlogFile.hpp"
 #include "Nodes/DataProvider/State/PosVelAttFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
+#include "Nodes/DataProvider/WiFi/Sensors/EspressifSensor.hpp"
+#include "Nodes/DataProvider/WiFi/Sensors/ArubaSensor.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
@@ -262,6 +265,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<LooselyCoupledKF>();
     registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
+    registerNodeType<WiFiPositioning>();
     // Data Provider
     registerNodeType<CsvFile>();
     registerNodeType<RinexNavFile>();
@@ -281,6 +285,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UlogFile>();
     registerNodeType<PosVelAttFile>();
     registerNodeType<MultiImuFile>();
+    registerNodeType<EspressifSensor>();
+    registerNodeType<ArubaSensor>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
@@ -312,6 +318,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/WiFi/ArubaObs.hpp"
+#include "NodeData/WiFi/EspressifObs.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -337,4 +345,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();
+    // WiFi
+    registerNodeDataType<ArubaObs>();
+    registerNodeDataType<EspressifObs>();
 }

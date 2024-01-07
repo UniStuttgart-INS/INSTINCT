@@ -37,6 +37,7 @@ if(ENABLE_MAIN)
             ImGuiFileDialog
             implot
             application
+            ssh
             libvncxx
             libUartSensor)
 

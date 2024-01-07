@@ -1,6 +1,6 @@
 {
     "[cpp]": {
-        "editor.defaultFormatter": "xaver.clang-format"
+        "editor.defaultFormatter": "ms-vscode.cpptools"
     },
     "[c]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
