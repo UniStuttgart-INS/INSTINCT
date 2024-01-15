@@ -41,6 +41,20 @@ enum SatelliteSystem_ : uint64_t
 /// @brief Satellite System type
 struct SatelliteSystem
 {
+    /// @brief Satellite System enumeration with continuous range. Not usable as a mask
+    enum Enum : size_t
+    {
+        Enum_GPS,   ///< Global Positioning System
+        Enum_GAL,   ///< Galileo
+        Enum_GLO,   ///< Globalnaja nawigazionnaja sputnikowaja sistema (GLONASS)
+        Enum_BDS,   ///< Beidou
+        Enum_QZSS,  ///< Quasi-Zenith Satellite System
+        Enum_IRNSS, ///< Indian Regional Navigation Satellite System
+        Enum_SBAS,  ///< Satellite Based Augmentation System
+        Enum_COUNT, ///< Count variable
+        Enum_None,  ///< No Satellite system
+    };
+
     /// @brief Default Constructor
     constexpr SatelliteSystem() = default;
 
@@ -60,7 +74,7 @@ struct SatelliteSystem
 
     /// @brief Constructs a new object from continuous enumeration
     /// @param[in] enumeration Continuous enumeration of the satellite system
-    static SatelliteSystem fromEnum(size_t enumeration);
+    static SatelliteSystem fromEnum(Enum enumeration);
 
     /// @brief Assignment operator from Value type
     /// @param[in] v Value type to construct from
@@ -111,10 +125,10 @@ struct SatelliteSystem
 
     /// @brief Get the continuous enumeration of the specified Satellite System
     /// @param[in] satSys Satellite System to get the continuous enumeration for
-    static size_t ToEnumeration(SatelliteSystem satSys);
+    static Enum ToEnumeration(SatelliteSystem satSys);
 
     /// @brief Returns a continuous enumeration of the object
-    [[nodiscard]] size_t toEnumeration() const;
+    [[nodiscard]] Enum toEnumeration() const;
 
     /// @brief Get a vector representation of the specified Satellite Systems
     /// @param[in] satSys Satellite System to get the vector for

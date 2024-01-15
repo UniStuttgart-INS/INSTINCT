@@ -31,7 +31,7 @@ pkgs.mkShell {
 
       ccache
       ccacheStdenv
-      llvmPackages_16.libcxxClang # When using 'gcc' this needs to be commented out
+      llvmPackages_latest.libcxxClang # When using 'gcc' this needs to be commented out
       gperftools
     ];
     buildInputs = with pkgs; [

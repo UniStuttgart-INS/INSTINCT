@@ -46,7 +46,7 @@ std::string NAV::Combiner::type() const
 
 std::string NAV::Combiner::category()
 {
-    return "Simple";
+    return "Utility";
 }
 
 void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinIndex, const std::vector<std::string>& dataIdentifiers)

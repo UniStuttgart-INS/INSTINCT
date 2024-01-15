@@ -30,7 +30,9 @@
     "nodes": {
         "node-11": {
             "data": {
-                "nInputPins": 1,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "nPlots": 2,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -720,7 +722,9 @@
         },
         "node-31": {
             "data": {
-                "nInputPins": 1,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [

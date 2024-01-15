@@ -52,7 +52,7 @@ double calcTotalPressure(double altitudeMSL, PressureModel pressureModel)
         return calcTotalPressureStAtm(altitudeMSL);
     case PressureModel::GPT2:
     case PressureModel::GPT3:
-        INS_ASSERT_USER_ERROR(false, "GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        LOG_CRITICAL("GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
         break;
     case PressureModel::None:
     case PressureModel::COUNT:

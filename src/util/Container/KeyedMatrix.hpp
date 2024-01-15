@@ -553,7 +553,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
     template<size_t P>
-    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousSegment(rowKeys, P);
 
@@ -572,7 +572,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
-    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousSegment(rowKeys, rowKeys.size());
 
@@ -1083,9 +1083,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return Scalar value
     Scalar& operator()(const RowKeyType& rowKey, const ColKeyType& colKey)
     {
-        auto rowIdx = this->rowIndices.at(rowKey);
-        auto colIdx = this->colIndices.at(colKey);
-        return this->matrix(rowIdx, colIdx);
+        return this->matrix(this->rowIndices.at(rowKey), this->colIndices.at(colKey));
     }
 
     /// @brief Gets the values for the row and col keys
@@ -1186,7 +1184,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the row and col keys
     template<size_t P, size_t Q = P>
-    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(rowKeys, colKeys, P, Q);
 
@@ -1208,7 +1206,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKey Col Key
     /// @return View into the matrix for the row and col keys
     template<size_t P>
-    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const // NOLINT(readability-const-return-type)
     {
         return this->block<P, 1>(rowKeys, std::vector{ colKey });
     }
@@ -1226,7 +1224,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the row and col keys
     template<size_t Q>
-    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         return this->block<1, Q>(std::vector{ rowKey }, colKeys);
     }
@@ -1244,7 +1242,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
     template<size_t P>
-    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(rowKeys, this->colKeys(), P, this->colKeys().size());
 
@@ -1264,7 +1262,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the col keys
     template<size_t Q>
-    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), Q);
 

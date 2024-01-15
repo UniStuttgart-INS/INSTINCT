@@ -2213,7 +2213,9 @@
         },
         "node-80": {
             "data": {
-                "nInputPins": 4,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 4
+                },
                 "nPlots": 1,
                 "overridePositionStartValues": false,
                 "pinData": [

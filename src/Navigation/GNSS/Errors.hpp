@@ -137,7 +137,7 @@ class GnssMeasurementErrorModel
     /// @param[in] freq Frequency the measurement originates from
     /// @param[in] num  Frequency number. Only used for GLONASS G1 and G2
     /// @return Variance of the Pseudo-range rate error [m^2/s^2]
-    [[nodiscard]] double psrRateErrorVar(Frequency freq, int8_t num = -128) const;
+    [[nodiscard]] double psrRateErrorVar(Frequency freq, int8_t num) const;
 
     /// @brief Returns the Doppler Error Variance
     /// @return Variance of the Doppler error [Hz^2]

@@ -194,11 +194,11 @@ void NAV::GnssAnalyzer::guiConfig()
                 ImGui::SameLine();
                 std::string description = "As percentage of the smallest wavelength of the combination terms.";
                 if (auto maxF = std::max_element(comb.terms.begin(), comb.terms.end(), [](const Combination::Term& a, const Combination::Term& b) {
-                        return a.satSigId.freq().getFrequency() < b.satSigId.freq().getFrequency();
+                        return a.satSigId.freq().getFrequency(a.freqNum) < b.satSigId.freq().getFrequency(b.freqNum);
                     });
                     maxF != comb.terms.end())
                 {
-                    double lambda = InsConst::C / maxF->satSigId.freq().getFrequency();
+                    double lambda = InsConst::C / maxF->satSigId.freq().getFrequency(maxF->freqNum);
                     double threshold = comb.polynomialCycleSlipDetectorThresholdPercentage * lambda;
                     description += fmt::format("\nFor [{} {}] the wavelength is λ = {:.3f} [m].\nThe threshold is then {:.3f} [m].",
                                                maxF->satSigId.toSatId().satSys, maxF->satSigId.freq(), lambda, threshold);
@@ -285,7 +285,7 @@ void NAV::GnssAnalyzer::guiConfig()
                     }
 
                     ImGui::TableSetColumnIndex(static_cast<int>(t) * 3 + 1);
-                    double f = term.satSigId.freq().getFrequency();
+                    double f = term.satSigId.freq().getFrequency(term.freqNum);
                     ImGui::TextUnformatted(fmt::format("{:.2f}", f * 1e-6).c_str());
                     if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("Frequency in [Mhz]\nλ = {:.3f}m", InsConst::C / f).c_str()); }
 
@@ -407,7 +407,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                                 ? GnssObs::ObservationType::Pseudorange
                                 : GnssObs::ObservationType::Carrier;
 
-            double freq = term.satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
+            double freq = term.satSigId.freq().getFrequency(term.freqNum);
             double lambda = InsConst::C / freq;
             lambdaMin = std::min(lambdaMin, lambda);
 

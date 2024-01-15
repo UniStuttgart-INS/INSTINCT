@@ -28,7 +28,7 @@ namespace nm = NAV::NodeManager;
 #endif
 #define protected public
 #define private public
-#include "Nodes/util/TimeWindow.hpp"
+#include "Nodes/Utility/TimeWindow.hpp"
 #undef protected
 #undef private
 #pragma GCC diagnostic pop

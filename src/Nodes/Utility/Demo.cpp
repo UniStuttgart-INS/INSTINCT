@@ -29,7 +29,7 @@ namespace NAV
 InsTime getCurrentInsTime()
 {
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
+    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe)
 
     return { static_cast<uint16_t>(t->tm_year + 1900),
              static_cast<uint16_t>(t->tm_mon),
@@ -259,7 +259,7 @@ void NAV::Demo::guiConfig()
             notifyOutputValueChanged(OUTPUT_PORT_INDEX_STRING, getCurrentInsTime());
         }
         ImGui::SameLine();
-        gui::widgets::HelpMarker("The string notifies about changes.\nEnable this nodes callback & initialize both nodes.");
+        gui::widgets::HelpMarker("The string notifies about changes.\nInitialize both nodes for this to work.");
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
         if (const auto* connectedObject = getInputValue<const DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
@@ -448,7 +448,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     auto obs = std::make_shared<ImuObs>(imuPos);
 
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
+    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe)
 
     obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                            static_cast<uint16_t>(t->tm_mon),

@@ -519,7 +519,9 @@
         },
         "node-250": {
             "data": {
-                "nInputPins": 9,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 9
+                },
                 "nPlots": 12,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -6685,7 +6687,9 @@
         },
         "node-9": {
             "data": {
-                "nInputPins": 3,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 3
+                },
                 "nPlots": 10,
                 "originPosition": {
                     "frame": "LLA",

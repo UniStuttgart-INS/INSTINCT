@@ -133,6 +133,16 @@ class KeyedKalmanFilter
         P(all, all) = (I - K(all, all) * H(all, all)) * P(all, all) * (I - K(all, all) * H(all, all)).transpose() + K(all, all) * R(all, all) * K(all, all).transpose();
     }
 
+    /// @brief Checks if the filter has the key
+    /// @param stateKey State key
+    [[nodiscard]] bool hasState(const StateKeyType& stateKey) const { return x.hasRow(stateKey); }
+    /// @brief Checks if the filter has the keys
+    /// @param stateKeys State keys
+    [[nodiscard]] bool hasStates(const std::vector<StateKeyType>& stateKeys) const { return x.hasStates(stateKeys); }
+    /// @brief Checks if the filter has any of the provided keys
+    /// @param stateKeys State keys
+    [[nodiscard]] bool hasAnyStates(const std::vector<StateKeyType>& stateKeys) const { return x.hasAnyStates(stateKeys); }
+
     /// @brief Add a new state to the filter
     /// @param stateKey State key
     void addState(const StateKeyType& stateKey) { addStates({ stateKey }); }

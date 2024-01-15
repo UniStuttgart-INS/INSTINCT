@@ -6,23 +6,26 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file UncertainValue.hpp
-/// @brief Values with an uncertainty (Standard Deviation)
+/// @file STL.hpp
+/// @brief Algorithms concerning the STL containers
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2023-04-19
+/// @date 2024-01-11
 
 #pragma once
+
+#include <fmt/format.h>
 
 namespace NAV
 {
 
-/// @brief Value with standard deviation
-/// @tparam T Type of the value and standard deviation
+/// @brief Joins the container to a string
+/// @param[in] container Container to join
 template<typename T>
-struct UncertainValue
+std::string joinToString(const T& container)
 {
-    T value{};  ///< Value
-    T stdDev{}; ///< Standard deviation
-};
+    std::string text;
+    std::for_each(container.begin(), container.end(), [&text](const auto& element) { text += fmt::format("{}, ", element); });
+    return text.substr(0, text.length() - 2);
+}
 
 } // namespace NAV

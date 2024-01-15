@@ -113,11 +113,11 @@ class Frequency
     /// @brief Get the frequency in [Hz]
     /// @param[in] freq Frequency to get the value for
     /// @param[in] num Frequency number. Only used for GLONASS G1 and G2
-    static double GetFrequency(Frequency freq, int8_t num = -128);
+    static double GetFrequency(Frequency freq, int8_t num);
 
     /// @brief Get the frequency in [Hz]
     /// @param[in] num Frequency number. Only used for GLONASS G1 and G2
-    [[nodiscard]] double getFrequency(int8_t num = -128) const
+    [[nodiscard]] double getFrequency(int8_t num) const
     {
         return GetFrequency(value, num);
     }

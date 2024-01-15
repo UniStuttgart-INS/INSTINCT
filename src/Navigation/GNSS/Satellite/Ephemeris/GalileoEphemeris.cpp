@@ -150,7 +150,7 @@ Clock::Corrections GalileoEphemeris::calcClockCorrections(const InsTime& recvTim
         dt_sv = a[0] + a[1] * t_minus_toc + a[2] * std::pow(t_minus_toc, 2) + dt_r;
 
         // See IS-GPS-200M GPS ICD, ch. 20.3.3.3.3.2, p.102
-        dt_sv -= ratioFreqSquared(E01, freq) * (freq == E05 ? BGD_E1_E5a : BGD_E1_E5b);
+        dt_sv -= ratioFreqSquared(E01, freq, -128, -128) * (freq == E05 ? BGD_E1_E5a : BGD_E1_E5b);
 
         LOG_DATA("      dt_sv {} [s] (SV PRN code phase time offset)", dt_sv);
 

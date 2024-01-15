@@ -79,7 +79,7 @@ void NAV::RtklibPosFile::guiConfig()
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
-            if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
+            if (alwaysNormal || std::find_if(_headerColumns.begin(), _headerColumns.end(), [&searchText](const std::string& header) { return header.starts_with(searchText); }) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
             }
@@ -90,7 +90,7 @@ void NAV::RtklibPosFile::guiConfig()
         };
 
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "Date", "Date"); // FIXME: Currently not working
+        TextColoredIfExists(0, "Date", "Date");
         TextColoredIfExists(1, "latitude(deg)", "latitude(deg)");
         TextColoredIfExists(2, "x-ecef(m)", "x-ecef(m)");
         TextColoredIfExists(3, "vn(m/s)", "vn(m/s)");

@@ -19,6 +19,7 @@
 #include <mutex>
 
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/DynamicInputPins.hpp"
 #include "internal/gui/widgets/PositionInput.hpp"
 
 #include "util/Container/ScrollingBuffer.hpp"
@@ -430,18 +431,62 @@ class Plot : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
-    void updateNumberOfInputPins();
-
     /// @brief Adds/Deletes Plots depending on the variable nPlots
     void updateNumberOfPlots();
 
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
+
+    /// Data storage for each pin
+    std::vector<PinData> _pinData;
+
+    /// Info for each plot window
+    std::vector<PlotInfo> _plots;
+
+    /// Amount of plot windows (should equal _plots.size())
+    size_t _nPlots = 0;
+    /// Possible data identifiers to connect
+    std::vector<std::string> _dataIdentifier = { Pos::type(),
+                                                 PosVel::type(),
+                                                 PosVelAtt::type(),
+                                                 LcKfInsGnssErrors::type(),
+                                                 TcKfInsGnssErrors::type(),
+                                                 GnssCombination::type(),
+                                                 GnssObs::type(),
+                                                 SppSolution::type(),
+                                                 RtklibPosObs::type(),
+                                                 UbloxObs::type(),
+                                                 ImuObs::type(),
+                                                 ImuObsSimulated::type(),
+                                                 KvhObs::type(),
+                                                 ImuObsWDelta::type(),
+                                                 VectorNavBinaryOutput::type() };
+
+    /// Index of the Collapsible Header currently being dragged
+    int _dragAndDropHeaderIndex = -1;
+
+    /// Start Time for calculation of relative time with the GPS ToW
+    InsTime _startTime;
+    /// Start position for the calculation of relative North-South and East-West
+    std::optional<gui::widgets::PositionWithFrame> _originPosition;
+
+    /// Flag, whether to override the North/East startValues in the GUI
+    bool _overridePositionStartValues = false;
+
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback, 5 };
+
     /// @brief Adds a event to a certain point in time
     /// @param[in] pinIndex Index of the input pin where the data was received
-    /// @param relTime Relative time in [s]
     /// @param insTime Absolute time
     /// @param text Text to display
-    void addEvent(size_t pinIndex, double relTime, InsTime insTime, const std::string& text);
+    void addEvent(size_t pinIndex, InsTime insTime, const std::string& text);
 
     /// @brief Add Data to the buffer of the pin
     /// @param[in] pinIndex Index of the input pin where the data was received
@@ -554,32 +599,6 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
-
-    /// Data storage for each pin
-    std::vector<PinData> _pinData;
-
-    /// Info for each plot window
-    std::vector<PlotInfo> _plots;
-
-    /// Amount of input pins (should equal data.size())
-    size_t _nInputPins = 5;
-    /// Amount of plot windows (should equal _plots.size())
-    size_t _nPlots = 0;
-    /// Possible data identifiers to connect
-    std::vector<std::string> _dataIdentifier;
-
-    /// Index of the Collapsible Header currently being dragged
-    int _dragAndDropHeaderIndex = -1;
-    /// Index of the Pin currently being dragged
-    int _dragAndDropPinIndex = -1;
-
-    /// Start Time for calculation of relative time with the GPS ToW
-    InsTime _startTime;
-    /// Start position for the calculation of relative North-South and East-West
-    std::optional<gui::widgets::PositionWithFrame> _originPosition;
-
-    /// Flag, whether to override the North/East startValues in the GUI
-    bool _overridePositionStartValues = false;
 };
 
 } // namespace NAV

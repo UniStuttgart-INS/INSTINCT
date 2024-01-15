@@ -89,6 +89,7 @@ class GnssAnalyzer : public Node
 
             int sign = +1;                                      ///< +1 or -1
             SatSigId satSigId = { Code::G1C, 1 };               ///< SignalId and satellite number
+            int8_t freqNum = -128;                              ///< Frequency number. Only used for GLONASS G1 and G2 // TODO: Set this somewhere
             ObservationType obsType = ObservationType::Carrier; ///< Observation Type
             bool receivedDuringRun = false;                     ///< Flag weather the signal was received
         };
@@ -137,10 +138,10 @@ class GnssAnalyzer : public Node
             double combinedFreq = 0.0;
             for (const auto& term : terms)
             {
-                double freq = term.satSigId.freq().getFrequency(); // TODO: GLONASS frequency number
+                double freq = term.satSigId.freq().getFrequency(term.freqNum);
                 combinedFreq += static_cast<double>(term.sign) * freq;
             }
-            return combinedFreq == 0 ? terms.front().satSigId.freq().getFrequency() : combinedFreq;
+            return combinedFreq == 0 ? terms.front().satSigId.freq().getFrequency(terms.front().freqNum) : combinedFreq;
         }
     };
 

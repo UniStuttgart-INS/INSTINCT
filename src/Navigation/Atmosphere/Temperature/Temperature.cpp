@@ -52,8 +52,7 @@ double calcAbsoluteTemperature(double altitudeMSL, TemperatureModel temperatureM
         return calcAbsoluteTemperatureStAtm(altitudeMSL);
     case TemperatureModel::GPT2:
     case TemperatureModel::GPT3:
-        INS_ASSERT_USER_ERROR(temperatureModel != TemperatureModel::GPT2, "GPT2 Model needs to be called separately because of parameter lookup.");
-        INS_ASSERT_USER_ERROR(temperatureModel != TemperatureModel::GPT3, "GPT3 Model needs to be called separately because of parameter lookup.");
+        LOG_CRITICAL("GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
         break;
     case TemperatureModel::None:
     case TemperatureModel::COUNT:

@@ -59,7 +59,9 @@
     "nodes": {
         "node-11": {
             "data": {
-                "nInputPins": 6,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 6
+                },
                 "nPlots": 2,
                 "overridePositionStartValues": false,
                 "pinData": [

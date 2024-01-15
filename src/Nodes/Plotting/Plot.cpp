@@ -393,24 +393,6 @@ NAV::Plot::Plot()
     _lockConfigDuringRun = false;
     _guiConfigDefaultWindowSize = { 750, 650 };
 
-    _dataIdentifier = { Pos::type(),
-                        PosVel::type(),
-                        PosVelAtt::type(),
-                        LcKfInsGnssErrors::type(),
-                        TcKfInsGnssErrors::type(),
-                        GnssCombination::type(),
-                        GnssObs::type(),
-                        SppSolution::type(),
-                        RtklibPosObs::type(),
-                        UbloxObs::type(),
-                        ImuObs::type(),
-                        ImuObsSimulated::type(),
-                        KvhObs::type(),
-                        ImuObsWDelta::type(),
-                        VectorNavBinaryOutput::type() };
-
-    updateNumberOfInputPins();
-
     // PinData::PinType::Flow:
     _pinData.at(0).pinType = PinData::PinType::Flow;
     inputPins.at(0).type = Pin::Type::Flow;
@@ -463,244 +445,100 @@ void NAV::Plot::guiConfig()
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Options##{}", size_t(id)).c_str()))
     {
-        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), inputPins.size() > 1 ? 5 : 4,
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+        auto columnContentPinType = [&](size_t pinIndex) -> bool {
+            auto& pinData = _pinData.at(pinIndex);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
+                             reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
+            {
+                if (inputPins.at(pinIndex).isPinLinked())
+                {
+                    inputPins.at(pinIndex).deleteLink();
+                }
+
+                switch (pinData.pinType)
+                {
+                case PinData::PinType::Flow:
+                    inputPins.at(pinIndex).type = Pin::Type::Flow;
+                    inputPins.at(pinIndex).dataIdentifier = _dataIdentifier;
+                    inputPins.at(pinIndex).callback = static_cast<InputPin::FlowFirableCallbackFunc>(&Plot::plotData);
+                    break;
+                case PinData::PinType::Bool:
+                    inputPins.at(pinIndex).type = Pin::Type::Bool;
+                    inputPins.at(pinIndex).dataIdentifier.clear();
+                    inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotBoolean);
+                    break;
+                case PinData::PinType::Int:
+                    inputPins.at(pinIndex).type = Pin::Type::Int;
+                    inputPins.at(pinIndex).dataIdentifier.clear();
+                    inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotInteger);
+                    break;
+                case PinData::PinType::Float:
+                    inputPins.at(pinIndex).type = Pin::Type::Float;
+                    inputPins.at(pinIndex).dataIdentifier.clear();
+                    inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotFloat);
+                    break;
+                case PinData::PinType::Matrix:
+                    inputPins.at(pinIndex).type = Pin::Type::Matrix;
+                    inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
+                    inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
+                    break;
+                }
+
+                return true;
+            }
+            return false;
+        };
+        auto columnContentDataPoints = [&](size_t pinIndex) -> bool {
+            bool changed = false;
+            auto& pinData = _pinData.at(pinIndex);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragInt(fmt::format("##Data Points {} - {}", size_t(id), pinIndex + 1).c_str(),
+                               &pinData.size, 10.0F, 0, INT32_MAX / 2))
+            {
+                if (pinData.size < 0)
+                {
+                    pinData.size = 0;
+                }
+                std::scoped_lock<std::mutex> guard(pinData.mutex);
+                for (auto& plotData : pinData.plotData)
+                {
+                    changed = true;
+                    plotData.buffer.resize(static_cast<size_t>(pinData.size));
+                }
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
+            }
+            return changed;
+        };
+        auto columnContentStride = [&](size_t pinIndex) -> bool {
+            bool changed = false;
+            auto& pinData = _pinData.at(pinIndex);
+            ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::InputInt(fmt::format("##Stride {} - {}", size_t(id), pinIndex + 1).c_str(),
+                                &pinData.stride))
+            {
+                if (pinData.stride < 1)
+                {
+                    pinData.stride = 1;
+                }
+                changed = true;
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("The amount of points to skip when plotting. This greatly reduces lag when plotting");
+            }
+            return changed;
+        };
+
+        if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this,
+                                             { { "Pin Type", columnContentPinType },
+                                               { "# Data Points", columnContentDataPoints },
+                                               { "Stride", columnContentStride } }))
         {
-            ImGui::TableSetupColumn("Pin");
-            ImGui::TableSetupColumn("Pin Type");
-            ImGui::TableSetupColumn("# Data Points");
-            ImGui::TableSetupColumn("Stride");
-            if (inputPins.size() > 1)
-            {
-                ImGui::TableSetupColumn("");
-            }
-            ImGui::TableHeadersRow();
-
-            // Used to reset the member variabel _dragAndDropPinIndex in case no plot does a drag and drop action
-            bool dragAndDropPinStillInProgress = false;
-
-            auto showDragDropTargetPin = [this](size_t pinIdxTarget) {
-                ImGui::Dummy(ImVec2(-1.F, 2.F));
-
-                bool selectableDummy = true;
-                ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5F, 0.5F));
-                ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(16, 173, 44, 79));
-                ImGui::Selectable(fmt::format("[drop here]").c_str(), &selectableDummy, ImGuiSelectableFlags_None,
-                                  ImVec2(std::max(ImGui::GetColumnWidth(0), ImGui::CalcTextSize("[drop here]").x), 20.F));
-                ImGui::PopStyleColor();
-                ImGui::PopStyleVar();
-
-                if (ImGui::BeginDragDropTarget())
-                {
-                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str()))
-                    {
-                        auto pinIdxSource = *static_cast<size_t*>(payloadData->Data);
-
-                        if (pinIdxSource < pinIdxTarget)
-                        {
-                            --pinIdxTarget;
-                        }
-
-                        move(inputPins, pinIdxSource, pinIdxTarget);
-                        move(_pinData, pinIdxSource, pinIdxTarget);
-                        for (auto& plot : _plots)
-                        {
-                            for (auto& plotItem : plot.plotItems)
-                            {
-                                if (plotItem.pinIndex == pinIdxSource)
-                                {
-                                    plotItem.pinIndex = pinIdxTarget;
-                                }
-                                else if (pinIdxSource < pinIdxTarget)
-                                {
-                                    if (pinIdxSource + 1 <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxTarget)
-                                    {
-                                        --plotItem.pinIndex;
-                                    }
-                                }
-                                else if (pinIdxTarget < pinIdxSource)
-                                {
-                                    if (pinIdxTarget <= plotItem.pinIndex && plotItem.pinIndex <= pinIdxSource - 1)
-                                    {
-                                        ++plotItem.pinIndex;
-                                    }
-                                }
-                            }
-                        }
-                        flow::ApplyChanges();
-                    }
-                    ImGui::EndDragDropTarget();
-                }
-                ImGui::Dummy(ImVec2(-1.F, 2.F));
-            };
-
-            for (size_t pinIndex = 0; pinIndex < _pinData.size(); pinIndex++)
-            {
-                auto& pinData = _pinData.at(pinIndex);
-                ImGui::TableNextRow();
-                ImGui::TableNextColumn(); // Pin
-
-                if (pinIndex == 0 && _dragAndDropPinIndex > 0)
-                {
-                    showDragDropTargetPin(0);
-                }
-
-                bool selectablePinDummy = false;
-                ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, size_t(id)).c_str(), &selectablePinDummy);
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-                {
-                    dragAndDropPinStillInProgress = true;
-                    _dragAndDropPinIndex = static_cast<int>(pinIndex);
-                    // Data is copied into heap inside the drag and drop
-                    ImGui::SetDragDropPayload(fmt::format("DND Pin {}", size_t(id)).c_str(), &pinIndex, sizeof(pinIndex));
-                    ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
-                    ImGui::EndDragDropSource();
-                }
-                if (_dragAndDropPinIndex >= 0
-                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
-                    && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
-                {
-                    showDragDropTargetPin(pinIndex + 1);
-                }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("This item can be dragged to reorder the pins");
-                }
-
-                ImGui::TableNextColumn(); // Pin Type
-                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
-                                 reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
-                {
-                    if (inputPins.at(pinIndex).isPinLinked())
-                    {
-                        inputPins.at(pinIndex).deleteLink();
-                    }
-
-                    switch (pinData.pinType)
-                    {
-                    case PinData::PinType::Flow:
-                        inputPins.at(pinIndex).type = Pin::Type::Flow;
-                        inputPins.at(pinIndex).dataIdentifier = _dataIdentifier;
-                        inputPins.at(pinIndex).callback = static_cast<InputPin::FlowFirableCallbackFunc>(&Plot::plotData);
-                        break;
-                    case PinData::PinType::Bool:
-                        inputPins.at(pinIndex).type = Pin::Type::Bool;
-                        inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotBoolean);
-                        break;
-                    case PinData::PinType::Int:
-                        inputPins.at(pinIndex).type = Pin::Type::Int;
-                        inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotInteger);
-                        break;
-                    case PinData::PinType::Float:
-                        inputPins.at(pinIndex).type = Pin::Type::Float;
-                        inputPins.at(pinIndex).dataIdentifier.clear();
-                        inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotFloat);
-                        break;
-                    case PinData::PinType::Matrix:
-                        inputPins.at(pinIndex).type = Pin::Type::Matrix;
-                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
-                        inputPins.at(pinIndex).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
-                        break;
-                    }
-
-                    flow::ApplyChanges();
-                }
-
-                ImGui::TableNextColumn(); // # Data Points
-                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::DragInt(fmt::format("##Data Points {} - {}", size_t(id), pinIndex + 1).c_str(),
-                                   &pinData.size, 10.0F, 0, INT32_MAX / 2))
-                {
-                    if (pinData.size < 0)
-                    {
-                        pinData.size = 0;
-                    }
-                    std::scoped_lock<std::mutex> guard(pinData.mutex);
-                    for (auto& plotData : pinData.plotData)
-                    {
-                        flow::ApplyChanges();
-                        plotData.buffer.resize(static_cast<size_t>(pinData.size));
-                    }
-                }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
-                }
-
-                ImGui::TableNextColumn(); // Stride
-                ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-                if (ImGui::InputInt(fmt::format("##Stride {} - {}", size_t(id), pinIndex + 1).c_str(),
-                                    &pinData.stride))
-                {
-                    if (pinData.stride < 1)
-                    {
-                        pinData.stride = 1;
-                    }
-                    flow::ApplyChanges();
-                }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("The amount of points to skip when plotting. This greatly reduces lag when plotting");
-                }
-
-                if (inputPins.size() > 1)
-                {
-                    ImGui::TableNextColumn(); // Delete
-                    if (ImGui::Button(fmt::format("x##{} - {}", size_t(id), pinIndex).c_str()))
-                    {
-                        nm::DeleteInputPin(inputPins.at(pinIndex));
-                        _pinData.erase(_pinData.begin() + static_cast<int64_t>(pinIndex));
-                        --_nInputPins;
-
-                        for (auto& plot : _plots)
-                        {
-                            if (plot.selectedPin >= inputPins.size())
-                            {
-                                plot.selectedPin = inputPins.size() - 1;
-                            }
-                            for (size_t plotItemIdx = 0; plotItemIdx < plot.plotItems.size(); ++plotItemIdx)
-                            {
-                                auto& plotItem = plot.plotItems.at(plotItemIdx);
-
-                                if (plotItem.pinIndex == pinIndex) // The index we want to delete
-                                {
-                                    plot.plotItems.erase(plot.plotItems.begin() + static_cast<int64_t>(plotItemIdx));
-                                    --plotItemIdx;
-                                }
-                                else if (plotItem.pinIndex > pinIndex) // Index higher -> Decrement
-                                {
-                                    --(plotItem.pinIndex);
-                                }
-                            }
-                        }
-                        flow::ApplyChanges();
-                    }
-                    if (ImGui::IsItemHovered())
-                    {
-                        ImGui::SetTooltip("Delete the pin");
-                    }
-                }
-            }
-
-            if (!dragAndDropPinStillInProgress)
-            {
-                _dragAndDropPinIndex = -1;
-            }
-
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn(); // Pin
-            if (ImGui::Button(fmt::format("Add Pin##{}", size_t(id)).c_str()))
-            {
-                ++_nInputPins;
-                LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nInputPins);
-                flow::ApplyChanges();
-                updateNumberOfInputPins();
-            }
-
-            ImGui::EndTable();
+            flow::ApplyChanges();
         }
 
         if (ImGui::Checkbox(fmt::format("Override local position origin (North/East)##{}", size_t(id)).c_str(), &_overridePositionStartValues))
@@ -1695,7 +1533,7 @@ void NAV::Plot::guiConfig()
 
     json j;
 
-    j["nInputPins"] = _nInputPins;
+    j["dynamicInputPins"] = _dynamicInputPins;
     j["nPlots"] = _nPlots;
     j["pinData"] = _pinData;
     j["plots"] = _plots;
@@ -1712,10 +1550,9 @@ void NAV::Plot::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("nInputPins"))
+    if (j.contains("dynamicInputPins"))
     {
-        j.at("nInputPins").get_to(_nInputPins);
-        updateNumberOfInputPins();
+        NAV::gui::widgets::from_json(j.at("dynamicInputPins"), _dynamicInputPins, this);
     }
     if (j.contains("nPlots"))
     {
@@ -1728,6 +1565,7 @@ void NAV::Plot::restore(json const& j)
 
         for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++)
         {
+            if (inputPinIndex >= _pinData.size()) { break; }
             switch (_pinData.at(inputPinIndex).pinType)
             {
             case PinData::PinType::Flow:
@@ -2052,9 +1890,9 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "North StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "East StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Down StDev [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "NE-ECEF StDev [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "ND-ECEF StDev [m]");
-            _pinData.at(pinIndex).addPlotDataItem(i++, "ED-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "NE StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ND StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ED StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF StDev [m/s]");
@@ -2622,40 +2460,6 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     }
 }
 
-void NAV::Plot::updateNumberOfInputPins()
-{
-    while (inputPins.size() < _nInputPins)
-    {
-        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow, _dataIdentifier, &Plot::plotData);
-        _pinData.emplace_back();
-    }
-    while (inputPins.size() > _nInputPins)
-    {
-        for (auto& plot : _plots)
-        {
-            if (plot.selectedPin >= _nInputPins)
-            {
-                plot.selectedPin = _nInputPins - 1;
-            }
-        }
-
-        nm::DeleteInputPin(inputPins.back());
-        _pinData.pop_back();
-    }
-
-    for (auto& plot : _plots)
-    {
-        while (plot.selectedXdata.size() < _nInputPins)
-        {
-            plot.selectedXdata.emplace_back(0);
-        }
-        while (plot.selectedXdata.size() > _nInputPins)
-        {
-            plot.selectedXdata.pop_back();
-        }
-    }
-}
-
 void NAV::Plot::updateNumberOfPlots()
 {
     while (_nPlots > _plots.size())
@@ -2668,9 +2472,57 @@ void NAV::Plot::updateNumberOfPlots()
     }
 }
 
-void NAV::Plot::addEvent(size_t pinIndex, double relTime, InsTime insTime, const std::string& text)
+void NAV::Plot::pinAddCallback(Node* node)
 {
-    _pinData.at(pinIndex).events.emplace_back(relTime, insTime, text);
+    auto* plotNode = static_cast<Plot*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+
+    nm::CreateInputPin(node, fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, plotNode->_dataIdentifier, &Plot::plotData);
+    plotNode->_pinData.emplace_back();
+    for (auto& plot : plotNode->_plots)
+    {
+        plot.selectedXdata.emplace_back(0);
+    }
+}
+
+void NAV::Plot::pinDeleteCallback(Node* node, size_t pinIdx)
+{
+    auto* plotNode = static_cast<Plot*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+
+    for (auto& plot : plotNode->_plots)
+    {
+        if (plot.selectedPin >= pinIdx)
+        {
+            plot.selectedPin--;
+        }
+        for (size_t plotItemIdx = 0; plotItemIdx < plot.plotItems.size(); ++plotItemIdx)
+        {
+            auto& plotItem = plot.plotItems.at(plotItemIdx);
+
+            if (plotItem.pinIndex == pinIdx) // The index we want to delete
+            {
+                plot.plotItems.erase(plot.plotItems.begin() + static_cast<int64_t>(plotItemIdx));
+                --plotItemIdx;
+            }
+            else if (plotItem.pinIndex > pinIdx) // Index higher -> Decrement
+            {
+                --(plotItem.pinIndex);
+            }
+        }
+
+        plot.selectedXdata.erase(std::next(plot.selectedXdata.begin(), static_cast<int64_t>(pinIdx)));
+    }
+
+    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+    plotNode->_pinData.erase(std::next(plotNode->_pinData.begin(), static_cast<int64_t>(pinIdx)));
+}
+
+void NAV::Plot::addEvent(size_t pinIndex, InsTime insTime, const std::string& text)
+{
+    if (!insTime.empty() && !_startTime.empty())
+    {
+        double relTime = static_cast<double>((insTime - _startTime).count());
+        _pinData.at(pinIndex).events.emplace_back(relTime, insTime, text);
+    }
 }
 
 void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)

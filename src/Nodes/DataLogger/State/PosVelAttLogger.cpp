@@ -20,6 +20,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include "NodeRegistry.hpp"
 
 NAV::PosVelAttLogger::PosVelAttLogger()
     : Node(typeStatic())
@@ -193,9 +194,7 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
             }
         }
         // -------------------------------------------------------- Velocity -----------------------------------------------------------
-        if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-            || sourcePin->dataIdentifier.front() == PosVel::type()
-            || sourcePin->dataIdentifier.front() == InertialNavSol::type())
+        if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { PosVel::type() }))
         {
             auto obs = std::static_pointer_cast<const PosVel>(nodeData);
 
@@ -235,8 +234,7 @@ void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue,
             _filestream << ",,,,,,";
         }
         // -------------------------------------------------------- Attitude -----------------------------------------------------------
-        if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-            || sourcePin->dataIdentifier.front() == InertialNavSol::type())
+        if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { PosVelAtt::type() }))
         {
             auto obs = std::static_pointer_cast<const PosVelAtt>(nodeData);
             if (!obs->n_Quat_b().coeffs().isZero())

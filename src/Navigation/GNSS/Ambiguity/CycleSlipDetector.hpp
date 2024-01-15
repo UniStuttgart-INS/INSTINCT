@@ -162,6 +162,7 @@ class CycleSlipDetector
 
         SatId satId;                 ///< Satellite identifier
         std::vector<Signal> signals; ///< List of signals
+        int8_t freqNum = -128;       ///< Frequency number. Only used for GLONASS G1 and G2
     };
 
     /// @brief Checks for a cycle slip

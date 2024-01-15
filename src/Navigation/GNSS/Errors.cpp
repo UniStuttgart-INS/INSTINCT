@@ -145,7 +145,7 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
         ImGui::SetNextItemWidth(width);
         changed |= ImGui::InputDouble(fmt::format("Doppler Frequency##", id).c_str(), &(rtklibParams.dopplerFrequency), 0.0, 0.0, "%.3g Hz");
         ImGui::SameLine();
-        ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(rtklibParams.dopplerFrequency, G01)));
+        ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(rtklibParams.dopplerFrequency, G01, -128)));
     }
     if (model == GnssMeasurementErrorModel::Groves2013)
     {

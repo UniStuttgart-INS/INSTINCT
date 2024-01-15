@@ -280,7 +280,9 @@
         },
         "node-1154": {
             "data": {
-                "nInputPins": 3,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 3
+                },
                 "nPlots": 4,
                 "originPosition": {
                     "frame": "LLA",
@@ -1400,7 +1402,9 @@
         },
         "node-1160": {
             "data": {
-                "nInputPins": 2,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 2
+                },
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [

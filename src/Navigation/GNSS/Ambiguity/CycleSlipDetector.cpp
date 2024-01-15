@@ -69,8 +69,8 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
         if (obs.signals.size() >= 2)
         {
             // Signal with largest frequency, e.g. L1
-            auto signal1 = std::max_element(obs.signals.begin(), obs.signals.end(), [](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
-                return s1.code.getFrequency().getFrequency() < s2.code.getFrequency().getFrequency();
+            auto signal1 = std::max_element(obs.signals.begin(), obs.signals.end(), [&obs](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
+                return s1.code.getFrequency().getFrequency(obs.freqNum) < s2.code.getFrequency().getFrequency(obs.freqNum);
             });
             // Signal with lower frequency, e.g. L2/L5
             for (const auto& signal2 : obs.signals)
