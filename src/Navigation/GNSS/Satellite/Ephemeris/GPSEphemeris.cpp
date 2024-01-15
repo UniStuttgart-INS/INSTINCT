@@ -150,8 +150,8 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
         // SV PRN code phase time offset [s]
         dt_sv = a[0] + a[1] * t_minus_toc + a[2] * std::pow(t_minus_toc, 2) + dt_r;
 
-        // See IS-GPS-200M GPS ICD, ch. 20.3.3.3.3.2, p.102
-        dt_sv -= ratioFreqSquared(G01, freq, -128, -128) * T_GD;
+        // See IS-GPS-200M GPS ICD, ch. 20.3.3.3.3.2, p.99
+        dt_sv -= freq & (G01 | G05) ? T_GD : ratioFreqSquared(G01, freq, -128, -128) * T_GD;
 
         LOG_DATA("      dt_sv {} [s] (SV PRN code phase time offset)", dt_sv);
 

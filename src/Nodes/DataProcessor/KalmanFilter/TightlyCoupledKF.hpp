@@ -19,7 +19,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
-#include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/ReceiverClock.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
 #include "NodeData/State/TcKfInsGnssErrors.hpp"

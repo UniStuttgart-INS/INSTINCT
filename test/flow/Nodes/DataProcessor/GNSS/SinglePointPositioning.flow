@@ -1,4 +1,5 @@
 {
+    "colormaps": [],
     "links": {
         "link-81": {
             "endPinId": 76,
@@ -25,7 +26,7 @@
         "node-54": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_7200S_GN.rnx"
+                    "path": "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_GN.23N"
                 }
             },
             "enabled": true,
@@ -52,7 +53,7 @@
         "node-65": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx"
+                    "path": "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs"
                 },
                 "eraseLessPreciseCodes": true
             },
@@ -79,8 +80,10 @@
         },
         "node-77": {
             "data": {
-                "nInputPins": 2,
-                "nPlots": 9,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 2
+                },
+                "nPlots": 8,
                 "originPosition": {
                     "frame": "LLA",
                     "position": {
@@ -130,6 +133,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -186,13 +192,13 @@
                                 "displayName": "Down StDev [m]"
                             },
                             {
-                                "displayName": "NE-ECEF StDev [m]"
+                                "displayName": "NE StDev [m]"
                             },
                             {
-                                "displayName": "ND-ECEF StDev [m]"
+                                "displayName": "ND StDev [m]"
                             },
                             {
-                                "displayName": "ED-ECEF StDev [m]"
+                                "displayName": "ED StDev [m]"
                             },
                             {
                                 "displayName": "X velocity ECEF StDev [m/s]"
@@ -410,6 +416,9 @@
                                 "displayName": "ratio [-]"
                             },
                             {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
                                 "displayName": "Velocity ECEF X [m/s]"
                             },
                             {
@@ -470,7 +479,7 @@
                 ],
                 "plots": [
                     {
-                        "headerText": "Position",
+                        "headerText": "Plot 1",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -487,8 +496,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -521,107 +557,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North/South [m] (RTKLIB)",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
-                        "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
-                        "selectedXdata": [
-                            6,
-                            9
-                        ],
-                        "size": {
-                            "x": -1.0,
-                            "y": 300.0
-                        },
-                        "title": "Position",
-                        "xAxisFlags": 2048,
-                        "xAxisLabel": "",
-                        "xAxisScale": 0,
-                        "y1AxisLabel": "North/South [m]",
-                        "y2AxisLabel": "",
-                        "y3AxisLabel": "",
-                        "yAxesScale": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "yAxisFlags": 2048
-                    },
-                    {
-                        "headerText": "North/South",
-                        "leftPaneWidth": 180.0,
-                        "overrideXAxisLabel": false,
-                        "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 5,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "INSTINCT",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "RTKLIB",
-                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 8,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -653,11 +617,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "North/South",
+                        "title": "Plot 1",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "North/South [m]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -668,7 +632,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "East/West",
+                        "headerText": "Plot 2",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -685,8 +649,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "East/West [m] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -719,8 +710,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 9,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "East/West [m] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 9,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -752,11 +770,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "East/West",
+                        "title": "Plot 2",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "East/West [m]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -767,7 +785,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Altitude",
+                        "headerText": "Plot 3",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -784,8 +802,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Altitude [m] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 4,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -818,8 +863,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Altitude [m] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 7,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -851,11 +923,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Altitude",
+                        "title": "Plot 3",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Altitude [m]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -866,14 +938,14 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "# Satellites",
+                        "headerText": "Plot 4",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 16,
+                                "dataIndex": 17,
                                 "displayName": "Number satellites",
                                 "pinIndex": 0,
                                 "style": {
@@ -883,8 +955,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 17,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Number satellites (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 17,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -917,8 +1016,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 11,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "ns [-] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 11,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -950,11 +1076,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "# Satellites",
+                        "title": "Plot 4",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "# Satellites",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -965,15 +1091,15 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Velocity North",
+                        "headerText": "Plot 8",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 13,
-                                "displayName": "North velocity [m/s]",
+                                "dataIndex": 18,
+                                "displayName": "Receiver clock bias [s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -982,8 +1108,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 18,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Receiver clock bias [s] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 18,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1006,9 +1159,9 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 29,
-                                "displayName": "Velocity North [m/s]",
-                                "pinIndex": 1,
+                                "dataIndex": 19,
+                                "displayName": "Receiver clock drift [s/s]",
+                                "pinIndex": 0,
                                 "style": {
                                     "color": {
                                         "w": -1.0,
@@ -1016,8 +1169,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 19,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Receiver clock drift [s/s] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 19,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1040,7 +1220,7 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 0,
                         "selectedXdata": [
                             0,
                             0
@@ -1049,11 +1229,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Velocity North",
+                        "title": "Plot 8",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity North [m/s]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -1064,7 +1244,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Velocity East",
+                        "headerText": "Plot 5",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -1072,7 +1252,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 14,
-                                "displayName": "East velocity [m/s]",
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1081,8 +1261,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 14,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "North velocity [m/s] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 14,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1106,7 +1313,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 30,
-                                "displayName": "Velocity East [m/s]",
+                                "displayName": "Velocity North [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1115,8 +1322,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 30,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Velocity North [m/s] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 30,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1148,11 +1382,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Velocity East",
+                        "title": "Plot 5",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity East [m/s]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -1163,7 +1397,7 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "Velocity Down",
+                        "headerText": "Plot 6",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
@@ -1171,7 +1405,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 15,
-                                "displayName": "Down velocity [m/s]",
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1180,8 +1414,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 15,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "East velocity [m/s] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 15,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1205,7 +1466,7 @@
                             {
                                 "axis": 3,
                                 "dataIndex": 31,
-                                "displayName": "Velocity Down [m/s]",
+                                "displayName": "Velocity East [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1214,8 +1475,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 31,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Velocity East [m/s] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 31,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1247,11 +1535,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "Velocity Down",
+                        "title": "Plot 6",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity Down [m/s]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -1262,15 +1550,15 @@
                         "yAxisFlags": 2048
                     },
                     {
-                        "headerText": "StDev North",
+                        "headerText": "Plot 7",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 26,
-                                "displayName": "North StDev [m]",
+                                "dataIndex": 16,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -1279,8 +1567,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "INSTINCT",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 16,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Down velocity [m/s] (SPP)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 16,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1303,8 +1618,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
-                                "displayName": "sdn [m]",
+                                "dataIndex": 32,
+                                "displayName": "Velocity Down [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -1313,8 +1628,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "legendName": "RTKLIB",
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 32,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "Velocity Down [m/s] (RTKLIB)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 32,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1346,11 +1688,11 @@
                             "x": -1.0,
                             "y": 300.0
                         },
-                        "title": "StDev North",
+                        "title": "Plot 7",
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "StDev North [m]",
+                        "y1AxisLabel": "",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -1390,7 +1732,7 @@
         "node-80": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/SkydelRINEX_S_20230080000_04H_G.pos"
+                    "path": "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/RTKLIB/Spirent_RINEX_G.pos"
                 }
             },
             "enabled": true,
@@ -1416,46 +1758,593 @@
         },
         "node-91": {
             "data": {
-                "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110",
-                "elevationMask": 0.0,
-                "estimatorType": 1,
-                "excludedSatellites": [],
-                "frequencies": 1,
-                "ionosphereModel": 0,
-                "nNavInfoPins": 1,
-                "troposphereModels": {
-                    "zhdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
+                "algorithm": {
+                    "estimatorType": 1,
+                    "obsEstimator": {
+                        "gnssMeasurementError": {
+                            "groves2013Params": {
+                                "sigmaR": [
+                                    0.1,
+                                    0.1
+                                ],
+                                "sigmaRho": [
+                                    0.1,
+                                    0.1
+                                ]
+                            },
+                            "model": 1,
+                            "rtklibParams": {
+                                "carrierPhaseErrorAB": [
+                                    0.003,
+                                    0.003
+                                ],
+                                "codeCarrierPhaseErrorRatio": [
+                                    100.0,
+                                    100.0
+                                ],
+                                "dopplerFrequency": 1.0
+                            }
+                        },
+                        "ionosphereModel": 0,
+                        "troposphereModels": {
+                            "zhdMappingFunction": [
+                                0,
+                                {
+                                    "pressureModel": 0,
+                                    "temperatureModel": 0,
+                                    "waterVaporModel": 0
+                                }
+                            ],
+                            "zhdModel": [
+                                0,
+                                {
+                                    "pressureModel": 0,
+                                    "temperatureModel": 0,
+                                    "waterVaporModel": 0
+                                }
+                            ],
+                            "zwdMappingFunction": [
+                                0,
+                                {
+                                    "pressureModel": 0,
+                                    "temperatureModel": 0,
+                                    "waterVaporModel": 0
+                                }
+                            ],
+                            "zwdModel": [
+                                0,
+                                {
+                                    "pressureModel": 0,
+                                    "temperatureModel": 0,
+                                    "waterVaporModel": 0
+                                }
+                            ]
                         }
-                    ],
-                    "zhdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ]
+                    },
+                    "obsFilter": {
+                        "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
+                        "elevationMask": 0.0,
+                        "excludedSatellites": [],
+                        "frequencies": 1,
+                        "neededObsType": [
+                            0
+                        ],
+                        "sameSnrMaskForAllReceivers": true,
+                        "snrMask": [
+                            {
+                                "allOverride": [
+                                    [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    true
+                                ],
+                                "mask": [
+                                    [
+                                        "L1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "L2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "L5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E6",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5b",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G3",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G1a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G2a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B1-2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B3",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2b",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q6",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "I5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "IS",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "S1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "S5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ]
+                                ]
+                            }
+                        ],
+                        "usedObsTypes": [
+                            0,
+                            2
+                        ]
+                    }
+                },
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
                 }
             },
             "enabled": true,

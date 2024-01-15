@@ -122,13 +122,13 @@ bool NAV::SppSolutionLogger::initialize()
                 << "IRNSS System time drift difference [s/s],"
                 << "SBAS System time drift difference [s/s],"
                 << "X-ECEF StDev [m],Y-ECEF StDev [m],Z-ECEF StDev [m],"
-                // << "XY-ECEF StDev [m],XZ-ECEF StDev [m],YZ-ECEF StDev [m],"
+                << "XY-ECEF StDev [m],XZ-ECEF StDev [m],YZ-ECEF StDev [m],"
                 << "North StDev [m],East StDev [m],Down StDev [m],"
-                // << "NE-ECEF StDev [m],ND-ECEF StDev [m],ED-ECEF StDev [m],"
+                << "NE StDev [m],ND StDev [m],ED StDev [m],"
                 << "X velocity ECEF StDev [m/s],Y velocity ECEF StDev [m/s],Z velocity ECEF StDev [m/s],"
-                // << "XY velocity StDev [m],XZ velocity StDev [m],YZ velocity StDev [m],"
+                << "XY velocity StDev [m],XZ velocity StDev [m],YZ velocity StDev [m],"
                 << "North velocity StDev [m/s],East velocity StDev [m/s],Down velocity StDev [m/s],"
-                // << "NE velocity StDev [m],ND velocity StDev [m],ED velocity StDev [m],"
+                << "NE velocity StDev [m],ND velocity StDev [m],ED velocity StDev [m],"
                 << "Receiver clock bias StDev [s],"
                 << "GPS system time difference StDev [s],"
                 << "GAL system time difference StDev [s],"
@@ -232,37 +232,18 @@ void NAV::SppSolutionLogger::writeObservation(NAV::InputPin::NodeDataQueue& queu
     _filestream << ",";
     _filestream << obs->recvClk.referenceTimeSatelliteSystem; // System time reference system
     _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GPS)) { _filestream << obs->recvClk.sysTimeDiff.at(GPS).value; } // GPS system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GAL)) { _filestream << obs->recvClk.sysTimeDiff.at(GAL).value; } // GAL system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GLO)) { _filestream << obs->recvClk.sysTimeDiff.at(GLO).value; } // GLO system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(BDS)) { _filestream << obs->recvClk.sysTimeDiff.at(BDS).value; } // BDS system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(QZSS)) { _filestream << obs->recvClk.sysTimeDiff.at(QZSS).value; } // QZSS system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(IRNSS)) { _filestream << obs->recvClk.sysTimeDiff.at(IRNSS).value; } // IRNSS system time difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(SBAS)) { _filestream << obs->recvClk.sysTimeDiff.at(SBAS).value; } // SBAS system time difference [s]
-    _filestream << ",";
-
+    for (size_t i = 0; i < SatelliteSystem::Enum_COUNT; ++i)
+    {
+        if (obs->recvClk.sysTimeDiffBias.at(i).value != 0.0) { _filestream << obs->recvClk.sysTimeDiffBias.at(i).value; } // System time difference bias [s]
+        _filestream << ",";
+    }
     if (!std::isnan(obs->recvClk.drift.value)) { _filestream << obs->recvClk.drift.value; } // Receiver clock drift [s/s]
     _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(GPS)) { _filestream << obs->recvClk.sysDriftDiff.at(GPS).value; } // GPS system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(GAL)) { _filestream << obs->recvClk.sysDriftDiff.at(GAL).value; } // GAL system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(GLO)) { _filestream << obs->recvClk.sysDriftDiff.at(GLO).value; } // GLO system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(BDS)) { _filestream << obs->recvClk.sysDriftDiff.at(BDS).value; } // BDS system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(QZSS)) { _filestream << obs->recvClk.sysDriftDiff.at(QZSS).value; } // QZSS system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(IRNSS)) { _filestream << obs->recvClk.sysDriftDiff.at(IRNSS).value; } // IRNSS system time drift difference [s]
-    _filestream << ",";
-    if (obs->recvClk.sysDriftDiff.contains(SBAS)) { _filestream << obs->recvClk.sysDriftDiff.at(SBAS).value; } // SBAS system time drift difference [s]
-    _filestream << ",";
+    for (size_t i = 0; i < SatelliteSystem::Enum_COUNT; ++i)
+    {
+        if (obs->recvClk.sysTimeDiffDrift.at(i).value != 0.0) { _filestream << obs->recvClk.sysTimeDiffDrift.at(i).value; } // System time difference drift [s]
+        _filestream << ",";
+    }
 
     if (!std::isnan(obs->e_positionStdev()(0))) { _filestream << obs->e_positionStdev()(0); }; // X-ECEF StDev [m]
     _filestream << ",";
@@ -270,81 +251,62 @@ void NAV::SppSolutionLogger::writeObservation(NAV::InputPin::NodeDataQueue& queu
     _filestream << ",";
     if (!std::isnan(obs->e_positionStdev()(2))) { _filestream << obs->e_positionStdev()(2); }; // Z-ECEF StDev [m]
     _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(0, 1))) { _filestream << obs->e_positionStdev()(0, 1); }; // XY-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(0, 2))) { _filestream << obs->e_positionStdev()(0, 2); }; // XZ-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(1, 2))) { _filestream << obs->e_positionStdev()(1, 2); }; // YZ-ECEF StDev [m]
-    // _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY); }; // XY-ECEF StDev [m]
+    _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ); }; // XZ-ECEF StDev [m]
+    _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ); }; // YZ-ECEF StDev [m]
+    _filestream << ",";
     if (!std::isnan(obs->n_positionStdev()(0))) { _filestream << obs->n_positionStdev()(0); }; // North StDev [m]
     _filestream << ",";
     if (!std::isnan(obs->n_positionStdev()(1))) { _filestream << obs->n_positionStdev()(1); }; // East StDev [m]
     _filestream << ",";
     if (!std::isnan(obs->n_positionStdev()(2))) { _filestream << obs->n_positionStdev()(2); }; // Down StDev [m]
     _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(0, 1))) { _filestream << obs->n_positionStdev()(0, 1); }; // NE-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(0, 2))) { _filestream << obs->n_positionStdev()(0, 2); }; // ND-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(1, 2))) { _filestream << obs->n_positionStdev()(1, 2); }; // ED-ECEF StDev [m]
-    // _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY); }; // NE StDev [m]
+    _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ); }; // ND StDev [m]
+    _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ); }; // ED StDev [m]
+    _filestream << ",";
     if (!std::isnan(obs->e_velocityStdev()(0))) { _filestream << obs->e_velocityStdev()(0); }; // X velocity ECEF StDev [m/s]
     _filestream << ",";
     if (!std::isnan(obs->e_velocityStdev()(1))) { _filestream << obs->e_velocityStdev()(1); }; // Y velocity ECEF StDev [m/s]
     _filestream << ",";
     if (!std::isnan(obs->e_velocityStdev()(2))) { _filestream << obs->e_velocityStdev()(2); }; // Z velocity ECEF StDev [m/s]
     _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(0, 1))) { _filestream << obs->e_velocityStdev()(0, 1); }; // XY velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(0, 2))) { _filestream << obs->e_velocityStdev()(0, 2); }; // XZ velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(1, 2))) { _filestream << obs->e_velocityStdev()(1, 2); }; // YZ velocity StDev [m]
-    // _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }; // XY velocity StDev [m]
+    _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }; // XZ velocity StDev [m]
+    _filestream << ",";
+    if (obs->e_CovarianceMatrix().has_value()) { _filestream << (*obs->e_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }; // YZ velocity StDev [m]
+    _filestream << ",";
     if (!std::isnan(obs->n_velocityStdev()(0))) { _filestream << obs->n_velocityStdev()(0); }; // North velocity StDev [m/s]
     _filestream << ",";
     if (!std::isnan(obs->n_velocityStdev()(1))) { _filestream << obs->n_velocityStdev()(1); }; // East velocity StDev [m/s]
     _filestream << ",";
     if (!std::isnan(obs->n_velocityStdev()(2))) { _filestream << obs->n_velocityStdev()(2); }; // Down velocity StDev [m/s]
     _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(0, 1))) { _filestream << obs->n_velocityStdev()(0, 1); }; // NE velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(0, 2))) { _filestream << obs->n_velocityStdev()(0, 2); }; // ND velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(1, 2))) { _filestream << obs->n_velocityStdev()(1, 2); }; // ED velocity StDev [m]
-    // _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }; // NE velocity StDev [m]
+    _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }; // ND velocity StDev [m]
+    _filestream << ",";
+    if (obs->n_CovarianceMatrix().has_value()) { _filestream << (*obs->n_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }; // ED velocity StDev [m]
+    _filestream << ",";
 
     if (!std::isnan(obs->recvClk.bias.stdDev)) { _filestream << obs->recvClk.bias.stdDev; } // Receiver clock bias StDev [s]
     _filestream << ",";
-
-    if (obs->recvClk.sysTimeDiff.contains(GPS) && !std::isnan(obs->recvClk.sysTimeDiff.at(GPS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GPS).stdDev; } // GPS system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GAL) && !std::isnan(obs->recvClk.sysTimeDiff.at(GAL).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GAL).stdDev; } // GAL system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GLO) && !std::isnan(obs->recvClk.sysTimeDiff.at(GLO).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GLO).stdDev; } // GLO system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(BDS) && !std::isnan(obs->recvClk.sysTimeDiff.at(BDS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(BDS).stdDev; } // BDS system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(QZSS) && !std::isnan(obs->recvClk.sysTimeDiff.at(QZSS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(QZSS).stdDev; } // QZSS system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(IRNSS) && !std::isnan(obs->recvClk.sysTimeDiff.at(IRNSS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(IRNSS).stdDev; } // IRNSS system time difference StDev [s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(SBAS) && !std::isnan(obs->recvClk.sysTimeDiff.at(SBAS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(SBAS).stdDev; } // SBAS system time difference StDev [s]
-    _filestream << ",";
+    for (size_t i = 0; i < SatelliteSystem::Enum_COUNT; ++i)
+    {
+        if (obs->recvClk.sysTimeDiffBias.at(i).stdDev != 0.0) { _filestream << obs->recvClk.sysTimeDiffBias.at(i).stdDev; } // System time difference bias StDev [s]
+        _filestream << ",";
+    }
     if (!std::isnan(obs->recvClk.drift.stdDev)) { _filestream << obs->recvClk.drift.stdDev; } // Receiver clock drift StDev [s/s]
     _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GPS) && !std::isnan(obs->recvClk.sysTimeDiff.at(GPS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GPS).stdDev; } // GPS system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GAL) && !std::isnan(obs->recvClk.sysTimeDiff.at(GAL).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GAL).stdDev; } // GAL system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(GLO) && !std::isnan(obs->recvClk.sysTimeDiff.at(GLO).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(GLO).stdDev; } // GLO system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(BDS) && !std::isnan(obs->recvClk.sysTimeDiff.at(BDS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(BDS).stdDev; } // BDS system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(QZSS) && !std::isnan(obs->recvClk.sysTimeDiff.at(QZSS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(QZSS).stdDev; } // QZSS system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(IRNSS) && !std::isnan(obs->recvClk.sysTimeDiff.at(IRNSS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(IRNSS).stdDev; } // IRNSS system time drift difference StDev [s/s]
-    _filestream << ",";
-    if (obs->recvClk.sysTimeDiff.contains(SBAS) && !std::isnan(obs->recvClk.sysTimeDiff.at(SBAS).stdDev)) { _filestream << obs->recvClk.sysTimeDiff.at(SBAS).stdDev; } // SBAS system time drift difference StDev [s/s]
-
+    for (size_t i = 0; i < SatelliteSystem::Enum_COUNT; ++i)
+    {
+        if (obs->recvClk.sysTimeDiffDrift.at(i).stdDev != 0.0) { _filestream << obs->recvClk.sysTimeDiffDrift.at(i).stdDev; } // System time difference drift StDev [s]
+        _filestream << ",";
+    }
     _filestream << '\n';
 }

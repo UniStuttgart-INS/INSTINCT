@@ -6,20 +6,22 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file SppKeys.hpp
-/// @brief Keys for SPP with keyed matrices
-/// @author P. Peitschat (HiWi)
+/// @file Keys.hpp
+/// @brief Keys for the SPP algorithm for use inside the KeyedMatrices
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2023-09-26
+/// @date 2023-12-22
 
 #pragma once
 
+#include <vector>
 #include <variant>
+#include <fmt/format.h>
 
-#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 
-namespace NAV::GNSS::Positioning::SPP
+namespace NAV::SPP
 {
+
 namespace States
 {
 /// @brief State Keys of the SPP
@@ -35,12 +37,18 @@ enum SppStates
     RecvClkDrift,    ///< Receiver clock drift [m/s]
     SppStates_COUNT, ///< Count
 };
+
+constexpr size_t POS_STATE_COUNT = 4; ///< Amount of states to estimate for the position
+constexpr size_t VEL_STATE_COUNT = 4; ///< Amount of states to estimate for the velocity
+
+constexpr size_t POS_VEL_STATE_COUNT = 6; ///< Amount of states
+
 /// @brief Inter-system clock errors (one for additional satellite system)
-struct InterSysErr
+struct InterSysBias
 {
     /// @brief Equal comparison operator
     /// @param rhs Right-hand side
-    bool operator==(const InterSysErr& rhs) const { return satSys == rhs.satSys; }
+    bool operator==(const InterSysBias& rhs) const { return satSys == rhs.satSys; }
     /// @brief Satellite system
     SatelliteSystem satSys;
 };
@@ -55,7 +63,7 @@ struct InterSysDrift
 };
 
 /// Alias for the state key type
-using StateKeyTypes = std::variant<SppStates, InterSysErr, InterSysDrift>;
+using StateKeyTypes = std::variant<SppStates, InterSysBias, InterSysDrift>;
 /// @brief All position keys
 inline static const std::vector<StateKeyTypes> Pos = { SppStates::PosX, SppStates::PosY, SppStates::PosZ };
 /// @brief All velocity keys
@@ -65,6 +73,10 @@ inline static const std::vector<StateKeyTypes> RecvClk = { SppStates::RecvClkErr
 /// @brief Vector with all position and velocity state keys
 inline static const std::vector<StateKeyTypes> PosVel = { SppStates::PosX, SppStates::PosY, SppStates::PosZ,
                                                           SppStates::VelX, SppStates::VelY, SppStates::VelZ };
+/// @brief Vector with all position, velocity and receiver clock bias keys
+inline static const std::vector<StateKeyTypes> PosVelRecvClkErr = { SppStates::PosX, SppStates::PosY, SppStates::PosZ,
+                                                                    SppStates::VelX, SppStates::VelY, SppStates::VelZ,
+                                                                    SppStates::RecvClkErr };
 /// @brief Vector with all position, velocity and receiver clock state keys
 inline static const std::vector<StateKeyTypes> PosVelRecvClk = { SppStates::PosX, SppStates::PosY, SppStates::PosZ,
                                                                  SppStates::VelX, SppStates::VelY, SppStates::VelZ,
@@ -105,50 +117,51 @@ struct Doppler
 using MeasKeyTypes = std::variant<Psr, Doppler>;
 
 } // namespace Meas
-} // namespace NAV::GNSS::Positioning::SPP
+
+} // namespace NAV::SPP
 
 namespace std
 {
 /// @brief Hash function (needed for unordered_map)
 template<>
-struct hash<NAV::GNSS::Positioning::SPP::States::InterSysErr>
+struct hash<NAV::SPP::States::InterSysBias>
 {
     /// @brief Hash function
-    /// @param[in] interSysErr Inter-system clock errors
-    size_t operator()(const NAV::GNSS::Positioning::SPP::States::InterSysErr& interSysErr) const
+    /// @param[in] interSysBias Inter-system clock errors
+    size_t operator()(const NAV::SPP::States::InterSysBias& interSysBias) const
     {
-        return NAV::GNSS::Positioning::SPP::States::SppStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysErr.satSys);
+        return NAV::SPP::States::SppStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysBias.satSys);
     }
 };
 /// @brief Hash function (needed for unordered_map)
 template<>
-struct hash<NAV::GNSS::Positioning::SPP::States::InterSysDrift>
+struct hash<NAV::SPP::States::InterSysDrift>
 {
     /// @brief Hash function
     /// @param[in] interSysDrift Inter-system clock drifts
-    size_t operator()(const NAV::GNSS::Positioning::SPP::States::InterSysDrift& interSysDrift) const
+    size_t operator()(const NAV::SPP::States::InterSysDrift& interSysDrift) const
     {
-        return NAV::GNSS::Positioning::SPP::States::SppStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysDrift.satSys);
+        return NAV::SPP::States::SppStates_COUNT + std::hash<NAV::SatelliteSystem>()(interSysDrift.satSys);
     }
 };
 /// @brief Hash function (needed for unordered_map)
 template<>
-struct hash<NAV::GNSS::Positioning::SPP::Meas::Psr>
+struct hash<NAV::SPP::Meas::Psr>
 {
     /// @brief Hash function
     /// @param[in] psr Pseudorange observation
-    size_t operator()(const NAV::GNSS::Positioning::SPP::Meas::Psr& psr) const
+    size_t operator()(const NAV::SPP::Meas::Psr& psr) const
     {
         return std::hash<NAV::SatSigId>()(psr.satSigId);
     }
 };
 /// @brief Hash function (needed for unordered_map)
 template<>
-struct hash<NAV::GNSS::Positioning::SPP::Meas::Doppler>
+struct hash<NAV::SPP::Meas::Doppler>
 {
     /// @brief Hash function
     /// @param[in] doppler Doppler observation
-    size_t operator()(const NAV::GNSS::Positioning::SPP::Meas::Doppler& doppler) const
+    size_t operator()(const NAV::SPP::Meas::Doppler& doppler) const
     {
         return std::hash<NAV::SatSigId>()(doppler.satSigId) << 12;
     }
@@ -159,16 +172,16 @@ struct hash<NAV::GNSS::Positioning::SPP::Meas::Doppler>
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::SppStates> : fmt::formatter<const char*>
+struct fmt::formatter<NAV::SPP::States::SppStates> : fmt::formatter<const char*>
 {
     /// @brief Defines how to format structs
     /// @param[in] state Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::States::SppStates& state, FormatContext& ctx)
+    auto format(const NAV::SPP::States::SppStates& state, FormatContext& ctx)
     {
-        using namespace NAV::GNSS::Positioning::SPP::States; // NOLINT(google-build-using-namespace)
+        using namespace NAV::SPP::States; // NOLINT(google-build-using-namespace)
 
         switch (state)
         {
@@ -198,29 +211,29 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::SppStates> : fmt::for
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysErr> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::States::InterSysBias> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
-    /// @param[in] interSysErr Struct to format
+    /// @param[in] interSysBias Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::States::InterSysErr& interSysErr, FormatContext& ctx)
+    auto format(const NAV::SPP::States::InterSysBias& interSysBias, FormatContext& ctx)
     {
-        return fmt::formatter<std::string>::format(fmt::format("InterSysErr({})", interSysErr.satSys), ctx);
+        return fmt::formatter<std::string>::format(fmt::format("InterSysBias({})", interSysBias.satSys), ctx);
     }
 };
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysDrift> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::States::InterSysDrift> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
     /// @param[in] interSysDrift Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::States::InterSysDrift& interSysDrift, FormatContext& ctx)
+    auto format(const NAV::SPP::States::InterSysDrift& interSysDrift, FormatContext& ctx)
     {
         return fmt::formatter<std::string>::format(fmt::format("InterSysDrift({})", interSysDrift.satSys), ctx);
     }
@@ -228,14 +241,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::InterSysDrift> : fmt:
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Psr> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::Meas::Psr> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
     /// @param[in] psr Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::Meas::Psr& psr, FormatContext& ctx)
+    auto format(const NAV::SPP::Meas::Psr& psr, FormatContext& ctx)
     {
         return fmt::formatter<std::string>::format(fmt::format("psr({})", psr.satSigId), ctx);
     }
@@ -243,14 +256,14 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Psr> : fmt::formatter<s
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Doppler> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::Meas::Doppler> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
     /// @param[in] doppler Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::Meas::Doppler& doppler, FormatContext& ctx)
+    auto format(const NAV::SPP::Meas::Doppler& doppler, FormatContext& ctx)
     {
         return fmt::formatter<std::string>::format(fmt::format("dop({})", doppler.satSigId), ctx);
     }
@@ -258,18 +271,18 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::Doppler> : fmt::formatt
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::States::StateKeyTypes> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
     /// @param[in] state Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::States::StateKeyTypes& state, FormatContext& ctx)
+    auto format(const NAV::SPP::States::StateKeyTypes& state, FormatContext& ctx)
     {
-        using namespace NAV::GNSS::Positioning::SPP::States; // NOLINT(google-build-using-namespace)
+        using namespace NAV::SPP::States; // NOLINT(google-build-using-namespace)
 
-        if (const auto* s = std::get_if<NAV::GNSS::Positioning::SPP::States::SppStates>(&state))
+        if (const auto* s = std::get_if<NAV::SPP::States::SppStates>(&state))
         {
             switch (*s)
             {
@@ -293,11 +306,11 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes> : fmt:
                 return fmt::formatter<std::string>::format("SppStates_COUNT", ctx);
             }
         }
-        if (const auto* interSysErr = std::get_if<NAV::GNSS::Positioning::SPP::States::InterSysErr>(&state))
+        if (const auto* interSysBias = std::get_if<NAV::SPP::States::InterSysBias>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("InterSysErr({}))", interSysErr->satSys), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("InterSysBias({}))", interSysBias->satSys), ctx);
         }
-        if (const auto* interSysDrift = std::get_if<NAV::GNSS::Positioning::SPP::States::InterSysDrift>(&state))
+        if (const auto* interSysDrift = std::get_if<NAV::SPP::States::InterSysDrift>(&state))
         {
             return fmt::formatter<std::string>::format(fmt::format("InterSysDrift({}))", interSysDrift->satSys), ctx);
         }
@@ -308,20 +321,20 @@ struct fmt::formatter<NAV::GNSS::Positioning::SPP::States::StateKeyTypes> : fmt:
 
 /// @brief Formatter
 template<>
-struct fmt::formatter<NAV::GNSS::Positioning::SPP::Meas::MeasKeyTypes> : fmt::formatter<std::string>
+struct fmt::formatter<NAV::SPP::Meas::MeasKeyTypes> : fmt::formatter<std::string>
 {
     /// @brief Defines how to format structs
     /// @param[in] meas Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GNSS::Positioning::SPP::Meas::MeasKeyTypes& meas, FormatContext& ctx)
+    auto format(const NAV::SPP::Meas::MeasKeyTypes& meas, FormatContext& ctx)
     {
-        if (const auto* psr = std::get_if<NAV::GNSS::Positioning::SPP::Meas::Psr>(&meas))
+        if (const auto* psr = std::get_if<NAV::SPP::Meas::Psr>(&meas))
         {
             return fmt::formatter<std::string>::format(fmt::format("psr({})", psr->satSigId), ctx);
         }
-        if (const auto* doppler = std::get_if<NAV::GNSS::Positioning::SPP::Meas::Doppler>(&meas))
+        if (const auto* doppler = std::get_if<NAV::SPP::Meas::Doppler>(&meas))
         {
             return fmt::formatter<std::string>::format(fmt::format("doppler({})", doppler->satSigId), ctx);
         }

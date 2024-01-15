@@ -1,0 +1,211 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+/// @file KalmanFilter.hpp
+/// @brief
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author P. Peitschat (paula.peitschat@ins.uni-stuttgart.de)
+/// @date 2023-12-22
+
+#pragma once
+
+#include <array>
+#include <set>
+
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+#include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
+#include "Navigation/Math/KeyedKalmanFilter.hpp"
+#include "Navigation/Time/InsTime.hpp"
+
+#include "util/Eigen.hpp"
+
+namespace NAV::SPP
+{
+
+/// @brief The Spp Kalman Filter related options
+class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
+{
+  public:
+    /// @brief Resets the filter
+    /// @param[in] useDoppler Whether to use doppler measurements
+    void reset(bool useDoppler);
+
+    /// @brief Initialize the filter
+    /// @param states States to initialize with
+    /// @param variance Variance of the state
+    void initialize(const KeyedVectorXd<States::StateKeyTypes>& states, const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance);
+
+    /// @brief Deinitialize the KF (can be used to reinitialize the Filter when results seem strange)
+    void deinitialize();
+
+    /// @brief Checks wether the Kalman filter is initialized
+    [[nodiscard]] bool isInitialized() const { return _initialized; }
+
+    /// @brief Does the Kalman Filter prediction
+    /// @param[in] dt Time step [s]
+    /// @param[in] lla_pos Position in Latitude, Longitude, Altitude [rad, rad, m]
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void predict(const double& dt, const Eigen::Vector3d& lla_pos, const std::string& nameId);
+
+    /// @brief Does the Kalman Filter update
+    /// @param[in] measKeys Measurement keys
+    /// @param[in] H Measurement sensitivity matrix 𝐇
+    /// @param[in] R Measurement noise covariance matrix 𝐑
+    /// @param[in] dz Measurement innovation 𝜹𝐳
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void update(const std::vector<Meas::MeasKeyTypes>& measKeys,
+                const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes>& H,
+                const KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>& R,
+                const KeyedVectorXd<Meas::MeasKeyTypes>& dz,
+                const std::string& nameId);
+
+    /// @brief Adds the inter system time difference bias and drift
+    /// @param[in] usedSatSystems Used Satellite systems this epoch
+    /// @param[in] oldRefSys Old Satellite time reference system
+    /// @param[in] newRefSys New Satellite time reference system
+    /// @param[in] useDoppler Whether to use doppler measurements
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    /// @return The reference system which was selected
+    SatelliteSystem updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems,
+                                                     SatelliteSystem oldRefSys,
+                                                     SatelliteSystem newRefSys,
+                                                     bool useDoppler,
+                                                     const std::string& nameId);
+
+    /// @brief Calculates the process noise matrix Q
+    /// @param[in] dt Time step [s]
+    /// @param[in] lla_pos Position in Latitude, Longitude, Altitude [rad, rad, m]
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    /// @note See \cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.152, p. 417
+    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>
+        calcProcessNoiseMatrixGroves(double dt, const Eigen::Vector3d& lla_pos, const std::string& nameId) const;
+
+    /// @brief Shows the GUI input to select the options
+    /// @param[in] id Unique id for ImGui.
+    /// @param[in] useDoppler Whether to use doppler measurements
+    /// @param[in] itemWidth Width of the widgets
+    /// @param[in] unitWidth  Width on unit inputs
+    /// @return True when something was changed
+    bool ShowGuiWidgets(const char* id, bool useDoppler, float itemWidth, float unitWidth);
+
+    /// @brief Set the P matrix entry for the covariance of the clock phase drift
+    /// @param clkPhaseDrift Clock phase drift variance in [m^2 / s]
+    void setClockBiasErrorCovariance(double clkPhaseDrift);
+
+    /// @brief Get the States in the Kalman Filter
+    [[nodiscard]] const std::vector<SPP::States::StateKeyTypes>& getStateKeys() const;
+
+    /// @brief Returns the State vector x̂
+    [[nodiscard]] const KeyedVectorXd<States::StateKeyTypes>& getState() const;
+
+    /// @brief Returns the Error covariance matrix 𝐏
+    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& getErrorCovarianceMatrix() const;
+
+  private:
+    /// Kalman Filter representation
+    KeyedKalmanFilterD<SPP::States::StateKeyTypes, SPP::Meas::MeasKeyTypes> _kalmanFilter;
+
+    /// Boolean that determines, if Kalman Filter is initialized (from weighted LSE solution)
+    bool _initialized = false;
+
+    // ###########################################################################################################
+    //                                               GUI settings
+    // ###########################################################################################################
+
+    /// GUI option for the Q calculation algorithm
+    enum class QCalculationAlgorithm
+    {
+        VanLoan, ///< Van-Loan
+        Taylor1, ///< Taylor
+    };
+    /// Q calculation algorithm
+    QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::VanLoan;
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the acceleration due to user motion
+    enum class CovarianceAccelUnits
+    {
+        m_sqrts3, ///< [ m / √(s^3) ]
+        m2_s3,    ///< [ m^2 / s^3 ]
+    };
+    /// Gui selection for the Unit of the input stdev_accel parameter for the StDev due to acceleration due to user motion
+    CovarianceAccelUnits _gui_covarianceAccelUnit = CovarianceAccelUnits::m_sqrts3;
+
+    /// @brief GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component
+    /// @note See Groves (2013) eq. (9.156)
+    std::array<double, 2> _gui_covarianceAccel = { 3.0, 1.5 } /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
+    std::array<double, 2> _covarianceAccel = { 3.0, 1.5 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the clock phase drift
+    enum class CovarianceClkPhaseDriftUnits
+    {
+        m_sqrts, ///< [ m / √(s) ]
+        m2_s,    ///< [ m^2 / s ]
+    };
+    /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
+    CovarianceClkPhaseDriftUnits _gui_covarianceClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m_sqrts;
+
+    /// @brief GUI selection for the Standard deviation of the clock phase drift
+    double _gui_covarianceClkPhaseDrift = 0.1 /* [ m / √(s) ] */;
+    /// @brief Covariance of the clock phase drift [m²/s]
+    double _covarianceClkPhaseDrift = 0.01;
+
+    // ###########################################################################################################
+
+    /// Possible Units for the Standard deviation of the clock frequency drift
+    enum class CovarianceClkFrequencyDriftUnits
+    {
+        m_sqrts3, ///< [ m / √(s^3) ]
+        m2_s3,    ///< [ m^2 / s^3 ]
+    };
+    /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
+    CovarianceClkFrequencyDriftUnits _gui_covarianceClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m_sqrts3;
+
+    /// @brief GUI selection for the Standard deviation of the clock frequency drift
+    double _gui_covarianceClkFrequencyDrift = 0.2 /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the clock frequency drift [m²/s³]
+    double _covarianceClkFrequencyDrift = 0.04;
+
+    // ###########################################################################################################
+
+    /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
+    CovarianceClkPhaseDriftUnits _gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m_sqrts;
+
+    /// @brief GUI selection for the Standard deviation of the inter-system clock phase drift
+    double _gui_covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.1 /* [ m / √(s) ] */;
+    /// @brief Covariance of the inter-system clock phase drift [m²/s]
+    double _covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.01;
+
+    // ###########################################################################################################
+
+    /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
+    CovarianceClkFrequencyDriftUnits _gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m_sqrts3;
+
+    /// @brief GUI selection for the Standard deviation of the inter-system clock frequency drift
+    double _gui_covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.2 /* [ m / √(s^3) ] */;
+    /// @brief Covariance of the inter-system clock frequency drift [m²/s³]
+    double _covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.04;
+
+    friend void to_json(json& j, const KalmanFilter& data);
+    friend void from_json(const json& j, KalmanFilter& data);
+};
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const KalmanFilter& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, KalmanFilter& data);
+
+} // namespace NAV::SPP

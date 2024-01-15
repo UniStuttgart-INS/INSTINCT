@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <unordered_map>
+#include <array>
 
 #include "util/Container/UncertainValue.hpp"
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
@@ -31,10 +31,10 @@ struct ReceiverClock
 
     /// System time reference system
     SatelliteSystem referenceTimeSatelliteSystem = SatSys_None;
-    /// System time differences [s]
-    std::unordered_map<SatelliteSystem, UncertainValue<double>> sysTimeDiff;
-    /// System time drift difference [s/s]
-    std::unordered_map<SatelliteSystem, UncertainValue<double>> sysDriftDiff;
+    /// System time difference bias [s]
+    std::array<UncertainValue<double>, SatelliteSystem::Enum::Enum_COUNT> sysTimeDiffBias{};
+    /// System time difference drift [s/s]
+    std::array<UncertainValue<double>, SatelliteSystem::Enum::Enum_COUNT> sysTimeDiffDrift{};
 };
 
 } // namespace NAV

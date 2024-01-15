@@ -3070,8 +3070,6 @@ void NAV::Plot::plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pi
 
 void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
 {
-    namespace States = NAV::GNSS::Positioning::SPP::States;
-
     if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
     size_t i = 0;
 
@@ -3099,108 +3097,91 @@ void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, s
     addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
     addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
     // PosVel
-    addData(pinIndex, i++, rad2deg(obs->lla_position()(0)));
-    addData(pinIndex, i++, rad2deg(obs->lla_position()(1)));
-    addData(pinIndex, i++, obs->lla_position()(2));
-    addData(pinIndex, i++, northSouth);
-    addData(pinIndex, i++, eastWest);
-    addData(pinIndex, i++, obs->e_position().x());
-    addData(pinIndex, i++, obs->e_position().y());
-    addData(pinIndex, i++, obs->e_position().z());
-    addData(pinIndex, i++, obs->e_velocity().norm());
-    addData(pinIndex, i++, obs->e_velocity().x());
-    addData(pinIndex, i++, obs->e_velocity().y());
-    addData(pinIndex, i++, obs->e_velocity().z());
-    addData(pinIndex, i++, obs->n_velocity().x());
-    addData(pinIndex, i++, obs->n_velocity().y());
-    addData(pinIndex, i++, obs->n_velocity().z());
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(0))); // Latitude [deg]
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(1))); // Longitude [deg]
+    addData(pinIndex, i++, obs->lla_position()(2));          // Altitude [m]
+    addData(pinIndex, i++, northSouth);                      // North/South [m]
+    addData(pinIndex, i++, eastWest);                        // East/West [m]
+    addData(pinIndex, i++, obs->e_position().x());           // X-ECEF [m]
+    addData(pinIndex, i++, obs->e_position().y());           // Y-ECEF [m]
+    addData(pinIndex, i++, obs->e_position().z());           // Z-ECEF [m]
+    addData(pinIndex, i++, obs->e_velocity().norm());        // Velocity norm [m/s]
+    addData(pinIndex, i++, obs->e_velocity().x());           // X velocity ECEF [m/s]
+    addData(pinIndex, i++, obs->e_velocity().y());           // Y velocity ECEF [m/s]
+    addData(pinIndex, i++, obs->e_velocity().z());           // Z velocity ECEF [m/s]
+    addData(pinIndex, i++, obs->n_velocity().x());           // North velocity [m/s]
+    addData(pinIndex, i++, obs->n_velocity().y());           // East velocity [m/s]
+    addData(pinIndex, i++, obs->n_velocity().z());           // Down velocity [m/s]
     // SppSolution
-    addData(pinIndex, i++, static_cast<double>(obs->nSatellites));                                                                                                                 // Number satellites
-    addData(pinIndex, i++, obs->recvClk.bias.value);                                                                                                                               // Receiver clock bias [s]
-    addData(pinIndex, i++, obs->recvClk.drift.value);                                                                                                                              // Receiver clock drift [s/s]
-    addData(pinIndex, i++, obs->e_positionStdev()(0));                                                                                                                             // X-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(1));                                                                                                                             // Y-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_positionStdev()(2));                                                                                                                             // Z-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 1 && obs->e_CovarianceMatrix().cols() >= 2 ? obs->e_CovarianceMatrix()(States::PosX, States::PosY) : std::nan("")); // XY-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 1 && obs->e_CovarianceMatrix().cols() >= 3 ? obs->e_CovarianceMatrix()(States::PosX, States::PosZ) : std::nan("")); // XZ-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 2 && obs->e_CovarianceMatrix().cols() >= 3 ? obs->e_CovarianceMatrix()(States::PosY, States::PosZ) : std::nan("")); // YZ-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(0));                                                                                                                             // North StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(1));                                                                                                                             // East StDev [m]
-    addData(pinIndex, i++, obs->n_positionStdev()(2));                                                                                                                             // Down StDev [m]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 1 && obs->n_CovarianceMatrix().cols() >= 2 ? obs->n_CovarianceMatrix()(States::PosX, States::PosY) : std::nan("")); // NE-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 1 && obs->n_CovarianceMatrix().cols() >= 3 ? obs->n_CovarianceMatrix()(States::PosX, States::PosZ) : std::nan("")); // ND-ECEF StDev [m]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 2 && obs->n_CovarianceMatrix().cols() >= 3 ? obs->n_CovarianceMatrix()(States::PosY, States::PosZ) : std::nan("")); // ED-ECEF StDev [m]
-    addData(pinIndex, i++, obs->e_velocityStdev()(0));                                                                                                                             // X velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_velocityStdev()(1));                                                                                                                             // Y velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_velocityStdev()(2));                                                                                                                             // Z velocity ECEF StDev [m/s]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 && obs->e_CovarianceMatrix().cols() >= 5 ? obs->e_CovarianceMatrix()(States::VelX, States::VelY) : std::nan("")); // XY velocity StDev [m]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 && obs->e_CovarianceMatrix().cols() >= 6 ? obs->e_CovarianceMatrix()(States::VelX, States::VelZ) : std::nan("")); // XZ velocity StDev [m]
-    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 5 && obs->e_CovarianceMatrix().cols() >= 6 ? obs->e_CovarianceMatrix()(States::VelY, States::VelZ) : std::nan("")); // YZ velocity StDev [m]
-    addData(pinIndex, i++, obs->n_velocityStdev()(0));                                                                                                                             // North velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_velocityStdev()(1));                                                                                                                             // East velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_velocityStdev()(2));                                                                                                                             // Down velocity StDev [m/s]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 && obs->n_CovarianceMatrix().cols() >= 5 ? obs->n_CovarianceMatrix()(States::VelX, States::VelY) : std::nan("")); // NE velocity StDev [m]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 && obs->n_CovarianceMatrix().cols() >= 6 ? obs->n_CovarianceMatrix()(States::VelX, States::VelZ) : std::nan("")); // ND velocity StDev [m]
-    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 5 && obs->n_CovarianceMatrix().cols() >= 6 ? obs->n_CovarianceMatrix()(States::VelY, States::VelZ) : std::nan("")); // ED velocity StDev [m]
-    addData(pinIndex, i++, obs->recvClk.bias.stdDev);                                                                                                                              // Receiver clock bias StDev [s]
-    addData(pinIndex, i++, obs->recvClk.drift.stdDev);                                                                                                                             // Receiver clock drift StDev [s/s]
+    addData(pinIndex, i++, static_cast<double>(obs->nSatellites));                                                                                     // Number satellites
+    addData(pinIndex, i++, obs->recvClk.bias.value);                                                                                                   // Receiver clock bias [s]
+    addData(pinIndex, i++, obs->recvClk.drift.value);                                                                                                  // Receiver clock drift [s/s]
+    addData(pinIndex, i++, obs->e_positionStdev()(0));                                                                                                 // X-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1));                                                                                                 // Y-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(2));                                                                                                 // Z-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY) : std::nan("")); // XY-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ) : std::nan("")); // XZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ) : std::nan("")); // YZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0));                                                                                                 // North StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1));                                                                                                 // East StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(2));                                                                                                 // Down StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY) : std::nan("")); // NE StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ) : std::nan("")); // ND StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ) : std::nan("")); // ED StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0));                                                                                                 // X velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1));                                                                                                 // Y velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(2));                                                                                                 // Z velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY) : std::nan("")); // XY velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ) : std::nan("")); // XZ velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().has_value() ? (*obs->e_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ) : std::nan("")); // YZ velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0));                                                                                                 // North velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1));                                                                                                 // East velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(2));                                                                                                 // Down velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY) : std::nan("")); // NE velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ) : std::nan("")); // ND velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().has_value() ? (*obs->n_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ) : std::nan("")); // ED velocity StDev [m]
+    addData(pinIndex, i++, obs->recvClk.bias.stdDev);                                                                                                  // Receiver clock bias StDev [s]
+    addData(pinIndex, i++, obs->recvClk.drift.stdDev);                                                                                                 // Receiver clock drift StDev [s/s]
 
     addData(pinIndex, i++, static_cast<double>(obs->recvClk.referenceTimeSatelliteSystem.toEnumeration())); // System time reference system
-
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GPS) ? obs->recvClk.sysTimeDiff.at(GPS).value : std::nan(""));     // GPS system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GAL) ? obs->recvClk.sysTimeDiff.at(GAL).value : std::nan(""));     // GAL system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GLO) ? obs->recvClk.sysTimeDiff.at(GLO).value : std::nan(""));     // GLO system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(BDS) ? obs->recvClk.sysTimeDiff.at(BDS).value : std::nan(""));     // BDS system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(QZSS) ? obs->recvClk.sysTimeDiff.at(QZSS).value : std::nan(""));   // QZSS system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(IRNSS) ? obs->recvClk.sysTimeDiff.at(IRNSS).value : std::nan("")); // IRNSS system time difference [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(SBAS) ? obs->recvClk.sysTimeDiff.at(SBAS).value : std::nan(""));   // SBAS system time difference [s]
-
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GPS) ? obs->recvClk.sysDriftDiff.at(GPS).value : std::nan(""));     // GPS system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GAL) ? obs->recvClk.sysDriftDiff.at(GAL).value : std::nan(""));     // GAL system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GLO) ? obs->recvClk.sysDriftDiff.at(GLO).value : std::nan(""));     // GLO system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(BDS) ? obs->recvClk.sysDriftDiff.at(BDS).value : std::nan(""));     // BDS system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).value : std::nan(""));   // QZSS system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).value : std::nan("")); // IRNSS system time drift difference [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).value : std::nan(""));   // SBAS system time drift difference [s/s]
-
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GPS) ? obs->recvClk.sysTimeDiff.at(GPS).stdDev : std::nan(""));     // GPS system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GAL) ? obs->recvClk.sysTimeDiff.at(GAL).stdDev : std::nan(""));     // GAL system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(GLO) ? obs->recvClk.sysTimeDiff.at(GLO).stdDev : std::nan(""));     // GLO system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(BDS) ? obs->recvClk.sysTimeDiff.at(BDS).stdDev : std::nan(""));     // BDS system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(QZSS) ? obs->recvClk.sysTimeDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(IRNSS) ? obs->recvClk.sysTimeDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time difference StDev [s]
-    addData(pinIndex, i++, obs->recvClk.sysTimeDiff.contains(SBAS) ? obs->recvClk.sysTimeDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time difference StDev [s]
-
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GPS) ? obs->recvClk.sysDriftDiff.at(GPS).stdDev : std::nan(""));     // GPS system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GAL) ? obs->recvClk.sysDriftDiff.at(GAL).stdDev : std::nan(""));     // GAL system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(GLO) ? obs->recvClk.sysDriftDiff.at(GLO).stdDev : std::nan(""));     // GLO system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(BDS) ? obs->recvClk.sysDriftDiff.at(BDS).stdDev : std::nan(""));     // BDS system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(QZSS) ? obs->recvClk.sysDriftDiff.at(QZSS).stdDev : std::nan(""));   // QZSS system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(IRNSS) ? obs->recvClk.sysDriftDiff.at(IRNSS).stdDev : std::nan("")); // IRNSS system time drift difference StDev [s/s]
-    addData(pinIndex, i++, obs->recvClk.sysDriftDiff.contains(SBAS) ? obs->recvClk.sysDriftDiff.at(SBAS).stdDev : std::nan(""));   // SBAS system time drift difference StDev [s/s]
+    for (const auto& bias : obs->recvClk.sysTimeDiffBias)
+    {
+        addData(pinIndex, i++, bias.value != 0.0 ? bias.value : std::nan("")); // GPS/GAL/GLO/BDS/QZSS/IRNSS/SBAS system time difference [s]
+    }
+    for (const auto& drift : obs->recvClk.sysTimeDiffDrift)
+    {
+        addData(pinIndex, i++, drift.value != 0.0 ? drift.value : std::nan("")); // GPS/GAL/GLO/BDS/QZSS/IRNSS/SBAS system time drift difference [s/s]
+    }
+    for (const auto& bias : obs->recvClk.sysTimeDiffBias)
+    {
+        addData(pinIndex, i++, bias.value != 0.0 ? bias.stdDev : std::nan("")); // GPS/GAL/GLO/BDS/QZSS/IRNSS/SBAS system time difference StDev [s]
+    }
+    for (const auto& drift : obs->recvClk.sysTimeDiffDrift)
+    {
+        addData(pinIndex, i++, drift.stdDev != 0.0 ? drift.stdDev : std::nan("")); // GPS/GAL/GLO/BDS/QZSS/IRNSS/SBAS system time drift difference StDev [s/s]
+    }
 
     // Dynamic data
-    for (const auto& satData : obs->satData)
+    for (const auto& [satId, satData] : obs->satData)
     {
-        addData(pinIndex, fmt::format("{} SatPos ECEF X [m]", satData.satSigId), satData.e_satPos.x());
-        addData(pinIndex, fmt::format("{} SatPos ECEF Y [m]", satData.satSigId), satData.e_satPos.y());
-        addData(pinIndex, fmt::format("{} SatPos ECEF Z [m]", satData.satSigId), satData.e_satPos.z());
-        addData(pinIndex, fmt::format("{} SatVel ECEF X [m/s]", satData.satSigId), satData.e_satVel.x());
-        addData(pinIndex, fmt::format("{} SatVel ECEF Y [m/s]", satData.satSigId), satData.e_satVel.y());
-        addData(pinIndex, fmt::format("{} SatVel ECEF Z [m/s]", satData.satSigId), satData.e_satVel.z());
-        addData(pinIndex, fmt::format("{} Satellite clock bias [s]", satData.satSigId), satData.satClkBias);
-        addData(pinIndex, fmt::format("{} Satellite clock drift [s/s]", satData.satSigId), satData.satClkDrift);
-        addData(pinIndex, fmt::format("{} Elevation [deg]", satData.satSigId), rad2deg(satData.satElevation));
-        addData(pinIndex, fmt::format("{} Azimuth [deg]", satData.satSigId), rad2deg(satData.satAzimuth));
-        addData(pinIndex, fmt::format("{} Unhealthy (skipped)", satData.satSigId), static_cast<int>(satData.skipped));
-        addData(pinIndex, fmt::format("{} Elevation mask triggered", satData.satSigId), static_cast<int>(satData.elevationMaskTriggered));
-        addData(pinIndex, fmt::format("{} Estimated Pseudorange [m]", satData.satSigId), satData.psrEst);
-        addData(pinIndex, fmt::format("{} Estimated Pseudorange rate [m/s]", satData.satSigId), satData.psrRateEst.has_value() ? satData.psrRateEst.value() : std::nan(""));
-        addData(pinIndex, fmt::format("{} Geometric distance [m]", satData.satSigId), satData.geometricDist);
-        addData(pinIndex, fmt::format("{} Estimated Inter-system clock bias [m]", satData.satSigId), satData.dpsr_clkISB);
-        addData(pinIndex, fmt::format("{} Estimated ionosphere propagation error [m]", satData.satSigId), satData.dpsr_I);
-        addData(pinIndex, fmt::format("{} Estimated troposphere propagation error [m]", satData.satSigId), satData.dpsr_T);
-        addData(pinIndex, fmt::format("{} Sagnac correction [m]", satData.satSigId), satData.dpsr_ie);
+        addData(pinIndex, fmt::format("{} Elevation [deg]", satId), rad2deg(satData.satElevation));
+        addData(pinIndex, fmt::format("{} Azimuth [deg]", satId), rad2deg(satData.satAzimuth));
+        // addData(pinIndex, fmt::format("{} Satellite clock bias [s]", satData.first), satData.second.satClock.bias);
+        // addData(pinIndex, fmt::format("{} Satellite clock drift [s/s]", satData.first), satData.second.satClock.drift);
+        // addData(pinIndex, fmt::format("{} SatPos ECEF X [m]", satData.first), satData.second.e_satPos.x());
+        // addData(pinIndex, fmt::format("{} SatPos ECEF Y [m]", satData.first), satData.second.e_satPos.y());
+        // addData(pinIndex, fmt::format("{} SatPos ECEF Z [m]", satData.first), satData.second.e_satPos.z());
+        // addData(pinIndex, fmt::format("{} SatPos Latitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.x()));
+        // addData(pinIndex, fmt::format("{} SatPos Longitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.y()));
+        // addData(pinIndex, fmt::format("{} SatPos Altitude [m]", satData.first), satData.second.lla_satPos.z());
+        // addData(pinIndex, fmt::format("{} SatVel ECEF X [m/s]", satData.first), satData.second.e_satVel.x());
+        // addData(pinIndex, fmt::format("{} SatVel ECEF Y [m/s]", satData.first), satData.second.e_satVel.y());
+        // addData(pinIndex, fmt::format("{} SatVel ECEF Z [m/s]", satData.first), satData.second.e_satVel.z());
+    }
+
+    for (const auto& event : obs->events)
+    {
+        addEvent(pinIndex, obs->insTime, event);
     }
 }
 
