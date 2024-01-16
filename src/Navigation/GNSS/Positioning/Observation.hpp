@@ -18,7 +18,6 @@
 #include <unordered_set>
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
-#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
