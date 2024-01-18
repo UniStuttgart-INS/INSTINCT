@@ -130,6 +130,71 @@ Frequency Frequency::fromString(const std::string& typeString)
     return Freq_None;
 }
 
+Frequency Frequency::fromEnum(Frequency::Enum enumeration)
+{
+    switch (enumeration)
+    {
+    case Frequency::Enum_G01:
+        return G01;
+    case Frequency::Enum_G02:
+        return G02;
+    case Frequency::Enum_G05:
+        return G05;
+    case Frequency::Enum_E01:
+        return E01;
+    case Frequency::Enum_E05:
+        return E05;
+    case Frequency::Enum_E06:
+        return E06;
+    case Frequency::Enum_E07:
+        return E07;
+    case Frequency::Enum_E08:
+        return E08;
+    case Frequency::Enum_R01:
+        return R01;
+    case Frequency::Enum_R02:
+        return R02;
+    case Frequency::Enum_R03:
+        return R03;
+    case Frequency::Enum_R04:
+        return R04;
+    case Frequency::Enum_R06:
+        return R06;
+    case Frequency::Enum_B01:
+        return B01;
+    case Frequency::Enum_B02:
+        return B02;
+    case Frequency::Enum_B05:
+        return B05;
+    case Frequency::Enum_B06:
+        return B06;
+    case Frequency::Enum_B07:
+        return B07;
+    case Frequency::Enum_B08:
+        return B08;
+    case Frequency::Enum_J01:
+        return J01;
+    case Frequency::Enum_J02:
+        return J02;
+    case Frequency::Enum_J05:
+        return J05;
+    case Frequency::Enum_J06:
+        return J06;
+    case Frequency::Enum_I05:
+        return I05;
+    case Frequency::Enum_I09:
+        return I09;
+    case Frequency::Enum_S01:
+        return S01;
+    case Frequency::Enum_S05:
+        return S05;
+    case Frequency::Enum_COUNT:
+    case Frequency::Enum_None:
+        return Freq_None;
+    }
+    return Freq_None;
+}
+
 Frequency::operator std::string() const
 {
     const std::string filler = " | ";
@@ -404,6 +469,75 @@ size_t Frequency::count() const
     if (value & S05) { num += 1; }
 
     return num;
+}
+
+Frequency::Enum Frequency::ToEnumeration(Frequency freq)
+{
+    switch (Frequency_(freq))
+    {
+    case Freq_None:
+        return Enum_None;
+    case G01:
+        return Enum_G01;
+    case G02:
+        return Enum_G02;
+    case G05:
+        return Enum_G05;
+    case E01:
+        return Enum_E01;
+    case E05:
+        return Enum_E05;
+    case E06:
+        return Enum_E06;
+    case E07:
+        return Enum_E07;
+    case E08:
+        return Enum_E08;
+    case R01:
+        return Enum_R01;
+    case R02:
+        return Enum_R02;
+    case R03:
+        return Enum_R03;
+    case R04:
+        return Enum_R04;
+    case R06:
+        return Enum_R06;
+    case B01:
+        return Enum_B01;
+    case B02:
+        return Enum_B02;
+    case B05:
+        return Enum_B05;
+    case B06:
+        return Enum_B06;
+    case B07:
+        return Enum_B07;
+    case B08:
+        return Enum_B08;
+    case J01:
+        return Enum_J01;
+    case J02:
+        return Enum_J02;
+    case J05:
+        return Enum_J05;
+    case J06:
+        return Enum_J06;
+    case I05:
+        return Enum_I05;
+    case I09:
+        return Enum_I09;
+    case S01:
+        return Enum_S01;
+    case S05:
+        return Enum_S05;
+    }
+    return Enum_None;
+}
+
+Frequency::Enum Frequency::toEnumeration() const
+{
+    return ToEnumeration(*this);
 }
 
 void to_json(json& j, const Frequency& data)

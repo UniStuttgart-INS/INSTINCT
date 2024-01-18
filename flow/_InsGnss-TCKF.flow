@@ -2306,10 +2306,6 @@
                             0.003,
                             0.003
                         ],
-                        "codeCarrierPhaseErrorRatio": [
-                            100.0,
-                            100.0
-                        ],
                         "dopplerFrequency": 1.0
                     }
                 },

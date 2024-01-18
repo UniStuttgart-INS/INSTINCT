@@ -20,7 +20,7 @@
 
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
-#include "Navigation/GNSS/Errors.hpp"
+#include "Navigation/GNSS/Errors/MeasurementErrors.hpp"
 #include "Navigation/GNSS/Positioning/Observation.hpp"
 #include "Navigation/GNSS/Positioning/Receiver.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
@@ -82,6 +82,8 @@ class ObservationEstimator
                 // Sagnac correction [m]
                 double dpsr_ie_r_s = calcSagnacCorrection(receiver.e_pos, observation.e_satPos());
 
+                double cn0 = recvObs.gnssObsData().CN0.value_or(1.0);
+
                 for (auto& [obsType, obsData] : recvObs.obs)
                 {
                     switch (obsType)
@@ -95,7 +97,7 @@ class ObservationEstimator
                                                  * (receiver.recvClk.bias.value
                                                     - observation.satClock().bias
                                                     + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
-                        obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, freq, recvObs.satElevation());
+                        obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, recvObs.satElevation(), cn0);
                         LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m] = {} + {} + {} + {} + c * ({} - {} + {}); diff to meas: {}",
                                  nameId, satSigId, obsType, recv, obsData.estimate,
                                  rho_r_s, dpsr_ie_r_s, dpsr_T_r_s, dpsr_I_r_s, receiver.recvClk.bias.value, observation.satClock().bias,
@@ -110,7 +112,7 @@ class ObservationEstimator
                                                  * (receiver.recvClk.bias.value
                                                     - observation.satClock().bias
                                                     + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
-                        obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, recvObs.satElevation());
+                        obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, recvObs.satElevation(), cn0);
                         LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m] = {} + {} + {} - {} + c * ({} - {} + {}); diff to meas: {}",
                                  nameId, satSigId, obsType, recv, obsData.estimate,
                                  rho_r_s, dpsr_ie_r_s, dpsr_T_r_s, dpsr_I_r_s, receiver.recvClk.bias.value, observation.satClock().bias,
@@ -123,7 +125,7 @@ class ObservationEstimator
                                                  * (receiver.recvClk.drift.value
                                                     - observation.satClock().drift
                                                     + receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value);
-                        obsData.measVar = _gnssMeasurementErrorModel.psrRateErrorVar(freq, observation.freqNum());
+                        obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), recvObs.satElevation(), cn0);
                         LOG_DATA("{}:   [{}][{:11}][{:5}] {} [m/s] = {} - {} + c * ({} - {} + {}); diff to meas: {}",
                                  nameId, satSigId, obsType, recv, obsData.estimate,
                                  recvObs.e_pLOS().dot(observation.e_satVel() - receiver.e_vel),
