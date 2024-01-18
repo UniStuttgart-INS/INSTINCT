@@ -53,6 +53,8 @@ if(ENABLE_MAIN)
     endif()
   endif()
 
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC JSON_DIAGNOSTICS=1)
+
   target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
   if(APPLE)

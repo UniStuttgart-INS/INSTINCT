@@ -64,6 +64,12 @@ struct SatelliteSystem
         : value(type)
     {}
 
+    /// @brief Implicit Constructor from Enum type
+    /// @param[in] enumeration Enum type to construct from
+    SatelliteSystem(Enum enumeration) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : value(SatelliteSystem::fromEnum(enumeration))
+    {}
+
     /// @brief Construct new object from std::string
     /// @param[in] typeString String representation of the satellite system
     static SatelliteSystem fromString(const std::string& typeString);

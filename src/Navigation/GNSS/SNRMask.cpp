@@ -57,7 +57,7 @@ bool SNRMask::ShowGuiWidgets(const char* label)
     {
         if (ImGui::BeginTable(fmt::format("").c_str(), elevations.size() + 2, ImGuiTableFlags_Borders))
         {
-            ImGui::TableSetupColumn("");
+            ImGui::TableSetupColumn("Elevation:");
             for (const auto& elevation : elevations)
             {
                 ImGui::TableSetupColumn(fmt::format("< {:.0f}", rad2deg(elevation)).c_str());
