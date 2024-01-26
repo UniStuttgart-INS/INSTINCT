@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <fmt/format.h>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -413,3 +414,22 @@ struct hash<NAV::TimeSystem>
     }
 };
 } // namespace std
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter for TimeSystem
+template<>
+struct fmt::formatter<NAV::TimeSystem> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format TimeSystem structs
+    /// @param[in] timeSys Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::TimeSystem& timeSys, FormatContext& ctx)
+    {
+        return fmt::formatter<std::string>::format(std::string(timeSys), ctx);
+    }
+};
+
+#endif

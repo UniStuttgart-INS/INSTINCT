@@ -136,8 +136,9 @@ class GnssObs : public NodeData
     /// @brief Constructor
     /// @param[in] insTime Epoch time
     /// @param[in] data Observation data
-    GnssObs(const InsTime& insTime, std::vector<ObservationData> data)
-        : data(std::move(data))
+    /// @param[in] satData Satellite data
+    GnssObs(const InsTime& insTime, std::vector<ObservationData> data, std::vector<SatelliteData> satData)
+        : data(std::move(data)), _satData(std::move(satData))
     {
         this->insTime = insTime;
     }
@@ -223,7 +224,7 @@ class GnssObs : public NodeData
     /// @brief Return the element with the identifier
     /// @param[in] satSigId Signal id
     /// @return The element found in the observations
-    std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
+    [[nodiscard]] std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
     {
         auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
             return idData.satSigId == satSigId;
@@ -235,6 +236,9 @@ class GnssObs : public NodeData
         }
         return std::nullopt;
     }
+
+    /// @brief Useful information of the satellites
+    [[nodiscard]] const std::vector<SatelliteData>& getSatData() const { return _satData; }
 
   private:
     /// @brief Useful information of the satellites

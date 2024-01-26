@@ -21,6 +21,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 
+#include "util/Vendor/RINEX/RINEXUtilities.hpp"
+
 namespace NAV
 {
 
@@ -360,13 +362,13 @@ void RinexObsFile::readHeader()
             {
                 // Observation descriptors: Type, Band, Attribute - FORMAT 13(1X,A3)
 
-                ObsType type = obsTypeFromChar(line.at(i));
-                Frequency freq = getFrequencyFromBand(satSys, line.at(i + 1) - '0');
+                NAV::vendor::RINEX::ObsType type = NAV::vendor::RINEX::obsTypeFromChar(line.at(i));
+                Frequency freq = NAV::vendor::RINEX::getFrequencyFromBand(satSys, line.at(i + 1) - '0');
                 Code code = Code::fromFreqAttr(freq, line.at(i + 2));
 
-                _obsDescription[satSys].push_back(ObservationDescription{ .type = type, .code = code });
+                _obsDescription[satSys].push_back(NAV::vendor::RINEX::ObservationDescription{ .type = type, .code = code });
 
-                debugOutput += fmt::format("({},{},{})", obsTypeToChar(type), freq, code);
+                debugOutput += fmt::format("({},{},{})", NAV::vendor::RINEX::obsTypeToChar(type), freq, code);
 
                 if (nLine == 13)
                 {
@@ -396,7 +398,7 @@ void RinexObsFile::readHeader()
             [[maybe_unused]] auto min = std::stoi(line.substr(24, 6));
             [[maybe_unused]] auto sec = std::stold(line.substr(30, 13));
             _timeSystem = TimeSystem::fromString(line.substr(30 + 13 + 5, 3));
-            LOG_DATA("{}: Time of first obs: {} UTC (originally in '{}' time)", nameId(),
+            LOG_DATA("{}: Time of first obs: {} GPST (originally in '{}' time)", nameId(),
                      InsTime{ static_cast<uint16_t>(year),
                               static_cast<uint16_t>(month),
                               static_cast<uint16_t>(day),
@@ -404,7 +406,7 @@ void RinexObsFile::readHeader()
                               static_cast<uint16_t>(min),
                               sec,
                               _timeSystem }
-                         .toYMDHMS(),
+                         .toYMDHMS(GPST),
                      std::string(_timeSystem));
         }
         else if (headerLabel == "TIME OF LAST OBS")
@@ -601,11 +603,11 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             {
                 if ((*gnssObs)({ obsDesc.code, satNum }).pseudorange)
                 {
-                    if (obsDesc.type == ObsType::L) // Phase
+                    if (obsDesc.type == NAV::vendor::RINEX::ObsType::L) // Phase
                     {
                         LOG_WARN("{}: observation of satSys = {} contains no carrier phase. This happens if the CN0 is so small that the PLL could not lock, even if the DLL has locked (= pseudorange available). The observation is still valid.", nameId(), char(satSys));
                     }
-                    else if (obsDesc.type == ObsType::D) // Doppler
+                    else if (obsDesc.type == NAV::vendor::RINEX::ObsType::D) // Doppler
                     {
                         LOG_WARN("{}: observation of satSys = {} contains no doppler.", nameId(), char(satSys));
                     }
@@ -660,24 +662,24 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
             switch (obsDesc.type)
             {
-            case ObsType::C: // Code / Pseudorange
+            case NAV::vendor::RINEX::ObsType::C: // Code / Pseudorange
                 (*gnssObs)({ obsDesc.code, satNum }).pseudorange = { .value = observation,
                                                                      .SSI = SSI };
                 break;
-            case ObsType::L: // Phase
+            case NAV::vendor::RINEX::ObsType::L: // Phase
                 (*gnssObs)({ obsDesc.code, satNum }).carrierPhase = { .value = observation,
                                                                       .SSI = SSI,
                                                                       .LLI = LLI };
                 break;
-            case ObsType::D: // Doppler
+            case NAV::vendor::RINEX::ObsType::D: // Doppler
                 (*gnssObs)({ obsDesc.code, satNum }).doppler = observation;
                 break;
-            case ObsType::S: // Raw signal strength(carrier to noise ratio)
+            case NAV::vendor::RINEX::ObsType::S: // Raw signal strength(carrier to noise ratio)
                 (*gnssObs)({ obsDesc.code, satNum }).CN0 = observation;
                 break;
-            case ObsType::I:
-            case ObsType::X:
-            case ObsType::Error:
+            case NAV::vendor::RINEX::ObsType::I:
+            case NAV::vendor::RINEX::ObsType::X:
+            case NAV::vendor::RINEX::ObsType::Error:
                 LOG_WARN("{}: ObsType {} not supported", nameId(), size_t(obsDesc.type));
                 break;
             }
@@ -685,7 +687,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             gnssObs->satData(SatId{ satSys, satNum }).frequencies |= obsDesc.code.getFrequency();
 
             LOG_DATA("{}:     {}-{}-{}: {}, LLI {}, SSI {}", nameId(),
-                     obsTypeToChar(obsDesc.type), obsDesc.code, satNum,
+                     NAV::vendor::RINEX::obsTypeToChar(obsDesc.type), obsDesc.code, satNum,
                      observation, LLI, SSI);
 
             if (_eraseLessPreciseCodes) { eraseLessPreciseCodes(gnssObs, obsDesc.code.getFrequency(), satNum); }
@@ -710,210 +712,6 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     invokeCallbacks(OutputPortIndex_GnssObs, gnssObs);
     return gnssObs;
-}
-
-RinexObsFile::ObsType RinexObsFile::obsTypeFromChar(char c)
-{
-    switch (c)
-    {
-    case 'C':
-        return ObsType::C;
-    case 'L':
-        return ObsType::L;
-    case 'D':
-        return ObsType::D;
-    case 'S':
-        return ObsType::S;
-    case 'I':
-        return ObsType::I;
-    case 'X':
-        return ObsType::X;
-    default:
-        return ObsType::Error;
-    }
-}
-
-char RinexObsFile::obsTypeToChar(ObsType type)
-{
-    switch (type)
-    {
-    case ObsType::C:
-        return 'C';
-    case ObsType::L:
-        return 'L';
-    case ObsType::D:
-        return 'D';
-    case ObsType::S:
-        return 'S';
-    case ObsType::I:
-        return 'I';
-    case ObsType::X:
-        return 'X';
-    default:
-        return '\0';
-    }
-}
-
-Frequency RinexObsFile::getFrequencyFromBand(SatelliteSystem satSys, int band) const
-{
-    switch (band)
-    {
-    case 1:
-        // 1 = L1       (GPS, QZSS, SBAS, BDS)
-        //     G1       (GLO)
-        //     E1       (GAL)
-        //     B1       (BDS)
-        if (satSys == GPS)
-        {
-            return Frequency_::G01;
-        }
-        if (satSys == QZSS)
-        {
-            return Frequency_::J01;
-        }
-        if (satSys == SBAS)
-        {
-            return Frequency_::S01;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B01;
-        }
-        if (satSys == GLO)
-        {
-            return Frequency_::R01;
-        }
-        if (satSys == GAL)
-        {
-            return Frequency_::E01;
-        }
-        break;
-    case 2:
-        // 2 = L2       (GPS, QZSS)
-        //     G2       (GLO)
-        //     B1-2     (BDS)
-        if (satSys == GPS)
-        {
-            return Frequency_::G02;
-        }
-        if (satSys == QZSS)
-        {
-            return Frequency_::J02;
-        }
-        if (satSys == GLO)
-        {
-            return Frequency_::R02;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B02;
-        }
-        break;
-    case 3:
-        // 3 = G3       (GLO)
-        if (satSys == GLO)
-        {
-            return Frequency_::R03;
-        }
-        break;
-    case 4:
-        // 4 = G1a      (GLO)
-        if (satSys == GLO)
-        {
-            return Frequency_::R04;
-        }
-        break;
-    case 5:
-        // 5 = L5       (GPS, QZSS, SBAS, IRNSS)
-        //     E5a      (GAL)
-        //     B2/B2a   (BDS)
-        if (satSys == GPS)
-        {
-            return Frequency_::G05;
-        }
-        if (satSys == QZSS)
-        {
-            return Frequency_::J05;
-        }
-        if (satSys == SBAS)
-        {
-            return Frequency_::S05;
-        }
-        if (satSys == IRNSS)
-        {
-            return Frequency_::I05;
-        }
-        if (satSys == GAL)
-        {
-            return Frequency_::E05;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B05;
-        }
-        break;
-    case 6:
-        // 6 = E6       (GAL)
-        //     L6       (QZSS)
-        //     B3       (BDS)
-        //     G2a      (GLO)
-        if (satSys == GAL)
-        {
-            return Frequency_::E06;
-        }
-        if (satSys == QZSS)
-        {
-            return Frequency_::J06;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B06;
-        }
-        if (satSys == GLO)
-        {
-            return Frequency_::R06;
-        }
-        break;
-    case 7:
-        // 7 = E5b      (GAL)
-        //     B2/B2b   (BDS)
-        if (satSys == GAL)
-        {
-            return Frequency_::E07;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B07;
-        }
-        break;
-    case 8:
-        // 8 = E5a+b    (GAL)
-        //     B2a+b    (BDS)
-        if (satSys == GAL)
-        {
-            return Frequency_::E08;
-        }
-        if (satSys == BDS)
-        {
-            return Frequency_::B08;
-        }
-        break;
-    case 9:
-        // 9 = S        (IRNSS)
-        if (satSys == IRNSS)
-        {
-            return Frequency_::I09;
-        }
-        break;
-    case 0:
-        // 0 for type X (all)
-        break;
-    default:
-        break;
-    }
-
-    LOG_ERROR("{}: Cannot find frequency for satellite system '{}' and band '{}'", nameId(), satSys, band);
-    return Freq_None;
 }
 
 void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gnssObs, const Frequency& freq, uint16_t satNum) // NOLINT(readability-convert-member-functions-to-static)

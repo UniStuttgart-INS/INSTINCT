@@ -26,6 +26,17 @@ namespace NAV::math
 /// @return The factorial of 'n'
 uint64_t factorial(uint64_t n);
 
+/// @brief Round the number to the specified amount of digits
+/// @param[in] value Value to round
+/// @param[in] digits Amount of digits
+/// @return The rounded value
+template<typename T>
+constexpr T round(const T& value, size_t digits)
+{
+    auto factor = std::pow(10, digits);
+    return std::round(value * factor) / factor;
+}
+
 /// @brief Calculates the skew symmetric matrix of the given vector.
 ///        This is needed to perform the cross product with a scalar product operation
 /// @tparam Derived Derived Eigen Type

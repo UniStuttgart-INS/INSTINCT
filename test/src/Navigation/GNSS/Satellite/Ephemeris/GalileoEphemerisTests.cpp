@@ -59,7 +59,7 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Orolia Skydel data)", "[Ephemer
                       E01, Skydel, margin);
 }
 
-TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris][Debug]")
+TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
 {
     // E24 - Exported from the Spirent SimGEN GUI
     GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.046534081865e-03, -2.098943241435e-11, 0.000000000000e+00,

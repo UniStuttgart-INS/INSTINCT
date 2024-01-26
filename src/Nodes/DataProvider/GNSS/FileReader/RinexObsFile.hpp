@@ -25,6 +25,8 @@
 
 #include "NodeData/GNSS/GnssObs.hpp"
 
+#include "util/Vendor/RINEX/RINEXUtilities.hpp"
+
 namespace NAV
 {
 /// File reader Node for RINEX Observation messages
@@ -70,35 +72,6 @@ class RinexObsFile : public Node, public FileReader
   private:
     constexpr static size_t OutputPortIndex_GnssObs = 0; ///< @brief Flow (GnssObs)
 
-    /// @brief Observation types of the 'SYS / # / OBS TYPES' header
-    enum class ObsType
-    {
-        Error, ///< Error Type
-        C,     ///< Code / Pseudorange
-        L,     ///< Phase
-        D,     ///< Doppler
-        S,     ///< Raw signal strength(carrier to noise ratio)
-        I,     ///< Ionosphere phase delay
-        X,     ///< Receiver channel numbers
-    };
-
-    /// @brief Description of the observations from the 'SYS / # / OBS TYPES' header
-    struct ObservationDescription
-    {
-        /// RINEX observation type
-        ///
-        /// C = Code / Pseudorange [m]
-        /// L = Phase [full cycles]
-        /// D = Doppler [Hz]
-        /// S = Raw signal strength (carrier to noise ratio) [unit receiver dependent]
-        /// I = Ionosphere phase delay [full cycles]
-        /// X = Receiver channel numbers
-        ObsType type{ ObsType::Error };
-
-        /// GNSS Code
-        Code code;
-    };
-
     /// @brief Initialize the node
     bool initialize() override;
 
@@ -122,21 +95,8 @@ class RinexObsFile : public Node, public FileReader
     /// @brief Version of the RINEX file
     double _version = 0.0;
 
-    /// @brief Converts a character to an ObsType
-    /// @param[in] c Character for the ObsType
-    static ObsType obsTypeFromChar(char c);
-
-    /// @brief Converts an ObsType to char
-    /// @param[in] type ObsType to convert
-    static char obsTypeToChar(ObsType type);
-
-    /// @brief Get the Frequency from the provided satellite system and band in the 'SYS / # / OBS TYPES' header
-    /// @param[in] satSys Satellite System
-    /// @param[in] band Band (1...9, 0)
-    [[nodiscard]] Frequency getFrequencyFromBand(SatelliteSystem satSys, int band) const;
-
     /// Observation description. [Key]: Satellite System, [Value]: List with descriptions
-    std::unordered_map<SatelliteSystem, std::vector<ObservationDescription>> _obsDescription;
+    std::unordered_map<SatelliteSystem, std::vector<NAV::vendor::RINEX::ObservationDescription>> _obsDescription;
 
     /// Time system of all observations in the file
     TimeSystem _timeSystem = TimeSys_None;

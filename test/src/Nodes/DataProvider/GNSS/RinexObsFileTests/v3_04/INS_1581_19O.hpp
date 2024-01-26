@@ -236,6 +236,23 @@ const std::vector<GnssObs> gnssObs_INS_1581_19O = {
                                     /* .carrierPhase = */ CarrierPhase{ .value = 151712562.074, .SSI = 6, .LLI = 0 },
                                     /* .doppler =      */ std::nullopt,
                                     /* .CN0 =          */ std::nullopt },
+      },
+      /* ._satData = */ std::vector<GnssObs::SatelliteData>{
+          { SatId(BDS, 5), B02 | B07 | B06 },
+          { SatId(BDS, 20), B02 | B06 },
+          { SatId(BDS, 23), B02 },
+          { SatId(GAL, 2), E01 | E06 | E05 | E07 | E08 },
+          { SatId(GAL, 13), E01 },
+          { SatId(GAL, 20), E01 },
+          { SatId(GPS, 2), G01 | G02 },
+          { SatId(GPS, 3), G01 | G02 | G05 },
+          { SatId(GPS, 5), G01 | G02 },
+          { SatId(IRNSS, 2), I05 },
+          { SatId(QZSS, 2), J01 | J02 | J05 },
+          { SatId(GLO, 6), R01 },
+          { SatId(GLO, 7), R01 | R02 },
+          { SatId(GLO, 9), R01 | R02 | R03 },
+          { SatId(SBAS, 23), S01 | S05 },
       } },
 };
 } // namespace NAV::TESTS::RinexObsFileTests::v3_04

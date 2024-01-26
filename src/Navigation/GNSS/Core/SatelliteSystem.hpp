@@ -136,6 +136,13 @@ struct SatelliteSystem
     /// @brief Returns a continuous enumeration of the object
     [[nodiscard]] Enum toEnumeration() const;
 
+    /// @brief Get char representation of the specified Satellite System
+    /// @param[in] satSys Satellite System to get the continuous enumeration for
+    static char ToChar(SatelliteSystem satSys);
+
+    /// @brief Returns the char representation of the object
+    [[nodiscard]] char toChar() const;
+
     /// @brief Get a vector representation of the specified Satellite Systems
     /// @param[in] satSys Satellite System to get the vector for
     static std::vector<SatelliteSystem> ToVector(SatelliteSystem satSys);

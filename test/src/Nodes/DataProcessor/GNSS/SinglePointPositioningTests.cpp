@@ -240,7 +240,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     }
 }
 
-TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no Sat clk - no Iono - no Tropo)", "[SinglePointPositioning][flow][Debug]")
+TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no Sat clk - no Iono - no Tropo)", "[SinglePointPositioning][flow]")
 {
     auto logger = initializeTestLogger();
 

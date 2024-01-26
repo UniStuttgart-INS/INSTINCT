@@ -1,0 +1,105 @@
+{
+    "colormaps": [],
+    "links": {
+        "link-5": {
+            "endPinId": 3,
+            "id": 5,
+            "startPinId": 1
+        }
+    },
+    "nodes": {
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": "DataLogger/GNSS/RinexObsLogger-1.obs"
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 29.0,
+                "y": 190.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-4": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "RinexObsLogger.obs"
+                },
+                "HeaderInfo": {
+                    "agency": "o34g43utbtjbtt3jwbkjbt43hjtbw3ljb34tljbt",
+                    "antennaDeltaHeightEastNorth": [
+                        -99999999.9999,
+                        -1.23456,
+                        -99999999.9999
+                    ],
+                    "antennaNumber": "m34xy34y93487yx9y394",
+                    "antennaType": "x73ym398xyyyy93457y3",
+                    "approxPositionEnabled": true,
+                    "approxPositionXYZ": {
+                        "0": {
+                            "0": -99999999.9999
+                        },
+                        "1": {
+                            "0": 99999999.9999
+                        },
+                        "2": {
+                            "0": 0.0
+                        }
+                    },
+                    "comments": [
+                        "hnwerctiwot8c4th8thcwo8thc3nwothhhhhhho384co834hcot8n834otht",
+                        "",
+                        "345c34w"
+                    ],
+                    "markerName": "34c9834ctu8340mu340cu34034u934ucm405uc3495cu3405cu345c93425u",
+                    "markerNumber": "cny34895y0c34n5cy304",
+                    "markerType": 14,
+                    "markerTypeUser": "oy834cno934u09tcm034",
+                    "observer": "fndmncxvd,sjgfs;kfsd",
+                    "receiverNumber": "comi34co58345yunnn92",
+                    "receiverType": "4c594387ncy93485cyn",
+                    "receiverVersion": "c42534mmmmmmmmmm2xy3",
+                    "runBy": "qwertyuiopasdfghjklz",
+                    "version": 3.04
+                }
+            },
+            "enabled": true,
+            "id": 4,
+            "inputPins": [
+                {
+                    "id": 3,
+                    "name": "writeObservation"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "RinexObsLogger",
+            "outputPins": [],
+            "pos": {
+                "x": 264.0,
+                "y": 190.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsLogger"
+        }
+    }
+}

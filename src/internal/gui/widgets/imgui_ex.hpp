@@ -16,6 +16,7 @@
 #include <imgui.h>
 
 #include <limits>
+#include <string>
 #include <cstdint>
 
 namespace ImGui
@@ -501,6 +502,14 @@ bool InputDouble3L(const char* label, double v[3], double v_min = std::numeric_l
 /// @param[in] flags InputText flags to modify the behavior
 /// @return True if the value was changed
 bool InputDouble4L(const char* label, double v[4], double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a InputText GUI element with limited amount of characters
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] str String to modify
+/// @param[in] limit Amount of characters to limit
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputTextL(const char* label, std::string* str, size_t limit, ImGuiInputTextFlags flags = 0);
 
 } // namespace ImGui
 

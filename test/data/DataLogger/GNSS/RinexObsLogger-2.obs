@@ -1,0 +1,37 @@
+     3.03           OBSERVATION DATA    R: GLONASS          RINEX VERSION / TYPE
+CONVBIN 1.0.1 Emlid                     20230524 072120 UTC PGM / RUN BY / DATE
+log: reach-m2-01_raw_202305240625.23                        COMMENT
+format: u-blox                                              COMMENT
+                                                            MARKER NAME
+                                                            MARKER NUMBER
+                                                            MARKER TYPE
+                                                            OBSERVER / AGENCY
+                    EMLID REACH M2                          REC # / TYPE / VERS
+                                                            ANT # / TYPE
+  4163586.5303   653602.6848  4771934.1219                  APPROX POSITION XYZ
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+G    8 C1C L1C D1C S1C C2X L2X D2X S2X                      SYS / # / OBS TYPES
+R    8 C1C L1C D1C S1C C2C L2C D2C S2C                      SYS / # / OBS TYPES
+E    8 C1X L1X D1X S1X C7X L7X D7X S7X                      SYS / # / OBS TYPES
+C    8 C2I L2I D2I S2I C7I L7I D7I S7I                      SYS / # / OBS TYPES
+J   20 C1C L1C D1C S1C C1X L1X D1X S1X C1Z L1Z D1Z S1Z C5X  SYS / # / OBS TYPES
+       L5X D5X S5X C5Z L5Z D5Z S5Z                          SYS / # / OBS TYPES
+  2023     5    24     7     4   30.0000000     GLO         TIME OF FIRST OBS
+  2023     5    24     7     4   30.0000000     GLO         TIME OF LAST OBS
+R                                                           SYS / PHASE SHIFT
+  0                                                         GLONASS SLOT / FRQ #
+ C1C    0.000 C1P    0.000 C2C    0.000 C2P    0.000        GLONASS COD/PHS/BIS
+                                                            END OF HEADER
+> 2023  5 24  7  4 30.0000000  0 7
+R 7                                                                  23774323.929 2  98984491.168 5     -3097.571          34.000
+R 8  23145805.976 2 123944722.547 2     -1505.512          38.000    23145807.476 4                     -1172.082          30.000
+R10  23577812.140 8                      3143.854          25.000
+R15  23800376.613 4               6     -4349.554          30.000    23800382.238 4               7     -3382.825          28.000
+R16  19893950.759 2 106269927.239 3     -2264.630          38.000    19893952.064 2  82654388.456 4     -1761.112          34.000
+R18  19735186.249 2 105347745.457 2     -1660.350          37.000    19735187.920 4               6     -1291.148          32.000
+R19  20282571.333 8                      2170.738          27.000    20282573.236 4               7      1689.125          31.000
+> 2023  5 24  7  4 30.1000000  0 10
+R 1  24242934.127 8                      1474.029          26.000    24242944.352 8                      1146.481          26.000
+R 7  23774396.936 2 127266122.233 4     -3982.642          34.000    23774398.339 2  98984800.968 4     -3097.858          34.000
+R 8  23145834.077 2 123944873.065 2     -1505.237          38.000    23145835.482 4                     -1169.324          31.000
+R 9  20079743.645 2 107224696.471 2      1618.673          40.000    20079743.668 2  83396997.061 4      1259.029          33.000

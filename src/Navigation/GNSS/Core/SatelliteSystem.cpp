@@ -128,8 +128,10 @@ SatelliteSystem::operator char() const
         return 'I';
     case SBAS:
         return 'S';
+    case SatSys_None:
+        return '-';
     default:
-        return '\0';
+        return 'M';
     }
 }
 
@@ -225,6 +227,16 @@ SatelliteSystem::Enum SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
 SatelliteSystem::Enum SatelliteSystem::toEnumeration() const
 {
     return ToEnumeration(*this);
+}
+
+char SatelliteSystem::ToChar(SatelliteSystem satSys)
+{
+    return char(satSys);
+}
+
+char SatelliteSystem::toChar() const
+{
+    return char(*this);
 }
 
 std::vector<SatelliteSystem> SatelliteSystem::ToVector(SatelliteSystem satSys)
