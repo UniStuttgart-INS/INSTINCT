@@ -161,6 +161,7 @@ clang-tidy:
     - .linux
     - .clang
   script:
+    - conan profile detect --force
     - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
@@ -173,6 +174,7 @@ clang-tidy:tests:
     - .linux
     - .clang
   script:
+    - conan profile detect --force
     - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
@@ -193,6 +195,7 @@ documentation:
   extends:
     - .linux
   script:
+    - conan profile detect --force
     - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
@@ -217,6 +220,7 @@ documentation:
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
+    - conan profile detect --force
     - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=20
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
@@ -338,6 +342,7 @@ tests:clang:LOG_DATA:
     - .build
     - .build:tests
     - .build:linux
+    - .build:test-artifacts
     - .clang
     - .release
     - .log-data
@@ -392,7 +397,7 @@ tests:macOS:
   artifacts:
     when: on_failure
     paths:
-      - test/logs/*.log
+      - test/logs/
     name: 'test-logs'
 
 
@@ -427,6 +432,14 @@ run-tests:gcc:
     when: always
     untracked: true # For the coverage report
     expire_in: 2h
+
+run-tests:clang:LOG_DATA:
+  needs: ["tests:clang:LOG_DATA"]
+  extends:
+    - .run-tests
+    - .linux
+    - .release
+    - .junit
 
 run-tests:win:
   needs: ["tests:win"]
@@ -467,6 +480,7 @@ doxygen:
   extends:
     - .linux
   script:
+    - conan profile detect --force
     - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
@@ -477,12 +491,15 @@ doxygen:
   only:
     - main
 
-coverage:
+.coverage:
   stage: analyze
   needs: ["run-tests:gcc"]
-  extends: .linux
-  when: always
+  extends:
+    - .linux
+    - .gcc
   script:
+    - conan profile detect --force
+    - conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20
     - mkdir -p build/coverage
     - gcovr --config doc/coverage/gcovr.cfg
   # coverage: '/Total:\| ?(\d+\.?\d+\%)/'
@@ -502,11 +519,11 @@ coverage:
 
 pages:
   stage: deploy
-  needs: ["doxygen", "coverage"]
+  needs: ["doxygen"] # , "coverage"
   extends: .linux
   script:
     - mv build/doc/html/ public/
-    - mv build/coverage/ public/coverage/
+    # - mv build/coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:

@@ -1,0 +1,119 @@
+{
+    "colormaps": [],
+    "links": {
+        "link-10": {
+            "endPinId": 7,
+            "id": 10,
+            "startPinId": 5
+        },
+        "link-9": {
+            "endPinId": 3,
+            "id": 9,
+            "startPinId": 1
+        }
+    },
+    "nodes": {
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": ""
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 61.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-4": {
+            "data": null,
+            "enabled": true,
+            "id": 4,
+            "inputPins": [
+                {
+                    "id": 3,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "Terminator",
+            "outputPins": [],
+            "pos": {
+                "x": 264.0,
+                "y": 236.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Terminator"
+        },
+        "node-6": {
+            "data": {
+                "FileReader": {
+                    "path": ""
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 6,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 5,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": 61.0,
+                "y": 302.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-8": {
+            "data": null,
+            "enabled": true,
+            "id": 8,
+            "inputPins": [
+                {
+                    "id": 7,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "Terminator",
+            "outputPins": [],
+            "pos": {
+                "x": 264.0,
+                "y": 332.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Terminator"
+        }
+    }
+}

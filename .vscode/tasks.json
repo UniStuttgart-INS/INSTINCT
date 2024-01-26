@@ -17,12 +17,12 @@
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
+                    "-Force",
                     "build",
                 ]
             },
             "presentation": {
-                "reveal": "never",
-                "echo": false,
+                "clear": true,
                 "showReuseMessage": false,
             },
             "problemMatcher": [],
@@ -37,15 +37,28 @@
                 "test/logs/[^\\.]*",
             ],
             "windows": {
-                "command": "Remove-Item",
+                "command": "Get-ChildItem",
                 "args": [
+                    "-Path",
+                    "'test/logs'",
                     "-Recurse",
-                    "build",
+                    "-exclude",
+                    ".gitignore",
+                    "|",
+                    "Select",
+                    "-ExpandProperty",
+                    "FullName",
+                    "|",
+                    "sort",
+                    "length",
+                    "-Descending",
+                    "|",
+                    "Remove-Item",
+                    "-force",
                 ]
             },
             "presentation": {
-                "reveal": "never",
-                "echo": false,
+                "clear": true,
                 "showReuseMessage": false,
             },
             "problemMatcher": [],
@@ -60,8 +73,22 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan profile detect --force",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan profile detect --force",
             ],
+            "windows": {
+                "command": "conan",
+                "args": [
+                    "profile",
+                    "detect",
+                    "--force",
+                ],
+                "options": {
+                    "env": {
+                        "VSLANG": "1033",
+                        "chcp": "1252",
+                    }
+                },
+            },
             "presentation": {
                 "clear": true,
             },
@@ -74,18 +101,26 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:buildType} -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:Build-Type} -s compiler.cppstd=20",
             ],
-            // "command": "conan",
-            // "args": [
-            //     "install",
-            //     ".",
-            //     "--build=missing",
-            //     "-s",
-            //     "build_type=${input:buildType}",
-            //     "-s",
-            //     "compiler.cppstd=20",
-            // ],
+            "windows": {
+                "command": "conan",
+                "args": [
+                    "install",
+                    ".",
+                    "--build=missing",
+                    "-s",
+                    "build_type=${input:Build-Type}",
+                    "-s",
+                    "compiler.cppstd=20",
+                ],
+                "options": {
+                    "env": {
+                        "VSLANG": "1033",
+                        "chcp": "1252",
+                    }
+                },
+            },
             "dependsOn": [
                 "Conan: Detect",
             ],
@@ -98,8 +133,26 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20",
             ],
+            "windows": {
+                "command": "conan",
+                "args": [
+                    "install",
+                    ".",
+                    "--build=missing",
+                    "-s",
+                    "build_type=Debug",
+                    "-s",
+                    "compiler.cppstd=20",
+                ],
+                "options": {
+                    "env": {
+                        "VSLANG": "1033",
+                        "chcp": "1252",
+                    }
+                },
+            },
             "dependsOn": [
                 "Conan: Detect",
             ],
@@ -112,8 +165,26 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=20",
             ],
+            "windows": {
+                "command": "conan",
+                "args": [
+                    "install",
+                    ".",
+                    "--build=missing",
+                    "-s",
+                    "build_type=Release",
+                    "-s",
+                    "compiler.cppstd=20",
+                ],
+                "options": {
+                    "env": {
+                        "VSLANG": "1033",
+                        "chcp": "1252",
+                    }
+                },
+            },
             "dependsOn": [
                 "Conan: Detect",
             ],
@@ -129,14 +200,14 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:Build-Type}-${input:Compiler} -S. -DCMAKE_BUILD_TYPE=${input:Build-Type} -DCMAKE_TOOLCHAIN_FILE=build/${input:Build-Type}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=${input:clang-tidy} -DENABLE_CPPCHECK=${input:cppcheck} -DLOG_LEVEL=${input:Log-Level} -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/${input:buildType}-msvc",
+                    "-Bbuild/${input:Build-Type}-msvc",
                     "-S.",
-                    "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_BUILD_TYPE=${input:Build-Type}",
                     "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=ON",
                     "-DENABLE_TESTING=OFF",
@@ -146,7 +217,6 @@
                     "-DENABLE_CPPCHECK=OFF",
                     "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                     "-DWARNINGS_AS_ERRORS=OFF",
-                    "-DUSE_ALTERNATE_LINKER=${input:linker}",
                 ],
                 "options": {
                     "env": {
@@ -167,20 +237,14 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:Build-Type}-${input:Compiler} -S. -DCMAKE_BUILD_TYPE=${input:Build-Type} -DCMAKE_TOOLCHAIN_FILE=build/${input:Build-Type}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=${input:clang-tidy} -DENABLE_CPPCHECK=${input:cppcheck} -DLOG_LEVEL=${input:Log-Level} -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
-            // "options": {
-            //     "env": {
-            //         "CC": "/usr/bin/clang",
-            //         "CXX": "/usr/bin/clang++",
-            //     }
-            // },
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/${input:buildType}-msvc",
+                    "-Bbuild/${input:Build-Type}-msvc",
                     "-S.",
-                    "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                    "-DCMAKE_BUILD_TYPE=${input:Build-Type}",
                     "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/build/generators/conan_toolchain.cmake",
                     "-DENABLE_MAIN=OFF",
                     "-DENABLE_TESTING=ON",
@@ -221,12 +285,12 @@
                 "-DENABLE_CLANG_TIDY=OFF",
                 "-DENABLE_CPPCHECK=OFF",
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-                "-DUSE_ALTERNATE_LINKER=${input:linker}",
+                "-DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/gcc",
-                    "CXX": "/usr/bin/g++",
+                    "CC": "gcc",
+                    "CXX": "g++",
                 }
             },
             "dependsOn": [
@@ -241,7 +305,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
                 "Conan: Release",
@@ -255,7 +319,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
                 "Conan: Release",
@@ -271,14 +335,14 @@
             "group": "build",
             "command": "ccmake",
             "args": [
-                "-Bbuild/${input:buildType}-${input:compiler}",
+                "-Bbuild/${input:Build-Type}-${input:Compiler}",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                "-DCMAKE_BUILD_TYPE=${input:Build-Type}",
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
+                    "CC": "clang",
+                    "CXX": "clang++",
                 }
             },
             "presentation": {
@@ -300,24 +364,24 @@
             "linux": {
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
+                    "cmake --build build/${input:Build-Type}-${input:Compiler} --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/${input:Build-Type}-${input:Compiler} --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/${input:buildType}-msvc",
+                    "build/${input:Build-Type}-msvc",
                     "--config",
-                    "${input:buildType}",
-                    "--parallel8",
+                    "${input:Build-Type}",
+                    "--parallel${input:Jobs}",
                 ],
                 "options": {
                     "env": {
@@ -339,24 +403,24 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
+                    "cmake --build build/${input:Build-Type}-${input:Compiler} --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/${input:Build-Type}-${input:Compiler} --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "windows": {
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/${input:buildType}-msvc",
+                    "build/${input:Build-Type}-msvc",
                     "--config",
-                    "${input:buildType}",
-                    "--parallel8",
+                    "${input:Build-Type}",
+                    "--parallel${input:Jobs}",
                 ],
                 "options": {
                     "env": {
@@ -378,14 +442,14 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(nproc)",
+                    "cmake --build build/Debug-cov --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
+                    "cmake --build build/Debug-cov --config ${input:Build-Type} --parallel${input:Jobs}",
                 ],
             },
             "dependsOn": [
@@ -435,7 +499,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "${workspaceFolder}/build/bin/${input:buildType}/instinct",
+            "command": "${workspaceFolder}/build/bin/${input:Build-Type}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
@@ -480,11 +544,11 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:Build-Type}-${input:Compiler}",
             },
             "windows": {
                 "options": {
-                    "cwd": "${workspaceFolder}/build/${input:buildType}-msvc",
+                    "cwd": "${workspaceFolder}/build/${input:Build-Type}-msvc",
                 },
             },
             "dependsOn": [
@@ -507,7 +571,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:Build-Type}-${input:Compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
@@ -626,7 +690,7 @@
             "label": "Gperftools: Run profiler",
             "type": "shell",
             "group": "test",
-            "command": "${workspaceFolder}/build/bin/${input:buildType}/instinct",
+            "command": "${workspaceFolder}/build/bin/${input:Build-Type}/instinct",
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/RTK-2020-08-05-Icare.flow\"",
@@ -653,7 +717,7 @@
             "linux": {
                 "options": {
                     "env": {
-                        "CPUPROFILE": "build/bin/${input:buildType}/instinct.prof",
+                        "CPUPROFILE": "build/bin/${input:Build-Type}/instinct.prof",
                         "CPUPROFILE_FREQUENCY": "500", // Default: 100      How many interrupts/second the cpu-profiler samples.
                     }
                 }
@@ -671,10 +735,10 @@
             "args": [
                 "--gv", // Displays annotated call-graph via 'gv'
                 // "--callgrind", // Outputs the call information in callgrind format
-                "build/bin/${input:buildType}/instinct",
-                "build/bin/${input:buildType}/instinct.prof",
+                "build/bin/${input:Build-Type}/instinct",
+                "build/bin/${input:Build-Type}/instinct.prof",
                 // ">", // For --callgrind option
-                // "build/bin/${input:buildType}/callgrind.out", // For --callgrind option
+                // "build/bin/${input:Build-Type}/callgrind.out", // For --callgrind option
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -688,7 +752,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=build/bin/${input:Build-Type}/callgrind.out --tool=callgrind build/bin/${input:Build-Type}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:Build-Type}/callgrind.out",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -704,7 +768,7 @@
             "group": "test",
             "command": "kcachegrind",
             "args": [
-                "build/bin/${input:buildType}/callgrind.out",
+                "build/bin/${input:Build-Type}/callgrind.out",
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -718,7 +782,7 @@
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "build/bin/${input:buildType}/instinct",
+                "build/bin/${input:Build-Type}/instinct",
                 "-f",
                 "config.ini",
                 "--nogui",
@@ -739,67 +803,100 @@
     // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
     "inputs": [
         { // buildType
-            "id": "buildType",
+            "id": "Build-Type",
             "type": "command",
             "command": "statusBarParam.get.buildType",
-            "args": [
-                "Debug",
-                "Release",
-            ],
+            "args": {
+                "values": [
+                    "Debug",
+                    "Release",
+                ],
+                "initialSelection": "Debug",
+            }
         },
         { // compiler
-            "id": "compiler",
+            "id": "Compiler",
             "type": "command",
             "command": "statusBarParam.get.compiler",
-            "args": [
-                "clang",
-                "gcc",
-            ],
+            "args": {
+                "values": [
+                    "clang",
+                    "gcc",
+                ],
+                "initialSelection": "clang",
+            }
+        },
+        { // Jobs
+            "id": "Jobs",
+            "type": "command",
+            "command": "statusBarParam.get.jobs",
+            "args": {
+                "values": [
+                    "1",
+                    "4",
+                    "8",
+                    "12",
+                    "18",
+                ],
+                "initialSelection": "8",
+            }
         },
         { // linker
-            "id": "linker",
+            "id": "Linker",
             "type": "command",
             "command": "statusBarParam.get.linker",
-            "args": [
-                "mold",
-                "ld",
-                "gold",
-                "lld",
-                "bfd",
-            ],
+            "args": {
+                "values": [
+                    "mold",
+                    "ld",
+                    "gold",
+                    "lld",
+                    "bfd",
+                ],
+                "initialSelection": "mold",
+            }
         },
         { // clang-tidy
-            "id": "clangTidy",
+            "id": "clang-tidy",
             "type": "command",
             "command": "statusBarParam.get.clangTidy",
-            "args": [
-                "clang-tidy: OFF",
-                "clang-tidy: ON",
-            ],
+            "args": {
+                "values": [
+                    "OFF",
+                    "ON",
+                ],
+                "initialSelection": "OFF",
+            }
         },
         { // cppcheck
             "id": "cppcheck",
             "type": "command",
             "command": "statusBarParam.get.cppcheck",
-            "args": [
-                "cppcheck: OFF",
-                "cppcheck: ON",
-            ],
+            "args": {
+                "values": [
+                    "OFF",
+                    "ON",
+                ],
+                "initialSelection": "OFF",
+            }
         },
         { // logLevel
-            "id": "logLevel",
+            "id": "Log-Level",
             "type": "command",
             "command": "statusBarParam.get.logLevel",
-            "args": [
-                "Log Level: DATA",
-                "Log Level: TRACE",
-                "Log Level: DEBUG",
-                "Log Level: INFO",
-                "Log Level: WARN",
-                "Log Level: ERROR",
-                "Log Level: CRITICAL",
-                "Log Level: OFF",
-            ],
+            "args": {
+                "values": [
+                    "DATA",
+                    "TRACE",
+                    "DEBUG",
+                    "INFO",
+                    "WARN",
+                    "ERROR",
+                    "CRITICAL",
+                    "OFF",
+                ],
+                "initialSelection": "TRACE",
+            }
         },
     ],
 }

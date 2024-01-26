@@ -30,6 +30,7 @@
 using json = nlohmann::json; ///< json namespace
 
 #include "TimeSystem.hpp"
+#include "Navigation/Math/Math.hpp"
 
 namespace NAV
 {
@@ -336,7 +337,7 @@ struct InsTime_GPSweekTow
         if (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
         {
             this->gpsWeek += static_cast<int32_t>(this->tow / InsTimeUtil::SECONDS_PER_WEEK);
-            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - gcem::floor(this->tow));
+            this->tow = gcem::fmod(this->tow, InsTimeUtil::SECONDS_PER_WEEK);
         }
         while (this->tow < 0.0L)
         {
@@ -432,19 +433,22 @@ struct InsTime_YMDHMS
     /// @param[in] hour Hour in Universal Time Coordinated [UTC]
     /// @param[in] min Minute in Universal Time Coordinated [UTC]
     /// @param[in] sec Second in Universal Time Coordinated [UTC]
-    constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec)
+    /// @param[in] digits Amount of digits for the seconds to round to
+    constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec, int digits = -1)
         : year(year), month(month), day(day), hour(hour), min(min), sec(sec)
     {
+        if (digits >= 0) { this->sec = math::round(this->sec, static_cast<size_t>(digits)); }
         if (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
         {
             this->min += static_cast<int32_t>(this->sec / InsTimeUtil::SECONDS_PER_MINUTE);
-            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - gcem::floor(this->sec));
+            this->sec = gcem::fmod(this->sec, InsTimeUtil::SECONDS_PER_MINUTE);
         }
         while (this->sec < 0.0L)
         {
             this->sec += InsTimeUtil::SECONDS_PER_MINUTE;
             this->min--;
         }
+        if (digits >= 0) { this->sec = math::round(this->sec, static_cast<size_t>(digits)); }
 
         if (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
         {
@@ -577,7 +581,7 @@ struct InsTime_YDoySod
         if (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
         {
             this->doy += static_cast<int32_t>(this->sod / InsTimeUtil::SECONDS_PER_DAY);
-            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - gcem::floor(this->sod));
+            this->sod = gcem::fmod(this->sod, InsTimeUtil::SECONDS_PER_DAY);
         }
         while (this->sod < 0)
         {
@@ -818,8 +822,9 @@ class InsTime
 
     /// @brief Converts this time object into a different format
     /// @param timesys Time System in which the time should be given
+    /// @param digits Amount of digits for the seconds to round to
     /// @return InsTime_YMDHMS structure of the this object
-    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys = UTC) const
+    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys = UTC, int digits = -1) const
     {
         // transform MJD to JD
         InsTime_JD jd = toJD();
@@ -845,7 +850,7 @@ class InsTime
 
         long double sec = jd.jd_frac * InsTimeUtil::SECONDS_PER_DAY;
 
-        return { year, month, day, 0, 0, sec };
+        return { year, month, day, 0, 0, sec, digits };
     }
 
     /// @brief Converts this time object into a different format

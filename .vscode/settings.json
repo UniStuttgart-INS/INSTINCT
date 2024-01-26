@@ -196,4 +196,5 @@
         "LOG_(DATA)",
     ],
     "matched-line-dimmer.opacity": 40,
+    "statusBarParam.showNames": true,
 }

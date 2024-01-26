@@ -8,6 +8,7 @@
 
 #include "imgui_ex.hpp"
 
+#include <imgui_stdlib.h>
 #include <algorithm>
 
 namespace ImGui
@@ -340,6 +341,28 @@ bool InputDouble4L(const char* label, double v[4], double v_min, double v_max, c
         return true;
     }
     return false;
+}
+
+bool InputTextL(const char* label, std::string* str, size_t limit, ImGuiInputTextFlags flags)
+{
+    std::pair<std::string, size_t> oldTextLimit = std::make_pair(*str, limit);
+    auto callback = [](ImGuiInputTextCallbackData* data) -> int {
+        if (data->EventFlag == ImGuiInputTextFlags_CallbackEdit)
+        {
+            auto* oldTextLimit = static_cast<std::pair<std::string, size_t>*>(data->UserData);
+            int limit = static_cast<int>(oldTextLimit->second);
+            if (data->BufTextLen > limit)
+            {
+                strncpy(data->Buf, oldTextLimit->first.data(), oldTextLimit->first.length() + 1);
+                data->BufTextLen = static_cast<int>(oldTextLimit->first.length());
+                data->BufDirty = true;
+                if (data->CursorPos != limit) { data->CursorPos--; }
+            }
+        }
+        return 0;
+    };
+
+    return InputText(label, str, flags | ImGuiInputTextFlags_CallbackEdit, callback, &oldTextLimit);
 }
 
 } // namespace ImGui

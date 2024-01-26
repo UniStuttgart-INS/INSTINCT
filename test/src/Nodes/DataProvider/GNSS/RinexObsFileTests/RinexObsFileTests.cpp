@@ -24,7 +24,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "GnssObsComparisons.hpp"
+#include "NodeData/GNSS/GnssObsComparisons.hpp"
 #include "v3_02/INSA11DEU_R_MO_rnx.hpp"
 #include "v3_03/reach-m2-01_22O.hpp"
 #include "v3_04/INS_1581_19O.hpp"
@@ -120,7 +120,7 @@ TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw.22O", "[RinexObsFile]
 //                                                   v3.04
 // ###########################################################################################################
 
-TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow]")
+TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow][Debug]")
 {
     testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_04/INS_1581.19O", v3_04::gnssObs_INS_1581_19O);
 }
