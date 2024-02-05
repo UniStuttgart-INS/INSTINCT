@@ -297,12 +297,12 @@ void NAV::vendor::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& o
 
                 std::get<UbxRxmSfrbx>(obs->data).gnssId = packet.extractUint8();
                 std::get<UbxRxmSfrbx>(obs->data).svId = packet.extractUint8();
-                std::get<UbxRxmSfrbx>(obs->data).reserved1 = packet.extractUint8();
+                std::get<UbxRxmSfrbx>(obs->data).sigId = packet.extractUint8();
                 std::get<UbxRxmSfrbx>(obs->data).freqId = packet.extractUint8();
                 std::get<UbxRxmSfrbx>(obs->data).numWords = packet.extractUint8();
                 std::get<UbxRxmSfrbx>(obs->data).chn = packet.extractUint8();
                 std::get<UbxRxmSfrbx>(obs->data).version = packet.extractUint8();
-                std::get<UbxRxmSfrbx>(obs->data).reserved2 = packet.extractUint8();
+                std::get<UbxRxmSfrbx>(obs->data).reserved0 = packet.extractUint8();
 
                 for (size_t i = 0; i < std::get<UbxRxmSfrbx>(obs->data).numWords; i++)
                 {

@@ -168,7 +168,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
     {
         uint8_t i = 0;
         std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-        while (readsome(reinterpret_cast<char*>(&i), 1))
+        while (!eof() && read(reinterpret_cast<char*>(&i), 1))
         {
             packet = _sensor.findPacket(i);
 
