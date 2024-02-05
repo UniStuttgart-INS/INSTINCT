@@ -16,6 +16,9 @@ coverage/*
 # Ignore Mac specific files
 .DS_Store
 
+# Ignore Direnv
+.direnv
+
 # Ignore clangd cache
 /.cache
 

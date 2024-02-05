@@ -6145,7 +6145,7 @@
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "Combiner"
+            "type": "Merger"
         },
         "node-333": {
             "data": {
@@ -6241,7 +6241,7 @@
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "Combiner"
+            "type": "Merger"
         },
         "node-386": {
             "data": {
@@ -6683,7 +6683,7 @@
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "Combiner"
+            "type": "Merger"
         },
         "node-9": {
             "data": {

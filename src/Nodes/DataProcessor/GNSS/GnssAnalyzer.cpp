@@ -45,18 +45,9 @@ void to_json(json& j, const GnssAnalyzer::Combination::Term& data)
 /// @param[out] data Output object
 void from_json(const json& j, GnssAnalyzer::Combination::Term& data)
 {
-    if (j.contains("obsType"))
-    {
-        j.at("obsType").get_to(data.obsType);
-    }
-    if (j.contains("satSigId"))
-    {
-        j.at("satSigId").get_to(data.satSigId);
-    }
-    if (j.contains("sign"))
-    {
-        j.at("sign").get_to(data.sign);
-    }
+    if (j.contains("obsType")) { j.at("obsType").get_to(data.obsType); }
+    if (j.contains("satSigId")) { j.at("satSigId").get_to(data.satSigId); }
+    if (j.contains("sign")) { j.at("sign").get_to(data.sign); }
 }
 
 /// @brief Write info to a json object
@@ -219,13 +210,13 @@ void NAV::GnssAnalyzer::guiConfig()
                 ImGui::EndPopup();
             }
 
-            if (ImGui::BeginTable(fmt::format("##Table id{} c{}", size_t(id), c).c_str(), 3 * static_cast<int>(comb.terms.size() + 1),
+            std::vector<size_t> termToDelete;
+            if (ImGui::BeginTable(fmt::format("##Table id{} c{}", size_t(id), c).c_str(), 3 * static_cast<int>(comb.terms.size()) + 1,
                                   ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX,
                                   ImVec2(0, 70.0F)))
             {
                 ImGui::TableNextRow();
 
-                std::vector<size_t> termToDelete;
                 for (size_t t = 0; t < comb.terms.size(); t++)
                 {
                     auto& term = comb.terms.at(t);
@@ -303,10 +294,10 @@ void NAV::GnssAnalyzer::guiConfig()
                 ImGui::TextUnformatted(fmt::format("          {:.2f} MHz", f * 1e-6).c_str());
                 if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("λ = {:.3f}m", InsConst::C / f).c_str()); }
 
-                for (const auto& t : termToDelete) { comb.terms.erase(std::next(comb.terms.begin(), static_cast<std::ptrdiff_t>(t))); }
-
                 ImGui::EndTable();
             }
+
+            for (const auto& t : termToDelete) { comb.terms.erase(std::next(comb.terms.begin(), static_cast<std::ptrdiff_t>(t))); }
         }
 
         if (!keepCombination) { combToDelete.push_back(c); }

@@ -1133,6 +1133,24 @@ void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
 
+namespace std
+{
+/// @brief Hash function for InsTime (needed for unordered_map)
+template<>
+struct hash<NAV::InsTime>
+{
+    /// @brief Hash function for InsTime
+    /// @param[in] t Time
+    std::size_t operator()(const NAV::InsTime& t) const
+    {
+        auto hash1 = std::hash<int32_t>{}(t.toMJD().mjd_day);
+        auto hash2 = std::hash<long double>{}(t.toMJD().mjd_frac);
+
+        return hash1 | (hash2 << 32);
+    }
+};
+} // namespace std
+
 #ifndef DOXYGEN_IGNORE
 
 template<>

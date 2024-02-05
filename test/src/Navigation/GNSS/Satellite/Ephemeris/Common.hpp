@@ -17,7 +17,7 @@
 #include "CatchMatchers.hpp"
 #include "Logger.hpp"
 
-#include "data/OroliaRawLogging.hpp"
+#include "data/SkydelSatData.hpp"
 #include "data/SpirentAsciiSatelliteData.hpp"
 
 #include "Navigation/Constants.hpp"
@@ -169,7 +169,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
     while (!fs.eof() && std::getline(fs, line) && !line.empty())
     {
         std::vector<std::string> v = str::split(line, ",");
-        REQUIRE(v.size() == (dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_COUNT) : size_t(OroliaRawLogging_COUNT)));
+        REQUIRE(v.size() == (dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_COUNT) : size_t(SkydelSatData_COUNT)));
 
         InsTime recvTime;
         if (dataSource == Spirent)
@@ -207,7 +207,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
         }
         else // Skydel
         {
-            recvTime = InsTime{ 0, std::stoi(v[OroliaRawLogging_GPS_Week_Number]), std::stold(v[OroliaRawLogging_GPS_TOW]) };
+            recvTime = InsTime{ 0, std::stoi(v[SkydelSatData_GPS_Week_Number]), std::stold(v[SkydelSatData_GPS_TOW]) };
         }
         LOG_TRACE("  recvTime = {} ({})", recvTime.toYMDHMS(), recvTime.toGPSweekTow());
 
@@ -221,7 +221,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
 
         LOG_TRACE("    reference: {} ", line);
 
-        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) : size_t(OroliaRawLogging_PSR)]);
+        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) : size_t(SkydelSatData_PSR)]);
         LOG_TRACE("    psr {} [m]", psr);
 
         auto satClk = eph.calcClockCorrections(recvTime, psr, freq);
@@ -229,7 +229,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
         LOG_TRACE("    clkBias           {}", satClk.bias);
         if (dataSource == Skydel)
         {
-            double clkCorrection_ref = std::stod(v[OroliaRawLogging_Clock_Correction]);
+            double clkCorrection_ref = std::stod(v[SkydelSatData_Clock_Correction]);
             LOG_TRACE("    clkCorrection_ref {}", clkCorrection_ref);
             LOG_TRACE("    clkBias - ref {}", satClk.bias - clkCorrection_ref);
             REQUIRE_THAT(satClk.bias - clkCorrection_ref, Catch::Matchers::WithinAbs(0.0, margin.clock));
@@ -247,9 +247,9 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
             data = Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
         };
 
-        Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(OroliaRawLogging_ECEF_X)]),
-                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Y) : size_t(OroliaRawLogging_ECEF_Y)]),
-                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Z) : size_t(OroliaRawLogging_ECEF_Z)]));
+        Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(SkydelSatData_ECEF_X)]),
+                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Y) : size_t(SkydelSatData_ECEF_Y)]),
+                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Z) : size_t(SkydelSatData_ECEF_Z)]));
         if (dataSource == Spirent) { rotateDataFrame(e_refPos); }
         LOG_TRACE("    e_refPos {}", e_refPos.transpose());
         LOG_TRACE("    pos      {}", pos.e_pos.transpose());

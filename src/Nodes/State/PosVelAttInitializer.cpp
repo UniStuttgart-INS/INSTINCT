@@ -684,7 +684,7 @@ void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, s
     if (_posVelAttInitialized.at(3)) { return; }
     LOG_DATA("{}: receiveGnssObs at time [{}]", nameId(), nodeData->insTime.toYMDHMS());
 
-    const auto* sourcePin = inputPins[pinIdx].link.getConnectedPin();
+    const auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin();
 
     if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
     {

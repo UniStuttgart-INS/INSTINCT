@@ -26,6 +26,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "Logger.hpp"
 #include "util/Container/CartesianProduct.hpp"
@@ -48,7 +49,7 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 namespace NAV::TESTS::TightlyCoupledKFTests
 {
@@ -228,7 +229,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
         //                                                                       (575) ImuObs |>                       (555)----------/-------------------------------------------------------------------->  |> Nominal (5)
         //                                                                    (576) PosVelAtt |>                      /              /                                                                   -->  |> Filter (121)
         //                                                                                       \                   /              /                                                                   /
-        //                                                                                        \          Combiner (344)        /            PosVelAttInitializer (21)                               |
+        //                                                                                        \          Merger (344)          /            PosVelAttInitializer (21)                               |
         // VectorNavFile - IMU (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |> -                      (20) PosVelAtt |>                              |
         //    (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
         //                                                                                                      /                   \                                      /                            |
@@ -267,7 +268,7 @@ void testTCKFwithImuFile(const char* imuFilePath, const char* gnssFilePath, size
         //                                                                       (575) ImuObs |>                                      /                                                                       |> Nominal (5)
         //                                                                    (576) PosVelAtt |>                                     /                                                                   -->  |> Filter (121)
         //                                                                                       \                                  /                                                                   /
-        //                                                                                        \          Combiner (344)        /            PosVelAttInitializer (21)                               |
+        //                                                                                        \          Merger (344)          /            PosVelAttInitializer (21)                               |
         // VectorNavFile - IMU (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |> -                      (20) PosVelAtt |>                              |
         //    (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
         //                                                                                                                          \                                      /                            |

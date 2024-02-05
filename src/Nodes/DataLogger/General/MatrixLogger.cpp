@@ -121,7 +121,7 @@ void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
         _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s]";
     }
 
-    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
+    if (auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin())
     {
         // Matrix
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")

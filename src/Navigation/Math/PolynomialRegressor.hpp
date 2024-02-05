@@ -180,6 +180,12 @@ class PolynomialRegressor
         return _data.size() == _windowSize;
     }
 
+    /// @brief Checks if the container has no elements
+    [[nodiscard]] bool empty() const { return _data.empty(); }
+
+    /// @brief Gets the underlying buffer
+    [[nodiscard]] const ScrollingBuffer<std::pair<Scalar, Scalar>>& data() const { return _data; }
+
   private:
     /// Strategy to use to fit the polynomial
     Strategy _strategy = Strategy::IncrementalLeastSquares;

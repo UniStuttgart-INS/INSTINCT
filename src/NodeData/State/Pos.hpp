@@ -14,8 +14,10 @@
 #pragma once
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include "util/Eigen.hpp"
+#include "util/Logger/CommonLog.hpp"
 #include "NodeData/NodeData.hpp"
 
 namespace NAV
@@ -36,6 +38,56 @@ class Pos : public NodeData
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
         return { NodeData::type() };
+    }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        return {
+            "Latitude [deg]",
+            "Longitude [deg]",
+            "Altitude [m]",
+            "North/South [m]",
+            "East/West [m]",
+            "X-ECEF [m]",
+            "Y-ECEF [m]",
+            "Z-ECEF [m]",
+        };
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 8; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0: // Latitude [deg]
+            return rad2deg(latitude());
+        case 1: // Longitude [deg]
+            return rad2deg(longitude());
+        case 2: // Altitude [m]
+            return altitude();
+        case 3: // North/South [m]
+            return CommonLog::calcLocalPosition(lla_position()).northSouth;
+        case 4: // East/West [m]
+            return CommonLog::calcLocalPosition(lla_position()).eastWest;
+        case 5: // X-ECEF [m]
+            return e_position().x();
+        case 6: // Y-ECEF [m]
+            return e_position().y();
+        case 7: // Z-ECEF [m]
+            return e_position().z();
+        default:
+            return std::nullopt;
+        }
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

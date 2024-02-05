@@ -161,22 +161,27 @@ void NAV::ImuSimulator::guiConfig()
         {
             auto TextColoredIfExists = [this](int index, const char* text, const char* type) {
                 ImGui::TableSetColumnIndex(index);
-                auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
-                if (mutex) { mutex->lock(); }
-                if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
-                    csvData && std::find(csvData->description.begin(), csvData->description.end(), text) != csvData->description.end())
+                auto displayTable = [&]() {
+                    if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
+                        csvData && std::find(csvData->description.begin(), csvData->description.end(), text) != csvData->description.end())
+                    {
+                        ImGui::TextUnformatted(text);
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(type);
+                    }
+                    else
+                    {
+                        ImGui::TextDisabled("%s", text);
+                        ImGui::TableNextColumn();
+                        ImGui::TextDisabled("%s", type);
+                    }
+                };
+                if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
                 {
-                    ImGui::TextUnformatted(text);
-                    ImGui::TableNextColumn();
-                    ImGui::TextUnformatted(type);
+                    std::lock_guard lk(*mutex);
+                    displayTable();
                 }
-                else
-                {
-                    ImGui::TextDisabled("%s", text);
-                    ImGui::TableNextColumn();
-                    ImGui::TextDisabled("%s", type);
-                }
-                if (mutex) { mutex->unlock(); }
+                else { displayTable(); }
             };
 
             if (ImGui::TreeNode(fmt::format("Format description##{}", size_t(id)).c_str()))
@@ -1256,90 +1261,90 @@ bool NAV::ImuSimulator::initializeSplines()
     }
     else if (_trajectoryType == TrajectoryType::Csv)
     {
-        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
-        if (mutex) { mutex->lock(); }
-        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
-            csvData && csvData->lines.size() >= 2)
+        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
         {
-            _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
-            if (_startTime.empty()) { return false; }
-
-            constexpr size_t nVirtPoints = 10;
-            splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-            std::vector<double> splineX(splineTime.size());
-            std::vector<double> splineY(splineTime.size());
-            std::vector<double> splineZ(splineTime.size());
-            std::vector<double> splineRoll(splineTime.size());
-            std::vector<double> splinePitch(splineTime.size());
-            std::vector<double> splineYaw(splineTime.size());
-
-            for (size_t i = 0; i < csvData->lines.size(); i++)
+            std::lock_guard lk(*mutex);
+            if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
+                csvData && csvData->lines.size() >= 2)
             {
-                InsTime insTime = getTimeFromCsvLine(csvData->lines[i], csvData->description);
-                if (insTime.empty()) { return false; }
-                LOG_DATA("{}: Time {}", nameId(), insTime);
-                double time = static_cast<double>((insTime - _startTime).count());
+                _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
+                if (_startTime.empty()) { return false; }
 
-                Eigen::Vector3d e_pos = e_getPositionFromCsvLine(csvData->lines[i], csvData->description);
-                if (std::isnan(e_pos.x())) { return false; }
-                LOG_DATA("{}: e_pos {}", nameId(), e_pos);
+                constexpr size_t nVirtPoints = 10;
+                splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
+                std::vector<double> splineX(splineTime.size());
+                std::vector<double> splineY(splineTime.size());
+                std::vector<double> splineZ(splineTime.size());
+                std::vector<double> splineRoll(splineTime.size());
+                std::vector<double> splinePitch(splineTime.size());
+                std::vector<double> splineYaw(splineTime.size());
 
-                Eigen::Quaterniond n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->lines[i], csvData->description);
-                if (std::isnan(n_Quat_b.w()))
+                for (size_t i = 0; i < csvData->lines.size(); i++)
                 {
-                    // TODO: Calculate with rotation minimizing frame instead of returning false
-                    return false;
+                    InsTime insTime = getTimeFromCsvLine(csvData->lines[i], csvData->description);
+                    if (insTime.empty()) { return false; }
+                    LOG_DATA("{}: Time {}", nameId(), insTime);
+                    double time = static_cast<double>((insTime - _startTime).count());
+
+                    Eigen::Vector3d e_pos = e_getPositionFromCsvLine(csvData->lines[i], csvData->description);
+                    if (std::isnan(e_pos.x())) { return false; }
+                    LOG_DATA("{}: e_pos {}", nameId(), e_pos);
+
+                    Eigen::Quaterniond n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->lines[i], csvData->description);
+                    if (std::isnan(n_Quat_b.w()))
+                    {
+                        // TODO: Calculate with rotation minimizing frame instead of returning false
+                        return false;
+                    }
+                    LOG_DATA("{}: n_Quat_b {}", nameId(), n_Quat_b);
+
+                    splineTime.push_back(time);
+                    splineX.push_back(e_pos.x());
+                    splineY.push_back(e_pos.y());
+                    splineZ.push_back(e_pos.z());
+
+                    auto rpy = trafo::quat2eulerZYX(n_Quat_b);
+                    LOG_DATA("{}: RPY {} [deg] (from CSV)", nameId(), rad2deg(rpy).transpose());
+                    splineRoll.push_back(i > 0 ? unwrapAngle(rpy(0), splineRoll.back(), M_PI) : rpy(0));
+                    splinePitch.push_back(i > 0 ? unwrapAngle(rpy(1), splinePitch.back(), M_PI_2) : rpy(1));
+                    splineYaw.push_back(i > 0 ? unwrapAngle(rpy(2), splineYaw.back(), M_PI) : rpy(2));
+                    LOG_DATA("{}: R {}, P {}, Y {} [deg] (in Spline)", nameId(), rad2deg(splineRoll.back()), rad2deg(splinePitch.back()), rad2deg(splineYaw.back()));
                 }
-                LOG_DATA("{}: n_Quat_b {}", nameId(), n_Quat_b);
+                _csvDuration = splineTime.back();
 
-                splineTime.push_back(time);
-                splineX.push_back(e_pos.x());
-                splineY.push_back(e_pos.y());
-                splineZ.push_back(e_pos.z());
+                double dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
+                for (size_t i = 0; i < nVirtPoints; i++)
+                {
+                    double h = 0.001;
+                    splineTime[nVirtPoints - i - 1] = splineTime[nVirtPoints - i] - h;
+                    splineX[nVirtPoints - i - 1] = splineX[nVirtPoints - i] - h * (splineX[nVirtPoints + 1] - splineX[nVirtPoints]) / dt;
+                    splineY[nVirtPoints - i - 1] = splineY[nVirtPoints - i] - h * (splineY[nVirtPoints + 1] - splineY[nVirtPoints]) / dt;
+                    splineZ[nVirtPoints - i - 1] = splineZ[nVirtPoints - i] - h * (splineZ[nVirtPoints + 1] - splineZ[nVirtPoints]) / dt;
+                    splineRoll[nVirtPoints - i - 1] = splineRoll[nVirtPoints - i] - h * (splineRoll[nVirtPoints + 1] - splineRoll[nVirtPoints]) / dt;
+                    splinePitch[nVirtPoints - i - 1] = splinePitch[nVirtPoints - i] - h * (splinePitch[nVirtPoints + 1] - splinePitch[nVirtPoints]) / dt;
+                    splineYaw[nVirtPoints - i - 1] = splineYaw[nVirtPoints - i] - h * (splineYaw[nVirtPoints + 1] - splineYaw[nVirtPoints]) / dt;
+                    splineTime.push_back(splineTime[splineX.size() - 1] + h);
+                    splineX.push_back(splineX[splineX.size() - 1] + h * (splineX[splineX.size() - 1] - splineX[splineX.size() - 2]) / dt);
+                    splineY.push_back(splineY[splineY.size() - 1] + h * (splineY[splineY.size() - 1] - splineY[splineY.size() - 2]) / dt);
+                    splineZ.push_back(splineZ[splineZ.size() - 1] + h * (splineZ[splineZ.size() - 1] - splineZ[splineZ.size() - 2]) / dt);
+                    splineRoll.push_back(splineRoll[splineRoll.size() - 1] + h * (splineRoll[splineRoll.size() - 1] - splineRoll[splineRoll.size() - 2]) / dt);
+                    splinePitch.push_back(splinePitch[splinePitch.size() - 1] + h * (splinePitch[splinePitch.size() - 1] - splinePitch[splinePitch.size() - 2]) / dt);
+                    splineYaw.push_back(splineYaw[splineYaw.size() - 1] + h * (splineYaw[splineYaw.size() - 1] - splineYaw[splineYaw.size() - 2]) / dt);
+                }
 
-                auto rpy = trafo::quat2eulerZYX(n_Quat_b);
-                LOG_DATA("{}: RPY {} [deg] (from CSV)", nameId(), rad2deg(rpy).transpose());
-                splineRoll.push_back(i > 0 ? unwrapAngle(rpy(0), splineRoll.back(), M_PI) : rpy(0));
-                splinePitch.push_back(i > 0 ? unwrapAngle(rpy(1), splinePitch.back(), M_PI_2) : rpy(1));
-                splineYaw.push_back(i > 0 ? unwrapAngle(rpy(2), splineYaw.back(), M_PI) : rpy(2));
-                LOG_DATA("{}: R {}, P {}, Y {} [deg] (in Spline)", nameId(), rad2deg(splineRoll.back()), rad2deg(splinePitch.back()), rad2deg(splineYaw.back()));
+                _splines.x.setPoints(splineTime, splineX);
+                _splines.y.setPoints(splineTime, splineY);
+                _splines.z.setPoints(splineTime, splineZ);
+
+                _splines.roll.setPoints(splineTime, splineRoll);
+                _splines.pitch.setPoints(splineTime, splinePitch);
+                _splines.yaw.setPoints(splineTime, splineYaw);
             }
-            if (mutex) { mutex->unlock(); }
-            _csvDuration = splineTime.back();
-
-            double dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
-            for (size_t i = 0; i < nVirtPoints; i++)
+            else
             {
-                double h = 0.001;
-                splineTime[nVirtPoints - i - 1] = splineTime[nVirtPoints - i] - h;
-                splineX[nVirtPoints - i - 1] = splineX[nVirtPoints - i] - h * (splineX[nVirtPoints + 1] - splineX[nVirtPoints]) / dt;
-                splineY[nVirtPoints - i - 1] = splineY[nVirtPoints - i] - h * (splineY[nVirtPoints + 1] - splineY[nVirtPoints]) / dt;
-                splineZ[nVirtPoints - i - 1] = splineZ[nVirtPoints - i] - h * (splineZ[nVirtPoints + 1] - splineZ[nVirtPoints]) / dt;
-                splineRoll[nVirtPoints - i - 1] = splineRoll[nVirtPoints - i] - h * (splineRoll[nVirtPoints + 1] - splineRoll[nVirtPoints]) / dt;
-                splinePitch[nVirtPoints - i - 1] = splinePitch[nVirtPoints - i] - h * (splinePitch[nVirtPoints + 1] - splinePitch[nVirtPoints]) / dt;
-                splineYaw[nVirtPoints - i - 1] = splineYaw[nVirtPoints - i] - h * (splineYaw[nVirtPoints + 1] - splineYaw[nVirtPoints]) / dt;
-                splineTime.push_back(splineTime[splineX.size() - 1] + h);
-                splineX.push_back(splineX[splineX.size() - 1] + h * (splineX[splineX.size() - 1] - splineX[splineX.size() - 2]) / dt);
-                splineY.push_back(splineY[splineY.size() - 1] + h * (splineY[splineY.size() - 1] - splineY[splineY.size() - 2]) / dt);
-                splineZ.push_back(splineZ[splineZ.size() - 1] + h * (splineZ[splineZ.size() - 1] - splineZ[splineZ.size() - 2]) / dt);
-                splineRoll.push_back(splineRoll[splineRoll.size() - 1] + h * (splineRoll[splineRoll.size() - 1] - splineRoll[splineRoll.size() - 2]) / dt);
-                splinePitch.push_back(splinePitch[splinePitch.size() - 1] + h * (splinePitch[splinePitch.size() - 1] - splinePitch[splinePitch.size() - 2]) / dt);
-                splineYaw.push_back(splineYaw[splineYaw.size() - 1] + h * (splineYaw[splineYaw.size() - 1] - splineYaw[splineYaw.size() - 2]) / dt);
+                LOG_ERROR("{}: Can't calculate the data without a connected CSV file with at least two datasets", nameId());
+                return false;
             }
-
-            _splines.x.setPoints(splineTime, splineX);
-            _splines.y.setPoints(splineTime, splineY);
-            _splines.z.setPoints(splineTime, splineZ);
-
-            _splines.roll.setPoints(splineTime, splineRoll);
-            _splines.pitch.setPoints(splineTime, splinePitch);
-            _splines.yaw.setPoints(splineTime, splineYaw);
-        }
-        else
-        {
-            if (mutex) { mutex->unlock(); }
-            LOG_ERROR("{}: Can't calculate the data without a connected CSV file with at least two datasets", nameId());
-            return false;
         }
     }
 
@@ -1403,24 +1408,24 @@ bool NAV::ImuSimulator::resetNode()
 
     if (_trajectoryType == TrajectoryType::Csv)
     {
-        auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV);
-        if (mutex) { mutex->lock(); }
-        if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
-            csvData && !csvData->lines.empty())
+        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
         {
-            _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
-            if (mutex) { mutex->unlock(); }
-            if (_startTime.empty())
+            std::lock_guard lk(*mutex);
+            if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
+                csvData && !csvData->lines.empty())
             {
+                _startTime = getTimeFromCsvLine(csvData->lines.front(), csvData->description);
+                if (_startTime.empty())
+                {
+                    return false;
+                }
+                LOG_DEBUG("{}: Start Time set to {}", nameId(), _startTime);
+            }
+            else
+            {
+                LOG_ERROR("{}: Can't reset the ImuSimulator without a connected CSV file", nameId());
                 return false;
             }
-            LOG_DEBUG("{}: Start Time set to {}", nameId(), _startTime);
-        }
-        else
-        {
-            if (mutex) { mutex->unlock(); }
-            LOG_ERROR("{}: Can't reset the ImuSimulator without a connected CSV file", nameId());
-            return false;
         }
     }
     else if (_startTimeSource == StartTimeSource::CurrentComputerTime)

@@ -152,10 +152,10 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         m2_s,    ///< [ m^2 / s ]
     };
     /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
-    CovarianceClkPhaseDriftUnits _gui_covarianceClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m_sqrts;
+    CovarianceClkPhaseDriftUnits _gui_covarianceClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s;
 
     /// @brief GUI selection for the Standard deviation of the clock phase drift
-    double _gui_covarianceClkPhaseDrift = 0.1 /* [ m / √(s) ] */;
+    double _gui_covarianceClkPhaseDrift = 0.01 /*[ m^2 / s ] */;
     /// @brief Covariance of the clock phase drift [m²/s]
     double _covarianceClkPhaseDrift = 0.01;
 
@@ -168,30 +168,30 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         m2_s3,    ///< [ m^2 / s^3 ]
     };
     /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
-    CovarianceClkFrequencyDriftUnits _gui_covarianceClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m_sqrts3;
+    CovarianceClkFrequencyDriftUnits _gui_covarianceClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s3;
 
     /// @brief GUI selection for the Standard deviation of the clock frequency drift
-    double _gui_covarianceClkFrequencyDrift = 0.2 /* [ m / √(s^3) ] */;
+    double _gui_covarianceClkFrequencyDrift = 0.04 /* [ m^2 / s^3 ] */;
     /// @brief Covariance of the clock frequency drift [m²/s³]
     double _covarianceClkFrequencyDrift = 0.04;
 
     // ###########################################################################################################
 
     /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
-    CovarianceClkPhaseDriftUnits _gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m_sqrts;
+    CovarianceClkPhaseDriftUnits _gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock phase drift
-    double _gui_covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.1 /* [ m / √(s) ] */;
+    double _gui_covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.01 /* [m²/s] */;
     /// @brief Covariance of the inter-system clock phase drift [m²/s]
     double _covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.01;
 
     // ###########################################################################################################
 
     /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
-    CovarianceClkFrequencyDriftUnits _gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m_sqrts3;
+    CovarianceClkFrequencyDriftUnits _gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s3;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock frequency drift
-    double _gui_covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.2 /* [ m / √(s^3) ] */;
+    double _gui_covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.04 /* [m²/s³] */;
     /// @brief Covariance of the inter-system clock frequency drift [m²/s³]
     double _covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.04;
 

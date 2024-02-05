@@ -57,15 +57,15 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
     //                                             RinexObsFile.flow
     // ###########################################################################################################
     //
-    // RinexObsFile (2)                Combiner (28)
-    //       (1) GnssObs |> --(29)--> |> GnssObs (25)
-    //                                |> <not linked> (26)
+    // RinexObsFile (2)
+    //       (1) GnssObs |> --(32)--> |> (30) Terminator (31)
+    constexpr size_t PIN_ID_GNSS_OBS = 30;
     //
     // ###########################################################################################################
 
     size_t msgCounter = 0;
 
-    nm::RegisterWatcherCallbackToInputPin(25, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto gnssObs = std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front());
         REQUIRE(gnssObs != nullptr);
 
@@ -120,7 +120,7 @@ TEST_CASE("[RinexObsFile][flow] Read v3_03/reach-m2-01_raw.22O", "[RinexObsFile]
 //                                                   v3.04
 // ###########################################################################################################
 
-TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow][Debug]")
+TEST_CASE("[RinexObsFile][flow] Read v3_04/INS_1581.19O", "[RinexObsFile][flow]")
 {
     testRinexObsFileFlow("DataProvider/GNSS/RinexObsFile/v3_04/INS_1581.19O", v3_04::gnssObs_INS_1581_19O);
 }

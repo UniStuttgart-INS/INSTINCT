@@ -40,6 +40,70 @@ class PosVelAtt : public PosVel
         return parent;
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        auto desc = PosVel::GetDataDescriptors();
+        desc.reserve(GetDescriptorCount());
+        desc.emplace_back("Roll [deg]");
+        desc.emplace_back("Pitch [deg]");
+        desc.emplace_back("Yaw [deg]");
+        desc.emplace_back("Quaternion::w");
+        desc.emplace_back("Quaternion::x");
+        desc.emplace_back("Quaternion::y");
+        desc.emplace_back("Quaternion::z");
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 22; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0:  // Latitude [deg]
+        case 1:  // Longitude [deg]
+        case 2:  // Altitude [m]
+        case 3:  // North/South [m]
+        case 4:  // East/West [m]
+        case 5:  // X-ECEF [m]
+        case 6:  // Y-ECEF [m]
+        case 7:  // Z-ECEF [m]
+        case 8:  // Velocity norm [m/s]
+        case 9:  // X velocity ECEF [m/s]
+        case 10: // Y velocity ECEF [m/s]
+        case 11: // Z velocity ECEF [m/s]
+        case 12: // North velocity [m/s]
+        case 13: // East velocity [m/s]
+        case 14: // Down velocity [m/s]
+            return PosVel::getValueAt(idx);
+        case 15: // Roll [deg]
+            return rad2deg(rollPitchYaw().x());
+        case 16: // Pitch [deg]
+            return rad2deg(rollPitchYaw().y());
+        case 17: // Yaw [deg]
+            return rad2deg(rollPitchYaw().z());
+        case 18: // Quaternion::w
+            return n_Quat_b().w();
+        case 19: // Quaternion::x
+            return n_Quat_b().x();
+        case 20: // Quaternion::y
+            return n_Quat_b().y();
+        case 21: // Quaternion::z
+            return n_Quat_b().z();
+        default:
+            return std::nullopt;
+        }
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                           Rotation Quaternions                                           */
     /* -------------------------------------------------------------------------------------------------------- */

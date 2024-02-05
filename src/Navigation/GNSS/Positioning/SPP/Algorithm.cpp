@@ -16,6 +16,7 @@
 #include <fmt/format.h>
 
 #include "internal/gui/widgets/EnumCombo.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "Navigation/Atmosphere/Ionosphere/IonosphericCorrections.hpp"
 #include "Navigation/Math/KeyedLeastSquares.hpp"
@@ -38,6 +39,8 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
 
     if (_estimatorType == EstimatorType::KalmanFilter)
     {
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("The Kalman Filter is currently not working.\nUse at your own risk.", "(!!!)"); // FIXME: Remove this after fixing the KF
         // The logic currently needs Doppler measurements, otherwise results get quite bad. Could be improved in the future.
         _obsFilter.useObsType(GnssObs::Doppler);
         _obsFilter.markObsTypeAsNeeded(GnssObs::Doppler);
@@ -174,7 +177,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                                               highInnovation.substr(0, highInnovation.length() - 2));
                 LOG_WARN("{}: [{}] {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), msg);
                 _kalmanFilter.setClockBiasErrorCovariance(1e6);
-                sppSol->events.push_back(msg);
+                sppSol->addEvent(msg);
             }
         }
 
@@ -237,22 +240,30 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 sppSol->satData.reserve(observations.satellites.size());
                 for (const auto& [satSigId, signalObs] : observations.signals)
                 {
-                    sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
-                                                                                           .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                    if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
+                                     [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                        == sppSol->satData.end())
+                    {
+                        sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
+                                                                                               .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                    }
                 }
                 break;
             }
         }
         else // if (_estimatorType == EstimatorType::KalmanFilter)
         {
-            _kalmanFilter.update(measKeys, H, R, dz, nameId);
+            auto W = KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes>(Eigen::MatrixXd(R(all, all).diagonal().cwiseInverse().asDiagonal()), R.colKeys(), R.rowKeys());
+            LOG_DATA("{}: W =\n{}", nameId, W);
+            _kalmanFilter.update(measKeys, H, W, dz, nameId);
+            // _kalmanFilter.update(measKeys, H, R, dz, nameId);
 
             if (double posDiff = (_kalmanFilter.getState()(States::Pos) - _receiver[Rover].e_pos).norm();
                 posDiff > 100)
             {
                 std::string msg = fmt::format("Potential clock jump detected. Reinitializing KF with WLSQ.\nPosition difference to previous epoch {:.1f}m", posDiff);
                 LOG_WARN("{}: [{}] {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), msg);
-                sppSol->events.push_back(msg);
+                sppSol->addEvent(msg);
                 _kalmanFilter.deinitialize();
                 nIter = N_ITER_MAX_LSQ + 1;
                 continue;
@@ -266,8 +277,13 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             sppSol->satData.reserve(observations.satellites.size());
             for (const auto& [satSigId, signalObs] : observations.signals)
             {
-                sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
-                                                                                       .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
+                                 [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                    == sppSol->satData.end())
+                {
+                    sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
+                                                                                           .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                }
             }
         }
     }
@@ -674,6 +690,7 @@ void to_json(json& j, const Algorithm& obj)
         { "obsFilter", obj._obsFilter },
         { "obsEstimator", obj._obsEstimator },
         { "estimatorType", obj._estimatorType },
+        { "kalmanFilter", obj._kalmanFilter },
     };
 }
 /// @brief Converts the provided json object into a node object
@@ -684,6 +701,7 @@ void from_json(const json& j, Algorithm& obj)
     if (j.contains("obsFilter")) { j.at("obsFilter").get_to(obj._obsFilter); }
     if (j.contains("obsEstimator")) { j.at("obsEstimator").get_to(obj._obsEstimator); }
     if (j.contains("estimatorType")) { j.at("estimatorType").get_to(obj._estimatorType); }
+    if (j.contains("kalmanFilter")) { j.at("kalmanFilter").get_to(obj._kalmanFilter); }
 }
 
 } // namespace SPP

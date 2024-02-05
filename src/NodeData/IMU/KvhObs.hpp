@@ -48,6 +48,61 @@ class KvhObs final : public ImuObs
         return { ImuObs::type() };
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        auto desc = ImuObs::GetDataDescriptors();
+        desc.emplace_back("Status [bits]");
+        desc.emplace_back("Sequence Number [-]");
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 22; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0:  // Time since startup [ns]
+        case 1:  // Mag uncomp X [Gauss]
+        case 2:  // Mag uncomp Y [Gauss]
+        case 3:  // Mag uncomp Z [Gauss]
+        case 4:  // Accel uncomp X [m/s^2]
+        case 5:  // Accel uncomp Y [m/s^2]
+        case 6:  // Accel uncomp Z [m/s^2]
+        case 7:  // Gyro uncomp X [rad/s]
+        case 8:  // Gyro uncomp Y [rad/s]
+        case 9:  // Gyro uncomp Z [rad/s]
+        case 10: // Mag Comp X [Gauss]
+        case 11: // Mag Comp Y [Gauss]
+        case 12: // Mag Comp Z [Gauss]
+        case 13: // Accel Comp X [m/s^2]
+        case 14: // Accel Comp Y [m/s^2]
+        case 15: // Accel Comp Z [m/s^2]
+        case 16: // Gyro Comp X [rad/s]
+        case 17: // Gyro Comp Y [rad/s]
+        case 18: // Gyro Comp Z [rad/s]
+        case 19: // Temperature [°C]
+            return ImuObs::getValueAt(idx);
+        case 20: // Status [bits]
+            return static_cast<double>(status.to_ulong());
+        case 21: // Sequence Number [-]
+            if (sequenceNumber < 128) { return sequenceNumber; }
+            break;
+        default:
+            return std::nullopt;
+        }
+        return std::nullopt;
+    }
+
     /// Complete message raw binary data including header and checksum
     uart::protocol::Packet raw;
 

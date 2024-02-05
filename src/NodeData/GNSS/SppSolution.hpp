@@ -49,6 +49,265 @@ class SppSolution : public PosVel
         return parent;
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        auto desc = PosVel::GetDataDescriptors();
+        desc.reserve(GetDescriptorCount());
+        desc.emplace_back("Number satellites");
+        desc.emplace_back("Receiver clock bias [s]");
+        desc.emplace_back("Receiver clock drift [s/s]");
+        desc.emplace_back("X-ECEF StDev [m]");
+        desc.emplace_back("Y-ECEF StDev [m]");
+        desc.emplace_back("Z-ECEF StDev [m]");
+        desc.emplace_back("XY-ECEF StDev [m]");
+        desc.emplace_back("XZ-ECEF StDev [m]");
+        desc.emplace_back("YZ-ECEF StDev [m]");
+        desc.emplace_back("North StDev [m]");
+        desc.emplace_back("East StDev [m]");
+        desc.emplace_back("Down StDev [m]");
+        desc.emplace_back("NE StDev [m]");
+        desc.emplace_back("ND StDev [m]");
+        desc.emplace_back("ED StDev [m]");
+        desc.emplace_back("X velocity ECEF StDev [m/s]");
+        desc.emplace_back("Y velocity ECEF StDev [m/s]");
+        desc.emplace_back("Z velocity ECEF StDev [m/s]");
+        desc.emplace_back("XY velocity StDev [m]");
+        desc.emplace_back("XZ velocity StDev [m]");
+        desc.emplace_back("YZ velocity StDev [m]");
+        desc.emplace_back("North velocity StDev [m/s]");
+        desc.emplace_back("East velocity StDev [m/s]");
+        desc.emplace_back("Down velocity StDev [m/s]");
+        desc.emplace_back("NE velocity StDev [m]");
+        desc.emplace_back("ND velocity StDev [m]");
+        desc.emplace_back("ED velocity StDev [m]");
+        desc.emplace_back("Receiver clock bias StDev [s]");
+        desc.emplace_back("Receiver clock drift StDev [s/s]");
+        desc.emplace_back("System time reference system");
+        desc.emplace_back("GPS system time difference [s]");
+        desc.emplace_back("GAL system time difference [s]");
+        desc.emplace_back("GLO system time difference [s]");
+        desc.emplace_back("BDS system time difference [s]");
+        desc.emplace_back("QZSS system time difference [s]");
+        desc.emplace_back("IRNSS system time difference [s]");
+        desc.emplace_back("SBAS system time difference [s]");
+        desc.emplace_back("GPS system time drift difference [s/s]");
+        desc.emplace_back("GAL system time drift difference [s/s]");
+        desc.emplace_back("GLO system time drift difference [s/s]");
+        desc.emplace_back("BDS system time drift difference [s/s]");
+        desc.emplace_back("QZSS system time drift difference [s/s]");
+        desc.emplace_back("IRNSS system time drift difference [s/s]");
+        desc.emplace_back("SBAS system time drift difference [s/s]");
+        desc.emplace_back("GPS system time difference StDev [s]");
+        desc.emplace_back("GAL system time difference StDev [s]");
+        desc.emplace_back("GLO system time difference StDev [s]");
+        desc.emplace_back("BDS system time difference StDev [s]");
+        desc.emplace_back("QZSS system time difference StDev [s]");
+        desc.emplace_back("IRNSS system time difference StDev [s]");
+        desc.emplace_back("SBAS system time difference StDev [s]");
+        desc.emplace_back("GPS system time drift difference StDev [s/s]");
+        desc.emplace_back("GAL system time drift difference StDev [s/s]");
+        desc.emplace_back("GLO system time drift difference StDev [s/s]");
+        desc.emplace_back("BDS system time drift difference StDev [s/s]");
+        desc.emplace_back("QZSS system time drift difference StDev [s/s]");
+        desc.emplace_back("IRNSS system time drift difference StDev [s/s]");
+        desc.emplace_back("SBAS system time drift difference StDev [s/s]");
+
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 73; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0:  // Latitude [deg]
+        case 1:  // Longitude [deg]
+        case 2:  // Altitude [m]
+        case 3:  // North/South [m]
+        case 4:  // East/West [m]
+        case 5:  // X-ECEF [m]
+        case 6:  // Y-ECEF [m]
+        case 7:  // Z-ECEF [m]
+        case 8:  // Velocity norm [m/s]
+        case 9:  // X velocity ECEF [m/s]
+        case 10: // Y velocity ECEF [m/s]
+        case 11: // Z velocity ECEF [m/s]
+        case 12: // North velocity [m/s]
+        case 13: // East velocity [m/s]
+        case 14: // Down velocity [m/s]
+            return PosVel::getValueAt(idx);
+        case 15: // Number satellites
+            return static_cast<double>(nSatellites);
+        case 16: // Receiver clock bias [s]
+            return recvClk.bias.value;
+        case 17: // Receiver clock drift [s/s]
+            return recvClk.drift.value;
+        case 18: // X-ECEF StDev [m]
+            return e_positionStdev()(0);
+        case 19: // Y-ECEF StDev [m]
+            return e_positionStdev()(1);
+        case 20: // Z-ECEF StDev [m]
+            return e_positionStdev()(2);
+        case 21: // XY-ECEF StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY); }
+            break;
+        case 22: // XZ-ECEF StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ); }
+            break;
+        case 23: // YZ-ECEF StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ); }
+            break;
+        case 24: // North StDev [m]
+            return n_positionStdev()(0);
+        case 25: // East StDev [m]
+            return n_positionStdev()(1);
+        case 26: // Down StDev [m]
+            return n_positionStdev()(2);
+        case 27: // NE StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosY); }
+            break;
+        case 28: // ND StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::PosX, SPP::States::PosZ); }
+            break;
+        case 29: // ED StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::PosY, SPP::States::PosZ); }
+            break;
+        case 30: // X velocity ECEF StDev [m/s]
+            return e_velocityStdev()(0);
+        case 31: // Y velocity ECEF StDev [m/s]
+            return e_velocityStdev()(1);
+        case 32: // Z velocity ECEF StDev [m/s]
+            return e_velocityStdev()(2);
+        case 33: // XY velocity StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
+            break;
+        case 34: // XZ velocity StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
+            break;
+        case 35: // YZ velocity StDev [m]
+            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
+            break;
+        case 36: // North velocity StDev [m/s]
+            return n_velocityStdev()(0);
+        case 37: // East velocity StDev [m/s]
+            return n_velocityStdev()(1);
+        case 38: // Down velocity StDev [m/s]
+            return n_velocityStdev()(2);
+        case 39: // NE velocity StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
+            break;
+        case 40: // ND velocity StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
+            break;
+        case 41: // ED velocity StDev [m]
+            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
+            break;
+        case 42: // Receiver clock bias StDev [s]
+            return recvClk.bias.stdDev;
+        case 43: // Receiver clock drift StDev [s/s]
+            return recvClk.drift.stdDev;
+        case 44: // System time reference system
+            return static_cast<double>(recvClk.referenceTimeSatelliteSystem.toEnumeration());
+        case 45: // GPS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 46: // GAL system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 47: // GLO system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 48: // BDS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 49: // QZSS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 50: // IRNSS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 51: // SBAS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 52: // GPS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 53: // GAL system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 54: // GLO system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 55: // BDS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 56: // QZSS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 57: // IRNSS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 58: // SBAS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 59: // GPS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 60: // GAL system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 61: // GLO system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 62: // BDS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 63: // QZSS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 64: // IRNSS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 65: // SBAS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 66: // GPS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 67: // GAL system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 68: // GLO system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 69: // BDS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 70: // QZSS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 71: // IRNSS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 72: // SBAS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        default:
+            return std::nullopt;
+        }
+        return std::nullopt;
+    }
+
     // --------------------------------------------------------- Public Members ------------------------------------------------------------
 
     /// Amount of satellites used for the calculation
@@ -72,9 +331,6 @@ class SppSolution : public PosVel
 
     /// Extended data for each satellite
     std::vector<std::pair<SatId, SatData>> satData;
-
-    /// @brief List of events for plotting
-    std::vector<std::string> events;
 
     // ------------------------------------------------------------- Getter ----------------------------------------------------------------
 
@@ -134,6 +390,10 @@ class SppSolution : public PosVel
         (*_n_covarianceMatrix)(SPP::States::Pos, SPP::States::Pos) = n_Quat_e * (*_e_covarianceMatrix)(SPP::States::Pos, SPP::States::Pos) * e_Quat_n;
         (*_n_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) = n_Quat_e * (*_e_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) * e_Quat_n;
     }
+
+    /// @brief Adds an event to the event list
+    /// @param event Event string
+    void addEvent(const std::string& event) { _events.push_back(event); }
 
   private:
     /// Standard deviation of Position in ECEF coordinates [m]

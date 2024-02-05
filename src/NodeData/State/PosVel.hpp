@@ -37,6 +37,63 @@ class PosVel : public Pos
         return parent;
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        auto desc = Pos::GetDataDescriptors();
+        desc.reserve(GetDescriptorCount());
+        desc.emplace_back("Velocity norm [m/s]");
+        desc.emplace_back("X velocity ECEF [m/s]");
+        desc.emplace_back("Y velocity ECEF [m/s]");
+        desc.emplace_back("Z velocity ECEF [m/s]");
+        desc.emplace_back("North velocity [m/s]");
+        desc.emplace_back("East velocity [m/s]");
+        desc.emplace_back("Down velocity [m/s]");
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 15; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0: // Latitude [deg]
+        case 1: // Longitude [deg]
+        case 2: // Altitude [m]
+        case 3: // North/South [m]
+        case 4: // East/West [m]
+        case 5: // X-ECEF [m]
+        case 6: // Y-ECEF [m]
+        case 7: // Z-ECEF [m]
+            return Pos::getValueAt(idx);
+        case 8: // Velocity norm [m/s]
+            return e_velocity().norm();
+        case 9: // X velocity ECEF [m/s]
+            return e_velocity().x();
+        case 10: // Y velocity ECEF [m/s]
+            return e_velocity().y();
+        case 11: // Z velocity ECEF [m/s]
+            return e_velocity().z();
+        case 12: // North velocity [m/s]
+            return n_velocity().x();
+        case 13: // East velocity [m/s]
+            return n_velocity().y();
+        case 14: // Down velocity [m/s]
+            return n_velocity().z();
+        default:
+            return std::nullopt;
+        }
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                                 Velocity                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
