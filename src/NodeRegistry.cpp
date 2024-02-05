@@ -171,6 +171,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Utility/Combiner.hpp"
 #include "Nodes/Utility/Demo.hpp"
 #include "Nodes/Utility/GroupBox.hpp"
+#include "Nodes/Utility/Merger.hpp"
 #include "Nodes/Utility/Terminator.hpp"
 #include "Nodes/Utility/TimeWindow.hpp"
 // Converter
@@ -236,12 +237,12 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     Node::_autostartWorker = false;
 
     // Utility
+    registerNodeType<Combiner>();
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
+    registerNodeType<Merger>();
     registerNodeType<Terminator>();
     registerNodeType<TimeWindow>();
-    // Simple
-    registerNodeType<Combiner>();
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
@@ -300,6 +301,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     Node::_autostartWorker = true;
 }
 
+#include "NodeData/General/DynamicData.hpp"
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/GnssCombination.hpp"
@@ -323,6 +325,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     // General
+    registerNodeDataType<DynamicData>();
     registerNodeDataType<StringObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();

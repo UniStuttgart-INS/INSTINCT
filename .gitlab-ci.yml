@@ -491,7 +491,8 @@ doxygen:
   only:
     - main
 
-.coverage:
+coverage:
+  allow_failure: true # Currently the pipeline is failing. Update of gcovr. Remove this as soon as the pipeline is working and add it to pages job again
   stage: analyze
   needs: ["run-tests:gcc"]
   extends:

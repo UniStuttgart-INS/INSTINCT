@@ -13,9 +13,11 @@
 
 #pragma once
 
+#include <mutex>
+#include <vector>
+
 #include "util/Eigen.hpp"
 #include "Navigation/Time/InsTime.hpp"
-#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 
 namespace NAV
 {
@@ -23,29 +25,40 @@ namespace NAV
 class CommonLog
 {
   public:
+    /// @brief Destructor
+    virtual ~CommonLog();
+    /// @brief Copy constructor
+    CommonLog(const CommonLog&) = delete;
+    /// @brief Move constructor
+    CommonLog(CommonLog&&) = delete;
+    /// @brief Copy assignment operator
+    CommonLog& operator=(const CommonLog&) = delete;
+    /// @brief Move assignment operator
+    CommonLog& operator=(CommonLog&&) = delete;
+
     /// @brief Initialize the common log variables
-    void initialize();
+    void initialize() const;
 
     /// @brief Calculates the relative time into he run
     /// @param[in] insTime Absolute Time
     /// @return Relative
-    double calcTimeIntoRun(const InsTime& insTime);
+    static double calcTimeIntoRun(const InsTime& insTime);
 
     /// Local position offset from a reference point
     struct LocalPosition
     {
-        double northSouth = std::nan(""); ///< North/South deviation from the reference point [m]
-        double eastWest = std::nan("");   ///< East/West deviation from the reference point [m]
+        double northSouth = 0.0; ///< North/South deviation from the reference point [m]
+        double eastWest = 0.0;   ///< East/West deviation from the reference point [m]
     };
 
     /// @brief Calculate the local position offset from a reference point
     /// @param[in] lla_position [𝜙, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
     /// @return Local positions in north/south and east/west directions in [m]
-    LocalPosition calcLocalPosition(const Eigen::Vector3d& lla_position);
+    static LocalPosition calcLocalPosition(const Eigen::Vector3d& lla_position);
 
   protected:
     /// @brief Default constructor
-    CommonLog() = default;
+    CommonLog();
 
     /// Start Time for calculation of relative time
     static inline InsTime _startTime;
@@ -55,10 +68,12 @@ class CommonLog
     static inline double _originLongitude = std::nan("");
 
   private:
-    /// Counter of how many nodes already depend on the values
-    static inline size_t _referenceCounter = 0;
-    /// Set to true if the node increased the reference counter
-    bool _locked = false;
+    /// Mutex to lock before writing
+    static inline std::mutex _mutex;
+    /// Vector on which nodes want to initialize
+    static inline std::vector<bool> _wantsInit;
+    /// Index which common log node this is
+    size_t _index = 0;
 };
 
 } // namespace NAV

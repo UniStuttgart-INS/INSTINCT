@@ -119,6 +119,153 @@ class RtklibPosObs : public PosVel
         return { NodeData::type() };
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        auto desc = PosVel::GetDataDescriptors();
+        desc.reserve(GetDescriptorCount());
+        desc.emplace_back("Q [-]");
+        desc.emplace_back("ns [-]");
+        desc.emplace_back("sdx [m]");
+        desc.emplace_back("sdy [m]");
+        desc.emplace_back("sdz [m]");
+        desc.emplace_back("sdn [m]");
+        desc.emplace_back("sde [m]");
+        desc.emplace_back("sdd [m]");
+        desc.emplace_back("sdxy [m]");
+        desc.emplace_back("sdyz [m]");
+        desc.emplace_back("sdzx [m]");
+        desc.emplace_back("sdne [m]");
+        desc.emplace_back("sded [m]");
+        desc.emplace_back("sddn [m]");
+        desc.emplace_back("age [s]");
+        desc.emplace_back("ratio [-]");
+        desc.emplace_back("sdvn [m/s]");
+        desc.emplace_back("sdve [m/s]");
+        desc.emplace_back("sdvd [m/s]");
+        desc.emplace_back("sdvne [m/s]");
+        desc.emplace_back("sdved [m/s]");
+        desc.emplace_back("sdvdn [m/s]");
+        desc.emplace_back("sdvx [m/s]");
+        desc.emplace_back("sdvy [m/s]");
+        desc.emplace_back("sdvz [m/s]");
+        desc.emplace_back("sdvxy [m/s]");
+        desc.emplace_back("sdvyz [m/s]");
+        desc.emplace_back("sdvzx [m/s]");
+
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 43; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0:  // Latitude [deg]
+        case 1:  // Longitude [deg]
+        case 2:  // Altitude [m]
+        case 3:  // North/South [m]
+        case 4:  // East/West [m]
+        case 5:  // X-ECEF [m]
+        case 6:  // Y-ECEF [m]
+        case 7:  // Z-ECEF [m]
+        case 8:  // Velocity norm [m/s]
+        case 9:  // X velocity ECEF [m/s]
+        case 10: // Y velocity ECEF [m/s]
+        case 11: // Z velocity ECEF [m/s]
+        case 12: // North velocity [m/s]
+        case 13: // East velocity [m/s]
+        case 14: // Down velocity [m/s]
+            return PosVel::getValueAt(idx);
+        case 15: // Q [-]
+            return Q;
+        case 16: // ns [-]
+            return ns;
+        case 17: // sdx [m]
+            return sdXYZ.x();
+        case 18: // sdy [m]
+            return sdXYZ.y();
+        case 19: // sdz [m]
+            return sdXYZ.z();
+        case 20: // sdn [m]
+            return sdNED.x();
+        case 21: // sde [m]
+            return sdNED.y();
+        case 22: // sdd [m]
+            return sdNED.z();
+        case 23: // sdxy [m]
+            if (sdxy.has_value()) { return sdxy.value(); }
+            break;
+        case 24: // sdyz [m]
+            if (sdyz.has_value()) { return sdyz.value(); }
+            break;
+        case 25: // sdzx [m]
+            if (sdzx.has_value()) { return sdzx.value(); }
+            break;
+        case 26: // sdne [m]
+            if (sdne.has_value()) { return sdne.value(); }
+            break;
+        case 27: // sded [m]
+            if (sded.has_value()) { return sded.value(); }
+            break;
+        case 28: // sddn [m]
+            if (sddn.has_value()) { return sddn.value(); }
+            break;
+        case 29: // age [s]
+            return age;
+        case 30: // ratio [-]
+            return ratio;
+        case 31: // sdvn [m/s]
+            if (sdvNED.has_value()) { return sdvNED->x(); }
+            break;
+        case 32: // sdve [m/s]
+            if (sdvNED.has_value()) { return sdvNED->y(); }
+            break;
+        case 33: // sdvd [m/s]
+            if (sdvNED.has_value()) { return sdvNED->z(); }
+            break;
+        case 34: // sdvne [m/s]
+            if (sdvne.has_value()) { return sdvne.value(); }
+            break;
+        case 35: // sdved [m/s]
+            if (sdved.has_value()) { return sdved.value(); }
+            break;
+        case 36: // sdvdn [m/s]
+            if (sdvdn.has_value()) { return sdvdn.value(); }
+            break;
+        case 37: // sdvx [m/s]
+            if (sdvXYZ.has_value()) { return sdvXYZ->x(); }
+            break;
+        case 38: // sdvy [m/s]
+            if (sdvXYZ.has_value()) { return sdvXYZ->y(); }
+            break;
+        case 39: // sdvz [m/s]
+            if (sdvXYZ.has_value()) { return sdvXYZ->z(); }
+            break;
+        case 40: // sdvxy [m/s]
+            if (sdvxy.has_value()) { return sdvxy.value(); }
+            break;
+        case 41: // sdvyz [m/s]
+            if (sdvyz.has_value()) { return sdvyz.value(); }
+            break;
+        case 42: // sdvzx [m/s]
+            if (sdvzx.has_value()) { return sdvzx.value(); }
+            break;
+        default:
+            return std::nullopt;
+        }
+        return std::nullopt;
+    }
+
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     uint8_t Q = 0;
     /// Number of satellites

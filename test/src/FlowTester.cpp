@@ -33,6 +33,7 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
                                       outputPath.c_str(),
                                       "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                                       "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
+                                                                   //   "--log-filter=ObservationEstimatorTests.cpp",
                                       nullptr };
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());

@@ -15,7 +15,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
-#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 namespace NAV
 {

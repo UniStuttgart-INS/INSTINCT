@@ -119,7 +119,7 @@ void NAV::PosVelAttLogger::deinitialize()
 
 void NAV::PosVelAttLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
-    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
+    if (auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin())
     {
         constexpr int gpsCyclePrecision = 3;
         constexpr int gpsTimePrecision = 12;

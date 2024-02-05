@@ -43,6 +43,113 @@ class ImuObs : public NodeData
         return { NodeData::type() };
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    {
+        return {
+            "Time since startup [ns]",
+            "Mag uncomp X [Gauss]",
+            "Mag uncomp Y [Gauss]",
+            "Mag uncomp Z [Gauss]",
+            "Accel uncomp X [m/s^2]",
+            "Accel uncomp Y [m/s^2]",
+            "Accel uncomp Z [m/s^2]",
+            "Gyro uncomp X [rad/s]",
+            "Gyro uncomp Y [rad/s]",
+            "Gyro uncomp Z [rad/s]",
+            "Mag Comp X [Gauss]",
+            "Mag Comp Y [Gauss]",
+            "Mag Comp Z [Gauss]",
+            "Accel Comp X [m/s^2]",
+            "Accel Comp Y [m/s^2]",
+            "Accel Comp Z [m/s^2]",
+            "Gyro Comp X [rad/s]",
+            "Gyro Comp Y [rad/s]",
+            "Gyro Comp Z [rad/s]",
+            "Temperature [°C]",
+        };
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 20; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetDescriptorCount());
+        switch (idx)
+        {
+        case 0: // Time since startup [ns]
+            if (timeSinceStartup.has_value()) { return static_cast<double>(timeSinceStartup.value()); }
+            break;
+        case 1: // Mag uncomp X [Gauss]
+            if (magUncompXYZ.has_value()) { return magUncompXYZ->x(); }
+            break;
+        case 2: // Mag uncomp Y [Gauss]
+            if (magUncompXYZ.has_value()) { return magUncompXYZ->y(); }
+            break;
+        case 3: // Mag uncomp Z [Gauss]
+            if (magUncompXYZ.has_value()) { return magUncompXYZ->z(); }
+            break;
+        case 4: // Accel uncomp X [m/s^2]
+            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->x(); }
+            break;
+        case 5: // Accel uncomp Y [m/s^2]
+            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->y(); }
+            break;
+        case 6: // Accel uncomp Z [m/s^2]
+            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->z(); }
+            break;
+        case 7: // Gyro uncomp X [rad/s]
+            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->x(); }
+            break;
+        case 8: // Gyro uncomp Y [rad/s]
+            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->y(); }
+            break;
+        case 9: // Gyro uncomp Z [rad/s]
+            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->z(); }
+            break;
+        case 10: // Mag Comp X [Gauss]
+            if (magCompXYZ.has_value()) { return magCompXYZ->x(); }
+            break;
+        case 11: // Mag Comp Y [Gauss]
+            if (magCompXYZ.has_value()) { return magCompXYZ->y(); }
+            break;
+        case 12: // Mag Comp Z [Gauss]
+            if (magCompXYZ.has_value()) { return magCompXYZ->z(); }
+            break;
+        case 13: // Accel Comp X [m/s^2]
+            if (accelCompXYZ.has_value()) { return accelCompXYZ->x(); }
+            break;
+        case 14: // Accel Comp Y [m/s^2]
+            if (accelCompXYZ.has_value()) { return accelCompXYZ->y(); }
+            break;
+        case 15: // Accel Comp Z [m/s^2]
+            if (accelCompXYZ.has_value()) { return accelCompXYZ->z(); }
+            break;
+        case 16: // Gyro Comp X [rad/s]
+            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->x(); }
+            break;
+        case 17: // Gyro Comp Y [rad/s]
+            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->y(); }
+            break;
+        case 18: // Gyro Comp Z [rad/s]
+            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->z(); }
+            break;
+        case 19: // Temperature [°C]
+            if (temperature.has_value()) { return temperature.value(); }
+            break;
+        default:
+            return std::nullopt;
+        }
+        return std::nullopt;
+    }
+
     /// Position and rotation information for conversion from platform to body frame
     const ImuPos& imuPos;
 

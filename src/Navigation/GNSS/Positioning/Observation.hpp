@@ -22,6 +22,7 @@
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
+#include "Navigation/Atmosphere/Troposphere/ZenithDelay.hpp"
 
 #include "NodeData/GNSS/GnssObs.hpp"
 
@@ -91,6 +92,17 @@ struct Observations
             [[nodiscard]] const double& satElevation() const { return _satElevation; }
             /// @brief Satellite Azimuth [rad]
             [[nodiscard]] const double& satAzimuth() const { return _satAzimuth; }
+
+            /// @brief Terms used in the calculation
+            struct CalcTerms
+            {
+                double rho_r_s = 0.0;         ///< Receiver-Satellite Range [m]
+                ZenithDelay tropoZenithDelay; ///< Troposphere delay
+                double dpsr_T_r_s = 0.0;      ///< Estimated troposphere propagation error [m]
+                double dpsr_I_r_s = 0.0;      ///< Estimated ionosphere propagation error [m]
+                double dpsr_ie_r_s = 0.0;     ///< Sagnac correction [m]
+            };
+            CalcTerms terms; ///< Sub terms used in the calculation
 
           private:
             std::shared_ptr<const GnssObs> _gnssObs = nullptr; ///< GNSS observation

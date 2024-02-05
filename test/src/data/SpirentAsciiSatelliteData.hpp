@@ -14,6 +14,10 @@
 #pragma once
 
 #include <cstddef>
+#include <optional>
+#include <functional>
+#include <vector>
+#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 
 namespace NAV::TESTS
@@ -83,6 +87,90 @@ enum SpirentAsciiSatelliteData_ : size_t
 /// Storage class for Spirent Satellite Data
 struct SpirentAsciiSatelliteData
 {
+    explicit SpirentAsciiSatelliteData(const std::string& line)
+    {
+        std::vector<std::string> v = str::split(line, ",");
+        REQUIRE(v.size() == size_t(SpirentAsciiSatelliteData_COUNT));
+
+        SatelliteSystem satSys;
+        auto satNum = static_cast<uint16_t>(std::stoul(v[SpirentAsciiSatelliteData_Sat_ID]));
+        if (v[SpirentAsciiSatelliteData_Sat_type] == "GPS") { satSys = GPS; }
+        else if (v[SpirentAsciiSatelliteData_Sat_type] == "GALILEO") { satSys = GAL; }
+        else if (v[SpirentAsciiSatelliteData_Sat_type] == "GLONASS") { satSys = GLO; }
+        else if (v[SpirentAsciiSatelliteData_Sat_type] == "BeiDou") { satSys = BDS; }
+        else if (v[SpirentAsciiSatelliteData_Sat_type] == "Quasi-Zenith") { satSys = QZSS; }
+        else if (v[SpirentAsciiSatelliteData_Sat_type] == "IRNSS") { satSys = IRNSS; }
+        REQUIRE(satSys != SatSys_None);
+
+        recvTime = InsTime{ 2023, 1, 8, 10, 0, std::stod(v[SpirentAsciiSatelliteData_Time_ms]) * 1e-3 - 60.0, GPST };
+        LOG_DEBUG("  [{} GPST][{}] Found in Spirent file", recvTime.toYMDHMS(GPST), SatId{ satSys, satNum });
+
+        // The Spirent reference frame is rotated by the signal transmit time
+        auto rotateDataFrame = [&v](const Eigen::Vector3d& e_satPos) -> Eigen::Vector3d {
+            auto dt = std::stod(v[SpirentAsciiSatelliteData_Range]) / InsConst::C;
+
+            // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
+            return Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * e_satPos;
+        };
+
+        satId = SatId{ satSys, satNum };
+        Time_ms = std::stoul(v[SpirentAsciiSatelliteData_Time_ms]);
+        Channel = std::stoul(v[SpirentAsciiSatelliteData_Channel]);
+        Sat_type = v[SpirentAsciiSatelliteData_Sat_type];
+        Sat_ID = std::stoul(v[SpirentAsciiSatelliteData_Sat_ID]);
+        Sat_PRN = std::stoul(v[SpirentAsciiSatelliteData_Sat_PRN]);
+        Echo_Num = std::stoul(v[SpirentAsciiSatelliteData_Echo_Num]);
+        Sat_Pos = rotateDataFrame({ std::stod(v[SpirentAsciiSatelliteData_Sat_Pos_X]),
+                                    std::stod(v[SpirentAsciiSatelliteData_Sat_Pos_Y]),
+                                    std::stod(v[SpirentAsciiSatelliteData_Sat_Pos_Z]) });
+        Sat_Vel = rotateDataFrame({ std::stod(v[SpirentAsciiSatelliteData_Sat_Vel_X]),
+                                    std::stod(v[SpirentAsciiSatelliteData_Sat_Vel_Y]),
+                                    std::stod(v[SpirentAsciiSatelliteData_Sat_Vel_Z]) });
+        Azimuth = std::stod(v[SpirentAsciiSatelliteData_Azimuth]);
+        Elevation = std::stod(v[SpirentAsciiSatelliteData_Elevation]);
+        Range = std::stod(v[SpirentAsciiSatelliteData_Range]);
+        P_Range_Group_A = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_A]);
+        P_Range_Group_B = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_B]);
+        P_Range_Group_C = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_C]);
+        P_Range_Group_D = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_D]);
+        P_Range_Group_E = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_E]);
+        P_Range_Group_F = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_F]);
+        P_R_rate = std::stod(v[SpirentAsciiSatelliteData_P_R_rate]);
+        Iono_delay_Group_A = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_A]);
+        Iono_delay_Group_B = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_B]);
+        Iono_delay_Group_C = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_C]);
+        Iono_delay_Group_D = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_D]);
+        Iono_delay_Group_E = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_E]);
+        Iono_delay_Group_F = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_F]);
+        Tropo_delay = std::stod(v[SpirentAsciiSatelliteData_Tropo_delay]);
+        P_R_Error = std::stod(v[SpirentAsciiSatelliteData_P_R_Error]);
+        Signal_dB_Group_A = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_A]);
+        Signal_dB_Group_B = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_B]);
+        Signal_dB_Group_C = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_C]);
+        Signal_dB_Group_D = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_D]);
+        Signal_dB_Group_E = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_E]);
+        Signal_dB_Group_F = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_F]);
+        Ant_azimuth = std::stod(v[SpirentAsciiSatelliteData_Ant_azimuth]);
+        Ant_elevation = std::stod(v[SpirentAsciiSatelliteData_Ant_elevation]);
+        Range_rate = std::stod(v[SpirentAsciiSatelliteData_Range_rate]);
+        P_R_Error_rate = std::stod(v[SpirentAsciiSatelliteData_P_R_Error_rate]);
+        Doppler_shift_Group_A = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_A]);
+        Doppler_shift_Group_B = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_B]);
+        Doppler_shift_Group_C = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_C]);
+        Doppler_shift_Group_D = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_D]);
+        Doppler_shift_Group_E = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_E]);
+        Doppler_shift_Group_F = std::stod(v[SpirentAsciiSatelliteData_Doppler_shift_Group_F]);
+        Delta_range_Group_A = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_A]);
+        Delta_range_Group_B = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_B]);
+        Delta_range_Group_C = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_C]);
+        Delta_range_Group_D = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_D]);
+        Delta_range_Group_E = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_E]);
+        Delta_range_Group_F = std::stod(v[SpirentAsciiSatelliteData_Delta_range_Group_F]);
+        Sat_Acc_X = std::stod(v[SpirentAsciiSatelliteData_Sat_Acc_X]);
+        Sat_Acc_Y = std::stod(v[SpirentAsciiSatelliteData_Sat_Acc_Y]);
+        Sat_Acc_Z = std::stod(v[SpirentAsciiSatelliteData_Sat_Acc_Z]);
+    }
+
     InsTime recvTime; ///< Receive Time
     SatId satId;      ///< Satellite Id
 
@@ -137,6 +225,69 @@ struct SpirentAsciiSatelliteData
     double Sat_Acc_X;             ///< Sat_Acc_X [m/s^2]
     double Sat_Acc_Y;             ///< Sat_Acc_Y [m/s^2]
     double Sat_Acc_Z;             ///< Sat_Acc_Z [m/s^2]
+
+    bool checked = false; ///< Boolean to check if this data was visited
+};
+
+struct SpirentSatDataFile
+{
+    /// @brief Constructor
+    /// @param path Path to the reference file
+    explicit SpirentSatDataFile(const std::string& path)
+    {
+        std::ifstream fs(path, std::ios_base::binary);
+        REQUIRE(fs.good());
+        std::string line;
+        std::getline(fs, line); // Header line: Build,GPS Time,Interval ms,Channels,SIR ms,Header rows,N_freqs
+        std::getline(fs, line); // Header line
+        std::vector<std::string> v = str::split(line, ",");
+        double gpsTime = std::stod(v.at(1));
+        InsTime startTime(1980, 1, 6, 0, 0, gpsTime, GPST);
+        LOG_DEBUG("{}", startTime);
+
+        for (size_t i = 0; i < 3; i++) { std::getline(fs, line); } // Remaining Header lines
+
+        while (!fs.eof() && std::getline(fs, line) && !line.empty())
+        {
+            refData.emplace_back(line);
+        }
+    }
+
+    /// @brief Searches for the refeence data
+    /// @param recvTime Receive Time
+    /// @param satId Satellite Id
+    /// @return The data or none if not found
+    [[nodiscard]] std::optional<std::reference_wrapper<const SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId) const
+    {
+        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+            return spirentSatData.recvTime == recvTime
+                   && spirentSatData.satId == satId;
+        });
+        if (iter != refData.end())
+        {
+            return *iter;
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Searches for the refeence data
+    /// @param recvTime Receive Time
+    /// @param satId Satellite Id
+    /// @return The data or none if not found
+    std::optional<std::reference_wrapper<SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId)
+    {
+        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+            return spirentSatData.recvTime == recvTime
+                   && spirentSatData.satId == satId;
+        });
+        if (iter != refData.end())
+        {
+            return *iter;
+        }
+        return std::nullopt;
+    }
+
+    std::vector<SpirentAsciiSatelliteData> refData; ///< Reference data read from the file
 };
 
 } // namespace NAV::TESTS

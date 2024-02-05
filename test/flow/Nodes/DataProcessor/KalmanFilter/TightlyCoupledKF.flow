@@ -1,4 +1,5 @@
 {
+    "colormaps": [],
     "implot": {
         "prefereFlowOverGlobal": true,
         "style": {
@@ -4305,8 +4306,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Accelerometer bias b_X accumulated [m/s^2] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4339,8 +4367,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Accelerometer bias b_Y accumulated [m/s^2] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4373,8 +4428,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Accelerometer bias b_Z accumulated [m/s^2] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4445,8 +4527,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Gyroscope bias b_X accumulated [rad/s] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4479,8 +4588,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Gyroscope bias b_Y accumulated [rad/s] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4513,8 +4649,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Gyroscope bias b_Z accumulated [rad/s] (PVAError)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4696,8 +4859,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Roll - P(0, 0)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4730,8 +4920,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Pitch - P(1, 1)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4764,8 +4981,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Yaw - P(2, 2)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4836,8 +5080,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "North - P(3, 3)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4870,8 +5141,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "East - P(4, 4)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4904,8 +5202,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Down - P(5, 5)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4976,8 +5301,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "North - P(6, 6)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5010,8 +5362,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "East - P(7, 7)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5044,8 +5423,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Up - P(8, 8)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5116,8 +5522,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "X - P(9, 9)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5150,8 +5583,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Y - P(10, 10)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5184,8 +5644,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Z - P(11, 11)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5256,8 +5743,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "X - P(12, 12)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5290,8 +5804,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Y - P(13, 13)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5324,8 +5865,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Z - P(14, 14)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5396,8 +5964,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "North/Lat - z(0)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5430,8 +6025,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "East/Lon - z(1)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5464,8 +6086,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Up/Alt - z(2)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5536,8 +6185,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "North - z(3)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5570,8 +6246,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "East - z(4)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5604,8 +6307,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Down - z(5)",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6019,7 +6749,7 @@
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "Combiner"
+            "type": "Merger"
         },
         "node-577": {
             "data": {
@@ -6108,11 +6838,6 @@
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
                 "circularTrajectoryCircleCountForStop": 1.0,
-                "circularTrajectoryDirection": 1,
-                "circularTrajectoryHorizontalSpeed": 10.0,
-                "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 50.0,
-                "circularTrajectoryVerticalSpeed": 0.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -6140,6 +6865,10 @@
                         "0": 0.0
                     }
                 },
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 300.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
@@ -6166,7 +6895,12 @@
                     "system": "GPST"
                 },
                 "startTimeSource": 0,
-                "trajectoryType": 0
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 50.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 0,
+                "trajectoryVerticalSpeed": 0.0
             },
             "enabled": false,
             "id": 577,
@@ -6547,7 +7281,7 @@
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "ImuObs",
+                        "dataIdentifier": "ImuObsSimulated",
                         "pinType": 0,
                         "plotData": [
                             {
@@ -6615,6 +7349,42 @@
                             },
                             {
                                 "displayName": "Temperature [°C]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsN [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsE [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsD [m/s^2]"
+                            },
+                            {
+                                "displayName": "AngularRateN (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateE (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateD (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsX ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsY ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsZ ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AngularRateX ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateY ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
                             }
                         ],
                         "size": 0,
@@ -6653,6 +7423,9 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF [m/s]"
@@ -6732,6 +7505,9 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
                                 "displayName": "X velocity ECEF [m/s]"
                             },
                             {
@@ -6794,8 +7570,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6828,8 +7631,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6897,8 +7727,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6931,8 +7788,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6997,8 +7881,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7031,8 +7942,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7097,8 +8035,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7131,8 +8096,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7200,8 +8192,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7234,8 +8253,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7303,8 +8349,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7337,8 +8410,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7406,8 +8506,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7440,8 +8567,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7509,8 +8663,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7543,8 +8724,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7612,8 +8820,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7646,8 +8881,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7715,8 +8977,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Nominal",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7749,8 +9038,35 @@
                                         "y": 0.0,
                                         "z": 0.0
                                     },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Filter",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -7805,110 +9121,7 @@
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 6,
-                                "displayName": "Accel uncomp X [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "displayName": "Accel uncomp Y [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "Accel uncomp Z [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
+                        "plotItems": [],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
@@ -7942,110 +9155,7 @@
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
-                        "plotItems": [
-                            {
-                                "axis": 3,
-                                "dataIndex": 9,
-                                "displayName": "Gyro uncomp X [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp X",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 10,
-                                "displayName": "Gyro uncomp Y [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "Gyro uncomp Z [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "legendName": "Uncomp Z",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            }
-                        ],
+                        "plotItems": [],
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [

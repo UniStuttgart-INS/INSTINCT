@@ -111,7 +111,7 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
                 ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
                 ImGui::EndDragDropSource();
             }
-            if (_dragAndDropPinIndex > 0 && pinIndex >= FIRST_DYNAMIC_PIN
+            if (_dragAndDropPinIndex >= 0 && pinIndex >= FIRST_DYNAMIC_PIN
                 && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
                 && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
             {
