@@ -21,6 +21,8 @@
 #include <cstdint>
 #include <fmt/ostream.h>
 
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+
 namespace NAV::vendor::ublox
 {
 /// @brief Error detection modes available
@@ -664,6 +666,18 @@ struct UbxRxmRawx
         std::bitset<1UL * 8UL> doStdev; ///< Estimated Doppler measurement standard deviation. [Hz * 0.002*2^n] (see graphic below)
         std::bitset<1UL * 8UL> trkStat; ///< Tracking status bitfield (see graphic below)
         uint8_t reserved2 = 0;          ///< Reserved
+
+        /// @brief Pseudorange valid
+        [[nodiscard]] bool prValid() const { return trkStat[0]; }
+
+        /// @brief Carrier phase valid
+        [[nodiscard]] bool cpValid() const { return trkStat[1]; }
+
+        /// @brief Half cycle valid
+        [[nodiscard]] bool halfCycValid() const { return trkStat[2]; }
+
+        /// @brief Half cycle subtracted from phase
+        [[nodiscard]] bool subHalfCycValid() const { return trkStat[3]; }
     };
 
     /// Measurement time of week in receiverblocal time approximately aligned to the GPS time system.
@@ -693,12 +707,12 @@ struct UbxRxmSfrbx
 {
     uint8_t gnssId = 0;         ///< GNSS identifier (see Satellite Numbering)
     uint8_t svId = 0;           ///< Satellite identifier (see Satellite Numbering)
-    uint8_t reserved1 = 0;      ///< Reserved
+    uint8_t sigId = 0;          ///< Signal identifier
     uint8_t freqId = 0;         ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
     uint8_t numWords = 0;       ///< The number of data words contained in this message (0..16)
     uint8_t chn = 0;            ///< The tracking channel number the message was received on
     uint8_t version = 0;        ///< Message version (0x01 for this version)
-    uint8_t reserved2 = 0;      ///< Reserved
+    uint8_t reserved0 = 0;      ///< Reserved
     std::vector<uint32_t> dwrd; ///< The data words
 
     // TODO: Make this into functions
@@ -768,6 +782,16 @@ enum UbxUpdMessages
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
+
+/// @brief Get the GNSS Satellite System from gnssId
+/// @param gnssId Ublox gnssId
+[[nodiscard]] SatelliteSystem getSatSys(uint8_t gnssId);
+
+/// @brief Get the GNSS code from gnssId and sigId
+/// @param gnssId Ublox gnssId
+/// @param sigId Ublox sigId
+/// @return The Code object
+[[nodiscard]] Code getCode(uint8_t gnssId, uint8_t sigId);
 
 } // namespace NAV::vendor::ublox
 

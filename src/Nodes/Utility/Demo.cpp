@@ -132,10 +132,11 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         {
             const Demo* connectedNode = getInputValue<const Demo>(INPUT_PORT_INDEX_DEMO_NODE);
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_NODE);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_NODE))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
+            }
         }
         ImGui::TableNextColumn();
         /* ------------------------------------------------ Sensor ------------------------------------------------ */
@@ -161,12 +162,14 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         {
             const auto* connectedBool = getInputValue<const bool>(INPUT_PORT_INDEX_BOOL);
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_BOOL);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_BOOL))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
+            }
         }
         ImGui::TableNextColumn();
+        requestOutputValueLock(OUTPUT_PORT_INDEX_BOOL);
         if (ImGui::Checkbox("Bool", &_valueBool))
         {
             flow::ApplyChanges();
@@ -176,16 +179,18 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         if (const auto* connectedInt = getInputValue<const int>(INPUT_PORT_INDEX_INT))
         {
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_INT);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Int: %d", *connectedInt);
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_INT))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Int: %d", *connectedInt);
+            }
         }
         else
         {
             ImGui::TextUnformatted("Int: N/A");
         }
         ImGui::TableNextColumn();
+        requestOutputValueLock(OUTPUT_PORT_INDEX_INT);
         if (ImGui::InputInt("Int", &_valueInt)) // Returns true if a change was made
         {
             // Limit the values to [-2,5]
@@ -204,16 +209,18 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         if (const auto* connectedFloat = getInputValue<const float>(INPUT_PORT_INDEX_FLOAT))
         {
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_FLOAT);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Float: %.3f", *connectedFloat);
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_FLOAT))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Float: %.3f", *connectedFloat);
+            }
         }
         else
         {
             ImGui::TextUnformatted("Float: N/A");
         }
         ImGui::TableNextColumn();
+        requestOutputValueLock(OUTPUT_PORT_INDEX_FLOAT);
         if (ImGui::DragFloat("Float", &_valueFloat))
         {
             flow::ApplyChanges();
@@ -222,17 +229,18 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         if (const auto* connectedDouble = getInputValue<const double>(INPUT_PORT_INDEX_DOUBLE))
         {
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DOUBLE);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Double : %.3f", *connectedDouble);
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DOUBLE))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Double : %.3f", *connectedDouble);
+            }
         }
         else
         {
             ImGui::TextUnformatted("Double: N/A");
         }
         ImGui::TableNextColumn();
-
+        requestOutputValueLock(OUTPUT_PORT_INDEX_DOUBLE);
         if (ImGui::DragDouble("Double", &_valueDouble))
         {
             flow::ApplyChanges();
@@ -264,17 +272,19 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         if (const auto* connectedObject = getInputValue<const DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
         {
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_DATA);
-            if (mutex) { mutex->lock(); }
-            ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
-                        connectedObject->boolean ? "true" : "false");
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_DATA))
+            {
+                std::lock_guard lk(*mutex);
+                ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
+                            connectedObject->boolean ? "true" : "false");
+            }
         }
         else
         {
             ImGui::TextUnformatted("Object: N/A");
         }
         ImGui::TableNextColumn();
+        requestOutputValueLock(OUTPUT_PORT_INDEX_DEMO_DATA);
         if (ImGui::InputInt3("", _valueObject.integer.data()))
         {
             flow::ApplyChanges();
@@ -288,17 +298,18 @@ void NAV::Demo::guiConfig()
         ImGui::TableNextColumn();
         if (const auto* connectedMatrix = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
         {
-            auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_MATRIX);
-            if (mutex) { mutex->lock(); }
-            gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
-            if (mutex) { mutex->unlock(); }
+            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_MATRIX))
+            {
+                std::lock_guard lk(*mutex);
+                gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
+            }
         }
         else
         {
             ImGui::TextUnformatted("Matrix: N/A");
         }
         ImGui::TableNextColumn();
-
+        requestOutputValueLock(OUTPUT_PORT_INDEX_MATRIX);
         if (gui::widgets::InputMatrix("Init Matrix", &_valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
         {
             flow::ApplyChanges();

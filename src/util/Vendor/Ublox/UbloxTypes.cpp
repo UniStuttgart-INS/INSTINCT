@@ -727,3 +727,81 @@ uint8_t NAV::vendor::ublox::getMsgIdFromString(const std::string& className, con
 {
     return getMsgIdFromString(getMsgClassFromString(className), idName);
 }
+
+NAV::SatelliteSystem NAV::vendor::ublox::getSatSys(uint8_t gnssId)
+{
+    switch (gnssId)
+    {
+    case 0:
+        return GPS;
+    case 1:
+        return SBAS;
+    case 2:
+        return GAL;
+    case 3:
+        return BDS;
+    case 5:
+        return QZSS;
+    case 6:
+        return GLO;
+    case 7:
+        return IRNSS;
+    default:
+        return SatSys_None;
+    }
+}
+
+NAV::Code NAV::vendor::ublox::getCode(uint8_t gnssId, uint8_t sigId)
+{
+    if (gnssId == 0) // GPS
+    {
+        if (sigId == 0) { return Code::G1C; } // GPS L1C/A
+        if (sigId == 3) { return Code::G2L; } // GPS L2 CL
+        if (sigId == 4) { return Code::G2M; } // GPS L2 CM
+        if (sigId == 6) { return Code::G5I; } // GPS L5 I
+        if (sigId == 7) { return Code::G5Q; } // GPS L5 Q
+    }
+    else if (gnssId == 1) // SBAS
+    {
+        if (sigId == 0) { return Code::S1C; } // SBAS L1C/A
+    }
+    else if (gnssId == 2) // Galileo
+    {
+        if (sigId == 0) { return Code::E1C; } // Galileo E1 C
+        if (sigId == 1) { return Code::E1B; } // Galileo E1 B
+        if (sigId == 3) { return Code::E5I; } // Galileo E5 aI
+        if (sigId == 4) { return Code::E5Q; } // Galileo E5 aQ
+        if (sigId == 5) { return Code::E7I; } // Galileo E5 bI
+        if (sigId == 6) { return Code::E7Q; } // Galileo E5 bQ
+    }
+    else if (gnssId == 3) // Beidou
+    {
+        if (sigId == 0) { return Code::None; } // BeiDou B1I D1 // TODO: Add this, but do not know which one
+        if (sigId == 1) { return Code::None; } // BeiDou B1I D2 // TODO: Add this, but do not know which one
+        if (sigId == 2) { return Code::None; } // BeiDou B2I D1 // TODO: Add this, but do not know which one
+        if (sigId == 3) { return Code::None; } // BeiDou B2I D2 // TODO: Add this, but do not know which one
+        if (sigId == 5) { return Code::B1P; }  // BeiDou B1 Cp (pilot)
+        if (sigId == 6) { return Code::B1D; }  // BeiDou B1 Cd (data)
+        if (sigId == 7) { return Code::B5P; }  // BeiDou B2 ap (pilot)
+        if (sigId == 8) { return Code::B5D; }  // BeiDou B2 ad (data)
+    }
+    else if (gnssId == 5) // QZSS
+    {
+        if (sigId == 0) { return Code::J1C; } // QZSS L1C/A
+        if (sigId == 1) { return Code::J1S; } // QZSS L1S
+        if (sigId == 4) { return Code::J2S; } // QZSS L2 CM
+        if (sigId == 5) { return Code::J2L; } // QZSS L2 CL
+        if (sigId == 8) { return Code::J5D; } // QZSS L5 I
+        if (sigId == 9) { return Code::J5P; } // QZSS L5 Q
+    }
+    else if (gnssId == 6) // GLONASS
+    {
+        if (sigId == 0) { return Code::R1C; } // GLONASS L1 OF
+        if (sigId == 2) { return Code::R2C; } // GLONASS L2 OF
+    }
+    else if (gnssId == 7) // IRNSS
+    {
+        if (sigId == 0) { return Code::I5A; } // NavIC L5 A
+    }
+    return Code::None;
+}

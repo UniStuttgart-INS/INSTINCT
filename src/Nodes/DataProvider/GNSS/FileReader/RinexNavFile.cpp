@@ -104,6 +104,9 @@ bool RinexNavFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _gnssNavInfo.reset();
+    _version = 0.0;
+
     if (!FileReader::initialize())
     {
         return false;
@@ -119,9 +122,6 @@ void RinexNavFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-
-    _gnssNavInfo.reset();
-    _version = 0.0;
 }
 
 bool RinexNavFile::resetNode()
