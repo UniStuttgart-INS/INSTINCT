@@ -182,7 +182,7 @@ void NAV::gui::widgets::from_json(const json& j, PositionWithFrame& position)
         else if (position.frame == PositionWithFrame::ReferenceFrame::LLA)
         {
             auto lla = j.at("position").get<Eigen::Vector3d>();
-            position.e_position = trafo::lla2ecef_WGS84({ deg2rad(lla(0)), deg2rad(lla(1)), lla(2) });
+            position.e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(lla(0)), deg2rad(lla(1)), lla(2)));
         }
     }
 }

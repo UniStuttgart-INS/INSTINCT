@@ -891,7 +891,7 @@ Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLi
         auto lat = deg2rad(std::get<double>(line.at(static_cast<size_t>(latIter - description.begin()))));
         auto lon = deg2rad(std::get<double>(line.at(static_cast<size_t>(lonIter - description.begin()))));
         auto alt = std::get<double>(line.at(static_cast<size_t>(altIter - description.begin())));
-        return trafo::lla2ecef_WGS84({ lat, lon, alt });
+        return trafo::lla2ecef_WGS84(Eigen::Vector3d{ lat, lon, alt });
     }
 
     LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the position.", nameId());
@@ -1512,7 +1512,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 
     auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
 
-    Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
+    Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst<>::e_omega_ie;
     LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), imuUpdateTime, n_omega_ie.transpose());
     double R_N = calcEarthRadius_N(lla_position(0));
     LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), imuUpdateTime, R_N);

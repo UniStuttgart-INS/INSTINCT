@@ -57,7 +57,7 @@ double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
             if (alpha && beta)
             {
                 return calcIonosphericTimeDelay_Klobuchar(tow, freq, freqNum, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
-                       * InsConst::C;
+                       * InsConst<>::C;
             }
         }
 

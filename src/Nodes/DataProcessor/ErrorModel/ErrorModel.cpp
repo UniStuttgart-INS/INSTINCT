@@ -886,7 +886,7 @@ void NAV::ErrorModel::receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs)
         if (obs.carrierPhase)
         {
             // ------------------------------------------- Noise ---------------------------------------------
-            auto lambda = InsConst::C / obs.satSigId.freq().getFrequency(0); // wave-length [m] // TODO: Add frequency number here for GLONASS
+            auto lambda = InsConst<>::C / obs.satSigId.freq().getFrequency(0); // wave-length [m] // TODO: Add frequency number here for GLONASS
             obs.carrierPhase.value().value += _carrierPhaseRng.getRand_normalDist(0.0, carrierPhaseNoise) / lambda;
 
             // ---------------------------------------- Cycle-slip -------------------------------------------

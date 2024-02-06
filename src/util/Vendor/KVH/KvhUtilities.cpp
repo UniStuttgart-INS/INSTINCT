@@ -153,6 +153,6 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
             obs->magUncompXYZ.emplace(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
         }
 
-        obs->accelUncompXYZ.value() *= InsConst::G_NORM;
+        obs->accelUncompXYZ.value() *= InsConst<>::G_NORM;
     }
 }

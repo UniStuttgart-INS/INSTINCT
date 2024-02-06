@@ -86,7 +86,7 @@ Eigen::Matrix3d e_Dcm_i(const double time, const double omega_ie)
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
 /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
-Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsConst::WGS84::a, double e_squared = InsConst::WGS84::e_squared)
+Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsConst<>::WGS84::a, double e_squared = InsConst<>::WGS84::e_squared)
 {
     // Value is used every iteration and does not change
     double sqrt_x1x1_x2x2 = std::sqrt(std::pow(e_position(0), 2) + std::pow(e_position(1), 2));
@@ -271,11 +271,11 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     auto logger = initializeTestLogger();
 
     double time = 86164.099 / 3.0;
-    auto e_Quat_i = trafo::e_Quat_i(time, InsConst::omega_ie);
+    auto e_Quat_i = trafo::e_Quat_i(time, InsConst<>::omega_ie);
     CHECK_THAT(e_Quat_i.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     auto C_ei = e_Quat_i.toRotationMatrix();
-    auto C_ei_ref = ref::e_Dcm_i(time, InsConst::omega_ie);
+    auto C_ei_ref = ref::e_Dcm_i(time, InsConst<>::omega_ie);
 
     CHECK_THAT(C_ei, Catch::Matchers::WithinAbs(C_ei_ref, EPSILON));
 
@@ -283,7 +283,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     // Sidereal day: 23h 56min 4.099s
     auto siderialDay4 = 86164.099 / 4.0;
-    e_Quat_i = trafo::e_Quat_i(siderialDay4, InsConst::omega_ie);
+    e_Quat_i = trafo::e_Quat_i(siderialDay4, InsConst<>::omega_ie);
     CHECK_THAT(e_Quat_i.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
@@ -294,7 +294,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     CHECK_THAT(e_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ -2.5, -1, 22 }, 1e-8));
 
-    auto i_Quat_e = trafo::i_Quat_e(siderialDay4, InsConst::omega_ie);
+    auto i_Quat_e = trafo::i_Quat_e(siderialDay4, InsConst<>::omega_ie);
     CHECK_THAT(i_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
 
     auto q_identity = i_Quat_e * e_Quat_i;
@@ -350,9 +350,9 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
     CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     //                    (0, 0, 7.2921151467e-05)
-    n_x = n_Quat_e * InsConst::e_omega_ie;
+    n_x = n_Quat_e * InsConst<>::e_omega_ie;
 
-    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst::omega_ie, 0, 0 }, EPSILON));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst<>::omega_ie, 0, 0 }, EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -362,9 +362,9 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     n_Quat_e = trafo::n_Quat_e(latitude, longitude);
     CHECK_THAT(n_Quat_e.norm(), Catch::Matchers::WithinAbs(1.0, EPSILON));
     //                    (0, 0, 7.2921151467e-05)
-    n_x = n_Quat_e * InsConst::e_omega_ie;
+    n_x = n_Quat_e * InsConst<>::e_omega_ie;
 
-    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst::omega_ie / std::sqrt(2), 0, -InsConst::omega_ie / std::sqrt(2) }, EPSILON));
+    CHECK_THAT(n_x, Catch::Matchers::WithinAbs(Eigen::Vector3d{ InsConst<>::omega_ie / std::sqrt(2), 0, -InsConst<>::omega_ie / std::sqrt(2) }, EPSILON));
 }
 
 TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")
@@ -374,34 +374,34 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
     double latitude_ref = deg2rad(88);
     double longitude_ref = deg2rad(-40);
     double altitude_ref = 500;
-    auto e_position_ref = trafo::lla2ecef_WGS84({ latitude_ref, longitude_ref, altitude_ref });
+    auto e_position_ref = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
 
-    auto n_position_ref = trafo::ecef2ned(e_position_ref, { latitude_ref, longitude_ref, altitude_ref });
+    auto n_position_ref = trafo::ecef2ned(e_position_ref, Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
 
     CHECK(n_position_ref(0) == 0);
     CHECK(n_position_ref(1) == 0);
     CHECK(n_position_ref(2) == 0);
 
-    auto e_position = trafo::lla2ecef_WGS84({ latitude_ref, longitude_ref, altitude_ref + 200 });
-    auto n_position = trafo::ecef2ned(e_position, { latitude_ref, longitude_ref, altitude_ref });
+    auto e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref + 200 });
+    auto n_position = trafo::ecef2ned(e_position, Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
 
     LOG_DEBUG("{}", (n_position - Eigen::Vector3d{ 0, 0, -200 }).transpose());
     CHECK_THAT(n_position, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0, 0, -200 }, 1e-9));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    e_position = trafo::ned2ecef(n_position_ref, { latitude_ref, longitude_ref, altitude_ref });
+    e_position = trafo::ned2ecef(n_position_ref, Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
 
     CHECK(e_position == e_position_ref);
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    e_position_ref = trafo::lla2ecef_WGS84({ deg2rad(-10), deg2rad(70), 2001 });
+    e_position_ref = trafo::lla2ecef_WGS84(Eigen::Vector3d{ deg2rad(-10), deg2rad(70), 2001 });
     e_position = e_position_ref;
     for (size_t i = 0; i < 10000; i++)
     {
-        n_position = trafo::ecef2ned(e_position, { latitude_ref, longitude_ref, altitude_ref });
-        e_position = trafo::ned2ecef(n_position, { latitude_ref, longitude_ref, altitude_ref });
+        n_position = trafo::ecef2ned(e_position, Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
+        e_position = trafo::ned2ecef(n_position, Eigen::Vector3d{ latitude_ref, longitude_ref, altitude_ref });
     }
 
     LOG_DEBUG("{}", (e_position - e_position_ref).transpose());
@@ -546,7 +546,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     double longitude = deg2rad(9.172012);
     double altitude = 254;
     Eigen::Vector3d e_position_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
-    Eigen::Vector3d e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
     Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_position_ref);
     CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.3));
     CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-7));
@@ -561,7 +561,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     longitude = deg2rad(-74.006015);
     altitude = 13;
     e_position_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
-    e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
     CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.5));
     CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-7));
@@ -574,7 +574,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     longitude = 0;
     altitude = -3492;
     e_position_ref = Eigen::Vector3d(6374.645, 0, 0) * 1000;
-    e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
     CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, EPSILON));
     CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
@@ -587,7 +587,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     longitude = deg2rad(0);
     altitude = 2801;
     e_position_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
-    e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
     CHECK_THAT(e_position, Catch::Matchers::WithinAbs(e_position_ref, 0.4));
     CHECK_THAT(lla_position.x(), Catch::Matchers::WithinAbs(latitude, 1e-6));
@@ -600,7 +600,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     longitude = deg2rad(180);
     altitude = -5097;
     e_position_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
-    e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
     lla_position = trafo::ecef2lla_WGS84(e_position_ref);
     LOG_DATA("{}", (e_position - e_position_ref).transpose());
     CHECK_THAT(e_position.x(), Catch::Matchers::WithinAbs(e_position_ref.x(), 0.072));
@@ -683,8 +683,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     double latitude = deg2rad(90);
     double longitude = deg2rad(0);
     double altitude = 0;
-    auto e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    auto lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
+    auto e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
+    auto lla_position_iter = ref::ecef2lla_iter(e_position, InsConst<>::WGS84::a, InsConst<>::WGS84::e_squared);
 
     CHECK_THAT(lla_position_iter.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
     CHECK_THAT(lla_position_iter.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));
@@ -695,8 +695,8 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     latitude = deg2rad(90);
     longitude = deg2rad(180);
     altitude = 0;
-    e_position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    lla_position_iter = ref::ecef2lla_iter(e_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
+    e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d{ latitude, longitude, altitude });
+    lla_position_iter = ref::ecef2lla_iter(e_position, InsConst<>::WGS84::a, InsConst<>::WGS84::e_squared);
 
     CHECK_THAT(lla_position_iter.x(), Catch::Matchers::WithinAbs(latitude, EPSILON));
     CHECK_THAT(lla_position_iter.y(), Catch::Matchers::WithinAbs(longitude, EPSILON));

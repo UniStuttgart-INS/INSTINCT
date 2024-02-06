@@ -94,9 +94,9 @@ class TcKfInsGnssErrors : public LcKfInsGnssErrors
         case 25: // Receiver clock drift [m/s]
             return recvClkDrift;
         case 26: // Receiver clock offset [s]
-            return recvClkOffset / InsConst::C;
+            return recvClkOffset / InsConst<>::C;
         case 27: // Receiver clock drift [s/s]
-            return recvClkDrift / InsConst::C;
+            return recvClkDrift / InsConst<>::C;
         default:
             return std::nullopt;
         }

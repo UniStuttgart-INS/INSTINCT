@@ -95,7 +95,7 @@ GPT2output GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos)
         // virtual temperature in Kelvin
         double Tv = T0 * (1 + 0.6077 * Q);
 
-        double c = InsConst::G_NORM * InsConst::dMtr / (InsConst::Rg * Tv);
+        double c = InsConst<>::G_NORM * InsConst<>::dMtr / (InsConst<>::Rg * Tv);
 
         // pressure in hPa
         gpt2outputs.p = (p0 * exp(-c * redh)) / 100.0;
@@ -172,7 +172,7 @@ GPT2output GPT2_param(const double& mjd, const Eigen::Vector3d& lla_pos)
 
             // virtual temperature
             double Tv = T0 * (1 + 0.6077 * Ql.at(l));
-            double c = InsConst::G_NORM * InsConst::dMtr / (InsConst::Rg * Tv);
+            double c = InsConst<>::G_NORM * InsConst<>::dMtr / (InsConst<>::Rg * Tv);
 
             // pressure in hPa
             pl.at(l) = (p0 * exp(-c * redh)) / 100.0;
@@ -327,7 +327,7 @@ GPT3output GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos)
         // virtual temperature in Kelvin
         double Tv = T0 * (1 + 0.6077 * Q);
 
-        double c = InsConst::G_NORM * InsConst::dMtr / (InsConst::Rg * Tv);
+        double c = InsConst<>::G_NORM * InsConst<>::dMtr / (InsConst<>::Rg * Tv);
 
         // pressure in hPa
         gpt3outputs.p = (p0 * exp(-c * redh)) / 100.0;
@@ -418,7 +418,7 @@ GPT3output GPT3_param(const double& mjd, const Eigen::Vector3d& lla_pos)
 
             // virtual temperature
             double Tv = T0 * (1 + 0.6077 * Ql.at(l));
-            double c = InsConst::G_NORM * InsConst::dMtr / (InsConst::Rg * Tv);
+            double c = InsConst<>::G_NORM * InsConst<>::dMtr / (InsConst<>::Rg * Tv);
 
             // pressure in hPa
             pl.at(l) = (p0 * exp(-c * redh)) / 100.0;
@@ -593,9 +593,9 @@ double asknewet(const double& e, const double& Tm, const double& la)
     double k3 = 377600.0;                     // KK/hPa
 
     // specific gas constant for dry consituents
-    constexpr double Rd = InsConst::Rg / InsConst::dMtr;
+    constexpr double Rd = InsConst<>::Rg / InsConst<>::dMtr;
 
-    return 1.0e-6 * (k2p + k3 / Tm) * Rd / (la + 1.0) / InsConst::G_NORM * e;
+    return 1.0e-6 * (k2p + k3 / Tm) * Rd / (la + 1.0) / InsConst<>::G_NORM * e;
 }
 
 } // namespace NAV

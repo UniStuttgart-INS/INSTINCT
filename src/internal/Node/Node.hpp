@@ -420,6 +420,10 @@ class Node
 
     /// Mutex to show the config window (prevents initialization to modify values within the config window)
     std::mutex _configWindowMutex;
+    /// Flag if the config window should be forced collapsed
+    bool _configWindowForceCollapse = false;
+    /// Flag if the config window is collapsed
+    bool _configWindowIsCollapsed = false;
 
     /// Flag if the config window should be focused
     bool _configWindowFocus = false;

@@ -26,10 +26,10 @@ template<class T>
 /// @brief Convert Degree to Radians
 /// @param[in] deg Value to convert in [deg]
 /// @return The converted value in [rad]
-template<>
-[[nodiscard]] inline auto deg2rad(const Eigen::Vector3d& deg)
+template<typename Scalar>
+[[nodiscard]] inline auto deg2rad(const Eigen::Vector3<Scalar>& deg)
 {
-    Eigen::Vector3d ret = deg * std::numbers::pi_v<double> / 180.0;
+    Eigen::Vector3<Scalar> ret = deg * std::numbers::pi_v<Scalar> / 180.0;
     return ret;
 }
 
@@ -45,10 +45,10 @@ template<class T>
 /// @brief Convert Radians to Degree
 /// @param[in] rad Value to convert in [rad]
 /// @return The converted value in [deg]
-template<>
-[[nodiscard]] inline auto rad2deg(const Eigen::Vector3d& rad)
+template<typename Scalar>
+[[nodiscard]] inline auto rad2deg(const Eigen::Vector3<Scalar>& rad)
 {
-    Eigen::Vector3d ret = rad * 180.0 / std::numbers::pi_v<double>;
+    Eigen::Vector3<Scalar> ret = rad * 180.0 / std::numbers::pi_v<Scalar>;
     return ret;
 }
 

@@ -215,17 +215,17 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                                                                                   lsq.variance.rowKeys(), lsq.variance.colKeys());
                     x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
                     if (x.hasAnyRows(States::Vel)) { x.segment<3>(States::Vel) = _receiver[Rover].e_vel; }
-                    x(States::RecvClkErr) = _receiver[Rover].recvClk.bias.value * InsConst::C;
-                    if (x.hasRow(States::RecvClkDrift)) { x(States::RecvClkDrift) = _receiver[Rover].recvClk.drift.value * InsConst::C; }
+                    x(States::RecvClkErr) = _receiver[Rover].recvClk.bias.value * InsConst<>::C;
+                    if (x.hasRow(States::RecvClkDrift)) { x(States::RecvClkDrift) = _receiver[Rover].recvClk.drift.value * InsConst<>::C; }
                     for (const auto& state : x.rowKeys())
                     {
                         if (const auto* bias = std::get_if<States::InterSysBias>(&state))
                         {
-                            x(*bias) = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value * InsConst::C;
+                            x(*bias) = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value * InsConst<>::C;
                         }
                         else if (const auto* drift = std::get_if<States::InterSysDrift>(&state))
                         {
-                            x(*drift) = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value * InsConst::C;
+                            x(*drift) = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value * InsConst<>::C;
                         }
                     }
 
@@ -321,13 +321,13 @@ void Algorithm::updateInterSystemTimeDifferences(const std::set<SatelliteSystem>
             {
                 if (const auto* bias = std::get_if<States::InterSysBias>(&state))
                 {
-                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value = _kalmanFilter.getState()(*bias) / InsConst::C;
-                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*bias, *bias)) / InsConst::C;
+                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value = _kalmanFilter.getState()(*bias) / InsConst<>::C;
+                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*bias, *bias)) / InsConst<>::C;
                 }
                 else if (const auto* drift = std::get_if<States::InterSysDrift>(&state))
                 {
-                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value = _kalmanFilter.getState()(*drift) / InsConst::C;
-                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*drift, *drift)) / InsConst::C;
+                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value = _kalmanFilter.getState()(*drift) / InsConst<>::C;
+                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*drift, *drift)) / InsConst<>::C;
                 }
             }
         }
@@ -558,15 +558,15 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
 {
     _receiver[Rover].e_pos += state.segment<3>(States::Pos);
     _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
-    _receiver[Rover].recvClk.bias.value += state(States::RecvClkErr) / InsConst::C;
-    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst::C;
+    _receiver[Rover].recvClk.bias.value += state(States::RecvClkErr) / InsConst<>::C;
+    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
     for (const auto& s : state.rowKeys())
     {
         if (const auto* bias = std::get_if<States::InterSysBias>(&s))
         {
             auto& sysTimeDiff = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration());
-            sysTimeDiff.value += state(*bias) / InsConst::C;
-            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            sysTimeDiff.value += state(*bias) / InsConst<>::C;
+            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
             LOG_DATA("{}: Setting ISB Bias  [{}] = {}", nameId, bias->satSys, sysTimeDiff.value);
         }
     }
@@ -574,15 +574,15 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
     if (nUniqueDopplerMeas >= nParams)
     {
         _receiver[Rover].e_vel += state.segment<3>(States::Vel);
-        _receiver[Rover].recvClk.drift.value += state(States::RecvClkDrift) / InsConst::C;
-        _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst::C;
+        _receiver[Rover].recvClk.drift.value += state(States::RecvClkDrift) / InsConst<>::C;
+        _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst<>::C;
         for (const auto& s : state.rowKeys())
         {
             if (const auto* drift = std::get_if<States::InterSysDrift>(&s))
             {
                 auto& sysTimeDrift = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration());
-                sysTimeDrift.value += state(*drift) / InsConst::C;
-                sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                sysTimeDrift.value += state(*drift) / InsConst<>::C;
+                sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst<>::C;
                 LOG_DATA("{}: Setting ISB Drift [{}] = {}", nameId, drift->satSys, sysTimeDrift.value);
             }
         }
@@ -630,28 +630,28 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
     _receiver[Rover].e_pos = state(States::Pos);
     _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
     _receiver[Rover].e_vel = state(States::Vel);
-    _receiver[Rover].recvClk.bias.value = state(States::RecvClkErr) / InsConst::C;
-    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst::C;
+    _receiver[Rover].recvClk.bias.value = state(States::RecvClkErr) / InsConst<>::C;
+    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
     for (const auto& s : state.rowKeys())
     {
         if (const auto* bias = std::get_if<States::InterSysBias>(&s))
         {
             auto& sysTimeDiff = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration());
-            sysTimeDiff.value = state(*bias) / InsConst::C;
-            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            sysTimeDiff.value = state(*bias) / InsConst<>::C;
+            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
         }
     }
     if (_obsFilter.isObsTypeUsed(GnssObs::Doppler))
     {
-        _receiver[Rover].recvClk.drift.value = state(States::RecvClkDrift) / InsConst::C;
-        _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst::C;
+        _receiver[Rover].recvClk.drift.value = state(States::RecvClkDrift) / InsConst<>::C;
+        _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst<>::C;
         for (const auto& s : state.rowKeys())
         {
             if (const auto* drift = std::get_if<States::InterSysDrift>(&s))
             {
                 auto& sysTimeDrift = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration());
-                sysTimeDrift.value = state(*drift) / InsConst::C;
-                sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                sysTimeDrift.value = state(*drift) / InsConst<>::C;
+                sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst<>::C;
             }
         }
     }

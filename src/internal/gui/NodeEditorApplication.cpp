@@ -1658,14 +1658,30 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             }
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5F, 0.5F));
             ImGui::SetNextWindowSize(node->_guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
+            if (!node->_configWindowMutex.try_lock())
+            {
+                ImGui::SetNextWindowCollapsed(true, ImGuiCond_Always);
+                node->_configWindowForceCollapse = true;
+            }
+            else
+            {
+                node->_configWindowMutex.unlock();
+                if (node->_configWindowForceCollapse)
+                {
+                    LOG_TRACE("Setting next window collapsed: {}", node->_configWindowIsCollapsed);
+                    ImGui::SetNextWindowCollapsed(node->_configWindowIsCollapsed);
+                    node->_configWindowForceCollapse = false;
+                }
+            }
             if (ImGui::Begin(fmt::format("{} ({})", node->nameId(), node->type()).c_str(), &(node->_showConfig),
                              ImGuiWindowFlags_None))
             {
                 ImGui::PushFont(WindowFont());
                 bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
                 if (locked) { ImGui::BeginDisabled(); }
+                if (!node->_configWindowForceCollapse)
                 {
-                    std::scoped_lock<std::mutex> guard(node->_configWindowMutex);
+                    node->_configWindowIsCollapsed = false;
                     node->guiConfig();
                 }
                 if (locked) { ImGui::EndDisabled(); }
@@ -1673,6 +1689,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             }
             else // Window is collapsed
             {
+                if (!node->_configWindowForceCollapse) { node->_configWindowIsCollapsed = true; }
                 if (ImGui::IsWindowFocused())
                 {
                     ed::EnableShortcuts(true);

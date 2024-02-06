@@ -205,8 +205,8 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
 
                 double timeDiffRange_ref = (refData.Elapsed_Time - refData.PSR_satellite_time) * 1e-3;                       // [s]
                 double timeDiffRecvTrans = static_cast<double>((gnssObs->insTime - sigObs.satClock().transmitTime).count()); // [s]
-                timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s / InsConst::C;
-                timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s / InsConst::C;
+                timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s / InsConst<>::C;
+                timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s / InsConst<>::C;
                 LOG_DEBUG("    timeDiffRecvTrans {} [s]", timeDiffRecvTrans);
                 LOG_DEBUG("    timeDiffRange_ref {} [s]", timeDiffRange_ref);
                 LOG_DEBUG("    timeDiffRecvTrans - timeDiffRange_ref {} [s]", timeDiffRecvTrans - timeDiffRange_ref);

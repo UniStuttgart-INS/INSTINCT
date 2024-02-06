@@ -107,10 +107,10 @@ struct SpirentAsciiSatelliteData
 
         // The Spirent reference frame is rotated by the signal transmit time
         auto rotateDataFrame = [&v](const Eigen::Vector3d& e_satPos) -> Eigen::Vector3d {
-            auto dt = std::stod(v[SpirentAsciiSatelliteData_Range]) / InsConst::C;
+            auto dt = std::stod(v[SpirentAsciiSatelliteData_Range]) / InsConst<>::C;
 
             // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
-            return Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * e_satPos;
+            return Eigen::AngleAxisd(InsConst<>::omega_ie * dt, Eigen::Vector3d::UnitZ()) * e_satPos;
         };
 
         satId = SatId{ satSys, satNum };

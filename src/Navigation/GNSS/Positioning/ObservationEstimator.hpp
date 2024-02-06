@@ -98,7 +98,7 @@ class ObservationEstimator
                                            + dpsr_ie_r_s
                                            + dpsr_T_r_s
                                            + dpsr_I_r_s
-                                           + InsConst::C
+                                           + InsConst<>::C
                                                  * (receiver.recvClk.bias.value
                                                     - observation.satClock().bias
                                                     + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
@@ -113,7 +113,7 @@ class ObservationEstimator
                                            + dpsr_ie_r_s
                                            + dpsr_T_r_s
                                            - dpsr_I_r_s
-                                           + InsConst::C
+                                           + InsConst<>::C
                                                  * (receiver.recvClk.bias.value
                                                     - observation.satClock().bias
                                                     + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
@@ -126,7 +126,7 @@ class ObservationEstimator
                     case GnssObs::Doppler:
                         obsData.estimate = recvObs.e_pLOS().dot(observation.e_satVel() - receiver.e_vel)
                                            - calcSagnacRateCorrection(receiver.e_pos, observation.e_satPos(), receiver.e_vel, observation.e_satVel())
-                                           + InsConst::C
+                                           + InsConst<>::C
                                                  * (receiver.recvClk.drift.value
                                                     - observation.satClock().drift
                                                     + receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value);
@@ -167,7 +167,7 @@ class ObservationEstimator
                     {
                         if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
                         {
-                            double recvClockVariance = std::pow(InsConst::C, 2)
+                            double recvClockVariance = std::pow(InsConst<>::C, 2)
                                                        * (std::pow(receiver.recvClk.bias.stdDev, 2)
                                                           + std::pow(receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).stdDev, 2));
                             obsData.measVar += recvClockVariance;
@@ -175,7 +175,7 @@ class ObservationEstimator
                         }
                         else if (obsType == GnssObs::Doppler)
                         {
-                            double recvClockVariance = std::pow(InsConst::C, 2)
+                            double recvClockVariance = std::pow(InsConst<>::C, 2)
                                                        * (std::pow(receiver.recvClk.drift.stdDev, 2)
                                                           + std::pow(receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).stdDev, 2));
                             obsData.measVar += recvClockVariance;

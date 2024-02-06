@@ -42,9 +42,9 @@ namespace nm = NAV::NodeManager;
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
-constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
+constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst<>::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst<>::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -1099,12 +1099,12 @@ bool NAV::TightlyCoupledKF::initialize()
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter)
     {
         e_variance = _initCovariancePosition.array().pow(2);
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
     {
         e_variance = _initCovariancePosition;
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
 
     // Initial Covariance of the accelerometer biases in [m^2/s^4]
@@ -1145,7 +1145,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2)
     {
-        variance_clkPhase = std::pow(InsConst::C, 2) * _initCovariancePhase;
+        variance_clkPhase = std::pow(InsConst<>::C, 2) * _initCovariancePhase;
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m)
     {
@@ -1153,7 +1153,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s)
     {
-        variance_clkPhase = std::pow(InsConst::C * _initCovariancePhase, 2);
+        variance_clkPhase = std::pow(InsConst<>::C * _initCovariancePhase, 2);
     }
 
     // Initial Covariance of the receiver clock frequency drift
@@ -1265,7 +1265,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelNoiseUnits)
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
-        sigma2_ra = (_stdev_ra * 1e-3 * InsConst::G_NORM).array().square();
+        sigma2_ra = (_stdev_ra * 1e-3 * InsConst<>::G_NORM).array().square();
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
         sigma2_ra = _stdev_ra.array().square();
@@ -1291,7 +1291,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelBiasUnits)
     {
     case StdevAccelBiasUnits::microg: // [µg]
-        sigma2_bad = (_stdev_bad * 1e-6 * InsConst::G_NORM).array().square();
+        sigma2_bad = (_stdev_bad * 1e-6 * InsConst<>::G_NORM).array().square();
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
         sigma2_bad = _stdev_bad.array().square();
@@ -1375,7 +1375,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
         // omega_in^n = omega_ie^n + omega_en^n
-        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
+        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie
                                      + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
@@ -1409,7 +1409,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
+        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst<>::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -1835,21 +1835,21 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         LOG_DATA("{}:     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), dpsr_T);
 
         // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-        double dpsr_ie = 1.0 / InsConst::C * (e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(e_position));
+        double dpsr_ie = 1.0 / InsConst<>::C * (e_position - calc.e_satPos).dot(InsConst<>::e_omega_ie.cross(e_position));
         LOG_DATA("{}:     dpsr_ie {}", nameId(), dpsr_ie);
         // Geometric distance [m]
         double geometricDist = (calc.e_satPos - e_position).norm();
         LOG_DATA("{}:     geometricDist {}", nameId(), geometricDist);
 
-        _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
+        _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
 
         LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
 
         // Pseudorange estimate [m]
         psrEst(static_cast<int>(ix)) = geometricDist
-                                       + _recvClk.bias.value * InsConst::C
-                                       + _recvClk.drift.value * InsConst::C * tau_epoch
-                                       - calc.satClkBias * InsConst::C
+                                       + _recvClk.bias.value * InsConst<>::C
+                                       + _recvClk.drift.value * InsConst<>::C * tau_epoch
+                                       - calc.satClkBias * InsConst<>::C
                                        + dpsr_I
                                        + dpsr_T
                                        + dpsr_ie;
@@ -1868,7 +1868,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             LOG_DATA("{}:     psrRateMeas({}) {}", nameId(), iv, psrRateMeas(static_cast<int>(iv)));
 
             // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
-            double dpsr_dot_ie = InsConst::omega_ie / InsConst::C
+            double dpsr_dot_ie = InsConst<>::omega_ie / InsConst<>::C
                                  * (calc.e_satVel.y() * e_position.x() + calc.e_satPos.y() * e_velocity.x()
                                     - calc.e_satVel.x() * e_position.y() - calc.e_satPos.x() * e_velocity.y());
             LOG_DATA("{}:     dpsr_dot_ie {}", nameId(), dpsr_dot_ie);
@@ -1876,14 +1876,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             LOG_DATA("{}: _kalmanFilter.x(16, 0) = {} m/s", nameId(), _kalmanFilter.x(16, 0));
             LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
 
-            _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
+            _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst<>::C;
 
             LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
 
             // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
             psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - e_velocity)
-                                               + _recvClk.drift.value * InsConst::C
-                                               - calc.satClkDrift * InsConst::C
+                                               + _recvClk.drift.value * InsConst<>::C
+                                               - calc.satClkDrift * InsConst<>::C
                                                - dpsr_dot_ie;
             LOG_DATA("{}:     psrRateEst({}) {}", nameId(), iv, psrRateEst(static_cast<int>(iv)));
 
@@ -2033,8 +2033,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
 
     _accumulatedAccelBiases += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
     _accumulatedGyroBiases += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
-    _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
-    _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
+    _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
+    _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst<>::C;
 
     // Push out the new data
     auto tcKfInsGnssErrors = std::make_shared<TcKfInsGnssErrors>();
@@ -2044,8 +2044,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     tcKfInsGnssErrors->attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
     tcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
     tcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
-    tcKfInsGnssErrors->recvClkOffset = _recvClk.bias.value * InsConst::C;
-    tcKfInsGnssErrors->recvClkDrift = _recvClk.drift.value * InsConst::C;
+    tcKfInsGnssErrors->recvClkOffset = _recvClk.bias.value * InsConst<>::C;
+    tcKfInsGnssErrors->recvClkDrift = _recvClk.drift.value * InsConst<>::C;
 
     if (_frame == Frame::NED)
     {

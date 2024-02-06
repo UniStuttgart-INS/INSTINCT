@@ -244,7 +244,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
             auto dt = static_cast<double>((recvTime - satClk.transmitTime).count());
 
             // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
-            data = Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
+            data = Eigen::AngleAxisd(InsConst<>::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
         };
 
         Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(SkydelSatData_ECEF_X)]),

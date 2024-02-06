@@ -74,17 +74,17 @@ Eigen::Matrix<double, 16, 1> e_calcPosVelAttDerivative(const Eigen::Matrix<doubl
     LOG_DATA("b_omega_ib = {} [rad/s]", b_omega_ib.transpose());
 
     // ω_eb_b = ω_ib_b - C_be * ω_ie_e
-    Eigen::Vector3d b_omega_eb = b_omega_ib - b_Quat_e * (c.angularRateEarthRotationCompensationEnabled ? InsConst::e_omega_ie : Eigen::Vector3d::Zero());
+    Eigen::Vector3d b_omega_eb = b_omega_ib - b_Quat_e * (c.angularRateEarthRotationCompensationEnabled ? InsConst<>::e_omega_ie : Eigen::Vector3d::Zero());
     LOG_DATA("b_omega_eb = {} [rad/s]", b_omega_eb.transpose());
 
     // Coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
     Eigen::Vector3d e_coriolisAcceleration = c.coriolisAccelerationCompensationEnabled
-                                                 ? e_calcCoriolisAcceleration(InsConst::e_omega_ie, y.segment<3>(4))
+                                                 ? e_calcCoriolisAcceleration(InsConst<>::e_omega_ie, y.segment<3>(4))
                                                  : Eigen::Vector3d::Zero();
     LOG_DATA("e_coriolisAcceleration = {} [m/s^2]", e_coriolisAcceleration.transpose());
     // Centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path)
     Eigen::Vector3d e_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
-                                                    ? e_calcCentrifugalAcceleration(y.segment<3>(7), InsConst::e_omega_ie)
+                                                    ? e_calcCentrifugalAcceleration(y.segment<3>(7), InsConst<>::e_omega_ie)
                                                     : Eigen::Vector3d::Zero();
     LOG_DATA("e_centrifugalAcceleration = {} [m/s^2]", e_centrifugalAcceleration.transpose());
 

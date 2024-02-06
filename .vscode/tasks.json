@@ -307,7 +307,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:Linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc-${input:compiler} -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
                 "Conan: Release",
@@ -321,7 +321,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:Linker}",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc-${input:compiler} -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
                 "Conan: Release",
@@ -466,7 +466,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Release-doc",
+                "build/Release-doc-${input:compiler}",
                 "--target",
                 "doc",
             ],
@@ -482,7 +482,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Release-doc",
+                "build/Release-doc-${input:compiler}",
                 "--target",
                 "doc",
             ],

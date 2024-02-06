@@ -273,7 +273,7 @@ class ObservationFilter
                             recvObsData.obs[obsType].measurement = recvObsData.gnssObsData().pseudorange->value;
                             break;
                         case GnssObs::Carrier:
-                            recvObsData.obs[obsType].measurement = InsConst::C / obsData.satSigId.freq().getFrequency(freqNum)
+                            recvObsData.obs[obsType].measurement = InsConst<>::C / obsData.satSigId.freq().getFrequency(freqNum)
                                                                    * recvObsData.gnssObsData().carrierPhase->value;
                             break;
                         case GnssObs::Doppler:

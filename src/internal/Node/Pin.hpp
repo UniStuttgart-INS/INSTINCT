@@ -632,7 +632,7 @@ class InputPin : public Pin
     using FlowFirableCheckFunc = bool (*)(const Node*, const InputPin&);
 
     /// @brief Function to check if the callback is firable
-    FlowFirableCheckFunc firable = [](const Node*, const InputPin& inputPin) { return !inputPin.queue.empty(); };
+    FlowFirableCheckFunc firable = [](const Node*, const InputPin& inputPin) { return !inputPin.queue.empty() && !inputPin.queueBlocked; };
 
     /// @brief Priority when checking firable condition related to other pins (higher priority gets triggered first)
     int priority = 0;

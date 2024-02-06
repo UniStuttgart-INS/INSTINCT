@@ -35,9 +35,9 @@ namespace nm = NAV::NodeManager;
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
-constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
+constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst<>::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst<>::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -681,12 +681,12 @@ bool NAV::LooselyCoupledKF::initialize()
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter)
     {
         e_variance = _initCovariancePosition.array().pow(2);
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
     {
         e_variance = _initCovariancePosition;
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
 
     // Initial Covariance of the accelerometer biases in [m^2/s^4]
@@ -803,7 +803,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
         sigma_ra = _stdev_ra * 1e-3;      // [g / √(Hz)]
-        sigma_ra *= InsConst::G_NORM;     // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
+        sigma_ra *= InsConst<>::G_NORM;   // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
         // sigma_ra /= 1.;                // [m / (s^2 · √(s))]
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
@@ -834,9 +834,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Vector3d sigma_bad = Eigen::Vector3d::Zero();
     switch (_stdevAccelBiasUnits)
     {
-    case StdevAccelBiasUnits::microg:  // [µg]
-        sigma_bad = _stdev_bad * 1e-6; // [g]
-        sigma_bad *= InsConst::G_NORM; // [m / s^2]
+    case StdevAccelBiasUnits::microg:    // [µg]
+        sigma_bad = _stdev_bad * 1e-6;   // [g]
+        sigma_bad *= InsConst<>::G_NORM; // [m / s^2]
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
         sigma_bad = _stdev_bad;
@@ -898,7 +898,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
         // omega_in^n = omega_ie^n + omega_en^n
-        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
+        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie
                                      + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
@@ -931,7 +931,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
+        _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst<>::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -1119,7 +1119,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_latestInertialNavSol->n_Quat_e() * InsConst::e_omega_ie);
+        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_latestInertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie);
         LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
@@ -1146,7 +1146,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     e_Dcm_b =\n{}", nameId(), e_Dcm_b);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d e_Omega_ie = math::skewSymmetricMatrix(InsConst::e_omega_ie);
+        Eigen::Matrix3d e_Omega_ie = math::skewSymmetricMatrix(InsConst<>::e_omega_ie);
         LOG_DATA("{}:     e_Omega_ie =\n{}", nameId(), e_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
