@@ -41,7 +41,7 @@ class IonosphericCorrections
     {
         SatelliteSystem satSys = SatSys_None; ///< Satellite System (e.g. GPS, GAL, GLO, ...)
         AlphaBeta alphaBeta = Alpha;          ///< Alpha or beta value
-        std::array<double, 4> data{};         ///< Data storage (3 values for GAL, otherwise 4)
+        std::array<double, 4> data{};         ///< Data storage (3 values for GAL, otherwise 4) [s, s/semi-circle, s/semi-circle^2, s/semi-circle^3]
     };
 
     /// @brief Default constructor
@@ -91,7 +91,7 @@ class IonosphericCorrections
     /// @brief Inserts new data into the m_ionosphericCorrections variable
     /// @param[in] satSys Satellite System to search the value for
     /// @param[in] alphaBeta Alpha or beta values (Galileo only alpha)
-    /// @param[in] values Values to add
+    /// @param[in] values Values to add [s, s/semi-circle, s/semi-circle^2, s/semi-circle^3]
     void insert(SatelliteSystem satSys, AlphaBeta alphaBeta, const std::array<double, 4>& values)
     {
         auto iter = std::find_if(m_ionosphericCorrections.begin(), m_ionosphericCorrections.end(), [satSys, alphaBeta](const Corrections& c) {

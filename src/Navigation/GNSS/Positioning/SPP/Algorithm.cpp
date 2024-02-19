@@ -735,3 +735,13 @@ const char* to_string(SPP::Algorithm::ReceiverType receiver)
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::SPP::Algorithm::EstimatorType& obj)
+{
+    return os << fmt::format("{}", obj);
+}
+
+std::ostream& operator<<(std::ostream& os, const NAV::SPP::Algorithm::ReceiverType& obj)
+{
+    return os << fmt::format("{}", obj);
+}

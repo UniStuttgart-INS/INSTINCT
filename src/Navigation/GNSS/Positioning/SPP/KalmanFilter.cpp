@@ -423,18 +423,20 @@ const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& KalmanFilter:
 
 void to_json(json& j, const KalmanFilter& data)
 {
-    j["qCalculationAlgorithm"] = data._qCalculationAlgorithm;
-    j["covarianceAccelUnit"] = data._gui_covarianceAccelUnit;
-    j["covarianceAccel"] = data._gui_covarianceAccel;
-    j["covarianceClkPhaseDriftUnit"] = data._gui_covarianceClkPhaseDriftUnit;
-    j["covarianceClkPhaseDrift"] = data._gui_covarianceClkPhaseDrift;
-    j["covarianceClkFrequencyDriftUnit"] = data._gui_covarianceClkFrequencyDriftUnit;
-    j["covarianceClkFrequencyDrift"] = data._gui_covarianceClkFrequencyDrift;
-    j["covarianceInterSysClkPhaseDriftUnit"] = data._gui_covarianceInterSysClkPhaseDriftUnit;
-    j["covarianceInterSysClkPhaseDrift"] = data._gui_covarianceInterSysClkPhaseDrift;
-    j["covarianceInterSysClkFrequencyDriftUnit"] = data._gui_covarianceInterSysClkFrequencyDriftUnit;
-    j["covarianceInterSysClkFrequencyDrift"] = data._gui_covarianceInterSysClkFrequencyDrift;
-}
+    j = {
+        { "qCalculationAlgorithm", data._qCalculationAlgorithm },
+        { "covarianceAccelUnit", data._gui_covarianceAccelUnit },
+        { "covarianceAccel", data._gui_covarianceAccel },
+        { "covarianceClkPhaseDriftUnit", data._gui_covarianceClkPhaseDriftUnit },
+        { "covarianceClkPhaseDrift", data._gui_covarianceClkPhaseDrift },
+        { "covarianceClkFrequencyDriftUnit", data._gui_covarianceClkFrequencyDriftUnit },
+        { "covarianceClkFrequencyDrift", data._gui_covarianceClkFrequencyDrift },
+        { "covarianceInterSysClkPhaseDriftUnit", data._gui_covarianceInterSysClkPhaseDriftUnit },
+        { "covarianceInterSysClkPhaseDrift", data._gui_covarianceInterSysClkPhaseDrift },
+        { "covarianceInterSysClkFrequencyDriftUnit", data._gui_covarianceInterSysClkFrequencyDriftUnit },
+        { "covarianceInterSysClkFrequencyDrift", data._gui_covarianceInterSysClkFrequencyDrift },
+    };
+} // namespace NAV::SPP
 
 void from_json(const json& j, KalmanFilter& data)
 {

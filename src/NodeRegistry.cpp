@@ -178,6 +178,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
 #include "Nodes/Converter/GNSS/UbloxGnssObsConverter.hpp"
+#include "Nodes/Converter/GNSS/UbloxGnssOrbitCollector.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Link
 #include "Nodes/DataLink/udpSend.hpp"
@@ -247,6 +248,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
     registerNodeType<UbloxGnssObsConverter>();
+    registerNodeType<UbloxGnssOrbitCollector>();
     registerNodeType<VectorNavBinaryConverter>();
     // Data Link
     registerNodeType<UdpSend>();

@@ -526,6 +526,12 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
 
 } // namespace NAV
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::Frequency& obj);
+
 namespace std
 {
 /// @brief Hash function for Frequency (needed for unordered_map)

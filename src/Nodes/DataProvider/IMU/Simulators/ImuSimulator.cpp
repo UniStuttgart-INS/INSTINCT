@@ -178,7 +178,7 @@ void NAV::ImuSimulator::guiConfig()
                 };
                 if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
                 {
-                    std::lock_guard lk(*mutex);
+                    std::scoped_lock lk(*mutex);
                     displayTable();
                 }
                 else { displayTable(); }
@@ -1263,7 +1263,7 @@ bool NAV::ImuSimulator::initializeSplines()
     {
         if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
         {
-            std::lock_guard lk(*mutex);
+            std::scoped_lock lk(*mutex);
             if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
                 csvData && csvData->lines.size() >= 2)
             {
@@ -1410,7 +1410,7 @@ bool NAV::ImuSimulator::resetNode()
     {
         if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_CSV))
         {
-            std::lock_guard lk(*mutex);
+            std::scoped_lock lk(*mutex);
             if (const auto* csvData = getInputValue<const CsvData>(INPUT_PORT_INDEX_CSV);
                 csvData && !csvData->lines.empty())
             {

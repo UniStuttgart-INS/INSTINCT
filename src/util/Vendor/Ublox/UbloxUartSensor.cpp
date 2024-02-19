@@ -9,7 +9,8 @@
 #include "UbloxUartSensor.hpp"
 
 #include "UbloxUtilities.hpp"
-#include "util/Logger.hpp"
+
+#include "util/Container/STL.hpp"
 
 NAV::vendor::ublox::UbloxUartSensor::UbloxUartSensor(std::string name)
     : _name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
@@ -19,6 +20,7 @@ NAV::vendor::ublox::UbloxUartSensor::UbloxUartSensor(std::string name)
 
 void NAV::vendor::ublox::UbloxUartSensor::resetTracking()
 {
+    LOG_DATA("{}: Reset tracking", _name);
     _currentlyBuildingBinaryPacket = false;
     _currentlyBuildingAsciiPacket = false;
 
@@ -42,6 +44,9 @@ void NAV::vendor::ublox::UbloxUartSensor::resetTracking()
 
     _buffer.resize(0);
     _numOfBytesRemainingForCompletePacket = 0;
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+    _unrecognizedBytes.clear();
+#endif
 }
 
 std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::findPacket(uint8_t dataByte)
@@ -50,20 +55,35 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::fin
     {
         // Buffer is full
         resetTracking();
-        LOG_ERROR("{}: Discarding current packet, because buffer is full.", _name);
+        LOG_ERROR("{}: Discarding current packet, because buffer is full", _name);
     }
 
     if (!_currentlyBuildingAsciiPacket && !_currentlyBuildingBinaryPacket)
     {
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+        if (dataByte == BINARY_SYNC_CHAR_1 || dataByte == ASCII_START_CHAR)
+        {
+            if (!_unrecognizedBytes.empty())
+            {
+                LOG_DATA("{}: {} unrecognized bytes since last message: {}", _name, _unrecognizedBytes.size(), joinToString(_unrecognizedBytes, " ", ":x"));
+            }
+        }
+        else
+        {
+            _unrecognizedBytes.push_back(dataByte);
+        }
+#endif
         // This byte must be the start char
         if (dataByte == BINARY_SYNC_CHAR_1)
         {
+            LOG_DATA("{}: 1st sync character found", _name);
             resetTracking();
             _currentlyBuildingBinaryPacket = true;
             _buffer.push_back(dataByte);
         }
         else if (dataByte == ASCII_START_CHAR)
         {
+            LOG_DATA("{}: Ascii sync character found", _name);
             resetTracking();
             _currentlyBuildingAsciiPacket = true;
             _buffer.push_back(dataByte);
@@ -79,6 +99,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::fin
             if (dataByte == BINARY_SYNC_CHAR_2)
             {
                 _binarySyncChar2Found = true;
+                LOG_DATA("{}: 2nd sync character found", _name);
             }
             else
             {
@@ -108,7 +129,10 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::fin
             _binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             _binaryPayloadLength = uart::stoh(_binaryPayloadLength, ENDIANNESS);
             _numOfBytesRemainingForCompletePacket = _binaryPayloadLength + 2U;
-            LOG_DATA("{}: Binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
+
+            LOG_DATA("{}: Binary packet: Class={:0x} [{}], Id={:0x} [{}], payload length={}", _name,
+                     _binaryMsgClass, getStringFromMsgClass(static_cast<UbxClass>(_binaryMsgClass)),
+                     _binaryMsgId, getStringFromMsgId(static_cast<UbxClass>(_binaryMsgClass), _binaryMsgId), _binaryPayloadLength);
         }
         else
         {
@@ -155,12 +179,16 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::fin
                 {
                     // We have a valid ascii packet!!!.
                     LOG_DATA("{}: Valid ascii packet: {}", _name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    resetTracking();
                     return p;
                 }
                 // Invalid packet!
                 LOG_ERROR("{}: Invalid ascii packet: {}", _name, p->datastr());
             }
-
+            else
+            {
+                LOG_DATA("{}: 2nd Ascii end character not found", _name);
+            }
             resetTracking();
         }
     }

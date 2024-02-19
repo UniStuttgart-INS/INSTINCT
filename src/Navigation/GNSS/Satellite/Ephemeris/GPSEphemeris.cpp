@@ -16,6 +16,9 @@
 namespace NAV
 {
 
+GPSEphemeris::GPSEphemeris(const InsTime& toc)
+    : SatNavData(SatNavData::GPSEphemeris, toc) {}
+
 GPSEphemeris::GPSEphemeris(const InsTime& toc, const InsTime& toe,
                            const size_t& IODE, const size_t& IODC,
                            const std::array<double, 3>& a,
@@ -312,8 +315,7 @@ bool GPSEphemeris::isHealthy() const
 
 double GPSEphemeris::calcSatellitePositionVariance() const
 {
-    // Getting the index and value again will discretize the URA values
-    return std::pow(gpsUraIdx2Val(gpsUraVal2Idx(svAccuracy)), 2);
+    return std::pow(svAccuracy, 2);
 }
 
 } // namespace NAV

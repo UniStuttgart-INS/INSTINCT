@@ -54,6 +54,8 @@ bool NAV::UbloxGnssObsConverter::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _lastEpochObs.clear();
+
     return true;
 }
 
@@ -75,13 +77,15 @@ void NAV::UbloxGnssObsConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue,
 
             for (const auto& satSys : SatelliteSystem::GetAll())
             {
-                std::map<uint16_t, GnssObs::ObservationData> sortedObsData;
+                std::map<SatSigId, GnssObs::ObservationData> sortedObsData;
                 for (const auto& data : ubxRxmRawx.data)
                 {
                     if (ubx::getSatSys(data.gnssId) != satSys) { continue; }
 
                     SatSigId satSigId(ubx::getCode(data.gnssId, data.sigId), data.svId);
-                    // LOG_DATA("{}: Reading [{}]", nameId(), satSigId);
+                    LOG_DATA("{}: [{}][{}], prValid {}, cpValid {}, halfCycValid {}, subHalfSubtractedFromPhase {}, trkStat {}, observedLastEpoch {}",
+                             nameId(), ubloxObs->insTime.toYMDHMS(GPST), satSigId, data.prValid(), data.cpValid(), data.halfCycValid(), data.subHalfSubtractedFromPhase(), data.trkStat,
+                             _lastEpochObs.contains(satSigId));
                     GnssObs::ObservationData obsData(satSigId);
                     if (data.prValid())
                     {
@@ -92,25 +96,33 @@ void NAV::UbloxGnssObsConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue,
                     }
                     if (data.cpValid())
                     {
+                        std::bitset<4> LLI;
+                        LLI[0] = !_lastEpochObs.contains(satSigId);
+                        LLI[1] = !data.halfCycValid();
                         obsData.carrierPhase = GnssObs::ObservationData::CarrierPhase{
                             .value = data.cpMes,
                             .SSI = 0,
-                            .LLI = 0,
+                            .LLI = static_cast<uint8_t>(LLI.to_ulong()),
                         };
                     }
                     obsData.doppler = data.doMes;
                     obsData.CN0 = data.cno;
 
-                    sortedObsData.insert(std::make_pair(satSigId.satNum, obsData));
+                    sortedObsData.insert(std::make_pair(satSigId, obsData));
                     gnssObs->satData(satSigId.toSatId()).frequencies |= satSigId.freq();
                 }
+                std::erase_if(_lastEpochObs, [&](const SatSigId& satSigId) { return satSigId.freq().getSatSys() == satSys; });
                 for (const auto& obsData : sortedObsData)
                 {
                     // LOG_DATA("{}: Adding [{}]", nameId(), obsData.second.satSigId);
                     gnssObs->data.push_back(obsData.second);
+                    if (obsData.second.carrierPhase)
+                    {
+                        _lastEpochObs.insert(obsData.first);
+                    }
                 }
             }
-
+            if (gnssObs->data.empty()) { return; }
             invokeCallbacks(OUTPUT_PORT_INDEX_GNSS_OBS, gnssObs);
         }
     }

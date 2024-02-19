@@ -84,8 +84,12 @@ uint8_t gpsUraVal2Idx(double val)
 
 double gpsUraIdx2Val(uint8_t idx)
 {
-    constexpr std::array<double, 15> URA = { 2.4, 3.4, 4.85, 6.85, 9.65, 13.65, 24.0, 48.0, 96.0, 192.0, 384.0, 768.0, 1536.0, 3072.0, 6144.0 };
-    return URA.at(std::min(static_cast<size_t>(idx), URA.size()));
+    if (idx == 1) { return 2.8; }
+    if (idx == 3) { return 5.7; }
+    if (idx == 5) { return 11.3; }
+    if (idx <= 6) { return std::pow(2, 1.0 + idx / 2.0); }
+    if (idx < 15) { return std::pow(2, idx - 2); }
+    return 6144.0;
 }
 
 } // namespace NAV

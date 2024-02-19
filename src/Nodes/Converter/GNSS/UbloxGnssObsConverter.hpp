@@ -13,7 +13,10 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "internal/Node/Node.hpp"
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 
 namespace NAV
 {
@@ -45,6 +48,9 @@ class UbloxGnssObsConverter : public Node
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_GNSS_OBS = 0; ///< @brief Flow
+
+    /// List of signals of the last epoch. To set the LLI flag
+    std::unordered_set<SatSigId> _lastEpochObs;
 
     /// @brief Initialize the node
     bool initialize() override;

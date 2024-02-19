@@ -16,6 +16,9 @@
 namespace NAV
 {
 
+GalileoEphemeris::GalileoEphemeris(const InsTime& toc)
+    : SatNavData(SatNavData::GalileoEphemeris, toc) {}
+
 GalileoEphemeris::GalileoEphemeris(const InsTime& toc, const InsTime& toe,
                                    const size_t& IODnav,
                                    const std::array<double, 3>& a,
@@ -87,7 +90,7 @@ GalileoEphemeris::GalileoEphemeris(int32_t year, int32_t month, int32_t day, int
                  .E1B_DataValidityStatus = static_cast<GalileoEphemeris::SvHealth::DataValidityStatus>((static_cast<uint16_t>(svHealth) & 0b000000001) >> 0),
                  .E5a_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((static_cast<uint16_t>(svHealth) & 0b000110000) >> 4),
                  .E5b_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((static_cast<uint16_t>(svHealth) & 0b110000000) >> 7),
-                 .E1BC_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((static_cast<uint16_t>(svHealth) & 0b000000110) >> 1) }),
+                 .E1B_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((static_cast<uint16_t>(svHealth) & 0b000000110) >> 1) }),
       BGD_E1_E5a(BGD_E1_E5a),
       BGD_E1_E5b(BGD_E1_E5b)
 {}
@@ -311,13 +314,12 @@ bool GalileoEphemeris::isHealthy() const
            && svHealth.E1B_DataValidityStatus == SvHealth::DataValidityStatus::NavigationDataValid
            && svHealth.E5a_SignalHealthStatus == SvHealth::SignalHealthStatus::SignalOK
            && svHealth.E5b_SignalHealthStatus == SvHealth::SignalHealthStatus::SignalOK
-           && svHealth.E1BC_SignalHealthStatus == SvHealth::SignalHealthStatus::SignalOK;
+           && svHealth.E1B_SignalHealthStatus == SvHealth::SignalHealthStatus::SignalOK;
 }
 
 double GalileoEphemeris::calcSatellitePositionVariance() const
 {
-    // Getting the index and value again will discretize the URA values
-    return std::pow(galSisaIdx2Val(galSisaVal2Idx(signalAccuracy)), 2);
+    return std::pow(signalAccuracy, 2);
 }
 
 } // namespace NAV

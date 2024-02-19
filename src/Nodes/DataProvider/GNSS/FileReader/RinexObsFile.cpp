@@ -710,7 +710,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         }
     }
 
-    invokeCallbacks(OutputPortIndex_GnssObs, gnssObs);
+    invokeCallbacks(OUTPUT_PORT_INDEX_GNSS_OBS, gnssObs);
     return gnssObs;
 }
 

@@ -92,6 +92,8 @@ bool NAV::UbloxFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _lastObsTime.reset();
+
     return FileReader::initialize();
 }
 
@@ -113,42 +115,56 @@ std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData()
 {
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-    while (!eof() && read(reinterpret_cast<char*>(&i), 1))
+    std::shared_ptr<UbloxObs> obs;
+    while (true)
     {
-        packet = _sensor.findPacket(i);
-
-        if (packet != nullptr)
+        while (!eof() && read(reinterpret_cast<char*>(&i), 1))
         {
-            break;
+            packet = _sensor.findPacket(i);
+
+            if (packet != nullptr)
+            {
+                break;
+            }
         }
-    }
 
-    if (!packet)
-    {
-        return nullptr;
-    }
-
-    // Check if package is empty
-    if (packet->getRawDataLength() == 0)
-    {
-        return nullptr;
-    }
-
-    auto obs = std::make_shared<UbloxObs>();
-    vendor::ublox::decryptUbloxObs(obs, *packet);
-
-    if (!obs->insTime.empty())
-    {
-        if (util::time::GetMode() == util::time::Mode::REAL_TIME)
+        if (!packet || eof())
         {
-            util::time::SetCurrentTime(obs->insTime);
+            LOG_DEBUG("{}: End of file reached.", nameId());
+            return nullptr;
         }
+
+        if (packet->getRawDataLength() == 0)
+        {
+            LOG_TRACE("{}: Packet has empty payload", nameId());
+            return nullptr;
+        }
+
+        obs = std::make_shared<UbloxObs>();
+        if (!vendor::ublox::decryptUbloxObs(obs, *packet, nameId())) { continue; };
+        if (packet->type() != uart::protocol::Packet::Type::TYPE_BINARY) { continue; };
+
+        if (!obs->insTime.empty())
+        {
+            _lastObsTime = obs->insTime;
+        }
+        else
+        {
+            if (!_lastObsTime.empty())
+            {
+                obs->insTime = _lastObsTime;
+            }
+            else
+            {
+                LOG_DATA("{}: Could not set valid time. Skipping package.", nameId());
+                continue;
+            }
+        }
+        break;
     }
-    else if (auto currentTime = util::time::GetCurrentInsTime();
-             !currentTime.empty())
-    {
-        obs->insTime = currentTime;
-    }
+
+    LOG_DATA("{}: [{}] Packet found [{}][{}]", nameId(), obs->insTime.toYMDHMS(GPST),
+             obs->msgClass, vendor::ublox::getStringFromMsgId(obs->msgClass, obs->msgId));
 
     invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, obs);
     return obs;

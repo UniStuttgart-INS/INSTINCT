@@ -898,7 +898,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterImuLogCsv),
                   fmt::streamed(messageCounterImuLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         data_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
@@ -912,7 +912,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterImuLogCsv),
                   fmt::streamed(messageCounterImuLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         logs_vn310_imu_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
@@ -926,7 +926,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterImuLogCsv),
                   fmt::streamed(messageCounterImuLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         logs_vn310_imu_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_imu_csv, logs_vn310_imu_csv, logs_vn310_imu_vnb);
@@ -942,7 +942,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterGnssLogCsv),
                   fmt::streamed(messageCounterGnssLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         data_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
@@ -956,7 +956,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterGnssLogCsv),
                   fmt::streamed(messageCounterGnssLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         logs_vn310_gnss_csv.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);
@@ -970,7 +970,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
                   fmt::streamed(messageCounterGnssLogCsv),
                   fmt::streamed(messageCounterGnssLogVnb));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         logs_vn310_gnss_vnb.push_back(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(queue.front()));
 
         compareObservations(data_vn310_gnss_csv, logs_vn310_gnss_csv, logs_vn310_gnss_vnb);

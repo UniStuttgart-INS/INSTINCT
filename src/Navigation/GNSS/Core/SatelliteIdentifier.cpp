@@ -122,10 +122,14 @@ bool ShowSatelliteSelector(const char* label, SatId& satellite, SatelliteSystem 
     return false;
 }
 
-std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId)
+} // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& obj)
 {
-    os << fmt::format("{}", satId);
-    return os;
+    return os << fmt::format("{}", obj);
 }
 
-} // namespace NAV
+std::ostream& operator<<(std::ostream& os, const NAV::SatSigId& obj)
+{
+    return os << fmt::format("{}", obj);
+}

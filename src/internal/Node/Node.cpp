@@ -101,8 +101,11 @@ void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
             auto* targetPin = link.getConnectedPin();
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
-                outputPin.dataAccessCounter++;
-                LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, fmt::streamed(outputPin.dataAccessCounter));
+                {
+                    std::scoped_lock<std::mutex> lk(outputPin.dataAccessMutex);
+                    outputPin.dataAccessCounter++;
+                    LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
+                }
 
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
@@ -127,16 +130,19 @@ void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
     }
 }
 
-void NAV::Node::requestOutputValueLock(size_t pinIdx)
+std::scoped_lock<std::mutex> NAV::Node::requestOutputValueLock(size_t pinIdx)
 {
     auto& outputPin = outputPins.at(pinIdx);
-    if (outputPin.dataAccessCounter > 0)
     {
-        LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, fmt::streamed(outputPin.dataAccessCounter));
         std::unique_lock<std::mutex> lk(outputPin.dataAccessMutex);
-        outputPin.dataAccessConditionVariable.wait(lk, [&outputPin]() { return outputPin.dataAccessCounter == 0; });
-        LOG_DATA("{}: Lock on output pin '{}' acquired.", nameId(), outputPin.name);
+        if (outputPin.dataAccessCounter > 0)
+        {
+            LOG_DATA("{}: Requesting lock on output pin '{}', {} threads accessing still.", nameId(), outputPin.name, outputPin.dataAccessCounter);
+            outputPin.dataAccessConditionVariable.wait(lk, [&outputPin]() { return outputPin.dataAccessCounter == 0; });
+            LOG_DATA("{}: Lock on output pin '{}' acquired.", nameId(), outputPin.name);
+        }
     }
+    return std::scoped_lock(outputPin.dataAccessMutex);
 }
 
 std::mutex* NAV::Node::getInputValueMutex(size_t portIndex)
@@ -151,14 +157,18 @@ std::mutex* NAV::Node::getInputValueMutex(size_t portIndex)
 void NAV::Node::releaseInputValue(size_t portIndex)
 {
     OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin();
-    if (outputPin && outputPin->dataAccessCounter > 0)
+    if (outputPin)
     {
-        outputPin->dataAccessCounter--;
-        std::lock_guard<std::mutex> lk(outputPin->dataAccessMutex);
-        if (outputPin->dataAccessCounter == 0)
+        std::scoped_lock<std::mutex> lk(outputPin->dataAccessMutex);
+        if (outputPin->dataAccessCounter > 0)
         {
-            LOG_DATA("{}: Notifying node '{}' connected to pin {} that all data is read.", nameId(), outputPin->parentNode->nameId(), outputPin->name);
-            outputPin->dataAccessConditionVariable.notify_all();
+            outputPin->dataAccessCounter--;
+
+            if (outputPin->dataAccessCounter == 0)
+            {
+                LOG_DATA("{}: Notifying node '{}' connected to pin {} that all data is read.", nameId(), outputPin->parentNode->nameId(), outputPin->name);
+                outputPin->dataAccessConditionVariable.notify_all();
+            }
         }
     }
 }
@@ -274,7 +284,7 @@ std::string NAV::Node::toString(State state)
 
 NAV::Node::State NAV::Node::getState() const
 {
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     return _state;
 }
 
@@ -324,10 +334,10 @@ bool NAV::Node::doInitialize(bool wait)
     {
         std::unique_lock lk(_workerMutex);
         _workerConditionVariable.wait(lk, [&, this] {
-            std::lock_guard lks(_stateMutex);
+            std::scoped_lock lks(_stateMutex);
             return _state == State::Initialized || _state == State::Deinitialized;
         });
-        std::lock_guard lks(_stateMutex);
+        std::scoped_lock lks(_stateMutex);
         return _state == State::Initialized;
     }
     return true;
@@ -369,10 +379,10 @@ bool NAV::Node::doReinitialize(bool wait)
     {
         std::unique_lock lk(_workerMutex);
         _workerConditionVariable.wait(lk, [&, this] {
-            std::lock_guard lks(_stateMutex);
+            std::scoped_lock lks(_stateMutex);
             return _state == State::Initialized || _state == State::Deinitialized;
         });
-        std::lock_guard lks(_stateMutex);
+        std::scoped_lock lks(_stateMutex);
         return _state == State::Initialized;
     }
     return true;
@@ -412,7 +422,7 @@ bool NAV::Node::doDeinitialize(bool wait)
     {
         std::unique_lock lk(_workerMutex);
         _workerConditionVariable.wait(lk, [&, this] {
-            std::lock_guard lks(_stateMutex);
+            std::scoped_lock lks(_stateMutex);
             return _state == State::Deinitialized;
         });
     }
@@ -454,7 +464,7 @@ bool NAV::Node::doDisable(bool wait)
     {
         std::unique_lock lk(_workerMutex);
         _workerConditionVariable.wait(lk, [&, this] {
-            std::lock_guard lks(_stateMutex);
+            std::scoped_lock lks(_stateMutex);
             return _state == State::Deinitialized;
         });
     }
@@ -463,7 +473,7 @@ bool NAV::Node::doDisable(bool wait)
 
 bool NAV::Node::doEnable()
 {
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     LOG_TRACE("{}: Current state = {}", nameId(), toString(_state));
 
     if (_state == State::Disabled)
@@ -476,7 +486,7 @@ bool NAV::Node::doEnable()
 void NAV::Node::wakeWorker()
 {
     {
-        std::lock_guard lk(_workerMutex);
+        std::scoped_lock lk(_workerMutex);
         _workerWakeup = true;
     }
     _workerConditionVariable.notify_all();
@@ -484,17 +494,17 @@ void NAV::Node::wakeWorker()
 
 bool NAV::Node::isDisabled() const
 {
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     return _state == State::Disabled;
 }
 bool NAV::Node::isInitialized() const
 {
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     return _state == State::Initialized;
 }
 bool NAV::Node::isTransient() const
 {
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     switch (_state)
     {
     case State::Disabled:
@@ -511,6 +521,10 @@ bool NAV::Node::isTransient() const
     }
 
     return true;
+}
+bool NAV::Node::isOnlyRealtime() const
+{
+    return _onlyRealTime;
 }
 
 void NAV::Node::workerThread(Node* node)
@@ -820,7 +834,7 @@ bool NAV::Node::workerInitializeNode()
 {
     LOG_TRACE("{}: called", nameId());
     {
-        std::lock_guard lk(_stateMutex);
+        std::scoped_lock lk(_stateMutex);
         INS_ASSERT_USER_ERROR(_state == State::DoInitialize, fmt::format("Worker can only initialize the node if the state is set to DoInitialize, but it is {}.", toString(_state)).c_str());
         _state = Node::State::Initializing;
     }
@@ -841,7 +855,7 @@ bool NAV::Node::workerInitializeNode()
                     if (!connectedNode->doInitialize(true))
                     {
                         LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
-                        std::lock_guard lk(_stateMutex);
+                        std::scoped_lock lk(_stateMutex);
                         if (_state == State::Initializing)
                         {
                             _state = Node::State::Deinitialized;
@@ -889,7 +903,7 @@ bool NAV::Node::workerInitializeNode()
             }
         }
 
-        std::lock_guard lk(_stateMutex);
+        std::scoped_lock lk(_stateMutex);
         if (_state == State::Initializing)
         {
             _state = Node::State::Initialized;
@@ -898,7 +912,7 @@ bool NAV::Node::workerInitializeNode()
     }
 
     LOG_TRACE("{}: initialize() failed", nameId());
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     if (_state == State::Initializing)
     {
         _state = Node::State::Deinitialized;
@@ -910,7 +924,7 @@ bool NAV::Node::workerDeinitializeNode()
 {
     LOG_TRACE("{}: called", nameId());
     {
-        std::lock_guard lk(_stateMutex);
+        std::scoped_lock lk(_stateMutex);
         INS_ASSERT_USER_ERROR(_state == State::DoDeinitialize, fmt::format("Worker can only deinitialize the node if the state is set to DoDeinitialize, but it is {}.", toString(_state)).c_str());
         {
             _state = Node::State::Deinitializing;
@@ -944,7 +958,7 @@ bool NAV::Node::workerDeinitializeNode()
         deinitialize();
     }
 
-    std::lock_guard lk(_stateMutex);
+    std::scoped_lock lk(_stateMutex);
     if (_state == State::Deinitializing)
     {
         if (_disable)
@@ -1006,7 +1020,7 @@ void NAV::from_json(const json& j, Node& node)
         bool enabled = j.at("enabled").get<bool>();
         if (!enabled)
         {
-            std::lock_guard lk(node._stateMutex);
+            std::scoped_lock lk(node._stateMutex);
             node._state = Node::State::Disabled;
         }
     }

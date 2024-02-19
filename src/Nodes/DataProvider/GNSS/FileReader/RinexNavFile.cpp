@@ -104,7 +104,11 @@ bool RinexNavFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _gnssNavInfo.reset();
+    {
+        // The guards needs to be released before FileReader::initialize()
+        auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_GNSS_NAV_INFO);
+        _gnssNavInfo.reset();
+    }
     _version = 0.0;
 
     if (!FileReader::initialize())
@@ -240,6 +244,7 @@ FileReader::FileType RinexNavFile::determineFileType()
 void RinexNavFile::readHeader()
 {
     LOG_TRACE("{}: called", nameId());
+    auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_GNSS_NAV_INFO);
 
     std::string line;
     auto extHeaderLabel = [](const std::string& line) {
@@ -414,6 +419,7 @@ void RinexNavFile::readHeader()
 void RinexNavFile::readOrbits()
 {
     LOG_TRACE("{}: called", nameId());
+    auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_GNSS_NAV_INFO);
 
     auto abortReading = [&]() {
         LOG_ERROR("{}: The file '{}' is corrupt in line {}.", nameId(), _path, getCurrentLineNumber());
@@ -680,7 +686,7 @@ void RinexNavFile::readOrbits()
                                                           .E1B_DataValidityStatus = static_cast<GalileoEphemeris::SvHealth::DataValidityStatus>((svHealth & 0b000000001) >> 0),
                                                           .E5a_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((svHealth & 0b000110000) >> 4),
                                                           .E5b_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((svHealth & 0b110000000) >> 7),
-                                                          .E1BC_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((svHealth & 0b000000110) >> 1) };
+                                                          .E1B_SignalHealthStatus = static_cast<GalileoEphemeris::SvHealth::SignalHealthStatus>((svHealth & 0b000000110) >> 1) };
                     _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<GalileoEphemeris>(epoch, toe, IODE_IODnav_AODE_IODEC, a,
                                                                                                             sqrt_A, e, i_0, Omega_0, omega, M_0,
                                                                                                             delta_n, Omega_dot, i_dot, Cus, Cuc,

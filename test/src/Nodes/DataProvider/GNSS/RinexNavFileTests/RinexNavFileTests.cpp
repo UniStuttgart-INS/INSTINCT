@@ -20,7 +20,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "GnssNavInfoComparisons.hpp"
+#include "NodeData/GNSS/GnssNavInfoComparisons.hpp"
 #include "v2_01/brdc0990_22g.hpp"
 #include "v2_10/bako3540_22n.hpp"
 #include "v2_11/Allo060xA_22n.hpp"
