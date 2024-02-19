@@ -266,7 +266,7 @@ class Node
 
     /// @brief Blocks the thread till the output values was read by all connected nodes
     /// @param[in] pinIdx Output Pin index where to request the lock
-    void requestOutputValueLock(size_t pinIdx);
+    [[nodiscard]] std::scoped_lock<std::mutex> requestOutputValueLock(size_t pinIdx);
 
     /// @brief Get Input Value connected on the pin. Only const data types.
     /// @tparam T Type of the connected object
@@ -366,6 +366,9 @@ class Node
 
     /// @brief Checks if the node is changing its state currently
     [[nodiscard]] bool isTransient() const;
+
+    /// @brief Checks if the node is only working in real time (sensors, network interfaces, ...)
+    [[nodiscard]] bool isOnlyRealtime() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */

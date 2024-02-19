@@ -677,7 +677,7 @@ struct UbxRxmRawx
         [[nodiscard]] bool halfCycValid() const { return trkStat[2]; }
 
         /// @brief Half cycle subtracted from phase
-        [[nodiscard]] bool subHalfCycValid() const { return trkStat[3]; }
+        [[nodiscard]] bool subHalfSubtractedFromPhase() const { return trkStat[3]; }
     };
 
     /// Measurement time of week in receiverblocal time approximately aligned to the GPS time system.
@@ -770,18 +770,27 @@ enum UbxUpdMessages
 [[nodiscard]] UbxClass getMsgClassFromString(const std::string& className);
 
 /// @brief Get the UBX Msg Id From String object
-///
 /// @param[in] msgClass The Ubx Msg Class to search in
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string& idName);
 
 /// @brief Get the UBX Msg Id From String objects
-///
 /// @param[in] className String of the UBX class
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
+
+/// @brief Get the a string from a UBX Msg Class
+/// @param[in] msgClass The Ubx Msg Class
+/// @return The Msg Class string
+[[nodiscard]] std::string getStringFromMsgClass(UbxClass msgClass);
+
+/// @brief Get the a string from a UBX Msg Id
+/// @param[in] msgClass The Ubx Msg Class to search in
+/// @param[in] msgId Msg Id
+/// @return The Msg Id string
+[[nodiscard]] std::string getStringFromMsgId(UbxClass msgClass, uint8_t msgId);
 
 /// @brief Get the GNSS Satellite System from gnssId
 /// @param gnssId Ublox gnssId
@@ -794,6 +803,12 @@ enum UbxUpdMessages
 [[nodiscard]] Code getCode(uint8_t gnssId, uint8_t sigId);
 
 } // namespace NAV::vendor::ublox
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::vendor::ublox::UbxClass& obj);
 
 #ifndef DOXYGEN_IGNORE
 
@@ -812,9 +827,22 @@ struct fmt::formatter<NAV::vendor::ublox::NmeaStandardMessages> : ostream_format
 template<>
 struct fmt::formatter<NAV::vendor::ublox::NmeaPubxMessages> : ostream_formatter
 {};
+
+/// @brief Formatter for UbxClass
 template<>
-struct fmt::formatter<NAV::vendor::ublox::UbxClass> : ostream_formatter
-{};
+struct fmt::formatter<NAV::vendor::ublox::UbxClass> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format SatelliteSystem structs
+    /// @param[in] ubxClass Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::vendor::ublox::UbxClass& ubxClass, FormatContext& ctx)
+    {
+        return fmt::formatter<std::string>::format(NAV::vendor::ublox::getStringFromMsgClass(ubxClass), ctx);
+    }
+};
+
 template<>
 struct fmt::formatter<NAV::vendor::ublox::UbxAckMessages> : ostream_formatter
 {};

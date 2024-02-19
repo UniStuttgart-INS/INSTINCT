@@ -46,13 +46,13 @@ class GalileoEphemeris final : public SatNavData
             SignalComponentCurrentlyInTest = 3, ///< Signal Component currently in Test
         };
 
-        DataValidityStatus E5a_DataValidityStatus; ///< E5a Data Validity Status
-        DataValidityStatus E5b_DataValidityStatus; ///< E5b Data Validity Status
-        DataValidityStatus E1B_DataValidityStatus; ///< E1-B Data Validity Status
+        DataValidityStatus E5a_DataValidityStatus = NavigationDataValid; ///< E5a Data Validity Status
+        DataValidityStatus E5b_DataValidityStatus = NavigationDataValid; ///< E5b Data Validity Status
+        DataValidityStatus E1B_DataValidityStatus = NavigationDataValid; ///< E1-B Data Validity Status
 
-        SignalHealthStatus E5a_SignalHealthStatus;  ///< E5a Signal Health Status
-        SignalHealthStatus E5b_SignalHealthStatus;  ///< E5b Signal Health Status
-        SignalHealthStatus E1BC_SignalHealthStatus; ///< E1-B/C Signal Health Status
+        SignalHealthStatus E5a_SignalHealthStatus = SignalOK; ///< E5a Signal Health Status
+        SignalHealthStatus E5b_SignalHealthStatus = SignalOK; ///< E5b Signal Health Status
+        SignalHealthStatus E1B_SignalHealthStatus = SignalOK; ///< E1-B/C Signal Health Status
     };
 
     // #######################################################################################################
@@ -62,10 +62,10 @@ class GalileoEphemeris final : public SatNavData
     // ------------------------------------------ Time Parameters --------------------------------------------
 
     /// @brief Time of Clock
-    const InsTime toc;
+    InsTime toc;
 
     /// @brief Time of Ephemeris
-    const InsTime toe;
+    InsTime toe;
 
     /// @brief Issue of Data of the nav batch
     ///
@@ -80,7 +80,7 @@ class GalileoEphemeris final : public SatNavData
     ///   or start receiving the data somewhere during the transmission
     ///
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.9.2, p. 51
-    const size_t IODnav;
+    size_t IODnav{};
 
     /// Polynomial coefficients for clock correction
     /// - a(0) bias [s]
@@ -88,28 +88,28 @@ class GalileoEphemeris final : public SatNavData
     /// - a(2) drift rate (aging) [s/s^2]
     ///
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.3, p. 46
-    const std::array<double, 3> a;
+    std::array<double, 3> a{};
 
     // --------------------------------------- Keplerian Parameters ------------------------------------------
 
-    const double sqrt_A;  ///< Square root of the semi-major axis [m^1/2]
-    const double e;       ///< Eccentricity [-]
-    const double i_0;     ///< Inclination angle at reference time [rad]
-    const double Omega_0; ///< Longitude of the ascending node at reference time [rad]
-    const double omega;   ///< Argument of perigee [rad]
-    const double M_0;     ///< Mean anomaly at reference time [rad]
+    double sqrt_A{};  ///< Square root of the semi-major axis [m^1/2]
+    double e{};       ///< Eccentricity [-]
+    double i_0{};     ///< Inclination angle at reference time [rad]
+    double Omega_0{}; ///< Longitude of the ascending node at reference time [rad]
+    double omega{};   ///< Argument of perigee [rad]
+    double M_0{};     ///< Mean anomaly at reference time [rad]
 
     // -------------------------------------- Pertubation Parameters -----------------------------------------
 
-    const double delta_n;   ///< Mean motion difference from computed value [rad/s]
-    const double Omega_dot; ///< Rate of change of right ascension [rad/s]
-    const double i_dot;     ///< Rate of change of inclination [rad/s]
-    const double Cus;       ///< Amplitude of the sine harmonic correction term to the argument of latitude [rad]
-    const double Cuc;       ///< Amplitude of the cosine harmonic correction term to the argument of latitude [rad]
-    const double Cis;       ///< Amplitude of the sine harmonic correction term to the angle of inclination [rad]
-    const double Cic;       ///< Amplitude of the cosine harmonic correction term to the angle of inclination [rad]
-    const double Crs;       ///< Amplitude of the sine harmonic correction term to the orbit radius [m]
-    const double Crc;       ///< Amplitude of the cosine harmonic correction term to the orbit radius [m]
+    double delta_n{};   ///< Mean motion difference from computed value [rad/s]
+    double Omega_dot{}; ///< Rate of change of right ascension [rad/s]
+    double i_dot{};     ///< Rate of change of inclination [rad/s]
+    double Cus{};       ///< Amplitude of the sine harmonic correction term to the argument of latitude [rad]
+    double Cuc{};       ///< Amplitude of the cosine harmonic correction term to the argument of latitude [rad]
+    double Cis{};       ///< Amplitude of the sine harmonic correction term to the angle of inclination [rad]
+    double Cic{};       ///< Amplitude of the cosine harmonic correction term to the angle of inclination [rad]
+    double Crs{};       ///< Amplitude of the sine harmonic correction term to the orbit radius [m]
+    double Crc{};       ///< Amplitude of the cosine harmonic correction term to the orbit radius [m]
 
     // ----------------------------------------------- Other -------------------------------------------------
 
@@ -127,7 +127,7 @@ class GalileoEphemeris final : public SatNavData
     /// Bits 8-9 : exclusive (only one bit can be set)
     ///
     /// @note See \cite RINEX-3.04 RINEX-3.04, ch. A8, p. A25
-    const std::bitset<10> dataSource;
+    std::bitset<10> dataSource{};
 
     /// SISA (Signal in space accuracy) [m]
     ///
@@ -138,22 +138,26 @@ class GalileoEphemeris final : public SatNavData
     /// of a potential anomalous SIS.
     ///
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.12, p.58
-    const double signalAccuracy;
+    double signalAccuracy{};
 
     /// @brief Signal Health
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.9.3, p. 52
-    const SvHealth svHealth;
+    SvHealth svHealth{};
 
     /// @brief E1-E5a Broadcast Group Delay [s]
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.5, p. 47f
-    const double BGD_E1_E5a;
+    double BGD_E1_E5a{};
     /// @brief E1-E5b Broadcast Group Delay [s]
     /// @note See \cite GAL-ICD-2.0 GAL-ICD-2.0, ch. 5.1.5, p. 47f
-    const double BGD_E1_E5b;
+    double BGD_E1_E5b{};
 
     // #######################################################################################################
     //                                               Functions
     // #######################################################################################################
+
+    /// @brief Default Constructor
+    /// @param[in] toc Time the Clock information is calculated (Time of Clock)
+    explicit GalileoEphemeris(const InsTime& toc);
 
     /// @brief Constructor
     /// @param[in] toc Time the Clock information is calculated (Time of Clock)

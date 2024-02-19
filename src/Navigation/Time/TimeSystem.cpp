@@ -58,3 +58,8 @@ const char* to_string(TimeSystem::TimeSystemEnum timeSystem)
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::TimeSystem& obj)
+{
+    return os << fmt::format("{}", obj);
+}

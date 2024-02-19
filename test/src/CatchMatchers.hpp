@@ -16,11 +16,14 @@
 #include <catch2/matchers/catch_matchers_templated.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include "util/Eigen.hpp"
+#include "util/Container/STL.hpp"
 #include "Navigation/Time/InsTime.hpp"
+#include "Navigation/Math/Math.hpp"
 
 #include <fmt/ostream.h>
 #include <iomanip>
 #include <limits>
+#include <algorithm>
 
 namespace NAV::TESTS
 {
@@ -82,6 +85,8 @@ auto WithinAbs(const Eigen::DenseBase<Derived>& target, double margin) -> Within
     return WithinAbsMatcherEigen<Derived>{ target, margin };
 }
 
+// ###########################################################################################################
+
 template<typename Derived>
 struct WithinAbsMatcherEigenQuaternion : Catch::Matchers::MatcherGenericBase
 {
@@ -114,10 +119,14 @@ auto WithinAbs(const Eigen::QuaternionBase<Derived>& target, double margin) -> W
     return WithinAbsMatcherEigenQuaternion<Derived>{ target, margin };
 }
 
+// ###########################################################################################################
+
 /// @brief Creates a matcher that accepts numbers within certain range of target
 /// @param[in] target Target value
 /// @param[in] margin Accepted range around target
 auto WithinAbs(long double target, long double margin) -> WithinAbsMatcher;
+
+// ###########################################################################################################
 
 template<size_t N>
 struct WithinAbsMatcherArray : Catch::Matchers::MatcherGenericBase
@@ -153,6 +162,8 @@ auto WithinAbs(const std::array<double, N>& target, double margin) -> WithinAbsM
     return WithinAbsMatcherArray<N>{ target, margin };
 }
 
+// ###########################################################################################################
+
 template<class Rep,
          class Period = std::ratio<1>>
 struct WithinAbsMatcherInsTime : Catch::Matchers::MatcherGenericBase
@@ -186,6 +197,84 @@ template<class Rep,
 auto WithinAbs(const NAV::InsTime& target, const std::chrono::duration<Rep, Period>& margin) -> WithinAbsMatcherInsTime<Rep, Period>
 {
     return WithinAbsMatcherInsTime<Rep, Period>{ target, margin };
+}
+
+// ###########################################################################################################
+
+template<typename Scalar>
+struct EqualsSigDigitsMatcher : Catch::Matchers::MatcherGenericBase
+{
+    EqualsSigDigitsMatcher(const Scalar& target, size_t digits)
+        : m_target(fmt::format("{:.{p}e}", target, fmt::arg("p", digits > 0 ? digits - 1 : digits))), m_digits(digits) {}
+
+    bool match(const Scalar& matchee) const
+    {
+        m_matchee = fmt::format("{:.{p}e}", matchee, fmt::arg("p", m_digits > 0 ? m_digits - 1 : m_digits));
+        return m_target == m_matchee;
+    }
+
+    std::string describe() const override
+    {
+        return fmt::format("({}) is within {} sig digits of {}", m_matchee, m_digits, m_target);
+    }
+
+  private:
+    const std::string m_target;
+    mutable std::string m_matchee;
+    const size_t m_digits;
+};
+
+/// @brief Creates a matcher that rounds to significant digits and compares for equality
+/// @param[in] target Target value
+/// @param[in] digits Significant digits to round to
+template<typename Scalar>
+auto EqualsSigDigits(const Scalar& target, size_t digits) -> EqualsSigDigitsMatcher<Scalar>
+{
+    return EqualsSigDigitsMatcher<Scalar>{ target, digits };
+}
+
+// ###########################################################################################################
+
+template<typename T>
+struct EqualsSigDigitsMatcherContainer : Catch::Matchers::MatcherGenericBase
+{
+    EqualsSigDigitsMatcherContainer(const T& target, size_t digits)
+        : m_digits(digits)
+    {
+        std::transform(target.cbegin(), target.cend(), std::back_inserter(m_target), [&](const auto& element) {
+            return fmt::format("{:.{p}e}", element, fmt::arg("p", m_digits > 0 ? m_digits - 1 : m_digits));
+        });
+    }
+
+    bool match(const T& matchee) const
+    {
+        std::transform(matchee.cbegin(), matchee.cend(), std::back_inserter(m_matchee), [&](const auto& element) {
+            return fmt::format("{:.{p}e}", element, fmt::arg("p", m_digits > 0 ? m_digits - 1 : m_digits));
+        });
+        return m_target == m_matchee;
+    }
+
+    std::string describe() const override
+    {
+        return fmt::format("\n  ({})\n    is within {} significant digits of\n  ({})",
+                           NAV::joinToString(m_matchee),
+                           m_digits,
+                           NAV::joinToString(m_target));
+    }
+
+  private:
+    std::vector<std::string> m_target;
+    mutable std::vector<std::string> m_matchee;
+    const size_t m_digits;
+};
+
+/// @brief Creates a matcher that rounds to significant digits and compares for equality
+/// @param[in] target Target value
+/// @param[in] digits Significant digits to round to
+template<typename T>
+auto EqualsSigDigitsContainer(const T& target, size_t digits) -> EqualsSigDigitsMatcherContainer<T>
+{
+    return EqualsSigDigitsMatcherContainer<T>{ target, digits };
 }
 
 } // namespace Catch::Matchers

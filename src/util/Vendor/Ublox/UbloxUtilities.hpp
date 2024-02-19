@@ -25,7 +25,9 @@ namespace NAV::vendor::ublox
 /// @brief Decrypts the provided Ublox observation
 /// @param[in] obs Ublox Observation to decrypt
 /// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-void decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet);
+/// @param[in] nameId NameId for printing log messages
+/// @return False if the message should be discarded
+[[nodiscard]] bool decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, uart::protocol::Packet& packet, const std::string& nameId);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 /// @param[in] data Data Vector for which the checksum should be calculated

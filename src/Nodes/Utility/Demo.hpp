@@ -80,23 +80,23 @@ class Demo : public Node
     };
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_SENSOR = 1; ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOW_FILE = 2;   ///< @brief Flow (NodeData)
-    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;        ///< @brief Bool
-    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;         ///< @brief Int
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;       ///< @brief Float
-    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;      ///< @brief Double
-    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;      ///< @brief String
-    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8;   ///< @brief DemoData
-    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;      ///< @brief Matrix
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;    ///< @brief Delegate (Demo)
-    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;         ///< @brief Bool
-    constexpr static size_t INPUT_PORT_INDEX_INT = 4;          ///< @brief Int
-    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;        ///< @brief Float
-    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;       ///< @brief Double
-    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;       ///< @brief String
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;    ///< @brief DemoData
-    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;       ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 1;      ///< @brief Flow
+    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 2;      ///< @brief Bool
+    constexpr static size_t OUTPUT_PORT_INDEX_INT = 3;       ///< @brief Int
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 4;     ///< @brief Float
+    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 5;    ///< @brief Double
+    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 6;    ///< @brief String
+    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 7; ///< @brief DemoData
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 8;    ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;  ///< @brief Delegate (Demo)
+    constexpr static size_t INPUT_PORT_INDEX_FLOW = 1;       ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_BOOL = 2;       ///< @brief Bool
+    constexpr static size_t INPUT_PORT_INDEX_INT = 3;        ///< @brief Int
+    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 4;      ///< @brief Float
+    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 5;     ///< @brief Double
+    constexpr static size_t INPUT_PORT_INDEX_STRING = 6;     ///< @brief String
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 7;  ///< @brief DemoData
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 8;     ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -104,15 +104,10 @@ class Demo : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Receive Sensor Data
+    /// @brief Receive callback on the Flow pin
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void receiveSensorData(InputPin::NodeDataQueue& queue, size_t pinIdx);
-
-    /// @brief Receive File Reader Data
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void receiveFileReaderData(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Polls data from the file. This function is needed, if we have multiple output pins, polling data.
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
@@ -123,6 +118,12 @@ class Demo : public Node
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollData();
 
+    /// @brief Updates the output flow pin depending on the GUI selection
+    void updateOutputFlowPin();
+
+    /// Whether to have a file reader instead of a sensor output pin
+    bool _fileReaderInsteadSensor = false;
+
     /// Timer object to handle async data requests
     CallbackTimer _timer;
 
@@ -132,10 +133,8 @@ class Demo : public Node
 
     /// @brief Output frequency for the simulated sensor data
     int _outputFrequency = 1;
-    /// @brief Counter how often sensor data was received
-    int _receivedDataFromSensorCnt = 0;
-    /// @brief Counter how often file reader data was received
-    int _receivedDataFromFileReaderCnt = 0;
+    /// @brief Counter how often data was received
+    int _receivedDataCnt = 0;
 
     /// Counter for data Reading
     int _iPollData = 0;
@@ -147,7 +146,6 @@ class Demo : public Node
     float _valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
     double _valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
     std::string _valueString = "Demo";                              ///< Value which is represented over the String pin
-    std::string _connectedString = "N/A";                           ///< Value which is represented over the String pin
     DemoData _valueObject;                                          ///< Value which is represented over the Object pin
     Eigen::MatrixXd _valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
     size_t _stringUpdateCounter = 0;                                ///< Counter of how often the string was updated

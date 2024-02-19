@@ -140,9 +140,15 @@ bool ShowSatelliteSelector(const char* label, SatId& satellite, SatelliteSystem 
 
 /// @brief Stream insertion operator overload
 /// @param[in, out] os Output stream object to stream the time into
-/// @param[in] satId Object to print
+/// @param[in] obj Object to print
 /// @return Returns the output stream object in order to chain stream insertions
-std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId);
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& obj);
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::SatSigId& obj);
 
 #ifndef DOXYGEN_IGNORE
 

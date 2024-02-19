@@ -14,6 +14,7 @@
 #pragma once
 
 #include "spdlog/sinks/dist_sink.h"
+#include <regex>
 
 namespace spdlog::sinks
 {
@@ -25,8 +26,8 @@ class dist_filter_sink : public spdlog::sinks::dist_sink<Mutex> // NOLINT(cppcor
   public:
     /// @brief Default constructor
     /// @param[in] filter Filter string
-    explicit dist_filter_sink(std::string filter)
-        : filter_(std::move(filter)){};
+    explicit dist_filter_sink(const std::string& filter)
+        : filter_(filter, std::regex_constants::ECMAScript){};
     /// @brief Destructor
     ~dist_filter_sink() override = default;
     /// @brief Copy constructor
@@ -40,7 +41,7 @@ class dist_filter_sink : public spdlog::sinks::dist_sink<Mutex> // NOLINT(cppcor
 
   protected:
     /// String to filter messages for
-    std::string filter_;
+    std::regex filter_;
 
     /// @brief Function called to process the log message
     /// @param msg Log message struct
@@ -50,7 +51,7 @@ class dist_filter_sink : public spdlog::sinks::dist_sink<Mutex> // NOLINT(cppcor
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted_buf);
         std::string formatted = fmt::to_string(formatted_buf);
 
-        if (formatted.find(filter_) != std::string::npos)
+        if (std::regex_search(formatted, filter_))
         {
             spdlog::sinks::dist_sink<Mutex>::sink_it_(msg);
         }

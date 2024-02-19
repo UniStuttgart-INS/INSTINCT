@@ -138,6 +138,10 @@ Logger::Logger(const std::string& logpath)
     spdlog::flush_on(spdlog::level::trace);
 
     writeHeader();
+    if (NAV::ConfigManager::HasKey("log-filter"))
+    {
+        LOG_DEBUG("Setting log filter to: {}", NAV::ConfigManager::Get<std::string>("log-filter"));
+    }
 }
 
 Logger::Logger()

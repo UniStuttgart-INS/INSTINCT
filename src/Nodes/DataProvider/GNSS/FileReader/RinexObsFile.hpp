@@ -70,7 +70,7 @@ class RinexObsFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_GnssObs = 0; ///< @brief Flow (GnssObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_GNSS_OBS = 0; ///< @brief Flow (GnssObs)
 
     /// @brief Initialize the node
     bool initialize() override;

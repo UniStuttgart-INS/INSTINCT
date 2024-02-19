@@ -63,6 +63,8 @@ class RinexNavFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
+    constexpr static size_t OUTPUT_PORT_INDEX_GNSS_NAV_INFO = 0; ///< @brief Object (GnssNavInfo)
+
     /// @brief Initialize the node
     bool initialize() override;
 

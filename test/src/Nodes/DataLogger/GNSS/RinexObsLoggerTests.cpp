@@ -103,7 +103,7 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
 
         data1.push_back(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         compareObservations(data1, data2);
     });
     nm::RegisterWatcherCallbackToInputPin(PIN_ID_TERM_2, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
@@ -112,7 +112,7 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
 
         data2.push_back(std::dynamic_pointer_cast<const NAV::GnssObs>(queue.front()));
 
-        std::lock_guard lk(comparisonMutex);
+        std::scoped_lock lk(comparisonMutex);
         compareObservations(data1, data2);
     });
 

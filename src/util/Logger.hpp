@@ -98,11 +98,11 @@ class Logger
     /// @brief Copy constructor
     Logger(const Logger&) = delete;
     /// @brief Move constructor
-    Logger(Logger&&) = delete;
+    Logger(Logger&&) = default;
     /// @brief Copy assignment operator
     Logger& operator=(const Logger&) = delete;
     /// @brief Move assignment operator
-    Logger& operator=(Logger&&) = delete;
+    Logger& operator=(Logger&&) = default;
 
     /// @brief Returns the ring buffer sink
     static const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& GetRingBufferSink();

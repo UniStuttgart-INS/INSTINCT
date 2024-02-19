@@ -609,3 +609,8 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::Frequency& obj)
+{
+    return os << fmt::format("{}", obj);
+}

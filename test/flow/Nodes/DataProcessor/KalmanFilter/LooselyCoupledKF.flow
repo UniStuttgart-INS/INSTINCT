@@ -91,25 +91,15 @@
             "id": 557,
             "startPinId": 339
         },
-        "link-561": {
-            "endPinId": 346,
-            "id": 561,
+        "link-588": {
+            "endPinId": 164,
+            "id": 588,
             "startPinId": 331
         },
-        "link-581": {
-            "endPinId": 345,
-            "id": 581,
-            "startPinId": 575
-        },
-        "link-583": {
-            "endPinId": 164,
-            "id": 583,
-            "startPinId": 347
-        },
-        "link-585": {
+        "link-589": {
             "endPinId": 4,
-            "id": 585,
-            "startPinId": 347
+            "id": 589,
+            "startPinId": 331
         }
     },
     "nodes": {
@@ -6944,214 +6934,6 @@
             },
             "type": "VectorNavBinaryConverter"
         },
-        "node-344": {
-            "data": null,
-            "enabled": true,
-            "id": 344,
-            "inputPins": [
-                {
-                    "id": 345,
-                    "name": ""
-                },
-                {
-                    "id": 346,
-                    "name": ""
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 347,
-                    "name": ""
-                }
-            ],
-            "pos": {
-                "x": 552.0,
-                "y": -464.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Merger"
-        },
-        "node-577": {
-            "data": {
-                "Imu": {
-                    "imuPos": {
-                        "b_positionAccel": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        }
-                    }
-                },
-                "angularRateEarthRotationEnabled": true,
-                "angularRateTransportRateEnabled": true,
-                "centrifgalAccelerationEnabled": true,
-                "circularHarmonicAmplitudeFactor": 0.1,
-                "circularHarmonicFrequency": 0,
-                "circularTrajectoryCircleCountForStop": 1.0,
-                "coriolisAccelerationEnabled": true,
-                "fixedTrajectoryStartOrientation": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "gnssFrequency": 5.0,
-                "gravitationModel": 4,
-                "imuFrequency": 100.0,
-                "linearTrajectoryDistanceForStop": 100.0,
-                "n_linearTrajectoryStartVelocity": {
-                    "0": {
-                        "0": 1.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "rosePetDenom": 1,
-                "rosePetNum": 2,
-                "roseStepLengthMax": 0.1,
-                "roseTrajectoryCountForStop": 1.0,
-                "simulationDuration": 300.0,
-                "simulationStopCondition": 0,
-                "splineSampleInterval": 0.1,
-                "startPosition": {
-                    "frame": "LLA",
-                    "position": {
-                        "0": {
-                            "0": 0.0
-                        },
-                        "1": {
-                            "0": 0.0
-                        },
-                        "2": {
-                            "0": 0.0
-                        }
-                    }
-                },
-                "startTime": {
-                    "mjd_day": 51544,
-                    "mjd_frac": 0.0
-                },
-                "startTimeEditFormat": {
-                    "format": 0,
-                    "system": "GPST"
-                },
-                "startTimeSource": 0,
-                "trajectoryDirection": 1,
-                "trajectoryHorizontalSpeed": 10.0,
-                "trajectoryRadius": 50.0,
-                "trajectoryRotationAngle": 0.0,
-                "trajectoryType": 0,
-                "trajectoryVerticalSpeed": 0.0
-            },
-            "enabled": false,
-            "id": 577,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "ImuSimulator",
-            "outputPins": [
-                {
-                    "id": 575,
-                    "name": "ImuObs"
-                },
-                {
-                    "id": 576,
-                    "name": "PosVelAtt"
-                }
-            ],
-            "pos": {
-                "x": 256.0,
-                "y": -690.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuSimulator"
-        },
         "node-9": {
             "data": {
                 "dynamicInputPins": {
@@ -7175,7 +6957,7 @@
                 "overridePositionStartValues": true,
                 "pinData": [
                     {
-                        "dataIdentifier": "ImuObsSimulated",
+                        "dataIdentifier": "ImuObsWDelta",
                         "pinType": 0,
                         "plotData": [
                             {
@@ -7245,40 +7027,25 @@
                                 "displayName": "Temperature [°C]"
                             },
                             {
-                                "displayName": "AccelDynamicsN [m/s^2]"
+                                "displayName": "dTime [s]"
                             },
                             {
-                                "displayName": "AccelDynamicsE [m/s^2]"
+                                "displayName": "dTheta X [deg]"
                             },
                             {
-                                "displayName": "AccelDynamicsD [m/s^2]"
+                                "displayName": "dTheta Y [deg]"
                             },
                             {
-                                "displayName": "AngularRateN (ω_nb_n) [rad/s]"
+                                "displayName": "dTheta Z [deg]"
                             },
                             {
-                                "displayName": "AngularRateE (ω_nb_n) [rad/s]"
+                                "displayName": "dVelocity X [m/s]"
                             },
                             {
-                                "displayName": "AngularRateD (ω_nb_n) [rad/s]"
+                                "displayName": "dVelocity Y [m/s]"
                             },
                             {
-                                "displayName": "AccelDynamicsX ECEF [m/s^2]"
-                            },
-                            {
-                                "displayName": "AccelDynamicsY ECEF [m/s^2]"
-                            },
-                            {
-                                "displayName": "AccelDynamicsZ ECEF [m/s^2]"
-                            },
-                            {
-                                "displayName": "AngularRateX ECEF (ω_nb_e) [rad/s]"
-                            },
-                            {
-                                "displayName": "AngularRateY ECEF (ω_nb_e) [rad/s]"
-                            },
-                            {
-                                "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
+                                "displayName": "dVelocity Z [m/s]"
                             }
                         ],
                         "size": 0,

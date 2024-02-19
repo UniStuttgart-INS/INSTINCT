@@ -18,6 +18,22 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+namespace NAV::TESTS
+{
+
+std::vector<const char*> argv = { "",
+                                  "--nogui",
+                                  "-l", "path",
+                                  "inputPath",
+                                  "outputPath",
+                                  "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
+                                  "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
+
+                                  //   "--log-filter=GnssObsComparisons|UbloxGnssObsConverterTests|UbloxGnssObsConverter.cpp",
+                                  nullptr };
+
+} // namespace NAV::TESTS
+
 bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
 {
     // Config Manager object
@@ -26,15 +42,10 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
     std::string folder = useTestDirectories ? "test/" : "";
     std::string inputPath = "--input-path=" + folder + "data";
     std::string outputPath = "--output-path=" + folder + "logs";
-    std::vector<const char*> argv = { "",
-                                      "--nogui",
-                                      "-l", path,
-                                      inputPath.c_str(),
-                                      outputPath.c_str(),
-                                      "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
-                                      "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
-                                                                   //   "--log-filter=ObservationEstimatorTests.cpp",
-                                      nullptr };
+
+    argv.at(3) = path;
+    argv.at(4) = inputPath.c_str();
+    argv.at(5) = outputPath.c_str();
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
 

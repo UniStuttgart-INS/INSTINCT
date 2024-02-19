@@ -79,6 +79,9 @@ class UbloxFile : public Node, public FileReader
 
     /// Sensor Object
     vendor::ublox::UbloxUartSensor _sensor;
+
+    /// Last obs time
+    InsTime _lastObsTime;
 };
 
 } // namespace NAV

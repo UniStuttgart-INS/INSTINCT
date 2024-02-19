@@ -278,3 +278,8 @@ std::string to_string(const CycleSlipDetector::Result& cycleSlip)
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::CycleSlipDetector::Result& obj)
+{
+    return os << fmt::format("{}", obj);
+}

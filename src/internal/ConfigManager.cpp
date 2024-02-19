@@ -54,7 +54,7 @@ void NAV::ConfigManager::initialize()
             ("implot-config",     bpo::value<std::string>()->default_value("implot.json"),          "Config file to read implot settings from"                                                )
             ("console-log-level", bpo::value<std::string>()->default_value("off"),                  "Log level on the console  (possible values: trace/debug/info/warning/error/critical/off" )
             ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file (possible values: trace/debug/info/warning/error/critical/off" )
-            ("log-filter",        bpo::value<std::string>(),                                        "Filter for log messages"                                                                 )
+            ("log-filter",        bpo::value<std::string>(),                                        "Filter/Regex for log messages"                                                           )
         ;
         // clang-format on
     }

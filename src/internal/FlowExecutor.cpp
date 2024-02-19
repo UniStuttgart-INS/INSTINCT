@@ -70,7 +70,7 @@ void execute();
 
 bool NAV::FlowExecutor::isRunning() noexcept
 {
-    std::lock_guard<std::mutex> lk(_mutex);
+    std::scoped_lock<std::mutex> lk(_mutex);
     return _state != State::Idle;
 }
 
@@ -81,7 +81,7 @@ void NAV::FlowExecutor::start()
     stop();
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Starting;
     }
 
@@ -95,7 +95,7 @@ void NAV::FlowExecutor::stop()
     if (isRunning())
     {
         {
-            std::lock_guard<std::mutex> lk(_mutex);
+            std::scoped_lock<std::mutex> lk(_mutex);
             if (_state == State::Running || _state == State::Starting)
             {
                 _state = State::Stopping;
@@ -118,7 +118,7 @@ void NAV::FlowExecutor::waitForFinish()
     }
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         if (_thd.joinable()) { _thd.join(); }
     }
     LOG_TRACE("FlowExecutor finished.");
@@ -131,7 +131,7 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 
     if (_activeNodes == 0)
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Stopping;
         _cv.notify_all();
     }
@@ -153,7 +153,7 @@ void NAV::FlowExecutor::execute()
 
     if (!nm::InitializeAllNodes()) // This wakes the threads
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Idle;
         _cv.notify_all();
         return;
@@ -166,13 +166,14 @@ void NAV::FlowExecutor::execute()
     LOG_INFO("Executing in {} mode", realTimeMode ? "real-time" : "post-processing");
 
     util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);
+    _activeNodes = 0;
 
     for (Node* node : nm::m_Nodes())
     {
         if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
         {
-            std::lock_guard<std::mutex> lk(_mutex);
+            std::scoped_lock<std::mutex> lk(_mutex);
             if (_state != State::Starting) { break; }
         }
 
@@ -219,7 +220,7 @@ void NAV::FlowExecutor::execute()
     }
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         if (_state == State::Starting)
         {
             nm::EnableAllCallbacks();
@@ -296,7 +297,7 @@ void NAV::FlowExecutor::execute()
     _activeNodes = 0;
     LOG_TRACE("FlowExecutor deinitialized.");
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Idle;
         _cv.notify_all();
     }

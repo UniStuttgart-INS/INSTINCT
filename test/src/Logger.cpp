@@ -10,11 +10,16 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
+#include "FlowTester.hpp"
 
+#include "internal/ConfigManager.hpp"
 #include "util/StringUtil.hpp"
 
 [[nodiscard]] Logger NAV::TESTS::initializeTestLogger()
 {
+    NAV::ConfigManager::initialize();
+    NAV::ConfigManager::FetchConfigs(static_cast<int>(argv.size() - 1), argv.data());
+
     std::string testName = Catch::getResultCapture().getCurrentTestName();
 
     str::replaceAll(testName, " ", "_");
@@ -33,5 +38,8 @@
 
     auto logpath = std::filesystem::path("test") / "logs" / (testName + ".log");
 
-    return Logger(logpath.string());
+    Logger log(logpath.string());
+
+    NAV::ConfigManager::deinitialize();
+    return log;
 }

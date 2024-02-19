@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "CatchMatchers.hpp"
+
 #include "NodeData/GNSS/GnssObs.hpp"
 
 #include "Logger.hpp"
@@ -23,7 +25,7 @@ namespace NAV
 inline bool operator==(const GnssObs::ObservationData::Pseudorange& lhs, const GnssObs::ObservationData::Pseudorange& rhs)
 {
     LOG_DEBUG("      [{}] == [{}] | value", lhs.value, rhs.value);
-    REQUIRE(lhs.value == rhs.value);
+    REQUIRE_THAT(lhs.value, Catch::Matchers::WithinAbs(rhs.value, 1e-3)); // RINEX files have 3 digits
     LOG_DEBUG("      [{}] == [{}] | SSI", lhs.SSI, rhs.SSI);
     REQUIRE(lhs.SSI == rhs.SSI);
     return true;
@@ -32,7 +34,7 @@ inline bool operator==(const GnssObs::ObservationData::Pseudorange& lhs, const G
 inline bool operator==(const GnssObs::ObservationData::CarrierPhase& lhs, const GnssObs::ObservationData::CarrierPhase& rhs)
 {
     LOG_DEBUG("      [{}] == [{}] | value", lhs.value, rhs.value);
-    REQUIRE(lhs.value == rhs.value);
+    REQUIRE_THAT(lhs.value, Catch::Matchers::WithinAbs(rhs.value, 1e-3)); // RINEX files have 3 digits
     LOG_DEBUG("      [{}] == [{}] | SSI", lhs.SSI, rhs.SSI);
     REQUIRE(lhs.SSI == rhs.SSI);
     LOG_DEBUG("      [{}] == [{}] | LLI", lhs.LLI, rhs.LLI);
@@ -49,7 +51,11 @@ inline bool operator==(const GnssObs::ObservationData& lhs, const GnssObs::Obser
     LOG_DEBUG("    carrierPhase");
     REQUIRE(lhs.carrierPhase == rhs.carrierPhase);
     LOG_DEBUG("    [{}] == [{}] | doppler", lhs.doppler, rhs.doppler);
-    REQUIRE(lhs.doppler == rhs.doppler);
+    REQUIRE(lhs.doppler.has_value() == rhs.doppler.has_value());
+    if (lhs.doppler.has_value())
+    {
+        REQUIRE_THAT(*lhs.doppler, Catch::Matchers::WithinAbs(*rhs.doppler, 1e-3)); // RINEX files have 3 digits
+    }
     LOG_DEBUG("    [{}] == [{}] | CN0", lhs.CN0, rhs.CN0);
     REQUIRE(lhs.CN0 == rhs.CN0);
     return true;
@@ -66,12 +72,13 @@ inline bool operator==(const GnssObs::SatelliteData& lhs, const GnssObs::Satelli
 
 inline bool operator==(const GnssObs& lhs, const GnssObs& rhs)
 {
-    LOG_DEBUG("[{}] == [{}] | insTime", lhs.insTime, rhs.insTime);
+    LOG_DEBUG("[{}] == [{}] | insTime", lhs.insTime.toYMDHMS(GPST), rhs.insTime.toYMDHMS(GPST));
     REQUIRE(lhs.insTime == rhs.insTime);
     LOG_DEBUG("  [{}] == [{}] | data.size()", lhs.data.size(), rhs.data.size());
     REQUIRE(lhs.data.size() == rhs.data.size());
     for (const auto& l : lhs.data)
     {
+        LOG_DEBUG("  [{}] | satId", l.satSigId);
         auto r = std::find_if(rhs.data.begin(), rhs.data.end(), [&](const auto& r) { return l.satSigId == r.satSigId; });
         REQUIRE(r != rhs.data.end());
         REQUIRE(*r == l);

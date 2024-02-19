@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace NAV::TESTS
 {
 
@@ -24,5 +26,8 @@ bool testFlow(const char* path, bool useTestDirectories = true);
 
 /// @brief Runs general purpose cleanup checks
 void runGeneralFlowCleanupChecks();
+
+/// @brief Argv arguments for testing
+extern std::vector<const char*> argv;
 
 } // namespace NAV::TESTS

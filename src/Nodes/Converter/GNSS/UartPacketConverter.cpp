@@ -133,7 +133,7 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
     {
         auto obs = std::make_shared<UbloxObs>();
         auto packet = uartPacket->raw;
-        vendor::ublox::decryptUbloxObs(obs, packet);
+        if (!vendor::ublox::decryptUbloxObs(obs, packet, nameId())) { return; };
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */

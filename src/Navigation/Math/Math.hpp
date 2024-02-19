@@ -14,9 +14,13 @@
 
 #pragma once
 
-#include "util/Assert.h"
 #include <cstdint>
+#include <type_traits>
 #include <Eigen/Core>
+#include <gcem.hpp>
+#include <fmt/format.h>
+
+#include "util/Assert.h"
 
 namespace NAV::math
 {
@@ -30,11 +34,51 @@ uint64_t factorial(uint64_t n);
 /// @param[in] value Value to round
 /// @param[in] digits Amount of digits
 /// @return The rounded value
-template<typename T>
+template<typename T,
+         typename = std::enable_if_t<std::is_floating_point_v<T>>>
 constexpr T round(const T& value, size_t digits)
 {
     auto factor = std::pow(10, digits);
     return std::round(value * factor) / factor;
+}
+
+/// @brief Round the number to the specified amount of significant digits
+/// @param[in] value Value to round
+/// @param[in] digits Amount of digits
+/// @return The rounded value
+template<typename T,
+         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+constexpr T roundSignificantDigits(T value, size_t digits)
+{
+    if (value == 0.0) { return 0.0; }
+    // LOG_DEBUG("value = {:.13e} --> Round to {} digits", value, digits);
+    auto absVal = gcem::abs(value);
+    auto log10 = static_cast<int32_t>(gcem::log10(absVal));
+    auto exp = log10 + (log10 > 0 || (log10 == 0 && absVal >= 1.0));
+    auto fac = static_cast<T>(digits) - static_cast<T>(exp);
+    // LOG_DEBUG("  log10  = {}, exp = {}, fac = {}", log10, exp, fac);
+    auto factor = static_cast<T>(gcem::pow(10.0, fac));
+    // LOG_DEBUG("  factor = {:.0e} --> value * factor = {}", factor, value * factor);
+    // LOG_DEBUG("  round = {} --> ... / factor = {}", gcem::round(value * factor), gcem::round(value * factor) / factor);
+    return static_cast<T>(gcem::round(value * factor) / factor);
+}
+
+/// @brief Interprets the input integer with certain amount of Bits as Output type. Takes care of sign extension
+/// @tparam Out Output type
+/// @tparam Bits Size of the input data
+/// @tparam In Input data type (needs to be bigger than the amount of Bits)
+/// @param[in] in Number as two's complement, with the sign bit (+ or -) occupying the MSB
+/// @return Output type
+template<typename Out, size_t Bits, typename In,
+         typename = std::enable_if_t<std::is_integral_v<Out>>,
+         typename = std::enable_if_t<std::is_integral_v<In>>>
+constexpr Out interpretAs(In in)
+{
+    static_assert(Bits < sizeof(In) * 8);
+    static_assert(Bits < sizeof(Out) * 8);
+
+    constexpr size_t N = sizeof(Out) * 8 - Bits;
+    return static_cast<Out>(static_cast<Out>((in & static_cast<In>(gcem::pow(2, Bits) - 1)) << N) >> N);
 }
 
 /// @brief Calculates the skew symmetric matrix of the given vector.

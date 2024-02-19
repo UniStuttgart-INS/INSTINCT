@@ -18,20 +18,20 @@ namespace NAV
 
 CommonLog::CommonLog()
 {
-    std::lock_guard lk(_mutex);
+    std::scoped_lock lk(_mutex);
     _index = _wantsInit.size(); // NOLINT(cppcoreguidelines-prefer-member-initializer)
     _wantsInit.push_back(false);
 }
 
 CommonLog::~CommonLog()
 {
-    std::lock_guard lk(_mutex);
+    std::scoped_lock lk(_mutex);
     _wantsInit.erase(_wantsInit.begin() + static_cast<int64_t>(_index));
 }
 
 void CommonLog::initialize() const
 {
-    std::lock_guard lk(_mutex);
+    std::scoped_lock lk(_mutex);
     _wantsInit.at(_index) = true;
 
     if (std::all_of(_wantsInit.begin(), _wantsInit.end(), [](bool val) { return val; }))
@@ -47,7 +47,7 @@ void CommonLog::initialize() const
 
 double CommonLog::calcTimeIntoRun(const InsTime& insTime)
 {
-    if (std::lock_guard lk(_mutex);
+    if (std::scoped_lock lk(_mutex);
         _startTime.empty())
     {
         _startTime = insTime;
@@ -59,7 +59,7 @@ double CommonLog::calcTimeIntoRun(const InsTime& insTime)
 CommonLog::LocalPosition CommonLog::calcLocalPosition(const Eigen::Vector3d& lla_position)
 {
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         if (std::isnan(_originLatitude))
         {
             _originLatitude = lla_position.x();

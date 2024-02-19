@@ -159,11 +159,20 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
 {
     // Collection of all connected navigation data providers
     std::vector<const GnssNavInfo*> gnssNavInfos;
+    std::vector<std::unique_lock<std::mutex>> guards;
     for (size_t i = 0; i < _dynamicInputPins.getNumberOfDynamicPins(); i++)
     {
-        if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
         {
-            gnssNavInfos.push_back(gnssNavInfo);
+            guards.emplace_back(*mutex);
+            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+            {
+                gnssNavInfos.push_back(gnssNavInfo);
+            }
+            else
+            {
+                guards.pop_back();
+            }
         }
     }
     if (gnssNavInfos.empty()) { return; }

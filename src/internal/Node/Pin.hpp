@@ -456,7 +456,7 @@ class OutputPin : public Pin
     std::mutex dataAccessMutex;
 
     /// @brief Counter for data accessing
-    std::atomic<size_t> dataAccessCounter = 0;
+    size_t dataAccessCounter = 0;
 
     /// Condition variable to signal that the data was read by connected nodes (used for non-flow pins)
     std::condition_variable dataAccessConditionVariable;

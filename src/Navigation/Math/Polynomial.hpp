@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 #include "util/Eigen.hpp"
 
 namespace NAV
@@ -114,3 +115,13 @@ struct fmt::formatter<NAV::Polynomial<Scalar>> : fmt::formatter<std::string>
 };
 
 #endif
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+template<typename Scalar>
+std::ostream& operator<<(std::ostream& os, const NAV::Polynomial<Scalar>& obj)
+{
+    return os << fmt::format("{}", obj);
+}

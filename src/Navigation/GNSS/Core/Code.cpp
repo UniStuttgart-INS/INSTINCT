@@ -1287,3 +1287,8 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::Code& obj)
+{
+    return os << fmt::format("{}", obj);
+}

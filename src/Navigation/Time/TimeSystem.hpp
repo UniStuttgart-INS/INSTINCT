@@ -433,3 +433,9 @@ struct fmt::formatter<NAV::TimeSystem> : fmt::formatter<std::string>
 };
 
 #endif
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::TimeSystem& obj);
