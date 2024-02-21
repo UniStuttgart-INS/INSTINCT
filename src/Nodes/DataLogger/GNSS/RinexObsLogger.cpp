@@ -504,7 +504,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
                 switch (obsDesc.type)
                 {
                 case vendor::RINEX::ObsType::C:
-                    if (signal->pseudorange)
+                    if (signal->pseudorange && signal->pseudorange->value < 100'000'000.0)
                     {
                         _filestream << fmt::format("{obs:14.3f} {SSI}",
                                                    "obs"_a = signal->pseudorange->value,
@@ -513,7 +513,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
                     }
                     break;
                 case vendor::RINEX::ObsType::L:
-                    if (signal->carrierPhase)
+                    if (signal->carrierPhase && signal->carrierPhase->value < 1'000'000'000.0)
                     {
                         _filestream << fmt::format("{obs:14.3f}{LLI:1}{SSI:1}",
                                                    "obs"_a = signal->carrierPhase->value,

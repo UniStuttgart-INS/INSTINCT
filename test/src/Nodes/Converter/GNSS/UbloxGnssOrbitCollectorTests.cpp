@@ -38,7 +38,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::UbloxGnssOrbitCollectorTests
 {
 
-TEST_CASE("[UbloxGnssOrbitCollectorTests][flow] Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx", "[UbloxGnssOrbitCollectorTests][flow][Debug]")
+TEST_CASE("[UbloxGnssOrbitCollectorTests][flow] Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx", "[UbloxGnssOrbitCollectorTests][flow]")
 {
     auto logger = initializeTestLogger();
 

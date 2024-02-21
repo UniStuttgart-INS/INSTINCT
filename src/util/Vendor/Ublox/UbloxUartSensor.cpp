@@ -151,7 +151,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::ublox::UbloxUartSensor::fin
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
+                LOG_DEBUG("{}: Invalid binary packet: Class={:0x}, Id={:0x}, payload length={}", _name, _binaryMsgClass, _binaryMsgId, _binaryPayloadLength);
                 resetTracking();
             }
         }
