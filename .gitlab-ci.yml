@@ -325,18 +325,6 @@ tests:clang:
     - .release
     - .log-trace
 
-tests:gcc:
-  extends:
-    - .build
-    - .build:tests
-    - .build:linux
-    - .gcc
-    - .debug
-    - .log-trace
-  artifacts:
-    untracked: true # For the coverage report
-    expire_in: 2h
-
 tests:clang:LOG_DATA:
   extends:
     - .build
@@ -421,18 +409,6 @@ run-tests:clang:
     - .release
     - .junit
 
-run-tests:gcc:
-  needs: ["tests:gcc"]
-  extends:
-    - .run-tests
-    - .linux
-    - .debug
-    - .junit
-  artifacts:
-    when: always
-    untracked: true # For the coverage report
-    expire_in: 2h
-
 run-tests:clang:LOG_DATA:
   needs: ["tests:clang:LOG_DATA"]
   extends:
@@ -492,15 +468,30 @@ doxygen:
     - main
 
 coverage:
-  allow_failure: true # Currently the pipeline is failing. Update of gcovr. Remove this as soon as the pipeline is working and add it to pages job again
   stage: analyze
-  needs: ["run-tests:gcc"]
+  needs: ["check-image"]
   extends:
-    - .linux
+    - .build:tests
+    - .build:linux
     - .gcc
+    - .debug
+    - .log-trace
   script:
+    - echo "$CC"
+    - echo "$CXX"
+    - echo "$BUILD_TYPE"
+    - echo "$ENABLE_MAIN"
+    - echo "$ENABLE_TESTING"
+    - echo "$LOG_LEVEL_INSTINCT"
+    - echo "$WARNINGS_AS_ERRORS"
+    - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - conan profile detect --force
-    - conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=20
+    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="$ENABLE_TESTING" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
+    - cd build/$BUILD_TYPE
+    - ctest --output-on-failure # -j2
+    - cd ../..
     - mkdir -p build/coverage
     - gcovr --config doc/coverage/gcovr.cfg
   # coverage: '/Total:\| ?(\d+\.?\d+\%)/'
@@ -520,11 +511,11 @@ coverage:
 
 pages:
   stage: deploy
-  needs: ["doxygen"] # , "coverage"
+  needs: ["doxygen", "coverage"]
   extends: .linux
   script:
     - mv build/doc/html/ public/
-    # - mv build/coverage/ public/coverage/
+    - mv build/coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:

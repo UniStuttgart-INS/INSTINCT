@@ -73,7 +73,7 @@ inline bool operator==(const GnssObs::SatelliteData& lhs, const GnssObs::Satelli
 inline bool operator==(const GnssObs& lhs, const GnssObs& rhs)
 {
     LOG_DEBUG("[{}] == [{}] | insTime", lhs.insTime.toYMDHMS(GPST), rhs.insTime.toYMDHMS(GPST));
-    REQUIRE(lhs.insTime == rhs.insTime);
+    REQUIRE_THAT(std::chrono::abs(lhs.insTime - rhs.insTime).count(), Catch::Matchers::WithinAbs(0.0, 1e-7)); // RINEX Format: F11.7
     LOG_DEBUG("  [{}] == [{}] | data.size()", lhs.data.size(), rhs.data.size());
     REQUIRE(lhs.data.size() == rhs.data.size());
     for (const auto& l : lhs.data)

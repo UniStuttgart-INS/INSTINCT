@@ -109,7 +109,7 @@ TEST_CASE("[Math] Catch Matcher significant digits", "[Math]")
     REQUIRE_THAT(val1, Catch::Matchers::EqualsSigDigits(val2, 12));
 }
 
-TEST_CASE("[Math] Catch Matcher significant digits container", "[Math][Debug]")
+TEST_CASE("[Math] Catch Matcher significant digits container", "[Math]")
 {
     auto logger = initializeTestLogger();
 

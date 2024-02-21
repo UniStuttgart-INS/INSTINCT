@@ -127,6 +127,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem::Style& style)
         { "eventMarkerOutlineColor", style.eventMarkerOutlineColor },
         { "eventTooltipFilterRegex", style.eventTooltipFilterRegex },
     };
+    if (style.lineFlags) { j["lineFlags"] = style.lineFlags.value(); }
 }
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
@@ -140,6 +141,7 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem::Style& style)
     if (j.contains("colormapMask")) { j.at("colormapMask").get_to(style.colormapMask); }
     if (j.contains("colormapMaskDataCmpIdx")) { j.at("colormapMaskDataCmpIdx").get_to(style.colormapMaskDataCmpIdx); }
     if (j.contains("thickness")) { j.at("thickness").get_to(style.thickness); }
+    if (j.contains("lineFlags")) { style.lineFlags.emplace(j.at("lineFlags").get<uint32_t>()); }
     if (j.contains("markerColormapMask")) { j.at("markerColormapMask").get_to(style.markerColormapMask); }
     if (j.contains("markerColormapMaskDataCmpIdx")) { j.at("markerColormapMaskDataCmpIdx").get_to(style.markerColormapMaskDataCmpIdx); }
     if (j.contains("markers")) { j.at("markers").get_to(style.markers); }
@@ -193,6 +195,7 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "yAxisFlags", data.yAxisFlags },
         { "xAxisScale", data.xAxisScale },
         { "yAxesScale", data.yAxesScale },
+        { "lineFlags", data.lineFlags },
         { "headerText", data.headerText },
         { "leftPaneWidth", data.leftPaneWidth },
         { "plotFlags", data.plotFlags },
@@ -218,6 +221,7 @@ void from_json(const json& j, Plot::PlotInfo& data)
     if (j.contains("yAxisFlags")) { j.at("yAxisFlags").get_to(data.yAxisFlags); }
     if (j.contains("xAxisScale")) { j.at("xAxisScale").get_to(data.xAxisScale); }
     if (j.contains("yAxesScale")) { j.at("yAxesScale").get_to(data.yAxesScale); }
+    if (j.contains("lineFlags")) { j.at("lineFlags").get_to(data.lineFlags); }
     if (j.contains("headerText")) { j.at("headerText").get_to(data.headerText); }
     if (j.contains("leftPaneWidth")) { j.at("leftPaneWidth").get_to(data.leftPaneWidth); }
     if (j.contains("plotFlags")) { j.at("plotFlags").get_to(data.plotFlags); }
@@ -751,6 +755,25 @@ void NAV::Plot::guiConfig()
                     axisScaleCombo("Y3", plot.yAxesScale[2]);
                 }
 
+                ImGui::SameLine();
+                if (ImGui::CheckboxFlags(fmt::format("NoClip##LineFlags {} - {}", size_t(id), plotIdx).c_str(), &plot.lineFlags, ImPlotLineFlags_NoClip))
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Markers (if displayed) on the edge of a plot will not be clipped"); }
+                ImGui::SameLine();
+                if (ImGui::CheckboxFlags(fmt::format("SkipNaN##LineFlags {} - {}", size_t(id), plotIdx).c_str(), &plot.lineFlags, ImPlotLineFlags_SkipNaN))
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("NaNs values will be skipped instead of rendered as missing data"); }
+                ImGui::SameLine();
+                if (ImGui::CheckboxFlags(fmt::format("Loop##LineFlags {} - {}", size_t(id), plotIdx).c_str(), &plot.lineFlags, ImPlotLineFlags_Loop))
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("The last and first point will be connected to form a closed loop"); }
+
                 ImGui::TreePop();
             }
 
@@ -1047,7 +1070,7 @@ void NAV::Plot::guiConfig()
                                              plotDataX.buffer.data(),
                                              plotData.buffer.data(),
                                              dataPointCount,
-                                             ImPlotLineFlags_None,
+                                             plotItem.style.lineFlags.value_or(plot.lineFlags),
                                              static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                              stride * static_cast<int>(sizeof(double)));
                         }
@@ -1062,7 +1085,7 @@ void NAV::Plot::guiConfig()
                                                 plotDataX.buffer.data(),
                                                 plotData.buffer.data(),
                                                 dataPointCount,
-                                                ImPlotScatterFlags_None,
+                                                plotItem.style.lineFlags.value_or(plot.lineFlags) & ImPlotLineFlags_NoClip ? ImPlotScatterFlags_NoClip : ImPlotScatterFlags_None,
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
                         }
@@ -1211,6 +1234,38 @@ void NAV::Plot::guiConfig()
                             {
                                 flow::ApplyChanges();
                             }
+                            ImPlotLineFlags lineFlags = plotItem.style.lineFlags.value_or(plot.lineFlags);
+                            bool plotItemLineFlagsAuto = !plotItem.style.lineFlags.has_value();
+                            if (plotItemLineFlagsAuto) { ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.8F); }
+                            if (ImGui::CheckboxFlags("NoClip", &lineFlags, ImPlotLineFlags_NoClip))
+                            {
+                                plotItem.style.lineFlags = lineFlags;
+                                flow::ApplyChanges();
+                            }
+                            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Markers (if displayed) on the edge of a plot will not be clipped"); }
+                            ImGui::SameLine();
+                            if (ImGui::CheckboxFlags("SkipNaN", &lineFlags, ImPlotLineFlags_SkipNaN))
+                            {
+                                plotItem.style.lineFlags = lineFlags;
+                                flow::ApplyChanges();
+                            }
+                            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("NaNs values will be skipped instead of rendered as missing data"); }
+                            ImGui::SameLine();
+                            if (ImGui::CheckboxFlags("Loop", &lineFlags, ImPlotLineFlags_Loop))
+                            {
+                                plotItem.style.lineFlags = lineFlags;
+                                flow::ApplyChanges();
+                            }
+                            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("The last and first point will be connected to form a closed loop"); }
+                            if (plotItem.style.lineFlags)
+                            {
+                                ImGui::SameLine();
+                                if (ImGui::Button("Auto##Line Flags"))
+                                {
+                                    plotItem.style.lineFlags.reset();
+                                }
+                            }
+                            if (plotItemLineFlagsAuto) { ImGui::PopStyleVar(); }
                             if (plotItem.style.lineType == PlotInfo::PlotItem::Style::LineType::Line)
                             {
                                 if (ImGui::DragFloat("Line Thickness", &plotItem.style.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))

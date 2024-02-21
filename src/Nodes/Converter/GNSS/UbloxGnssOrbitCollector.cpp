@@ -1040,7 +1040,7 @@ void NAV::UbloxGnssOrbitCollector::decryptGalileo(const SatId& satId, const ubx:
         auto E5b_DVS = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 22) & 0b1);
         auto E1b_DVS = static_cast<uint8_t>((sfrbx.dwrd.at(w) >> 21) & 0b1);
         [[maybe_unused]] auto WN = static_cast<uint16_t>((sfrbx.dwrd.at(w) >> 9) & 0b111111111111);
-        uint32_t TOW = (sfrbx.dwrd.at(w) & 0b111111111) << 11;
+        [[maybe_unused]] uint32_t TOW = (sfrbx.dwrd.at(w) & 0b111111111) << 11;
         LOG_DEBUG("{}: [{}]       BGD_E1_E5b {} ({}), E5b_HS {}, E1b_HS {}, E5b_DVS {}, E1b_DVS {}, WN {}, TOW {}", nameId(), satId,
                   BGD_E1_E5b, std::bitset<16>(static_cast<uint16_t>(BGD_E1_E5b)), E5b_HS, E1b_HS, E5b_DVS, E1b_DVS, WN, std::bitset<32>(TOW));
 

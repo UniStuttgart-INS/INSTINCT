@@ -195,6 +195,8 @@ class Plot : public Node, public CommonLog
                 size_t colormapMaskDataCmpIdx = 0;
                 /// Line thickness
                 float thickness = 1.0F;
+                /// Line Flags (overrides the plot selection)
+                std::optional<ImPlotLineFlags> lineFlags;
 
                 /// Amount of points to skip for plotting
                 int stride = 0;
@@ -330,6 +332,8 @@ class Plot : public Node, public CommonLog
         ImPlotScale xAxisScale = ImPlotScale_Linear;
         /// Scale for the y-Axes
         std::array<ImPlotScale, 3> yAxesScale = { ImPlotScale_Linear, ImPlotScale_Linear, ImPlotScale_Linear };
+        /// Line Flags for all items (each item can override the selection)
+        ImPlotLineFlags lineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN;
 
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;

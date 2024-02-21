@@ -89,6 +89,7 @@ void NAV::UbloxGnssObsConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue,
                     GnssObs::ObservationData obsData(satSigId);
                     if (data.prValid())
                     {
+                        if (data.prMes > 100'000'000) { return; } // Sometimes at the start of the ublox receiver, it reports absurd high numbers
                         obsData.pseudorange = GnssObs::ObservationData::Pseudorange{
                             .value = data.prMes,
                             .SSI = 0,
