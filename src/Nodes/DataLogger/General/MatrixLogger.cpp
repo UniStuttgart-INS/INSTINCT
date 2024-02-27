@@ -126,15 +126,14 @@ void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
         // Matrix
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            const auto* value = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
-
-            if (value != nullptr && !insTime.empty())
+            if (auto value = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX);
+                value && !insTime.empty())
             {
                 if (!_headerWritten)
                 {
-                    for (int row = 0; row < value->rows(); row++)
+                    for (int row = 0; row < value->v->rows(); row++)
                     {
-                        for (int col = 0; col < value->cols(); col++)
+                        for (int col = 0; col < value->v->cols(); col++)
                         {
                             _filestream << ",[" << row << ";" << col << "]";
                         }
@@ -149,16 +148,19 @@ void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
                 _filestream << "," << std::defaultfloat << std::setprecision(gpsTimePrecision) << insTime.toGPSweekTow().tow;
                 _filestream << std::setprecision(valuePrecision);
 
-                for (int row = 0; row < value->rows(); row++)
+                for (int row = 0; row < value->v->rows(); row++)
                 {
-                    for (int col = 0; col < value->cols(); col++)
+                    for (int col = 0; col < value->v->cols(); col++)
                     {
-                        _filestream << "," << (*value)(row, col);
+                        _filestream << "," << (*value->v)(row, col);
                     }
                 }
                 _filestream << "\n";
             }
         }
+        else
+        {
+            releaseInputValue(pinIdx);
+        }
     }
-    releaseInputValue(pinIdx);
 }

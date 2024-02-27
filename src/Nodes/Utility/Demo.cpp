@@ -128,12 +128,9 @@ void NAV::Demo::guiConfig()
         /* ----------------------------------------------- Delegate ----------------------------------------------- */
         ImGui::TableNextColumn();
         {
-            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_NODE))
-            {
-                std::scoped_lock lk(*mutex);
-                const Demo* connectedNode = getInputValue<const Demo>(INPUT_PORT_INDEX_DEMO_NODE);
-                ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
-            }
+            // The returned type automatically blocks editing on the other side of the link. Like a scoped_lock for mutexes
+            auto connectedNode = getInputValue<Demo>(INPUT_PORT_INDEX_DEMO_NODE);
+            ImGui::Text("Delegate: %s", connectedNode ? connectedNode->v->nameId().c_str() : "N/A");
         }
         ImGui::TableNextColumn();
         /* ------------------------------------------------ Flow ------------------------------------------------ */
@@ -177,16 +174,8 @@ void NAV::Demo::guiConfig()
         /* ------------------------------------------------- Bool ------------------------------------------------- */
         ImGui::TableNextColumn();
         {
-            if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_BOOL))
-            {
-                std::scoped_lock lk(*mutex);
-                const auto* connectedBool = getInputValue<const bool>(INPUT_PORT_INDEX_BOOL);
-                ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
-            }
-            else
-            {
-                ImGui::TextUnformatted("Bool: N/A");
-            }
+            auto connectedBool = getInputValue<bool>(INPUT_PORT_INDEX_BOOL);
+            ImGui::Text("Bool: %s", connectedBool ? (connectedBool->v ? "true" : "false") : "N/A");
         }
         ImGui::TableNextColumn();
         {
@@ -199,17 +188,9 @@ void NAV::Demo::guiConfig()
 
         /* -------------------------------------------------- Int ------------------------------------------------- */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_INT))
+        if (auto connectedInt = getInputValue<int>(INPUT_PORT_INDEX_INT))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedInt = getInputValue<const int>(INPUT_PORT_INDEX_INT))
-            {
-                ImGui::Text("Int: %d", *connectedInt);
-            }
-            else
-            {
-                ImGui::TextUnformatted("Int: N/A");
-            }
+            ImGui::Text("Int: %d", *connectedInt->v);
         }
         else
         {
@@ -235,17 +216,9 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------- Float ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_FLOAT))
+        if (auto connectedFloat = getInputValue<float>(INPUT_PORT_INDEX_FLOAT))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedFloat = getInputValue<const float>(INPUT_PORT_INDEX_FLOAT))
-            {
-                ImGui::Text("Float: %.3f", *connectedFloat);
-            }
-            else
-            {
-                ImGui::TextUnformatted("Float: N/A");
-            }
+            ImGui::Text("Float: %.3f", *connectedFloat->v);
         }
         else
         {
@@ -261,17 +234,9 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DOUBLE))
+        if (auto connectedDouble = getInputValue<double>(INPUT_PORT_INDEX_DOUBLE))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedDouble = getInputValue<const double>(INPUT_PORT_INDEX_DOUBLE))
-            {
-                ImGui::Text("Double : %.3f", *connectedDouble);
-            }
-            else
-            {
-                ImGui::TextUnformatted("Double: N/A");
-            }
+            ImGui::Text("Double : %.3f", *connectedDouble->v);
         }
         else
         {
@@ -287,17 +252,9 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_STRING))
+        if (auto connectedString = getInputValue<std::string>(INPUT_PORT_INDEX_STRING))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedString = getInputValue<const std::string>(INPUT_PORT_INDEX_STRING))
-            {
-                ImGui::Text("String: %s", connectedString->c_str());
-            }
-            else
-            {
-                ImGui::TextUnformatted("String: N/A");
-            }
+            ImGui::Text("String: %s", connectedString->v->c_str());
         }
         else
         {
@@ -321,25 +278,17 @@ void NAV::Demo::guiConfig()
                         LOG_WARN("{}: Notifying connected nodes requires at least one connected node to be initialized.", nameId());
                     }
                 }
-                notifyOutputValueChanged(OUTPUT_PORT_INDEX_STRING, getCurrentInsTime());
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_STRING, getCurrentInsTime(), guard);
             }
         }
         ImGui::SameLine();
         gui::widgets::HelpMarker("The string notifies about changes.\nInitialize both nodes for this to work.");
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_DEMO_DATA))
+        if (auto connectedObject = getInputValue<DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedObject = getInputValue<const DemoData>(INPUT_PORT_INDEX_DEMO_DATA))
-            {
-                ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
-                            connectedObject->boolean ? "true" : "false");
-            }
-            else
-            {
-                ImGui::TextUnformatted("Object: N/A");
-            }
+            ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->v->integer.at(0), connectedObject->v->integer.at(1), connectedObject->v->integer.at(2),
+                        connectedObject->v->boolean ? "true" : "false");
         }
         else
         {
@@ -360,17 +309,9 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_MATRIX))
+        if (auto connectedMatrix = getInputValue<Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
         {
-            std::scoped_lock lk(*mutex);
-            if (const auto* connectedMatrix = getInputValue<const Eigen::MatrixXd>(INPUT_PORT_INDEX_MATRIX))
-            {
-                gui::widgets::MatrixView("Current Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
-            }
-            else
-            {
-                ImGui::TextUnformatted("Matrix: N/A");
-            }
+            gui::widgets::MatrixView("Current Matrix", connectedMatrix->v, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
         }
         else
         {
@@ -624,7 +565,8 @@ void NAV::Demo::stringUpdatedNotifyFunction([[maybe_unused]] const InsTime& insT
 {
     _stringUpdateCounter++;
 
-    LOG_DEBUG("String value updated to {} at time {}", *getInputValue<const std::string>(pinIdx), insTime);
-
-    releaseInputValue(pinIdx); // Do not forget to release the mutex after you are done reading it
+    if (auto value = getInputValue<std::string>(pinIdx))
+    {
+        LOG_DEBUG("String value updated to '{}' at time {}", *value->v, insTime);
+    }
 }

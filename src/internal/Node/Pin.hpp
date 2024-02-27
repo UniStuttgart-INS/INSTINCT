@@ -27,6 +27,7 @@ using json = nlohmann::json; ///< json namespace
 #include <atomic>
 #include <condition_variable>
 
+#include "util/Logger.hpp"
 #include "util/Container/TsDeque.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
@@ -422,6 +423,9 @@ class OutputPin : public Pin
 
         /// @brief Returns a pointer to the pin which is connected to this one
         [[nodiscard]] InputPin* getConnectedPin() const;
+
+        /// @brief Flag to signal the connected node, that the data was changed
+        bool dataChangeNotification = false;
     };
 
     /// Info to identify the linked pins
@@ -572,38 +576,122 @@ class InputPin : public Pin
         /// @brief Returns a pointer to the pin which is connected to this one
         [[nodiscard]] OutputPin* getConnectedPin() const;
 
-        /// @brief Get a pointer to the value connected on the pin
-        /// @tparam T Type of the connected object
-        /// @return Pointer to the object
+        /// @brief Value wrapper, automatically incrementing and decrementing the data access counter
         template<typename T>
-        [[nodiscard]] const T* getValue() const
+        class ValueWrapper
         {
-            if (const auto* connectedPin = getConnectedPin())
+          public:
+            /// @brief Constructor
+            /// @param v Reference to the value to wrap
+            /// @param outputPin Output pin reference
+            /// @param dataChangeNotification Reference to the Data change notification of the link
+            ValueWrapper(const T* v, OutputPin* outputPin, bool& dataChangeNotification)
+                : v(v), outputPin(outputPin)
             {
-                // if (!connectedPin->parentNode->isInitialized()) { return nullptr; } // TODO: Check this here (Problem: member access into incomplete type 'NAV::Node')
-
-                // clang-format off
-                if constexpr (std::is_same_v<T, const bool>
-                           || std::is_same_v<T, const int>
-                           || std::is_same_v<T, const float>
-                           || std::is_same_v<T, const double>
-                           || std::is_same_v<T, const std::string>) // clang-format on
+                std::scoped_lock guard(outputPin->dataAccessMutex);
+                if (!dataChangeNotification)
                 {
-                    if (const auto* pVal = std::get_if<const T*>(&(connectedPin->data)))
-                    {
-                        return *pVal;
-                    }
+                    outputPin->dataAccessCounter++;
                 }
-                else
+                dataChangeNotification = false; // We take 'ownership' of the incremented dataAccessCounter
+            }
+            /// @brief Desctructor
+            ~ValueWrapper()
+            {
+                if (outputPin)
                 {
-                    if (const auto* pVal = std::get_if<const void*>(&(connectedPin->data)))
+                    std::scoped_lock guard(outputPin->dataAccessMutex);
+                    if (outputPin->dataAccessCounter > 0)
                     {
-                        return static_cast<const T*>(*pVal);
+                        outputPin->dataAccessCounter--;
+                        if (outputPin->dataAccessCounter == 0)
+                        {
+                            LOG_DATA("Notifying node connected to pin '{} ({})' that all data is read.", outputPin->name, size_t(outputPin->id));
+                            outputPin->dataAccessConditionVariable.notify_all();
+                        }
                     }
                 }
             }
 
-            return nullptr;
+            /// @brief Copy constructor
+            ValueWrapper(const ValueWrapper& other)
+                : v(other.v), outputPin(other.outputPin)
+            {
+                std::scoped_lock guard(outputPin->dataAccessMutex);
+                outputPin->dataAccessCounter++;
+            }
+            /// @brief Move constructor
+            ValueWrapper(ValueWrapper&& other) noexcept
+                : v(std::move(other.v)), outputPin(std::move(other.outputPin)) {}
+            /// @brief Copy assignment operator
+            ValueWrapper& operator=(const ValueWrapper& other)
+            {
+                if (this != &other)
+                {
+                    v = other.v;
+                    outputPin = other.outputPin;
+                    std::scoped_lock guard(outputPin->dataAccessMutex);
+                    outputPin->dataAccessCounter++;
+                }
+                return *this;
+            }
+            /// @brief Move assignment operator
+            ValueWrapper& operator=(ValueWrapper&& other) noexcept
+            {
+                if (this != &other)
+                {
+                    v = std::move(other.v);
+                    outputPin = std::move(other.outputPin);
+                }
+                return *this;
+            }
+
+            /// Pointer to the value wrapped
+            const T* v;
+
+          private:
+            /// Pointer to the output pin representing the data
+            OutputPin* outputPin;
+        };
+
+        /// @brief Get the value connected on the pin if the pin is connected. Automatically increments the data access counter to prevent editing.
+        /// @tparam T Type of the connected object
+        /// @return ValueWrapper with a const pointer to the connected data
+        template<typename T>
+        [[nodiscard]] std::optional<ValueWrapper<T>> getValue() const
+        {
+            if (auto* connectedPin = getConnectedPin())
+            {
+                // if (!connectedPin->parentNode->isInitialized()) { return nullptr; } // TODO: Check this here (Problem: member access into incomplete type 'NAV::Node')
+
+                auto outgoingLink = std::find_if(connectedPin->links.begin(), connectedPin->links.end(), [&](const OutputPin::OutgoingLink& link) {
+                    return link.linkId == linkId;
+                });
+
+                // clang-format off
+                if constexpr (std::is_same_v<T, bool>
+                           || std::is_same_v<T, int>
+                           || std::is_same_v<T, float>
+                           || std::is_same_v<T, double>
+                           || std::is_same_v<T, std::string>) // clang-format on
+                {
+                    if (const auto* pVal = std::get_if<const T*>(&(connectedPin->data));
+                        pVal && *pVal)
+                    {
+                        return ValueWrapper<T>(*pVal, connectedPin, outgoingLink->dataChangeNotification);
+                    }
+                }
+                else
+                {
+                    if (const auto* pVal = std::get_if<const void*>(&(connectedPin->data));
+                        pVal && *pVal)
+                    {
+                        return ValueWrapper<T>(static_cast<const T*>(*pVal), connectedPin, outgoingLink->dataChangeNotification);
+                    }
+                }
+            }
+
+            return std::nullopt;
         }
     };
 

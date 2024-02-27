@@ -60,14 +60,14 @@ std::string NAV::SinglePointPositioning::category()
 void NAV::SinglePointPositioning::guiConfig()
 {
     auto nSatColumnContent = [&](size_t pinIndex) -> bool {
-        if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
+        if (auto gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
         {
             size_t usedSatNum = 0;
             std::string usedSats;
             std::string allSats;
 
             std::string filler = ", ";
-            for (const auto& satellite : gnssNavInfo->satellites())
+            for (const auto& satellite : gnssNavInfo->v->satellites())
             {
                 if (_algorithm.getObsFilter().isSatelliteAllowed(satellite.first))
                 {
@@ -76,7 +76,7 @@ void NAV::SinglePointPositioning::guiConfig()
                 }
                 allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
             }
-            ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
+            ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->v->nSatellites()).c_str());
             if (ImGui::IsItemHovered())
             {
                 ImGui::SetTooltip("Used  satellites: %s\n"
@@ -158,21 +158,14 @@ void NAV::SinglePointPositioning::pinDeleteCallback(Node* node, size_t pinIdx)
 void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     // Collection of all connected navigation data providers
+    std::vector<InputPin::IncomingLink::ValueWrapper<GnssNavInfo>> gnssNavInfoWrappers;
     std::vector<const GnssNavInfo*> gnssNavInfos;
-    std::vector<std::unique_lock<std::mutex>> guards;
     for (size_t i = 0; i < _dynamicInputPins.getNumberOfDynamicPins(); i++)
     {
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+        if (auto gnssNavInfo = getInputValue<GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
         {
-            guards.emplace_back(*mutex);
-            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
-            {
-                gnssNavInfos.push_back(gnssNavInfo);
-            }
-            else
-            {
-                guards.pop_back();
-            }
+            gnssNavInfoWrappers.push_back(*gnssNavInfo);
+            gnssNavInfos.push_back(gnssNavInfo->v);
         }
     }
     if (gnssNavInfos.empty()) { return; }

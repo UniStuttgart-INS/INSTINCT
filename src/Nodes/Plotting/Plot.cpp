@@ -22,6 +22,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Json.hpp"
 #include "util/StringUtil.hpp"
+#include "util/Container/STL.hpp"
 
 #include "util/Container/Vector.hpp"
 
@@ -1794,31 +1795,25 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             if (startPin.dataIdentifier.front() == "Eigen::MatrixXd")
             {
-                if (const auto* matrix = getInputValue<const Eigen::MatrixXd>(pinIndex))
+                if (auto matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
                 {
-                    auto* mutex = getInputValueMutex(pinIndex);
-                    if (mutex) { mutex->lock(); }
-                    for (int row = 0; row < matrix->rows(); row++)
+                    for (int row = 0; row < matrix->v->rows(); row++)
                     {
-                        for (int col = 0; col < matrix->cols(); col++)
+                        for (int col = 0; col < matrix->v->cols(); col++)
                         {
                             _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}, {}", row, col));
                         }
                     }
-                    if (mutex) { mutex->unlock(); }
                 }
             }
             else if (startPin.dataIdentifier.front() == "Eigen::VectorXd")
             {
-                if (const auto* matrix = getInputValue<const Eigen::VectorXd>(pinIndex))
+                if (auto matrix = getInputValue<Eigen::VectorXd>(pinIndex))
                 {
-                    auto* mutex = getInputValueMutex(pinIndex);
-                    if (mutex) { mutex->lock(); }
-                    for (int row = 0; row < matrix->rows(); row++)
+                    for (int row = 0; row < matrix->v->rows(); row++)
                     {
                         _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}", row));
                     }
-                    if (mutex) { mutex->unlock(); }
                 }
             }
 
@@ -1996,9 +1991,8 @@ void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<const bool>(pinIdx);
-
-    if (value != nullptr && !insTime.empty())
+    if (auto value = getInputValue<bool>(pinIdx);
+        value && !insTime.empty())
     {
         if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
@@ -2009,9 +2003,8 @@ void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Boolean
-        addData(pinIdx, i++, static_cast<double>(*value));
+        addData(pinIdx, i++, static_cast<double>(*value->v));
     }
-    releaseInputValue(pinIdx);
 }
 
 void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
@@ -2023,9 +2016,8 @@ void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<const int>(pinIdx);
-
-    if (value != nullptr && !insTime.empty())
+    if (auto value = getInputValue<int>(pinIdx);
+        value && !insTime.empty())
     {
         if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
@@ -2036,9 +2028,8 @@ void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Integer
-        addData(pinIdx, i++, static_cast<double>(*value));
+        addData(pinIdx, i++, static_cast<double>(*value->v));
     }
-    releaseInputValue(pinIdx);
 }
 
 void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
@@ -2050,9 +2041,8 @@ void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
         return;
     }
 
-    const auto* value = getInputValue<const double>(pinIdx);
-
-    if (value != nullptr && !insTime.empty())
+    if (auto value = getInputValue<double>(pinIdx);
+        value && !insTime.empty())
     {
         if (_startTime.empty()) { _startTime = insTime; }
         size_t i = 0;
@@ -2063,9 +2053,8 @@ void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Double
-        addData(pinIdx, i++, *value);
+        addData(pinIdx, i++, *value->v);
     }
-    releaseInputValue(pinIdx);
 }
 
 void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
@@ -2081,9 +2070,8 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
     {
         if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
-            const auto* value = getInputValue<const Eigen::MatrixXd>(pinIdx);
-
-            if (value != nullptr && !insTime.empty())
+            if (auto value = getInputValue<Eigen::MatrixXd>(pinIdx);
+                value && !insTime.empty())
             {
                 if (_startTime.empty()) { _startTime = insTime; }
                 size_t i = 0;
@@ -2094,20 +2082,19 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
                 addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
                 addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
                 // Matrix
-                for (int row = 0; row < value->rows(); row++)
+                for (int row = 0; row < value->v->rows(); row++)
                 {
-                    for (int col = 0; col < value->cols(); col++)
+                    for (int col = 0; col < value->v->cols(); col++)
                     {
-                        addData(pinIdx, i++, (*value)(row, col));
+                        addData(pinIdx, i++, (*value->v)(row, col));
                     }
                 }
             }
         }
         else if (sourcePin->dataIdentifier.front() == "Eigen::VectorXd")
         {
-            const auto* value = getInputValue<const Eigen::VectorXd>(pinIdx);
-
-            if (value != nullptr && !insTime.empty())
+            if (auto value = getInputValue<Eigen::VectorXd>(pinIdx);
+                value && !insTime.empty())
             {
                 if (_startTime.empty()) { _startTime = insTime; }
                 size_t i = 0;
@@ -2118,14 +2105,17 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
                 addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
                 addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
                 // Vector
-                for (int row = 0; row < value->rows(); row++)
+                for (int row = 0; row < value->v->rows(); row++)
                 {
-                    addData(pinIdx, i++, (*value)(row));
+                    addData(pinIdx, i++, (*value->v)(row));
                 }
             }
         }
+        else
+        {
+            releaseInputValue(pinIdx);
+        }
     }
-    releaseInputValue(pinIdx);
 }
 
 void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
@@ -2144,6 +2134,7 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 
     if (auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin())
     {
+        LOG_DATA("{}: Connected Pin data identifier: [{}]", nameId(), joinToString(sourcePin->dataIdentifier));
         // -------------------------------------------- General ----------------------------------------------
         if (sourcePin->dataIdentifier.front() == DynamicData::type())
         {
@@ -2157,14 +2148,6 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         else if (sourcePin->dataIdentifier.front() == GnssObs::type())
         {
             plotGnssObs(std::static_pointer_cast<const GnssObs>(nodeData), pinIdx, i);
-        }
-        else if (sourcePin->dataIdentifier.front() == SppSolution::type())
-        {
-            plotSppSolution(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx, i);
-        }
-        else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
-        {
-            plotData(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIdx, i);
         }
         // ---------------------------------------------- IMU ------------------------------------------------
         else if (sourcePin->dataIdentifier.front() == ImuObs::type())
@@ -2208,6 +2191,16 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
                      || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
                 plotData(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+            }
+            // ------------------------------------------- GNSS ----------------------------------------------
+            else if (sourcePin->dataIdentifier.front() == SppSolution::type())
+            {
+                plotData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+                plotSppSolutionDynamicData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx);
+            }
+            else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
+            {
+                plotData(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
             }
         }
         else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
@@ -2282,10 +2275,8 @@ void NAV::Plot::plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pi
     }
 }
 
-void NAV::Plot::plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex, size_t& plotIndex)
+void NAV::Plot::plotSppSolutionDynamicData(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
 {
-    plotData(obs, pinIndex, plotIndex);
-
     // Dynamic data
     for (const auto& [satId, satData] : obs->satData)
     {

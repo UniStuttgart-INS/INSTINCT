@@ -116,7 +116,9 @@ class RtklibPosObs : public PosVel
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { NodeData::type() };
+        auto parent = PosVel::parentTypes();
+        parent.push_back(PosVel::type());
+        return parent;
     }
 
     /// @brief Returns a vector of data descriptors
