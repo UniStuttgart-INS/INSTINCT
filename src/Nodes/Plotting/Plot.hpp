@@ -495,8 +495,7 @@ class Plot : public Node, public CommonLog
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
-    void plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex, size_t& plotIndex);
+    void plotSppSolutionDynamicData(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex);
 };
 
 } // namespace NAV

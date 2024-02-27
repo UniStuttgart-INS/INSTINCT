@@ -23,11 +23,11 @@
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
+#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/TcKfInsGnssErrors.hpp"
 #include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsSimulated.hpp"

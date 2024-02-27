@@ -88,7 +88,7 @@ void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {
 
 void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
+void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>& /* guard */)
 {
     if (callbacksEnabled && isInitialized())
     {
@@ -96,16 +96,14 @@ void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime)
 
         if (!outputPin.isPinLinked()) { return; }
 
-        for (const auto& link : outputPin.links)
+        for (auto& link : outputPin.links)
         {
             auto* targetPin = link.getConnectedPin();
             if (link.connectedNode->isInitialized() && !targetPin->queueBlocked)
             {
-                {
-                    std::scoped_lock<std::mutex> lk(outputPin.dataAccessMutex);
-                    outputPin.dataAccessCounter++;
-                    LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
-                }
+                outputPin.dataAccessCounter++;
+                link.dataChangeNotification = true;
+                LOG_DATA("{}: Increasing data access counter on output pin '{}'. Value now {}.", nameId(), outputPin.name, outputPin.dataAccessCounter);
 
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
@@ -145,29 +143,26 @@ std::scoped_lock<std::mutex> NAV::Node::requestOutputValueLock(size_t pinIdx)
     return std::scoped_lock(outputPin.dataAccessMutex);
 }
 
-std::mutex* NAV::Node::getInputValueMutex(size_t portIndex)
-{
-    if (OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin())
-    {
-        return &outputPin->dataAccessMutex;
-    }
-    return nullptr;
-}
-
 void NAV::Node::releaseInputValue(size_t portIndex)
 {
-    OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin();
-    if (outputPin)
+    if (OutputPin* outputPin = inputPins.at(portIndex).link.getConnectedPin())
     {
         std::scoped_lock<std::mutex> lk(outputPin->dataAccessMutex);
         if (outputPin->dataAccessCounter > 0)
         {
-            outputPin->dataAccessCounter--;
-
-            if (outputPin->dataAccessCounter == 0)
+            auto outgoingLink = std::find_if(outputPin->links.begin(), outputPin->links.end(), [&](const OutputPin::OutgoingLink& link) {
+                return link.connectedPinId == inputPins.at(portIndex).id;
+            });
+            if (outgoingLink != outputPin->links.end() && outgoingLink->dataChangeNotification)
             {
-                LOG_DATA("{}: Notifying node '{}' connected to pin {} that all data is read.", nameId(), outputPin->parentNode->nameId(), outputPin->name);
-                outputPin->dataAccessConditionVariable.notify_all();
+                outgoingLink->dataChangeNotification = false;
+                outputPin->dataAccessCounter--;
+
+                if (outputPin->dataAccessCounter == 0)
+                {
+                    LOG_DATA("{}: Notifying node '{}' connected to pin {} that all data is read.", nameId(), outputPin->parentNode->nameId(), outputPin->name);
+                    outputPin->dataAccessConditionVariable.notify_all();
+                }
             }
         }
     }

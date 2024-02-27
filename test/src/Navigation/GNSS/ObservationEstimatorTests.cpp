@@ -124,12 +124,14 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
         const auto* spp = dynamic_cast<const NAV::SinglePointPositioning*>(node);
         auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.front());
         // Collection of all connected navigation data providers
+        std::vector<InputPin::IncomingLink::ValueWrapper<GnssNavInfo>> gnssNavInfoWrappers;
         std::vector<const GnssNavInfo*> gnssNavInfos;
         for (size_t i = 0; i < spp->_dynamicInputPins.getNumberOfDynamicPins(); i++)
         {
-            if (const auto* gnssNavInfo = spp->getInputValue<const GnssNavInfo>(NAV::SinglePointPositioning::INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+            if (auto gnssNavInfo = spp->getInputValue<GnssNavInfo>(NAV::SinglePointPositioning::INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
             {
-                gnssNavInfos.push_back(gnssNavInfo);
+                gnssNavInfoWrappers.push_back(*gnssNavInfo);
+                gnssNavInfos.push_back(gnssNavInfo->v);
             }
         }
         if (gnssNavInfos.empty()) { return; }
@@ -287,12 +289,14 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS L
         const auto* spp = dynamic_cast<const NAV::SinglePointPositioning*>(node);
         auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.front());
         // Collection of all connected navigation data providers
+        std::vector<InputPin::IncomingLink::ValueWrapper<GnssNavInfo>> gnssNavInfoWrappers;
         std::vector<const GnssNavInfo*> gnssNavInfos;
         for (size_t i = 0; i < spp->_dynamicInputPins.getNumberOfDynamicPins(); i++)
         {
-            if (const auto* gnssNavInfo = spp->getInputValue<const GnssNavInfo>(NAV::SinglePointPositioning::INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+            if (auto gnssNavInfo = spp->getInputValue<GnssNavInfo>(NAV::SinglePointPositioning::INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
             {
-                gnssNavInfos.push_back(gnssNavInfo);
+                gnssNavInfoWrappers.push_back(*gnssNavInfo);
+                gnssNavInfos.push_back(gnssNavInfo->v);
             }
         }
         if (gnssNavInfos.empty()) { return; }

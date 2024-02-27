@@ -262,7 +262,8 @@ class Node
     /// @brief Notifies connected nodes about the change
     /// @param[in] pinIdx Output Port index where to set the value
     /// @param[in] insTime Time the value was generated
-    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime);
+    /// @param[in] guard Lock guard of the output data
+    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>& guard);
 
     /// @brief Blocks the thread till the output values was read by all connected nodes
     /// @param[in] pinIdx Output Pin index where to request the lock
@@ -272,18 +273,13 @@ class Node
     /// @tparam T Type of the connected object
     /// @param[in] portIndex Input port where to retrieve the data from
     /// @return Pointer to the object
-    template<typename T,
-             typename = std::enable_if_t<std::is_const_v<T>>>
-    [[nodiscard]] T* getInputValue(size_t portIndex) const
+    template<typename T>
+    [[nodiscard]] std::optional<InputPin::IncomingLink::ValueWrapper<T>> getInputValue(size_t portIndex) const
     {
         return inputPins.at(portIndex).link.getValue<T>();
     }
 
-    /// @brief Gets the mutex of the connected node pin data
-    /// @param[in] portIndex Input port where the data should be locked
-    std::mutex* getInputValueMutex(size_t portIndex);
-
-    /// @brief Unblocks the connected node. Has to be called when the input value was retrieved
+    /// @brief Unblocks the connected node. Has to be called when the input value should be released and getInputValue was not called.
     /// @param[in] portIndex Input port where the data should be released
     void releaseInputValue(size_t portIndex);
 

@@ -917,6 +917,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                                   _tau_bad, _tau_bgd,
                                                                   _kalmanFilter.F.block<3>(Vel, Att), T_rn_p,
                                                                   n_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
             }
             else
             {
@@ -955,6 +956,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                                   _tau_bad, _tau_bgd,
                                                                   _kalmanFilter.F.block<3>(Vel, Att),
                                                                   e_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
             }
             else
             {
@@ -987,6 +989,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
             _kalmanFilter.calcPhiAndQWithVanLoanMethod(tau_i);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard1);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard2);
         }
         else
         {
@@ -1017,20 +1021,15 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             calcPhi();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
         }
         else
         {
             calcPhi();
         }
     }
-
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
-    }
 
     LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q(all, all) - _kalmanFilter.Q(all, all).transpose());
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
@@ -1042,17 +1041,14 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.predict();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime, guard2);
     }
     else
     {
         _kalmanFilter.predict();
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
-    }
     LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transposed());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1165,6 +1161,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_H);
             _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1176,6 +1173,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_R);
             _kalmanFilter.R = n_measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1189,6 +1187,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
             _kalmanFilter.z = n_measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
                                                          gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
                                                          T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1212,6 +1211,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_H);
             _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, e_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1223,6 +1223,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_R);
             _kalmanFilter.R = e_measurementNoiseCovariance_R(gnssSigmaSquaredPosition, gnssSigmaSquaredVelocity);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1236,6 +1237,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
             _kalmanFilter.z = e_measurementInnovation_dz(gnssMeasurement->e_position(), _latestInertialNavSol->e_position(),
                                                          gnssMeasurement->e_velocity(), _latestInertialNavSol->e_velocity(),
                                                          _latestInertialNavSol->e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime, guard);
         }
         else
         {
@@ -1245,12 +1247,6 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         }
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime);
-    }
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
     LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
     LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
@@ -1274,18 +1270,15 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard3 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.correctWithMeasurementInnovation();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssMeasurement->insTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime, guard2);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssMeasurement->insTime, guard3);
     }
     else
     {
         _kalmanFilter.correctWithMeasurementInnovation();
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssMeasurement->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssMeasurement->insTime);
-    }
     LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
     LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
@@ -1349,6 +1342,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     {
         auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         _kalmanFilter.x(all).setZero();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime, guard);
     }
     else
     {

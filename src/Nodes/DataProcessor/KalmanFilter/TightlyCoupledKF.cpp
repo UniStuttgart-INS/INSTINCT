@@ -206,14 +206,14 @@ void NAV::TightlyCoupledKF::guiConfig()
                     }
 
                     ImGui::TableNextColumn(); // # Sat
-                    if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
+                    if (auto gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
                     {
                         size_t usedSatNum = 0;
                         std::string usedSats;
                         std::string allSats;
 
                         std::string filler = ", ";
-                        for (const auto& satellite : gnssNavInfo->satellites())
+                        for (const auto& satellite : gnssNavInfo->v->satellites())
                         {
                             if ((satellite.first.satSys & _filterFreq)
                                 && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
@@ -223,7 +223,7 @@ void NAV::TightlyCoupledKF::guiConfig()
                             }
                             allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
                         }
-                        ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
+                        ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->v->nSatellites()).c_str());
                         if (ImGui::IsItemHovered())
                         {
                             ImGui::SetTooltip("Used satellites: %s\n"
@@ -1395,6 +1395,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
                                                                   sigma2_cPhi, sigma2_cf,
                                                                   F.block<3, 3>(3, 0), T_rn_p,
                                                                   n_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
             }
             else
             {
@@ -1429,13 +1430,13 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
             if (_showKalmanFilterOutputPins)
             {
                 auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
-
                 _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
                                                                   sigma2_bad, sigma2_bgd,
                                                                   _tau_bad, _tau_bgd,
                                                                   sigma2_cPhi, sigma2_cf,
                                                                   F.block<3, 3>(3, 0),
                                                                   e_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
             }
             else
             {
@@ -1470,6 +1471,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             _kalmanFilter.Phi = Phi;
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
         }
         else
         {
@@ -1481,6 +1483,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
             _kalmanFilter.Q = Q;
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
         }
         else
         {
@@ -1511,6 +1514,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             calcPhi();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
         }
         else
         {
@@ -1520,11 +1524,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
 
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
-    }
+
     LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1535,17 +1535,14 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.predict();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime, guard2);
     }
     else
     {
         _kalmanFilter.predict();
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
-    }
     LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1622,37 +1619,20 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // ----------------------------------------- Read observation data -------------------------------------------
 
     // Collection of all connected navigation data providers
+    std::vector<InputPin::IncomingLink::ValueWrapper<GnssNavInfo>> gnssNavInfoWrappers;
     std::vector<const GnssNavInfo*> gnssNavInfos;
-    std::vector<std::unique_lock<std::mutex>> guards;
     for (size_t i = 0; i < _nNavInfoPins; i++)
     {
-        if (auto* mutex = getInputValueMutex(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+        if (auto gnssNavInfo = getInputValue<GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
         {
-            guards.emplace_back(*mutex);
-            if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
-            {
-                gnssNavInfos.push_back(gnssNavInfo);
-            }
-            else
-            {
-                guards.pop_back();
-            }
+            gnssNavInfoWrappers.push_back(*gnssNavInfo);
+            gnssNavInfos.push_back(gnssNavInfo->v);
         }
     }
     if (gnssNavInfos.empty()) { return; }
 
     // Collection of all connected Ionospheric Corrections
-    IonosphericCorrections ionosphericCorrections;
-    for (const auto* gnssNavInfo : gnssNavInfos)
-    {
-        for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
-        {
-            if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
-            {
-                ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
-            }
-        }
-    }
+    IonosphericCorrections ionosphericCorrections(gnssNavInfos);
 
     // Data calculated for each observation
     struct CalcData
@@ -1999,6 +1979,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_H);
             _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors, pseudoRangeRateObservations);
             LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssObs->insTime, guard);
         }
         else
         {
@@ -2012,6 +1993,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_R);
             _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
             LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssObs->insTime, guard);
         }
         else
         {
@@ -2038,6 +2020,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_z);
             _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
             LOG_DATA("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssObs->insTime, guard);
         }
         else
         {
@@ -2050,12 +2033,6 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         LOG_ERROR("{}: Update in ECEF-frame not implemented, yet.", nameId()); // TODO: implement update in e-Sys.
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssObs->insTime);
-    }
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
     LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
     LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
@@ -2079,18 +2056,15 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard3 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.correctWithMeasurementInnovation();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssObs->insTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime, guard2);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssObs->insTime, guard3);
     }
     else
     {
         _kalmanFilter.correctWithMeasurementInnovation();
     }
 
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssObs->insTime);
-    }
     LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
     LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
@@ -2146,6 +2120,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     {
         auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         _kalmanFilter.x.setZero();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime, guard);
     }
     else
     {
