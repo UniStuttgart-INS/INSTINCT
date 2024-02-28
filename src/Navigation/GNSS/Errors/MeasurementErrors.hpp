@@ -178,7 +178,7 @@ class GnssMeasurementErrorModel
     /// @brief Elevation data for plotting [rad]
     static constexpr std::array<double, PLOT_SAMPLES> _elevation_deg = genRangeArray<PLOT_SAMPLES>(0.0, 0.01, 90.001);
     /// @brief Standard deviations for plotting
-    std::array<std::array<double, PLOT_SAMPLES>, Model::COUNT - 1> _stdDevCurvePlot{};
+    std::vector<std::vector<double>> _stdDevCurvePlot{ Model::COUNT - 1, std::vector<double>(PLOT_SAMPLES) };
 
     /// @brief Calculates the weighting function for the standard deviation
     /// @param[in] model Model to use
