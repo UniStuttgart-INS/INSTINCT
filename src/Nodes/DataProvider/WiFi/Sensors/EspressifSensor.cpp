@@ -151,5 +151,5 @@ void NAV::EspressifSensor::binaryAsyncMessageReceived(void* userData, uart::prot
     auto obs = std::make_shared<UartPacket>(p);
     obs->insTime = util::time::GetCurrentInsTime();
 
-    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_Espressif_OBS, obs);
+    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_WIFI_OBS, obs);
 }

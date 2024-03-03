@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file EspressifObs.hpp
+/// @file WiFiObs.hpp
 /// @brief Espressif Observation Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date TODO
@@ -18,14 +18,14 @@
 namespace NAV
 {
 /// Espressif Observation Class
-class EspressifObs : public NodeData
+class WiFiObs : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return "EspressifObs";
+        return "WiFiObs";
     }
 
     /// @brief Returns the parent types of the data class
@@ -42,7 +42,7 @@ class EspressifObs : public NodeData
     {
         std::string macAddress;
         InsTime time;
-        double measuredDistance;
+        double distance;
     };
 
     std::vector<FtmObs> data;

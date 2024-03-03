@@ -7,18 +7,18 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file WiFiPositioning.hpp
-/// @brief Single Point Positioning (SPP) / Code Phase Positioning
+/// @brief Single Point Positioning (SPP) / Code Phase Positioning // TODO
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-04-29
 
 #pragma once
 
 #include "util/Eigen.hpp"
+#include "util/CallbackTimer.hpp"
 #include <vector>
 
 #include "internal/Node/Node.hpp"
-#include "NodeData/WiFi/EspressifObs.hpp"
-#include "NodeData/WiFi/ArubaObs.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
 #include "NodeData/State/Pos.hpp"
 
 namespace NAV
@@ -61,9 +61,8 @@ class WiFiPositioning : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_ESPRESSIF_OBS = 0; ///< @brief EspressifObs
-    constexpr static size_t INPUT_PORT_INDEX_ARUBA_OBS = 0;     ///< @brief ArubaObs
-    constexpr static size_t OUTPUT_PORT_INDEX_POS = 0;          ///< @brief Pos
+    constexpr static size_t INPUT_PORT_INDEX_WIFI_OBS = 0; ///< @brief WiFiObs
+    constexpr static size_t OUTPUT_PORT_INDEX_POS = 0;     ///< @brief Pos
 
     // --------------------------------------------------------------- Gui -----------------------------------------------------------------
 
@@ -72,6 +71,12 @@ class WiFiPositioning : public Node
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// Amount of wifi input pins
+    size_t _nWifiInputPins = 2;
+
+    /// @brief Adds/Deletes Input Pins depending on the variable _nNavInfoPins
+    void updateNumberOfInputPins();
 
     /// @brief Available Frames
     enum class Frame : int
@@ -112,21 +117,19 @@ class WiFiPositioning : public Node
     };
     std::vector<Device> _devices;
 
-    /// @brief Receive Function for the Espressif Observations
+    /// @brief Receive Function for the WiFi Observations
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void recvEspressifObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void recvWiFiObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Receive Function for the Aruba Observations
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void recvArubaObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    /// Timer object to handle async data requests
+    CallbackTimer _timer;
 
     /// @brief Calculate the position
-    void lsqSolution2d();
+    static void lsqSolution2d(void* userData);
 
     /// @brief Calculate the position
-    void lsqSolution3d();
+    static void lsqSolution3d(void* userData);
 };
 
 } // namespace NAV

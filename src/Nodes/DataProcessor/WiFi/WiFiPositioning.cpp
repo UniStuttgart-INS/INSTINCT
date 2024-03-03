@@ -25,8 +25,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/WiFi/EspressifObs.hpp"
-#include "NodeData/WiFi/ArubaObs.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
@@ -42,8 +41,7 @@ NAV::WiFiPositioning::WiFiPositioning()
     _guiConfigDefaultWindowSize = { 575, 300 };
     _outputInterval = 3000;
 
-    nm::CreateInputPin(this, NAV::EspressifObs::type().c_str(), Pin::Type::Flow, { NAV::EspressifObs::type() }, &WiFiPositioning::recvEspressifObs);
-    nm::CreateInputPin(this, NAV::ArubaObs::type().c_str(), Pin::Type::Flow, { NAV::ArubaObs::type() }, &WiFiPositioning::recvArubaObs);
+    updateNumberOfInputPins();
 
     nm::CreateOutputPin(this, NAV::Pos::type().c_str(), Pin::Type::Flow, { NAV::Pos::type() });
 }
@@ -71,6 +69,22 @@ std::string NAV::WiFiPositioning::category()
 void NAV::WiFiPositioning::guiConfig()
 {
     float columnWidth = 140.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    if (ImGui::Button(fmt::format("Add Input Pin##{}", size_t(id)).c_str()))
+    {
+        _nWifiInputPins++;
+        LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nWifiInputPins);
+        flow::ApplyChanges();
+        updateNumberOfInputPins();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(fmt::format("Delete Input Pin##{}", size_t(id)).c_str()))
+    {
+        _nWifiInputPins--;
+        LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), _nWifiInputPins);
+        flow::ApplyChanges();
+        updateNumberOfInputPins();
+    }
 
     ImGui::SetNextItemWidth(250 * gui::NodeEditorApplication::windowFontRatio());
 
@@ -251,12 +265,10 @@ void NAV::WiFiPositioning::guiConfig()
         ImGui::SameLine();
         gui::widgets::HelpMarker("The third coordinate of the devices is not utilized in a two-dimensional solution.");
         flow::ApplyChanges();
-        if (ImGui::InputInt("Output Interval in ms", &_outputInterval))
+        if (ImGui::InputInt("Output interval [ms]", &_outputInterval))
         {
             LOG_DEBUG("{}: output interval changed to {}", nameId(), _outputInterval);
         }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker("The output interval should be at least as large as that of the sensors.");
         flow::ApplyChanges();
     }
 }
@@ -267,6 +279,7 @@ void NAV::WiFiPositioning::guiConfig()
 
     json j;
 
+    j["nWifiInputPins"] = _nWifiInputPins;
     j["frame"] = static_cast<int>(_frame);
     j["deviceMacAddresses"] = _deviceMacAddresses;
     j["devicePositions"] = _devicePositions;
@@ -281,6 +294,11 @@ void NAV::WiFiPositioning::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("nNavInfoPins"))
+    {
+        j.at("nNavInfoPins").get_to(_nWifiInputPins);
+        updateNumberOfInputPins();
+    }
     if (j.contains("frame"))
     {
         j.at("frame").get_to(_frame);
@@ -315,20 +333,38 @@ bool NAV::WiFiPositioning::initialize()
 
     LOG_DEBUG("WiFiPositioning initialized");
 
+    _devices.clear();
+    _timer.start(_outputInterval, lsqSolution3d, this);
+
     return true;
 }
 
 void NAV::WiFiPositioning::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (_timer.is_running())
+    {
+        _timer.stop();
+    }
 }
 
-void NAV::WiFiPositioning::recvEspressifObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::WiFiPositioning::updateNumberOfInputPins()
 {
-    _devices.clear();
-    auto espressifObs = std::static_pointer_cast<const EspressifObs>(queue.extract_front());
+    while (inputPins.size() < _nWifiInputPins)
+    {
+        nm::CreateInputPin(this, NAV::WiFiObs::type().c_str(), Pin::Type::Flow, { NAV::WiFiObs::type() }, &WiFiPositioning::recvWiFiObs);
+    }
+    while (inputPins.size() > _nWifiInputPins)
+    {
+        nm::DeleteInputPin(inputPins.back());
+    }
+}
 
-    for (auto const& obs : espressifObs->data)
+void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto wifiObs = std::static_pointer_cast<const WiFiObs>(queue.extract_front());
+    for (auto const& obs : wifiObs->data)
     {
         auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs.macAddress);
         if (it != _deviceMacAddresses.end()) // Device already exists
@@ -337,153 +373,128 @@ void NAV::WiFiPositioning::recvEspressifObs(NAV::InputPin::NodeDataQueue& queue,
             size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
             if (_frame == Frame::LLA)
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.measuredDistance });
+                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.distance });
             }
             else if (_frame == Frame::ECEF)
             {
-                _devices.push_back({ _devicePositions.at(index), obs.time, obs.measuredDistance });
+                _devices.push_back({ _devicePositions.at(index), obs.time, obs.distance });
             }
+            else if (_frame == Frame::NED)
+            {
+                _devices.push_back({ _devicePositions.at(index), obs.time, obs.distance });
+            }
+            // aufruf kf update
         }
     }
 }
 
-void NAV::WiFiPositioning::recvArubaObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::WiFiPositioning::lsqSolution2d(void* userData)
 {
-    _devices.clear();
-    auto arubaObs = std::static_pointer_cast<const ArubaObs>(queue.extract_front());
-    for (auto const& obs : arubaObs->data)
+    auto* node = static_cast<WiFiPositioning*>(userData);
+    if (node->_devices.size() < 3)
     {
-        auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs.macAddress);
-        if (it != _deviceMacAddresses.end()) // Device already exists
+        LOG_DEBUG("{}: Received less than 3 observations. Can't compute position", node->nameId());
+        return;
+    }
+    else
+    {
+        LOG_DEBUG("{}: Received {} observations", node->nameId(), node->_devices.size());
+    }
+    node->_e_position = { 1, 1, 0 };
+
+    Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(node->_devices.size()), static_cast<int>(2));
+    Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(node->_devices.size()));
+    size_t numMeasurements = node->_devices.size();
+    LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd>
+        lsq;
+    for (size_t o = 0; o < 10; o++)
+    {
+        LOG_DATA("{}: Iteration {}", nameId(), o);
+        for (size_t i = 0; i < numMeasurements; i++)
         {
-            // Get the index of the found element
-            size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
-            if (_frame == Frame::LLA)
+            double distEst = (node->_devices.at(i).position.head<2>() - node->_e_position.head<2>()).norm();
+            ddist(static_cast<int>(i)) = node->_devices.at(i).distance - distEst;
+            Eigen::Vector2d e_lineOfSightUnitVector = Eigen::Vector2d::Zero();
+            if ((node->_e_position.head<2>() - node->_devices.at(i).position.head<2>()).norm() != 0) // Check if it is the same position
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.measuredDistance });
+                e_lineOfSightUnitVector = (node->_e_position.head<2>() - node->_devices.at(i).position.head<2>()) / (node->_e_position.head<2>() - node->_devices.at(i).position.head<2>()).norm();
             }
-            else if (_frame == Frame::ECEF)
-            {
-                _devices.push_back({ _devicePositions.at(index), obs.time, obs.measuredDistance });
-            }
+            e_H.block<1, 2>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
+        }
+        // std::cout << "Matrix:\n"
+        //           << e_H << "\n";
+        Eigen::Vector2d dx = (e_H.transpose() * e_H).inverse() * e_H.transpose() * ddist;
+        // LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2));
+        // LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+
+        node->_e_position.head<2>() += dx;
+        bool solInaccurate = dx.norm() > 1e-3;
+
+        if (!solInaccurate)
+        {
+            break;
         }
     }
+    node->_devices.clear();
+    auto pos = std::make_shared<NAV::Pos>();
+    pos->setPosition_e(node->_e_position);
+    LOG_DEBUG("{}: Position: {}", node->nameId(), node->_e_position.transpose());
+    node->invokeCallbacks(OUTPUT_PORT_INDEX_POS, pos);
 }
 
-// void NAV::WiFiPositioning::lsqSolution2d()
-// {
-//     LOG_DEBUG("{}: Received {} observations", nameId(), _devices.size());
+void NAV::WiFiPositioning::lsqSolution3d(void* userData)
+{
+    auto* node = static_cast<WiFiPositioning*>(userData);
+    if (node->_devices.size() < 4)
+    {
+        LOG_DEBUG("{}: Received less than 4 observations. Can't compute position", node->nameId());
+        return;
+    }
+    else
+    {
+        LOG_DEBUG("{}: Received {} observations", node->nameId(), node->_devices.size());
+    }
+    node->_e_position = { 1, 1, 1 };
 
-//     if (_devices.size() < 3)
-//     {
-//         LOG_WARN("{}: Received less than 3 observations. Can't compute position", nameId());
-//         return;
-//     }
-//     else if (_devices.size() == 3 && _calc2dPosition)
-//     {
-//         LOG_WARN("{}: Received 3 observations. Only 2D position is possible", nameId());
-//     }
-//     else
-//     {
-//         LOG_DEBUG("{}: Received {} observations", nameId(), espressifObs->data.size());
-//     }
-//     _e_position = Eigen::Vector3d::Zero();
+    Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(node->_devices.size()), static_cast<int>(3));
+    Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(node->_devices.size()));
+    size_t numMeasurements = node->_devices.size();
+    LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd>
+        lsq;
+    for (size_t o = 0; o < 10; o++)
+    {
+        LOG_DATA("{}: Iteration {}", nameId(), o);
+        for (size_t i = 0; i < numMeasurements; i++)
+        {
+            double distEst = (node->_devices.at(i).position - node->_e_position).norm();
+            ddist(static_cast<int>(i)) = node->_devices.at(i).distance - distEst;
+            Eigen::Vector3d e_lineOfSightUnitVector = Eigen::Vector3d::Zero();
+            if ((node->_e_position - node->_devices.at(i).position).norm() != 0) // Check if it is the same position
+            {
+                e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(node->_e_position, node->_devices.at(i).position);
+            }
+            e_H.block<1, 3>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
+        }
+        // std::cout << "Matrix:\n"
+        //           << e_H << "\n";
+        Eigen::Vector3d dx = (e_H.transpose() * e_H).inverse() * e_H.transpose() * ddist;
+        // LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2));
+        // LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
 
-//     std::vector<Eigen::Vector2d> routerPositions;
-//     std::vector<double> distMeas;
-//     routerPositions.reserve(espressifObs->data.size());
+        node->_e_position += dx;
+        bool solInaccurate = dx.norm() > 1e-3;
 
-//     for (auto const& obs : espressifObs->data)
-//     {
-//         routerPositions.emplace_back(static_cast<double>(obs.routerPosition[0]), static_cast<double>(obs.routerPosition[1])); // Remove [2]
-//         distMeas.emplace_back(static_cast<double>(obs.measuredDistance));
-//     }
-
-//     Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(distMeas.size()), 2);
-//     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(distMeas.size()));
-//     LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsq;
-//     for (size_t o = 0; o < 10; o++)
-//     {
-//         LOG_DATA("{}: Iteration {}", nameId(), o);
-//         size_t ix = 0;
-//         for (auto const& routerPosition : routerPositions)
-//         {
-//             double distEst = (routerPosition - _e_position.head<2>()).norm();
-//             Eigen::Vector2d e_lineOfSightUnitVector = (_e_position.head<2>() - routerPosition) / (_e_position.head<2>() - routerPosition).norm();
-//             e_H.block<1, 2>(static_cast<int>(ix), 0) = -e_lineOfSightUnitVector;
-//             ddist(static_cast<int>(ix)) = distMeas.at(ix) - distEst;
-
-//             lsq = solveLinearLeastSquaresUncertainties(e_H, ddist);
-//             LOG_DATA("{}:     [{}] dx (lsq) {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1));
-//             LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
-
-//             _e_position.head<2>() += lsq.solution.head<2>();
-//             ix++;
-//         }
-//         bool solInaccurate = lsq.solution.norm() > 1e-4;
-
-//         if (!solInaccurate)
-//         {
-//             break;
-//         }
-//     }
-
-//     auto pos = std::make_shared<NAV::Pos>();
-//     pos->setPosition_e(_e_position);
-//     LOG_DEBUG("{}: Position: {}", nameId(), _e_position.transpose());
-//     invokeCallbacks(OUTPUT_PORT_INDEX_POS, pos);
-// }
-
-// void NAV::WiFiPositioning::lsqSolution3d()
-// {
-
-//     LOG_DEBUG("{}: Received {} observations", nameId(), _devices.size());
-
-//     if (_devices.size() < 4)
-//     {
-//         LOG_WARN("{}: Received less than 4 observations. Can't compute position", nameId());
-//         return;
-//     }
-//     else
-//     {
-//         LOG_DEBUG("{}: Received {} observations", nameId(), espressifObs->data.size());
-//     }
-//     _e_position = Eigen::Vector3d::Zero();
-
-//     Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(_numOfMeasurements), static_cast<int>(3));
-//     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(_numOfMeasurements));
-//     LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsq;
-//     for (size_t o = 0; o < 10; o++)
-//     {
-//         LOG_DATA("{}: Iteration {}", nameId(), o);
-//         size_t ix = 0;
-//         for (size_t i = 0; i < _numOfMeasurements; i++)
-//         {
-//             double distEst = (_devices.at(i).position - _e_position).norm();
-//             Eigen::Vector3d e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(_e_position, _devices.at(i).position);
-//             e_H.block<1, 3>(static_cast<int>(ix), 0) = -e_lineOfSightUnitVector;
-//             ddist(static_cast<int>(ix)) = distMeas.at(ix) - distEst;
-
-//             lsq = solveLinearLeastSquaresUncertainties(e_H, ddist);
-//             LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2));
-//             LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
-
-//             _e_position += lsq.solution.head<3>();
-//             ix++;
-//         }
-//         bool solInaccurate = lsq.solution.norm() > 1e-4;
-
-//         if (!solInaccurate)
-//         {
-//             break;
-//         }
-//     }
-
-//     auto pos = std::make_shared<NAV::Pos>();
-//     pos->setPosition_e(_e_position);
-//     LOG_DEBUG("{}: Position: {}", nameId(), _e_position.transpose());
-//     invokeCallbacks(OUTPUT_PORT_INDEX_POS, pos);
-// }
+        if (!solInaccurate)
+        {
+            break;
+        }
+    }
+    node->_devices.clear();
+    auto pos = std::make_shared<NAV::Pos>();
+    pos->setPosition_e(node->_e_position);
+    LOG_DEBUG("{}: Position: {}", node->nameId(), node->_e_position.transpose());
+    node->invokeCallbacks(OUTPUT_PORT_INDEX_POS, pos);
+}
 
 // void NAV::WiFiPositioning::kfSolution()
 // {

@@ -61,7 +61,7 @@ class ArubaSensor : public Node
     bool resetNode() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_Aruba_OBS = 0; ///< @brief Flow (ArubaObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_WIFI_OBS = 0; ///< @brief Flow (WiFiObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -82,6 +82,7 @@ class ArubaSensor : public Node
     /// Ssh options
     std::string _sshHost;
     std::string _sshUser;
+    std::string _sshPassword;
     std::string _sshHostkeys;
     std::string _sshKeyExchange;
     std::string _sshPublickeyAcceptedTypes;

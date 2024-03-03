@@ -318,8 +318,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/WiFi/ArubaObs.hpp"
-#include "NodeData/WiFi/EspressifObs.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -346,6 +345,5 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();
     // WiFi
-    registerNodeDataType<ArubaObs>();
-    registerNodeDataType<EspressifObs>();
+    registerNodeDataType<WiFiObs>();
 }

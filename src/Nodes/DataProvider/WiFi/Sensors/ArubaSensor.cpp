@@ -18,7 +18,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/WiFi/ArubaObs.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
 
 /// Speed of light in air [m/s]
 constexpr double cAir = 299702547.0;
@@ -34,12 +34,13 @@ NAV::ArubaSensor::ArubaSensor()
 
     _sshHost = "192.168.178.45";
     _sshUser = "admin";
+    _sshPassword = "admin1";
     _sshHostkeys = "ssh-rsa";
     _sshKeyExchange = "ecdh-sha2-nistp256";
     _sshPublickeyAcceptedTypes = "ssh-rsa";
     _outputInterval = 3000;
 
-    nm::CreateOutputPin(this, "ArubaObs", Pin::Type::Flow, { NAV::ArubaObs::type() });
+    nm::CreateOutputPin(this, "WiFiObs", Pin::Type::Flow, { NAV::WiFiObs::type() });
 }
 
 NAV::ArubaSensor::~ArubaSensor()
@@ -76,6 +77,12 @@ void NAV::ArubaSensor::guiConfig()
         flow::ApplyChanges();
         doDeinitialize();
     }
+    if (ImGui::InputText("SSH Password", &_sshPassword))
+    {
+        LOG_DEBUG("{}: ssh password changed to {}", nameId(), _sshPassword);
+        flow::ApplyChanges();
+        doDeinitialize();
+    }
     if (ImGui::InputText("SSH Host Keys", &_sshHostkeys))
     {
         LOG_DEBUG("{}: ssh host keys changed to {}", nameId(), _sshHostkeys);
@@ -96,7 +103,7 @@ void NAV::ArubaSensor::guiConfig()
     }
     ImGui::Spacing();   // Add spacing here
     ImGui::Separator(); // Add a horizontal line
-    if (ImGui::InputInt("Output Interval in ms", &_outputInterval))
+    if (ImGui::InputInt("Output interval [ms]", &_outputInterval))
     {
         LOG_DEBUG("{}: output interval changed to {}", nameId(), _outputInterval);
         flow::ApplyChanges();
@@ -111,6 +118,7 @@ void NAV::ArubaSensor::guiConfig()
 
     j["sshHost"] = _sshHost;
     j["sshUser"] = _sshUser;
+    j["sshPassword"] = _sshPassword;
     j["sshHostkeys"] = _sshHostkeys;
     j["sshKeyExchange"] = _sshKeyExchange;
     j["sshPublickeyAcceptedTypes"] = _sshPublickeyAcceptedTypes;
@@ -130,6 +138,10 @@ void NAV::ArubaSensor::restore(json const& j)
     if (j.contains("sshUser"))
     {
         j.at("sshUser").get_to(_sshUser);
+    }
+    if (j.contains("sshPassword"))
+    {
+        j.at("sshPassword").get_to(_sshPassword);
     }
     if (j.contains("sshHostkeys"))
     {
@@ -183,7 +195,7 @@ bool NAV::ArubaSensor::initialize()
     LOG_DEBUG("{}: Successfully connected to the router", nameId());
 
     // authenticate
-    if (ssh_userauth_password(_session, NULL, "CNNZKYJ51F") != SSH_AUTH_SUCCESS)
+    if (ssh_userauth_password(_session, NULL, _sshPassword.c_str()) != SSH_AUTH_SUCCESS)
     {
         LOG_INFO("{}: Authentication failed", nameId());
         ssh_disconnect(_session);
@@ -267,7 +279,7 @@ void NAV::ArubaSensor::deinitialize()
 void NAV::ArubaSensor::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<ArubaSensor*>(userData);
-    auto obs = std::make_shared<ArubaObs>();
+    auto obs = std::make_shared<WiFiObs>();
 
     obs->insTime = util::time::GetCurrentInsTime();
 
@@ -318,7 +330,7 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
         lineStream >> timeStamp1;
         lineStream >> timeStamp2;
 
-        double measuredDistance = static_cast<double>(rtt) * 1e-9 * cAir;
+        double measuredDistance = static_cast<double>(rtt) * 1e-9 / 2 * cAir;
         if (std::regex_match(macAddress, macRegex)) // Check if the MAC address is valid
         {
             InsTime_YMDHMS yearMonthDayHMS(std::stoi(timeStamp1.substr(0, 4)), std::stoi(timeStamp1.substr(5, 2)), std::stoi(timeStamp1.substr(8, 2)), std::stoi(timeStamp2.substr(0, 2)), std::stoi(timeStamp2.substr(3, 2)), std::stoi(timeStamp2.substr(6, 2)));
@@ -328,5 +340,5 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
         }
     }
 
-    node->invokeCallbacks(OUTPUT_PORT_INDEX_Aruba_OBS, obs);
+    node->invokeCallbacks(OUTPUT_PORT_INDEX_WIFI_OBS, obs);
 }

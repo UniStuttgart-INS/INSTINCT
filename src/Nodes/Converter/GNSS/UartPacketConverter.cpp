@@ -55,7 +55,7 @@ std::string NAV::UartPacketConverter::category()
 
 void NAV::UartPacketConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type ##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0EspressifObs\0\0"))
+    if (ImGui::Combo(fmt::format("Output Type ##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0WiFiObs\0\0"))
     {
         std::string outputTypeString;
         switch (_outputType)
@@ -67,7 +67,7 @@ void NAV::UartPacketConverter::guiConfig()
             outputTypeString = "EmlidObs";
             break;
         default:
-            outputTypeString = "EspressifObs";
+            outputTypeString = "WiFiObs";
         }
 
         LOG_DEBUG("{}: Output Type changed to {}", nameId(), outputTypeString);
@@ -82,10 +82,10 @@ void NAV::UartPacketConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
         }
-        else if (_outputType == OutputType_EspressifObs)
+        else if (_outputType == OutputType_WiFiObs)
         {
-            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EspressifObs::type() };
-            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EspressifObs::type();
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::WiFiObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::WiFiObs::type();
         }
 
         for (auto& link : outputPins.front().links)
@@ -98,6 +98,19 @@ void NAV::UartPacketConverter::guiConfig()
 
         flow::ApplyChanges();
     }
+    if (_outputType == OutputType_WiFiObs)
+    {
+        if (ImGui::Combo(fmt::format("Number of measurements##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_numberOfMeasurements), "Single\0Multiple\0\0"))
+        {
+            LOG_DEBUG("{}: Number of measurements changed to {}", nameId(), _numberOfMeasurements == NumberOfMeasurements::SINGLE ? "single" : "multiple");
+            flow::ApplyChanges();
+        }
+        if (ImGui::Combo(fmt::format("Time system##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_timeSystem), "INSTINCT\0WiFi device\0\0"))
+        {
+            LOG_DEBUG("{}: Frame changed to {}", nameId(), _timeSystem == WifiTimeSystem::INSTINCT ? "INSTINCT" : "WiFi device");
+            flow::ApplyChanges();
+        }
+    }
 }
 
 [[nodiscard]] json NAV::UartPacketConverter::save() const
@@ -107,6 +120,8 @@ void NAV::UartPacketConverter::guiConfig()
     json j;
 
     j["outputType"] = _outputType;
+    j["numberOfMeasurements"] = _numberOfMeasurements;
+    j["timeSystem"] = _timeSystem;
 
     return j;
 }
@@ -131,12 +146,20 @@ void NAV::UartPacketConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
             }
-            else if (_outputType == OutputType_EspressifObs)
+            else if (_outputType == OutputType_WiFiObs)
             {
-                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EspressifObs::type() };
-                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EspressifObs::type();
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::WiFiObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::WiFiObs::type();
             }
         }
+    }
+    if (j.contains("numberOfMeasurements"))
+    {
+        j.at("numberOfMeasurements").get_to(_numberOfMeasurements);
+    }
+    if (j.contains("timeSystem"))
+    {
+        j.at("timeSystem").get_to(_timeSystem);
     }
 }
 
@@ -160,11 +183,32 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         vendor::ublox::decryptUbloxObs(obs, packet);
         convertedData = obs;
     }
-    else if (_outputType == OutputType_EspressifObs)
+    else if (_outputType == OutputType_WiFiObs)
     {
-        auto obs = std::make_shared<EspressifObs>();
+        auto obs = std::make_shared<WiFiObs>();
         auto packet = uartPacket->raw;
-        vendor::espressif::decryptEspressifObs(obs, packet);
+        if (_numberOfMeasurements == NumberOfMeasurements::SINGLE)
+        {
+            if (_timeSystem == WifiTimeSystem::INSTINCT)
+            {
+                vendor::espressif::decryptSingleWiFiObsInstinctTime(obs, packet);
+            }
+            else
+            {
+                vendor::espressif::decryptSingleWiFiObsDeviceTime(obs, packet);
+            }
+        }
+        else
+        {
+            if (_timeSystem == WifiTimeSystem::INSTINCT)
+            {
+                vendor::espressif::decryptMultipleWiFiObsInstinctTime(obs, packet);
+            }
+            else
+            {
+                vendor::espressif::decryptMultipleWiFiObsDeviceTime(obs, packet);
+            }
+        }
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */

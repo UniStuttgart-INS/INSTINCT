@@ -60,7 +60,7 @@ class EspressifSensor : public Node, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_Espressif_OBS = 0; ///< @brief Flow (EspressifObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_WIFI_OBS = 0; ///< @brief Flow (EspressifObs)
 
     /// @brief Initialize the node
     bool initialize() override;
