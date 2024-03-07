@@ -17,12 +17,11 @@
 #include <functional>
 
 #include "internal/gui/widgets/InputWithUnit.hpp"
-#include "Navigation/Constants.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
 namespace NAV::SPP
 {
-void KalmanFilter::reset(bool useDoppler)
+void KalmanFilter::reset()
 {
     // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
     switch (_gui_covarianceAccelUnit)
@@ -81,23 +80,69 @@ void KalmanFilter::reset(bool useDoppler)
 
     // ###########################################################################################################
 
+    // Covariance of the P matrix initialization velocity uncertainty [m²/s²]
+    switch (_gui_initCovarianceVelocityUnit)
+    {
+    case InitCovarianceVelocityUnits::m_s:
+        _initCovarianceVelocity = std::pow(_gui_initCovarianceVelocity, 2);
+        break;
+    case InitCovarianceVelocityUnits::m2_s2:
+        _initCovarianceVelocity = _gui_initCovarianceVelocity;
+        break;
+    }
+
+    // Covariance of the P matrix initialization clock drift uncertainty [m²/s²]
+    switch (_gui_initCovarianceClockDriftUnit)
+    {
+    case InitCovarianceClockDriftUnits::m_s:
+        _initCovarianceClockDrift = std::pow(_gui_initCovarianceClockDrift, 2);
+        break;
+    case InitCovarianceClockDriftUnits::s_s:
+        _initCovarianceClockDrift = std::pow(_gui_initCovarianceClockDrift * InsConst<>::C, 2);
+        break;
+    case InitCovarianceClockDriftUnits::m2_s2:
+        _initCovarianceClockDrift = _gui_initCovarianceClockDrift;
+        break;
+    case InitCovarianceClockDriftUnits::s2_s2:
+        _initCovarianceClockDrift = _gui_initCovarianceClockDrift * std::pow(InsConst<>::C, 2);
+        break;
+    }
+
+    // Covariance of the P matrix initialization inter system clock drift uncertainty [m²/s²]
+    switch (_gui_initCovarianceInterSysClockDriftUnit)
+    {
+    case InitCovarianceClockDriftUnits::m_s:
+        _initCovarianceInterSysClockDrift = std::pow(_gui_initCovarianceInterSysClockDrift, 2);
+        break;
+    case InitCovarianceClockDriftUnits::s_s:
+        _initCovarianceInterSysClockDrift = std::pow(_gui_initCovarianceInterSysClockDrift * InsConst<>::C, 2);
+        break;
+    case InitCovarianceClockDriftUnits::m2_s2:
+        _initCovarianceInterSysClockDrift = _gui_initCovarianceInterSysClockDrift;
+        break;
+    case InitCovarianceClockDriftUnits::s2_s2:
+        _initCovarianceInterSysClockDrift = _gui_initCovarianceInterSysClockDrift * std::pow(InsConst<>::C, 2);
+        break;
+    }
+
+    // ###########################################################################################################
+
+    // Reset values to 0 and remove inter system states
     _kalmanFilter = KeyedKalmanFilterD<SPP::States::StateKeyTypes,
-                                       SPP::Meas::MeasKeyTypes>{ useDoppler ? SPP::States::PosVelRecvClk : SPP::States::PosVelRecvClkErr, {} };
+                                       SPP::Meas::MeasKeyTypes>{ SPP::States::PosVelRecvClk, {} };
 
     _kalmanFilter.F.block<3>(States::Pos, States::Vel) = Eigen::Matrix3d::Identity();
     _kalmanFilter.W.block<3>(States::Vel, States::Vel) = Eigen::DiagonalMatrix<double, 3>(_covarianceAccel[0], _covarianceAccel[0], _covarianceAccel[1]);
 
     _kalmanFilter.Phi(all, all).diagonal().setOnes();
+    _kalmanFilter.F(States::RecvClkErr, States::RecvClkDrift) = 1;
     _kalmanFilter.G(States::RecvClkErr, States::RecvClkErr) = 1;
     _kalmanFilter.W(States::RecvClkErr, States::RecvClkErr) = _covarianceClkPhaseDrift;
     _kalmanFilter.Q(States::RecvClkErr, States::RecvClkErr) = _covarianceClkPhaseDrift;
-    if (useDoppler)
-    {
-        _kalmanFilter.F(States::RecvClkErr, States::RecvClkDrift) = 1;
-        _kalmanFilter.G(States::RecvClkDrift, States::RecvClkDrift) = 1;
-        _kalmanFilter.W(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
-        _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
-    }
+
+    _kalmanFilter.G(States::RecvClkDrift, States::RecvClkDrift) = 1;
+    _kalmanFilter.W(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
+    _kalmanFilter.Q(States::RecvClkDrift, States::RecvClkDrift) = _covarianceClkFrequencyDrift;
 
     _initialized = false;
 }
@@ -109,7 +154,11 @@ void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyTypes>& states
 
     if (!states.hasAnyRows(States::Vel)) // We always estimate velocity in the KF, but LSQ could not, so set a default value
     {
-        _kalmanFilter.P(States::Vel, States::Vel).diagonal() << Eigen::Vector3d::Ones() * 1e-1;
+        _kalmanFilter.P(States::Vel, States::Vel).diagonal() << Eigen::Vector3d::Ones() * _initCovarianceVelocity;
+    }
+    if (!states.hasRow(States::RecvClkDrift)) // We always estimate receiver clock drift in the KF, but LSQ could not, so set a default value
+    {
+        _kalmanFilter.P(States::RecvClkDrift, States::RecvClkDrift) = _initCovarianceClockDrift;
     }
 
     _initialized = true;
@@ -170,7 +219,6 @@ void KalmanFilter::update(const std::vector<Meas::MeasKeyTypes>& measKeys,
 SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems,
                                                                SatelliteSystem oldRefSys,
                                                                SatelliteSystem newRefSys,
-                                                               bool useDoppler,
                                                                [[maybe_unused]] const std::string& nameId)
 {
     if (oldRefSys != newRefSys)
@@ -213,14 +261,14 @@ SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<Sa
                         auto keyBias = SPP::States::InterSysBias{ bias->satSys };
                         auto keyDrift = SPP::States::InterSysDrift{ bias->satSys };
                         D(keyBias, newKeyBias) = -1;
-                        if (useDoppler) { D(keyDrift, newKeyDrift) = -1; }
+                        D(keyDrift, newKeyDrift) = -1;
                     }
                 }
 
                 if (!usedSatSystems.contains(oldRefSys)) // Old Reference system not observed anymore
                 {
                     D(newKeyBias, newKeyBias) = 0;
-                    if (useDoppler) { D(newKeyDrift, newKeyDrift) = 0; }
+                    D(newKeyDrift, newKeyDrift) = 0;
                 }
 
                 LOG_DATA("{}: D = \n{}", nameId, D);
@@ -232,14 +280,13 @@ SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<Sa
                 if (!usedSatSystems.contains(oldRefSys)) // Old Reference system not observed anymore
                 {
                     LOG_DEBUG("{}: Removing inter system time difference states for system [{}]", nameId, newRefSys);
-                    if (useDoppler) { _kalmanFilter.removeStates({ newKeyBias, newKeyDrift }); }
-                    else { _kalmanFilter.removeState(newKeyBias); }
+                    _kalmanFilter.removeStates({ newKeyBias, newKeyDrift });
                 }
                 else
                 {
                     LOG_DEBUG("{}: Changing inter system time difference states for system [{}] into [{}]", nameId, newRefSys, oldRefSys);
                     _kalmanFilter.replaceState(newKeyBias, SPP::States::InterSysBias{ oldRefSys });
-                    if (useDoppler) { _kalmanFilter.replaceState(newKeyDrift, SPP::States::InterSysDrift{ oldRefSys }); }
+                    _kalmanFilter.replaceState(newKeyDrift, SPP::States::InterSysDrift{ oldRefSys });
                 }
                 LOG_DATA("{}: x_new = \n{}", nameId, _kalmanFilter.x.transposed());
             }
@@ -261,23 +308,20 @@ SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<Sa
         if (!_kalmanFilter.hasState(keyBias) && satSys != newRefSys)
         {
             LOG_DEBUG("{}: Adding inter system time difference states for system [{}]", nameId, satSys);
-            if (useDoppler) { _kalmanFilter.addStates({ keyBias, keyDrift }); }
-            else { _kalmanFilter.addState(keyBias); }
+            _kalmanFilter.addStates({ keyBias, keyDrift });
 
             _kalmanFilter.P(keyBias, keyBias) = _kalmanFilter.P(SPP::States::RecvClkErr, SPP::States::RecvClkErr);
             _kalmanFilter.Phi(keyBias, keyBias) = 1;
             _kalmanFilter.G(keyBias, keyBias) = 1;
             _kalmanFilter.W(keyBias, keyBias) = _covarianceInterSysClkPhaseDrift;
             _kalmanFilter.Q(keyBias, keyBias) = _covarianceInterSysClkPhaseDrift;
-            if (useDoppler)
-            {
-                _kalmanFilter.P(keyDrift, keyDrift) = _kalmanFilter.P(SPP::States::RecvClkDrift, SPP::States::RecvClkDrift);
-                _kalmanFilter.F(keyBias, keyDrift) = 1;
-                _kalmanFilter.Phi(keyDrift, keyDrift) = 1;
-                _kalmanFilter.G(keyDrift, keyDrift) = 1;
-                _kalmanFilter.W(keyDrift, keyDrift) = _covarianceInterSysClkFrequencyDrift;
-                _kalmanFilter.Q(keyDrift, keyDrift) = _covarianceInterSysClkFrequencyDrift;
-            }
+
+            _kalmanFilter.P(keyDrift, keyDrift) = _kalmanFilter.P(SPP::States::RecvClkDrift, SPP::States::RecvClkDrift);
+            _kalmanFilter.F(keyBias, keyDrift) = 1;
+            _kalmanFilter.Phi(keyDrift, keyDrift) = 1;
+            _kalmanFilter.G(keyDrift, keyDrift) = 1;
+            _kalmanFilter.W(keyDrift, keyDrift) = _covarianceInterSysClkFrequencyDrift;
+            _kalmanFilter.Q(keyDrift, keyDrift) = _covarianceInterSysClkFrequencyDrift;
         }
     }
     for (const auto& state : getStateKeys())
@@ -287,8 +331,7 @@ SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<Sa
             if (!usedSatSystems.contains(bias->satSys))
             {
                 LOG_DEBUG("{}: Removing inter system time difference states for system [{}]", nameId, bias->satSys);
-                if (useDoppler) { _kalmanFilter.removeStates({ *bias, SPP::States::InterSysDrift{ bias->satSys } }); }
-                else { _kalmanFilter.removeState(*bias); }
+                _kalmanFilter.removeStates({ *bias, SPP::States::InterSysDrift{ bias->satSys } });
             }
         }
     }
@@ -335,7 +378,7 @@ KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>
     return Q;
 }
 
-bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, float itemWidth, float unitWidth)
+bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, float itemWidth, float unitWidth)
 {
     bool changed = false;
 
@@ -352,7 +395,9 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, float itemWid
             changed = true;
         }
 
-        if (gui::widgets::InputDouble2WithUnit(fmt::format("Acceleration due to user motion (Hor/Ver)##{}", id).c_str(),
+        if (gui::widgets::InputDouble2WithUnit(fmt::format("{} of the acceleration due to user motion (Hor/Ver)##{}",
+                                                           _gui_covarianceAccelUnit == CovarianceAccelUnits::m_sqrts3 ? "Standard deviation" : "Variance", id)
+                                                   .c_str(),
                                                configWidth, unitWidth, _gui_covarianceAccel.data(), reinterpret_cast<int*>(&_gui_covarianceAccelUnit), "m/√(s^3)\0m^2/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -360,7 +405,9 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, float itemWid
             LOG_DEBUG("{}: _gui_covarianceAccelUnit changed to {}", id, fmt::underlying(_gui_covarianceAccelUnit));
             changed = true;
         }
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock phase drift (RW)##{}", id).c_str(),
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the receiver clock phase drift (RW)##{}",
+                                                          _gui_covarianceClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m_sqrts ? "Standard deviation" : "Variance", id)
+                                                  .c_str(),
                                               configWidth, unitWidth, &_gui_covarianceClkPhaseDrift, reinterpret_cast<int*>(&_gui_covarianceClkPhaseDriftUnit), "m/√(s)\0m^2/s\0\0",
                                               0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -368,25 +415,32 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, float itemWid
             LOG_DEBUG("{}: _gui_covarianceClkPhaseDriftUnit changed to {}", id, fmt::underlying(_gui_covarianceClkPhaseDriftUnit));
             changed = true;
         }
-        if (useDoppler
-            && gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver clock frequency drift (IRW)##{}", id).c_str(),
-                                                 configWidth, unitWidth, &_gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&_gui_covarianceClkFrequencyDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
-                                                 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the receiver clock frequency drift (IRW)##{}",
+                                                          _gui_covarianceClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m_sqrts3 ? "Standard deviation" : "Variance", id)
+                                                  .c_str(),
+                                              configWidth, unitWidth, &_gui_covarianceClkFrequencyDrift, reinterpret_cast<int*>(&_gui_covarianceClkFrequencyDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
+                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _gui_covarianceClkFrequencyDrift changed to {}", id, _gui_covarianceClkFrequencyDrift);
             LOG_DEBUG("{}: _gui_covarianceClkFrequencyDriftUnit changed to {}", id, fmt::underlying(_gui_covarianceClkFrequencyDriftUnit));
             changed = true;
         }
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock phase drift (RW)##{}", id).c_str(),
-                                              configWidth, unitWidth, &_gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&_gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s)\0m^2/s\0\0",
-                                              0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+
+        if (multiConstellation
+            && gui::widgets::InputDoubleWithUnit(fmt::format("{} of the inter-system clock phase drift (RW)##{}",
+                                                             _gui_covarianceInterSysClkPhaseDriftUnit == CovarianceClkPhaseDriftUnits::m_sqrts ? "Standard deviation" : "Variance", id)
+                                                     .c_str(),
+                                                 configWidth, unitWidth, &_gui_covarianceInterSysClkPhaseDrift, reinterpret_cast<int*>(&_gui_covarianceInterSysClkPhaseDriftUnit), "m/√(s)\0m^2/s\0\0",
+                                                 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: _gui_covarianceInterSysClkPhaseDrift changed to {}", id, _gui_covarianceInterSysClkPhaseDrift);
             LOG_DEBUG("{}: _gui_covarianceInterSysClkPhaseDriftUnit changed to {}", id, fmt::underlying(_gui_covarianceInterSysClkPhaseDriftUnit));
             changed = true;
         }
-        if (useDoppler
-            && gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the inter-system clock frequency drift (IRW)##{}", id).c_str(),
+        if (multiConstellation
+            && gui::widgets::InputDoubleWithUnit(fmt::format("{} of the inter-system clock frequency drift (IRW)##{}",
+                                                             _gui_covarianceInterSysClkFrequencyDriftUnit == CovarianceClkFrequencyDriftUnits::m_sqrts3 ? "Standard deviation" : "Variance", id)
+                                                     .c_str(),
                                                  configWidth, unitWidth, &_gui_covarianceInterSysClkFrequencyDrift, reinterpret_cast<int*>(&_gui_covarianceInterSysClkFrequencyDriftUnit), "m/√(s^3)\0m^2/s^3\0\0",
                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -395,6 +449,62 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, float itemWid
             changed = true;
         }
 
+        ImGui::TreePop();
+    }
+
+    if (!useDoppler)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Initial Error Covariance Matrix P##{}", id).c_str()))
+        {
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the velocity uncertainty##{}",
+                                                              _gui_initCovarianceVelocityUnit == InitCovarianceVelocityUnits::m_s ? "Standard deviation" : "Variance", id)
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_gui_initCovarianceVelocity, reinterpret_cast<int*>(&_gui_initCovarianceVelocityUnit), "m/s\0m^2/s^2\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: _gui_initCovarianceVelocity changed to {}", id, _gui_initCovarianceVelocity);
+                LOG_DEBUG("{}: _gui_initCovarianceVelocityUnit changed to {}", id, fmt::underlying(_gui_initCovarianceVelocityUnit));
+                changed = true;
+            }
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the clock drift uncertainty##{}",
+                                                              (_gui_initCovarianceClockDriftUnit == InitCovarianceClockDriftUnits::m_s
+                                                               || _gui_initCovarianceClockDriftUnit == InitCovarianceClockDriftUnits::s_s)
+                                                                  ? "Standard deviation"
+                                                                  : "Variance",
+                                                              id)
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &_gui_initCovarianceClockDrift, reinterpret_cast<int*>(&_gui_initCovarianceClockDriftUnit), "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
+                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: _gui_initCovarianceClockDrift changed to {}", id, _gui_initCovarianceClockDrift);
+                LOG_DEBUG("{}: _gui_initCovarianceClockDriftUnit changed to {}", id, fmt::underlying(_gui_initCovarianceClockDriftUnit));
+                changed = true;
+            }
+            if (multiConstellation
+                && gui::widgets::InputDoubleWithUnit(fmt::format("{} of the inter system clock drift uncertainty##{}",
+                                                                 (_gui_initCovarianceInterSysClockDriftUnit == InitCovarianceClockDriftUnits::m_s
+                                                                  || _gui_initCovarianceInterSysClockDriftUnit == InitCovarianceClockDriftUnits::s_s)
+                                                                     ? "Standard deviation"
+                                                                     : "Variance",
+                                                                 id)
+                                                         .c_str(),
+                                                     configWidth, unitWidth, &_gui_initCovarianceInterSysClockDrift, reinterpret_cast<int*>(&_gui_initCovarianceInterSysClockDriftUnit), "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
+                                                     0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: _gui_initCovarianceInterSysClockDrift changed to {}", id, _gui_initCovarianceInterSysClockDrift);
+                LOG_DEBUG("{}: _gui_initCovarianceInterSysClockDriftUnit changed to {}", id, fmt::underlying(_gui_initCovarianceInterSysClockDriftUnit));
+                changed = true;
+            }
+
+            ImGui::TreePop();
+        }
+    }
+
+    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Kalman Filter matrices##{}", id).c_str()))
+    {
+        _kalmanFilter.showKalmanFilterMatrixViews(id);
         ImGui::TreePop();
     }
 

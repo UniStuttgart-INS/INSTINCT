@@ -151,7 +151,8 @@ class SppSolution : public PosVel
         case 16: // Receiver clock bias [s]
             return recvClk.bias.value;
         case 17: // Receiver clock drift [s/s]
-            return recvClk.drift.value;
+            if (recvClk.drift.value != 0.0) { return recvClk.drift.value; }
+            break;
         case 18: // X-ECEF StDev [m]
             return e_positionStdev()(0);
         case 19: // Y-ECEF StDev [m]
@@ -189,13 +190,13 @@ class SppSolution : public PosVel
         case 32: // Z velocity ECEF StDev [m/s]
             return e_velocityStdev()(2);
         case 33: // XY velocity StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
+            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
             break;
         case 34: // XZ velocity StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
+            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*e_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
             break;
         case 35: // YZ velocity StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
+            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*e_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
             break;
         case 36: // North velocity StDev [m/s]
             return n_velocityStdev()(0);
@@ -204,18 +205,19 @@ class SppSolution : public PosVel
         case 38: // Down velocity StDev [m/s]
             return n_velocityStdev()(2);
         case 39: // NE velocity StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
+            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelY); }
             break;
         case 40: // ND velocity StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
+            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*n_CovarianceMatrix())(SPP::States::VelX, SPP::States::VelZ); }
             break;
         case 41: // ED velocity StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
+            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(SPP::States::Vel)) { return (*n_CovarianceMatrix())(SPP::States::VelY, SPP::States::VelZ); }
             break;
         case 42: // Receiver clock bias StDev [s]
             return recvClk.bias.stdDev;
         case 43: // Receiver clock drift StDev [s/s]
-            return recvClk.drift.stdDev;
+            if (recvClk.drift.value != 0.0) { return recvClk.drift.stdDev; }
+            break;
         case 44: // System time reference system
             return static_cast<double>(recvClk.referenceTimeSatelliteSystem.toEnumeration());
         case 45: // GPS system time difference [s]
@@ -382,13 +384,22 @@ class SppSolution : public PosVel
         _e_covarianceMatrix = e_covarianceMatrix;
         _n_covarianceMatrix = _e_covarianceMatrix;
 
-        (*_n_covarianceMatrix)(SPP::States::PosVel, all).setZero();
-        (*_n_covarianceMatrix)(all, SPP::States::PosVel).setZero();
         Eigen::Vector3d lla_pos = lla_position();
         Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(lla_pos(0), lla_pos(1));
         Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(lla_pos(0), lla_pos(1));
+
+        if (e_covarianceMatrix.hasCols(SPP::States::Vel))
+        {
+            (*_n_covarianceMatrix)(SPP::States::PosVel, all).setZero();
+            (*_n_covarianceMatrix)(all, SPP::States::PosVel).setZero();
+            (*_n_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) = n_Quat_e * (*_e_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) * e_Quat_n;
+        }
+        else
+        {
+            (*_n_covarianceMatrix)(SPP::States::Pos, all).setZero();
+            (*_n_covarianceMatrix)(all, SPP::States::Pos).setZero();
+        }
         (*_n_covarianceMatrix)(SPP::States::Pos, SPP::States::Pos) = n_Quat_e * (*_e_covarianceMatrix)(SPP::States::Pos, SPP::States::Pos) * e_Quat_n;
-        (*_n_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) = n_Quat_e * (*_e_covarianceMatrix)(SPP::States::Vel, SPP::States::Vel) * e_Quat_n;
     }
 
     /// @brief Adds an event to the event list

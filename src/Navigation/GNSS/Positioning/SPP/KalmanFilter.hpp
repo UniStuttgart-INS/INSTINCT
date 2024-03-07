@@ -17,6 +17,7 @@
 #include <array>
 #include <set>
 
+#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
 #include "Navigation/Math/KeyedKalmanFilter.hpp"
@@ -32,8 +33,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 {
   public:
     /// @brief Resets the filter
-    /// @param[in] useDoppler Whether to use doppler measurements
-    void reset(bool useDoppler);
+    void reset();
 
     /// @brief Initialize the filter
     /// @param states States to initialize with
@@ -68,13 +68,11 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] usedSatSystems Used Satellite systems this epoch
     /// @param[in] oldRefSys Old Satellite time reference system
     /// @param[in] newRefSys New Satellite time reference system
-    /// @param[in] useDoppler Whether to use doppler measurements
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
     /// @return The reference system which was selected
     SatelliteSystem updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems,
                                                      SatelliteSystem oldRefSys,
                                                      SatelliteSystem newRefSys,
-                                                     bool useDoppler,
                                                      const std::string& nameId);
 
     /// @brief Calculates the process noise matrix Q
@@ -88,10 +86,11 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @brief Shows the GUI input to select the options
     /// @param[in] id Unique id for ImGui.
     /// @param[in] useDoppler Whether to use doppler measurements
+    /// @param[in] multiConstellation Whether to use multiple constellations
     /// @param[in] itemWidth Width of the widgets
     /// @param[in] unitWidth  Width on unit inputs
     /// @return True when something was changed
-    bool ShowGuiWidgets(const char* id, bool useDoppler, float itemWidth, float unitWidth);
+    bool ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, float itemWidth, float unitWidth);
 
     /// @brief Set the P matrix entry for the covariance of the clock phase drift
     /// @param clkPhaseDrift Clock phase drift variance in [m^2 / s]
@@ -108,7 +107,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
   private:
     /// Kalman Filter representation
-    KeyedKalmanFilterD<SPP::States::StateKeyTypes, SPP::Meas::MeasKeyTypes> _kalmanFilter;
+    KeyedKalmanFilterD<SPP::States::StateKeyTypes, SPP::Meas::MeasKeyTypes> _kalmanFilter{ SPP::States::PosVelRecvClk, {} };
 
     /// Boolean that determines, if Kalman Filter is initialized (from weighted LSE solution)
     bool _initialized = false;
@@ -134,7 +133,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         m_sqrts3, ///< [ m / √(s^3) ]
         m2_s3,    ///< [ m^2 / s^3 ]
     };
-    /// Gui selection for the Unit of the input stdev_accel parameter for the StDev due to acceleration due to user motion
+    /// Gui selection for the Unit of the input covarianceAccel parameter for the StDev due to acceleration due to user motion
     CovarianceAccelUnits _gui_covarianceAccelUnit = CovarianceAccelUnits::m_sqrts3;
 
     /// @brief GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component
@@ -151,7 +150,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         m_sqrts, ///< [ m / √(s) ]
         m2_s,    ///< [ m^2 / s ]
     };
-    /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
+    /// Gui selection for the Unit of the input covarianceClkPhaseDrift parameter
     CovarianceClkPhaseDriftUnits _gui_covarianceClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s;
 
     /// @brief GUI selection for the Standard deviation of the clock phase drift
@@ -167,7 +166,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
         m_sqrts3, ///< [ m / √(s^3) ]
         m2_s3,    ///< [ m^2 / s^3 ]
     };
-    /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
+    /// Gui selection for the Unit of the input covarianceClkFrequencyDrift parameter
     CovarianceClkFrequencyDriftUnits _gui_covarianceClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s3;
 
     /// @brief GUI selection for the Standard deviation of the clock frequency drift
@@ -177,23 +176,71 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
 
     // ###########################################################################################################
 
-    /// Gui selection for the Unit of the input stdevClkPhaseDrift parameter
+    /// Gui selection for the Unit of the inter system covarianceInterSysClkPhaseDrift parameter
     CovarianceClkPhaseDriftUnits _gui_covarianceInterSysClkPhaseDriftUnit = CovarianceClkPhaseDriftUnits::m2_s;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock phase drift
-    double _gui_covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.01 /* [m²/s] */;
+    double _gui_covarianceInterSysClkPhaseDrift = 0.01 /* [m²/s] */;
     /// @brief Covariance of the inter-system clock phase drift [m²/s]
-    double _covarianceInterSysClkPhaseDrift = std::sqrt(2) * 0.01;
+    double _covarianceInterSysClkPhaseDrift = 0.01;
 
     // ###########################################################################################################
 
-    /// Gui selection for the Unit of the input stdevClkFrequencyDrift parameter
+    /// Gui selection for the Unit of the inter system covarianceInterSysClkFrequencyDrift parameter
     CovarianceClkFrequencyDriftUnits _gui_covarianceInterSysClkFrequencyDriftUnit = CovarianceClkFrequencyDriftUnits::m2_s3;
 
     /// @brief GUI selection for the Standard deviation of the inter-system clock frequency drift
-    double _gui_covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.04 /* [m²/s³] */;
+    double _gui_covarianceInterSysClkFrequencyDrift = 0.04 /* [m²/s³] */;
     /// @brief Covariance of the inter-system clock frequency drift [m²/s³]
-    double _covarianceInterSysClkFrequencyDrift = std::sqrt(2) * 0.04;
+    double _covarianceInterSysClkFrequencyDrift = 0.04;
+
+    // ###########################################################################################################
+    // ###########################################################################################################
+
+    /// Possible Units for the P matrix initialization velocity uncertainty
+    enum class InitCovarianceVelocityUnits
+    {
+        m_s,   ///< [ m / s ]
+        m2_s2, ///< [ m^2 / s^2 ]
+    };
+    /// Gui selection for the Unit of the P matrix initialization velocity uncertainty
+    InitCovarianceVelocityUnits _gui_initCovarianceVelocityUnit = InitCovarianceVelocityUnits::m_s;
+
+    /// @brief GUI selection for the P matrix initialization velocity uncertainty
+    double _gui_initCovarianceVelocity = 10 /* [ m / s ] */;
+    /// @brief Covariance of the P matrix initialization velocity uncertainty [m²/s²]
+    double _initCovarianceVelocity = 100;
+
+    // ###########################################################################################################
+
+    /// Possible Units for the P matrix initialization clock drift uncertainty
+    enum class InitCovarianceClockDriftUnits
+    {
+        m_s,   ///< [ m / s ]
+        s_s,   ///< [ s / s ]
+        m2_s2, ///< [ m^2 / s^2 ]
+        s2_s2, ///< [ s^2 / s^2 ]
+    };
+    /// Gui selection for the Unit of the P matrix initialization clock drift uncertainty
+    InitCovarianceClockDriftUnits _gui_initCovarianceClockDriftUnit = InitCovarianceClockDriftUnits::s_s;
+
+    /// @brief GUI selection for the P matrix initialization clock drift uncertainty
+    double _gui_initCovarianceClockDrift = 1e-6 /* [ s / s ] */;
+    /// @brief Covariance of the P matrix initialization clock drift uncertainty [m²/s²]
+    double _initCovarianceClockDrift = std::pow(1e-6 * InsConst<>::C, 2);
+
+    // ###########################################################################################################
+
+    /// Gui selection for the Unit of the P matrix initialization inter system clock drift uncertainty
+    InitCovarianceClockDriftUnits _gui_initCovarianceInterSysClockDriftUnit = InitCovarianceClockDriftUnits::s_s;
+
+    /// @brief GUI selection for the P matrix initialization inter system clock drift uncertainty
+    double _gui_initCovarianceInterSysClockDrift = 1e-6 /* [ s / s ] */;
+    /// @brief Covariance of the P matrix initialization inter system clock drift uncertainty [m²/s²]
+    double _initCovarianceInterSysClockDrift = std::pow(1e-6 * InsConst<>::C, 2);
+
+    // ###########################################################################################################
+    // ###########################################################################################################
 
     friend void to_json(json& j, const KalmanFilter& data);
     friend void from_json(const json& j, KalmanFilter& data);

@@ -447,6 +447,12 @@ class ObservationFilter
         return _filterFreq;
     }
 
+    /// @brief Get the Satellite System Filter
+    [[nodiscard]] SatelliteSystem getSystemFilter() const
+    {
+        return _filterFreq.getSatSys();
+    }
+
     /// @brief Get the used observation types
     [[nodiscard]] const std::unordered_set<GnssObs::ObservationType>& getUsedObservationTypes() const
     {
