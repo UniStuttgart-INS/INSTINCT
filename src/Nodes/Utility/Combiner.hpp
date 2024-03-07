@@ -118,7 +118,8 @@ class Combiner : public Node, public CommonLog
             size_t pinIndex = 0;  ///< Pin Index
             size_t dataIndex = 0; ///< Data Index
 
-            PolynomialRegressor<double> polyReg{ 1, 2 }; ///< Polynomial Regressor to interpolate data
+            PolynomialRegressor<double> polyReg{ 1, 2 };           ///< Polynomial Regressor to interpolate data
+            ScrollingBuffer<std::vector<std::string>> events{ 2 }; ///< Last events to add if we send
 
             /// @brief Get a string description of the combination
             /// @param node Combiner node pointer

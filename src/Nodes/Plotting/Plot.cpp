@@ -1001,7 +1001,8 @@ void NAV::Plot::guiConfig()
                                             if (std::abs(std::get<0>(e) - relTime) <= 1e-6)
                                             {
                                                 tooltip.time = std::get<1>(e);
-                                                if (plotItem.style.eventTooltipFilterRegex.empty() || std::regex_search(std::get<2>(e), filter))
+                                                if ((std::get<3>(e) == -1 || static_cast<size_t>(std::get<3>(e)) == plotItem.dataIndex)
+                                                    && (plotItem.style.eventTooltipFilterRegex.empty() || std::regex_search(std::get<2>(e), filter)))
                                                 {
                                                     tooltip.texts.push_back(std::get<2>(e));
                                                 }
@@ -1908,12 +1909,12 @@ void NAV::Plot::pinDeleteCallback(Node* node, size_t pinIdx)
     plotNode->_pinData.erase(std::next(plotNode->_pinData.begin(), static_cast<int64_t>(pinIdx)));
 }
 
-void NAV::Plot::addEvent(size_t pinIndex, InsTime insTime, const std::string& text)
+void NAV::Plot::addEvent(size_t pinIndex, InsTime insTime, const std::string& text, int32_t dataIndex)
 {
     if (!insTime.empty() && !_startTime.empty())
     {
         double relTime = static_cast<double>((insTime - _startTime).count());
-        _pinData.at(pinIndex).events.emplace_back(relTime, insTime, text);
+        _pinData.at(pinIndex).events.emplace_back(relTime, insTime, text, dataIndex);
     }
 }
 
@@ -1928,7 +1929,7 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
     }
 }
 
-void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
+size_t NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
 {
     auto& pinData = _pinData.at(pinIndex);
 
@@ -1955,8 +1956,9 @@ void NAV::Plot::addData(size_t pinIndex, std::string displayName, double value)
             plotData->buffer.push_back(std::nan(""));
         }
     }
-
-    addData(pinIndex, static_cast<size_t>(plotData - pinData.plotData.begin()), value);
+    auto dataIndex = static_cast<size_t>(plotData - pinData.plotData.begin());
+    addData(pinIndex, dataIndex, value);
+    return dataIndex;
 }
 
 NAV::CommonLog::LocalPosition NAV::Plot::calcLocalPosition(const Eigen::Vector3d& lla_position)
@@ -2214,7 +2216,7 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 
         for (const auto& event : nodeData->events())
         {
-            addEvent(pinIdx, nodeData->insTime, event);
+            addEvent(pinIdx, nodeData->insTime, event, -1);
         }
     }
 }
@@ -2225,11 +2227,12 @@ void NAV::Plot::plotDynamicData(const std::shared_ptr<const DynamicData>& obs, s
 
     for (const auto& data : obs->data)
     {
-        addData(pinIndex, data.description, data.value);
+        auto dataIndex = addData(pinIndex, data.description, data.value);
 
-        // TODO: Add events: But events need to be added for the data index, not for the whole pin.
-        //       - So we need a second per data index event system.
-        //       - Or we make the current one into per data index with the option to display for all (probably better)
+        for (const auto& event : data.events)
+        {
+            addEvent(pinIndex, obs->insTime, event, static_cast<int32_t>(dataIndex));
+        }
     }
 }
 

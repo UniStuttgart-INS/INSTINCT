@@ -402,6 +402,11 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
             {
                 LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
                 term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
+                term.events.push_back(nodeData->events());
+                if (!nodeData->events().empty())
+                {
+                    LOG_DATA("{}:       NodeData has {} events", nameId(), nodeData->events().size());
+                }
 
                 // Check for all combinations with new info:
 
@@ -443,7 +448,15 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                                          math::round(calcTimeIntoRun(sendRequestTime), 8));
                                 sendRequest.termIndices.insert(t);
                                 sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
-                                std::copy(nodeData->events().begin(), nodeData->events().end(), std::back_inserter(sendRequest.events));
+                                while (!term.events.empty())
+                                {
+                                    if (!term.events.front().empty())
+                                    {
+                                        LOG_DATA("{}:           Adding {} events", nameId(), term.events.front().size());
+                                        std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sendRequest.events));
+                                    }
+                                    term.events.pop_front();
+                                }
                             }
                         }
                     }
@@ -470,7 +483,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                     };
                     for (size_t t = 0; t < comb.terms.size(); t++)
                     {
-                        const auto term = comb.terms.at(t);
+                        auto& term = comb.terms.at(t);
                         auto [timeIntoRun, val] = term.polyReg.data().back();
                         if (timeIntoRun == nodeDataTimeIntoRun)
                         {
@@ -479,7 +492,15 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                                      term.factor, poly.f(nodeDataTimeIntoRun));
                             sr.termIndices.insert(t);
                             sr.result += term.factor * poly.f(nodeDataTimeIntoRun);
-                            std::copy(nodeData->events().begin(), nodeData->events().end(), std::back_inserter(sr.events));
+                            while (!term.events.empty())
+                            {
+                                if (!term.events.front().empty())
+                                {
+                                    LOG_DATA("{}:         {}: Adding {} events", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), term.events.front().size());
+                                    std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sr.events));
+                                }
+                                term.events.pop_front();
+                            }
                         }
                     }
                     _sendRequests[nodeData->insTime].push_back(sr);

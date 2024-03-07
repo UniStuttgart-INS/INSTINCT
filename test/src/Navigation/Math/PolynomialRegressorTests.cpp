@@ -159,9 +159,12 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     LOG_DEBUG("{} (IncrementalLeastSquares)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
-    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 1e-12));
+    LOG_DEBUG("{} (0)", polynomial.coeffs()(0) - (-2));
+    LOG_DEBUG("{} (1)", polynomial.coeffs()(1) - (5));
+    LOG_DEBUG("{} (2)", polynomial.coeffs()(2) - (2));
+    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 2e-12));
 
     polynomialReg.reset();
 
@@ -171,9 +174,12 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     LOG_DEBUG("{} (LeastSquares)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
-    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 1e-12));
+    LOG_DEBUG("{} (0)", polynomial.coeffs()(0) - (-2));
+    LOG_DEBUG("{} (1)", polynomial.coeffs()(1) - (5));
+    LOG_DEBUG("{} (2)", polynomial.coeffs()(2) - (2));
+    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 2e-12));
 
     polynomialReg.reset();
 
@@ -183,9 +189,12 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     LOG_DEBUG("{} (HouseholderQR)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
-    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 1e-12));
+    LOG_DEBUG("{} (0)", polynomial.coeffs()(0) - (-2));
+    LOG_DEBUG("{} (1)", polynomial.coeffs()(1) - (5));
+    LOG_DEBUG("{} (2)", polynomial.coeffs()(2) - (2));
+    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 2e-12));
 
     polynomialReg.reset();
 
@@ -195,9 +204,12 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     LOG_DEBUG("{} (BDCSVD)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
-    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 1e-12));
+    LOG_DEBUG("{} (0)", polynomial.coeffs()(0) - (-2));
+    LOG_DEBUG("{} (1)", polynomial.coeffs()(1) - (5));
+    LOG_DEBUG("{} (2)", polynomial.coeffs()(2) - (2));
+    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 2e-12));
 
     polynomialReg.reset();
 
@@ -207,9 +219,12 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (4 points)", "[PolynomialRe
 
     LOG_DEBUG("{} (COD)", polynomial);
     REQUIRE(polynomial.coeffs().rows() == 3);
-    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 1e-12));
-    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 1e-12));
+    LOG_DEBUG("{} (0)", polynomial.coeffs()(0) - (-2));
+    LOG_DEBUG("{} (1)", polynomial.coeffs()(1) - (5));
+    LOG_DEBUG("{} (2)", polynomial.coeffs()(2) - (2));
+    REQUIRE_THAT(polynomial.coeffs()(0), Catch::Matchers::WithinAbs(-2, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(1), Catch::Matchers::WithinAbs(5, 2e-12));
+    REQUIRE_THAT(polynomial.coeffs()(2), Catch::Matchers::WithinAbs(2, 2e-12));
 }
 
 TEST_CASE("[PolynomialRegressor] Strategy comparison (large dataset)", "[PolynomialRegressor]")

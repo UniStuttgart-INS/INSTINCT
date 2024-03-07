@@ -161,8 +161,8 @@ class Plot : public Node, public CommonLog
         std::mutex mutex;
         /// Dynamic data start index
         int dynamicDataStartIndex = -1;
-        /// Events with relative time, absolute time and tooltip text
-        std::vector<std::tuple<double, InsTime, std::string>> events;
+        /// Events with relative time, absolute time, tooltip text and data Index (-1 means all)
+        std::vector<std::tuple<double, InsTime, std::string, int32_t>> events;
     };
 
     /// @brief Information specifying the look of each plot
@@ -416,7 +416,8 @@ class Plot : public Node, public CommonLog
     /// @param[in] pinIndex Index of the input pin where the data was received
     /// @param insTime Absolute time
     /// @param text Text to display
-    void addEvent(size_t pinIndex, InsTime insTime, const std::string& text);
+    /// @param dataIndex Data Index to add the event for (-1 means all)
+    void addEvent(size_t pinIndex, InsTime insTime, const std::string& text, int32_t dataIndex);
 
     /// @brief Add Data to the buffer of the pin
     /// @param[in] pinIndex Index of the input pin where the data was received
@@ -428,7 +429,8 @@ class Plot : public Node, public CommonLog
     /// @param[in] pinIndex Index of the input pin where the data was received
     /// @param[in] displayName Display name of the data
     /// @param[in] value The value to insert
-    void addData(size_t pinIndex, std::string displayName, double value);
+    /// @return Data Index where data were inserted
+    size_t addData(size_t pinIndex, std::string displayName, double value);
 
     /// @brief Calculate the local position offset from the plot origin
     /// @param[in] lla_position [𝜙, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]

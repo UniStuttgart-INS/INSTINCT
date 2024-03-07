@@ -606,7 +606,6 @@ class InputPin : public Pin
                         outputPin->dataAccessCounter--;
                         if (outputPin->dataAccessCounter == 0)
                         {
-                            LOG_DATA("Notifying node connected to pin '{} ({})' that all data is read.", outputPin->name, size_t(outputPin->id));
                             outputPin->dataAccessConditionVariable.notify_all();
                         }
                     }
