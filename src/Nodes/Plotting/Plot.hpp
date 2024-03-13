@@ -37,6 +37,7 @@
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 
 namespace NAV
 {
@@ -496,6 +497,11 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotWiFiPositioningSolution(const std::shared_ptr<const WiFiPositioningSolution>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> _pinData;

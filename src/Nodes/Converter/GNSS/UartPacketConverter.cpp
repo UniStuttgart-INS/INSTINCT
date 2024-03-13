@@ -95,21 +95,7 @@ void NAV::UartPacketConverter::guiConfig()
                 outputPins.front().recreateLink(*connectedPin);
             }
         }
-
         flow::ApplyChanges();
-    }
-    if (_outputType == OutputType_WiFiObs)
-    {
-        if (ImGui::Combo(fmt::format("Number of measurements##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_numberOfMeasurements), "Single\0Multiple\0\0"))
-        {
-            LOG_DEBUG("{}: Number of measurements changed to {}", nameId(), _numberOfMeasurements == NumberOfMeasurements::SINGLE ? "single" : "multiple");
-            flow::ApplyChanges();
-        }
-        if (ImGui::Combo(fmt::format("Time system##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_timeSystem), "INSTINCT\0WiFi device\0\0"))
-        {
-            LOG_DEBUG("{}: Frame changed to {}", nameId(), _timeSystem == WifiTimeSystem::INSTINCT ? "INSTINCT" : "WiFi device");
-            flow::ApplyChanges();
-        }
     }
 }
 
@@ -120,8 +106,6 @@ void NAV::UartPacketConverter::guiConfig()
     json j;
 
     j["outputType"] = _outputType;
-    j["numberOfMeasurements"] = _numberOfMeasurements;
-    j["timeSystem"] = _timeSystem;
 
     return j;
 }
@@ -153,14 +137,6 @@ void NAV::UartPacketConverter::restore(json const& j)
             }
         }
     }
-    if (j.contains("numberOfMeasurements"))
-    {
-        j.at("numberOfMeasurements").get_to(_numberOfMeasurements);
-    }
-    if (j.contains("timeSystem"))
-    {
-        j.at("timeSystem").get_to(_timeSystem);
-    }
 }
 
 bool NAV::UartPacketConverter::initialize()
@@ -187,28 +163,7 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
     {
         auto obs = std::make_shared<WiFiObs>();
         auto packet = uartPacket->raw;
-        if (_numberOfMeasurements == NumberOfMeasurements::SINGLE)
-        {
-            if (_timeSystem == WifiTimeSystem::INSTINCT)
-            {
-                vendor::espressif::decryptSingleWiFiObsInstinctTime(obs, packet);
-            }
-            else
-            {
-                vendor::espressif::decryptSingleWiFiObsDeviceTime(obs, packet);
-            }
-        }
-        else
-        {
-            if (_timeSystem == WifiTimeSystem::INSTINCT)
-            {
-                vendor::espressif::decryptMultipleWiFiObsInstinctTime(obs, packet);
-            }
-            else
-            {
-                vendor::espressif::decryptMultipleWiFiObsDeviceTime(obs, packet);
-            }
-        }
+        vendor::espressif::decryptWiFiObs(obs, packet, nameId());
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */

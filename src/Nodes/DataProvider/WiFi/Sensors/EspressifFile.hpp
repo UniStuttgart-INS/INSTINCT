@@ -6,8 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file EspressifSensor.hpp
-/// @brief Espressif Sensor Class
+/// @file EspressifFile.hpp
+/// @brief File Reader for ubx files
 /// @author R. Lintz (r-lintz@gmx.de) (master thesis)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2024-01-08
@@ -15,27 +15,28 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
-#include "Nodes/DataProvider/Protocol/UartSensor.hpp"
+#include "Nodes/DataProvider/Protocol/FileReader.hpp"
+
 #include "util/Vendor/Espressif/EspressifUartSensor.hpp"
 
 namespace NAV
 {
-/// Espressif Sensor Class
-class EspressifSensor : public Node, public UartSensor
+/// File Reader for WiFiObs log files
+class EspressifFile : public Node, public FileReader
 {
   public:
     /// @brief Default constructor
-    EspressifSensor();
+    EspressifFile();
     /// @brief Destructor
-    ~EspressifSensor() override;
+    ~EspressifFile() override;
     /// @brief Copy constructor
-    EspressifSensor(const EspressifSensor&) = delete;
+    EspressifFile(const EspressifFile&) = delete;
     /// @brief Move constructor
-    EspressifSensor(EspressifSensor&&) = delete;
+    EspressifFile(EspressifFile&&) = delete;
     /// @brief Copy assignment operator
-    EspressifSensor& operator=(const EspressifSensor&) = delete;
+    EspressifFile& operator=(const EspressifFile&) = delete;
     /// @brief Move assignment operator
-    EspressifSensor& operator=(EspressifSensor&&) = delete;
+    EspressifFile& operator=(EspressifFile&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -57,11 +58,11 @@ class EspressifSensor : public Node, public UartSensor
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_WIFI_OBS = 0; ///< @brief Flow (EspressifObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_WiFiObs_OBS = 0; ///< @brief Flow (WiFiObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -69,11 +70,16 @@ class EspressifSensor : public Node, public UartSensor
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Callback handler for notifications of new asynchronous data packets received
-    /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
-    /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
-    /// @param[in] index Advanced usage item and can be safely ignored for now
-    static void binaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
+    /// @brief Polls data from the file
+    /// @return The read observation
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
+
+    /// @brief Determines the type of the file
+    /// @return The File Type
+    [[nodiscard]] FileType determineFileType() override;
+
+    ///
+    InsTime _lastObsTime;
 
     /// Sensor Object
     vendor::espressif::EspressifUartSensor _sensor;

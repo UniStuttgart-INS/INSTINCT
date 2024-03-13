@@ -8,8 +8,9 @@
 
 /// @file EspressifUartSensor.hpp
 /// @brief Class to read out Espressif Sensors
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-07-22
+/// @date 2024-01-08
 
 #pragma once
 

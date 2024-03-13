@@ -1,135 +1,116 @@
 {
     "version": "2.0.0",
     "tasks": [
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                       CLEAN Tasks                                        ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // CLEAN: Remove Build Files
+        {
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
             "command": "rm",
             "args": [
                 "-rf",
-                "build",
+                "build"
             ],
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "build",
+                    "build"
                 ]
             },
             "presentation": {
                 "reveal": "never",
                 "echo": false,
-                "showReuseMessage": false,
+                "showReuseMessage": false
             },
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // CLEAN: Tests
+        {
             "label": "CLEAN: Tests",
             "type": "shell",
             "group": "build",
             "command": "rm",
             "args": [
                 "-rf",
-                "test/logs/[^\\.]*",
+                "test/logs/[^\\.]*"
             ],
             "windows": {
                 "command": "Remove-Item",
                 "args": [
                     "-Recurse",
-                    "build",
+                    "build"
                 ]
             },
             "presentation": {
                 "reveal": "never",
                 "echo": false,
-                "showReuseMessage": false,
+                "showReuseMessage": false
             },
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                       Conan Tasks                                        ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // Conan: Detect
+        {
             "label": "Conan: Detect",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan profile detect --force",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan profile detect --force"
             ],
             "presentation": {
-                "clear": true,
+                "clear": true
             },
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // Conan
+        {
             "label": "Conan",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:buildType} -s compiler.cppstd=20",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:buildType} -s compiler.cppstd=20"
             ],
-            // "command": "conan",
-            // "args": [
-            //     "install",
-            //     ".",
-            //     "--build=missing",
-            //     "-s",
-            //     "build_type=${input:buildType}",
-            //     "-s",
-            //     "compiler.cppstd=20",
-            // ],
             "dependsOn": [
-                "Conan: Detect",
+                "Conan: Detect"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // Conan: Debug
+        {
             "label": "Conan: Debug",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20"
             ],
             "dependsOn": [
-                "Conan: Detect",
+                "Conan: Detect"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // Conan: Release
+        {
             "label": "Conan: Release",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=20",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=20"
             ],
             "dependsOn": [
-                "Conan: Detect",
+                "Conan: Detect"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                       CMAKE Tasks                                        ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // CMAKE: Main
+        {
             "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}"
             ],
             "windows": {
                 "command": "cmake",
@@ -146,35 +127,29 @@
                     "-DENABLE_CPPCHECK=OFF",
                     "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
                     "-DWARNINGS_AS_ERRORS=OFF",
-                    "-DUSE_ALTERNATE_LINKER=${input:linker}",
+                    "-DUSE_ALTERNATE_LINKER=${input:linker}"
                 ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252",
+                        "chcp": "1252"
                     }
-                },
+                }
             },
             "dependsOn": [
-                "Conan",
+                "Conan"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // CMAKE: Testing
+        {
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DCMAKE_TOOLCHAIN_FILE=build/${input:buildType}/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\") -DUSE_ALTERNATE_LINKER=${input:linker}"
             ],
-            // "options": {
-            //     "env": {
-            //         "CC": "/usr/bin/clang",
-            //         "CXX": "/usr/bin/clang++",
-            //     }
-            // },
             "windows": {
                 "command": "cmake",
                 "args": [
@@ -189,21 +164,21 @@
                     "-DENABLE_CLANG_TIDY=OFF",
                     "-DENABLE_CPPCHECK=OFF",
                     "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-                    "-DWARNINGS_AS_ERRORS=OFF",
+                    "-DWARNINGS_AS_ERRORS=OFF"
                 ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252",
+                        "chcp": "1252"
                     }
-                },
+                }
             },
             "dependsOn": [
-                "Conan",
+                "Conan"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // CMAKE: Coverage
+        {
             "label": "CMAKE: Coverage",
             "type": "shell",
             "group": "build",
@@ -221,51 +196,48 @@
                 "-DENABLE_CLANG_TIDY=OFF",
                 "-DENABLE_CPPCHECK=OFF",
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-                "-DUSE_ALTERNATE_LINKER=${input:linker}",
+                "-DUSE_ALTERNATE_LINKER=${input:linker}"
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/gcc",
-                    "CXX": "/usr/bin/g++",
+                    "CXX": "/usr/bin/g++"
                 }
             },
             "dependsOn": [
-                "Conan: Debug",
+                "Conan: Debug"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // CMAKE: Documentation
+        {
             "label": "CMAKE: Documentation",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:linker}"
             ],
             "dependsOn": [
-                "Conan: Release",
+                "Conan: Release"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // CMAKE: Documentation Check
+        {
             "label": "CMAKE: Documentation Check",
             "type": "shell",
             "group": "build",
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:linker}",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:linker}"
             ],
             "dependsOn": [
-                "Conan: Release",
+                "Conan: Release"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                  CMAKE Configure Tasks                                   ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // CMAKE: Configure
+        {
             "label": "CMAKE: Configure",
             "type": "shell",
             "group": "build",
@@ -273,26 +245,23 @@
             "args": [
                 "-Bbuild/${input:buildType}-${input:compiler}",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=${input:buildType}",
+                "-DCMAKE_BUILD_TYPE=${input:buildType}"
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
                 "focus": true
             },
             "dependsOn": [
-                "CMAKE: Main",
+                "CMAKE: Main"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                        Build Tasks                                       ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // MAIN: Build project
+        {
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
@@ -300,15 +269,15 @@
             "linux": {
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
-                ],
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)"
+                ]
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
-                ],
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)"
+                ]
             },
             "windows": {
                 "command": "cmake",
@@ -317,21 +286,21 @@
                     "build/${input:buildType}-msvc",
                     "--config",
                     "${input:buildType}",
-                    "--parallel8",
+                    "--parallel8"
                 ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252",
+                        "chcp": "1252"
                     }
-                },
+                }
             },
             "dependsOn": [
-                "CMAKE: Main",
+                "CMAKE: Main"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // TEST: Build project
+        {
             "label": "TEST: Build project",
             "type": "shell",
             "group": "build",
@@ -339,15 +308,15 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)",
-                ],
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(nproc)"
+                ]
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
-                ],
+                    "cmake --build build/${input:buildType}-${input:compiler} --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)"
+                ]
             },
             "windows": {
                 "command": "cmake",
@@ -356,21 +325,21 @@
                     "build/${input:buildType}-msvc",
                     "--config",
                     "${input:buildType}",
-                    "--parallel8",
+                    "--parallel8"
                 ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252",
+                        "chcp": "1252"
                     }
-                },
+                }
             },
             "dependsOn": [
-                "CMAKE: Testing",
+                "CMAKE: Testing"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Build Coverage Report
+        {
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
@@ -378,22 +347,22 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(nproc)",
-                ],
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(nproc)"
+                ]
             },
             "osx": {
                 "command": "bash",
                 "args": [
                     "-c",
-                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)",
-                ],
+                    "cmake --build build/Debug-cov --config ${input:buildType} --parallel$(sysctl -n hw.physicalcpu)"
+                ]
             },
             "dependsOn": [
-                "CMAKE: Coverage",
+                "CMAKE: Coverage"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // DOXYGEN: Build Documentation
+        {
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
             "group": "build",
@@ -402,14 +371,14 @@
                 "--build",
                 "build/Release-doc",
                 "--target",
-                "doc",
+                "doc"
             ],
             "dependsOn": [
-                "CMAKE: Documentation",
+                "CMAKE: Documentation"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // DOXYGEN: Check for errors
+        {
             "label": "DOXYGEN: Check for errors",
             "type": "shell",
             "group": "test",
@@ -418,17 +387,14 @@
                 "--build",
                 "build/Release-doc",
                 "--target",
-                "doc",
+                "doc"
             ],
             "dependsOn": [
-                "CMAKE: Documentation Check",
+                "CMAKE: Documentation Check"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                        Run Tasks                                         ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // MAIN: Build & run project
+        {
             "label": "MAIN: Build & run project",
             "type": "shell",
             "group": {
@@ -439,32 +405,18 @@
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
-                // "--sigterm",
-                // "--duration=60",
-                // "--nogui",
-                // "--noinit",
-                // "--input-path=data",
-                // "--output-path=logs",
-                // "--rotate-output",
-                // "--implot-config=\"config/implot.json\"",
-                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
-                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
-                // "--log-filter=SinglePointPositioning.cpp",
-                // ================ To configure tests ================
-                // "--flow-path=test/flow",
-                // "--input-path=test/data",
-                // "--output-path=test/logs",
+                "--console-log-level=trace",
+                "--file-log-level=trace"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
             "dependsOn": [
-                "MAIN: Build project",
+                "MAIN: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // TEST: Build & run
+        {
             "label": "TEST: Build & run",
             "type": "shell",
             "group": {
@@ -473,26 +425,22 @@
             },
             "command": "ctest",
             "args": [
-                // "-j4",
-                "--output-on-failure",
-                // "--tests-regex",
-                // "'PVAError|PosVelAtt'",
-                // "--verbose",
+                "--output-on-failure"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}"
             },
             "windows": {
                 "options": {
-                    "cwd": "${workspaceFolder}/build/${input:buildType}-msvc",
-                },
+                    "cwd": "${workspaceFolder}/build/${input:buildType}-msvc"
+                }
             },
             "dependsOn": [
-                "TEST: Build project",
+                "TEST: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // TEST: Build & run w/o flow tests
+        {
             "label": "TEST: Build & run w/o flow tests",
             "type": "shell",
             "group": "test",
@@ -501,38 +449,34 @@
                 "-j4",
                 "--output-on-failure",
                 "--exclude-regex",
-                "'\\[flow\\]'",
-                // "--tests-regex",
-                // "'ScrollingBuffer'"
-                // "--verbose",
+                "'\\[flow\\]'"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}",
+                "cwd": "${workspaceFolder}/build/${input:buildType}-${input:compiler}"
             },
             "dependsOn": [
-                "TEST: Build project",
+                "TEST: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Run Coverage Tests
+        {
             "label": "COVERAGE: Run Coverage Tests",
             "type": "shell",
             "group": "test",
             "command": "ctest",
             "args": [
                 "-j4",
-                "--output-on-failure",
-                // "--verbose",
+                "--output-on-failure"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov"
             },
             "dependsOn": [
-                "COVERAGE: Build Coverage Report",
+                "COVERAGE: Build Coverage Report"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Run Coverage Tests w/o flow tests
+        {
             "label": "COVERAGE: Run Coverage Tests w/o flow tests",
             "type": "shell",
             "group": "test",
@@ -542,87 +486,83 @@
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
-                // "--verbose",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug-cov",
+                "cwd": "${workspaceFolder}/build/Debug-cov"
             },
             "dependsOn": [
-                "COVERAGE: Build Coverage Report",
+                "COVERAGE: Build Coverage Report"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Create
+        {
             "label": "COVERAGE: Create",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg"
             ],
             "dependsOn": [
-                "COVERAGE: Run Coverage Tests",
+                "COVERAGE: Run Coverage Tests"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Create w/o flow tests
+        {
             "label": "COVERAGE: Create w/o flow tests",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg"
             ],
             "dependsOn": [
-                "COVERAGE: Run Coverage Tests w/o flow tests",
+                "COVERAGE: Run Coverage Tests w/o flow tests"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Create & Show
+        {
             "label": "COVERAGE: Create & Show",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/coverage/index.html",
+                "build/coverage/index.html"
             ],
             "dependsOn": [
-                "COVERAGE: Create",
+                "COVERAGE: Create"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // COVERAGE: Create & Show w/o flow tests
+        {
             "label": "COVERAGE: Create & Show w/o flow tests",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/coverage/index.html",
+                "build/coverage/index.html"
             ],
             "dependsOn": [
-                "COVERAGE: Create w/o flow tests",
+                "COVERAGE: Create w/o flow tests"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // DOXYGEN: Create & Show
+        {
             "label": "DOXYGEN: Create & Show",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/doc/html/index.html",
+                "build/doc/html/index.html"
             ],
             "dependsOn": [
-                "DOXYGEN: Build Documentation",
+                "DOXYGEN: Build Documentation"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                     Debugging Tasks                                      ║
-        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        { // Gperftools: Run profiler
+        {
             "label": "Gperftools: Run profiler",
             "type": "shell",
             "group": "test",
@@ -630,88 +570,71 @@
             "args": [
                 "--config=config.ini",
                 "--load=\"flow/RTK-2020-08-05-Icare.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
-                // "--sigterm",
-                // "--duration=60",
-                // "--nogui",
-                // "--noinit",
-                // "--input-path=data",
-                // "--output-path=logs",
-                // "--rotate-output",
-                // "--implot-config=\"config/implot.json\"",
-                "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
-                "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
-                // "--log-filter=SinglePointPositioning.cpp",
-                // ================ To configure tests ================
-                // "--flow-path=test/flow",
-                // "--input-path=test/data",
-                // "--output-path=test/logs",
+                "--console-log-level=trace",
+                "--file-log-level=trace"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
             "linux": {
                 "options": {
                     "env": {
                         "CPUPROFILE": "build/bin/${input:buildType}/instinct.prof",
-                        "CPUPROFILE_FREQUENCY": "500", // Default: 100      How many interrupts/second the cpu-profiler samples.
+                        "CPUPROFILE_FREQUENCY": "500"
                     }
                 }
             },
             "dependsOn": [
-                "MAIN: Build project",
+                "MAIN: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // Gperftools: Show profiled output
+        {
             "label": "Gperftools: Show profiled output",
             "type": "shell",
             "group": "test",
             "command": "pprof",
             "args": [
-                "--gv", // Displays annotated call-graph via 'gv'
-                // "--callgrind", // Outputs the call information in callgrind format
+                "--gv",
                 "build/bin/${input:buildType}/instinct",
-                "build/bin/${input:buildType}/instinct.prof",
-                // ">", // For --callgrind option
-                // "build/bin/${input:buildType}/callgrind.out", // For --callgrind option
+                "build/bin/${input:buildType}/instinct.prof"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // VALGRIND: Run profiler
+        {
             "label": "VALGRIND: Run profiler",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=build/bin/${input:buildType}/callgrind.out --tool=callgrind build/bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:buildType}/callgrind.out"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
             "dependsOn": [
-                "MAIN: Build project",
+                "MAIN: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // VALGRIND: Show profiled output
+        {
             "label": "VALGRIND: Show profiled output",
             "type": "shell",
             "group": "test",
             "command": "kcachegrind",
             "args": [
-                "build/bin/${input:buildType}/callgrind.out",
+                "build/bin/${input:buildType}/callgrind.out"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
-            "problemMatcher": [],
+            "problemMatcher": []
         },
-        { // VALGRIND: Memory Leak Check
+        {
             "label": "VALGRIND: Memory Leak Check",
             "type": "shell",
             "group": "test",
@@ -723,15 +646,15 @@
                 "config.ini",
                 "--nogui",
                 "-l",
-                "flow/Default.flow",
+                "flow/Default.flow"
             ],
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
             "dependsOn": [
-                "MAIN: Build project",
+                "MAIN: Build project"
             ],
-            "problemMatcher": [],
+            "problemMatcher": []
         }
     ],
     // ╔══════════════════════════════════════════════════════════════════════════════════════════╗

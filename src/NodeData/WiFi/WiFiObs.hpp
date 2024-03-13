@@ -8,8 +8,8 @@
 
 /// @file WiFiObs.hpp
 /// @brief Espressif Observation Class
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date TODO
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
+/// @date 2024-01-08
 
 #pragma once
 

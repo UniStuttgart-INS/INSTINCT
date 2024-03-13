@@ -8,8 +8,8 @@
 
 /// @file ArubaSensor.hpp
 /// @brief Aruba Sensor Class
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-03-19
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
+/// @date 2024-01-08
 
 #pragma once
 

@@ -219,6 +219,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/EspressifSensor.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/ArubaSensor.hpp"
+#include "Nodes/DataProvider/WiFi/Sensors/EspressifFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
@@ -287,6 +288,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<MultiImuFile>();
     registerNodeType<EspressifSensor>();
     registerNodeType<ArubaSensor>();
+    registerNodeType<EspressifFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
@@ -319,6 +321,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/WiFi/WiFiObs.hpp"
+#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -346,4 +349,5 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<PosVelAtt>();
     // WiFi
     registerNodeDataType<WiFiObs>();
+    registerNodeDataType<WiFiPositioningSolution>();
 }

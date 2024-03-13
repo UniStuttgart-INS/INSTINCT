@@ -358,7 +358,8 @@ NAV::Plot::Plot()
                         ImuObsSimulated::type(),
                         KvhObs::type(),
                         ImuObsWDelta::type(),
-                        VectorNavBinaryOutput::type() };
+                        VectorNavBinaryOutput::type(),
+                        WiFiPositioningSolution::type() };
 
     updateNumberOfInputPins();
 
@@ -2236,6 +2237,53 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Week");
             _pinData.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::NumSats");
         }
+        else if (startPin.dataIdentifier.front() == WiFiPositioningSolution::type())
+        {
+            // NodeData
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
+            // PosVel
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity [m/s]");
+            // WiFiPositioningSolution
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XY-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XZ-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "YZ-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "NE-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ND-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ED-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XY velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "XZ velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "YZ velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "North velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "East velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Down velocity StDev [m/s]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "NE velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ND velocity StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "ED velocity StDev [m]");
+        }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
@@ -2632,6 +2680,10 @@ void NAV::Plot::plotData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
             plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIdx);
+        }
+        else if (sourcePin->dataIdentifier.front() == WiFiPositioningSolution::type())
+        {
+            plotWiFiPositioningSolution(std::static_pointer_cast<const WiFiPositioningSolution>(nodeData), pinIdx);
         }
     }
 }
@@ -3550,4 +3602,75 @@ void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBina
     addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? obs->gnss2Outputs->raw.tow : std::nan(""));
     addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.week) : std::nan(""));
     addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.numSats) : std::nan(""));
+}
+
+void NAV::Plot::plotWiFiPositioningSolution(const std::shared_ptr<const WiFiPositioningSolution>& obs, size_t pinIndex)
+{
+    if (!obs->insTime.empty() && _startTime.empty()) { _startTime = obs->insTime; }
+    size_t i = 0;
+
+    if (!_originPosition)
+    {
+        _originPosition = { .frame = gui::widgets::PositionWithFrame::ReferenceFrame::ECEF,
+                            .e_position = obs->e_position() };
+    }
+
+    int sign = obs->lla_position().x() > _originPosition->latitude() ? 1 : -1;
+    // North/South deviation [m]
+    double northSouth = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                                 _originPosition->latitude(), obs->lla_position().y())
+                        * sign;
+
+    sign = obs->lla_position().y() > _originPosition->longitude() ? 1 : -1;
+    // East/West deviation [m]
+    double eastWest = calcGeographicalDistance(obs->lla_position().x(), obs->lla_position().y(),
+                                               obs->lla_position().x(), _originPosition->longitude())
+                      * sign;
+
+    std::scoped_lock<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
+    // NodeData
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>((obs->insTime - _startTime).count()) : std::nan(""));
+    addData(pinIndex, i++, !obs->insTime.empty() ? static_cast<double>(obs->insTime.toGPSweekTow().tow) : std::nan(""));
+    // PosVel
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(0)));
+    addData(pinIndex, i++, rad2deg(obs->lla_position()(1)));
+    addData(pinIndex, i++, obs->lla_position()(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
+    addData(pinIndex, i++, obs->e_position().x());
+    addData(pinIndex, i++, obs->e_position().y());
+    addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->e_velocity().norm());
+    addData(pinIndex, i++, obs->e_velocity().x());
+    addData(pinIndex, i++, obs->e_velocity().y());
+    addData(pinIndex, i++, obs->e_velocity().z());
+    addData(pinIndex, i++, obs->n_velocity().x());
+    addData(pinIndex, i++, obs->n_velocity().y());
+    addData(pinIndex, i++, obs->n_velocity().z());
+    // WiFiPositionSolution
+    addData(pinIndex, i++, obs->e_positionStdev()(0));                                                              // X-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(1));                                                              // Y-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_positionStdev()(2));                                                              // Z-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix()(0, 1));                                                        // XY-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix()(0, 2));                                                        // XZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix()(1, 2));                                                        // YZ-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(0));                                                              // North StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(1));                                                              // East StDev [m]
+    addData(pinIndex, i++, obs->n_positionStdev()(2));                                                              // Down StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix()(0, 1));                                                        // NE-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix()(0, 2));                                                        // ND-ECEF StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix()(1, 2));                                                        // ED-ECEF StDev [m]
+    addData(pinIndex, i++, obs->e_velocityStdev()(0));                                                              // X velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(1));                                                              // Y velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_velocityStdev()(2));                                                              // Z velocity ECEF StDev [m/s]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 ? obs->e_CovarianceMatrix()(3, 4) : std::nan("")); // XY velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 ? obs->e_CovarianceMatrix()(3, 5) : std::nan("")); // XZ velocity StDev [m]
+    addData(pinIndex, i++, obs->e_CovarianceMatrix().rows() >= 4 ? obs->e_CovarianceMatrix()(4, 5) : std::nan("")); // YZ velocity StDev [m]
+    addData(pinIndex, i++, obs->n_velocityStdev()(0));                                                              // North velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(1));                                                              // East velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_velocityStdev()(2));                                                              // Down velocity StDev [m/s]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 ? obs->n_CovarianceMatrix()(3, 4) : std::nan("")); // NE velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 ? obs->n_CovarianceMatrix()(3, 5) : std::nan("")); // ND velocity StDev [m]
+    addData(pinIndex, i++, obs->n_CovarianceMatrix().rows() >= 4 ? obs->n_CovarianceMatrix()(4, 5) : std::nan("")); // ED velocity StDev [m]
 }

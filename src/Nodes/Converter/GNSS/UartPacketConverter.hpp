@@ -9,6 +9,7 @@
 /// @file UartPacketConverter.hpp
 /// @brief Decrypts Uart packets
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
 /// @date 2022-06-13
 
 #pragma once
@@ -76,24 +77,6 @@ class UartPacketConverter : public Node
 
     /// The selected output type in the GUI
     OutputType _outputType = OutputType_UbloxObs;
-
-    /// @brief Number of measurements in one message
-    enum class NumberOfMeasurements : int
-    {
-        SINGLE,   ///< Single measurement
-        MULTIPLE, ///< Multiple measurements
-    };
-    /// Number of measurements in one message
-    NumberOfMeasurements _numberOfMeasurements = NumberOfMeasurements::SINGLE;
-
-    /// @brief Specifies the time system in which the timestamps of the FTM measurements are.
-    enum class WifiTimeSystem : int
-    {
-        INSTINCT,   ///< time system of INSTINCT
-        WIFIDEVICE, ///< time system of the WiFi device
-    };
-    /// Time system of the FTM measurements
-    WifiTimeSystem _timeSystem = WifiTimeSystem::INSTINCT;
 
     /// @brief Initialize the node
     bool initialize() override;

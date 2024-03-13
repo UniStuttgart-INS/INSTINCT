@@ -8,8 +8,9 @@
 
 /// @file EspressifUtilities.hpp
 /// @brief Helper Functions to work with Espressif Sensors
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-07-22
+/// @date 2024-01-08
 
 #pragma once
 
@@ -23,25 +24,10 @@
 
 namespace NAV::vendor::espressif
 {
-/// @brief Decrypts the provided Espressif observation with device time
-/// @param[in] obs Espressif Observation to decrypt
-/// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-void decryptSingleWiFiObsDeviceTime(const std::shared_ptr<NAV::WiFiObs>& obs, uart::protocol::Packet& packet);
-
-/// @brief Decrypts the provided multiple Espressif observation with device time
-/// @param[in] obs Espressif Observation to decrypt
-/// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-void decryptMultipleWiFiObsDeviceTime(const std::shared_ptr<NAV::WiFiObs>& obs, uart::protocol::Packet& packet);
-
 /// @brief Decrypts the provided Espressif observation
 /// @param[in] obs Espressif Observation to decrypt
 /// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-void decryptSingleWiFiObsInstinctTime(const std::shared_ptr<NAV::WiFiObs>& obs, uart::protocol::Packet& packet);
-
-/// @brief Decrypts the provided multiple Espressif observation
-/// @param[in] obs Espressif Observation to decrypt
-/// @param[in, out] packet Uart packet with the data (content gets changed because data gets extracted)
-void decryptMultipleWiFiObsInstinctTime(const std::shared_ptr<NAV::WiFiObs>& obs, uart::protocol::Packet& packet);
+bool decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>& obs, uart::protocol::Packet& packet, [[maybe_unused]] const std::string& nameId);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 /// @param[in] data Data Vector for which the checksum should be calculated

@@ -30,7 +30,8 @@ NAV::EspressifSensor::EspressifSensor()
     _guiConfigDefaultWindowSize = { 360, 70 };
 
     // TODO: Update the library to handle different baudrates
-    _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
+    // _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
+    _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_115200);
     _sensorPort = "/dev/ttyACM0";
 
     nm::CreateOutputPin(this, "UartPacket", Pin::Type::Flow, { NAV::UartPacket::type() });
@@ -106,7 +107,7 @@ bool NAV::EspressifSensor::initialize()
     // connect to the sensor
     try
     {
-        _sensor->connect(_sensorPort, sensorBaudrate());
+        _sensor->connect(_sensorPort, BAUDRATE_115200); // change Baudrate here
 
         LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), _sensorPort, sensorBaudrate());
     }
