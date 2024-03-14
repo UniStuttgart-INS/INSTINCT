@@ -219,9 +219,58 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
 
         nCalc++;
 
+        size_t grp = 0;
+        if (dataSource == Spirent)
+        {
+            switch (Frequency_(freq)) // TODO: Check sorting of GLONASS
+            {
+            case Freq_None:
+            case G01:
+            case E01:
+            case R04:
+            case J01:
+            case I09:
+            case S01:
+                grp = 0; // Group A (L1/E1/S/B1I)
+                break;
+            case G02:
+            case E06:
+            case R06:
+            case J02:
+                grp = 1; // Group B (L2/E6/B2I)
+                break;
+            case G05:
+            case E08:
+            case R01:
+            case B05:
+            case J05:
+            case I05:
+            case S05:
+                grp = 2; // Group C (L5/E5/B2A/C1)
+                break;
+            case R02:
+            case J06:
+                grp = 3; // Group D (L6/B1C/C2)
+                break;
+            case R03:
+            case B06:
+                grp = 4; // Group E (B3I/C3)
+                break;
+            case B07:
+                grp = 5; // Group F (B2b)
+                break;
+            case E07: // TODO: sort these
+            case E05:
+            case B01:
+            case B02:
+            case B08:
+                REQUIRE(false);
+            }
+        }
+
         LOG_TRACE("    reference: {} ", line);
 
-        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) : size_t(SkydelSatData_PSR)]);
+        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) + grp : size_t(SkydelSatData_PSR)]);
         LOG_TRACE("    psr {} [m]", psr);
 
         auto satClk = eph.calcClockCorrections(recvTime, psr, freq);

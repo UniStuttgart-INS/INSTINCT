@@ -38,7 +38,7 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
     testBrdcEphemerisData({ GAL, 24 }, eph, "test/data/GNSS/BRDC_20230080000/COD0OPSFIN_20230080000_01D_05M_ORB.SP3", margin);
 }
 
-TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+TEST_CASE("[Ephemeris] GAL E1 Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
 {
     // E13 - Generated from Orolia Skydel
     GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
@@ -57,6 +57,48 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Orolia Skydel data)", "[Ephemer
     testEphemerisData({ GAL, 24 }, eph,
                       "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E1 24.csv",
                       E01, Skydel, margin);
+}
+
+TEST_CASE("[Ephemeris] GAL E5a Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+{
+    // E13 - Generated from Orolia Skydel
+    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
+                         1.500000000000e+01, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
+                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
+                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
+                         9.686375123090e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
+                         -5.553802766749e-10, 3.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
+                         3.120000000000e+00, 0.000000000000e+00, -2.095475792885e-09, 0.000000000000e+00,
+                         9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+
+    Margin margin;          // Determined by running the test and adapting
+    margin.clock = 2.3e-14; // Orolia file has only 16 digits after comma
+    margin.pos = 6.0e-6;
+
+    testEphemerisData({ GAL, 24 }, eph,
+                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E5a 24.csv",
+                      E05, Skydel, margin);
+}
+
+TEST_CASE("[Ephemeris] GAL E5b Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+{
+    // E13 - Generated from Orolia Skydel
+    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
+                         1.500000000000e+01, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
+                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
+                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
+                         9.686375123090e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
+                         -5.553802766749e-10, 3.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
+                         3.120000000000e+00, 0.000000000000e+00, -2.095475792885e-09, 0.000000000000e+00,
+                         9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+
+    Margin margin;          // Determined by running the test and adapting
+    margin.clock = 2.3e-14; // Orolia file has only 16 digits after comma
+    margin.pos = 9.0e-6;
+
+    testEphemerisData({ GAL, 24 }, eph,
+                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E5b 24.csv",
+                      E07, Skydel, margin);
 }
 
 TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")

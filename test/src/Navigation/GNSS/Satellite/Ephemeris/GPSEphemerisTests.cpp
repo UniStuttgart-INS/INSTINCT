@@ -43,7 +43,7 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
     testBrdcEphemerisData({ GPS, 1 }, eph, "test/data/GNSS/BRDC_20230080000/COD0OPSFIN_20230080000_01D_05M_ORB.SP3", margin);
 }
 
-TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+TEST_CASE("[Ephemeris] GPS L1 Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
 {
     // G01 - Generated from Orolia Skydel
     GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.268395255669e-04, -4.774847184308e-12, 0.000000000000e+00,
@@ -64,7 +64,49 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Orolia Skydel data)", "[Ephemer
                       G01, Skydel, margin);
 }
 
-TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
+TEST_CASE("[Ephemeris] GPS L2 Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+{
+    // G01 - Generated from Orolia Skydel
+    GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.268395255669e-04, -4.774847184308e-12, 0.000000000000e+00,
+                     3.000000000000e+00, 4.684375000000e+01, 4.114099940205e-09, 9.534739229069e-02,
+                     2.561137080193e-06, 1.217794988770e-02, 1.572072505951e-06, 5.153651281357e+03,
+                     4.320000000000e+04, 9.685754776001e-08, -1.509389413407e+00, 2.831220626831e-07,
+                     9.889944452341e-01, 3.624375000000e+02, 9.377089341753e-01, -8.193912737927e-09,
+                     2.285809498855e-11, 1.000000000000e+00, 2.244000000000e+03, 1.000000000000e+00,
+                     2.000000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 3.000000000000e+00,
+                     9.999000000000e+08, 4.000000000000e+00);
+
+    Margin margin;          // Determined by running the test and adapting
+    margin.clock = 1.4e-15; // Orolia file has only 16 digits after comma
+    margin.pos = 6.3e-5;
+
+    testEphemerisData({ GPS, 1 }, eph,
+                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/L2C 01.csv",
+                      G02, Skydel, margin);
+}
+
+TEST_CASE("[Ephemeris] GPS L5 Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+{
+    // G01 - Generated from Orolia Skydel
+    GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.268395255669e-04, -4.774847184308e-12, 0.000000000000e+00,
+                     3.000000000000e+00, 4.684375000000e+01, 4.114099940205e-09, 9.534739229069e-02,
+                     2.561137080193e-06, 1.217794988770e-02, 1.572072505951e-06, 5.153651281357e+03,
+                     4.320000000000e+04, 9.685754776001e-08, -1.509389413407e+00, 2.831220626831e-07,
+                     9.889944452341e-01, 3.624375000000e+02, 9.377089341753e-01, -8.193912737927e-09,
+                     2.285809498855e-11, 1.000000000000e+00, 2.244000000000e+03, 1.000000000000e+00,
+                     2.000000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 3.000000000000e+00,
+                     9.999000000000e+08, 4.000000000000e+00);
+
+    Margin margin;          // Determined by running the test and adapting
+    margin.clock = 1.8e-15; // Orolia file has only 16 digits after comma
+    margin.pos = 6.3e-5;
+
+    testEphemerisData({ GPS, 1 }, eph,
+                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/L5 01.csv",
+                      G05, Skydel, margin);
+}
+
+TEST_CASE("[Ephemeris] GPS L1 Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
 {
     // G01 - Exported from the Spirent SimGEN GUI
     GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.270457989652e-04, -4.774847184308e-12, 0.000000000000e+00,
@@ -84,6 +126,50 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent SimGEN data)", "[Epheme
     testEphemerisData({ GPS, 1 }, eph,
                       "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv",
                       G01, Spirent, margin);
+}
+
+TEST_CASE("[Ephemeris] GPS L2 Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
+{
+    // G01 - Exported from the Spirent SimGEN GUI
+    GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.270457989652e-04, -4.774847184308e-12, 0.000000000000e+00,
+                     4.800000000000e+01, 4.684375000000e+01, 4.114099940205e-09, 9.534739229067e-02,
+                     2.561137080193e-06, 1.217794988770e-02, 1.572072505951e-06, 5.153651281357e+03,
+                     4.320000000000e+04, 9.685754776001e-08, -1.509389413407e+00, 2.831220626831e-07,
+                     9.889934577644e-01, 3.624375000000e+02, 9.377089341753e-01, -8.193912737927e-09,
+                     2.285809498855e-11, 1.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
+                     1.200000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 4.800000000000e+01,
+                     4.320000000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+
+    Margin margin; // Determined by running the test and adapting
+    margin.pos = 7.2e-5;
+    margin.vel = 7.8e-4;
+    margin.accel = 1.8e-1;
+
+    testEphemerisData({ GPS, 1 }, eph,
+                      "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv",
+                      G02, Spirent, margin);
+}
+
+TEST_CASE("[Ephemeris] GPS L5 Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
+{
+    // G01 - Exported from the Spirent SimGEN GUI
+    GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.270457989652e-04, -4.774847184308e-12, 0.000000000000e+00,
+                     4.800000000000e+01, 4.684375000000e+01, 4.114099940205e-09, 9.534739229067e-02,
+                     2.561137080193e-06, 1.217794988770e-02, 1.572072505951e-06, 5.153651281357e+03,
+                     4.320000000000e+04, 9.685754776001e-08, -1.509389413407e+00, 2.831220626831e-07,
+                     9.889934577644e-01, 3.624375000000e+02, 9.377089341753e-01, -8.193912737927e-09,
+                     2.285809498855e-11, 1.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
+                     1.200000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 4.800000000000e+01,
+                     4.320000000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+
+    Margin margin; // Determined by running the test and adapting
+    margin.pos = 8.6e-5;
+    margin.vel = 7.8e-4;
+    margin.accel = 1.8e-1;
+
+    testEphemerisData({ GPS, 1 }, eph,
+                      "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv",
+                      G05, Spirent, margin);
 }
 
 } // namespace NAV::TESTS::EphemerisTests

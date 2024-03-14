@@ -141,8 +141,11 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
 
         // Eccentric anomaly [rad]
         double E_k = M_k;
-        for (size_t i = 0; i < 7; i++)
+        double E_k_old = 0.0;
+
+        for (size_t i = 0; std::abs(E_k - E_k_old) > 1e-13 && i < 10; i++)
         {
+            E_k_old = E_k; // Kepler’s equation ( Mk = E_k − e sin E_k ) may be solved for Eccentric anomaly (E_k) by iteration:
             E_k = M_k + e * sin(E_k);
         }
 
@@ -154,7 +157,7 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
         dt_sv = a[0] + a[1] * t_minus_toc + a[2] * std::pow(t_minus_toc, 2) + dt_r;
 
         // See IS-GPS-200M GPS ICD, ch. 20.3.3.3.3.2, p.99
-        dt_sv -= freq & (G01 | G05) ? T_GD : ratioFreqSquared(G01, freq, -128, -128) * T_GD;
+        dt_sv -= ratioFreqSquared(G01, freq, -128, -128) * T_GD;
 
         LOG_DATA("      dt_sv {} [s] (SV PRN code phase time offset)", dt_sv);
 
@@ -213,7 +216,8 @@ Orbit::PosVelAccel GPSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
     }
 
     // auto v_k = 2.0 * std::atan(std::sqrt((1.0 + e) / (1.0 - e)) * std::tan(E_k / 2.0)); // True Anomaly (unambiguous quadrant) [rad] (GPS ICD algorithm)
-    auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k) / (1 - e * std::cos(E_k)), (std::cos(E_k) - e) / (1 - e * std::cos(E_k))); // True Anomaly [rad] (GALILEO ICD algorithm)
+    // auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k) / (1 - e * std::cos(E_k)), (std::cos(E_k) - e) / (1 - e * std::cos(E_k))); // True Anomaly [rad] (GALILEO ICD algorithm)
+    auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k), (std::cos(E_k) - e)); // True Anomaly [rad] // simplified, since the denominators cancel out
     LOG_DATA("    v_k {} [rad] (True Anomaly (unambiguous quadrant))", v_k);
     auto Phi_k = v_k + omega; // Argument of Latitude [rad]
     LOG_DATA("    Phi_k {} [rad] (Argument of Latitude)", Phi_k);

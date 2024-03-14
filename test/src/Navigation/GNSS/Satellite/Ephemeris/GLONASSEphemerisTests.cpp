@@ -130,7 +130,7 @@ TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (Spirent SimGEN data)", "[Epheme
 
     testEphemerisData({ GLO, 13 }, eph,
                       "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv",
-                      R01, Spirent, margin);
+                      R04, Spirent, margin);
 }
 
 } // namespace NAV::TESTS::EphemerisTests
