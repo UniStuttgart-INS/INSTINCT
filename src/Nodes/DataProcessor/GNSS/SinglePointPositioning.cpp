@@ -69,7 +69,7 @@ void NAV::SinglePointPositioning::guiConfig()
             std::string filler = ", ";
             for (const auto& satellite : gnssNavInfo->v->satellites())
             {
-                if (_algorithm.getObsFilter().isSatelliteAllowed(satellite.first))
+                if (_algorithm._obsFilter.isSatelliteAllowed(satellite.first))
                 {
                     usedSatNum++;
                     usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);

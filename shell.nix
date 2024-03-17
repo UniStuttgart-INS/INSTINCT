@@ -1,10 +1,17 @@
 # Use VSCode Extension: mkhl.direnv
 
-with import <nixpkgs> {};
+{ callPackage, fetchFromGitHub, lib, stdenv,
+  cmake, conan, gdb, lldb, gcovr, mold, clang-tools_16, llvmPackages_16, gcc12, gcc12Stdenv,
+  doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools,
+  xorg, glfw, gl3w, libGLU, libunwind, libGL
+}:
 
-pkgs.mkShell {
+let
+  mainPkg = callPackage ./default.nix { };
+in
+mainPkg.overrideAttrs (oa: {
     # stdenv = pkgs.llvmPackages_16.stdenv;
-    nativeBuildInputs = with pkgs; [
+    nativeBuildInputs = [
       cmake
       conan
       gdb
@@ -33,14 +40,14 @@ pkgs.mkShell {
       ccacheStdenv
       llvmPackages_latest.libcxxClang # When using 'gcc' this needs to be commented out
       gperftools
-    ];
-    buildInputs = with pkgs; [
+    ] ++ (oa.nativeBuildInputs or [ ]);
+    buildInputs = [
       xorg.libX11.dev
       glfw
       gl3w
       libGLU
       libunwind
       gperftools
-    ];
-    LD_LIBRARY_PATH = "${pkgs.libGL}/lib:${pkgs.glfw}/lib:${pkgs.libGLU}/lib:${stdenv.cc.cc.lib}/lib:${pkgs.llvmPackages_16.libcxxabi}/lib:${pkgs.llvmPackages_16.libcxx}/lib:${pkgs.gperftools}/lib";
-}
+    ] ++ (oa.buildInputs or [ ]);
+    LD_LIBRARY_PATH = "${libGL}/lib:${glfw}/lib:${libGLU}/lib:${stdenv.cc.cc.lib}/lib:${llvmPackages_16.libcxxabi}/lib:${llvmPackages_16.libcxx}/lib:${gperftools}/lib";
+})

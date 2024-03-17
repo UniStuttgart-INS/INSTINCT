@@ -70,17 +70,13 @@ class Algorithm
                                                  const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                  const std::string& nameId);
 
-    /// @brief Get the observation filter
-    [[nodiscard]] const ObservationFilter& getObsFilter() const { return _obsFilter; }
-    /// @brief Get the observation estimator
-    [[nodiscard]] const ObservationEstimator& getObsEstimator() const { return _obsEstimator; }
+    /// Observation Filter
+    ObservationFilter _obsFilter{ ReceiverType_COUNT,
+                                  /* available */ std::unordered_set{ GnssObs::Pseudorange, GnssObs::Doppler },
+                                  /*   needed  */ std::unordered_set{ GnssObs::Pseudorange } };
 
-    /// @brief Set the observation filter
-    /// @param[in] obsFilter Observation Filter
-    void setObsFilter(const ObservationFilter& obsFilter) { _obsFilter = obsFilter; }
-    /// @brief Set the observation estimator
-    /// @param[in] obsEstimator Observation Estimator
-    void setObsEstimator(const ObservationEstimator& obsEstimator) { _obsEstimator = obsEstimator; }
+    /// Observation Estimator
+    ObservationEstimator _obsEstimator;
 
   private:
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver
@@ -151,14 +147,6 @@ class Algorithm
     void assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTypes>& state,
                                   const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
                                   const std::string& nameId);
-
-    /// Observation Filter
-    ObservationFilter _obsFilter{ ReceiverType_COUNT,
-                                  /* available */ std::unordered_set{ GnssObs::Pseudorange, GnssObs::Doppler },
-                                  /*   needed  */ std::unordered_set{ GnssObs::Pseudorange } };
-
-    /// Observation Estimator
-    ObservationEstimator _obsEstimator;
 
     /// Receiver
     std::array<Receiver, ReceiverType::ReceiverType_COUNT> _receiver = { { Receiver(Rover) } };
