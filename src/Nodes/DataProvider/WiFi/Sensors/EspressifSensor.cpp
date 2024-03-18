@@ -30,7 +30,6 @@ NAV::EspressifSensor::EspressifSensor()
     _guiConfigDefaultWindowSize = { 360, 70 };
 
     // TODO: Update the library to handle different baudrates
-    // _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
     _selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_115200);
     _sensorPort = "/dev/ttyACM0";
 

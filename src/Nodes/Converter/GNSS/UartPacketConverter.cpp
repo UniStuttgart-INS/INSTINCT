@@ -97,6 +97,32 @@ void NAV::UartPacketConverter::guiConfig()
         }
         flow::ApplyChanges();
     }
+
+    // if (_outputType == OutputType_WiFiObs)
+    // {
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Synchronization Control##{}", size_t(id)).c_str()))
+    {
+        ImGui::TextUnformatted("Contains parameters which allow the timing of the VN-310E to be\n"
+                               "synchronized with external devices.");
+
+        if (ImGui::Checkbox(fmt::format("Show SyncIn Pin##{}", size_t(id)).c_str(), &_syncInPin))
+        {
+            LOG_DEBUG("{}: syncInPin changed to {}", nameId(), _syncInPin);
+            flow::ApplyChanges();
+            if (_syncInPin)
+            {
+                nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+            }
+            else if (!_syncInPin)
+            {
+                nm::DeleteInputPin(inputPins.at(INPUT_PORT_INDEX_SYNC_IN));
+            }
+        }
+        ImGui::TreePop();
+    }
+    flow::ApplyChanges();
+    // }
 }
 
 [[nodiscard]] json NAV::UartPacketConverter::save() const

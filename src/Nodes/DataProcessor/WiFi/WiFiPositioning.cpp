@@ -563,6 +563,7 @@ bool NAV::WiFiPositioning::initialize()
 
     _kalmanFilter.P.diagonal() << variance_pos, variance_vel;
     _kalmanFilter.x << _state.e_position, _state.e_velocity;
+    std::cout << _kalmanFilter.x << std::endl;
     if (_measurementNoiseUnit == MeasurementNoiseUnit::meter2)
     {
         _kalmanFilter.R << _measurementNoise;
@@ -751,6 +752,8 @@ void NAV::WiFiPositioning::kfSolution()
         F(1, 4) = 1;
         F(2, 5) = 1;
         _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, 1);
+        std::cout << F << std::endl;
+        std::cout << _kalmanFilter.Phi << std::endl;
         // Process noise covariance matrix
         Eigen::Matrix3d Q1 = Eigen::Matrix3d::Zero();
         Q1.diagonal() = Eigen::Vector3d(std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0);
@@ -768,6 +771,9 @@ void NAV::WiFiPositioning::kfSolution()
             _kalmanFilter.Q *= std::pow(_processNoise, 2);
         }
         // Predict
+        std::cout << _kalmanFilter.Q << std::endl;
+        std::cout << _kalmanFilter.x << std::endl;
+        std::cout << _kalmanFilter.P << std::endl;
         _kalmanFilter.predict();
     }
 
@@ -782,6 +788,11 @@ void NAV::WiFiPositioning::kfSolution()
     H.block<1, 3>(0, 0) = -e_calcLineOfSightUnitVector(_kalmanFilter.x.block<3, 1>(0, 0), _devices.at(0).position);
     _kalmanFilter.H << H;
     // Correct
+    std::cout << _kalmanFilter.Q << std::endl;
+    std::cout << _kalmanFilter.x << std::endl;
+    std::cout << _kalmanFilter.P << std::endl;
+    std::cout << _kalmanFilter.z << std::endl;
+    std::cout << _kalmanFilter.H << std::endl;
     _kalmanFilter.correctWithMeasurementInnovation();
 
     _devices.clear();

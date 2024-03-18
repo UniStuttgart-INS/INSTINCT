@@ -66,6 +66,7 @@ class UartPacketConverter : public Node
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;  ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_UART_PACKET = 0; ///< @brief Flow (UartPacket)
+    constexpr static size_t INPUT_PORT_INDEX_SYNC_IN = 1;     ///< @brief Flow (SyncIn)
 
     /// Enum specifying the type of the output message
     enum OutputType
@@ -77,6 +78,9 @@ class UartPacketConverter : public Node
 
     /// The selected output type in the GUI
     OutputType _outputType = OutputType_UbloxObs;
+
+    /// Show the SyncIn Pin
+    bool _syncInPin = false;
 
     /// @brief Initialize the node
     bool initialize() override;

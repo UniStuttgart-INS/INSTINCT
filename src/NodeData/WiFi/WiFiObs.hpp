@@ -14,6 +14,7 @@
 #pragma once
 
 #include "NodeData/NodeData.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/TimeOutputs.hpp"
 
 namespace NAV
 {
@@ -40,8 +41,13 @@ class WiFiObs : public NodeData
 
     struct FtmObs
     {
+        /// MAC address of the device
         std::string macAddress;
+        /// Time of the measurement
         InsTime time;
+        /// TODO
+        // NAV::vendor::vectornav::TimeOutputs timeOutputs;
+        /// Distance to the device
         double distance;
     };
 

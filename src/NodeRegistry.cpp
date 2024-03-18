@@ -190,6 +190,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/State/LcKfInsGnssErrorLogger.hpp"
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
+#include "Nodes/DataLogger/WiFi/WiFiObsLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
@@ -219,7 +220,8 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/EspressifSensor.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/ArubaSensor.hpp"
-#include "Nodes/DataProvider/WiFi/Sensors/EspressifFile.hpp"
+#include "Nodes/DataProvider/WiFi/FileReader/EspressifFile.hpp"
+#include "Nodes/DataProvider/WiFi/FileReader/WiFiObsFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
@@ -259,6 +261,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<VectorNavDataLogger>();
     registerNodeType<LcKfInsGnssErrorLogger>();
     registerNodeType<PosVelAttLogger>();
+    registerNodeType<WiFiObsLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
     registerNodeType<SinglePointPositioning>();
@@ -289,6 +292,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<EspressifSensor>();
     registerNodeType<ArubaSensor>();
     registerNodeType<EspressifFile>();
+    registerNodeType<WiFiObsFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental

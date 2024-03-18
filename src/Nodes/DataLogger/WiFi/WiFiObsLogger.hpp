@@ -6,37 +6,37 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file EspressifFile.hpp
-/// @brief File Reader for ubx files
+/// @file WiFiObsLogger.hpp
+/// @brief Data Logger for WiFi observations
 /// @author R. Lintz (r-lintz@gmx.de) (master thesis)
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2024-01-08
+/// @date 2024-03-14
 
 #pragma once
 
 #include "internal/Node/Node.hpp"
-#include "Nodes/DataProvider/Protocol/FileReader.hpp"
-
-#include "util/Vendor/Espressif/EspressifUartSensor.hpp"
+#include "Nodes/DataLogger/Protocol/FileWriter.hpp"
+#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
 
 namespace NAV
 {
-/// File Reader for WiFiObs log files
-class EspressifFile : public Node, public FileReader
+class NodeData;
+
+/// Data Logger for WiFiObs observations
+class WiFiObsLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    EspressifFile();
+    WiFiObsLogger();
     /// @brief Destructor
-    ~EspressifFile() override;
+    ~WiFiObsLogger() override;
     /// @brief Copy constructor
-    EspressifFile(const EspressifFile&) = delete;
+    WiFiObsLogger(const WiFiObsLogger&) = delete;
     /// @brief Move constructor
-    EspressifFile(EspressifFile&&) = delete;
+    WiFiObsLogger(WiFiObsLogger&&) = delete;
     /// @brief Copy assignment operator
-    EspressifFile& operator=(const EspressifFile&) = delete;
+    WiFiObsLogger& operator=(const WiFiObsLogger&) = delete;
     /// @brief Move assignment operator
-    EspressifFile& operator=(EspressifFile&&) = delete;
+    WiFiObsLogger& operator=(WiFiObsLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -58,31 +58,20 @@ class EspressifFile : public Node, public FileReader
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Resets the node. Moves the read cursor to the start
-    bool resetNode() override;
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    void flush() override;
 
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_WiFiObs_OBS = 0; ///< @brief Flow (WiFiObs)
-
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Polls data from the file
-    /// @return The read observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData();
-
-    /// @brief Determines the type of the file
-    /// @return The File Type
-    [[nodiscard]] FileType determineFileType() override;
-
-    ///
-    InsTime _lastObsTime;
-
-    /// Sensor Object
-    vendor::espressif::EspressifUartSensor _sensor;
+    /// @brief Write Observation to the file
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

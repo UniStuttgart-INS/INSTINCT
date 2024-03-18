@@ -168,54 +168,6 @@ std::shared_ptr<const NAV::NodeData> NAV::EspressifFile::pollData()
     return obs;
 }
 
-// std::shared_ptr<const NAV::NodeData> NAV::EspressifFile::pollData()
-// {
-//     auto filestream = std::ifstream(getFilepath(), std::ios::binary); // TODO
-//     uint8_t i = 0;
-//     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-//     // while (filestream.read(reinterpret_cast<char*>(&i), 1))
-//     while (readsome(reinterpret_cast<char*>(&i), 1)) // TODO Wieso funktioniert das nicht?
-//     {
-//         packet = _sensor.findPacket(i);
-
-//         if (packet != nullptr)
-//         {
-//             break;
-//         }
-//     }
-
-//     if (!packet)
-//     {
-//         return nullptr;
-//     }
-
-//     // Check if package is empty
-//     if (packet->getRawDataLength() == 0)
-//     {
-//         return nullptr;
-//     }
-
-//     auto obs = std::make_shared<WiFiObs>();
-//     vendor::espressif::decryptSingleWiFiObsDeviceTime(obs, *packet); // TODO weitere neben single?
-
-//     if (!obs->insTime.empty())
-//     {
-//         if (util::time::GetMode() == util::time::Mode::REAL_TIME)
-//         {
-//             util::time::SetCurrentTime(obs->insTime);
-//         }
-//     }
-//     else if (auto currentTime = util::time::GetCurrentInsTime();
-//              !currentTime.empty())
-//     {
-//         obs->insTime = currentTime;
-//     }
-
-//     invokeCallbacks(OUTPUT_PORT_INDEX_WiFiObs_OBS, obs);
-//     // filestream.close(); // TODO
-//     return obs;
-// }
-
 NAV::FileReader::FileType NAV::EspressifFile::determineFileType()
 {
     LOG_TRACE("called for {}", nameId());

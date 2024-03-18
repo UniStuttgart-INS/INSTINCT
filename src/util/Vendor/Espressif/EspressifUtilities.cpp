@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "util/Time/TimeBase.hpp"
+#include "util/Vendor/VectorNav/BinaryOutputs/TimeOutputs.hpp"
 
 /// Speed of light in air [m/s]
 constexpr double cAir = 299702547.0;
@@ -34,6 +35,10 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
         InsTime_YMDHMS yearMonthDayHMS(packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32());
         InsTime timeOfMeasurement(yearMonthDayHMS, UTC);
         [[maybe_unused]] int ms = packet.extractInt32();
+        // Time outputs
+        std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs;
+        timeOutputs->syncInCnt = packet.extractUint32();
+        timeOutputs->timeSyncIn = packet.extractUint64();
         // Add the measurement to the WiFiObs
         obs->data.push_back({ macAddress, timeOfMeasurement, measuredDistance });
         // Log the measurement details
