@@ -1,0 +1,53 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file matrix_logger_node.dox
+// @brief Guide for the MatrixLogger Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-03-15
+
+\namespace Instinct {
+/** \page matrix_logger_node MatrixLogger Node
+<img src="matrixLoggerNode.png" align="right">
+\section matrix_logger_node_introduction Introduction
+The *MatrixLogger* Node logs (saves) a *Matrix*.
+
+\section matrix_logger_node_connections Connections
+- **Input** : The Node has a *Matrix*-flow input (see \ref demo_node).
+- **Output** : The Node has no output connection: In the \ref matrix_logger_node_settings the output file can be selected.
+
+\section matrix_logger_node_settings Settings
+The Settings offer to enter a file path or **choose** one to save the *csv*-file generated.
+
+\section matrix_logger_node_example_flow Example Flow
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+
+<b>Required Nodes:</b>
+*- *Demo* Node (\ref demo_node)
+*- *MatrixLogger* Node
+
+<b>Steps</b>
+*1. Add the *Demo* and *MatrixLogger* Node to your workspace.
+*2. Connect the *Matrix*-output of the *Demo* Node with the *MatrixLogger*.
+*3. Open the *Demo* Node Settings:
+    - Change the output matrix as you wish.
+*4. Open the *MatrixLogger* Node Settings:
+    - Select a path to save the file.
+*5. Run the Flow, compare the resulting file with your input.
+
+<i>Example of how the result should look like:</i>
+
+\image html matrixLoggerExample1.png width=1000
+</blockquote>
+
+________
+<i>Last updated: 2024-03-15</i>
+*/
+}

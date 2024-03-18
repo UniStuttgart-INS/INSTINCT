@@ -1,0 +1,60 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file inode_guide.dox
+// @brief Node Guide main page
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+\namespace Instinct {
+/** \page node_guide_introduction Nodes Introduction
+<img src="rinexNavFileNode.png" align="right">
+\section node_guide_introduction_preface Preface
+Nodes are the major part of \ref introduction_fbp_instinct. These C++ objects perform different tasks, including reading/logging data and processing them.
+
+\section node_guide_introduction_add_nodes Adding Nodes
+As described in the \ref getting_started, a Node can be placed in the \ref work_space via **right-click** in the Workspace and select the wanted.
+They can be moved around by **drag-and-drop**.
+
+\section node_guide_introduction_context Context Menu
+To open the Context Menu, **right-click** the Node. It provides information and interaction details regarding the selected Node. These include:
+<img src="nodesContextMenu.png" align="right">
+  1. **ID** : The Nodes individual ID (different for each Node, even for multiple Nodes of the same type)
+  2. **Type** : The type/name of the node, indicating its purpose
+  3. **Kind** : Relevant for developers (in most cases: *blueprint*)
+  4. **Inputs** : Number of input-Pins the Node has
+  5. **Outputs** : Number of output-Pins the Node has
+  6. **State** : State of the Node (*Deinitialized, Initialized, Disabled*)
+  7. **Mode** : Mode the Node is running in (default: *Real-time*)
+  8. **Initialize** : Initialize (only) the Node
+    - **Reinitialize** : Reinitialize the Node if it is initialized before
+  9. **Deinitialize** : Deinitialize (only) the Node
+  10. **Wake worker** : Wakes the worker if it went to sleep (not relevant for basic users)
+  11. **Configure** : Opens the \ref node_guide_introduction_settings
+  12. **Disable** : Disables the Node; Node will be ignored in the Flow
+  13. **Rename** : Change the Nodes name - does not change the name displayed under *3. kind*
+  14. **Delete** : Removes the Node
+
+\section node_guide_introduction_settings Node Settings
+By clicking the *Configure* button in the Context Menu, or **double-(left)click** on a Node, the Settings open. Here, necessary configurations have to be made, as described in \ref working_with_instinct . Examples are:
+- Choose the file to read (Data Provider Nodes)
+- Choose the method, parameters etc. for a calculation (Data Processor Nodes)
+- Choose the name/folder for the file to store (Data Logger Nodes)
+
+The Settings are individual for every Node depending on her purpose.
+
+\section node_guide_introduction_connect Connect Nodes
+Nodes have Pins that need to be connected to other Nodes in order to build a working Flow. More about the types and how connecting them works can be found in \ref node_connections .
+
+\section node_guide_introduction_nodes List of Nodes
+For a list of all available Nodes, their Settings and examples, follow \ref node_guide_landing_page .
+________
+<i>Last updated: 2024-02-22</i>
+*/
+}

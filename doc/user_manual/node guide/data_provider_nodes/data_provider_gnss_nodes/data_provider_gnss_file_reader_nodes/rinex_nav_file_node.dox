@@ -1,0 +1,37 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file rinex_nav_file_node.dox
+// @brief Guide for the RinexNavFile Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-03-18
+
+\namespace Instinct {
+/** \page rinex_nav_file_node RinexNavFile Node
+<img src="rinexNavFileNode.png" align="right">
+\section rinex_nav_file_node_introduction Introduction
+The *RinexNavFile* Node reads RINEX <i>.nav</i>-files into INSTINCT.
+
+\section rinex_nav_file_node_connections Connections
+- **Input** : The Node has no input connection: In the \ref rinex_nav_file_node_settings the input file can be selected.
+- **Output** : The Node has an *GnssNavInfo*-Object output.
+
+\section rinex_nav_file_node_settings Settings
+The Settings offer to enter a file path or **choose** a <i>.nav</i>-file with the file browser. The Node detects the file version automatically.
+
+Currently supported file versions: 2.01, 2.10, 2.11, 3.02, 3.03, 3.04, 3.05
+
+\section rinex_nav_file_node_example_flow Example Flow
+<blockquote>
+See \ref getting_started_ex1 and \ref getting_started_ex2 in the \ref getting_started.
+</blockquote>
+________
+<i>Last updated: 2024-03-18</i>
+*/
+}

@@ -1,0 +1,25 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file user_manual_landing_page.dox
+// @brief Landing page to structure subpages
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+\namespace Instinct {
+/** \page user_manual_landing_page User Manual
+- \subpage getting_started : Learn the basic use of INSTINCT (recommended)
+- \subpage gui_landing_page : Learn about the GUI
+- \subpage node_connections : Additional info and tips for connecting Nodes
+- \subpage node_guide_landing_page : Guides for each individual Node
+
+________
+<i>Last updated: 2024-01-31</i>
+*/
+}

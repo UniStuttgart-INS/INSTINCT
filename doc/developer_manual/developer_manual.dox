@@ -1,0 +1,22 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file developer_manual.dox
+// @brief Main page for the developer manual
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-03-18
+
+\namespace Instinct {
+/** \page developer_manual Developer Manual
+//TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
+
+________
+<i>Last updated: 2024-03-18</i>
+*/
+}

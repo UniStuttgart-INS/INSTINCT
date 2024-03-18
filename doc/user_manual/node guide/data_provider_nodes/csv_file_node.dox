@@ -1,0 +1,42 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file csv_file_node.dox
+// @brief Guide for the CsvFile Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-22
+
+\namespace Instinct {
+/** \page csv_file_node CsvFile Node
+<img src="csvFileNode.png" align="right">
+\section csv_file_node_introduction Introduction
+The *CsvFile* Node reads <i>.csv</i>-files into INSTINCT.
+
+\section csv_file_node_connections Connections
+- **Input** : The Node has no input connection: In the \ref csv_file_node_settings the input file can be selected.
+- **Output** : The Node has an *Object*-type (see \ref demo_node) data output with the default label *CsvData*.
+
+\section csv_file_node_settings Settings
+<img src="csvFileNodeSettings.png" align="right">
+The Settings offer to enter a file path or **choose** a <i>.csv</i>-file with the file browser.
+
+Additional Settings include:
+- **Delimiter Character** : Enter the character used to separate columns in the <i>.csv</i>-file
+- **Comment Character** : Enter the character used for comments that should be ignored in the <i>.csv</i>-file
+- **Skip line** : Number of lines to be skipped by the Node
+- **Header line** : If the <i>.csv</i>-file contains a header line or not
+
+The Node should initialize as soon as a file in selected, if not, it can be done manually. This way, the Node displays the found lines and entries depending on the (additional) settings made in a preview below the settings.
+
+\section csv_file_node_example_flow Example Flow
+//TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
+________
+<i>Last updated: 2024-02-22</i>
+*/
+}

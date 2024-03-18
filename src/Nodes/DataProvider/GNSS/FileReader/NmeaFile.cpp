@@ -25,7 +25,7 @@ NAV::NmeaFile::NmeaFile()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 100, 290 };
+    _guiConfigDefaultWindowSize = { 517, 87 };
 
     nm::CreateOutputPin(this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &NmeaFile::pollData);
 }
