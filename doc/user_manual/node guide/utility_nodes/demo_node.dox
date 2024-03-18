@@ -1,0 +1,65 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file demo_node.dox
+// @brief Guide for the Demo Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-22
+
+\namespace Instinct {
+/** \page demo_node Demo Node
+<img src="demoNode.png" align="right">
+\section demo_node_introduction Introduction
+The *Demo* Node provides a demo window that shows all currently available Pins. They vary in their *data type* and can be either an *input-Pin* or an *output-Pin*.
+How to connect and ensure their compatibility, see the \ref node_connections .
+\note This Node is not meant to run in any legit flow. It only provides an overview and testing.
+
+\section demo_node_connections Connections
+The *Demo* Node has all available in-/output Pins. To run it, any amount of connections (or none) can be added. The Node is compatible with every other Node, including itself.
+
+\section demo_node_settings Settings
+The Node can display any input and generate output for testing for different data types:
+
+| Pin | Settings: Input | Settings: Output |
+| :---- | :---- | :---- |
+| **Sensor Data** (flow) | Counts incoming sensor data | Set output frequency |
+| **File Reader Data** (flow) | Counts incoming file reader data  | Set simulated file reader output amount |
+| **Bool** | Shows input bool | Set output bool |
+| **Int** | Shows input integer value | Sets output integer value |
+| **Float** | Shows input float value | Sets output float value |
+| **Double** | Shows input double value | Sets output double value |
+| **String** | Shows input string and updates | Sets output string |
+| **Object** | Shows input object values (3 int, bool) | Sets output object values (3 int, bool) |
+| **Matrix** | Shows input matrix | Sets output matrix |
+
+
+
+\section demo_node_example_flow Example Flow
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+
+<b>Required Nodes:</b>
+*-
+
+*1. Place 2 Demo Nodes in your workspace
+*2. Connect as many (or all) output Pins of one with the input Pins of the second Node
+*3. Open both Node Settings windows
+*4. Change the values
+*5. Run the flow
+
+<i>Example of how the result should look like:</i>
+
+\image html demoNodeExample.png width=1000
+
+You can also connect any other Node and repeat the process.
+</blockquote>
+________
+<i>Last updated: 2024-02-22</i>
+*/
+}

@@ -1,0 +1,56 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file nmea_file_node.dox
+// @brief NMEA Tutorial
+// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-26
+
+namespace Instinct {
+
+/** \page nmea_file_node NmeaFile Node
+<img src="nmeaFileNode.png" align="right">
+\section nmea_file_node_introduction Introduction
+The *NmeaFile* Node reads NMEA-files into INSTINCT.
+
+\section nmea_file_node_connections Connections
+- **Input** : The Node has no input connection: In the \ref nmea_file_node_settings the input file can be selected.
+- **Output** : The Node has a *PosVel*-Flow output.
+
+\section nmea_file_node_settings Settings
+The Settings offer to enter a file path or **choose** a file with the file browser.
+
+\section nmea_file_node_example_flow Example Flow
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+
+<b>Learning objectives</b>
+
+- Get familiar with NMEA files as input and
+- Understand the limitations of reading those files
+- You will learn how you can build a simple flow that converts geographic (lat, lon, height) coordinates from NMEA into ECEF coordinates.
+
+<b>Data-sets to reproduce the results from the video</b>
+
+- [NMEA file](./resources/sample_data/NMEA/putty_nmea_netr9.log)
+
+<b>Video</b>
+
+\htmlonly
+
+<iframe width="800" height="450" src="https://www.youtube.com/embed/jdvsI_7R5q0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+\endhtmlonly
+
+</blockquote>
+________
+<i>Last updated: 2024-02-26</i>
+*/
+}

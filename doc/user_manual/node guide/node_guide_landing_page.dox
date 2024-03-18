@@ -1,0 +1,114 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file node_guide_landing_page.dox
+// @brief Landing page to structure subpages
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+\namespace Instinct {
+/** \page node_guide_landing_page Node Guide
+
+- \subpage node_guide_introduction : Basic Information regarding Nodes
+
+The available Nodes are structured as listed below in INSTINCT:
+________
+*- <b>Converter</b> Nodes
+*  - GNSS
+*    - \subpage rtklib_pos_converter_node
+*    - \subpage uart_packet_converter_node
+*  - IMU
+*    - \subpage vector_nav_binary_converter_node
+
+________
+*- <b>DataLink</b> Nodes
+*  - \subpage udp_recv_node
+*  - \subpage udp_send_node
+
+________
+*- <b>DataLogger</b> Nodes
+*  - General
+*    - \subpage matrix_logger_node
+*  - GNSS
+*    - \subpage rinex_obs_logger_node
+*    - \subpage spp_solution_logger_node
+*    - \subpage uart_data_logger_node
+*  - IMU
+*    - \subpage imu_data_logger_node
+*    - \subpage kvh_data_logger_node
+*    - \subpage vector_nav_data_logger_node
+*  - State
+*    - \subpage lc_kf_ins_gnss_error_logger_node
+*    - \subpage pos_vel_att_logger_node
+
+________
+*- <b>DataProcessor</b> Nodes
+*  - \subpage error_model_node
+*  - \subpage gnss_analyzer_node
+*  - \subpage single_point_positioning_node
+*  - \subpage imu_integrator_node
+*  - \subpage loosely_coupled_kf_node
+*  - \subpage tightly_coupled_kf_node
+*  - \subpage imu_fusion_node
+
+________
+*- <b>DataProvider</b> Nodes
+*  - \subpage csv_file_node
+*  - GNSS
+*    - FileReader
+*      - \subpage emlid_file_node
+*      - \subpage nmea_file_node
+*      - \subpage rinex_nav_file_node
+*      - \subpage rinex_obs_file_node
+*      - \subpage rtklib_pos_file_node
+*      - \subpage ublox_file_node
+*    - Sensors
+*      - \subpage emlid_sensor_node
+*      - \subpage ublox_sensor_node
+*  - IMU
+*    - FileReader
+*      - \subpage imu_file_node
+*      - \subpage kvh_file_node
+*      - \subpage multi_imu_file_node
+*      - \subpage ulog_file_node
+*      - \subpage vector_nav_file_node
+*    - Sensors
+*      - \subpage kvh_sensor_node
+*      - \subpage navio_2_sensor_node
+*      - \subpage vector_nav_sensor_node
+*    - Simulators
+*      - \subpage imu_simulator_node
+*  - State
+*    - \subpage pos_vel_att_file_node
+
+________
+*- \subpage experimental_node
+
+________
+*- \subpage plot_node
+
+________
+*- <b>State</b> Nodes
+*  - \subpage pos_vel_att_initializer_node
+
+________
+*- <b>Utility</b> Nodes and Features
+*  - \subpage combiner_node
+*  - \subpage demo_node
+*  - \subpage group_box
+*  - \subpage merger_node
+*  - \subpage terminator_node
+*  - \subpage time_window_node
+
+\note Some of these Nodes may undergo changes in the future and their respective documentation might be lacking behind.
+
+________
+<i>Last updated: 2024-01-31</i>
+*/
+}
