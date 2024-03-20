@@ -187,8 +187,6 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
     uint16_t gpsWeek;
     long double gpsToW;
     InsTime time;
-    std::string macAddress;
-    double distance;
 
     bool gpsCycleSet = false;
     bool gpsWeekSet = false;
@@ -225,12 +223,12 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
             }
             else if (column == "MacAddress")
             {
-                macAddress = cell;
+                obs->macAddress = cell;
                 macAddressSet = true;
             }
             else if (column == "Distance [m]")
             {
-                distance = std::stod(cell);
+                obs->distance = std::stod(cell);
                 distanceSet = true;
             }
         }
@@ -245,9 +243,7 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
     {
         time = InsTime(gpsCycle, gpsWeek, gpsToW);
     }
-    obs->data.push_back({ macAddress, time, distance }); // TODO: Add timeOutputs
     obs->insTime = time;
-
     invokeCallbacks(OUTPUT_PORT_INDEX_WiFiObs_OBS, obs);
     return obs;
 }

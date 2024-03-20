@@ -124,61 +124,49 @@ void NAV::WiFiObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
         auto nodeData = queue.extract_front();
 
         // -------------------------------------------------------- Time -----------------------------------------------------------
-        auto wifiObs = std::static_pointer_cast<const WiFiObs>(nodeData);
-        for (auto const& obs : wifiObs->data)
+        auto obs = std::static_pointer_cast<const WiFiObs>(nodeData);
+        if (!obs->insTime.empty())
         {
-            if (!obs.time.empty())
-            {
-                _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs.time) * 1e9) / 1e9;
-            }
-            _filestream << ",";
-            if (!obs.time.empty())
-            {
-                _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs.time.toGPSweekTow().gpsCycle;
-            }
-            _filestream << ",";
-            if (!obs.time.empty())
-            {
-                _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs.time.toGPSweekTow().gpsWeek;
-            }
-            _filestream << ",";
-            if (!obs.time.empty())
-            {
-                _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs.time.toGPSweekTow().tow;
-            }
-            _filestream << "," << std::setprecision(valuePrecision);
-
-            // {
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.year), sizeof(obs->timeOutputs->timeUtc.year));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.month), sizeof(obs->timeOutputs->timeUtc.month));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.day), sizeof(obs->timeOutputs->timeUtc.day));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.hour), sizeof(obs->timeOutputs->timeUtc.hour));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.min), sizeof(obs->timeOutputs->timeUtc.min));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.sec), sizeof(obs->timeOutputs->timeUtc.sec));
-            //     _filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeUtc.ms), sizeof(obs->timeOutputs->timeUtc.ms));
-            // }
-
-            // ------------------------------------------------------ MacAddress ----------------------------------------------------------
-            if (!obs.macAddress.empty())
-            {
-                _filestream << obs.macAddress;
-            }
-            else
-            {
-                _filestream << ",";
-            }
-            _filestream << ",";
-
-            // ------------------------------------------------------- Distance -----------------------------------------------------------
-            if (!(obs.distance < 0.0))
-            {
-                _filestream << obs.distance;
-            }
-            else
-            {
-                _filestream << ",";
-            }
+            _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
         }
+        _filestream << ",";
+        if (!obs->insTime.empty())
+        {
+            _filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.toGPSweekTow().gpsCycle;
+        }
+        _filestream << ",";
+        if (!obs->insTime.empty())
+        {
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().gpsWeek;
+        }
+        _filestream << ",";
+        if (!obs->insTime.empty())
+        {
+            _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
+        }
+        _filestream << "," << std::setprecision(valuePrecision);
+
+        // ------------------------------------------------------ MacAddress ----------------------------------------------------------
+        if (!obs->macAddress.empty())
+        {
+            _filestream << obs->macAddress;
+        }
+        else
+        {
+            _filestream << ",";
+        }
+        _filestream << ",";
+
+        // ------------------------------------------------------- Distance -----------------------------------------------------------
+        if (!(obs->distance < 0.0))
+        {
+            _filestream << obs->distance;
+        }
+        else
+        {
+            _filestream << ",";
+        }
+
         _filestream << std::endl;
     }
 }

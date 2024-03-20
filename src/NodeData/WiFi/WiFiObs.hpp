@@ -39,19 +39,12 @@ class WiFiObs : public NodeData
     /// Payload length in bytes
     uint16_t payloadLength = 0;
 
-    struct FtmObs
-    {
-        /// MAC address of the device
-        std::string macAddress;
-        /// Time of the measurement
-        InsTime time;
-        /// TODO
-        // NAV::vendor::vectornav::TimeOutputs timeOutputs;
-        /// Distance to the device
-        double distance;
-    };
-
-    std::vector<FtmObs> data;
+    /// MAC address of the device
+    std::string macAddress;
+    /// Distance to the device
+    double distance;
+    /// TODO
+    NAV::vendor::vectornav::TimeOutputs timeOutputs;
 };
 
 } // namespace NAV

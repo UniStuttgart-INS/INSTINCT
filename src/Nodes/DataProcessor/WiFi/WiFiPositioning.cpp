@@ -460,9 +460,9 @@ void NAV::WiFiPositioning::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("nNavInfoPins"))
+    if (j.contains("nWifiInputPins"))
     {
-        j.at("nNavInfoPins").get_to(_nWifiInputPins);
+        j.at("nWifiInputPins").get_to(_nWifiInputPins);
         updateNumberOfInputPins();
     }
     if (j.contains("frame"))
@@ -563,7 +563,6 @@ bool NAV::WiFiPositioning::initialize()
 
     _kalmanFilter.P.diagonal() << variance_pos, variance_vel;
     _kalmanFilter.x << _state.e_position, _state.e_velocity;
-    std::cout << _kalmanFilter.x << std::endl;
     if (_measurementNoiseUnit == MeasurementNoiseUnit::meter2)
     {
         _kalmanFilter.R << _measurementNoise;
@@ -597,74 +596,70 @@ void NAV::WiFiPositioning::updateNumberOfInputPins()
 
 void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto wifiObs = std::static_pointer_cast<const WiFiObs>(queue.extract_front());
-    for (auto const& obs : wifiObs->data)
+    auto obs = std::static_pointer_cast<const WiFiObs>(queue.extract_front());
+    auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs->macAddress);
+    if (it != _deviceMacAddresses.end()) // Device exists
     {
-        auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs.macAddress);
-        if (it != _deviceMacAddresses.end()) // Device exists
+        // Get the index of the found element
+        size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
+
+        // Check if a device with the same position already exists and update the distance
+        bool deviceExists = false;
+        for (auto& device : _devices)
         {
-            // Get the index of the found element
-            size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
-
-            // Check if a device with the same position already exists and update the distance
-            bool deviceExists = false;
-            for (auto& device : _devices)
+            if (device.position == _devicePositions.at(index))
             {
-                if (device.position == _devicePositions.at(index))
-                {
-                    deviceExists = true;
-                    device.distance = obs.distance * _deviceScale.at(index) + _deviceBias.at(index);
-                    device.time = obs.time;
-                    break;
-                }
+                deviceExists = true;
+                device.distance = obs->distance * _deviceScale.at(index) + _deviceBias.at(index);
+                device.time = obs->insTime;
+                break;
             }
+        }
 
-            // If the device does not exist, add it to the list
-            if (!deviceExists)
+        // If the device does not exist, add it to the list
+        if (!deviceExists)
+        {
+            if (_frame == Frame::LLA)
             {
-                if (_frame == Frame::LLA)
-                {
-                    _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs.time, obs.distance * _deviceScale.at(index) + _deviceBias.at(index) });
-                }
-                else if (_frame == Frame::ECEF)
-                {
-                    _devices.push_back({ _devicePositions.at(index), obs.time, obs.distance * _deviceScale.at(index) + _deviceBias.at(index) });
-                }
-                else if (_frame == Frame::ENU)
-                {
-                    _devices.push_back({ _devicePositions.at(index), obs.time, obs.distance * _deviceScale.at(index) + _deviceBias.at(index) });
-                }
-                else if (_frame == Frame::NED)
-                {
-                    _devices.push_back({ _devicePositions.at(index), obs.time, obs.distance * _deviceScale.at(index) + _deviceBias.at(index) });
-                }
+                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
             }
+            else if (_frame == Frame::ECEF)
+            {
+                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
+            }
+            else if (_frame == Frame::ENU)
+            {
+                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
+            }
+            else if (_frame == Frame::NED)
+            {
+                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
+            }
+        }
 
-            auto wifiPositioningSolution = std::make_shared<NAV::WiFiPositioningSolution>();
-            wifiPositioningSolution->insTime = obs.time;
-            if (_solutionMode == SolutionMode::LSQ)
+        auto wifiPositioningSolution = std::make_shared<NAV::WiFiPositioningSolution>();
+        wifiPositioningSolution->insTime = obs->insTime;
+        if (_solutionMode == SolutionMode::LSQ)
+        {
+            if (_devices.size() == _numOfDevices)
             {
-                if (_devices.size() == _numOfDevices)
-                {
-                    LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
-                    wifiPositioningSolution->setPositionAndStdDev_e(_state.e_position, lsqSolution.variance.cwiseSqrt());
-                    std::cout << lsqSolution.solution << std::endl;
-                    wifiPositioningSolution->setCovarianceMatrix(lsqSolution.variance);
-                    invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
-                }
-            }
-            else if (_solutionMode == SolutionMode::KF)
-            {
-                WiFiPositioning::kfSolution();
-                wifiPositioningSolution->setPositionAndStdDev_e(_kalmanFilter.x.block<3, 1>(0, 0), _kalmanFilter.P.block<3, 3>(0, 0).cwiseSqrt());
-                wifiPositioningSolution->setVelocityAndStdDev_e(_kalmanFilter.x.block<3, 1>(3, 0), _kalmanFilter.P.block<3, 3>(3, 3).cwiseSqrt());
-                wifiPositioningSolution->setCovarianceMatrix(_kalmanFilter.P);
+                LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
+                wifiPositioningSolution->setPositionAndStdDev_e(_state.e_position, lsqSolution.variance.cwiseSqrt());
+                wifiPositioningSolution->setCovarianceMatrix(lsqSolution.variance);
                 invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
             }
-
-            // print // TODO delete
-            LOG_DEBUG("{}: Received distance to device {} at position {} with distance {}", nameId(), obs.macAddress, _devicePositions.at(index).transpose(), obs.distance);
         }
+        else if (_solutionMode == SolutionMode::KF)
+        {
+            WiFiPositioning::kfSolution();
+            wifiPositioningSolution->setPositionAndStdDev_e(_kalmanFilter.x.block<3, 1>(0, 0), _kalmanFilter.P.block<3, 3>(0, 0).cwiseSqrt());
+            wifiPositioningSolution->setVelocityAndStdDev_e(_kalmanFilter.x.block<3, 1>(3, 0), _kalmanFilter.P.block<3, 3>(3, 3).cwiseSqrt());
+            wifiPositioningSolution->setCovarianceMatrix(_kalmanFilter.P);
+            invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
+        }
+
+        // print // TODO delete
+        LOG_DEBUG("{}: Received distance to device {} at position {} with distance {}", nameId(), obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
     }
 }
 
@@ -752,8 +747,8 @@ void NAV::WiFiPositioning::kfSolution()
         F(1, 4) = 1;
         F(2, 5) = 1;
         _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, 1);
-        std::cout << F << std::endl;
-        std::cout << _kalmanFilter.Phi << std::endl;
+        // std::cout << F << std::endl; // TODO delete
+        // std::cout << _kalmanFilter.Phi << std::endl;
         // Process noise covariance matrix
         Eigen::Matrix3d Q1 = Eigen::Matrix3d::Zero();
         Q1.diagonal() = Eigen::Vector3d(std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0);
@@ -771,9 +766,9 @@ void NAV::WiFiPositioning::kfSolution()
             _kalmanFilter.Q *= std::pow(_processNoise, 2);
         }
         // Predict
-        std::cout << _kalmanFilter.Q << std::endl;
-        std::cout << _kalmanFilter.x << std::endl;
-        std::cout << _kalmanFilter.P << std::endl;
+        // std::cout << _kalmanFilter.Q << std::endl; // TODO delete
+        // std::cout << _kalmanFilter.x << std::endl;
+        // std::cout << _kalmanFilter.P << std::endl;
         _kalmanFilter.predict();
     }
 
@@ -788,11 +783,11 @@ void NAV::WiFiPositioning::kfSolution()
     H.block<1, 3>(0, 0) = -e_calcLineOfSightUnitVector(_kalmanFilter.x.block<3, 1>(0, 0), _devices.at(0).position);
     _kalmanFilter.H << H;
     // Correct
-    std::cout << _kalmanFilter.Q << std::endl;
-    std::cout << _kalmanFilter.x << std::endl;
-    std::cout << _kalmanFilter.P << std::endl;
-    std::cout << _kalmanFilter.z << std::endl;
-    std::cout << _kalmanFilter.H << std::endl;
+    // std::cout << _kalmanFilter.Q << std::endl; // TODO delete
+    // std::cout << _kalmanFilter.x << std::endl;
+    // std::cout << _kalmanFilter.P << std::endl;
+    // std::cout << _kalmanFilter.z << std::endl;
+    // std::cout << _kalmanFilter.H << std::endl;
     _kalmanFilter.correctWithMeasurementInnovation();
 
     _devices.clear();

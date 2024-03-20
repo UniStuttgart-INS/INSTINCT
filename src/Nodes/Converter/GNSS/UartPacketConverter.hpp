@@ -16,6 +16,7 @@
 
 #include "internal/Node/Node.hpp"
 
+#include "vn/sensors.h"
 #include "NodeData/General/UartPacket.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
@@ -82,8 +83,21 @@ class UartPacketConverter : public Node
     /// Show the SyncIn Pin
     bool _syncInPin = false;
 
+    /// Last received syncInCnt
+    int64_t _lastSyncInCnt = 0;
+
+    /// Last received syncOutCnt
+    int64_t _lastSyncOutCnt = 0;
+
+    /// Corrected SyncOut counter in case of a reset (master)
+    int64_t _syncOutCntCorr = 0;
+
+    /// Corrected SyncIn counter in case of a reset (slave)
+    int64_t _syncInCntCorr = 0;
+
     /// @brief Initialize the node
-    bool initialize() override;
+    bool
+        initialize() override;
 
     /// @brief Converts the UartPacket to the selected message type
     /// @param[in] queue Queue with all the received data messages

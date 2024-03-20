@@ -26,24 +26,23 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
     {
         obs->payloadLength = packet.extractUint16(); // TODO remove
         // Mac address
-        std::string macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
-        std::transform(macAddress.begin(), macAddress.end(), macAddress.begin(), ::toupper); // Convert to uppercase
+        obs->macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
+        std::transform(obs->macAddress.begin(), obs->macAddress.end(), obs->macAddress.begin(), ::toupper); // Convert to uppercase
         // Distance
         int rtt = packet.extractInt32(); // TODO check if ps or ns
-        double measuredDistance = static_cast<double>(rtt) * cAir * 1e-12 / 2;
+        obs->distance = static_cast<double>(rtt) * cAir * 1e-12 / 2;
         // Time of measurement
         InsTime_YMDHMS yearMonthDayHMS(packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32());
         InsTime timeOfMeasurement(yearMonthDayHMS, UTC);
-        [[maybe_unused]] int ms = packet.extractInt32();
+        [[maybe_unused]] uint32_t microseconds = packet.extractUint32();
+        obs->insTime = timeOfMeasurement + std::chrono::microseconds(microseconds);
         // Time outputs
-        std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs;
-        timeOutputs->syncInCnt = packet.extractUint32();
-        timeOutputs->timeSyncIn = packet.extractUint64();
-        // Add the measurement to the WiFiObs
-        obs->data.push_back({ macAddress, timeOfMeasurement, measuredDistance });
+        std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs = std::make_shared<vendor::vectornav::TimeOutputs>();
+        obs->timeOutputs.syncInCnt = packet.extractUint32();
+        obs->timeOutputs.timeSyncIn = packet.extractUint64();
         // Log the measurement details
-        LOG_DATA("WiFiObs mac Address: {}, measured distance: {}", macAddress, measuredDistance);
-        LOG_DEBUG("WiFiObs mac Address: {}, measured distance: {}, time of measurement: {}", macAddress, measuredDistance, timeOfMeasurement);
+        LOG_DATA("WiFiObs mac Address: {}, measured distance: {}", obs->macAddress, obs->distance);
+        LOG_DEBUG("WiFiObs mac Address: {}, measured distance: {}, time of measurement: {}", obs->macAddress, obs->distance, obs->insTime);
     }
     else
     {

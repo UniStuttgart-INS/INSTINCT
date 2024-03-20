@@ -191,6 +191,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/State/LcKfInsGnssErrorLogger.hpp"
 #include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 #include "Nodes/DataLogger/WiFi/WiFiObsLogger.hpp"
+#include "Nodes/DataLogger/WiFi/WiFiPositioningSolutionLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
@@ -262,6 +263,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<LcKfInsGnssErrorLogger>();
     registerNodeType<PosVelAttLogger>();
     registerNodeType<WiFiObsLogger>();
+    registerNodeType<WiFiPositioningSolutionLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
     registerNodeType<SinglePointPositioning>();
