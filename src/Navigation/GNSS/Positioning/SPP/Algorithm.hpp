@@ -81,15 +81,29 @@ class Algorithm
   private:
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver
 
+    /// @brief Checks if the SPP algorithm can calculate the position (always true for Kalman filter)
+    /// @param[in] nDoppMeas Amount of Doppler measurements
+    [[nodiscard]] bool canCalculateVelocity(size_t nDoppMeas) const;
+
+    /// @brief Checks if the SPP algorithm can estimate inter-frequency biases
+    [[nodiscard]] bool canEstimateInterFrequencyBias() const;
+
     /// @brief Updates the inter system reference system
     /// @param[in] usedSatSystems Used Satellite systems this epoch
+    /// @param[in] nDoppMeas Amount of Doppler measurements
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    void updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems, const std::string& nameId);
+    void updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId);
+
+    /// @brief Updates the inter frequency biases
+    /// @param[in] observations List of GNSS observation data used for the calculation
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void updateInterFrequencyBiases(const Observations& observations, const std::string& nameId);
 
     /// @brief Returns a list of state keys
     /// @param[in] usedSatSystems Used Satellite systems this epoch
+    /// @param[in] nDoppMeas Amount of Doppler measurements
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    std::vector<States::StateKeyTypes> determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, const std::string& nameId) const;
+    std::vector<States::StateKeyTypes> determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId) const;
 
     /// @brief Returns a list of measurement keys
     /// @param[in] observations List of GNSS observation data used for the calculation
@@ -153,6 +167,9 @@ class Algorithm
 
     /// Estimator type used for the calculations
     EstimatorType _estimatorType = EstimatorType::WeightedLeastSquares;
+
+    /// Estimate Inter-frequency biases
+    bool _estimateInterFreqBiases = true;
 
     /// SPP specific Kalman filter
     SPP::KalmanFilter _kalmanFilter;

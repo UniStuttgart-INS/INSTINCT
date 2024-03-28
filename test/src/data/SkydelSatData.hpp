@@ -7,7 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file SkydelSatData.hpp
-/// @brief Orolia raw logging file description
+/// @brief Skydel raw logging file description
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2023-01-11
 
@@ -18,9 +18,11 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "util/StringUtil.hpp"
 
+#include <catch2/catch_test_macros.hpp>
+
 namespace NAV::TESTS
 {
-/// @brief Orolia raw logging file description
+/// @brief Skydel raw logging file description
 enum SkydelSatData : size_t
 {
     SkydelSatData_Elapsed_Time,                   ///< Elapsed Time (ms)                                       | The elapsed time of the simulation in milliseconds.
@@ -149,6 +151,18 @@ struct SkydelRawData
 /// @brief SkydelReference for SPP calcualtion
 struct SkydelReference
 {
+    struct Margin
+    {
+        double clock = 0.0;
+        double pos = 0.0;
+        double satElevation = 0.0;
+        double satAzimuth = 0.0;
+        double dpsr_I = 0.0;
+        double dpsr_T = 0.0;
+        double timeDiffRecvTrans = 0.0;
+        double geometricDist = 0.0;
+    };
+
     /// @brief Constructor
     /// @param[in] satSigId Signal identifier
     /// @param[in] path Path to the reference file

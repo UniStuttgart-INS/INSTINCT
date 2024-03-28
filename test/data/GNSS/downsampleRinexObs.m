@@ -1,5 +1,5 @@
-%fin = "Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs";
-fin = 'Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080959_04H_02Z_MO.rnx';
+fin = "Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs";
+%fin = 'Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080959_04H_02Z_MO.rnx';
 
 fid_in = fopen(fin);
 fid_out = fopen('output.txt', 'w');

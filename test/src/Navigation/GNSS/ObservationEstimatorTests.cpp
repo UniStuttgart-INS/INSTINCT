@@ -47,7 +47,6 @@ namespace nm = NAV::NodeManager;
 #define private public
 #include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #undef protected
 #undef private
@@ -58,66 +57,43 @@ namespace NAV::TESTS::ObservationEstimatorTests
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 
-TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1 C/A - no Iono - no Tropo)", "[ObservationEstimator][flow]")
+void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoModel, TroposphereModelSelection tropoModel, double elevationMaskDeg,
+                    const Eigen::Vector3d& lla_refRecvPos,
+                    const std::string& rinexObsFile, const std::string& rinexNavFile, std::vector<SkydelReference> sppReference,
+                    size_t obsCount, const std::unordered_map<Frequency, SkydelReference::Margin>& margins)
 {
     auto logger = initializeTestLogger();
 
     nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_7200S_GN.rnx";
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(80))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/SkydelRINEX_S_20230080000_04H_G.pos";
+        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = rinexObsFile;
+        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = rinexNavFile;
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterFreq = G01;
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterCode = Code::G1C;
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
-        AtmosphereModels atmosphere{
-            .pressureModel = PressureModel::ISA,
-            .temperatureModel = TemperatureModel::ISA,
-            .waterVaporModel = WaterVaporModel::ISA,
-        };
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
-            .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
-            .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
-            .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
-            .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
-        };
+        sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
+        sppNode->_algorithm._obsFilter._filterCode = filterCode;
+        sppNode->_algorithm._obsFilter._elevationMask = deg2rad(elevationMaskDeg);
+
+        sppNode->_algorithm._obsEstimator._ionosphereModel = ionoModel;
+        sppNode->_algorithm._obsEstimator._troposphereModels = tropoModel;
     });
 
     // ###########################################################################################################
     //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
-    // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
-    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(94)-->  |> SPP (72)
-    //                              (93)-->  |> GnssNavInfo (89)                         (81)-->  |> RTKLIB (76)
-    // RinexNavFile() (54)         /                                                    /
-    //         (53) PosVelAtt <>  -                                                    /
-    //                                                         RtklibPosFile (80)     /
-    //                                                         (79) RtklibPosObs |>  -
+    // RinexObsFile (65)                          SinglePointPositioning (91)
+    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(97)-->  |> (95) Terminator (96)
+    //                              (93)-->  |> GnssNavInfo (89)
+    // RinexNavFile() (54)         /
+    //         (53) PosVelAtt <>  -
     //
     // ###########################################################################################################
 
-    const Eigen::Vector3d e_refRecvPos{ -481819.31349724, 5507219.95375401, 3170373.73538364 }; // Receiver position simulated by Skydel
-    Eigen::Vector3d lla_refRecvPos = trafo::ecef2lla_WGS84(e_refRecvPos);
+    const Eigen::Vector3d e_refRecvPos = trafo::lla2ecef_WGS84(lla_refRecvPos);
     LOG_DEBUG("lla_refRecvPos {}, {}, {}", rad2deg(lla_refRecvPos.x()), rad2deg(lla_refRecvPos.y()), lla_refRecvPos.z());
 
-    std::string folder = "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/";
-    std::vector<SkydelReference> sppReference;
-    sppReference.emplace_back(SatSigId(Code::G1C, 1), folder + "L1CA 01.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 3), folder + "L1CA 03.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 6), folder + "L1CA 06.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 7), folder + "L1CA 07.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 8), folder + "L1CA 08.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 9), folder + "L1CA 09.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 11), folder + "L1CA 11.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 13), folder + "L1CA 13.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 14), folder + "L1CA 14.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 17), folder + "L1CA 17.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 19), folder + "L1CA 19.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 21), folder + "L1CA 21.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 24), folder + "L1CA 24.csv");
-    sppReference.emplace_back(SatSigId(Code::G1C, 30), folder + "L1CA 30.csv");
+    std::unordered_map<Frequency, SkydelReference::Margin> marginsMax{};
 
     size_t messageCounter = 0; // Message Counter
     nm::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
@@ -145,8 +121,8 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
         algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, true);
-        algorithm.updateInterSystemTimeDifferences(observations.systems, nameId);
+        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, false);
+        algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
         for (auto& ref : sppReference)
@@ -161,64 +137,80 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
 
             if (gnssObs->insTime == refData.recvTime)
             {
+                LOG_DEBUG("Checking {} observation line {}/{}. Elapsed time: {:.0f} ms", ref.satSigId, ref.counter, ref.refData.size(), refData.Elapsed_Time);
                 REQUIRE(observations.signals.contains(ref.satSigId));
                 ref.counter++;
 
-                LOG_DEBUG("Checking {} observation line {}/{}. Elapsed time: {:.0f} ms", ref.satSigId, ref.counter, ref.refData.size(), refData.Elapsed_Time);
+                auto marginIter = std::find_if(margins.begin(), margins.end(), [&](const auto& m) { return m.first & ref.satSigId.freq(); });
+                REQUIRE(marginIter != margins.end());
+                const auto& margin = marginIter->second;
+                auto& marginMax = marginsMax[ref.satSigId.freq()];
+
                 const Observations::SignalObservation& sigObs = observations.signals.at(ref.satSigId);
 
                 Eigen::Vector3d e_refSatPos(refData.ECEF_X, refData.ECEF_Y, refData.ECEF_Z);
                 LOG_DEBUG("    satData.e_satPos {} [m]", sigObs.e_satPos().transpose());
                 LOG_DEBUG("    e_refSatPos       {} [m]", e_refSatPos.transpose());
                 LOG_DEBUG("      satData.pos - e_refPos   = {}", (sigObs.e_satPos() - e_refSatPos).transpose());
-                LOG_DEBUG("    | satData.pos - e_refPos | = {} [m]", (sigObs.e_satPos() - e_refSatPos).norm());
-                REQUIRE_THAT((sigObs.e_satPos() - e_refSatPos).norm(), Catch::Matchers::WithinAbs(0.0, 2e-4)); // Determined by running the test and adapting
+                LOG_DEBUG("    | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.e_satPos() - e_refSatPos).norm());
+                CHECK_THAT((sigObs.e_satPos() - e_refSatPos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
+                marginMax.pos = std::max(marginMax.pos, (sigObs.e_satPos() - e_refSatPos).norm());
 
                 // e_satVel
 
-                LOG_DEBUG("    satClkBias       {} [s]", sigObs.satClock().bias);
-                LOG_DEBUG("    refClkCorrection {} [s]", refData.Clock_Correction);
-                LOG_DEBUG("    clkBias - ref    {} [s]", sigObs.satClock().bias - refData.Clock_Correction);
-                REQUIRE_THAT(sigObs.satClock().bias - refData.Clock_Correction, Catch::Matchers::WithinAbs(0.0, 4e-15)); // Determined by running the test and adapting
+                LOG_DEBUG("    satClkBias       {:.7e} [s]", sigObs.satClock().bias);
+                LOG_DEBUG("    refClkCorrection {:.7e} [s]", refData.Clock_Correction);
+                LOG_DEBUG("    clkBias - ref    {:.4e} [s]", sigObs.satClock().bias - refData.Clock_Correction);
+                CHECK_THAT(sigObs.satClock().bias - refData.Clock_Correction, Catch::Matchers::WithinAbs(0.0, margin.clock));
+                marginMax.clock = std::max(marginMax.clock, std::abs(sigObs.satClock().bias - refData.Clock_Correction));
 
                 // satClkDrift
 
                 LOG_DEBUG("    satElevation          {} [deg]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation()));
                 LOG_DEBUG("    refSatElevation       {} [deg]", rad2deg(refData.Receiver_Antenna_Elevation));
-                LOG_DEBUG("    satElevation - refSatElevation {} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - refData.Receiver_Antenna_Elevation));
-                REQUIRE_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - refData.Receiver_Antenna_Elevation),
-                             Catch::Matchers::WithinAbs(0.0, 1e-7)); // Determined by running the test and adapting
+                LOG_DEBUG("    satElevation - refSatElevation {:.4e} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - refData.Receiver_Antenna_Elevation));
+                CHECK_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - refData.Receiver_Antenna_Elevation),
+                           Catch::Matchers::WithinAbs(0.0, margin.satElevation));
+                marginMax.satElevation = std::max(marginMax.satElevation, std::abs(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - refData.Receiver_Antenna_Elevation)));
 
                 LOG_DEBUG("    satAzimuth          {} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth()));
                 LOG_DEBUG("    refSatAzimuth       {} [°]", rad2deg(refData.Receiver_Antenna_Azimuth));
-                LOG_DEBUG("    satAzimuth - refSatAzimuth {} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - refData.Receiver_Antenna_Azimuth));
-                REQUIRE_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - refData.Receiver_Antenna_Azimuth),
-                             Catch::Matchers::WithinAbs(0.0, 1e-8)); // Determined by running the test and adapting
+                LOG_DEBUG("    satAzimuth - refSatAzimuth {:.4e} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - refData.Receiver_Antenna_Azimuth));
+                CHECK_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - refData.Receiver_Antenna_Azimuth),
+                           Catch::Matchers::WithinAbs(0.0, margin.satAzimuth));
+                marginMax.satAzimuth = std::max(marginMax.satAzimuth, std::abs(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - refData.Receiver_Antenna_Azimuth)));
 
-                LOG_DEBUG("    satData.dpsr_I   {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s);
-                LOG_DEBUG("    refIonoCorrection {} [m]", refData.Iono_Correction);
-                LOG_DEBUG("    satData.dpsr_I - refIonoCorrection = {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refData.Iono_Correction);
-                REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refData.Iono_Correction, Catch::Matchers::WithinAbs(0.0, 1e-16));
+                LOG_DEBUG("    satData.dpsr_I   {:.4f} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s);
+                LOG_DEBUG("    refIonoCorrection {:.4f} [m]", refData.Iono_Correction);
+                LOG_DEBUG("    satData.dpsr_I - refIonoCorrection = {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refData.Iono_Correction);
+                CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refData.Iono_Correction, Catch::Matchers::WithinAbs(0.0, margin.dpsr_I));
+                marginMax.dpsr_I = std::max(marginMax.dpsr_I, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refData.Iono_Correction));
 
-                LOG_DEBUG("    satData.dpsr_T    {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s);
-                LOG_DEBUG("    refTropoCorrection {} [m]", refData.Tropo_Correction);
-                LOG_DEBUG("    satData.dpsr_T - refTropoCorrection = {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction);
-                REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction, Catch::Matchers::WithinAbs(0.0, 1e-16));
+                LOG_DEBUG("    satData.dpsr_T    {:.4f} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s);
+                LOG_DEBUG("    refTropoCorrection {:.4f} [m]", refData.Tropo_Correction);
+                LOG_DEBUG("    satData.dpsr_T - refTropoCorrection = {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction);
+                CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction, Catch::Matchers::WithinAbs(0.0, margin.dpsr_T));
+                marginMax.dpsr_T = std::max(marginMax.dpsr_T, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction));
 
                 double timeDiffRange_ref = (refData.Elapsed_Time - refData.PSR_satellite_time) * 1e-3;                       // [s]
                 double timeDiffRecvTrans = static_cast<double>((gnssObs->insTime - sigObs.satClock().transmitTime).count()); // [s]
                 timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s / InsConst<>::C;
                 timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s / InsConst<>::C;
-                LOG_DEBUG("    timeDiffRecvTrans {} [s]", timeDiffRecvTrans);
-                LOG_DEBUG("    timeDiffRange_ref {} [s]", timeDiffRange_ref);
-                LOG_DEBUG("    timeDiffRecvTrans - timeDiffRange_ref {} [s]", timeDiffRecvTrans - timeDiffRange_ref);
-                REQUIRE_THAT(timeDiffRecvTrans - timeDiffRange_ref, Catch::Matchers::WithinAbs(0.0, 7e-4)); // Determined by running the test and adapting
+                LOG_DEBUG("    timeDiffRecvTrans {:.4f} [s]", timeDiffRecvTrans);
+                LOG_DEBUG("    timeDiffRange_ref {:.4f} [s]", timeDiffRange_ref);
+                LOG_DEBUG("    timeDiffRecvTrans - timeDiffRange_ref {:.4e} [s]", timeDiffRecvTrans - timeDiffRange_ref);
+                CHECK_THAT(timeDiffRecvTrans - timeDiffRange_ref, Catch::Matchers::WithinAbs(0.0, margin.timeDiffRecvTrans));
+                marginMax.timeDiffRecvTrans = std::max(marginMax.timeDiffRecvTrans, std::abs(timeDiffRecvTrans - timeDiffRange_ref));
 
-                LOG_DEBUG("    geometricDist {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s);
-                LOG_DEBUG("    refGeometricDist       {} [m]", refData.Range);
-                LOG_DEBUG("    geometricDist - refGeometricDist = {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s - refData.Range);
-                REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - refData.Range,
-                             Catch::Matchers::WithinAbs(0.0, 2e-4)); // Determined by running the test and adapting
+                LOG_DEBUG("    geometricDist {:.4f} + dpsr_ie_r_s {:.4f} = {:.4f} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s,
+                          sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s,
+                          sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s);
+                LOG_DEBUG("    refGeometricDist       {:.4f} [m]", refData.Range);
+                LOG_DEBUG("    geometricDist - refGeometricDist = {:.4e} [m]",
+                          sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - refData.Range);
+                CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - refData.Range,
+                           Catch::Matchers::WithinAbs(0.0, margin.geometricDist));
+                marginMax.geometricDist = std::max(marginMax.geometricDist, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - refData.Range));
             }
         }
         messageCounter++;
@@ -226,7 +218,20 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
 
     REQUIRE(testFlow("test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow"));
 
-    CHECK(messageCounter == 49);
+    for ([[maybe_unused]] const auto& [freq, margin] : marginsMax)
+    {
+        LOG_DEBUG("[{}] margin maxima", freq);
+        LOG_DEBUG("  clock = {:e}", margin.clock);
+        LOG_DEBUG("  pos = {:e}", margin.pos);
+        LOG_DEBUG("  satElevation = {:e}", margin.satElevation);
+        LOG_DEBUG("  satAzimuth = {:e}", margin.satAzimuth);
+        LOG_DEBUG("  dpsr_I = {:e}", margin.dpsr_I);
+        LOG_DEBUG("  dpsr_T = {:e}", margin.dpsr_T);
+        LOG_DEBUG("  timeDiffRecvTrans = {:e}", margin.timeDiffRecvTrans);
+        LOG_DEBUG("  geometricDist = {:e}", margin.geometricDist);
+    }
+
+    CHECK(messageCounter == obsCount);
     for (auto& ref : sppReference)
     {
         LOG_DEBUG("Checking if all messages from satellite {} were read.", ref.satSigId);
@@ -234,54 +239,45 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS L1
     }
 }
 
-TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS L1 C/A - no Sat clk - no Iono - no Tropo)", "[ObservationEstimator][flow]")
+void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel ionoModel, TroposphereModelSelection tropoModel, double elevationMaskDeg,
+                     const Eigen::Vector3d& lla_refRecvPos,
+                     const std::string& rinexObsFile, const std::string& rinexNavFile, const std::string& spirentSatDataFile,
+                     size_t refDataSize, size_t obsCount, const std::unordered_map<Frequency, SpirentSatDataFile::Margin>& margins)
 {
     auto logger = initializeTestLogger();
 
-    Frequency filterFreq = G01;
-    Code filterCode = Code::G1C;
-
     nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_GN.23N";
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(80))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/RTKLIB/Spirent_RINEX_G.pos";
+        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = rinexObsFile;
+        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = rinexNavFile;
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterFreq = filterFreq;
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterCode = filterCode;
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
-        AtmosphereModels atmosphere{
-            .pressureModel = PressureModel::ISA,
-            .temperatureModel = TemperatureModel::ISA,
-            .waterVaporModel = WaterVaporModel::ISA,
-        };
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
-            .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
-            .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
-            .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
-            .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
-        };
+        sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
+        sppNode->_algorithm._obsFilter._filterCode = filterCode;
+        sppNode->_algorithm._obsFilter._elevationMask = deg2rad(elevationMaskDeg);
+
+        sppNode->_algorithm._obsEstimator._ionosphereModel = ionoModel;
+        sppNode->_algorithm._obsEstimator._troposphereModels = tropoModel;
     });
 
     // ###########################################################################################################
     //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
-    // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
-    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(94)-->  |> SPP (72)
-    //                              (93)-->  |> GnssNavInfo (89)                         (81)-->  |> RTKLIB (76)
-    // RinexNavFile() (54)         /                                                    /
-    //         (53) PosVelAtt <>  -                                                    /
-    //                                                         RtklibPosFile (80)     /
-    //                                                         (79) RtklibPosObs |>  -
+    // RinexObsFile (65)                          SinglePointPositioning (91)
+    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(97)-->  |> (95) Terminator (96)
+    //                              (93)-->  |> GnssNavInfo (89)
+    // RinexNavFile() (54)         /
+    //         (53) PosVelAtt <>  -
     //
     // ###########################################################################################################
 
-    const Eigen::Vector3d lla_refRecvPos = { deg2rad(30.0), deg2rad(95.0), 0.0 };
     const Eigen::Vector3d e_refRecvPos = trafo::lla2ecef_WGS84(lla_refRecvPos);
 
-    SpirentSatDataFile spirentSatelliteData("test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv");
-    REQUIRE(spirentSatelliteData.refData.size() == 1917);
+    SpirentSatDataFile spirentSatelliteData(spirentSatDataFile);
+    REQUIRE(spirentSatelliteData.refData.size() == refDataSize);
+
+    std::unordered_map<Frequency, SpirentSatDataFile::Margin> marginsMax{};
 
     size_t messageCounter = 0; // Message Counter
     nm::RegisterWatcherCallbackToInputPin(88, [&](const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
@@ -303,15 +299,15 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS L
         // Collection of all connected Ionospheric Corrections
         IonosphericCorrections ionosphericCorrections(gnssNavInfos);
 
-        std::string nameId = "SPP TEST";
+        std::string nameId = "ObservationEstimator TEST";
         SPP::Algorithm algorithm = spp->_algorithm;
         algorithm._receiver[SPP::Algorithm::Rover].gnssObs = gnssObs;
         algorithm._receiver[SPP::Algorithm::Rover].e_pos = e_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, true);
-        algorithm.updateInterSystemTimeDifferences(observations.systems, nameId);
+        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, false);
+        algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
         LOG_DEBUG("{}:", gnssObs->insTime.toYMDHMS(GPST));
@@ -320,33 +316,70 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS L
         {
             auto ref = spirentSatelliteData.get(gnssObs->insTime, satSigId.toSatId());
             REQUIRE(ref.has_value());
-            LOG_DEBUG("    {}:", satSigId.toSatId());
+            LOG_DEBUG("    {}:", satSigId);
 
-            LOG_DEBUG("        | pos - e_refPos | = {}", (sigObs.e_satPos() - ref->get().Sat_Pos).norm());
-            REQUIRE_THAT((sigObs.e_satPos() - ref->get().Sat_Pos).norm(), Catch::Matchers::WithinAbs(0.0, 2.0e-4)); // Determined by running the test and adapting
+            auto marginIter = std::find_if(margins.begin(), margins.end(), [&satSigId = satSigId](const auto& m) { return m.first & satSigId.freq(); });
+            REQUIRE(marginIter != margins.end());
+            const auto& margin = marginIter->second;
+            auto& marginMax = marginsMax[satSigId.freq()];
 
-            LOG_DEBUG("        | vel - e_refVel | = {}", (sigObs.e_satVel() - ref->get().Sat_Vel).norm());
-            REQUIRE_THAT((sigObs.e_satVel() - ref->get().Sat_Vel).norm(), Catch::Matchers::WithinAbs(0.0, 9.2e-4)); // Determined by running the test and adapting
+            LOG_DEBUG("      satData.e_satPos {} [m]", sigObs.e_satPos().transpose());
+            LOG_DEBUG("        e_refSatPos    {} [m]", ref->get().Sat_Pos.transpose());
+            LOG_DEBUG("          satData.pos - e_refPos   = {}", (sigObs.e_satPos() - ref->get().Sat_Pos).transpose());
+            LOG_DEBUG("        | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.e_satPos() - ref->get().Sat_Pos).norm());
+            CHECK_THAT((sigObs.e_satPos() - ref->get().Sat_Pos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
+            marginMax.pos = std::max(marginMax.pos, (sigObs.e_satPos() - ref->get().Sat_Pos).norm());
 
-            LOG_DEBUG("        satElevation - refElevation = {}°", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - ref->get().Elevation));
-            REQUIRE_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - ref->get().Elevation), Catch::Matchers::WithinAbs(0.0, 3.2e-3)); // Determined by running the test and adapting
-            LOG_DEBUG("        satAzimuth - refAzimuth = {}°", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - ref->get().Azimuth));
-            REQUIRE_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - ref->get().Azimuth), Catch::Matchers::WithinAbs(0.0, 4.5e-3)); // Determined by running the test and adapting
+            LOG_DEBUG("      satData.e_satVel {} [m]", sigObs.e_satVel().transpose());
+            LOG_DEBUG("        e_refSatVel    {} [m]", ref->get().Sat_Vel.transpose());
+            LOG_DEBUG("          satData.vel - e_refVel   = {}", (sigObs.e_satVel() - ref->get().Sat_Vel).transpose());
+            LOG_DEBUG("        | satData.vel - e_refVel | = {:.4e} [m]", (sigObs.e_satVel() - ref->get().Sat_Vel).norm());
+            CHECK_THAT((sigObs.e_satVel() - ref->get().Sat_Vel).norm(), Catch::Matchers::WithinAbs(0.0, margin.vel));
+            marginMax.vel = std::max(marginMax.vel, (sigObs.e_satVel() - ref->get().Sat_Vel).norm());
 
-            LOG_DEBUG("            dpsr_I = {}", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s);
-            LOG_DEBUG("        ref.dpsr_I = {}", ref->get().Iono_delay_Group_A);
-            REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - ref->get().Iono_delay_Group_A, Catch::Matchers::WithinAbs(0.0, 1e-16));
-            LOG_DEBUG("            dpsr_T = {}", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s);
-            LOG_DEBUG("        ref.dpsr_T = {}", ref->get().Tropo_delay);
-            REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - ref->get().Tropo_delay, Catch::Matchers::WithinAbs(0.0, 1e-16));
+            LOG_DEBUG("      satElevation      {} [deg]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation()));
+            LOG_DEBUG("        refSatElevation {} [deg]", rad2deg(ref->get().Elevation));
+            LOG_DEBUG("        satElevation - refSatElevation {:.4e} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - ref->get().Elevation));
+            CHECK_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - ref->get().Elevation), Catch::Matchers::WithinAbs(0.0, margin.satElevation));
+            marginMax.satElevation = std::max(marginMax.satElevation, std::abs(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation() - ref->get().Elevation)));
 
-            LOG_DEBUG("        psrEst - refPsr = {}", sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate - ref->get().P_Range_Group_A);
-            REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate - ref->get().P_Range_Group_A,
-                         Catch::Matchers::WithinAbs(0.0, 6.7e-4)); // Determined by running the test and adapting
+            LOG_DEBUG("      satAzimuth      {} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth()));
+            LOG_DEBUG("        refSatAzimuth {} [°]", rad2deg(ref->get().Azimuth));
+            LOG_DEBUG("        satAzimuth - refSatAzimuth {:.4e} [°]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - ref->get().Azimuth));
+            CHECK_THAT(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - ref->get().Azimuth), Catch::Matchers::WithinAbs(0.0, margin.satAzimuth));
+            marginMax.satAzimuth = std::max(marginMax.satAzimuth, std::abs(rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satAzimuth() - ref->get().Azimuth)));
 
-            LOG_DEBUG("        geometricDist - refRange = {}", sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - ref->get().Range);
-            REQUIRE_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - ref->get().Range,
-                         Catch::Matchers::WithinAbs(0.0, 1.9e-4)); // Determined by running the test and adapting
+            double refIono_delay = ref->get().getIono_delay(satSigId.freq());
+            LOG_DEBUG("      satData.dpsr_I      {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s);
+            LOG_DEBUG("        refIonoCorrection {:.4e} [m]", refIono_delay);
+            LOG_DEBUG("        satData.dpsr_I - refIonoCorrection = {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refIono_delay);
+            CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refIono_delay, Catch::Matchers::WithinAbs(0.0, margin.dpsr_I));
+            marginMax.dpsr_I = std::max(marginMax.dpsr_I, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s - refIono_delay));
+
+            LOG_DEBUG("      satData.dpsr_T       {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s);
+            LOG_DEBUG("        refTropoCorrection {:.4e} [m]", ref->get().Tropo_delay);
+            LOG_DEBUG("        satData.dpsr_T - refTropoCorrection = {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - ref->get().Tropo_delay);
+            CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - ref->get().Tropo_delay, Catch::Matchers::WithinAbs(0.0, margin.dpsr_T));
+            marginMax.dpsr_T = std::max(marginMax.dpsr_T, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - ref->get().Tropo_delay));
+
+            double refPsrRange = ref->get().getP_Range(satSigId.freq());
+
+            LOG_DEBUG("      satData.psrEst    = {:.4f} [m]", sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate);
+            LOG_DEBUG("        refPsr          = {:.4f} [m]", refPsrRange);
+            LOG_DEBUG("        psrEst - refPsr = {:.4e} [m]", sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate - refPsrRange);
+            CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate - refPsrRange,
+                       Catch::Matchers::WithinAbs(0.0, margin.pseudorange));
+            marginMax.pseudorange = std::max(marginMax.pseudorange, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].obs.at(GnssObs::Pseudorange).estimate - refPsrRange));
+
+            LOG_DEBUG("      geometricDist {:.4f} + dpsr_ie_r_s {:.4f} = {:.4f} [m]", sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s,
+                      sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s,
+                      sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s);
+            LOG_DEBUG("        refGeometricDist       {:.4f} [m]", ref->get().Range);
+            LOG_DEBUG("        geometricDist - refGeometricDist = {:.4e} [m]",
+                      sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - ref->get().Range);
+            CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - ref->get().Range,
+                       Catch::Matchers::WithinAbs(0.0, margin.geometricDist));
+            marginMax.geometricDist = std::max(marginMax.geometricDist, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.rho_r_s + sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_ie_r_s - ref->get().Range));
 
             ref->get().checked = true;
         }
@@ -354,16 +387,376 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS L
 
     REQUIRE(testFlow("test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow"));
 
-    CHECK(messageCounter == 49);
+    for ([[maybe_unused]] const auto& [freq, margin] : marginsMax)
+    {
+        LOG_DEBUG("[{}] margin maxima", freq);
+        LOG_DEBUG("  pos = {:e}", margin.pos);
+        LOG_DEBUG("  vel = {:e}", margin.vel);
+        LOG_DEBUG("  satElevation = {:e}", margin.satElevation);
+        LOG_DEBUG("  satAzimuth = {:e}", margin.satAzimuth);
+        LOG_DEBUG("  dpsr_I = {:e}", margin.dpsr_I);
+        LOG_DEBUG("  dpsr_T = {:e}", margin.dpsr_T);
+        LOG_DEBUG("  pseudorange = {:e}", margin.pseudorange);
+        LOG_DEBUG("  geometricDist = {:e}", margin.geometricDist);
+    }
+
+    CHECK(messageCounter == obsCount);
 
     for (const auto& satData : spirentSatelliteData.refData)
     {
         if ((satData.satId.satSys & filterFreq.getSatSys()) != SatSys_None)
         {
             LOG_DEBUG("[{}][{}] Checking if ref data was used", satData.recvTime.toYMDHMS(GPST), satData.satId);
-            REQUIRE(satData.checked);
+            if (rad2deg(satData.Elevation) >= elevationMaskDeg)
+            {
+                REQUIRE(satData.checked);
+            }
         }
     }
+}
+
+TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS - no Iono - no Tropo)", "[ObservationEstimator][flow]")
+{
+    Frequency filterFreq = G01 | G02 | G05;
+    Code filterCode = Code_ALL | G01 | G02 | G05;
+    double elevationMaskDeg = 0;
+
+    IonosphereModel ionoModel = IonosphereModel::None;
+    AtmosphereModels atmosphere{
+        .pressureModel = PressureModel::ISA,
+        .temperatureModel = TemperatureModel::ISA,
+        .waterVaporModel = WaterVaporModel::ISA,
+    };
+    auto tropoModel = TroposphereModelSelection{
+        .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
+        .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
+        .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+        .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+    };
+
+    const Eigen::Vector3d lla_refRecvPos(deg2rad(30.0), deg2rad(95.0), 0.0);
+    size_t obsCount = 49;
+
+    // Determined by running the test and adapting
+    std::unordered_map<Frequency, SkydelReference::Margin> margins = {
+        { G01 | G02, SkydelReference::Margin{ .clock = 4.8e-15,
+                                              .pos = 1.9e-4,
+                                              .satElevation = 3.7e-10,
+                                              .satAzimuth = 7.0e-9,
+                                              .dpsr_I = 0,
+                                              .dpsr_T = 0,
+                                              .timeDiffRecvTrans = 7.0e-4,
+                                              .geometricDist = 1.2e-4 } },
+    };
+    margins[G05] = margins.at(G01 | G02);
+    margins.at(G05).clock = 1.3e-8; // Skydel applies T_GD to the satellite clock, which is wrong according to IS-GPS-705J GPS ICD L5, ch. 20.3.3.3.2.1, p.78
+    std::string folder = "test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/sat_data/";
+    std::vector<SkydelReference> sppReference;
+    {
+        sppReference.emplace_back(SatSigId(Code::G1X, 1), folder + "L1C 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 3), folder + "L1C 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 6), folder + "L1C 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 7), folder + "L1C 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 8), folder + "L1C 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 9), folder + "L1C 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 11), folder + "L1C 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 13), folder + "L1C 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 14), folder + "L1C 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 17), folder + "L1C 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 19), folder + "L1C 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 21), folder + "L1C 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 24), folder + "L1C 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 30), folder + "L1C 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 1), folder + "L1CA 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 3), folder + "L1CA 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 6), folder + "L1CA 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 7), folder + "L1CA 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 8), folder + "L1CA 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 9), folder + "L1CA 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 11), folder + "L1CA 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 13), folder + "L1CA 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 14), folder + "L1CA 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 17), folder + "L1CA 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 19), folder + "L1CA 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 21), folder + "L1CA 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 24), folder + "L1CA 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 30), folder + "L1CA 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 1), folder + "L1P 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 3), folder + "L1P 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 6), folder + "L1P 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 7), folder + "L1P 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 8), folder + "L1P 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 9), folder + "L1P 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 11), folder + "L1P 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 13), folder + "L1P 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 14), folder + "L1P 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 17), folder + "L1P 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 19), folder + "L1P 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 21), folder + "L1P 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 24), folder + "L1P 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 30), folder + "L1P 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 1), folder + "L2C 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 3), folder + "L2C 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 6), folder + "L2C 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 7), folder + "L2C 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 8), folder + "L2C 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 9), folder + "L2C 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 11), folder + "L2C 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 13), folder + "L2C 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 14), folder + "L2C 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 17), folder + "L2C 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 19), folder + "L2C 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 21), folder + "L2C 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 24), folder + "L2C 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 30), folder + "L2C 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 1), folder + "L2P 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 3), folder + "L2P 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 6), folder + "L2P 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 7), folder + "L2P 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 8), folder + "L2P 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 9), folder + "L2P 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 11), folder + "L2P 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 13), folder + "L2P 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 14), folder + "L2P 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 17), folder + "L2P 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 19), folder + "L2P 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 21), folder + "L2P 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 24), folder + "L2P 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 30), folder + "L2P 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 1), folder + "L5 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 3), folder + "L5 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 6), folder + "L5 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 7), folder + "L5 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 8), folder + "L5 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 9), folder + "L5 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 11), folder + "L5 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 13), folder + "L5 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 14), folder + "L5 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 17), folder + "L5 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 19), folder + "L5 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 21), folder + "L5 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 24), folder + "L5 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 30), folder + "L5 30.csv");
+    }
+
+    testSkydelData(filterFreq, filterCode, ionoModel, tropoModel, elevationMaskDeg, lla_refRecvPos,
+                   "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx",
+                   "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_7200S_GN.rnx",
+                   sppReference, obsCount, margins);
+}
+
+TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (Klobuchar, Saastamoinen)", "[ObservationEstimator][flow]")
+{
+    Frequency filterFreq = G01 | G02 | G05;
+    Code filterCode = Code_ALL | G01 | G02 | G05;
+    double elevationMaskDeg = 0;
+
+    IonosphereModel ionoModel = IonosphereModel::Klobuchar;
+    AtmosphereModels atmosphere{
+        .pressureModel = PressureModel::ISA,
+        .temperatureModel = TemperatureModel::ISA,
+        .waterVaporModel = WaterVaporModel::ISA,
+    };
+    auto tropoModel = TroposphereModelSelection{
+        .zhdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
+        .zwdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
+        .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+        .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+    };
+
+    const Eigen::Vector3d lla_refRecvPos(deg2rad(30.0), deg2rad(95.0), 0.0);
+    size_t obsCount = 49;
+
+    // Determined by running the test and adapting
+    std::unordered_map<Frequency, SkydelReference::Margin> margins = {
+        { G01 | G02, SkydelReference::Margin{ .clock = 4.8e-15,
+                                              .pos = 3.7e-4,
+                                              .satElevation = 6.4e-10,
+                                              .satAzimuth = 1.4e-8,
+                                              .dpsr_I = 1.5e-1,
+                                              .dpsr_T = 9.8e-1,
+                                              .timeDiffRecvTrans = 7.0e-4,
+                                              .geometricDist = 1.5e-4 } },
+    };
+    margins[G05] = margins.at(G01 | G02);
+    margins.at(G05).clock = 1.3e-8; // Skydel applies T_GD to the satellite clock, which is wrong according to IS-GPS-705J GPS ICD L5, ch. 20.3.3.3.2.1, p.78
+    std::string folder = "test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-Klob_tropo-Saast/sat_data/";
+    std::vector<SkydelReference> sppReference;
+    {
+        sppReference.emplace_back(SatSigId(Code::G1X, 1), folder + "L1C 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 3), folder + "L1C 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 6), folder + "L1C 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 7), folder + "L1C 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 8), folder + "L1C 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 9), folder + "L1C 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 11), folder + "L1C 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 13), folder + "L1C 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 14), folder + "L1C 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 17), folder + "L1C 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 19), folder + "L1C 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 21), folder + "L1C 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 24), folder + "L1C 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1X, 30), folder + "L1C 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 1), folder + "L1CA 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 3), folder + "L1CA 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 6), folder + "L1CA 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 7), folder + "L1CA 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 8), folder + "L1CA 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 9), folder + "L1CA 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 11), folder + "L1CA 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 13), folder + "L1CA 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 14), folder + "L1CA 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 17), folder + "L1CA 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 19), folder + "L1CA 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 21), folder + "L1CA 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 24), folder + "L1CA 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1C, 30), folder + "L1CA 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 1), folder + "L1P 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 3), folder + "L1P 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 6), folder + "L1P 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 7), folder + "L1P 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 8), folder + "L1P 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 9), folder + "L1P 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 11), folder + "L1P 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 13), folder + "L1P 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 14), folder + "L1P 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 17), folder + "L1P 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 19), folder + "L1P 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 21), folder + "L1P 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 24), folder + "L1P 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G1P, 30), folder + "L1P 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 1), folder + "L2C 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 3), folder + "L2C 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 6), folder + "L2C 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 7), folder + "L2C 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 8), folder + "L2C 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 9), folder + "L2C 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 11), folder + "L2C 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 13), folder + "L2C 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 14), folder + "L2C 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 17), folder + "L2C 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 19), folder + "L2C 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 21), folder + "L2C 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 24), folder + "L2C 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G2C, 30), folder + "L2C 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 1), folder + "L2P 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 3), folder + "L2P 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 6), folder + "L2P 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 7), folder + "L2P 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 8), folder + "L2P 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 9), folder + "L2P 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 11), folder + "L2P 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 13), folder + "L2P 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 14), folder + "L2P 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 17), folder + "L2P 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 19), folder + "L2P 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 21), folder + "L2P 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 24), folder + "L2P 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G2P, 30), folder + "L2P 30.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 1), folder + "L5 01.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 3), folder + "L5 03.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 6), folder + "L5 06.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 7), folder + "L5 07.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 8), folder + "L5 08.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 9), folder + "L5 09.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 11), folder + "L5 11.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 13), folder + "L5 13.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 14), folder + "L5 14.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 17), folder + "L5 17.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 19), folder + "L5 19.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 21), folder + "L5 21.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 24), folder + "L5 24.csv");
+        sppReference.emplace_back(SatSigId(Code::G5X, 30), folder + "L5 30.csv");
+    }
+
+    testSkydelData(filterFreq, filterCode, ionoModel, tropoModel, elevationMaskDeg, lla_refRecvPos,
+                   "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-Klob_tropo-Saast/SkydelRINEX_S_20230080959_04H_02Z_MO.rnx",
+                   "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_7200S_GN.rnx",
+                   sppReference, obsCount, margins);
+}
+
+TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS - no Iono - no Tropo)", "[ObservationEstimator][flow]")
+{
+    Frequency filterFreq = G01 | G02 | G05;
+    Code filterCode = Code_ALL | G01 | G02 | G05;
+    double elevationMaskDeg = 0;
+
+    IonosphereModel ionoModel = IonosphereModel::None;
+    AtmosphereModels atmosphere{
+        .pressureModel = PressureModel::ISA,
+        .temperatureModel = TemperatureModel::ISA,
+        .waterVaporModel = WaterVaporModel::ISA,
+    };
+    auto tropoModel = TroposphereModelSelection{
+        .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
+        .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
+        .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+        .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+    };
+
+    const Eigen::Vector3d lla_refRecvPos(deg2rad(30.0), deg2rad(95.0), 0.0);
+    size_t refDataSize = 2114;
+    size_t obsCount = 49;
+
+    // Determined by running the test and adapting
+    std::unordered_map<Frequency, SpirentSatDataFile::Margin> margins = {
+        { G01 | G02 | G05, SpirentSatDataFile::Margin{ .pos = 9.1e-5,
+                                                       .vel = 8.4e-4,
+                                                       .satElevation = 3.2e-3, // High because Satellite position is calculated in ECEF frame at transmit time
+                                                       .satAzimuth = 4.5e-3,
+                                                       .dpsr_I = 0,
+                                                       .dpsr_T = 0,
+                                                       .pseudorange = 5.2e-4,
+                                                       .geometricDist = 1.5e-4 } },
+    };
+
+    testSpirentData(filterFreq, filterCode, ionoModel, tropoModel, elevationMaskDeg, lla_refRecvPos,
+                    "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs",
+                    "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N",
+                    "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/sat_data_V1A1.csv",
+                    refDataSize, obsCount, margins);
+}
+
+TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS - Klobuchar, Saastamoinen)", "[ObservationEstimator][flow]")
+{
+    Frequency filterFreq = G01 | G02 | G05;
+    Code filterCode = Code_ALL | G01 | G02 | G05;
+    double elevationMaskDeg = 10;
+
+    IonosphereModel ionoModel = IonosphereModel::Klobuchar;
+    AtmosphereModels atmosphere{
+        .pressureModel = PressureModel::ISA,
+        .temperatureModel = TemperatureModel::ISA,
+        .waterVaporModel = WaterVaporModel::ISA,
+    };
+    auto tropoModel = TroposphereModelSelection{
+        .zhdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
+        .zwdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
+        .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+        .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+    };
+
+    const Eigen::Vector3d lla_refRecvPos(deg2rad(30.0), deg2rad(95.0), 0.0);
+    size_t refDataSize = 2114;
+    size_t obsCount = 49;
+
+    // Determined by running the test and adapting
+    std::unordered_map<Frequency, SpirentSatDataFile::Margin> margins = {
+        { G01 | G02 | G05, SpirentSatDataFile::Margin{ .pos = 2.7e-4,
+                                                       .vel = 8.4e-4,
+                                                       .satElevation = 3.2e-3, // High because Satellite position is calculated in ECEF frame at transmit time
+                                                       .satAzimuth = 4.5e-3,
+                                                       .dpsr_I = 3.9e-4,
+                                                       .dpsr_T = 4.1e-1,
+                                                       .pseudorange = 5.0e-1,
+                                                       .geometricDist = 1.8e-4 } },
+    };
+
+    testSpirentData(filterFreq, filterCode, ionoModel, tropoModel, elevationMaskDeg, lla_refRecvPos,
+                    "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast/Spirent_RINEX_MO.obs",
+                    "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N",
+                    "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast/sat_data_V1A1.csv",
+                    refDataSize, obsCount, margins);
 }
 
 #endif

@@ -140,7 +140,10 @@ bool RinexObsFile::resetNode()
 
 FileReader::FileType RinexObsFile::determineFileType()
 {
-    auto extHeaderLabel = [](const std::string& line) {
+    auto extHeaderLabel = [](std::string line) {
+        // Remove any trailing non text characters
+        line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+
         return str::trim_copy(std::string_view(line).substr(60, 20));
     };
 
@@ -189,6 +192,7 @@ FileReader::FileType RinexObsFile::determineFileType()
         }
         // ---------------------------------------- PGM / RUN BY / DATE ------------------------------------------
         std::getline(filestreamHeader, line);
+        str::rtrim(line);
         if (extHeaderLabel(line) != "PGM / RUN BY / DATE")
         {
             LOG_ERROR("{}: Not a valid RINEX OBS file. Could not read 'PGM / RUN BY / DATE' line.", nameId());
@@ -198,6 +202,7 @@ FileReader::FileType RinexObsFile::determineFileType()
         // ----------------------------------------- END OF HEADER -------------------------------------------
         while (std::getline(filestreamHeader, line))
         {
+            str::rtrim(line);
             if (extHeaderLabel(line) == "END OF HEADER")
             {
                 return FileReader::FileType::ASCII;

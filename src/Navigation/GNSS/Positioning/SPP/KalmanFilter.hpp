@@ -75,6 +75,10 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
                                                      SatelliteSystem newRefSys,
                                                      const std::string& nameId);
 
+    /// @brief Adds the frequency as inter-frequency bias state
+    /// @param[in] freq Frequency to estimate the inter-frequency bias for
+    void addInterFrequencyBias(const Frequency& freq);
+
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time step [s]
     /// @param[in] lla_pos Position in Latitude, Longitude, Altitude [rad, rad, m]
@@ -87,10 +91,11 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     /// @param[in] id Unique id for ImGui.
     /// @param[in] useDoppler Whether to use doppler measurements
     /// @param[in] multiConstellation Whether to use multiple constellations
+    /// @param[in] estimateInterFrequencyBiases Whether to use estimate inter frequency biases
     /// @param[in] itemWidth Width of the widgets
     /// @param[in] unitWidth  Width on unit inputs
     /// @return True when something was changed
-    bool ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, float itemWidth, float unitWidth);
+    bool ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth);
 
     /// @brief Set the P matrix entry for the covariance of the clock phase drift
     /// @param clkPhaseDrift Clock phase drift variance in [m^2 / s]
@@ -193,6 +198,16 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     double _gui_covarianceInterSysClkFrequencyDrift = 0.04 /* [m²/s³] */;
     /// @brief Covariance of the inter-system clock frequency drift [m²/s³]
     double _covarianceInterSysClkFrequencyDrift = 0.04;
+
+    // ###########################################################################################################
+
+    /// Gui selection for the Unit of the inter-frequency covarianceInterFrequencyBias parameter
+    CovarianceClkPhaseDriftUnits _gui_covarianceInterFrequencyBiasUnit = CovarianceClkPhaseDriftUnits::m2_s;
+
+    /// @brief GUI selection for the Standard deviation of the inter-frequency bias
+    double _gui_covarianceInterFrequencyBias = 1e-6 /* [m²/s] */;
+    /// @brief Covariance of the inter-frequency bias [m²/s]
+    double _covarianceInterFrequencyBias = 1e-6;
 
     // ###########################################################################################################
     // ###########################################################################################################

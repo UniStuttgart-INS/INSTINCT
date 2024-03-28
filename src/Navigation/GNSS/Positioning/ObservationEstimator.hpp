@@ -91,6 +91,7 @@ class ObservationEstimator
 
                 for (auto& [obsType, obsData] : recvObs.obs)
                 {
+                    LOG_DATA("{}:   [{}][{:11}][{:5}] Observation estimate", nameId, satSigId, obsType, recv);
                     switch (obsType)
                     {
                     case GnssObs::Pseudorange:
@@ -101,12 +102,19 @@ class ObservationEstimator
                                            + InsConst<>::C
                                                  * (receiver.recvClk.bias.value
                                                     - observation.satClock().bias
-                                                    + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
+                                                    + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value
+                                                    + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0));
                         obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}] {:.3f} [m] = {:.3f} + {:.3f} + {} + {} + c * ({:.3e} - {:.3e} + {:.3e}); diff to meas: {:.3e}",
-                                 nameId, satSigId, obsType, recv, obsData.estimate,
-                                 rho_r_s, dpsr_ie_r_s, dpsr_T_r_s, dpsr_I_r_s, receiver.recvClk.bias.value, observation.satClock().bias,
-                                 receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value, obsData.measurement - obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, recv, rho_r_s);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, recv, dpsr_ie_r_s);
+                        if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, recv, dpsr_T_r_s); }
+                        if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, recv, dpsr_I_r_s); }
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.bias.value);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * observation.satClock().bias);
+                        if (receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-system clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value); }
+                        if (receiver.interFrequencyBias.contains(freq)) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-frequency bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.interFrequencyBias.at(freq).value); }
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Pseudorange estimate", nameId, satSigId, obsType, recv, obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
                         break;
                     case GnssObs::Carrier:
                         obsData.estimate = rho_r_s
@@ -118,10 +126,15 @@ class ObservationEstimator
                                                     - observation.satClock().bias
                                                     + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value);
                         obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}] {:.3f} [m] = {:.3f} + {:.3f} + {} - {} + c * ({:.3e} - {:.3e} + {:.3e}); diff to meas: {:.3e}",
-                                 nameId, satSigId, obsType, recv, obsData.estimate,
-                                 rho_r_s, dpsr_ie_r_s, dpsr_T_r_s, dpsr_I_r_s, receiver.recvClk.bias.value, observation.satClock().bias,
-                                 receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value, obsData.measurement - obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, recv, rho_r_s);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, recv, dpsr_ie_r_s);
+                        if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, recv, dpsr_T_r_s); }
+                        if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, recv, dpsr_I_r_s); }
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.bias.value);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * observation.satClock().bias);
+                        if (receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-system clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value); }
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Carrier-phase estimate", nameId, satSigId, obsType, recv, obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
                         break;
                     case GnssObs::Doppler:
                         obsData.estimate = recvObs.e_pLOS().dot(observation.e_satVel() - receiver.e_vel)
@@ -131,12 +144,13 @@ class ObservationEstimator
                                                     - observation.satClock().drift
                                                     + receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value);
                         obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}] {:.3f} [m/s] = {:.3f} - {:.3e} + c * ({:.3e} - {:.3e} + {:.3e}); diff to meas: {:.3e}",
-                                 nameId, satSigId, obsType, recv, obsData.estimate,
-                                 recvObs.e_pLOS().dot(observation.e_satVel() - receiver.e_vel),
-                                 calcSagnacRateCorrection(receiver.e_pos, observation.e_satPos(), receiver.e_vel, observation.e_satVel()),
-                                 receiver.recvClk.drift.value, observation.satClock().drift, receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value,
-                                 obsData.measurement - obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] ", nameId, satSigId, obsType, recv, recvObs.e_pLOS().dot(observation.e_satVel() - receiver.e_vel));
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Sagnac rate correction", nameId, satSigId, obsType, recv, calcSagnacRateCorrection(receiver.e_pos, observation.e_satPos(), receiver.e_vel, observation.e_satVel()));
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Receiver clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.drift.value);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Satellite clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * observation.satClock().drift);
+                        if (receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Inter-system clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value); }
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m/s] Doppler estimate", nameId, satSigId, obsType, recv, obsData.estimate);
+                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m/s] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
                         break;
                     case GnssObs::ObservationType_COUNT:
                         break;
@@ -153,14 +167,20 @@ class ObservationEstimator
                                                + ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())
                                                + tropoErrorVar(dpsr_T_r_s, recvObs.satElevation());
                             LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Satellite position variance", nameId, satSigId, obsType, recv, observation.navData()->calcSatellitePositionVariance());
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Ionosphere variance", nameId, satSigId, obsType, recv, ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum()));
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Troposphere variance", nameId, satSigId, obsType, recv, tropoErrorVar(dpsr_T_r_s, recvObs.satElevation()));
+                            if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Ionosphere variance", nameId, satSigId, obsType, recv, ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())); }
+                            if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Troposphere variance", nameId, satSigId, obsType, recv, tropoErrorVar(dpsr_T_r_s, recvObs.satElevation())); }
                         }
                         if (obsType == GnssObs::Pseudorange)
                         {
                             obsData.measVar += _gnssMeasurementErrorModel.codeBiasErrorVar();
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [{}] Code bias variance", nameId, satSigId, obsType, recv, _gnssMeasurementErrorModel.codeBiasErrorVar(),
-                                     obsType == GnssObs::Doppler ? "m^2/s^2" : "m^2");
+                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Code bias variance", nameId, satSigId, obsType, recv, _gnssMeasurementErrorModel.codeBiasErrorVar());
+
+                            if (receiver.interFrequencyBias.contains(freq))
+                            {
+                                obsData.measVar += std::pow(receiver.interFrequencyBias.at(freq).stdDev, 2);
+                                LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Inter-frequency bias variance", nameId, satSigId, obsType, recv,
+                                         std::pow(InsConst<>::C * receiver.interFrequencyBias.at(freq).stdDev, 2));
+                            }
                         }
                     }
                     if (obsDiff != DoubleDifference)

@@ -78,6 +78,17 @@ void KalmanFilter::reset()
         break;
     }
 
+    // Covariance of the inter-frequency bias [m²/s]
+    switch (_gui_covarianceInterFrequencyBiasUnit)
+    {
+    case CovarianceClkPhaseDriftUnits::m_sqrts:
+        _covarianceInterFrequencyBias = std::pow(_gui_covarianceInterFrequencyBias, 2);
+        break;
+    case CovarianceClkPhaseDriftUnits::m2_s:
+        _covarianceInterFrequencyBias = _gui_covarianceInterFrequencyBias;
+        break;
+    }
+
     // ###########################################################################################################
 
     // Covariance of the P matrix initialization velocity uncertainty [m²/s²]
@@ -339,6 +350,17 @@ SatelliteSystem KalmanFilter::updateInterSystemTimeDifferences(const std::set<Sa
     return newRefSys;
 }
 
+void KalmanFilter::addInterFrequencyBias(const Frequency& freq)
+{
+    auto keyBias = SPP::States::InterFreqBias{ freq };
+    _kalmanFilter.addState(keyBias);
+    _kalmanFilter.P(keyBias, keyBias) = _kalmanFilter.P(SPP::States::RecvClkErr, SPP::States::RecvClkErr);
+    _kalmanFilter.Phi(keyBias, keyBias) = 1;
+    _kalmanFilter.G(keyBias, keyBias) = 1;
+    _kalmanFilter.W(keyBias, keyBias) = _covarianceInterFrequencyBias;
+    _kalmanFilter.Q(keyBias, keyBias) = _covarianceInterFrequencyBias;
+}
+
 KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>
     KalmanFilter::calcProcessNoiseMatrixGroves(double dt, const Eigen::Vector3d& lla_pos, [[maybe_unused]] const std::string& nameId) const
 {
@@ -378,7 +400,7 @@ KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>
     return Q;
 }
 
-bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, float itemWidth, float unitWidth)
+bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiConstellation, bool estimateInterFrequencyBiases, float itemWidth, float unitWidth)
 {
     bool changed = false;
 
@@ -446,6 +468,17 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiCon
         {
             LOG_DEBUG("{}: _gui_covarianceInterSysClkFrequencyDrift changed to {}", id, _gui_covarianceInterSysClkFrequencyDrift);
             LOG_DEBUG("{}: _gui_covarianceInterSysClkFrequencyDriftUnit changed to {}", id, fmt::underlying(_gui_covarianceInterSysClkFrequencyDriftUnit));
+            changed = true;
+        }
+        if (estimateInterFrequencyBiases
+            && gui::widgets::InputDoubleWithUnit(fmt::format("{} of the inter-frequency bias (RW)##{}",
+                                                             _gui_covarianceInterFrequencyBiasUnit == CovarianceClkPhaseDriftUnits::m_sqrts ? "Standard deviation" : "Variance", id)
+                                                     .c_str(),
+                                                 configWidth, unitWidth, &_gui_covarianceInterFrequencyBias, reinterpret_cast<int*>(&_gui_covarianceInterFrequencyBiasUnit), "m/√(s)\0m^2/s\0\0",
+                                                 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: _gui_covarianceInterFrequencyBias changed to {}", id, _gui_covarianceInterFrequencyBias);
+            LOG_DEBUG("{}: _gui_covarianceInterFrequencyBiasUnit changed to {}", id, fmt::underlying(_gui_covarianceInterFrequencyBiasUnit));
             changed = true;
         }
 
@@ -545,6 +578,8 @@ void to_json(json& j, const KalmanFilter& data)
         { "covarianceInterSysClkPhaseDrift", data._gui_covarianceInterSysClkPhaseDrift },
         { "covarianceInterSysClkFrequencyDriftUnit", data._gui_covarianceInterSysClkFrequencyDriftUnit },
         { "covarianceInterSysClkFrequencyDrift", data._gui_covarianceInterSysClkFrequencyDrift },
+        { "covarianceInterInterFrequencyBiasUnit", data._gui_covarianceInterFrequencyBiasUnit },
+        { "covarianceInterInterFrequencyBias", data._gui_covarianceInterFrequencyBias },
     };
 } // namespace NAV::SPP
 
@@ -561,6 +596,8 @@ void from_json(const json& j, KalmanFilter& data)
     if (j.contains("covarianceInterSysClkPhaseDrift")) { j.at("covarianceInterSysClkPhaseDrift").get_to(data._gui_covarianceInterSysClkPhaseDrift); }
     if (j.contains("covarianceInterSysClkFrequencyDriftUnit")) { j.at("covarianceInterSysClkFrequencyDriftUnit").get_to(data._gui_covarianceInterSysClkFrequencyDriftUnit); }
     if (j.contains("covarianceInterSysClkFrequencyDrift")) { j.at("covarianceInterSysClkFrequencyDrift").get_to(data._gui_covarianceInterSysClkFrequencyDrift); }
+    if (j.contains("covarianceInterFrequencyBiasUnit")) { j.at("covarianceInterFrequencyBiasUnit").get_to(data._gui_covarianceInterFrequencyBiasUnit); }
+    if (j.contains("covarianceInterFrequencyBias")) { j.at("covarianceInterFrequencyBias").get_to(data._gui_covarianceInterFrequencyBias); }
 }
 
 } // namespace NAV::SPP

@@ -148,7 +148,7 @@ class Plot : public Node, public CommonLog
         void addPlotDataItem(size_t dataIndex, const std::string& displayName);
 
         /// Size of all buffers of the plotData elements
-        int size = 2000;
+        int size = 0;
         /// Data Identifier of the connected pin
         std::string dataIdentifier;
         /// List with all the data

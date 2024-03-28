@@ -11,7 +11,7 @@
         "node-31": {
             "data": {
                 "FileReader": {
-                    "path": "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_E.pos"
+                    "path": "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_E.pos"
                 }
             },
             "enabled": true,
