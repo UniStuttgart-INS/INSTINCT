@@ -43,6 +43,8 @@ struct Receiver
     Eigen::Vector3d e_vel = Eigen::Vector3d::Zero();
     /// Estimated receiver clock parameters
     ReceiverClock recvClk;
+    /// Inter frequency biases
+    std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias = std::unordered_map<Frequency, UncertainValue<double>>{};
     /// Latest GNSS observation
     std::shared_ptr<const GnssObs> gnssObs = nullptr;
 };

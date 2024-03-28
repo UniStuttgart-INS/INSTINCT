@@ -434,11 +434,11 @@ TEST_CASE("[RinexObsLoggerTests][flow] DataProvider/GNSS/RinexObsFile/v3_04/INS_
              });
 }
 
-TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs", "[RinexObsLoggerTests][flow]")
+TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR.obs", "[RinexObsLoggerTests][flow]")
 {
     auto logger = initializeTestLogger();
 
-    testFile("GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs",
+    testFile("GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/Septentrio-PolaRx5TR.obs",
              {
                  "     3.04           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
                  "INSTINCT 1.1.0      qwertyuiopasdfghjklz20240123 140953 UTC PGM / RUN BY / DATE ",
@@ -469,11 +469,11 @@ TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Orolia-Skydel_static_duration-4h_rat
              });
 }
 
-TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx", "[RinexObsLoggerTests][flow]")
+TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx", "[RinexObsLoggerTests][flow]")
 {
     auto logger = initializeTestLogger();
 
-    testFile("GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx",
+    testFile("GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx",
              {
                  "     3.04           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
                  "INSTINCT 1.1.0      qwertyuiopasdfghjklz20240123 140954 UTC PGM / RUN BY / DATE ",
@@ -489,7 +489,7 @@ TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Orolia-Skydel_static_duration-4h_rat
                  "-99999999.9999 99999999.9999        0.0000                  APPROX POSITION XYZ ",
                  "-99999999.9999       -1.2346-99999999.9999                  ANTENNA: DELTA H/E/N",
                  "G   24 C1C L1C D1C S1C C1P L1P D1P S1P C1X L1X D1X S1X C2P  SYS / # / OBS TYPES ",
-                 "       L2P D2P S2P C2X L2X D2X S2X C5X L5X D5X S5X          SYS / # / OBS TYPES ",
+                 "       L2P D2P S2P C2C L2C D2C S2C C5X L5X D5X S5X          SYS / # / OBS TYPES ",
                  "E   12 C1X L1X D1X S1X C5X L5X D5X S5X C7X L7X D7X S7X      SYS / # / OBS TYPES ",
                  "R    4 C1C L1C D1C S1C                                      SYS / # / OBS TYPES ",
                  "C   16 C1X L1X D1X S1X C2X L2X D2X S2X C5X L5X D5X S5X C7X  SYS / # / OBS TYPES ",
@@ -510,11 +510,11 @@ TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Orolia-Skydel_static_duration-4h_rat
              });
 }
 
-TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Septentrio-PolaRx5T.obs", "[RinexObsLoggerTests][flow]")
+TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Septentrio-PolaRx5T.obs", "[RinexObsLoggerTests][flow]")
 {
     auto logger = initializeTestLogger();
 
-    testFile("GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Septentrio-PolaRx5T.obs",
+    testFile("GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Septentrio-PolaRx5T.obs",
              {
                  "     3.04           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
                  "INSTINCT 1.1.0      qwertyuiopasdfghjklz20240123 140954 UTC PGM / RUN BY / DATE ",
@@ -545,11 +545,11 @@ TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_ra
              });
 }
 
-TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs", "[RinexObsLoggerTests][flow]")
+TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs", "[RinexObsLoggerTests][flow]")
 {
     auto logger = initializeTestLogger();
 
-    testFile("GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs",
+    testFile("GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs",
              {
                  "     3.04           OBSERVATION DATA    M: MIXED            RINEX VERSION / TYPE",
                  "INSTINCT 1.1.0      qwertyuiopasdfghjklz20240123 140954 UTC PGM / RUN BY / DATE ",
@@ -572,8 +572,8 @@ TEST_CASE("[RinexObsLoggerTests][flow] GNSS/Spirent-SimGEN_static_duration-4h_ra
                  "       L2P D2P S2P                                          SYS / # / OBS TYPES ",
                  "C   24 C2I L2I D2I S2I C7I L7I D7I S7I C6I L6I D6I S6I C7D  SYS / # / OBS TYPES ",
                  "       L7D D7D S7D C5X L5X D5X S5X C1X L1X D1X S1X          SYS / # / OBS TYPES ",
-                 "J   16 C1C L1C D1C S1C C1X L1X D1X S1X C1Z L1Z D1Z S1Z C2X  SYS / # / OBS TYPES ",
-                 "       L2X D2X S2X                                          SYS / # / OBS TYPES ",
+                 "J   20 C1C L1C D1C S1C C1X L1X D1X S1X C1Z L1Z D1Z S1Z C2X  SYS / # / OBS TYPES ",
+                 "       L2X D2X S2X C5I L5I D5I S5I                          SYS / # / OBS TYPES ",
                  "DBHZ                                                        SIGNAL STRENGTH UNIT",
                  "   300.000                                                  INTERVAL            ",
                  "  2023     1     8    10     0    0.0000000     GPS         TIME OF FIRST OBS   ",

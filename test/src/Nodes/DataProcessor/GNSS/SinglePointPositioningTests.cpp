@@ -47,7 +47,6 @@ namespace nm = NAV::NodeManager;
 #define private public
 #include "Nodes/DataProvider/GNSS/FileReader/RinexObsFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #undef protected
 #undef private
@@ -61,20 +60,22 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     auto logger = initializeTestLogger();
 
     nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/SkydelRINEX_S_20238959_7200S_GN.rnx";
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(80))->_path = "GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/SkydelRINEX_S_20230080000_04H_G.pos";
+        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20230080000_04H_MO.rnx";
+        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_7200S_GN.rnx";
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterFreq = G01;
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterCode = Code::G1C;
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
+        sppNode->_algorithm._obsFilter._filterFreq = G01;
+        sppNode->_algorithm._obsFilter._filterCode = Code::G1C;
+        sppNode->_algorithm._obsFilter._elevationMask = 0;
+
+        sppNode->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
         AtmosphereModels atmosphere{
             .pressureModel = PressureModel::ISA,
             .temperatureModel = TemperatureModel::ISA,
             .waterVaporModel = WaterVaporModel::ISA,
         };
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
+        sppNode->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
             .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
             .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
             .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
@@ -86,13 +87,11 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
-    // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
-    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(94)-->  |> SPP (72)
-    //                              (93)-->  |> GnssNavInfo (89)                         (81)-->  |> RTKLIB (76)
-    // RinexNavFile() (54)         /                                                    /
-    //         (53) PosVelAtt <>  -                                                    /
-    //                                                         RtklibPosFile (80)     /
-    //                                                         (79) RtklibPosObs |>  -
+    // RinexObsFile (65)                          SinglePointPositioning (91)
+    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(97)-->  |> (95) Terminator (96)
+    //                              (93)-->  |> GnssNavInfo (89)
+    // RinexNavFile() (54)         /
+    //         (53) PosVelAtt <>  -
     //
     // ###########################################################################################################
 
@@ -100,7 +99,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     Eigen::Vector3d lla_refRecvPos = trafo::ecef2lla_WGS84(e_refRecvPos);
     LOG_DEBUG("lla_refRecvPos {}, {}, {}", rad2deg(lla_refRecvPos.x()), rad2deg(lla_refRecvPos.y()), lla_refRecvPos.z());
 
-    std::string folder = "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/";
+    std::string folder = "test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/sat_data/";
     std::vector<SkydelReference> sppReference;
     sppReference.emplace_back(SatSigId(Code::G1C, 1), folder + "L1CA 01.csv");
     sppReference.emplace_back(SatSigId(Code::G1C, 3), folder + "L1CA 03.csv");
@@ -118,7 +117,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
     sppReference.emplace_back(SatSigId(Code::G1C, 30), folder + "L1CA 30.csv");
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(72, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolution>(queue.front());
 
         LOG_DEBUG("    e_refRecvPos         {} [m]", e_refRecvPos.transpose());
@@ -194,20 +193,22 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     Code filterCode = Code::G1C;
 
     nm::RegisterPreInitCallback([&]() {
-        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_MO.obs";
-        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/Spirent_RINEX_GN.23N";
-        dynamic_cast<RtklibPosFile*>(nm::FindNode(80))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/RTKLIB/Spirent_RINEX_G.pos";
+        dynamic_cast<RinexObsFile*>(nm::FindNode(65))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/Spirent_RINEX_MO.obs";
+        dynamic_cast<RinexNavFile*>(nm::FindNode(54))->_path = "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N";
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterFreq = filterFreq;
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsFilter._filterCode = filterCode;
+        auto* sppNode = dynamic_cast<SinglePointPositioning*>(nm::FindNode(91));
 
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
+        sppNode->_algorithm._obsFilter._filterFreq = filterFreq;
+        sppNode->_algorithm._obsFilter._filterCode = filterCode;
+        sppNode->_algorithm._obsFilter._elevationMask = 0;
+
+        sppNode->_algorithm._obsEstimator._ionosphereModel = IonosphereModel::None;
         AtmosphereModels atmosphere{
             .pressureModel = PressureModel::ISA,
             .temperatureModel = TemperatureModel::ISA,
             .waterVaporModel = WaterVaporModel::ISA,
         };
-        dynamic_cast<SinglePointPositioning*>(nm::FindNode(91))->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
+        sppNode->_algorithm._obsEstimator._troposphereModels = TroposphereModelSelection{
             .zhdModel = std::make_pair(TroposphereModel::None, atmosphere),
             .zwdModel = std::make_pair(TroposphereModel::None, atmosphere),
             .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
@@ -219,25 +220,23 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     //                                           SinglePointPositioning.flow
     // ###########################################################################################################
     //
-    // RinexObsFile (65)                          SinglePointPositioning (91)                     Plot (77)
-    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(94)-->  |> SPP (72)
-    //                              (93)-->  |> GnssNavInfo (89)                         (81)-->  |> RTKLIB (76)
-    // RinexNavFile() (54)         /                                                    /
-    //         (53) PosVelAtt <>  -                                                    /
-    //                                                         RtklibPosFile (80)     /
-    //                                                         (79) RtklibPosObs |>  -
+    // RinexObsFile (65)                          SinglePointPositioning (91)
+    //         (64) PosVelAtt |>  --(92)-->  |> GnssObs (88)      (90) SppSolution |>  --(97)-->  |> (95) Terminator (96)
+    //                              (93)-->  |> GnssNavInfo (89)
+    // RinexNavFile() (54)         /
+    //         (53) PosVelAtt <>  -
     //
     // ###########################################################################################################
 
     const Eigen::Vector3d lla_refRecvPos = { deg2rad(30.0), deg2rad(95.0), 0.0 };
     const Eigen::Vector3d e_refRecvPos = trafo::lla2ecef_WGS84(lla_refRecvPos);
 
-    SpirentSatDataFile spirentSatelliteData("test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv");
+    SpirentSatDataFile spirentSatelliteData("test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/sat_data_V1A1.csv");
 
-    REQUIRE(spirentSatelliteData.refData.size() == 1917);
+    REQUIRE(spirentSatelliteData.refData.size() == 2114);
 
     size_t messageCounter = 0; // Message Counter
-    nm::RegisterWatcherCallbackToInputPin(72, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(95, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         messageCounter++;
         auto sppSol = std::dynamic_pointer_cast<const NAV::SppSolution>(queue.front());
 

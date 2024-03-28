@@ -1,6 +1,6 @@
 % program   : RTKPOST-QT ver.demo5 b34g
-% inp file  : /test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs
-% inp file  : /test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav
+% inp file  : /test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs
+% inp file  : /test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav
 % obs start : 2023/01/08 18:59:42.0 JST (week2244  36000.0s)
 % obs end   : 2023/01/08 22:59:42.0 JST (week2244  50400.0s)
 % pos mode  : Single

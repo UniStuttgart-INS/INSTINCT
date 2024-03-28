@@ -13,17 +13,18 @@
 
 #pragma once
 
-#include <catch2/catch_test_macros.hpp>
-#include "CatchMatchers.hpp"
 #include "Logger.hpp"
-
-#include "data/SkydelSatData.hpp"
-#include "data/SpirentAsciiSatelliteData.hpp"
 
 #include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "util/StringUtil.hpp"
+
+#include "data/SkydelSatData.hpp"
+#include "data/SpirentAsciiSatelliteData.hpp"
+
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 namespace NAV::TESTS::EphemerisTests
 {
@@ -36,10 +37,10 @@ enum DataSource
 
 struct Margin
 {
+    double clock = 0.0;
     double pos = 0.0;
     double vel = 0.0;
     double accel = 0.0;
-    double clock = 0.0;
 };
 
 template<class Ephemeris>
@@ -342,5 +343,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
     // ± 15 minutes =  7
     REQUIRE(nCalc == (satId.satSys == GLO ? 7 : 25));
 }
+
+void testNavFile(DataSource dataSource, const std::string& navDataPath, const std::vector<std::tuple<SatSigId, std::string, Margin>>& files);
 
 } // namespace NAV::TESTS::EphemerisTests

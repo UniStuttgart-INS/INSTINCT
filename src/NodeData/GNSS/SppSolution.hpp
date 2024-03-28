@@ -324,6 +324,9 @@ class SppSolution : public PosVel
     /// Estimated receiver clock parameter
     ReceiverClock recvClk;
 
+    /// Inter-frequency biases
+    std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias;
+
     /// Satellite specific data
     struct SatData
     {

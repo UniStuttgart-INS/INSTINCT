@@ -1,4 +1,4 @@
-fp = "Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/";
+fp = "Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/";
 
 fin = [fp "sat_data_V1A1.csv"];
 

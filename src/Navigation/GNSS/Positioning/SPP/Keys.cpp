@@ -27,6 +27,10 @@ std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::InterSysDrift
 {
     return os << fmt::format("{}", obj);
 }
+std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::InterFreqBias& obj)
+{
+    return os << fmt::format("{}", obj);
+}
 std::ostream& operator<<(std::ostream& os, const NAV::SPP::Meas::Psr& obj)
 {
     return os << fmt::format("{}", obj);

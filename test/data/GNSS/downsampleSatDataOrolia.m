@@ -1,6 +1,6 @@
 format long
 
-fp = "Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/";
+fp = "Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/sat_data/";
 
 file_id = fopen([fp 'whitelist.txt'], 'w');
 

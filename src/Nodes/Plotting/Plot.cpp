@@ -2281,6 +2281,12 @@ void NAV::Plot::plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pi
 void NAV::Plot::plotSppSolutionDynamicData(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex)
 {
     // Dynamic data
+    for (const auto& bias : obs->interFrequencyBias)
+    {
+        addData(pinIndex, fmt::format("{} Inter-freq bias [s]", bias.first), bias.second.value);
+        addData(pinIndex, fmt::format("{} Inter-freq bias StDev [s]", bias.first), bias.second.stdDev);
+    }
+
     for (const auto& [satId, satData] : obs->satData)
     {
         addData(pinIndex, fmt::format("{} Elevation [deg]", satId), rad2deg(satData.satElevation));

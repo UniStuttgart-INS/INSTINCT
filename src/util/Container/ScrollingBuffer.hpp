@@ -34,7 +34,7 @@ class ScrollingBuffer
 
     /// @brief Reserves space for the buffer but does not fill the buffer with values
     /// @param[in] maxSize The maximum size of the scrolling buffer
-    explicit ScrollingBuffer(size_t maxSize = 2000)
+    explicit ScrollingBuffer(size_t maxSize = 0)
         : _infiniteBuffer(maxSize == 0), _maxSize(maxSize + _Padding), _dataStart(_Padding), _dataEnd(_infiniteBuffer ? 0 : _Padding)
     {
         _data.reserve(maxSize + _Padding);

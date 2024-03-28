@@ -38,89 +38,99 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
     testBrdcEphemerisData({ GAL, 24 }, eph, "test/data/GNSS/BRDC_20230080000/COD0OPSFIN_20230080000_01D_05M_ORB.SP3", margin);
 }
 
-TEST_CASE("[Ephemeris] GAL E1 Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none)", "[Ephemeris][flow]")
 {
-    // E13 - Generated from Orolia Skydel
-    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
-                         1.500000000000e+01, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
-                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
-                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
-                         9.686375123090e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
-                         -5.553802766749e-10, 3.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
-                         3.120000000000e+00, 0.000000000000e+00, -2.095475792885e-09, 0.000000000000e+00,
-                         9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // Margins determined by running the test and adapting (Skydel file has only 16 digits after comma)
+    Margin marginE1{ .clock = 6.4e-14, .pos = 2.7e-5, .vel = 0, .accel = 0 };
+    Margin marginE5a{ .clock = 6.4e-14, .pos = 3.9e-5, .vel = 0, .accel = 0 };
+    Margin marginE5b{ .clock = 6.4e-14, .pos = 2.7e-5, .vel = 0, .accel = 0 };
 
-    Margin margin;          // Determined by running the test and adapting
-    margin.clock = 2.3e-14; // Orolia file has only 16 digits after comma
-    margin.pos = 9.0e-6;
+    std::string folder = "test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/sat_data/";
+    std::vector<std::tuple<SatSigId, std::string, Margin>> files = {
+        { SatSigId(Code::E1X, 1), folder + "E1 01.csv", marginE1 },
+        { SatSigId(Code::E1X, 4), folder + "E1 04.csv", marginE1 },
+        { SatSigId(Code::E1X, 5), folder + "E1 05.csv", marginE1 },
+        { SatSigId(Code::E1X, 9), folder + "E1 09.csv", marginE1 },
+        { SatSigId(Code::E1X, 10), folder + "E1 10.csv", marginE1 },
+        { SatSigId(Code::E1X, 11), folder + "E1 11.csv", marginE1 },
+        { SatSigId(Code::E1X, 12), folder + "E1 12.csv", marginE1 },
+        { SatSigId(Code::E1X, 14), folder + "E1 14.csv", marginE1 },
+        { SatSigId(Code::E1X, 24), folder + "E1 24.csv", marginE1 },
+        { SatSigId(Code::E1X, 25), folder + "E1 25.csv", marginE1 },
+        { SatSigId(Code::E1X, 26), folder + "E1 26.csv", marginE1 },
+        { SatSigId(Code::E1X, 31), folder + "E1 31.csv", marginE1 },
+        { SatSigId(Code::E1X, 33), folder + "E1 33.csv", marginE1 },
+        { SatSigId(Code::E5X, 1), folder + "E5a 01.csv", marginE5a },
+        { SatSigId(Code::E5X, 4), folder + "E5a 04.csv", marginE5a },
+        { SatSigId(Code::E5X, 5), folder + "E5a 05.csv", marginE5a },
+        { SatSigId(Code::E5X, 9), folder + "E5a 09.csv", marginE5a },
+        { SatSigId(Code::E5X, 10), folder + "E5a 10.csv", marginE5a },
+        { SatSigId(Code::E5X, 11), folder + "E5a 11.csv", marginE5a },
+        { SatSigId(Code::E5X, 12), folder + "E5a 12.csv", marginE5a },
+        { SatSigId(Code::E5X, 14), folder + "E5a 14.csv", marginE5a },
+        { SatSigId(Code::E5X, 24), folder + "E5a 24.csv", marginE5a },
+        { SatSigId(Code::E5X, 25), folder + "E5a 25.csv", marginE5a },
+        { SatSigId(Code::E5X, 26), folder + "E5a 26.csv", marginE5a },
+        { SatSigId(Code::E5X, 31), folder + "E5a 31.csv", marginE5a },
+        { SatSigId(Code::E5X, 33), folder + "E5a 33.csv", marginE5a },
+        { SatSigId(Code::E7X, 1), folder + "E5b 01.csv", marginE5b },
+        { SatSigId(Code::E7X, 4), folder + "E5b 04.csv", marginE5b },
+        { SatSigId(Code::E7X, 5), folder + "E5b 05.csv", marginE5b },
+        { SatSigId(Code::E7X, 9), folder + "E5b 09.csv", marginE5b },
+        { SatSigId(Code::E7X, 10), folder + "E5b 10.csv", marginE5b },
+        { SatSigId(Code::E7X, 11), folder + "E5b 11.csv", marginE5b },
+        { SatSigId(Code::E7X, 12), folder + "E5b 12.csv", marginE5b },
+        { SatSigId(Code::E7X, 14), folder + "E5b 14.csv", marginE5b },
+        { SatSigId(Code::E7X, 24), folder + "E5b 24.csv", marginE5b },
+        { SatSigId(Code::E7X, 25), folder + "E5b 25.csv", marginE5b },
+        { SatSigId(Code::E7X, 26), folder + "E5b 26.csv", marginE5b },
+        { SatSigId(Code::E7X, 31), folder + "E5b 31.csv", marginE5b },
+        { SatSigId(Code::E7X, 33), folder + "E5b 33.csv", marginE5b },
+    };
 
-    testEphemerisData({ GAL, 24 }, eph,
-                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E1 24.csv",
-                      E01, Skydel, margin);
+    testNavFile(Skydel, "GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/SkydelRINEX_S_20238959_600S_EN.rnx", files);
 }
 
-TEST_CASE("[Ephemeris] GAL E5a Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
+TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none)", "[Ephemeris][flow]")
 {
-    // E13 - Generated from Orolia Skydel
-    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
-                         1.500000000000e+01, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
-                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
-                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
-                         9.686375123090e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
-                         -5.553802766749e-10, 3.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
-                         3.120000000000e+00, 0.000000000000e+00, -2.095475792885e-09, 0.000000000000e+00,
-                         9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // Margins determined by running the test and adapting
+    Margin marginE1{ .clock = 0, .pos = 8.6e-5, .vel = 8.4e-4, .accel = 8.1e-1 };
+    Margin marginE5{ .clock = 0, .pos = 8.5e-5, .vel = 8.4e-4, .accel = 8.1e-1 };
 
-    Margin margin;          // Determined by running the test and adapting
-    margin.clock = 2.3e-14; // Orolia file has only 16 digits after comma
-    margin.pos = 6.0e-6;
+    std::string path = "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/sat_data_V1A1.csv";
+    std::vector<std::tuple<SatSigId, std::string, Margin>> files = {
+        { SatSigId(Code::E1X, 1), path, marginE1 },
+        { SatSigId(Code::E1X, 4), path, marginE1 },
+        { SatSigId(Code::E1X, 5), path, marginE1 },
+        { SatSigId(Code::E1X, 9), path, marginE1 },
+        { SatSigId(Code::E1X, 10), path, marginE1 },
+        { SatSigId(Code::E1X, 11), path, marginE1 },
+        { SatSigId(Code::E1X, 12), path, marginE1 },
+        { SatSigId(Code::E1X, 14), path, marginE1 },
+        { SatSigId(Code::E1X, 24), path, marginE1 },
+        { SatSigId(Code::E1X, 25), path, marginE1 },
+        { SatSigId(Code::E1X, 26), path, marginE1 },
+        { SatSigId(Code::E1X, 31), path, marginE1 },
+        { SatSigId(Code::E1X, 33), path, marginE1 },
+        { SatSigId(Code::E1X, 36), path, marginE1 },
+        { SatSigId(Code::E5X, 1), path, marginE5 },
+        { SatSigId(Code::E5X, 4), path, marginE5 },
+        { SatSigId(Code::E5X, 5), path, marginE5 },
+        { SatSigId(Code::E5X, 9), path, marginE5 },
+        { SatSigId(Code::E5X, 10), path, marginE5 },
+        { SatSigId(Code::E5X, 11), path, marginE5 },
+        { SatSigId(Code::E5X, 12), path, marginE5 },
+        { SatSigId(Code::E5X, 14), path, marginE5 },
+        { SatSigId(Code::E5X, 24), path, marginE5 },
+        { SatSigId(Code::E5X, 25), path, marginE5 },
+        { SatSigId(Code::E5X, 26), path, marginE5 },
+        { SatSigId(Code::E5X, 31), path, marginE5 },
+        { SatSigId(Code::E5X, 33), path, marginE5 },
+        { SatSigId(Code::E5X, 36), path, marginE5 },
+        // E6 values for pseudorange are empty in the 'sat_data_V1A1.csv' file
+    };
 
-    testEphemerisData({ GAL, 24 }, eph,
-                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E5a 24.csv",
-                      E05, Skydel, margin);
-}
-
-TEST_CASE("[Ephemeris] GAL E5b Ephemeris calc orbit (Orolia Skydel data)", "[Ephemeris]")
-{
-    // E13 - Generated from Orolia Skydel
-    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.047604542918e-03, -2.098943241435e-11, 0.000000000000e+00,
-                         1.500000000000e+01, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
-                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
-                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
-                         9.686375123090e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
-                         -5.553802766749e-10, 3.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
-                         3.120000000000e+00, 0.000000000000e+00, -2.095475792885e-09, 0.000000000000e+00,
-                         9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
-
-    Margin margin;          // Determined by running the test and adapting
-    margin.clock = 2.3e-14; // Orolia file has only 16 digits after comma
-    margin.pos = 9.0e-6;
-
-    testEphemerisData({ GAL, 24 }, eph,
-                      "test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/sat_data/E5b 24.csv",
-                      E07, Skydel, margin);
-}
-
-TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
-{
-    // E24 - Exported from the Spirent SimGEN GUI
-    GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.046534081865e-03, -2.098943241435e-11, 0.000000000000e+00,
-                         2.000000000000e+00, -1.715625000000e+01, 3.218348342841e-09, 8.358664211813e-01,
-                         -8.828938007355e-07, 7.335821865126e-04, 7.871538400650e-06, 5.440620594025e+03,
-                         4.320000000000e+04, -1.862645149231e-09, 2.602301116676e+00, -9.313225746155e-09,
-                         9.686658367031e-01, 1.779687500000e+02, 6.866562298739e-01, -5.443083869148e-09,
-                         -5.553802766749e-10, 2.630000000000e+02, 2.244000000000e+03, 0.000000000000e+00,
-                         2.500000000000e+01, 0.000000000000e+00, -2.095475792885e-09, -2.363722364516e-09,
-                         4.320000000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
-
-    Margin margin; // Determined by running the test and adapting
-    margin.pos = 5.8e-5;
-    margin.vel = 6.8e-4;
-    margin.accel = 6.4e-1;
-
-    testEphemerisData({ GAL, 24 }, eph,
-                      "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ_iono-none_tropo-none/sat_data_V1A1.csv",
-                      E01, Spirent, margin);
+    testNavFile(Spirent, "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_EN.23L", files);
 }
 
 } // namespace NAV::TESTS::EphemerisTests
