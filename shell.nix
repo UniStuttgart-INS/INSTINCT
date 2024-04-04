@@ -1,7 +1,7 @@
 # Use VSCode Extension: mkhl.direnv
 
 { callPackage, fetchFromGitHub, lib, stdenv,
-  cmake, conan, gdb, lldb, gcovr, mold, clang-tools_16, llvmPackages_16, gcc12, gcc12Stdenv,
+  cmake, conan, gdb, lldb, gcovr, mold, clang-tools_17, llvmPackages_17, gcc13, gcc13Stdenv, libcxx,
   doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools,
   xorg, glfw, gl3w, libGLU, libunwind, libGL
 }:
@@ -18,19 +18,10 @@ mainPkg.overrideAttrs (oa: {
       lldb
       gcovr
       mold
-      clang-tools_16 # clang-format, clang-tidy
-      gcc12
-      gcc12Stdenv
-      (doxygen.overrideAttrs (oldAttrs: rec {
-          version = "1.9.8";
-          src = fetchFromGitHub {
-            owner = "doxygen";
-            repo = "doxygen";
-            rev = "Release_${lib.replaceStrings [ "." ] [ "_" ] version}";
-            sha256 = "sha256-uQ1Fl2kmY7qmzy34NOmZCgPxVGwmqRqDvV6yEab5P4w=";
-          };
-        })
-      )
+      clang-tools_17 # clang-format, clang-tidy
+      gcc13
+      gcc13Stdenv
+      doxygen
       texlive.combined.scheme-full
       graphviz
       ghostscript
@@ -49,5 +40,5 @@ mainPkg.overrideAttrs (oa: {
       libunwind
       gperftools
     ] ++ (oa.buildInputs or [ ]);
-    LD_LIBRARY_PATH = "${libGL}/lib:${glfw}/lib:${libGLU}/lib:${stdenv.cc.cc.lib}/lib:${llvmPackages_16.libcxxabi}/lib:${llvmPackages_16.libcxx}/lib:${gperftools}/lib";
+    LD_LIBRARY_PATH = "${libGL}/lib:${glfw}/lib:${libGLU}/lib:${stdenv.cc.cc.lib}/lib:${libcxx}/lib:${gperftools}/lib";
 })

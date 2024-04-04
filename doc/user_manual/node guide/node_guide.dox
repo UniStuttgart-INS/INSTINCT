@@ -14,6 +14,9 @@
 
 \namespace Instinct {
 /** \page node_guide_introduction Nodes Introduction
+
+\tableofcontents
+
 <img src="rinexNavFileNode.png" align="right">
 \section node_guide_introduction_preface Preface
 Nodes are the major part of \ref introduction_fbp_instinct. These C++ objects perform different tasks, including reading/logging data and processing them.

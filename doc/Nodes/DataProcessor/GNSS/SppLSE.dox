@@ -16,6 +16,8 @@ namespace Instinct {
 
 /** \defgroup SppLSE Single Point Positioning using (Weighed) Least Squares Estimation
 
+\tableofcontents
+
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section SppLSE-LseAlgorithm Algorithm - Linearized (Weighed) Least Squares Estimation
 <!-- --------------------------------------------------------------------------------------------------------------- -->

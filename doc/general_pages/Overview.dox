@@ -16,6 +16,8 @@ namespace Instinct {
 
 /** \mainpage notitle
 
+\tableofcontents
+
 \image html INSTINCT_Logo_Text.png
 
 \image html flowDots.png

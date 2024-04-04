@@ -1,8 +1,8 @@
 { lib
-, llvmPackages_16
+, llvmPackages_17
 , cmake }:
 
-llvmPackages_16.stdenv.mkDerivation rec {
+llvmPackages_17.stdenv.mkDerivation rec {
   pname = "INSTINCT";
   version = "0.1.0";
 

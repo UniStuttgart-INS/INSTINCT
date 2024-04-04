@@ -14,8 +14,11 @@
 
 \namespace Instinct {
 /** \page work_space Workspace
+
+\tableofcontents
+
 The Workspace is the area where the Flows can be build (see \ref working_with_instinct).
-Its appearance can be changed via the \ref bar_edit in the \ref main_menu_bar. Nodes (\ref node_guide_introduction) will automatically snap to the grid. 
+Its appearance can be changed via the \ref bar_edit in the \ref main_menu_bar. Nodes (\ref node_guide_introduction) will automatically snap to the grid.
 
 the Workspace can be manuevered via the mouse:
 - **Zoom in/out** with mousewheel up/down.

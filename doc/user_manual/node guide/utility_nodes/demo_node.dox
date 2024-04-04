@@ -14,6 +14,9 @@
 
 \namespace Instinct {
 /** \page demo_node Demo Node
+
+\tableofcontents
+
 <img src="demoNode.png" align="right">
 \section demo_node_introduction Introduction
 The *Demo* Node provides a demo window that shows all currently available Pins. They vary in their *data type* and can be either an *input-Pin* or an *output-Pin*.

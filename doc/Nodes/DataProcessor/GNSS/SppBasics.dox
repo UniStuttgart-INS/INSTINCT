@@ -16,6 +16,8 @@ namespace Instinct {
 
 /** \defgroup SppBasics Single Point Positioning Basics
 
+\tableofcontents
+
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section SppBasics-estimators Estimators
 <!-- --------------------------------------------------------------------------------------------------------------- -->

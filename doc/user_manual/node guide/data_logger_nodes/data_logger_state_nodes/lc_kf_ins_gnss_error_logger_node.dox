@@ -14,6 +14,9 @@
 
 \namespace Instinct {
 /** \page lc_kf_ins_gnss_error_logger_node LcKfInsGnssErrorLogger Node
+
+\tableofcontents
+
 //TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
 Node currently undergoing changes.
 ________
