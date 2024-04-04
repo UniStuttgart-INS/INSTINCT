@@ -16,6 +16,9 @@
 namespace Instinct {
 
 /** \page nmea_file_node NmeaFile Node
+
+\tableofcontents
+
 <img src="nmeaFileNode.png" align="right">
 \section nmea_file_node_introduction Introduction
 The *NmeaFile* Node reads NMEA-files into INSTINCT.

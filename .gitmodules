@@ -22,3 +22,6 @@
 [submodule "lib/implot"]
 	path = lib/implot
 	url = https://github.com/niavok/implot.git
+[submodule "doc/doxygen-awesome-css"]
+	path = doc/doxygen-awesome-css
+	url = https://github.com/jothepro/doxygen-awesome-css.git

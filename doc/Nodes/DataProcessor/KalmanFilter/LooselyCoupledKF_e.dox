@@ -16,6 +16,8 @@ namespace Instinct {
 
 /** \defgroup LooselyCoupledKF_e INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)
 
+\tableofcontents
+
 \section LooselyCoupledKF_e-ErrorStateEquations Earth Frame Error State Equations
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->

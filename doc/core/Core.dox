@@ -16,6 +16,9 @@
 namespace Instinct {
 
 /** \page Core Core
+
+\tableofcontents
+
   The core category provides documentation for the internal processes of INSTINCT.
   - \subpage Core_Node
 */

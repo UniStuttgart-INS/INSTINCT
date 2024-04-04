@@ -15,6 +15,8 @@
 \namespace Instinct {
 /** \page bar_edit_colormap_editor Colormap Editor
 
+\tableofcontents
+
 //TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
 
 Back to \ref bar_edit

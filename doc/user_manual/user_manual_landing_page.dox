@@ -14,6 +14,9 @@
 
 \namespace Instinct {
 /** \page user_manual_landing_page User Manual
+
+\tableofcontents
+
 - \subpage getting_started : Learn the basic use of INSTINCT (recommended)
 - \subpage gui_landing_page : Learn about the GUI
 - \subpage node_connections : Additional info and tips for connecting Nodes
