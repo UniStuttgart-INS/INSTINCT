@@ -1883,7 +1883,7 @@ void NAV::Plot::pinDeleteCallback(Node* node, size_t pinIdx)
 
     for (auto& plot : plotNode->_plots)
     {
-        if (plot.selectedPin >= pinIdx)
+        if (plot.selectedPin >= pinIdx && plot.selectedPin > 0)
         {
             plot.selectedPin -= 1;
         }
