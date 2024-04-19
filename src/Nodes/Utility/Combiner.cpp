@@ -18,6 +18,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/HelpMarker.hpp"
+
 #include "NodeData/General/DynamicData.hpp"
 
 namespace NAV
@@ -31,7 +33,7 @@ void to_json(json& j, const Combiner::Combination::Term& data)
     j = json{
         { "factor", data.factor },
         { "pinIndex", data.pinIndex },
-        { "dataIndex", data.dataIndex },
+        { "dataSelection", data.dataSelection },
     };
 }
 /// @brief Read info from a json object
@@ -41,7 +43,7 @@ void from_json(const json& j, Combiner::Combination::Term& data)
 {
     if (j.contains("factor")) { j.at("factor").get_to(data.factor); }
     if (j.contains("pinIndex")) { j.at("pinIndex").get_to(data.pinIndex); }
-    if (j.contains("dataIndex")) { j.at("dataIndex").get_to(data.dataIndex); }
+    if (j.contains("dataSelection")) { j.at("dataSelection").get_to(data.dataSelection); }
 }
 
 /// @brief Write info to a json object
@@ -100,10 +102,12 @@ void Combiner::guiConfig()
     if (ImGui::CollapsingHeader(fmt::format("Pins##{}", size_t(id)).c_str()))
     {
         std::vector<size_t> pinIds;
+        pinIds.reserve(inputPins.size());
         for (const auto& pin : inputPins) { pinIds.push_back(size_t(pin.id)); }
         if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this))
         {
             std::vector<size_t> inputPinIds;
+            inputPinIds.reserve(inputPins.size());
             for (const auto& pin : inputPins) { inputPinIds.push_back(size_t(pin.id)); }
             LOG_DATA("{}: old Input pin ids {}", nameId(), fmt::join(pinIds, ", "));
             LOG_DATA("{}: new Input pin ids {}", nameId(), fmt::join(inputPinIds, ", "));
@@ -182,7 +186,7 @@ void Combiner::guiConfig()
                             if (ImGui::Selectable(inputPins.at(i).name.c_str(), is_selected))
                             {
                                 term.pinIndex = i;
-                                term.dataIndex = 0;
+                                term.dataSelection = size_t(0);
                                 flow::ApplyChanges();
                             }
                             if (is_selected) { ImGui::SetItemDefaultFocus(); }
@@ -217,34 +221,69 @@ void Combiner::guiConfig()
 
                     ImGui::TableSetColumnIndex(static_cast<int>(t) * COL_PER_TERM);
                     auto dataDescriptors = getDataDescriptors(term.pinIndex);
-                    if (term.dataIndex < dataDescriptors.size())
+                    if ((std::holds_alternative<size_t>(term.dataSelection) && std::get<size_t>(term.dataSelection) < dataDescriptors.size())
+                        || std::holds_alternative<std::string>(term.dataSelection))
                     {
-                        ImGui::SetNextItemWidth(COL_SIGN_WIDTH + COL_PIN_WIDTH + ImGui::CalcTextSize("*").x + 2.0F * ImGui::GetStyle().ItemSpacing.x);
-                        if (ImGui::BeginCombo(fmt::format("##dataIndex id{} c{} t{}", size_t(id), c, t).c_str(), dataDescriptors.at(term.dataIndex).c_str()))
+                        std::string previewText = std::holds_alternative<size_t>(term.dataSelection)
+                                                      ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
+                                                      : std::get<std::string>(term.dataSelection);
+                        float comboWidth = COL_SIGN_WIDTH + COL_PIN_WIDTH + ImGui::CalcTextSize("*").x + 2.0F * ImGui::GetStyle().ItemSpacing.x;
+                        ImGui::SetNextItemWidth(comboWidth);
+                        if (ImGui::BeginCombo(fmt::format("##dataIndex id{} c{} t{}", size_t(id), c, t).c_str(), previewText.c_str()))
                         {
                             for (size_t i = 0; i < dataDescriptors.size(); i++)
                             {
-                                const bool is_selected = term.dataIndex == i;
+                                const bool is_selected = std::holds_alternative<size_t>(term.dataSelection)
+                                                             ? std::get<size_t>(term.dataSelection) == i
+                                                             : dataDescriptors.at(i) == previewText;
                                 if (ImGui::Selectable(dataDescriptors.at(i).c_str(), is_selected))
                                 {
-                                    term.dataIndex = i;
+                                    if (dataDescriptors.size() - i <= _pinData.at(term.pinIndex).dynDataDescriptors.size())
+                                    {
+                                        term.dataSelection = dataDescriptors.at(i);
+                                    }
+                                    else
+                                    {
+                                        term.dataSelection = i;
+                                    }
                                     for (size_t t2 = 0; t2 < comb.terms.size(); t2++) // Set other terms to same data if possible
                                     {
                                         if (t2 == t) { continue; }
                                         auto& term2 = comb.terms.at(t2);
                                         auto dataDescriptors2 = getDataDescriptors(term2.pinIndex);
-                                        auto iter = std::find(dataDescriptors2.begin(), dataDescriptors2.end(), dataDescriptors.at(term.dataIndex));
+                                        auto iter = std::find(dataDescriptors2.begin(), dataDescriptors2.end(),
+                                                              std::holds_alternative<size_t>(term.dataSelection)
+                                                                  ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
+                                                                  : std::get<std::string>(term.dataSelection));
                                         if (iter != dataDescriptors2.end())
                                         {
-                                            term2.dataIndex = static_cast<size_t>(std::distance(dataDescriptors2.begin(), iter));
+                                            if (std::holds_alternative<size_t>(term.dataSelection))
+                                            {
+                                                term2.dataSelection = static_cast<size_t>(std::distance(dataDescriptors2.begin(), iter));
+                                            }
+                                            else
+                                            {
+                                                term2.dataSelection = term.dataSelection;
+                                            }
                                         }
                                     }
+
                                     flow::ApplyChanges();
                                 }
                                 if (is_selected) { ImGui::SetItemDefaultFocus(); }
                             }
                             ImGui::EndCombo();
                         }
+                        if (ImGui::IsItemHovered() && ImGui::CalcTextSize(previewText.c_str()).x > comboWidth - 15.0F)
+                        {
+                            ImGui::SetTooltip("%s", previewText.c_str());
+                        }
+                    }
+                    else if (inputPins.at(term.pinIndex).isPinLinked())
+                    {
+                        ImGui::TextUnformatted("Please run the flow");
+                        ImGui::SameLine();
+                        gui::widgets::HelpMarker("Available data is collected when running the flow");
                     }
 
                     if (comb.terms.size() > 1)
@@ -302,13 +341,16 @@ void Combiner::restore(json const& j)
 
 void Combiner::pinAddCallback(Node* node)
 {
+    auto* combiner = static_cast<Combiner*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+    combiner->_pinData.emplace_back();
     nm::CreateInputPin(node, fmt::format("Pin {}", node->inputPins.size() + 1).c_str(), Pin::Type::Flow, _dataIdentifier, &Combiner::receiveData);
 }
 
 void Combiner::pinDeleteCallback(Node* node, size_t pinIdx)
 {
-    nm::DeleteInputPin(node->inputPins.at(pinIdx));
     auto* combiner = static_cast<Combiner*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+    combiner->_pinData.erase(std::next(combiner->_pinData.begin(), static_cast<int64_t>(pinIdx)));
+    nm::DeleteInputPin(node->inputPins.at(pinIdx));
 
     for (auto& comb : combiner->_combinations)
     {
@@ -342,6 +384,11 @@ bool Combiner::initialize()
         }
     }
 
+    for (auto& pinData : _pinData)
+    {
+        pinData.dynDataDescriptors.clear();
+    }
+
     _sendRequests.clear();
 
     return true;
@@ -357,18 +404,23 @@ std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
     std::vector<std::string> dataDescriptors;
     if (auto* sourcePin = inputPins.at(pinIndex).link.getConnectedPin())
     {
-        if (sourcePin->dataIdentifier.front() == Pos::type()) { dataDescriptors = Pos::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == PosVel::type()) { dataDescriptors = PosVel::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()) { dataDescriptors = PosVelAtt::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type()) { dataDescriptors = LcKfInsGnssErrors::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type()) { dataDescriptors = TcKfInsGnssErrors::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == SppSolution::type()) { dataDescriptors = SppSolution::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type()) { dataDescriptors = RtklibPosObs::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObs::type()) { dataDescriptors = ImuObs::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type()) { dataDescriptors = ImuObsSimulated::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == KvhObs::type()) { dataDescriptors = KvhObs::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type()) { dataDescriptors = ImuObsWDelta::GetDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type()) { dataDescriptors = VectorNavBinaryOutput::GetDataDescriptors(); }
+        if (sourcePin->dataIdentifier.front() == Pos::type()) { dataDescriptors = Pos::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == PosVel::type()) { dataDescriptors = PosVel::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()) { dataDescriptors = PosVelAtt::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type()) { dataDescriptors = LcKfInsGnssErrors::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type()) { dataDescriptors = TcKfInsGnssErrors::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == SppSolution::type()) { dataDescriptors = SppSolution::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type()) { dataDescriptors = RtklibPosObs::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == ImuObs::type()) { dataDescriptors = ImuObs::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type()) { dataDescriptors = ImuObsSimulated::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == KvhObs::type()) { dataDescriptors = KvhObs::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type()) { dataDescriptors = ImuObsWDelta::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type()) { dataDescriptors = VectorNavBinaryOutput::GetStaticDataDescriptors(); }
+    }
+    if (!_pinData.at(pinIndex).dynDataDescriptors.empty())
+    {
+        dataDescriptors.reserve(dataDescriptors.size() + _pinData.at(pinIndex).dynDataDescriptors.size());
+        std::copy(_pinData.at(pinIndex).dynDataDescriptors.begin(), _pinData.at(pinIndex).dynDataDescriptors.end(), std::back_inserter(dataDescriptors));
     }
     return dataDescriptors;
 }
@@ -387,8 +439,19 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     LOG_DATA("{}: [{:.3f}s][{} ({})] Received obs for time [{} GPST] ", nameId(),
              nodeDataTimeIntoRun, inputPins.at(pinIdx).name, pinIdx, nodeData->insTime.toYMDHMS(GPST));
 
-    // auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin();
-    // if (sourcePin == nullptr) { return; }
+    // Add dynamic data descriptors to display in GUI
+    auto& dataDescriptors = _pinData.at(pinIdx).dynDataDescriptors;
+    const std::vector<std::string> nodeDataDescriptors = nodeData->dynamicDataDescriptors();
+    for (const auto& desc : nodeDataDescriptors)
+    {
+        if (std::find(dataDescriptors.begin(), dataDescriptors.end(), desc) == dataDescriptors.end())
+        {
+            dataDescriptors.push_back(desc);
+        }
+    }
+
+    auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin();
+    if (sourcePin == nullptr) { return; }
 
     for (size_t c = 0; c < _combinations.size(); ++c)
     {
@@ -398,117 +461,125 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             auto& term = comb.terms.at(t);
             if (term.pinIndex != pinIdx) { continue; }
-            if (auto value = nodeData->getValueAt(term.dataIndex))
+            if (std::holds_alternative<size_t>(term.dataSelection) && nodeData->staticDescriptorCount() <= std::get<size_t>(term.dataSelection)
+                && std::get<size_t>(term.dataSelection) < dataDescriptors.size())
             {
-                LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
-                term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
-                term.events.push_back(nodeData->events());
-                if (!nodeData->events().empty())
-                {
-                    LOG_DATA("{}:       NodeData has {} events", nameId(), nodeData->events().size());
-                }
+                term.dataSelection = dataDescriptors.at(std::get<size_t>(term.dataSelection));
+                flow::ApplyChanges();
+            }
 
-                // Check for all combinations with new info:
+            auto value = std::holds_alternative<size_t>(term.dataSelection) ? nodeData->getValueAt(std::get<size_t>(term.dataSelection))
+                                                                            : nodeData->getDynamicDataAt(std::get<std::string>(term.dataSelection));
+            if (!value) { continue; }
 
-                if (std::any_of(comb.terms.begin(), comb.terms.end(), [&](const auto& t) {
-                        bool termHasNoData = t.polyReg.empty();
-                        if (termHasNoData)
-                        {
-                            LOG_DATA("{}:       Skipping, because no data on other term '{}' yet", nameId(), t.description(this, getDataDescriptors(t.pinIndex)));
-                        }
-                        return termHasNoData;
-                    }))
-                {
-                    continue;
-                }
+            LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
+            term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
+            term.events.push_back(nodeData->events());
+            if (!nodeData->events().empty())
+            {
+                LOG_DATA("{}:       NodeData has {} events", nameId(), nodeData->events().size());
+            }
 
-                bool termInAnySendRequestFound = false;
-                if (!_sendRequests.empty()) { LOG_DATA("{}:       Checking if term is in a send request", nameId()); }
-                for (auto& [sendRequestTime, sendRequests] : _sendRequests)
-                {
-                    for (auto& sendRequest : sendRequests)
+            // Check for all combinations with new info:
+
+            if (std::any_of(comb.terms.begin(), comb.terms.end(), [&](const auto& t) {
+                    bool termHasNoData = t.polyReg.empty();
+                    if (termHasNoData)
                     {
-                        if (sendRequest.combIndex != c) { continue; }
-                        const auto& srComb = _combinations.at(sendRequest.combIndex);
-
-                        auto poly = term.polyReg.calcPolynomial();
-
-                        for (const auto& srTerm : srComb.terms)
-                        {
-                            if (srTerm.pinIndex != term.pinIndex || srTerm.dataIndex != term.dataIndex) { continue; }
-                            LOG_DATA("{}:         [{:.3f}s] Term found in combination and term is {}", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8),
-                                     sendRequest.termIndices.contains(t) ? "already calculated." : "still missing");
-                            // We found this term within the send requests
-                            termInAnySendRequestFound = true;
-
-                            if (!sendRequest.termIndices.contains(t)) // The send request was waiting for this term
-                            {
-                                LOG_DATA("{}:           Updating send request: {} {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
-                                         sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
-                                         math::round(calcTimeIntoRun(sendRequestTime), 8));
-                                sendRequest.termIndices.insert(t);
-                                sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
-                                while (!term.events.empty())
-                                {
-                                    if (!term.events.front().empty())
-                                    {
-                                        LOG_DATA("{}:           Adding {} events", nameId(), term.events.front().size());
-                                        std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sendRequest.events));
-                                    }
-                                    term.events.pop_front();
-                                }
-                            }
-                        }
+                        LOG_DATA("{}:       Skipping, because no data on other term '{}' yet", nameId(), t.description(this, getDataDescriptors(t.pinIndex)));
                     }
-                }
-                if (termInAnySendRequestFound) { continue; }
+                    return termHasNoData;
+                }))
+            {
+                continue;
+            }
 
-                LOG_DATA("{}:       Checking if term should be sent. Other terms must be between or at right border of times.", nameId());
-                if (std::all_of(comb.terms.begin(), comb.terms.end(), [&](const Combination::Term& t) {
-                        LOG_DATA("{}:          [{:.3f}s {:.3f}s] and [{:.3f}s] on '{}'", nameId(),
-                                 term.polyReg.data().front().first, term.polyReg.data().back().first,
-                                 t.polyReg.data().back().first, t.description(this, getDataDescriptors(t.pinIndex)));
-
-                        return (!term.polyReg.windowSizeReached() && t.polyReg.data().back().first == term.polyReg.data().back().first)
-                               || (term.polyReg.data().front().first < t.polyReg.data().back().first
-                                   && t.polyReg.data().back().first <= term.polyReg.data().back().first);
-                    }))
+            bool termInAnySendRequestFound = false;
+            if (!_sendRequests.empty()) { LOG_DATA("{}:       Checking if term is in a send request", nameId()); }
+            for (auto& [sendRequestTime, sendRequests] : _sendRequests)
+            {
+                for (auto& sendRequest : sendRequests)
                 {
-                    LOG_DATA("{}:       Adding new send request", nameId());
-                    SendRequest sr{
-                        .combIndex = c,
-                        .termIndices = {},
-                        .result = 0.0,
-                        .events = {},
-                    };
-                    for (size_t t = 0; t < comb.terms.size(); t++)
+                    if (sendRequest.combIndex != c) { continue; }
+                    const auto& srComb = _combinations.at(sendRequest.combIndex);
+
+                    auto poly = term.polyReg.calcPolynomial();
+
+                    for (const auto& srTerm : srComb.terms)
                     {
-                        auto& term = comb.terms.at(t);
-                        auto [timeIntoRun, val] = term.polyReg.data().back();
-                        if (timeIntoRun == nodeDataTimeIntoRun)
+                        if (srTerm.pinIndex != term.pinIndex || srTerm.dataSelection != term.dataSelection) { continue; }
+                        LOG_DATA("{}:         [{:.3f}s] Term found in combination and term is {}", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8),
+                                 sendRequest.termIndices.contains(t) ? "already calculated." : "still missing");
+                        // We found this term within the send requests
+                        termInAnySendRequestFound = true;
+
+                        if (!sendRequest.termIndices.contains(t)) // The send request was waiting for this term
                         {
-                            auto poly = term.polyReg.calcPolynomial();
-                            LOG_DATA("{}:         {}: {:.2f} * {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)),
-                                     term.factor, poly.f(nodeDataTimeIntoRun));
-                            sr.termIndices.insert(t);
-                            sr.result += term.factor * poly.f(nodeDataTimeIntoRun);
+                            LOG_DATA("{}:           Updating send request: {} {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
+                                     sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
+                                     math::round(calcTimeIntoRun(sendRequestTime), 8));
+                            sendRequest.termIndices.insert(t);
+                            sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
                             while (!term.events.empty())
                             {
                                 if (!term.events.front().empty())
                                 {
-                                    LOG_DATA("{}:         {}: Adding {} events", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), term.events.front().size());
-                                    std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sr.events));
+                                    LOG_DATA("{}:           Adding {} events", nameId(), term.events.front().size());
+                                    std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sendRequest.events));
                                 }
                                 term.events.pop_front();
                             }
                         }
                     }
-                    _sendRequests[nodeData->insTime].push_back(sr);
                 }
-                else
+            }
+            if (termInAnySendRequestFound) { continue; }
+
+            LOG_DATA("{}:       Checking if term should be sent. Other terms must be between or at right border of times.", nameId());
+            if (std::all_of(comb.terms.begin(), comb.terms.end(), [&](const Combination::Term& t) {
+                    LOG_DATA("{}:          [{:.3f}s {:.3f}s] and [{:.3f}s] on '{}'", nameId(),
+                             term.polyReg.data().front().first, term.polyReg.data().back().first,
+                             t.polyReg.data().back().first, t.description(this, getDataDescriptors(t.pinIndex)));
+
+                    return (!term.polyReg.windowSizeReached() && t.polyReg.data().back().first == term.polyReg.data().back().first)
+                           || (term.polyReg.data().front().first < t.polyReg.data().back().first
+                               && t.polyReg.data().back().first <= term.polyReg.data().back().first);
+                }))
+            {
+                LOG_DATA("{}:       Adding new send request", nameId());
+                SendRequest sr{
+                    .combIndex = c,
+                    .termIndices = {},
+                    .result = 0.0,
+                    .events = {},
+                };
+                for (size_t t = 0; t < comb.terms.size(); t++)
                 {
-                    LOG_DATA("{}:       Not adding send request", nameId());
+                    auto& term = comb.terms.at(t);
+                    auto [timeIntoRun, val] = term.polyReg.data().back();
+                    if (timeIntoRun == nodeDataTimeIntoRun)
+                    {
+                        auto poly = term.polyReg.calcPolynomial();
+                        LOG_DATA("{}:         {}: {:.2f} * {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)),
+                                 term.factor, poly.f(nodeDataTimeIntoRun));
+                        sr.termIndices.insert(t);
+                        sr.result += term.factor * poly.f(nodeDataTimeIntoRun);
+                        while (!term.events.empty())
+                        {
+                            if (!term.events.front().empty())
+                            {
+                                LOG_DATA("{}:         {}: Adding {} events", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), term.events.front().size());
+                                std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sr.events));
+                            }
+                            term.events.pop_front();
+                        }
+                    }
                 }
+                _sendRequests[nodeData->insTime].push_back(sr);
+            }
+            else
+            {
+                LOG_DATA("{}:       Not adding send request", nameId());
             }
         }
     }

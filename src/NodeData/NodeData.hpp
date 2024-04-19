@@ -48,13 +48,16 @@ class NodeData
     [[nodiscard]] static std::vector<std::string> parentTypes() { return {}; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors() { return {}; }
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors() { return {}; }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 0; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 0; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] virtual std::vector<std::string> dataDescriptors() const { return GetDataDescriptors(); }
+    [[nodiscard]] virtual std::vector<std::string> staticDataDescriptors() const { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] virtual size_t staticDescriptorCount() const { return GetStaticDescriptorCount(); }
 
     /// @brief Returns a vector of string events associated with this data
     [[nodiscard]] const std::vector<std::string>& events() const { return _events; }
@@ -67,6 +70,16 @@ class NodeData
     /// @param idx Index corresponding to data descriptor order
     /// @return Value or NaN if not in the observation
     [[nodiscard]] double getValueAtOrNaN(size_t idx) const { return getValueAt(idx).value_or(std::nan("")); }
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] virtual std::vector<std::string> dynamicDataDescriptors() const { return {}; }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] virtual std::optional<double> getDynamicDataAt(const std::string& /* descriptor */) const { return std::nullopt; }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] virtual std::vector<std::pair<std::string, double>> getDynamicData() const { return {}; }
 
     /// Time at which the message was received
     InsTime insTime;

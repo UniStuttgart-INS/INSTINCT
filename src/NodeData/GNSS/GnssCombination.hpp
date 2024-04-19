@@ -65,6 +65,52 @@ class GnssCombination : public NodeData
 
     /// List of combinations
     std::vector<Combination> combinations;
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(combinations.size() * 4);
+
+        for (const auto& comb : combinations)
+        {
+            descriptors.push_back(comb.description);
+            descriptors.push_back(comb.description + " Cycle Slip");
+            descriptors.push_back(comb.description + " Prediction");
+            descriptors.push_back(comb.description + " Meas - Pred");
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& comb : combinations)
+        {
+            if (descriptor == comb.description) { return comb.result; }
+            if (descriptor == comb.description + " Cycle Slip" && comb.cycleSlipResult) { return static_cast<double>(*comb.cycleSlipResult); }
+            if (descriptor == comb.description + " Prediction") { return comb.cycleSlipPrediction; }
+            if (descriptor == comb.description + " Meas - Pred") { return comb.cycleSlipMeasMinPred; }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(combinations.size() * 4);
+        for (const auto& comb : combinations)
+        {
+            if (comb.result) { dynData.emplace_back(comb.description, *comb.result); }
+            if (comb.cycleSlipResult) { dynData.emplace_back(comb.description + " Cycle Slip", static_cast<double>(*comb.cycleSlipResult)); }
+            if (comb.cycleSlipPrediction) { dynData.emplace_back(comb.description + " Prediction", *comb.cycleSlipPrediction); }
+            if (comb.cycleSlipMeasMinPred) { dynData.emplace_back(comb.description + " Meas - Pred", *comb.cycleSlipMeasMinPred); }
+        }
+        return dynData;
+    }
 };
 
 } // namespace NAV

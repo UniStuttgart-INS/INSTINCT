@@ -45,6 +45,44 @@ class DynamicData : public NodeData
 
     /// @brief Data storage
     std::vector<Data> data;
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(data.size());
+
+        for (const auto& d : data)
+        {
+            descriptors.push_back(d.description);
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& d : data)
+        {
+            if (descriptor == d.description) { return d.value; }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(data.size());
+
+        for (const auto& d : data)
+        {
+            dynData.emplace_back(d.description, d.value);
+        }
+        return dynData;
+    }
 };
 
 } // namespace NAV

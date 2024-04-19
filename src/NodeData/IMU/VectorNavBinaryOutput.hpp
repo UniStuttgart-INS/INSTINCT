@@ -51,7 +51,7 @@ class VectorNavBinaryOutput : public NodeData
     }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
         return {
             // Group 2 (Time)
@@ -269,17 +269,20 @@ class VectorNavBinaryOutput : public NodeData
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 205; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 205; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
     /// @param idx Index corresponding to data descriptor order
     /// @return Value if in the observation
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
-        INS_ASSERT(idx < GetDescriptorCount());
+        INS_ASSERT(idx < GetStaticDescriptorCount());
         switch (idx)
         {
             // Group 2 (Time)

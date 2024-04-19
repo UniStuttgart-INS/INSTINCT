@@ -240,6 +240,87 @@ class GnssObs : public NodeData
     /// @brief Useful information of the satellites
     [[nodiscard]] const std::vector<SatelliteData>& getSatData() const { return _satData; }
 
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(data.size() * 7);
+
+        for (const auto& obsData : data)
+        {
+            descriptors.push_back(fmt::format("{} Pseudorange [m]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Pseudorange SSI", obsData.satSigId));
+
+            descriptors.push_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId));
+
+            descriptors.push_back(fmt::format("{} Doppler [Hz]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId));
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& obsData : data)
+        {
+            if (descriptor == fmt::format("{} Pseudorange [m]", obsData.satSigId) && obsData.pseudorange)
+            {
+                return obsData.pseudorange->value;
+            }
+            if (descriptor == fmt::format("{} Pseudorange SSI", obsData.satSigId) && obsData.pseudorange)
+            {
+                return obsData.pseudorange->SSI;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase [cycles]", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->value;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase SSI", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->SSI;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase LLI", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->LLI;
+            }
+            if (descriptor == fmt::format("{} Doppler [Hz]", obsData.satSigId) && obsData.doppler)
+            {
+                return obsData.doppler.value();
+            }
+            if (descriptor == fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId) && obsData.CN0)
+            {
+                return obsData.CN0.value();
+            }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(data.size() * 7);
+        for (const auto& obsData : data)
+        {
+            if (obsData.pseudorange) { dynData.emplace_back(fmt::format("{} Pseudorange [m]", obsData.satSigId), obsData.pseudorange->value); }
+            if (obsData.pseudorange) { dynData.emplace_back(fmt::format("{} Pseudorange SSI", obsData.satSigId), obsData.pseudorange->SSI); }
+
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId), obsData.carrierPhase->value); }
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId), obsData.carrierPhase->SSI); }
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId), obsData.carrierPhase->LLI); }
+
+            if (obsData.doppler) { dynData.emplace_back(fmt::format("{} Doppler [Hz]", obsData.satSigId), obsData.doppler.value()); }
+
+            if (obsData.CN0) { dynData.emplace_back(fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId), obsData.CN0.value()); }
+        }
+        return dynData;
+    }
+
   private:
     /// @brief Useful information of the satellites
     std::vector<SatelliteData> _satData;

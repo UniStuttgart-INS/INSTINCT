@@ -223,13 +223,13 @@ class Plot : public Node, public CommonLog
                 /// Style of the marker to display
                 ImPlotMarker eventMarkerStyle = ImPlotMarker_Cross;
                 /// Size of the markers (makes the marker smaller/bigger)
-                float eventMarkerSize = 1.0F;
+                float eventMarkerSize = 6.0F;
                 /// Weight of the markers (increases thickness of marker lines)
-                float eventMarkerWeight = 1.0F;
+                float eventMarkerWeight = 2.0F;
                 /// Fill color for markers
-                ImVec4 eventMarkerFillColor = IMPLOT_AUTO_COL;
+                ImVec4 eventMarkerFillColor = ImVec4(1.0, 0.0, 0.0, 1.0);
                 /// Outline/Border color for markers
-                ImVec4 eventMarkerOutlineColor = IMPLOT_AUTO_COL;
+                ImVec4 eventMarkerOutlineColor = ImVec4(1.0, 0.0, 0.0, 1.0);
                 /// Tooltip search regex
                 std::string eventTooltipFilterRegex;
             };
@@ -470,7 +470,7 @@ class Plot : public Node, public CommonLog
     template<typename T>
     void plotData(const std::shared_ptr<const T>& obs, size_t pinIndex, size_t& plotIndex, size_t startIndex = 0)
     {
-        for (size_t i = startIndex; i < T::GetDescriptorCount(); ++i)
+        for (size_t i = startIndex; i < T::GetStaticDescriptorCount(); ++i)
         {
             addData(pinIndex, plotIndex++, obs->getValueAtOrNaN(i));
         }

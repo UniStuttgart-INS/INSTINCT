@@ -45,6 +45,11 @@ uint64_t factorial(uint64_t n)
     return n * factorial(n - 1);
 }
 
+double normalCDF(double value)
+{
+    return 0.5 * std::erfc(-value * M_SQRT1_2);
+}
+
 double calcEllipticalIntegral(double phi, double m)
 {
     double origM = m;

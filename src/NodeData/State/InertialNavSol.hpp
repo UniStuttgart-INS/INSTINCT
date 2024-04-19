@@ -38,16 +38,19 @@ class InertialNavSol : public PosVelAtt
     }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
-        return PosVelAtt::GetDataDescriptors();
+        return PosVelAtt::GetStaticDataDescriptors();
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return PosVelAtt::GetDescriptorCount(); }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount(); }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */

@@ -81,14 +81,6 @@ class Combiner : public Node, public CommonLog
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_DYN_DATA = 0; ///< @brief Flow (DynamicData)
 
-    /// @brief Function to call to add a new pin
-    /// @param[in, out] node Pointer to this node
-    static void pinAddCallback(Node* node);
-    /// @brief Function to call to delete a pin
-    /// @param[in, out] node Pointer to this node
-    /// @param[in] pinIdx Input pin index to delete
-    static void pinDeleteCallback(Node* node, size_t pinIdx);
-
     /// Possible data identifiers to connect
     static inline std::vector<std::string> _dataIdentifier = { Pos::type(),
                                                                PosVel::type(),
@@ -96,6 +88,7 @@ class Combiner : public Node, public CommonLog
                                                                LcKfInsGnssErrors::type(),
                                                                TcKfInsGnssErrors::type(),
                                                                GnssCombination::type(),
+                                                               GnssObs::type(),
                                                                SppSolution::type(),
                                                                RtklibPosObs::type(),
                                                                ImuObs::type(),
@@ -104,19 +97,15 @@ class Combiner : public Node, public CommonLog
                                                                ImuObsWDelta::type(),
                                                                VectorNavBinaryOutput::type() };
 
-    /// @brief Dynamic input pins
-    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
-    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback };
-
     /// Combination of data
     struct Combination
     {
         /// Term of a combination equation
         struct Term
         {
-            double factor = 1.0;  ///< Factor to multiply the term with
-            size_t pinIndex = 0;  ///< Pin Index
-            size_t dataIndex = 0; ///< Data Index
+            double factor = 1.0;                                         ///< Factor to multiply the term with
+            size_t pinIndex = 0;                                         ///< Pin Index
+            std::variant<size_t, std::string> dataSelection = size_t(0); ///< Data Index or Data identifier
 
             PolynomialRegressor<double> polyReg{ 1, 2 };           ///< Polynomial Regressor to interpolate data
             ScrollingBuffer<std::vector<std::string>> events{ 2 }; ///< Last events to add if we send
@@ -126,10 +115,15 @@ class Combiner : public Node, public CommonLog
             /// @param descriptors Data descriptors
             [[nodiscard]] std::string description(const Combiner* node, const std::vector<std::string>& descriptors) const
             {
-                if (dataIndex < descriptors.size())
+                if (std::holds_alternative<size_t>(dataSelection) && std::get<size_t>(dataSelection) < descriptors.size())
                 {
                     return fmt::format("{} {} ({})", factor == 1.0 ? "+" : (factor == -1.0 ? "-" : fmt::format("{:.2f}", factor)),
-                                       descriptors.at(dataIndex), node->inputPins.at(pinIndex).name);
+                                       descriptors.at(std::get<size_t>(dataSelection)), node->inputPins.at(pinIndex).name);
+                }
+                if (std::holds_alternative<std::string>(dataSelection))
+                {
+                    return fmt::format("{} {} ({})", factor == 1.0 ? "+" : (factor == -1.0 ? "-" : fmt::format("{:.2f}", factor)),
+                                       std::get<std::string>(dataSelection), node->inputPins.at(pinIndex).name);
                 }
                 return fmt::format("N/A ({})", node->inputPins.at(pinIndex).name);
             }
@@ -170,6 +164,16 @@ class Combiner : public Node, public CommonLog
     /// Combinations to calculate
     std::vector<Combination> _combinations{ Combination() };
 
+    /// Pin data
+    struct PinData
+    {
+        /// Extra data descriptors for dynamic data
+        std::vector<std::string> dynDataDescriptors;
+    };
+
+    /// Data per pin
+    std::vector<PinData> _pinData;
+
     /// Send request information
     struct SendRequest
     {
@@ -181,6 +185,18 @@ class Combiner : public Node, public CommonLog
 
     /// Chronological list of send request
     std::map<InsTime, std::vector<SendRequest>> _sendRequests;
+
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
+
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback };
 
     /// @brief Initialize the node
     bool initialize() override;

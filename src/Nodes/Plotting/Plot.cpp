@@ -1009,7 +1009,7 @@ void NAV::Plot::guiConfig()
                                             }
                                         }
                                     }
-                                    catch (...)
+                                    catch (...) // NOLINT(bugprone-empty-catch)
                                     {}
 
                                     if (!tooltip.texts.empty())
@@ -1712,27 +1712,27 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         if (startPin.dataIdentifier.front() == Pos::type())
         {
-            for (const auto& desc : Pos::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : Pos::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == PosVel::type())
         {
-            for (const auto& desc : PosVel::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : PosVel::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == PosVelAtt::type())
         {
-            for (const auto& desc : PosVelAtt::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : PosVelAtt::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == InertialNavSol::type())
         {
-            for (const auto& desc : InertialNavSol::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : InertialNavSol::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == LcKfInsGnssErrors::type())
         {
-            for (const auto& desc : LcKfInsGnssErrors::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : LcKfInsGnssErrors::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == TcKfInsGnssErrors::type())
         {
-            for (const auto& desc : TcKfInsGnssErrors::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : TcKfInsGnssErrors::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == GnssCombination::type())
         {
@@ -1744,32 +1744,32 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == SppSolution::type())
         {
-            for (const auto& desc : SppSolution::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : SppSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
             _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
-            for (const auto& desc : RtklibPosObs::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : RtklibPosObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == ImuObs::type())
         {
-            for (const auto& desc : ImuObs::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : ImuObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == ImuObsSimulated::type())
         {
-            for (const auto& desc : ImuObsSimulated::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : ImuObsSimulated::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == KvhObs::type())
         {
-            for (const auto& desc : KvhObs::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : KvhObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == ImuObsWDelta::type())
         {
-            for (const auto& desc : ImuObsWDelta::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : ImuObsWDelta::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
-            for (const auto& desc : VectorNavBinaryOutput::GetDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : VectorNavBinaryOutput::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
     }
     else
@@ -1883,7 +1883,7 @@ void NAV::Plot::pinDeleteCallback(Node* node, size_t pinIdx)
 
     for (auto& plot : plotNode->_plots)
     {
-        if (plot.selectedPin >= pinIdx && plot.selectedPin > 0)
+        if (plot.selectedPin >= pinIdx)
         {
             plot.selectedPin -= 1;
         }
@@ -2178,7 +2178,7 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
             auto obs = std::static_pointer_cast<const Pos>(nodeData);
             auto localPosition = calcLocalPosition(obs->lla_position());
 
-            for (size_t j = 0; j < Pos::GetDescriptorCount(); ++j)
+            for (size_t j = 0; j < Pos::GetStaticDescriptorCount(); ++j)
             {
                 if (j == 3) { addData(pinIdx, i++, localPosition.northSouth); }
                 else if (j == 4) { addData(pinIdx, i++, localPosition.eastWest); }
@@ -2187,22 +2187,22 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 
             if (sourcePin->dataIdentifier.front() == PosVel::type())
             {
-                plotData(std::static_pointer_cast<const PosVel>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+                plotData(std::static_pointer_cast<const PosVel>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
             else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
                      || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
-                plotData(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+                plotData(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
             // ------------------------------------------- GNSS ----------------------------------------------
             else if (sourcePin->dataIdentifier.front() == SppSolution::type())
             {
-                plotData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+                plotData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
                 plotSppSolutionDynamicData(std::static_pointer_cast<const SppSolution>(nodeData), pinIdx);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                plotData(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIdx, i, Pos::GetDescriptorCount());
+                plotData(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
         }
         else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
@@ -2248,6 +2248,8 @@ void NAV::Plot::plotGnssCombination(const std::shared_ptr<const GnssCombination>
         addData(pinIndex, comb.description + " Prediction", comb.cycleSlipPrediction.value_or(std::nan("")));
         addData(pinIndex, comb.description + " Meas - Pred", comb.cycleSlipMeasMinPred.value_or(std::nan("")));
     }
+
+    // TODO: KEEP THIS
     for (const auto& comb : obs->combinations)
     {
         for (const auto& [insTime, poly, value] : comb.cycleSlipPolynomials)

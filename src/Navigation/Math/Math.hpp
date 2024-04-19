@@ -144,6 +144,141 @@ int sgn(const T& val)
     return (T(0) < val) - (val < T(0));
 }
 
+/// @brief Find (L^T D L)-decomposition of Q-matrix via outer product method
+/// @param[in] Qmatrix Symmetric positive definite matrix to be factored
+/// @return L - Factor matrix (strict lower triangular)
+/// @return D - Vector with entries of the diagonal matrix
+/// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC5
+/// @attention Consider using NAV::math::LtDLdecomp_choleskyFact() because it is faster by up to a factor 10
+template<typename Derived>
+std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
+          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+    LtDLdecomp_outerProduct(const Eigen::MatrixBase<Derived>& Qmatrix)
+{
+    using Eigen::seq;
+
+    auto n = Qmatrix.rows();
+    Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> Q = Qmatrix.template triangularView<Eigen::Lower>();
+    Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> L;
+    Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic)
+    {
+        L = Eigen::Matrix<typename Derived::Scalar, Eigen::Dynamic, Eigen::Dynamic>::Zero(n, n);
+        D.setZero(n);
+    }
+    else
+    {
+        L = Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>::Zero();
+        D.setZero();
+    }
+
+    for (Eigen::Index i = n - 1; i >= 0; i--)
+    {
+        D(i) = Q(i, i);
+        L(i, seq(0, i)) = Q(i, seq(0, i)) / std::sqrt(Q(i, i));
+
+        for (Eigen::Index j = 0; j <= i - 1; j++)
+        {
+            Q(j, seq(0, j)) -= L(i, seq(0, j)) * L(i, j);
+        }
+        L(i, seq(0, i)) /= L(i, i);
+    }
+
+    return { L, D };
+}
+
+/// @brief Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method formulation
+/// @param[in] Q Symmetric positive definite matrix to be factored
+/// @return L - Factor matrix (strict lower triangular)
+/// @return D - Vector with entries of the diagonal matrix
+/// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC6
+template<typename Derived>
+std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
+          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+    LtDLdecomp_choleskyFact(const Eigen::MatrixBase<Derived>& Q)
+{
+    using Eigen::seq;
+
+    auto n = Q.rows();
+    typename Derived::PlainObject L = Q.template triangularView<Eigen::Lower>();
+    Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime> D;
+    double cmin = 1;
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic) { D.setZero(n); }
+    else { D.setZero(); }
+
+    for (Eigen::Index j = n - 1; j >= 0; j--)
+    {
+        for (Eigen::Index i = n - 1; i >= j + 1; i--)
+        {
+            L(i, j) = (L(i, j) - L(seq(i + 1, n - 1), j).dot(L(seq(i + 1, n - 1), i))) / L(i, i);
+        }
+        double t = L(j, j) - L(seq(j + 1, n - 1), j).dot(L(seq(j + 1, n - 1), j));
+        double c = t / L(j, j);
+        if (c < cmin)
+        {
+            cmin = c;
+        }
+        L(j, j) = std::sqrt(t);
+    }
+    for (Eigen::Index i = 0; i < n; i++)
+    {
+        L.row(i).leftCols(i) /= L(i, i);
+        D(i) = std::pow(L(i, i), 2.0);
+        L(i, i) = 1;
+    }
+
+    return { L, D };
+}
+
+/// @brief Calculates the squared norm of the vector and matrix
+///
+/// \anchor eq-squaredNorm \f{equation}{ \label{eq:eq-squaredNorm}
+/// ||\mathbf{\dots}||^2_{\mathbf{Q}} = (\dots)^T \mathbf{Q}^{-1} (\dots)
+/// \f}
+/// @param a Vector
+/// @param Q Covariance matrix of the vector
+/// @return Squared norm
+template<typename DerivedA, typename DerivedQ>
+typename DerivedA::Scalar squaredNormVectorMatrix(const Eigen::MatrixBase<DerivedA>& a, const Eigen::MatrixBase<DerivedQ>& Q)
+{
+    static_assert(DerivedA::ColsAtCompileTime == Eigen::Dynamic || DerivedA::ColsAtCompileTime == 1);
+    INS_ASSERT_USER_ERROR(a.cols() == 1, "Parameter 'a' has to be a vector");
+    INS_ASSERT_USER_ERROR(a.rows() == Q.rows(), "Parameter 'a' and 'Q' need to have same size");
+    INS_ASSERT_USER_ERROR(Q.cols() == Q.rows(), "Parameter 'Q' needs to be quadratic");
+
+    return a.transpose() * Q.inverse() * a;
+}
+
+/// @brief Calculates the cumulative distribution function (CDF) of the standard normal distribution
+///
+/// \anchor eq-normalDistCDF \f{equation}{ \label{eq:eq-normalDistCDF}
+///  \Phi(x) = \int\displaylimits_{-\infty}^x \frac{1}{\sqrt{2\pi}} \exp{\left(-\frac{1}{2} v^2\right)} \text{d}v
+/// \f}
+/// which can be expressed with the error function
+/// \anchor eq-normalDistCDF-erf \f{equation}{ \label{eq:eq-normalDistCDF-erf}
+///  \Phi(x) = \frac{1}{2} \left[ 1 + \text{erf}{\left(\frac{x}{\sqrt{2}}\right)} \right]
+/// \f}
+/// Using the property
+/// \anchor eq-erf-minus \f{equation}{ \label{eq:eq-erf-minus}
+///  \text{erf}{\left( -x \right)} = -\text{erf}{\left( x \right)}
+/// \f}
+/// and the complementary error function
+/// \anchor eq-erfc \f{equation}{ \label{eq:eq-erfc}
+///  \text{erfc}{\left( x \right)} = 1 - \text{erf}{\left( x \right)}
+/// \f}
+/// we can simplify equation \eqref{eq-normalDistCDF-erf} to
+/// \anchor eq-normalDistCDF-erfc \f{equation}{ \label{eq:eq-normalDistCDF-erfc}
+/// \begin{aligned}
+///  \Phi(x) &= \frac{1}{2} \left[ 1 - \text{erf}{\left(-\frac{x}{\sqrt{2}}\right)} \right] \\
+///          &= \frac{1}{2} \text{erfc}{\left(-\frac{x}{\sqrt{2}}\right)}
+/// \end{aligned}
+/// \f}
+///
+/// @param value Value to calculate the CDF for
+double normalCDF(double value);
+
 /// @brief Change the sign of x according to the value of y
 /// @param[in] x input value
 /// @param[in] y input value

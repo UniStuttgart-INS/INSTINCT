@@ -50,10 +50,10 @@ class SppSolution : public PosVel
     }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
-        auto desc = PosVel::GetDataDescriptors();
-        desc.reserve(GetDescriptorCount());
+        auto desc = PosVel::GetStaticDataDescriptors();
+        desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Number satellites");
         desc.emplace_back("Receiver clock bias [s]");
         desc.emplace_back("Receiver clock drift [s/s]");
@@ -117,17 +117,20 @@ class SppSolution : public PosVel
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 73; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 73; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
     /// @param idx Index corresponding to data descriptor order
     /// @return Value if in the observation
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
-        INS_ASSERT(idx < GetDescriptorCount());
+        INS_ASSERT(idx < GetStaticDescriptorCount());
         switch (idx)
         {
         case 0:  // Latitude [deg]
@@ -308,6 +311,95 @@ class SppSolution : public PosVel
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(interFrequencyBias.size() * 2 + satData.size() * 2);
+
+        for (const auto& bias : interFrequencyBias)
+        {
+            descriptors.push_back(fmt::format("{} Inter-freq bias [s]", bias.first));
+            descriptors.push_back(fmt::format("{} Inter-freq bias StDev [s]", bias.first));
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            descriptors.push_back(fmt::format("{} Elevation [deg]", satId));
+            descriptors.push_back(fmt::format("{} Azimuth [deg]", satId));
+            // descriptors.push_back(fmt::format("{} Satellite clock bias [s]", satData.first));
+            // descriptors.push_back(fmt::format("{} Satellite clock drift [s/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF X [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF Y [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF Z [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Latitude [deg]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Longitude [deg]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Altitude [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF X [m/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first));
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& bias : interFrequencyBias)
+        {
+            if (descriptor == fmt::format("{} Inter-freq bias [s]", bias.first)) { return bias.second.value; }
+            if (descriptor == fmt::format("{} Inter-freq bias StDev [s]", bias.first)) { return bias.second.stdDev; }
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            if (descriptor == fmt::format("{} Elevation [deg]", satId)) { return rad2deg(satData.satElevation); }
+            if (descriptor == fmt::format("{} Azimuth [deg]", satId)) { return rad2deg(satData.satAzimuth); }
+            // if (descriptor == fmt::format("{} Satellite clock bias [s]", satData.first)) { return satData.second.satClock.bias; }
+            // if (descriptor == fmt::format("{} Satellite clock drift [s/s]", satData.first)) { return satData.second.satClock.drift; }
+            // if (descriptor == fmt::format("{} SatPos ECEF X [m]", satData.first)) { return satData.second.e_satPos.x(); }
+            // if (descriptor == fmt::format("{} SatPos ECEF Y [m]", satData.first)) { return satData.second.e_satPos.y(); }
+            // if (descriptor == fmt::format("{} SatPos ECEF Z [m]", satData.first)) { return satData.second.e_satPos.z(); }
+            // if (descriptor == fmt::format("{} SatPos Latitude [deg]", satData.first)) { return rad2deg(satData.second.lla_satPos.x()); }
+            // if (descriptor == fmt::format("{} SatPos Longitude [deg]", satData.first)) { return rad2deg(satData.second.lla_satPos.y()); }
+            // if (descriptor == fmt::format("{} SatPos Altitude [m]", satData.first)) { return satData.second.lla_satPos.z(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF X [m/s]", satData.first)) { return satData.second.e_satVel.x(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF Y [m/s]", satData.first)) { return satData.second.e_satVel.y(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF Z [m/s]", satData.first)) { return satData.second.e_satVel.z(); }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(interFrequencyBias.size() * 2 + satData.size() * 2);
+
+        for (const auto& bias : interFrequencyBias)
+        {
+            dynData.emplace_back(fmt::format("{} Inter-freq bias [s]", bias.first), bias.second.value);
+            dynData.emplace_back(fmt::format("{} Inter-freq bias StDev [s]", bias.first), bias.second.stdDev);
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            dynData.emplace_back(fmt::format("{} Elevation [deg]", satId), rad2deg(satData.satElevation));
+            dynData.emplace_back(fmt::format("{} Azimuth [deg]", satId), rad2deg(satData.satAzimuth));
+            // dynData.emplace_back(fmt::format("{} Satellite clock bias [s]", satData.first), satData.second.satClock.bias);
+            // dynData.emplace_back(fmt::format("{} Satellite clock drift [s/s]", satData.first), satData.second.satClock.drift);
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF X [m]", satData.first), satData.second.e_satPos.x());
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF Y [m]", satData.first), satData.second.e_satPos.y());
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF Z [m]", satData.first), satData.second.e_satPos.z());
+            // dynData.emplace_back(fmt::format("{} SatPos Latitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.x()));
+            // dynData.emplace_back(fmt::format("{} SatPos Longitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.y()));
+            // dynData.emplace_back(fmt::format("{} SatPos Altitude [m]", satData.first), satData.second.lla_satPos.z());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF X [m/s]", satData.first), satData.second.e_satVel.x());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first), satData.second.e_satVel.y());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first), satData.second.e_satVel.z());
+        }
+        return dynData;
     }
 
     // --------------------------------------------------------- Public Members ------------------------------------------------------------

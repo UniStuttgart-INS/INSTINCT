@@ -38,10 +38,10 @@ class PosVel : public Pos
     }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
-        auto desc = Pos::GetDataDescriptors();
-        desc.reserve(GetDescriptorCount());
+        auto desc = Pos::GetStaticDataDescriptors();
+        desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Velocity norm [m/s]");
         desc.emplace_back("X velocity ECEF [m/s]");
         desc.emplace_back("Y velocity ECEF [m/s]");
@@ -53,17 +53,20 @@ class PosVel : public Pos
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 15; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 15; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
     /// @param idx Index corresponding to data descriptor order
     /// @return Value if in the observation
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
-        INS_ASSERT(idx < GetDescriptorCount());
+        INS_ASSERT(idx < GetStaticDescriptorCount());
         switch (idx)
         {
         case 0: // Latitude [deg]

@@ -39,7 +39,7 @@ class LcKfInsGnssErrors : public NodeData
     }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] static std::vector<std::string> GetDataDescriptors()
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
         return {
             // PVAError
@@ -72,17 +72,20 @@ class LcKfInsGnssErrors : public NodeData
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetDescriptorCount() { return 24; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 24; }
 
     /// @brief Returns a vector of data descriptors
-    [[nodiscard]] std::vector<std::string> dataDescriptors() const override { return GetDataDescriptors(); }
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
     /// @param idx Index corresponding to data descriptor order
     /// @return Value if in the observation
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
-        INS_ASSERT(idx < GetDescriptorCount());
+        INS_ASSERT(idx < GetStaticDescriptorCount());
         if (frame == Frame::NED && 9 <= idx && idx <= 17) { return std::nullopt; }
         if (frame == Frame::ECEF && idx <= 8) { return std::nullopt; }
 
