@@ -112,14 +112,12 @@ class ObservationFilter
     /// @param[in] receivers List of receivers
     /// @param[in] gnssNavInfos Collection of navigation data providers
     /// @param[in] nameId Name and Id of the node used for log messages only
-    /// @param[in] receiverUsedForOrbitCalculation Index of the receiver used for the orbit calculations
     /// @param[in] ignoreElevationMask Flag wether the elevation mask should be ignored
     /// @return 0: List of satellite data; 1: List of observations
     template<typename ReceiverType>
     [[nodiscard]] Observations selectObservationsForCalculation(const std::array<Receiver<ReceiverType>, ReceiverType::ReceiverType_COUNT>& receivers,
                                                                 const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                                 [[maybe_unused]] const std::string& nameId,
-                                                                size_t receiverUsedForOrbitCalculation,
                                                                 bool ignoreElevationMask = false)
     {
         Observations observations;
@@ -207,17 +205,7 @@ class ObservationFilter
                 }
             }
 
-            auto recvObsData = std::find_if(receivers.at(receiverUsedForOrbitCalculation).gnssObs->data.begin(),
-                                            receivers.at(receiverUsedForOrbitCalculation).gnssObs->data.end(),
-                                            [&obsData](const GnssObs::ObservationData& recvObsData) {
-                                                return recvObsData.satSigId == obsData.satSigId;
-                                            });
-            auto satClk = satNavData->calcClockCorrections(receivers.at(receiverUsedForOrbitCalculation).gnssObs->insTime,
-                                                           recvObsData->pseudorange->value,
-                                                           recvObsData->satSigId.freq());
-            auto satPosVel = satNavData->calcSatellitePosVel(satClk.transmitTime);
-
-            Observations::SignalObservation sigObs(satNavData, satPosVel.e_pos, satPosVel.e_vel, satClk, freqNum);
+            Observations::SignalObservation sigObs(satNavData, freqNum);
 
             bool skipObservation = false;
             for (const auto& recv : receivers)
@@ -226,11 +214,15 @@ class ObservationFilter
                                                 [&obsData](const GnssObs::ObservationData& recvObsData) {
                                                     return recvObsData.satSigId == obsData.satSigId;
                                                 });
+                auto satClk = satNavData->calcClockCorrections(recv.gnssObs->insTime,
+                                                               recvObsData->pseudorange->value,
+                                                               recvObsData->satSigId.freq());
+                auto satPosVel = satNavData->calcSatellitePosVel(satClk.transmitTime);
 
                 LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, obsData.satSigId, recv.type);
                 sigObs.recvObs.emplace_back(recv.gnssObs, static_cast<size_t>(recvObsData - recv.gnssObs->data.begin()),
                                             recv.e_pos, recv.lla_pos, recv.e_vel,
-                                            satPosVel.e_pos, satPosVel.e_vel);
+                                            satPosVel.e_pos, satPosVel.e_vel, satClk);
 
                 if (!ignoreElevationMask)
                 {
@@ -264,22 +256,27 @@ class ObservationFilter
                 {
                     if (availableObservations.contains(obsType) && availableObservations.at(obsType) == receivers.size())
                     {
-                        LOG_DATA("{}:  [{}]   Taking {} observation into account on {} receiver", nameId, obsData.satSigId, obsType, recv.type);
                         observations.nObservables.at(obsType)++;
                         nMeasUniqueSat.at(obsType).insert(satId);
                         switch (obsType)
                         {
                         case GnssObs::Pseudorange:
                             recvObsData.obs[obsType].measurement = recvObsData.gnssObsData().pseudorange->value;
+                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, obsData.satSigId,
+                                     obsType, recv.type, recvObsData.obs[obsType].measurement);
                             break;
                         case GnssObs::Carrier:
                             recvObsData.obs[obsType].measurement = InsConst<>::C / obsData.satSigId.freq().getFrequency(freqNum)
                                                                    * recvObsData.gnssObsData().carrierPhase->value;
+                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, obsData.satSigId,
+                                     obsType, recv.type, recvObsData.obs[obsType].measurement, recvObsData.gnssObsData().carrierPhase->value);
                             break;
                         case GnssObs::Doppler:
                             recvObsData.obs[obsType].measurement = doppler2rangeRate(recvObsData.gnssObsData().doppler.value(),
                                                                                      obsData.satSigId.freq(),
                                                                                      freqNum);
+                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, obsData.satSigId,
+                                     obsType, recv.type, recvObsData.obs[obsType].measurement, recvObsData.gnssObsData().doppler.value());
                             break;
                         case GnssObs::ObservationType_COUNT:
                             break;

@@ -19,7 +19,7 @@
 #include <bitset>
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 
-namespace NAV::TESTS::RealTimeKinematicTests
+namespace NAV::TESTS::SatelliteIdentifierTests
 {
 
 TEST_CASE("[SatelliteIdentifier] SatId hash unique", "[SatelliteIdentifier]")
@@ -99,4 +99,4 @@ TEST_CASE("[SatelliteIdentifier] SatSigId hash unique", "[SatelliteIdentifier]")
     }
 }
 
-} // namespace NAV::TESTS::RealTimeKinematicTests
+} // namespace NAV::TESTS::SatelliteIdentifierTests

@@ -58,14 +58,16 @@ struct Observations
             /// @param[in] e_recVel Receiver velocity in e frame
             /// @param[in] e_satPos Satellite position in e frame
             /// @param[in] e_satVel Satellite velocity in e frame
+            /// @param[in] satClock Satellite clock information
             ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
                                  size_t obsIdx,
                                  const Eigen::Vector3d& e_recPos,
                                  const Eigen::Vector3d& lla_recPos,
                                  const Eigen::Vector3d& e_recVel,
                                  const Eigen::Vector3d& e_satPos,
-                                 const Eigen::Vector3d& e_satVel)
-                : _gnssObs(std::move(gnssObs)), _obsIdx(obsIdx)
+                                 const Eigen::Vector3d& e_satVel,
+                                 Clock::Corrections satClock)
+                : _gnssObs(std::move(gnssObs)), _obsIdx(obsIdx), _e_satPos(e_satPos), _e_satVel(e_satVel), _satClock(satClock)
             {
                 _e_pLOS = e_calcLineOfSightUnitVector(e_recPos, e_satPos);
                 _e_vLOS = (e_recVel - e_satVel) / (e_recPos - e_satPos).norm();
@@ -84,6 +86,10 @@ struct Observations
 
             /// @brief Returns the observation data
             [[nodiscard]] const GnssObs::ObservationData& gnssObsData() const { return _gnssObs->data.at(_obsIdx); }
+            /// @brief Satellite position in ECEF frame coordinates [m]
+            [[nodiscard]] const Eigen::Vector3d& e_satPos() const { return _e_satPos; }
+            /// @brief Satellite velocity in ECEF frame coordinates [m/s]
+            [[nodiscard]] const Eigen::Vector3d& e_satVel() const { return _e_satVel; }
             /// @brief Position Line-of-sight unit vector in ECEF frame coordinates
             [[nodiscard]] const Eigen::Vector3d& e_pLOS() const { return _e_pLOS; }
             /// @brief Velocity Line-of-sight unit vector in ECEF frame coordinates
@@ -92,6 +98,8 @@ struct Observations
             [[nodiscard]] const double& satElevation() const { return _satElevation; }
             /// @brief Satellite Azimuth [rad]
             [[nodiscard]] const double& satAzimuth() const { return _satAzimuth; }
+            /// @brief Satellite clock information
+            [[nodiscard]] const Clock::Corrections& satClock() const { return _satClock; }
 
             /// @brief Terms used in the calculation
             struct CalcTerms
@@ -107,28 +115,22 @@ struct Observations
           private:
             std::shared_ptr<const GnssObs> _gnssObs = nullptr; ///< GNSS observation
             size_t _obsIdx = 0;                                ///< Gnss observation data index
+            Eigen::Vector3d _e_satPos;                         ///< Satellite position in ECEF frame coordinates [m] (has to be calculated per signal because of TGD)
+            Eigen::Vector3d _e_satVel;                         ///< Satellite velocity in ECEF frame coordinates [m/s]
             Eigen::Vector3d _e_pLOS;                           ///< Position Line-of-sight unit vector in ECEF frame coordinates
             Eigen::Vector3d _e_vLOS;                           ///< Velocity Line-of-sight unit vector in ECEF frame coordinates
+            Clock::Corrections _satClock;                      ///< Satellite clock information
             double _satElevation = 0.0;                        ///< Satellite Elevation [rad]
             double _satAzimuth = 0.0;                          ///< Satellite Azimuth [rad]
         };
 
         /// @brief Constructor
         /// @param[in] navData Satellite Navigation data
-        /// @param[in] e_satPos Satellite position in e frame
-        /// @param[in] e_satVel Satellite velocity in e frame
-        /// @param[in] satClock Satellite clock information
         /// @param[in] freqNum Frequency number. Only used for GLONASS G1 and G2
         SignalObservation(std::shared_ptr<SatNavData> navData,
-                          Eigen::Vector3d e_satPos,
-                          Eigen::Vector3d e_satVel,
-                          Clock::Corrections satClock,
                           int8_t freqNum)
             : _navData(std::move(navData)),
-              _freqNum(freqNum),
-              _e_satPos(std::move(e_satPos)),
-              _e_satVel(std::move(e_satVel)),
-              _satClock(satClock) {}
+              _freqNum(freqNum) {}
 
         /// @brief Receiver specific data
         std::vector<ReceiverSpecificData> recvObs;
@@ -137,19 +139,10 @@ struct Observations
         [[nodiscard]] const std::shared_ptr<const SatNavData>& navData() const { return _navData; }
         /// @brief Frequency number. Only used for GLONASS G1 and G2
         [[nodiscard]] int8_t freqNum() const { return _freqNum; }
-        /// @brief Satellite position in ECEF frame coordinates [m]
-        [[nodiscard]] const Eigen::Vector3d& e_satPos() const { return _e_satPos; }
-        /// @brief Satellite velocity in ECEF frame coordinates [m/s]
-        [[nodiscard]] const Eigen::Vector3d& e_satVel() const { return _e_satVel; }
-        /// @brief Satellite clock information
-        [[nodiscard]] const Clock::Corrections& satClock() const { return _satClock; }
 
       private:
         std::shared_ptr<const SatNavData> _navData = nullptr; ///< Satellite Navigation data
         int8_t _freqNum = -128;                               ///< Frequency number. Only used for GLONASS G1 and G2
-        Eigen::Vector3d _e_satPos;                            ///< Satellite position in ECEF frame coordinates [m] (has to be calculated per signal because of TGD)
-        Eigen::Vector3d _e_satVel;                            ///< Satellite velocity in ECEF frame coordinates [m/s]
-        Clock::Corrections _satClock;                         ///< Satellite clock information
     };
 
     unordered_map<SatSigId, SignalObservation> signals;                               ///< Observations and calculated data for each signal

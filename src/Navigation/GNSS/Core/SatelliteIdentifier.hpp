@@ -22,6 +22,8 @@ using json = nlohmann::json; ///< json namespace
 #include "Frequency.hpp"
 #include "Code.hpp"
 
+#include "util/Container/STL.hpp"
+
 namespace NAV
 {
 
@@ -84,7 +86,7 @@ struct SatSigId
         {
             if (satNum == rhs.satNum)
             {
-                return Code::Set(code).to_ullong() < Code::Set(rhs.code).to_ullong();
+                return Code::Set(code) < Code::Set(rhs.code);
             }
             return satNum < rhs.satNum;
         }

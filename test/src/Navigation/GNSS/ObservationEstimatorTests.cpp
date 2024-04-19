@@ -121,7 +121,7 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
         algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, false);
+        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
         algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
@@ -149,20 +149,20 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
                 const Observations::SignalObservation& sigObs = observations.signals.at(ref.satSigId);
 
                 Eigen::Vector3d e_refSatPos(refData.ECEF_X, refData.ECEF_Y, refData.ECEF_Z);
-                LOG_DEBUG("    satData.e_satPos {} [m]", sigObs.e_satPos().transpose());
+                LOG_DEBUG("    satData.e_satPos {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].e_satPos().transpose());
                 LOG_DEBUG("    e_refSatPos       {} [m]", e_refSatPos.transpose());
-                LOG_DEBUG("      satData.pos - e_refPos   = {}", (sigObs.e_satPos() - e_refSatPos).transpose());
-                LOG_DEBUG("    | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.e_satPos() - e_refSatPos).norm());
-                CHECK_THAT((sigObs.e_satPos() - e_refSatPos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
-                marginMax.pos = std::max(marginMax.pos, (sigObs.e_satPos() - e_refSatPos).norm());
+                LOG_DEBUG("      satData.pos - e_refPos   = {}", (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - e_refSatPos).transpose());
+                LOG_DEBUG("    | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - e_refSatPos).norm());
+                CHECK_THAT((sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - e_refSatPos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
+                marginMax.pos = std::max(marginMax.pos, (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - e_refSatPos).norm());
 
                 // e_satVel
 
-                LOG_DEBUG("    satClkBias       {:.7e} [s]", sigObs.satClock().bias);
+                LOG_DEBUG("    satClkBias       {:.7e} [s]", sigObs.recvObs[SPP::Algorithm::Rover].satClock().bias);
                 LOG_DEBUG("    refClkCorrection {:.7e} [s]", refData.Clock_Correction);
-                LOG_DEBUG("    clkBias - ref    {:.4e} [s]", sigObs.satClock().bias - refData.Clock_Correction);
-                CHECK_THAT(sigObs.satClock().bias - refData.Clock_Correction, Catch::Matchers::WithinAbs(0.0, margin.clock));
-                marginMax.clock = std::max(marginMax.clock, std::abs(sigObs.satClock().bias - refData.Clock_Correction));
+                LOG_DEBUG("    clkBias - ref    {:.4e} [s]", sigObs.recvObs[SPP::Algorithm::Rover].satClock().bias - refData.Clock_Correction);
+                CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].satClock().bias - refData.Clock_Correction, Catch::Matchers::WithinAbs(0.0, margin.clock));
+                marginMax.clock = std::max(marginMax.clock, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].satClock().bias - refData.Clock_Correction));
 
                 // satClkDrift
 
@@ -192,8 +192,8 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
                 CHECK_THAT(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction, Catch::Matchers::WithinAbs(0.0, margin.dpsr_T));
                 marginMax.dpsr_T = std::max(marginMax.dpsr_T, std::abs(sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s - refData.Tropo_Correction));
 
-                double timeDiffRange_ref = (refData.Elapsed_Time - refData.PSR_satellite_time) * 1e-3;                       // [s]
-                double timeDiffRecvTrans = static_cast<double>((gnssObs->insTime - sigObs.satClock().transmitTime).count()); // [s]
+                double timeDiffRange_ref = (refData.Elapsed_Time - refData.PSR_satellite_time) * 1e-3;                                                      // [s]
+                double timeDiffRecvTrans = static_cast<double>((gnssObs->insTime - sigObs.recvObs[SPP::Algorithm::Rover].satClock().transmitTime).count()); // [s]
                 timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_I_r_s / InsConst<>::C;
                 timeDiffRecvTrans += sigObs.recvObs[SPP::Algorithm::Rover].terms.dpsr_T_r_s / InsConst<>::C;
                 LOG_DEBUG("    timeDiffRecvTrans {:.4f} [s]", timeDiffRecvTrans);
@@ -306,7 +306,7 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
         algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, SPP::Algorithm::Rover, false);
+        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
         algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
@@ -323,19 +323,19 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
             const auto& margin = marginIter->second;
             auto& marginMax = marginsMax[satSigId.freq()];
 
-            LOG_DEBUG("      satData.e_satPos {} [m]", sigObs.e_satPos().transpose());
+            LOG_DEBUG("      satData.e_satPos {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].e_satPos().transpose());
             LOG_DEBUG("        e_refSatPos    {} [m]", ref->get().Sat_Pos.transpose());
-            LOG_DEBUG("          satData.pos - e_refPos   = {}", (sigObs.e_satPos() - ref->get().Sat_Pos).transpose());
-            LOG_DEBUG("        | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.e_satPos() - ref->get().Sat_Pos).norm());
-            CHECK_THAT((sigObs.e_satPos() - ref->get().Sat_Pos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
-            marginMax.pos = std::max(marginMax.pos, (sigObs.e_satPos() - ref->get().Sat_Pos).norm());
+            LOG_DEBUG("          satData.pos - e_refPos   = {}", (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - ref->get().Sat_Pos).transpose());
+            LOG_DEBUG("        | satData.pos - e_refPos | = {:.4e} [m]", (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - ref->get().Sat_Pos).norm());
+            CHECK_THAT((sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - ref->get().Sat_Pos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
+            marginMax.pos = std::max(marginMax.pos, (sigObs.recvObs[SPP::Algorithm::Rover].e_satPos() - ref->get().Sat_Pos).norm());
 
-            LOG_DEBUG("      satData.e_satVel {} [m]", sigObs.e_satVel().transpose());
+            LOG_DEBUG("      satData.e_satVel {} [m]", sigObs.recvObs[SPP::Algorithm::Rover].e_satVel().transpose());
             LOG_DEBUG("        e_refSatVel    {} [m]", ref->get().Sat_Vel.transpose());
-            LOG_DEBUG("          satData.vel - e_refVel   = {}", (sigObs.e_satVel() - ref->get().Sat_Vel).transpose());
-            LOG_DEBUG("        | satData.vel - e_refVel | = {:.4e} [m]", (sigObs.e_satVel() - ref->get().Sat_Vel).norm());
-            CHECK_THAT((sigObs.e_satVel() - ref->get().Sat_Vel).norm(), Catch::Matchers::WithinAbs(0.0, margin.vel));
-            marginMax.vel = std::max(marginMax.vel, (sigObs.e_satVel() - ref->get().Sat_Vel).norm());
+            LOG_DEBUG("          satData.vel - e_refVel   = {}", (sigObs.recvObs[SPP::Algorithm::Rover].e_satVel() - ref->get().Sat_Vel).transpose());
+            LOG_DEBUG("        | satData.vel - e_refVel | = {:.4e} [m]", (sigObs.recvObs[SPP::Algorithm::Rover].e_satVel() - ref->get().Sat_Vel).norm());
+            CHECK_THAT((sigObs.recvObs[SPP::Algorithm::Rover].e_satVel() - ref->get().Sat_Vel).norm(), Catch::Matchers::WithinAbs(0.0, margin.vel));
+            marginMax.vel = std::max(marginMax.vel, (sigObs.recvObs[SPP::Algorithm::Rover].e_satVel() - ref->get().Sat_Vel).norm());
 
             LOG_DEBUG("      satElevation      {} [deg]", rad2deg(sigObs.recvObs[SPP::Algorithm::Rover].satElevation()));
             LOG_DEBUG("        refSatElevation {} [deg]", rad2deg(ref->get().Elevation));

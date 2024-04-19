@@ -16,6 +16,7 @@
 #include <fmt/format.h>
 #include <cstring>
 #include <string>
+#include <bitset>
 #include <functional>
 
 namespace NAV
@@ -47,6 +48,22 @@ std::string joinToStringCustom(const T& container, U&& formatFunc, const char* d
         text += fmt::format("{}{}", formatFunc(element), delimiter);
     });
     return text.substr(0, text.length() - strlen(delimiter));
+}
+
+/// @brief Comparison operator for bitsets
+/// @tparam N Amount of bits
+/// @param[in] lhs Left-hand side
+/// @param[in] rhs Right-hand side
+/// @return True when lhs < rhs
+template<std::size_t N>
+bool operator<(const std::bitset<N>& lhs, const std::bitset<N>& rhs)
+{
+    for (size_t i = N - 1;; i--)
+    {
+        if (lhs[i] ^ rhs[i]) { return rhs[i]; }
+        if (i == 0) { break; }
+    }
+    return false;
 }
 
 } // namespace NAV
