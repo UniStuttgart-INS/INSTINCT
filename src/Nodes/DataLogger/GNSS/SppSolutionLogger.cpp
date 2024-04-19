@@ -145,7 +145,7 @@ bool NAV::SppSolutionLogger::initialize()
                 << "QZSS system time drift difference StDev [s/s],"
                 << "IRNSS system time drift difference StDev [s/s],"
                 << "SBAS system time drift difference StDev [s/s]"
-                << std::endl;
+                << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
 }

@@ -94,7 +94,7 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
 
     j["colormaps"] = ColormapsFlow;
 
-    filestream << std::setw(4) << j << std::endl;
+    filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
 
     unsavedChanges = false;
 }

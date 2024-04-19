@@ -315,8 +315,6 @@ void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue,
 
     if (static_cast<int>(_buffer.size()) == _deque_size) // deque filled
     {
-        std::cout << "Initializing..." << std::endl;
-
         _k = 0;
         for (auto& obs : _buffer) // read observations from buffer to y
         {
@@ -370,7 +368,6 @@ void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue,
                 }
                 else
                 {
-                    std::cout << "Initialized parameters for trajectory" << std::endl;
                     INITIALIZE = false; // initialized parameters for observation
                 }
             }

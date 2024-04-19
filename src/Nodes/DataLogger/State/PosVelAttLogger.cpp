@@ -105,7 +105,7 @@ bool NAV::PosVelAttLogger::initialize()
                 << "Pos ECEF X [m],Pos ECEF Y [m],Pos ECEF Z [m],Latitude [deg],Longitude [deg],Altitude [m],"
                 << "North/South [m],East/West [m],"
                 << "Vel ECEF X [m/s],Vel ECEF Y [m/s],Vel ECEF Z [m/s],Vel N [m/s],Vel E [m/s],Vel D [m/s],"
-                << "n_Quat_b w,n_Quat_b x,n_Quat_b y,n_Quat_b z,Roll [deg],Pitch [deg],Yaw [deg]" << std::endl;
+                << "n_Quat_b w,n_Quat_b x,n_Quat_b y,n_Quat_b z,Roll [deg],Pitch [deg],Yaw [deg]" << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
 }

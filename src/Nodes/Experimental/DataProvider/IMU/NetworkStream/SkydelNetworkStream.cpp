@@ -279,13 +279,13 @@ bool SkydelNetworkStream::initialize()
 
     if (_isStartup)
     {
-        _testThread = std::thread([=, this]() {
+        _testThread = std::thread([this]() {
             _ioservice.run();
         });
     }
     else
     {
-        _testThread = std::thread([=, this]() {
+        _testThread = std::thread([this]() {
             _ioservice.restart();
             _ioservice.run();
         });

@@ -119,7 +119,7 @@ bool NAV::ImuDataLogger::initialize()
                     << "AccelDynamicsX ECEF [m/s^2],AccelDynamicsY ECEF [m/s^2],AccelDynamicsZ ECEF [m/s^2],"
                     << "AngularRateX ECEF (ω_nb_e) [rad/s],AngularRateY ECEF (ω_nb_e) [rad/s],AngularRateZ ECEF (ω_nb_e) [rad/s]";
     }
-    _filestream << std::endl;
+    _filestream << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
 }

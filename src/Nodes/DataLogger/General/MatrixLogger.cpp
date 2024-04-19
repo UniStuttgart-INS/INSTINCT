@@ -138,7 +138,7 @@ void NAV::MatrixLogger::writeMatrix(const InsTime& insTime, size_t pinIdx)
                             _filestream << ",[" << row << ";" << col << "]";
                         }
                     }
-                    _filestream << std::endl;
+                    _filestream << std::endl; // NOLINT(performance-avoid-endl)
                     _headerWritten = true;
                 }
 

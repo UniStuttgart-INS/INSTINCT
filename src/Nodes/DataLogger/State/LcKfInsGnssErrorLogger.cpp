@@ -110,7 +110,7 @@ bool NAV::LcKfInsGnssErrorLogger::initialize()
                 // ImuBiases
                 << "Accelerometer bias b_X accumulated [m/s^2],Accelerometer bias b_Y accumulated [m/s^2],Accelerometer bias b_Z accumulated [m/s^2],"
                 << "Gyroscope bias b_X accumulated [rad/s],Gyroscope bias b_Y accumulated [rad/s],Gyroscope bias b_Z accumulated [rad/s]"
-                << std::endl;
+                << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
 }

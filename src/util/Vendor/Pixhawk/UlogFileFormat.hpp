@@ -19,7 +19,9 @@
 
 namespace NAV::vendor::pixhawk
 {
-#pragma pack(push, 1) // Syntax for gcc for #pragma pack
+#ifndef __clang__
+    #pragma pack(push, 1) // Syntax for gcc for #pragma pack
+#endif
 // --------------------------------------------------------------- Header ------------------------------------------------------------------
 /// @brief The header is a fixed-size section and has the following format (16 bytes)
 struct ulog_Header_s
@@ -156,6 +158,8 @@ struct message_dropout_s
     uint16_t duration{ 0 };  ///< duration of dropout
 };
 
-#pragma pack(pop)
+#ifndef __clang__
+    #pragma pack(pop)
+#endif
 
 } // namespace NAV::vendor::pixhawk

@@ -101,7 +101,7 @@ bool NAV::KvhDataLogger::initialize()
                 << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
                 << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
                 << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
-                << "Temperature [Celsius],Status,SequenceNumber" << std::endl;
+                << "Temperature [Celsius],Status,SequenceNumber" << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
 }

@@ -104,13 +104,13 @@ bool NAV::UdpRecv::initialize()
 
     if (_isStartup)
     {
-        _recvThread = std::thread([=, this]() {
+        _recvThread = std::thread([this]() {
             _io_context.run();
         });
     }
     else
     {
-        _recvThread = std::thread([=, this]() {
+        _recvThread = std::thread([this]() {
             _io_context.restart();
             _io_context.run();
         });

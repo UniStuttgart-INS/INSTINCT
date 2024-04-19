@@ -354,10 +354,11 @@ class OutputPin : public Pin
     /// @brief Move constructor
     OutputPin(OutputPin&& other) noexcept
         : Pin(std::move(other)),
-          links(std::move(other.links)),
-          data(other.data),
-          noMoreDataAvailable(other.noMoreDataAvailable.load()),
-          blocksConnectedNodeFromFinishing(other.blocksConnectedNodeFromFinishing.load()) {}
+          links(std::move(other.links)),                                                  // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          data(other.data),                                                               // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          noMoreDataAvailable(other.noMoreDataAvailable.load()),                          // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          blocksConnectedNodeFromFinishing(other.blocksConnectedNodeFromFinishing.load()) // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+    {}
     /// @brief Copy assignment operator
     OutputPin& operator=(const OutputPin&) = delete;
     /// @brief Move assignment operator
@@ -506,14 +507,15 @@ class InputPin : public Pin
     /// @brief Move constructor
     InputPin(InputPin&& other) noexcept
         : Pin(std::move(other)),
-          link(other.link),
-          callback(other.callback),
-          firable(other.firable),
-          priority(other.priority),
-          neededForTemporalQueueCheck(other.neededForTemporalQueueCheck),
-          dropQueueIfNotFirable(other.dropQueueIfNotFirable),
-          queueBlocked(other.queueBlocked),
-          queue(other.queue) {}
+          link(other.link),                                               // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          callback(other.callback),                                       // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          firable(other.firable),                                         // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          priority(other.priority),                                       // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          neededForTemporalQueueCheck(other.neededForTemporalQueueCheck), // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          dropQueueIfNotFirable(other.dropQueueIfNotFirable),             // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          queueBlocked(other.queueBlocked),                               // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+          queue(other.queue)                                              // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
+    {}
     /// @brief Copy assignment operator
     InputPin& operator=(const InputPin&) = delete;
     /// @brief Move assignment operator
