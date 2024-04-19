@@ -13,6 +13,8 @@
 #include <fstream>
 #include <iostream>
 #include <boost/program_options/parsers.hpp>
+#include <implot.h>
+#include <implot_internal.h>
 
 #include "internal/FlowManager.hpp"
 #include "util/Logger.hpp"
@@ -185,7 +187,23 @@ void NAV::ConfigManager::SaveGlobalSettings()
     std::ofstream filestream(flow::GetConfigPath() / "globals.json");
     json j;
     j["colormaps"] = ColormapsGlobal;
-    filestream << std::setw(4) << j << std::endl;
+
+    ImPlotContext& gp = *ImPlot::GetCurrentContext();
+    j["selectedImPlotColormap"] = gp.Style.Colormap;
+
+    constexpr int CMAP_USER_START = ImPlotColormap_Greys + 2;
+    for (int i = CMAP_USER_START; i < gp.ColormapData.Count; ++i)
+    {
+        j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["name"] = gp.ColormapData.GetName(i);
+        j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["qual"] = gp.ColormapData.IsQual(i);
+        for (int c = 0; c < gp.ColormapData.GetKeyCount(i); ++c)
+        {
+            j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["colors"][static_cast<size_t>(c)] =
+                ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(i, c));
+        }
+    }
+
+    filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
 }
 
 void NAV::ConfigManager::LoadGlobalSettings()
@@ -204,5 +222,26 @@ void NAV::ConfigManager::LoadGlobalSettings()
     if (j.contains("colormaps"))
     {
         j.at("colormaps").get_to(ColormapsGlobal);
+    }
+    if (j.contains("ImPlotColormaps"))
+    {
+        for (size_t i = 0; i < j["ImPlotColormaps"].size(); ++i)
+        {
+            ImVector<ImVec4> custom;
+            for (const auto& c : j.at("ImPlotColormaps").at(i).at("colors"))
+            {
+                custom.push_back(c.get<ImVec4>());
+            }
+
+            ImPlot::AddColormap(j.at("ImPlotColormaps").at(i).at("name").get<std::string>().c_str(),
+                                custom.Data, custom.Size, j.at("ImPlotColormaps").at(i).at("qual").get<bool>());
+            ImPlot::BustItemCache();
+        }
+    }
+    if (j.contains("selectedImPlotColormap"))
+    {
+        ImPlotContext& gp = *ImPlot::GetCurrentContext();
+        gp.Style.Colormap = j.at("selectedImPlotColormap").get<int>();
+        ImPlot::BustItemCache();
     }
 }

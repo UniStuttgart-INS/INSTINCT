@@ -19,6 +19,7 @@ namespace ed = ax::NodeEditor;
 #include "ImGuiFileDialog.h"
 
 #include "implot.h"
+#include <implot_internal.h>
 
 #include "internal/gui/Shortcuts.hpp"
 #include "internal/gui/TouchTracker.hpp"
@@ -132,6 +133,27 @@ void NAV::gui::NodeEditorApplication::OnStart()
             j.at("implot").at("style").get_to(ImPlot::GetStyle());
         }
     }
+
+    // Add custom colormap and set as default. ConfigManager::LoadGlobalSettings then overrides this default selection if it is saved
+    ImPlotContext& gp = *ImPlot::GetCurrentContext();
+    ImVector<ImVec4> custom;
+    for (int c = 0; c < gp.ColormapData.GetKeyCount(ImPlotColormap_Deep); ++c)
+    {
+        custom.push_back(ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(ImPlotColormap_Deep, c)));
+    }
+    custom.push_back(ImColor(37, 109, 227));
+    custom.push_back(ImColor(239, 100, 21));
+    custom.push_back(ImColor(21, 228, 69));
+    custom.push_back(ImColor(239, 20, 28));
+    custom.push_back(ImColor(100, 64, 217));
+    custom.push_back(ImColor(164, 78, 2));
+    custom.push_back(ImColor(232, 39, 176));
+    custom.push_back(ImColor(255, 207, 31));
+    custom.push_back(ImColor(54, 228, 174));
+    ImPlot::AddColormap("DeepEx", custom.Data, custom.Size, true);
+    ImPlot::BustItemCache();
+    gp.Style.Colormap = gp.ColormapData.Count - 1;
+    ImPlot::BustItemCache();
 
     ConfigManager::LoadGlobalSettings();
 
