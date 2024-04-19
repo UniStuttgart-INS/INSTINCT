@@ -97,7 +97,7 @@ bool NAV::gui::widgets::TimeEdit(const char* str_id, InsTime& insTime, TimeEditF
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
 
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDoubleL(fmt::format("Sec##{}", str_id).c_str(), &sec, 0, InsTimeUtil::SECONDS_PER_MINUTE - 1, 0, 0, "%.6f")) { edited = true; }
+        if (ImGui::InputDoubleL(fmt::format("Sec##{}", str_id).c_str(), &sec, 0, InsTimeUtil::SECONDS_PER_MINUTE - 1e-5, 0, 0, "%.6f")) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
 
         if (changes || edited)

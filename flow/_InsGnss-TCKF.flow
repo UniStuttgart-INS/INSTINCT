@@ -2526,7 +2526,7 @@
                     "useSeed": true
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "filterFreq": "L1",
+                "filterFreq": 1,
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -2731,7 +2731,7 @@
                     "useSeed": true
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "filterFreq": "L1",
+                "filterFreq": 1,
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {

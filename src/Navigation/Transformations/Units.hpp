@@ -27,10 +27,9 @@ template<class T>
 /// @param[in] deg Value to convert in [deg]
 /// @return The converted value in [rad]
 template<typename Scalar>
-[[nodiscard]] inline auto deg2rad(const Eigen::Vector3<Scalar>& deg)
+[[nodiscard]] inline Eigen::Vector3<Scalar> deg2rad(const Eigen::Vector3<Scalar>& deg)
 {
-    Eigen::Vector3<Scalar> ret = deg * std::numbers::pi_v<Scalar> / 180.0;
-    return ret;
+    return deg * std::numbers::pi_v<Scalar> / 180.0;
 }
 
 /// @brief Convert Radians to Degree
@@ -46,10 +45,9 @@ template<class T>
 /// @param[in] rad Value to convert in [rad]
 /// @return The converted value in [deg]
 template<typename Scalar>
-[[nodiscard]] inline auto rad2deg(const Eigen::Vector3<Scalar>& rad)
+[[nodiscard]] inline Eigen::Vector3<Scalar> rad2deg(const Eigen::Vector3<Scalar>& rad)
 {
-    Eigen::Vector3<Scalar> ret = rad * 180.0 / std::numbers::pi_v<Scalar>;
-    return ret;
+    return rad * 180.0 / std::numbers::pi_v<Scalar>;
 }
 
 /// @brief Convert Semicircles to Radians

@@ -420,7 +420,7 @@ json NAV::ErrorModel::save() const
     j["cycleSlipDetectionProbability"] = _gui_cycleSlipDetectionProbability;
     j["cycleSlipRng"] = _cycleSlipRng;
 
-    j["filterFreq"] = _filterFreq;
+    j["filterFreq"] = Frequency_(_filterFreq);
     j["filterCode"] = _filterCode;
 
     return j;
@@ -474,7 +474,12 @@ void NAV::ErrorModel::restore(json const& j)
     if (j.contains("cycleSlipDetectionProbabilityUnit")) { j.at("cycleSlipDetectionProbabilityUnit").get_to(_gui_cycleSlipDetectionProbabilityUnit); }
     if (j.contains("cycleSlipDetectionProbability")) { j.at("cycleSlipDetectionProbability").get_to(_gui_cycleSlipDetectionProbability); }
     if (j.contains("cycleSlipRng")) { j.at("cycleSlipRng").get_to(_cycleSlipRng); }
-    if (j.contains("filterFreq")) { j.at("filterFreq").get_to(_filterFreq); }
+    if (j.contains("filterFreq"))
+    {
+        uint64_t value = 0;
+        j.at("filterFreq").get_to(value);
+        _filterFreq = Frequency_(value);
+    }
     if (j.contains("filterCode")) { j.at("filterCode").get_to(_filterCode); }
 }
 
