@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['nmea_20log_20files_0',['Learn how to use NMEA log files',['../Tutorial_NMEA.html',1,'Tutorial']]],
-  ['node_1',['Node',['../Core_Node.html',1,'Core']]],
-  ['notitle_2',['notitle',['../index.html',1,'']]]
+  ['getting_20started_0',['Getting Started',['../getting_started.html',1,'user_manual_landing_page']]],
+  ['gnssanalyzer_20node_1',['GnssAnalyzer Node',['../gnss_analyzer_node.html',1,'node_guide_landing_page']]],
+  ['group_20box_2',['Group Box',['../group_box.html',1,'node_guide_landing_page']]],
+  ['gui_3',['GUI',['../advanced_gui_landing_page.html',1,'Advanced GUI'],['../gui_landing_page.html',1,'GUI']]],
+  ['guide_4',['Node Guide',['../node_guide_landing_page.html',1,'user_manual_landing_page']]]
 ];

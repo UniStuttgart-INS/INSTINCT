@@ -12,5 +12,5 @@ var searchData=
   ['erbvel_9',['ErbVel',['../structNAV_1_1vendor_1_1emlid_1_1ErbVel.html',1,'NAV::vendor::emlid']]],
   ['erbver_10',['ErbVer',['../structNAV_1_1vendor_1_1emlid_1_1ErbVer.html',1,'NAV::vendor::emlid']]],
   ['errormodel_11',['ErrorModel',['../classNAV_1_1ErrorModel.html',1,'NAV']]],
-  ['estweightdesignmatrices_12',['EstWeightDesignMatrices',['../structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1EstWeightDesignMatrices.html',1,'NAV::GNSS::Positioning::SPP']]]
+  ['extracolumn_12',['ExtraColumn',['../structNAV_1_1gui_1_1widgets_1_1DynamicInputPins_1_1ExtraColumn.html',1,'NAV::gui::widgets::DynamicInputPins']]]
 ];

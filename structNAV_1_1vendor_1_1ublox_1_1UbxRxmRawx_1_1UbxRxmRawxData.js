@@ -1,5 +1,9 @@
 var structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData =
 [
+    [ "cpValid", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a981f128c27786a9fb1115f24de66c4d2", null ],
+    [ "halfCycValid", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a9d253e289fc4edc054f0dc145caa4053", null ],
+    [ "prValid", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a0230a32dc266e1355dc9fe94269b24e8", null ],
+    [ "subHalfSubtractedFromPhase", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#ac6f6ef40c4ab85d531a234d2d7b0cedf", null ],
     [ "cno", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a57b795e8aa5efb0225247a7d281e39cc", null ],
     [ "cpMes", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#aec59bf65ea3741bf17a441d7132edc5d", null ],
     [ "cpStdev", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a767df48d03dfd73d9a54f0f5e6c7be79", null ],

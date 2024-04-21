@@ -1,5 +1,8 @@
 var Json_8hpp =
 [
+    [ "nlohmann::adl_serializer< std::variant< Args... > >", "structnlohmann_1_1adl__serializer_3_01std_1_1variant_3_01Args_8_8_8_01_4_01_4.html", "structnlohmann_1_1adl__serializer_3_01std_1_1variant_3_01Args_8_8_8_01_4_01_4" ],
+    [ "detail::variant_switch< N >", "structdetail_1_1variant__switch.html", "structdetail_1_1variant__switch" ],
+    [ "detail::variant_switch< 0 >", "structdetail_1_1variant__switch_3_010_01_4.html", "structdetail_1_1variant__switch_3_010_01_4" ],
     [ "json", "Json_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "from_json", "Json_8hpp.html#a3048934df8133da2be56e52198577177", null ],
     [ "from_json", "Json_8hpp.html#ad62aba96c5b5c04f8ea12328454f4587", null ],

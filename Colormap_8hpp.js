@@ -9,7 +9,7 @@ var Colormap_8hpp =
     [ "ColormapButton", "Colormap_8hpp.html#ab405a0602fe5fec9c73e5f4a0bc04851", null ],
     [ "ColormapSearch", "Colormap_8hpp.html#ac346408bcd48b99641c4738c8033441b", null ],
     [ "from_json", "Colormap_8hpp.html#a7ae5f6d30ed826223f9ce928d8f6103e", null ],
-    [ "ShowColormapSelector", "Colormap_8hpp.html#a48e3ca69f0ad64e5cbac8e6d71979c27", null ],
+    [ "ShowColormapSelector", "Colormap_8hpp.html#a4bd7d568defa73cc16cba64f1a072d80", null ],
     [ "to_json", "Colormap_8hpp.html#a7e73d97973ff7a033943539a2a717517", null ],
     [ "ColormapsFlow", "Colormap_8hpp.html#ab04c994f4ea5d8437680a0aba966db99", null ],
     [ "ColormapsGlobal", "Colormap_8hpp.html#a824b9aee5facc70dbb47caae7d5a21cb", null ]

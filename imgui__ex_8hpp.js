@@ -27,6 +27,7 @@ var imgui__ex_8hpp =
     [ "InputInt3L", "imgui__ex_8hpp.html#a6f18dbfef45a33832e828a71028b76cd", null ],
     [ "InputInt4L", "imgui__ex_8hpp.html#a8c8c7c6c5185968778cbc40b07acb3c1", null ],
     [ "InputIntL", "imgui__ex_8hpp.html#a4a068d4b611704f53ae39deafa4a1bc8", null ],
+    [ "InputTextL", "imgui__ex_8hpp.html#a464a9ea5c00c02b196de45c1e53e7e4c", null ],
     [ "operator!=", "imgui__ex_8hpp.html#aef0fd4ffe3cbb6278e6793a9009cc826", null ],
     [ "operator==", "imgui__ex_8hpp.html#ae62d73ae5b49cd2ef7fd4c30f37c07b6", null ],
     [ "SliderDouble", "imgui__ex_8hpp.html#af4b652b4d72e4992ac9325591afca03e", null ],

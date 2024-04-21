@@ -5,8 +5,8 @@ var structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx =
     [ "freqId", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a3480a0a697ff011451d3031b6e656af4", null ],
     [ "gnssId", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a8f869b120917fcca65ab1d53ac57e0f5", null ],
     [ "numWords", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a6a0e06ef4f67b0804085f51ecd9ab4e0", null ],
-    [ "reserved1", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a487287e0956449ae9305aa67d4da573a", null ],
-    [ "reserved2", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a5a10be46e28528a4adf5cda0a4847c78", null ],
+    [ "reserved0", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a984def7cec0ba25121c67b17bd09718d", null ],
+    [ "sigId", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a78765f709722cc0b412127dad5149753", null ],
     [ "svId", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a0d0096ee8e953042fac4887d17872ac4", null ],
     [ "version", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a31ecd34ac2545c8badccf86bb5f15502", null ]
 ];

@@ -7,8 +7,10 @@ var SatelliteIdentifier_8hpp =
     [ "json", "SatelliteIdentifier_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "from_json", "SatelliteIdentifier_8hpp.html#a01e08144419e3624fa275bbb5bb3a0c1", null ],
     [ "from_json", "SatelliteIdentifier_8hpp.html#a09affe8aa990cf9903a503676f2493de", null ],
-    [ "operator<<", "SatelliteIdentifier_8hpp.html#ad4645889bdd27f77fd0354b4649e21ee", null ],
-    [ "ShowSatelliteSelector", "SatelliteIdentifier_8hpp.html#a4ab444aa6f2cb5858f24a925a7dd27cf", null ],
+    [ "operator<<", "SatelliteIdentifier_8hpp.html#a0686b797c9f2114b42e68a8ce8b554c2", null ],
+    [ "operator<<", "SatelliteIdentifier_8hpp.html#ada0bea9f9f96576e36babe1d3e67ecb5", null ],
+    [ "ShowSatelliteSelector", "SatelliteIdentifier_8hpp.html#a421f41a1b2fe343c650404d31dc45615", null ],
+    [ "ShowSatelliteSelector", "SatelliteIdentifier_8hpp.html#ac7cf3bb37477f80e97c39cc5f75cd760", null ],
     [ "to_json", "SatelliteIdentifier_8hpp.html#ae541a49168840d016ba35b60fa77d95b", null ],
     [ "to_json", "SatelliteIdentifier_8hpp.html#a45b695cbf1007ddc32ee85e44b013190", null ]
 ];

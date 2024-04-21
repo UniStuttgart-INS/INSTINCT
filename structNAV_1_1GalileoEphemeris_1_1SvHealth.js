@@ -11,7 +11,7 @@ var structNAV_1_1GalileoEphemeris_1_1SvHealth =
       [ "SignalComponentCurrentlyInTest", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#ada9e01487f6fe957e7cfea77073c47c0a617525acaa071aaad4300f15c7c0de4e", null ]
     ] ],
     [ "E1B_DataValidityStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#ad5c8ce7f64d09a7b5c9b948669f1e41e", null ],
-    [ "E1BC_SignalHealthStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a57f52fe888ca79f6808d75be93ac219b", null ],
+    [ "E1B_SignalHealthStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a1638f4e9e4f3d567003bb3220e5ab611", null ],
     [ "E5a_DataValidityStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a5b425ab85a8883c524f637b8f9769977", null ],
     [ "E5a_SignalHealthStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#aac7a96ef99ebc1fdf18f7d53c67b08c1", null ],
     [ "E5b_DataValidityStatus", "structNAV_1_1GalileoEphemeris_1_1SvHealth.html#acfb7280e3ba210d0b81451fbfe4ac4ec", null ],

@@ -13,9 +13,10 @@ var searchData=
   ['imuobswdelta_2ehpp_10',['ImuObsWDelta.hpp',['../ImuObsWDelta_8hpp.html',1,'']]],
   ['imupos_2ehpp_11',['ImuPos.hpp',['../ImuPos_8hpp.html',1,'']]],
   ['imusimulator_2ehpp_12',['ImuSimulator.hpp',['../ImuSimulator_8hpp.html',1,'']]],
-  ['inertialnavsol_2ehpp_13',['InertialNavSol.hpp',['../InertialNavSol_8hpp.html',1,'']]],
-  ['inputwithunit_2ehpp_14',['InputWithUnit.hpp',['../InputWithUnit_8hpp.html',1,'']]],
-  ['instime_2ehpp_15',['InsTime.hpp',['../InsTime_8hpp.html',1,'']]],
-  ['ionosphere_2ehpp_16',['Ionosphere.hpp',['../Ionosphere_8hpp.html',1,'']]],
-  ['ionosphericcorrections_2ehpp_17',['IonosphericCorrections.hpp',['../IonosphericCorrections_8hpp.html',1,'']]]
+  ['incrementalleastsquares_2ehpp_13',['IncrementalLeastSquares.hpp',['../IncrementalLeastSquares_8hpp.html',1,'']]],
+  ['inertialnavsol_2ehpp_14',['InertialNavSol.hpp',['../InertialNavSol_8hpp.html',1,'']]],
+  ['inputwithunit_2ehpp_15',['InputWithUnit.hpp',['../InputWithUnit_8hpp.html',1,'']]],
+  ['instime_2ehpp_16',['InsTime.hpp',['../InsTime_8hpp.html',1,'']]],
+  ['ionosphere_2ehpp_17',['Ionosphere.hpp',['../Ionosphere_8hpp.html',1,'']]],
+  ['ionosphericcorrections_2ehpp_18',['IonosphericCorrections.hpp',['../IonosphericCorrections_8hpp.html',1,'']]]
 ];

@@ -10,7 +10,8 @@ var searchData=
   ['emliduartsensor_2ehpp_7',['EmlidUartSensor.hpp',['../EmlidUartSensor_8hpp.html',1,'']]],
   ['emlidutilities_2ehpp_8',['EmlidUtilities.hpp',['../EmlidUtilities_8hpp.html',1,'']]],
   ['enumcombo_2ehpp_9',['EnumCombo.hpp',['../EnumCombo_8hpp.html',1,'']]],
-  ['errorequations_2ehpp_10',['errorequations.hpp',['../EcefFrame_2ErrorEquations_8hpp.html',1,'(Global Namespace)'],['../LocalNavFrame_2ErrorEquations_8hpp.html',1,'(Global Namespace)']]],
-  ['errormodel_2ehpp_11',['ErrorModel.hpp',['../ErrorModel_8hpp.html',1,'']]],
-  ['errors_2ehpp_12',['Errors.hpp',['../Errors_8hpp.html',1,'']]]
+  ['enumcombowithabbreviation_2ehpp_10',['EnumComboWithAbbreviation.hpp',['../EnumComboWithAbbreviation_8hpp.html',1,'']]],
+  ['enumcombowithtooltip_2ehpp_11',['EnumComboWithTooltip.hpp',['../EnumComboWithTooltip_8hpp.html',1,'']]],
+  ['errorequations_2ehpp_12',['ErrorEquations.hpp',['../EcefFrame_2ErrorEquations_8hpp.html',1,'(Global Namespace)'],['../LocalNavFrame_2ErrorEquations_8hpp.html',1,'(Global Namespace)']]],
+  ['errormodel_2ehpp_13',['ErrorModel.hpp',['../ErrorModel_8hpp.html',1,'']]]
 ];

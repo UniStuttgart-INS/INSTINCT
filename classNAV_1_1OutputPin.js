@@ -2,7 +2,7 @@ var classNAV_1_1OutputPin =
 [
     [ "OutgoingLink", "structNAV_1_1OutputPin_1_1OutgoingLink.html", "structNAV_1_1OutputPin_1_1OutgoingLink" ],
     [ "PeekPollDataFunc", "classNAV_1_1OutputPin.html#a350d8060bcb57493ab01c91b36badfd5", null ],
-    [ "PinData", "classNAV_1_1OutputPin.html#a91d88b91ad8789bcaffcf682bc1c3583", null ],
+    [ "PinData", "classNAV_1_1OutputPin.html#a746f45d83fa13fc24ea8db7724ead64b", null ],
     [ "PollDataFunc", "classNAV_1_1OutputPin.html#ac34201ae3114e11ddf60a7b881f5cf09", null ],
     [ "OutputPin", "classNAV_1_1OutputPin.html#a0285a812f2f5f16219865d45883da9d6", null ],
     [ "OutputPin", "classNAV_1_1OutputPin.html#a79f749e8dac188c6f9b9370f16d9afdc", null ],
@@ -21,7 +21,7 @@ var classNAV_1_1OutputPin =
     [ "blocksConnectedNodeFromFinishing", "classNAV_1_1OutputPin.html#acee5fdaa70ee5261b91cb3952de54f5a", null ],
     [ "data", "classNAV_1_1OutputPin.html#a7fecdbbc7997dbda36faa9780906158d", null ],
     [ "dataAccessConditionVariable", "classNAV_1_1OutputPin.html#a52a39a12bae4e4d48541ac08ec2f6ef5", null ],
-    [ "dataAccessCounter", "classNAV_1_1OutputPin.html#a954bb5826780eab8105bc08538b69aa5", null ],
+    [ "dataAccessCounter", "classNAV_1_1OutputPin.html#a6e9b3e6848cd3c839514a70728d4579f", null ],
     [ "dataAccessMutex", "classNAV_1_1OutputPin.html#a191309d6234273153e3429583ffdd0c4", null ],
     [ "links", "classNAV_1_1OutputPin.html#ab1e7b109f0d4c7ea9660a76079ef4700", null ],
     [ "noMoreDataAvailable", "classNAV_1_1OutputPin.html#ae6531aa8245401908773ce1b71667de5", null ]

@@ -254,7 +254,12 @@ var UbloxTypes_8hpp =
     [ "UbxUpdMessages", "UbloxTypes_8hpp.html#a7893b7a1928121df7a2abd1ada48b0f0", [
       [ "UBX_UPD_SOS", "UbloxTypes_8hpp.html#a7893b7a1928121df7a2abd1ada48b0f0ab78069c017c3351b74eaff06de698f1b", null ]
     ] ],
+    [ "getCode", "UbloxTypes_8hpp.html#ac59df7e4580abb15e5f02b15a17d6ff1", null ],
     [ "getMsgClassFromString", "UbloxTypes_8hpp.html#a0b07788669ff1343aad31596b7402d4c", null ],
     [ "getMsgIdFromString", "UbloxTypes_8hpp.html#aa44b8e7509052d5053fea393289a682c", null ],
-    [ "getMsgIdFromString", "UbloxTypes_8hpp.html#a7ab4a63a113c36c997830d0e31c4d4ce", null ]
+    [ "getMsgIdFromString", "UbloxTypes_8hpp.html#a7ab4a63a113c36c997830d0e31c4d4ce", null ],
+    [ "getSatSys", "UbloxTypes_8hpp.html#a9369fae0a0af1e3eaa34e77026bf3866", null ],
+    [ "getStringFromMsgClass", "UbloxTypes_8hpp.html#ac5757b52d36207aa0fdabd2ca6f16870", null ],
+    [ "getStringFromMsgId", "UbloxTypes_8hpp.html#a318ea7c3ed8bf7da56738285bd062d05", null ],
+    [ "operator<<", "UbloxTypes_8hpp.html#a71e6ec1e8ee3138a542cfd8cf55ffac9", null ]
 ];

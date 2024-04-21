@@ -172,5 +172,6 @@ var searchData=
   ['unassigned_169',['unassigned',['../UlogFileFormat_8hpp.html#aaf4c855fcd1042223ebe548585f34d5dabad097494597a4e092c1524102eeaea7',1,'NAV::vendor::pixhawk']]],
   ['usedfornavigation_170',['UsedForNavigation',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a6c1fc597377bcb82cde7b1c5d9d2586d',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
   ['usedforrtk_171',['UsedForRTK',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0a08ccd0a73122f96eeca93f3b49339ca4',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['utc_172',['utc',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a9234324ddf6b4176b57d803a925b7961',1,'NAV::TimeSystem::UTC'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45',1,'NAV::UTC']]]
+  ['user_5fdefined_172',['USER_DEFINED',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a823114549e6433df98d966fceb419296a5123cb514ff95a726922950380866e00',1,'NAV::vendor::RINEX::ObsHeader']]],
+  ['utc_173',['UTC',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a9234324ddf6b4176b57d803a925b7961',1,'NAV::TimeSystem::UTC'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45',1,'NAV::UTC']]]
 ];

@@ -26,20 +26,22 @@ var NAVTREE =
 [
   [ "INSTINCT", "index.html", [
     [ "Overview", "index.html", null ],
-    [ "INS Toolkit for Integrated Navigation Concepts and Training", "index.html#autotoc_md8", null ],
-    [ "Core", "Core.html", [
-      [ "Node", "Core_Node.html", [
-        [ "Worker Thread", "Core_Node.html#Core_Node_Worker", null ],
-        [ "Node States", "Core_Node.html#Core_Node_State", null ]
+    [ "Core", "Core.html", "Core" ],
+    [ "Developer Manual", "developer_manual.html", null ],
+    [ "Project Introduction", "main_introduction.html", [
+      [ "Preface", "main_introduction.html#Preface", null ],
+      [ "Installation", "main_introduction.html#introduction_installation", null ],
+      [ "Getting Started as a User", "main_introduction.html#introduction_users", null ],
+      [ "For Developers", "main_introduction.html#introduction_developers", null ],
+      [ "Contact", "main_introduction.html#introduction_contact", null ],
+      [ "License and Citation", "main_introduction.html#introduction_cite", null ],
+      [ "Publications", "main_introduction.html#introduction_publications", null ],
+      [ "Flow-Based Programming", "main_introduction.html#introduction_programming", [
+        [ "What is flow-based programming", "main_introduction.html#introduction_fbp", null ],
+        [ "Flow-based Programming and INSTINCT", "main_introduction.html#introduction_fbp_instinct", null ]
       ] ]
     ] ],
-    [ "Tutorials", "Tutorial.html", [
-      [ "Preface", "Tutorial.html#autotoc_md12", null ],
-      [ "The Tutorials", "Tutorial.html#autotoc_md13", null ],
-      [ "What is flow-based programming", "Tutorial.html#autotoc_md14", null ],
-      [ "Flow-based Programming and INSTINCT", "Tutorial.html#autotoc_md15", null ],
-      [ "Learn how to use NMEA log files", "Tutorial_NMEA.html", null ]
-    ] ],
+    [ "User Manual", "user_manual_landing_page.html", "user_manual_landing_page" ],
     [ "Bibliography", "citelist.html", null ],
     [ "Nodes", "topics.html", "topics" ],
     [ "Classes", "annotated.html", [
@@ -75,26 +77,30 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "ARMA_8hpp.html",
-"EmlidTypes_8hpp.html#a6c08c10102e9b5c1ff914d99531680c4aa2971015ef4d5d38f08a9ae03928fb0d",
-"ImGui_8hpp.html",
-"NodeManager_8hpp.html#a036299cf9f05ab43bb6df5bec0ce9a92",
-"Sleep_8hpp.html#a3d23401ab02bc8a8477b552ee7c609b1",
-"UbloxTypes_8hpp.html#a099157f156c1bd2097804a17b8428a6dadd355780e88d1415027ae9977d0b7bbd",
-"VectorNavDataLogger_8hpp_source.html",
-"classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6caaaa4168beae4818c3da327721e87ae2b",
-"classNAV_1_1GLONASSEphemeris.html#ab795955a0faeabed52af1978f2647bc6",
-"classNAV_1_1ImuFusion.html#a691db3a2dd1ba045a617982fff7f1ee7",
-"classNAV_1_1KeyedRowVector.html#a55d39b34a51b2cfc4190420f75d76747",
-"classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136",
-"classNAV_1_1RinexObsFile.html#a4fbb01c552c8ebe76af950c98dd33e63",
-"classNAV_1_1TsDeque.html#a7aabb4ac4badd7364c466a333a157ad8",
-"classNAV_1_1experimental_1_1ARMA.html#ae55541bb9af54d92eba689e212591874",
-"classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#a86cbd36fc296117b9c7cac674db095f8",
-"functions_w.html",
-"structNAV_1_1ImuFusion_1_1PinData.html#a62dacfc83de0321e190b1fcc6d9e4c93a5048ae192d391e12c3401c38f2ffc497",
-"structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a108ddb73d8854c30c3da841fda2937d3",
-"structNAV_1_1internal_1_1GPT3Data.html#ae04c4420ce5e58241426eba37059d38b",
-"structNAV_1_1vendor_1_1vectornav_1_1DOP.html#ad40e18b953ab8ecefa82bbd212ea9695"
+"EmlidTypes_8hpp_source.html",
+"INS_2Functions_8hpp_source.html",
+"Math_2KalmanFilter_8hpp_source.html",
+"ProcessNoise_8hpp.html#acccdfb438abab94fb07f91e6c023f047",
+"TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a9284147e8640bbd87de2fbdfb892ade8",
+"UbloxTypes_8hpp.html#adfe462159584300213323fe576cc4804a760deab207e0872185ae3bc9f0456c61",
+"classNAV_1_1Code.html#a6e9ce0298cef4a48d107423a487b1b9c",
+"classNAV_1_1Demo.html#acb24a6f7bf8f192d51ffad854134f846",
+"classNAV_1_1GalileoEphemeris.html#ab1a736ceb855ea8729cdb865f57d6ed9",
+"classNAV_1_1ImuSimulator.html#a4bd9d41e67c5b9c2f4a4514f925927b2",
+"classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html#ab906433bbb44fc4dd87c5ec997902e2e",
+"classNAV_1_1Navio2Sensor.html#aa577e9ac45d93d2e9a1118d92e1ea6f0",
+"classNAV_1_1PolynomialRegressor.html#aeb8bcf105601dc48a420b7741b83c9cca1133d19018ef15068e235eb3df2bf419",
+"classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6f",
+"classNAV_1_1TsDeque.html#a2f5075bb909fff6e5cfde4c0363e424d",
+"classNAV_1_1VectorNavDataLogger.html#aad3f150d03400facabc0e8ce8c2cd0ca",
+"classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#a49c36bd8d34d4244c5a0299171478c6f",
+"functions_func.html",
+"rinex_nav_file_node.html",
+"structNAV_1_1InsTime__YDoySod.html#a5c12df9b7faa6405eeb5728bc588aa00",
+"structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Tooltip.html#a5b0403d93f4ef8579736854a8d1a4be5",
+"structNAV_1_1internal_1_1GPT3Data.html#ad13fa72b9b1d089cda56cbf6b21008d2",
+"structNAV_1_1vendor_1_1ublox_1_1UbxNavPosecef.html#a100838ba08823c96269c5e5a329e88c1",
+"structdetail_1_1variant__switch_3_010_01_4.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -5,6 +5,7 @@ var structNAV_1_1Plot_1_1PlotInfo =
     [ "PlotInfo", "structNAV_1_1Plot_1_1PlotInfo.html#ac7c3aad59a557fb995b2263360bf2a2e", null ],
     [ "headerText", "structNAV_1_1Plot_1_1PlotInfo.html#a302e265981c93c11223d67bda123c181", null ],
     [ "leftPaneWidth", "structNAV_1_1Plot_1_1PlotInfo.html#a706b576d390efcbc2a7247bf052a7649", null ],
+    [ "lineFlags", "structNAV_1_1Plot_1_1PlotInfo.html#a42ad7c704218b7c788069c0998b47a80", null ],
     [ "overrideXAxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#a967927e6a2be62a9b8e4f6285c346287", null ],
     [ "plotFlags", "structNAV_1_1Plot_1_1PlotInfo.html#a71114c1b897b0c84a567c89b791b4974", null ],
     [ "plotItems", "structNAV_1_1Plot_1_1PlotInfo.html#adafbfd4f4054673e9de6ec73e3a180e2", null ],

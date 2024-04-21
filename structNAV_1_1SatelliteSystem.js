@@ -1,9 +1,21 @@
 var structNAV_1_1SatelliteSystem =
 [
+    [ "Enum", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97f", [
+      [ "Enum_GPS", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa0f65a21d8534af0f579799f73c8633f2", null ],
+      [ "Enum_GAL", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa6e78fa654c8e5043781f69b0cfaddb71", null ],
+      [ "Enum_GLO", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa68aee9806c5ee76e11c2de6daadbf713", null ],
+      [ "Enum_BDS", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa8c01dee2ca0fb9015ff10e65de9845fd", null ],
+      [ "Enum_QZSS", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa908a68332a9ef46b4fd5a5953ccd6386", null ],
+      [ "Enum_IRNSS", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa79146df1138b65ab5b6043014d8d51ac", null ],
+      [ "Enum_SBAS", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fad6a1f05c149e69f088e8c3c7304d9ade", null ],
+      [ "Enum_COUNT", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fae260ffa1c1ba1afc649a31d7b40bff4b", null ],
+      [ "Enum_None", "structNAV_1_1SatelliteSystem.html#ae0c2c9526a539d4490275a1432abb97fa2db3908e48edc8b0b192138e10e783f1", null ]
+    ] ],
     [ "SatelliteSystem", "structNAV_1_1SatelliteSystem.html#a707766674d5155395522e6a7dd5567a2", null ],
     [ "SatelliteSystem", "structNAV_1_1SatelliteSystem.html#ae1b053dfff49123bd3369a5522c4986b", null ],
+    [ "SatelliteSystem", "structNAV_1_1SatelliteSystem.html#a952a198906d02251acd7a98468aef0ca", null ],
     [ "fromChar", "structNAV_1_1SatelliteSystem.html#a56139015779ce77af1204bb13dfdd2b5", null ],
-    [ "fromEnum", "structNAV_1_1SatelliteSystem.html#a28a4ff252d4785db8b872783541d551f", null ],
+    [ "fromEnum", "structNAV_1_1SatelliteSystem.html#ad47dc51c218e401e54e4c1c752af0d42", null ],
     [ "fromString", "structNAV_1_1SatelliteSystem.html#ad8a2b8ece180fc28ed1186f8e9ef6247", null ],
     [ "GetAll", "structNAV_1_1SatelliteSystem.html#a963f19888a844fc97c4ef7ceb8308e97", null ],
     [ "getSatellites", "structNAV_1_1SatelliteSystem.html#afc539e4a2fdef7a5661f618883889762", null ],
@@ -17,8 +29,10 @@ var structNAV_1_1SatelliteSystem =
     [ "operator uint64_t", "structNAV_1_1SatelliteSystem.html#ac199c3ac5cde837b241cb255d97a21c0", null ],
     [ "operator<", "structNAV_1_1SatelliteSystem.html#a50e7af3150e9ee696d9b8f847ccd924e", null ],
     [ "operator=", "structNAV_1_1SatelliteSystem.html#a69f98496a4fbb8245d6c56a258bc5913", null ],
-    [ "toEnumeration", "structNAV_1_1SatelliteSystem.html#a68c2c38380a2ce3f87c0298db8b78eca", null ],
-    [ "ToEnumeration", "structNAV_1_1SatelliteSystem.html#a0fbb52517ff7525825a2d4cac679c613", null ],
+    [ "toChar", "structNAV_1_1SatelliteSystem.html#a0925571bd27a1a0cb57445f2f6203736", null ],
+    [ "ToChar", "structNAV_1_1SatelliteSystem.html#a044a199f749351af5e809d435c4770ca", null ],
+    [ "toEnumeration", "structNAV_1_1SatelliteSystem.html#a12f54b8f9e412cc35d71fa8edd7887ed", null ],
+    [ "ToEnumeration", "structNAV_1_1SatelliteSystem.html#aa5397a55494f28c756bfcca4e570e833", null ],
     [ "toVector", "structNAV_1_1SatelliteSystem.html#ae95820ad357ff09a1f207b9fa02660cb", null ],
     [ "ToVector", "structNAV_1_1SatelliteSystem.html#a5e22b940226ce99c5353f81cd4fd1ce6", null ],
     [ "operator==", "structNAV_1_1SatelliteSystem.html#ad23a965cd1527371a5c23f50b8755a56", null ]

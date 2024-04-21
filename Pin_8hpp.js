@@ -8,6 +8,7 @@ var Pin_8hpp =
     [ "NAV::OutputPin", "classNAV_1_1OutputPin.html", "classNAV_1_1OutputPin" ],
     [ "NAV::Pin", "classNAV_1_1Pin.html", "classNAV_1_1Pin" ],
     [ "NAV::Pin::Type", "structNAV_1_1Pin_1_1Type.html", "structNAV_1_1Pin_1_1Type" ],
+    [ "NAV::InputPin::IncomingLink::ValueWrapper< T >", "classNAV_1_1InputPin_1_1IncomingLink_1_1ValueWrapper.html", "classNAV_1_1InputPin_1_1IncomingLink_1_1ValueWrapper" ],
     [ "json", "Pin_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "from_json", "Pin_8hpp.html#a6723e0fbe40de5227272270c17d25b05", null ],
     [ "from_json", "Pin_8hpp.html#a83ff517c30c869b6cc0649fd5a980ac8", null ],

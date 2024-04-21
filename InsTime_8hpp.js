@@ -1,5 +1,6 @@
 var InsTime_8hpp =
 [
+    [ "std::hash< NAV::InsTime >", "structstd_1_1hash_3_01NAV_1_1InsTime_01_4.html", "structstd_1_1hash_3_01NAV_1_1InsTime_01_4" ],
     [ "NAV::InsTime", "classNAV_1_1InsTime.html", "classNAV_1_1InsTime" ],
     [ "NAV::InsTime_GPSweekTow", "structNAV_1_1InsTime__GPSweekTow.html", "structNAV_1_1InsTime__GPSweekTow" ],
     [ "NAV::InsTime_JD", "structNAV_1_1InsTime__JD.html", "structNAV_1_1InsTime__JD" ],

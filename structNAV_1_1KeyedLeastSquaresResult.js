@@ -1,5 +1,5 @@
 var structNAV_1_1KeyedLeastSquaresResult =
 [
-    [ "solution", "structNAV_1_1KeyedLeastSquaresResult.html#a7192b14360c3194fb03e5c921072e67a", null ],
-    [ "variance", "structNAV_1_1KeyedLeastSquaresResult.html#aa0e748bcda46769ea2a3d09fe51956b0", null ]
+    [ "solution", "structNAV_1_1KeyedLeastSquaresResult.html#ac0faad950afbf90670011b01dd2ec121", null ],
+    [ "variance", "structNAV_1_1KeyedLeastSquaresResult.html#a05db8fe5f22f7d015478f414c49b6736", null ]
 ];

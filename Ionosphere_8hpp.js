@@ -7,6 +7,6 @@ var Ionosphere_8hpp =
     ] ],
     [ "calcIonosphericDelay", "Ionosphere_8hpp.html#ad29e4fa72143038b3e011e352e7c2de8", null ],
     [ "ComboIonosphereModel", "Ionosphere_8hpp.html#a71df6b973550e202c08108ccecf3da9d", null ],
-    [ "ionoErrorVar", "Ionosphere_8hpp.html#af1644383b1c08ad765fdfdc9a21a653e", null ],
+    [ "ionoErrorVar", "Ionosphere_8hpp.html#a50b554966b9fade0a5ad03fccd89c85c", null ],
     [ "to_string", "Ionosphere_8hpp.html#ae2975ef6f6f8424374851aea84c19225", null ]
 ];

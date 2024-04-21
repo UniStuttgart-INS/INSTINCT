@@ -16,6 +16,6 @@ var classNAV_1_1SatNavData =
     [ "isHealthy", "classNAV_1_1SatNavData.html#a4c6a7ce6bee92e6efff1663e711f8ef0", null ],
     [ "operator=", "classNAV_1_1SatNavData.html#a1b1730e064125d696facf2e9bd4b7597", null ],
     [ "operator=", "classNAV_1_1SatNavData.html#ad3649ac2406d879c1c62d2e6e9dc70a7", null ],
-    [ "refTime", "classNAV_1_1SatNavData.html#a944342e2ff0434092bca17a77247198b", null ],
+    [ "refTime", "classNAV_1_1SatNavData.html#a4c6dbdf8021bdb44b918e7f400cf9839", null ],
     [ "type", "classNAV_1_1SatNavData.html#a620048b1447848e7a619daeb640ecb9e", null ]
 ];

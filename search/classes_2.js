@@ -1,15 +1,23 @@
 var searchData=
 [
-  ['calcdata_0',['CalcData',['../structNAV_1_1GNSS_1_1Positioning_1_1SPP_1_1CalcData.html',1,'NAV::GNSS::Positioning::SPP']]],
+  ['calcterms_0',['CalcTerms',['../structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1CalcTerms.html',1,'NAV::Observations::SignalObservation::ReceiverSpecificData']]],
   ['callbacktimer_1',['CallbackTimer',['../classCallbackTimer.html',1,'']]],
   ['carrierphase_2',['CarrierPhase',['../structNAV_1_1GnssObs_1_1ObservationData_1_1CarrierPhase.html',1,'NAV::GnssObs::ObservationData']]],
   ['clock_3',['Clock',['../classNAV_1_1Clock.html',1,'NAV']]],
-  ['code_4',['Code',['../classNAV_1_1Code.html',1,'NAV']]],
-  ['colormap_5',['Colormap',['../classNAV_1_1Colormap.html',1,'NAV']]],
-  ['combiner_6',['Combiner',['../classNAV_1_1Combiner.html',1,'NAV']]],
-  ['commonlog_7',['CommonLog',['../classNAV_1_1CommonLog.html',1,'NAV']]],
-  ['corrections_8',['corrections',['../structNAV_1_1Clock_1_1Corrections.html',1,'NAV::Clock::Corrections'],['../structNAV_1_1IonosphericCorrections_1_1Corrections.html',1,'NAV::IonosphericCorrections::Corrections']]],
-  ['csvdata_9',['CsvData',['../classNAV_1_1CsvData.html',1,'NAV']]],
-  ['csvfile_10',['CsvFile',['../classNAV_1_1CsvFile.html',1,'NAV']]],
-  ['cubicspline_11',['CubicSpline',['../classNAV_1_1CubicSpline.html',1,'NAV']]]
+  ['cod_4',['COD',['../classNAV_1_1COD.html',1,'NAV']]],
+  ['code_5',['Code',['../classNAV_1_1Code.html',1,'NAV']]],
+  ['colormap_6',['Colormap',['../classNAV_1_1Colormap.html',1,'NAV']]],
+  ['combination_7',['Combination',['../structNAV_1_1GnssCombination_1_1Combination.html',1,'NAV::GnssCombination']]],
+  ['combiner_8',['Combiner',['../classNAV_1_1Combiner.html',1,'NAV']]],
+  ['commonlog_9',['CommonLog',['../classNAV_1_1CommonLog.html',1,'NAV']]],
+  ['constiterator_10',['ConstIterator',['../classNAV_1_1ScrollingBuffer_1_1ConstIterator.html',1,'NAV::ScrollingBuffer']]],
+  ['constreverseiterator_11',['ConstReverseIterator',['../classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html',1,'NAV::ScrollingBuffer']]],
+  ['corrections_12',['Corrections',['../structNAV_1_1Clock_1_1Corrections.html',1,'NAV::Clock::Corrections'],['../structNAV_1_1IonosphericCorrections_1_1Corrections.html',1,'NAV::IonosphericCorrections::Corrections']]],
+  ['csvdata_13',['CsvData',['../classNAV_1_1CsvData.html',1,'NAV']]],
+  ['csvfile_14',['CsvFile',['../classNAV_1_1CsvFile.html',1,'NAV']]],
+  ['cubicspline_15',['CubicSpline',['../classNAV_1_1CubicSpline.html',1,'NAV']]],
+  ['cycleslipdetector_16',['CycleSlipDetector',['../classNAV_1_1CycleSlipDetector.html',1,'NAV']]],
+  ['cycleslipdualfrequency_17',['CycleSlipDualFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipDualFrequency.html',1,'NAV::CycleSlipDetector']]],
+  ['cyclesliplossoflockindicator_18',['CycleSlipLossOfLockIndicator',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipLossOfLockIndicator.html',1,'NAV::CycleSlipDetector']]],
+  ['cycleslipsinglefrequency_19',['CycleSlipSingleFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipSingleFrequency.html',1,'NAV::CycleSlipDetector']]]
 ];
