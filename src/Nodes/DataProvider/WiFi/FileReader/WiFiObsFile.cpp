@@ -65,61 +65,6 @@ void NAV::WiFiObsFile::guiConfig()
             doDeinitialize();
         }
     }
-
-    // // Header info
-    // if (ImGui::BeginTable(fmt::format("##PvaHeaders ({})", id.AsPointer()).c_str(), 4,
-    //                       ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-    // {
-    //     ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
-    //     ImGui::TableSetupColumn("Position", ImGuiTableColumnFlags_WidthFixed);
-    //     ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_WidthFixed);
-    //     ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthFixed);
-    //     ImGui::TableHeadersRow();
-
-    //     auto TextColoredIfExists = [this](int index, const char* text) {
-    //         ImGui::TableSetColumnIndex(index);
-    //         if (std::find(_headerColumns.begin(), _headerColumns.end(), text) != _headerColumns.end())
-    //         {
-    //             ImGui::TextUnformatted(text);
-    //         }
-    //         else
-    //         {
-    //             ImGui::TextDisabled("%s", text);
-    //         }
-    //     };
-
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(0, "GpsCycle");
-    //     TextColoredIfExists(1, "Pos ECEF X [m]");
-    //     TextColoredIfExists(2, "Vel ECEF X [m/s]");
-    //     TextColoredIfExists(3, "n_Quat_b w");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(0, "GpsWeek");
-    //     TextColoredIfExists(1, "Pos ECEF Y [m]");
-    //     TextColoredIfExists(2, "Vel ECEF Y [m/s]");
-    //     TextColoredIfExists(3, "n_Quat_b x");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(0, "GpsToW [s]");
-    //     TextColoredIfExists(1, "Pos ECEF Z [m]");
-    //     TextColoredIfExists(2, "Vel ECEF Z [m/s]");
-    //     TextColoredIfExists(3, "n_Quat_b y");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(1, "Latitude [deg]");
-    //     TextColoredIfExists(2, "Vel N [m/s]");
-    //     TextColoredIfExists(3, "n_Quat_b z");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(1, "Longitude [deg]");
-    //     TextColoredIfExists(2, "Vel E [m/s]");
-    //     TextColoredIfExists(3, "Roll [deg]");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(1, "Altitude [m]");
-    //     TextColoredIfExists(2, "Vel D [m/s]");
-    //     TextColoredIfExists(3, "Pitch [deg]");
-    //     ImGui::TableNextRow();
-    //     TextColoredIfExists(3, "Yaw [deg]");
-
-    //     ImGui::EndTable();
-    // }
 }
 
 [[nodiscard]] json NAV::WiFiObsFile::save() const
@@ -193,6 +138,7 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
     bool gpsToWSet = false;
     bool macAddressSet = false;
     bool distanceSet = false;
+    bool distanceStdSet = false;
 
     // Split line at comma
     for (const auto& column : _headerColumns)
@@ -231,10 +177,15 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
                 obs->distance = std::stod(cell);
                 distanceSet = true;
             }
+            else if (column == "DistanceStd [m]")
+            {
+                obs->distanceStd = std::stod(cell);
+                distanceStdSet = true;
+            }
         }
     }
 
-    if (!gpsCycleSet || !gpsWeekSet || !gpsToWSet || !macAddressSet || !distanceSet)
+    if (!gpsCycleSet || !gpsWeekSet || !gpsToWSet || !macAddressSet || !distanceSet || !distanceStdSet)
     {
         LOG_ERROR("{}: Not all columns are set", nameId());
         return nullptr;

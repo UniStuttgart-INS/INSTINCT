@@ -1,6 +1,6 @@
 [requires]
-spdlog/1.12.0
-fmt/[<=10.1.1]
+spdlog/1.13.0
+fmt/[<=10.2.1]
 boost/1.83.0
 eigen/3.4.0
 catch2/3.4.0

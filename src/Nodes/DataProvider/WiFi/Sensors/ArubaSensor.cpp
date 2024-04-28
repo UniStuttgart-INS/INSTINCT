@@ -272,7 +272,7 @@ void NAV::ArubaSensor::deinitialize()
         _timer.stop();
     }
 
-    // To Show the Deinitialization in the GUI // TODO Wieso?
+    // To Show the Deinitialization in the GUI
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
@@ -280,8 +280,6 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<ArubaSensor*>(userData);
     auto obs = std::make_shared<WiFiObs>();
-
-    obs->insTime = util::time::GetCurrentInsTime();
 
     char buffer[1024];
     std::string receivedData;
@@ -316,30 +314,40 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
     while (std::getline(iss, line) && !line.empty())
     {
         std::istringstream lineStream(line);
-        std::string dummy;
+        std::string value;
         std::string macAddress;
         lineStream >> macAddress;
 
         int rtt, rssi, stdValue;
         lineStream >> rtt >> rssi >> stdValue;
-        for (int i = 0; i < 17; ++i)
-        {
-            lineStream >> dummy;
-        }
+
+        std::regex timeRegex("\\d{4}-\\d{2}-\\d{2}"); // Time format: YYYY-MM-DD
         std::string timeStamp1, timeStamp2;
         lineStream >> timeStamp1;
         lineStream >> timeStamp2;
-
+        while (lineStream >> value)
+        {
+            if (std::regex_match(value, timeRegex)) // Check if the value is a time stamp
+            {
+                timeStamp1 = value;
+                break;
+            }
+        }
+        lineStream >> value;
+        timeStamp2 = value;
         double measuredDistance = static_cast<double>(rtt) * 1e-9 / 2 * cAir;
+        double measuredDistanceStd = static_cast<double>(stdValue) * 1e-9 / 2 * cAir;
         if (std::regex_match(macAddress, macRegex)) // Check if the MAC address is valid
         {
             InsTime_YMDHMS yearMonthDayHMS(std::stoi(timeStamp1.substr(0, 4)), std::stoi(timeStamp1.substr(5, 2)), std::stoi(timeStamp1.substr(8, 2)), std::stoi(timeStamp2.substr(0, 2)), std::stoi(timeStamp2.substr(3, 2)), std::stoi(timeStamp2.substr(6, 2)));
             InsTime timeOfMeasurement(yearMonthDayHMS, UTC);
             std::transform(macAddress.begin(), macAddress.end(), macAddress.begin(), ::toupper); // Convert to uppercase
             obs->distance = measuredDistance;
+            obs->distanceStd = measuredDistanceStd;
             obs->macAddress = macAddress;
             obs->insTime = timeOfMeasurement;
+            // obs->insTime = util::time::GetCurrentInsTime(); // if you want to use the instinct time instead
+            node->invokeCallbacks(OUTPUT_PORT_INDEX_WIFI_OBS, obs);
         }
-        node->invokeCallbacks(OUTPUT_PORT_INDEX_WIFI_OBS, obs);
     }
 }

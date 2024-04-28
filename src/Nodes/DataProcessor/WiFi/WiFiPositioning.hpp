@@ -68,8 +68,14 @@ class WiFiPositioning : public Node
     constexpr static size_t INPUT_PORT_INDEX_WIFI_OBS = 0; ///< @brief WiFiObs
     constexpr static size_t OUTPUT_PORT_INDEX_WIFISOL = 0; ///< @brief WiFiPositioningSolution
 
-    /// Kalman Filter representation - States: 3xVel, 3xPos - Measurements: 1xDist
-    KalmanFilter _kalmanFilter{ 6, 1 };
+    /// @brief Number of states
+    uint8_t _numStates = 6;
+
+    /// @brief Number of measurements
+    uint8_t _numMeasurements = 1;
+
+    /// Kalman Filter representation - States: 3xVel, 3xPos, (1xBias) - Measurements: 1xDist
+    KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
 
     // --------------------------------------------------------------- Gui -----------------------------------------------------------------
 
@@ -90,10 +96,8 @@ class WiFiPositioning : public Node
     /// @brief Available Frames
     enum class Frame : int
     {
-        ENU,  ///< East-North-Up frame
-        NED,  ///< North-East-Down frame
-        ECEF, ///< Earth-Centered Earth-Fixed frame // TODO
-        LLA,  ///< Latitude-Longitude-Altitude frame // TODO
+        ECEF, ///< Earth-Centered Earth-Fixed frame
+        LLA,  ///< Latitude-Longitude-Altitude frame
     };
     /// Frame to calculate the position in
     Frame _frame = Frame::ECEF;
@@ -107,6 +111,12 @@ class WiFiPositioning : public Node
     /// Solution Mode
     SolutionMode _solutionMode = SolutionMode::LSQ;
 
+    /// Selection of whether the bias will be additionally estimated
+    bool _estimateBias = false;
+
+    /// Selection of whether the solution will be weighted
+    bool _weightedSolution = false;
+
     /// @brief State estimated by the positioning algorithm
     struct State
     {
@@ -114,24 +124,40 @@ class WiFiPositioning : public Node
         Eigen::Vector3d e_position = Eigen::Vector3d::Zero();
         /// Estimated velocity in ECEF frame [m/s]
         Eigen::Vector3d e_velocity = Eigen::Vector3d::Zero();
+        /// Estimated bias [m]
+        double bias = 0;
     };
 
     /// State estimated by the algorithm
     State _state;
 
-    std::vector<std::string>
-        _deviceMacAddresses;
+    /// Initial state
+    State _initialState;
+
+    /// Input of mac addresses
+    std::vector<std::string> _deviceMacAddresses;
+
+    /// Input of positions
     std::vector<Eigen::Vector3d> _devicePositions;
+
+    /// Input of biases
     std::vector<double> _deviceBias;
+
+    /// Input of scales
     std::vector<double> _deviceScale;
+
+    /// Number of devices
     size_t _numOfDevices;
 
+    /// @brief Device struct
     struct Device
     {
         Eigen::Vector3d position;
         InsTime time;
         double distance;
+        double distanceStd;
     };
+    /// Devices which are used for the positioning
     std::vector<Device> _devices;
 
     /// Time when the last prediction was triggered
@@ -204,6 +230,19 @@ class WiFiPositioning : public Node
 
     /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
     Eigen::Vector3d _initCovarianceVelocity{ 10, 10, 10 };
-};
 
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the bias (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasUnit
+    {
+        meter2, ///< Variance [m^2]
+        meter,  ///< Standard deviation [m]
+    };
+    /// Gui selection for the Unit of the initial covariance for the bias
+    InitCovarianceBiasUnit _initCovarianceBiasUnit = InitCovarianceBiasUnit::meter;
+
+    /// GUI selection of the initial covariance diagonal values for bias (standard deviation σ or Variance σ²)
+    double _initCovarianceBias = 10;
+};
 } // namespace NAV

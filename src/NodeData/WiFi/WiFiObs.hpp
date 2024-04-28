@@ -43,7 +43,9 @@ class WiFiObs : public NodeData
     std::string macAddress;
     /// Distance to the device
     double distance;
-    /// TODO
+    /// Standard deviation of the distance
+    double distanceStd;
+    /// Time of observation
     NAV::vendor::vectornav::TimeOutputs timeOutputs;
 };
 

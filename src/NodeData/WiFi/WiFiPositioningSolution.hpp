@@ -46,6 +46,12 @@ class WiFiPositioningSolution : public PosVel
     /// Returns the standard deviation of the position in local navigation frame coordinates in [m]
     [[nodiscard]] const Eigen::Vector3d& n_positionStdev() const { return _n_positionStdev; }
 
+    /// Returns the Bias in [m]
+    [[nodiscard]] double bias() const { return _bias; }
+
+    /// Returns the standard deviation of the Bias in [m]
+    [[nodiscard]] double biasStdev() const { return _biasStdev; }
+
     /// Returns the standard deviation of the velocity in [m/s], in earth coordinates
     [[nodiscard]] const Eigen::Vector3d& e_velocityStdev() const { return _e_velocityStdev; }
 
@@ -68,6 +74,15 @@ class WiFiPositioningSolution : public PosVel
         setPosition_e(e_position);
         _e_positionStdev = e_PositionCovarianceMatrix.diagonal().cwiseSqrt();
         _n_positionStdev = (n_Quat_e().toRotationMatrix() * e_PositionCovarianceMatrix * n_Quat_e().conjugate().toRotationMatrix()).diagonal().cwiseSqrt();
+    }
+
+    /// @brief Set the Bias and its standard deviation
+    /// @param[in] bias New Bias [m]
+    /// @param[in] biasStdev Standard deviation of Bias [m]
+    void setBiasAndStdDev(double bias, double biasStdev)
+    {
+        _bias = bias;
+        _biasStdev = biasStdev;
     }
 
     /// @brief Set the Velocity in ECEF coordinates and its standard deviation
@@ -107,6 +122,11 @@ class WiFiPositioningSolution : public PosVel
     Eigen::Vector3d _e_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
     /// Standard deviation of Position in local navigation frame coordinates [m]
     Eigen::Vector3d _n_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
+
+    /// Bias [m]
+    double _bias = std::nan("");
+    /// Standard deviation of Bias [m]
+    double _biasStdev = std::nan("");
 
     /// Standard deviation of Velocity in earth coordinates [m/s]
     Eigen::Vector3d _e_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");

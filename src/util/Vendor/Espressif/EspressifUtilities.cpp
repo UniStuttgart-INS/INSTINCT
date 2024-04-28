@@ -29,8 +29,10 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
         obs->macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
         std::transform(obs->macAddress.begin(), obs->macAddress.end(), obs->macAddress.begin(), ::toupper); // Convert to uppercase
         // Distance
-        int rtt = packet.extractInt32(); // TODO check if ps or ns
+        int rtt = packet.extractInt32(); // Round trip time in picoseconds
         obs->distance = static_cast<double>(rtt) * cAir * 1e-12 / 2;
+        int rttStd = packet.extractInt32(); // Standard deviation of the round trip time in picoseconds
+        obs->distanceStd = static_cast<double>(rttStd) * cAir * 1e-12 / 2;
         // Time of measurement
         InsTime_YMDHMS yearMonthDayHMS(packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32(), packet.extractInt32());
         InsTime timeOfMeasurement(yearMonthDayHMS, UTC);

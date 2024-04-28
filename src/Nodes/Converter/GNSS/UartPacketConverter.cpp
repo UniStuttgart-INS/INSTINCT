@@ -207,7 +207,7 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, [
             {
                 _syncOutCntCorr = obs->timeOutputs.syncInCnt;
             }
-            else if (_lastSyncInCnt == 0 && _lastSyncOutCnt > 1) // slave started later
+            else if (_lastSyncInCnt == 0 && _lastSyncOutCnt > 1) // slave counter started later
             {
                 _syncInCntCorr = timeSyncMaster->syncOutCnt;
             }

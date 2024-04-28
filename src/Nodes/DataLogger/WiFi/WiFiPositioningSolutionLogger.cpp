@@ -102,6 +102,7 @@ bool NAV::WiFiPositioningSolutionLogger::initialize()
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsTow [s],"
                 << "Pos ECEF X [m],Pos ECEF Y [m],Pos ECEF Z [m],Latitude [deg],Longitude [deg],Altitude [m],"
                 << "North/South [m],East/West [m],"
+                << "Bias [m],Bias StDev [m],"
                 << "Vel ECEF X [m/s],Vel ECEF Y [m/s],Vel ECEF Z [m/s],Vel N [m/s],Vel E [m/s],Vel D [m/s],"
                 << "X-ECEF StDev [m],Y-ECEF StDev [m],Z-ECEF StDev [m],"
                 // << "XY-ECEF StDev [m],XZ-ECEF StDev [m],YZ-ECEF StDev [m],"
@@ -176,6 +177,12 @@ void NAV::WiFiPositioningSolutionLogger::writeObservation(NAV::InputPin::NodeDat
     {
         _filestream << ",,";
     }
+
+    // -------------------------------------------------------- Bias -----------------------------------------------------------
+    if (!std::isnan(obs->bias())) { _filestream << obs->bias(); } // Bias [m]
+    _filestream << ",";
+    if (!std::isnan(obs->biasStdev())) { _filestream << obs->biasStdev(); } // Bias StDev [m]
+    _filestream << ",";
 
     // -------------------------------------------------------- Velocity -----------------------------------------------------------
 

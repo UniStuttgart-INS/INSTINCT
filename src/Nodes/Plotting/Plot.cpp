@@ -2251,6 +2251,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Bias [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Velocity norm [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF [m/s]");
@@ -2271,6 +2272,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             _pinData.at(pinIndex).addPlotDataItem(i++, "NE-ECEF StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ND-ECEF StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "ED-ECEF StDev [m]");
+            _pinData.at(pinIndex).addPlotDataItem(i++, "Bias StDev [m]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "X velocity ECEF StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Y velocity ECEF StDev [m/s]");
             _pinData.at(pinIndex).addPlotDataItem(i++, "Z velocity ECEF StDev [m/s]");
@@ -3641,6 +3643,7 @@ void NAV::Plot::plotWiFiPositioningSolution(const std::shared_ptr<const WiFiPosi
     addData(pinIndex, i++, obs->e_position().x());
     addData(pinIndex, i++, obs->e_position().y());
     addData(pinIndex, i++, obs->e_position().z());
+    addData(pinIndex, i++, obs->bias());
     addData(pinIndex, i++, obs->e_velocity().norm());
     addData(pinIndex, i++, obs->e_velocity().x());
     addData(pinIndex, i++, obs->e_velocity().y());
@@ -3661,6 +3664,7 @@ void NAV::Plot::plotWiFiPositioningSolution(const std::shared_ptr<const WiFiPosi
     addData(pinIndex, i++, obs->n_CovarianceMatrix()(0, 1));                                                        // NE-ECEF StDev [m]
     addData(pinIndex, i++, obs->n_CovarianceMatrix()(0, 2));                                                        // ND-ECEF StDev [m]
     addData(pinIndex, i++, obs->n_CovarianceMatrix()(1, 2));                                                        // ED-ECEF StDev [m]
+    addData(pinIndex, i++, obs->biasStdev());                                                                       // Bias StDev [m]
     addData(pinIndex, i++, obs->e_velocityStdev()(0));                                                              // X velocity ECEF StDev [m/s]
     addData(pinIndex, i++, obs->e_velocityStdev()(1));                                                              // Y velocity ECEF StDev [m/s]
     addData(pinIndex, i++, obs->e_velocityStdev()(2));                                                              // Z velocity ECEF StDev [m/s]

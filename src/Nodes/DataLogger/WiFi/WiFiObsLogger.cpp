@@ -101,7 +101,9 @@ bool NAV::WiFiObsLogger::initialize()
 
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],"
                 << "MacAddress,"
-                << "Distance [m]" << std::endl;
+                << "Distance [m],"
+                << "DistanceStd [m]"
+                << std::endl;
 
     return true;
 }
@@ -158,14 +160,10 @@ void NAV::WiFiObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
         _filestream << ",";
 
         // ------------------------------------------------------- Distance -----------------------------------------------------------
-        if (!(obs->distance < 0.0))
-        {
-            _filestream << obs->distance;
-        }
-        else
-        {
-            _filestream << ",";
-        }
+        _filestream << obs->distance;
+        _filestream << ",";
+        // --------------------------------------------------------- Standard deviation ---------------------------------------------------
+        _filestream << obs->distanceStd;
 
         _filestream << std::endl;
     }

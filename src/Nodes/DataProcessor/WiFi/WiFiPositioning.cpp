@@ -43,7 +43,6 @@ NAV::WiFiPositioning::WiFiPositioning()
 
     updateNumberOfInputPins();
 
-    // updateOutputPin();
     nm::CreateOutputPin(this, NAV::WiFiPositioningSolution::type().c_str(), Pin::Type::Flow, { NAV::WiFiPositioningSolution::type() });
 }
 
@@ -91,18 +90,15 @@ void NAV::WiFiPositioning::guiConfig()
 
     ImGui::SetNextItemWidth(250 * gui::NodeEditorApplication::windowFontRatio());
 
+    // ###########################################################################################################
+    //                                        Frames
+    // ###########################################################################################################
     if (_numOfDevices == 0)
     {
-        if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ENU\0NED\0ECEF\0LLA\0\0"))
+        if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0LLA\0\0"))
         {
             switch (_frame)
             {
-            case Frame::ENU:
-                LOG_DEBUG("{}: Frame changed to ENU", nameId());
-                break;
-            case Frame::NED:
-                LOG_DEBUG("{}: Frame changed to NED", nameId());
-                break;
             case Frame::ECEF:
                 LOG_DEBUG("{}: Frame changed to ECEF", nameId());
                 break;
@@ -115,23 +111,11 @@ void NAV::WiFiPositioning::guiConfig()
         flow::ApplyChanges();
     }
 
-    if (ImGui::BeginTable("RouterInput", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+    if (ImGui::BeginTable("AccessPointInput", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
         // Column headers
         ImGui::TableSetupColumn("MAC address", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-        if (_frame == Frame::ENU)
-        {
-            ImGui::TableSetupColumn("East", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-            ImGui::TableSetupColumn("North", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-            ImGui::TableSetupColumn("Up", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-        }
-        else if (_frame == Frame::NED)
-        {
-            ImGui::TableSetupColumn("North", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-            ImGui::TableSetupColumn("East", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-            ImGui::TableSetupColumn("Down", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-        }
-        else if (_frame == Frame::ECEF)
+        if (_frame == Frame::ECEF)
         {
             ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, columnWidth);
             ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, columnWidth);
@@ -171,49 +155,7 @@ void NAV::WiFiPositioning::guiConfig()
                     flow::ApplyChanges();
                 }
             }
-            if (_frame == Frame::ENU)
-            {
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputEast{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[0], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputNorth{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[1], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputUp{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-            }
-            else if (_frame == Frame::NED)
-            {
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputNorth{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[0], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputEast{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[1], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-                ImGui::TableNextColumn();
-                ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputDown{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
-                {
-                    flow::ApplyChanges();
-                }
-            }
-            else if (_frame == Frame::ECEF)
+            if (_frame == Frame::ECEF)
             {
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
@@ -306,8 +248,44 @@ void NAV::WiFiPositioning::guiConfig()
         }
     }
     flow::ApplyChanges();
-    // updateOutputPin();
 
+    // ###########################################################################################################
+    //                                        Least Squares
+    // ###########################################################################################################
+    if (_solutionMode == SolutionMode::LSQ)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("x0 - Initial State##{}", size_t(id)).c_str()))
+        {
+            ImGui::SetNextItemWidth(configWidth);
+            if (ImGui::InputDouble3(fmt::format("Position (m)##{}", "m",
+                                                size_t(id))
+                                        .c_str(),
+                                    _initialState.e_position.data(), "%.3e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
+                flow::ApplyChanges();
+            }
+
+            if (_estimateBias)
+            {
+                ImGui::SetNextItemWidth(configWidth);
+                if (ImGui::InputDouble(fmt::format("Bias (m)##{}", "m",
+                                                   size_t(id))
+                                           .c_str(),
+                                       &_initialState.bias, 0, 0, "%.3e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: bias changed to {}", nameId(), _initialState.bias);
+                    flow::ApplyChanges();
+                }
+            }
+
+            ImGui::TreePop();
+        }
+    }
+    // ###########################################################################################################
+    //                                        Kalman Filter
+    // ###########################################################################################################
     if (_solutionMode == SolutionMode::KF)
     {
         // ###########################################################################################################
@@ -367,9 +345,9 @@ void NAV::WiFiPositioning::guiConfig()
             if (ImGui::InputDouble3(fmt::format("Position (m)##{}", "m",
                                                 size_t(id))
                                         .c_str(),
-                                    _state.e_position.data(), "%.3e", ImGuiInputTextFlags_CharsScientific))
+                                    _initialState.e_position.data(), "%.3e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: e_position changed to {}", nameId(), _state.e_position);
+                LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
                 flow::ApplyChanges();
             }
 
@@ -381,6 +359,19 @@ void NAV::WiFiPositioning::guiConfig()
             {
                 LOG_DEBUG("{}: e_position changed to {}", nameId(), _state.e_velocity);
                 flow::ApplyChanges();
+            }
+
+            if (_estimateBias)
+            {
+                ImGui::SetNextItemWidth(configWidth);
+                if (ImGui::InputDouble(fmt::format("Bias (m)##{}", "m",
+                                                   size_t(id))
+                                           .c_str(),
+                                       &_state.bias, 0, 0, "%.3e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: bias changed to {}", nameId(), _state.bias);
+                    flow::ApplyChanges();
+                }
             }
 
             ImGui::TreePop();
@@ -423,9 +414,60 @@ void NAV::WiFiPositioning::guiConfig()
                 flow::ApplyChanges();
             }
 
+            if (_estimateBias)
+            {
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Bias covariance ({})##{}",
+                                                                  _initCovarianceBiasUnit == InitCovarianceBiasUnit::meter2
+                                                                      ? "Variance σ²"
+                                                                      : "Standard deviation σ",
+                                                                  size_t(id))
+                                                          .c_str(),
+                                                      configWidth, unitWidth, &_initCovarianceBias, reinterpret_cast<int*>(&_initCovarianceBiasUnit), "m^2\0"
+                                                                                                                                                      "m\0\0",
+                                                      0, 0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: initCovarianceBias changed to {}", nameId(), _initCovarianceBias);
+                    LOG_DEBUG("{}: initCovarianceBiasUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasUnit));
+                    flow::ApplyChanges();
+                }
+            }
+
             ImGui::TreePop();
         }
     }
+    ImGui::Separator();
+    // ###########################################################################################################
+    //                                        Estimate Bias
+    // ###########################################################################################################
+    if (ImGui::Checkbox(fmt::format("Estimate Bias##{}", size_t(id)).c_str(), &_estimateBias))
+    {
+        if (_estimateBias)
+        {
+            LOG_DEBUG("{}: Estimate Bias changed to Yes", nameId());
+            _numStates = 7;
+        }
+        else
+        {
+            LOG_DEBUG("{}: Estimate Bias changed to No", nameId());
+            _numStates = 6;
+        }
+    }
+    flow::ApplyChanges();
+    // ###########################################################################################################
+    //                                        Weighted Solution
+    // ###########################################################################################################
+    if (ImGui::Checkbox(fmt::format("Weighted Solution##{}", size_t(id)).c_str(), &_weightedSolution))
+    {
+        if (_weightedSolution)
+        {
+            LOG_DEBUG("{}: Weighted Solution changed to Yes", nameId());
+        }
+        else
+        {
+            LOG_DEBUG("{}: Weighted Solution changed to No", nameId());
+        }
+    }
+    flow::ApplyChanges();
 }
 
 [[nodiscard]] json NAV::WiFiPositioning::save() const
@@ -435,7 +477,11 @@ void NAV::WiFiPositioning::guiConfig()
     json j;
 
     j["nWifiInputPins"] = _nWifiInputPins;
+    j["numStates"] = _numStates;
+    j["numMeasurements"] = _numMeasurements;
     j["frame"] = _frame;
+    j["estimateBias"] = _estimateBias;
+    j["weightedSolution"] = _weightedSolution;
     j["deviceMacAddresses"] = _deviceMacAddresses;
     j["devicePositions"] = _devicePositions;
     j["deviceBias"] = _deviceBias;
@@ -444,10 +490,16 @@ void NAV::WiFiPositioning::guiConfig()
     j["solutionMode"] = _solutionMode;
     j["e_position"] = _state.e_position;
     j["e_velocity"] = _state.e_velocity;
+    j["bias"] = _state.bias;
+    j["intialStatePosition"] = _initialState.e_position;
+    j["initialStateVelocity"] = _initialState.e_velocity;
+    j["initialStateBias"] = _initialState.bias;
     j["initCovariancePosition"] = _initCovariancePosition;
     j["initCovariancePositionUnit"] = _initCovariancePositionUnit;
     j["initCovarianceVelocity"] = _initCovarianceVelocity;
     j["initCovarianceVelocityUnit"] = _initCovarianceVelocityUnit;
+    j["initCovarianceBias"] = _initCovarianceBias;
+    j["initCovarianceBiasUnit"] = _initCovarianceBiasUnit;
     j["measurementNoise"] = _measurementNoise;
     j["measurementNoiseUnit"] = _measurementNoiseUnit;
     j["processNoise"] = _processNoise;
@@ -465,9 +517,25 @@ void NAV::WiFiPositioning::restore(json const& j)
         j.at("nWifiInputPins").get_to(_nWifiInputPins);
         updateNumberOfInputPins();
     }
+    if (j.contains("numStates"))
+    {
+        j.at("numStates").get_to(_numStates);
+    }
+    if (j.contains("numMeasurements"))
+    {
+        j.at("numMeasurements").get_to(_numMeasurements);
+    }
     if (j.contains("frame"))
     {
         j.at("frame").get_to(_frame);
+    }
+    if (j.contains("estimateBias"))
+    {
+        j.at("estimateBias").get_to(_estimateBias);
+    }
+    if (j.contains("weightedSolution"))
+    {
+        j.at("weightedSolution").get_to(_weightedSolution);
     }
     if (j.contains("deviceMacAddresses"))
     {
@@ -501,6 +569,22 @@ void NAV::WiFiPositioning::restore(json const& j)
     {
         j.at("e_velocity").get_to(_state.e_velocity);
     }
+    if (j.contains("bias"))
+    {
+        j.at("bias").get_to(_state.bias);
+    }
+    if (j.contains("intialStatePosition"))
+    {
+        j.at("intialStatePosition").get_to(_initialState.e_position);
+    }
+    if (j.contains("initialStateVelocity"))
+    {
+        j.at("initialStateVelocity").get_to(_initialState.e_velocity);
+    }
+    if (j.contains("initialStateBias"))
+    {
+        j.at("initialStateBias").get_to(_initialState.bias);
+    }
     if (j.contains("initCovariancePosition"))
     {
         j.at("initCovariancePosition").get_to(_initCovariancePosition);
@@ -516,6 +600,14 @@ void NAV::WiFiPositioning::restore(json const& j)
     if (j.contains("initCovarianceVelocityUnit"))
     {
         j.at("initCovarianceVelocityUnit").get_to(_initCovarianceVelocityUnit);
+    }
+    if (j.contains("initCovarianceBias"))
+    {
+        j.at("initCovarianceBias").get_to(_initCovarianceBias);
+    }
+    if (j.contains("initCovarianceBiasUnit"))
+    {
+        j.at("initCovarianceBiasUnit").get_to(_initCovarianceBiasUnit);
     }
     if (j.contains("measurementNoise"))
     {
@@ -539,6 +631,16 @@ bool NAV::WiFiPositioning::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _kalmanFilter = KalmanFilter{ _numStates, _numMeasurements };
+
+    // Initial state
+    _state.e_position = _initialState.e_position;
+    _state.e_velocity = _initialState.e_velocity;
+    if (_estimateBias)
+    {
+        _state.bias = _initialState.bias;
+    }
+
     // Initial Covariance of the velocity in [m²/s²]
     Eigen::Vector3d variance_vel = Eigen::Vector3d::Zero();
     if (_initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2)
@@ -561,8 +663,32 @@ bool NAV::WiFiPositioning::initialize()
         variance_pos = _initCovariancePosition.array().pow(2);
     }
 
-    _kalmanFilter.P.diagonal() << variance_pos, variance_vel;
-    _kalmanFilter.x << _state.e_position, _state.e_velocity;
+    // Initial Covariance of the bias in [m²]
+    double variance_bias = 0.0;
+    if (_initCovarianceBiasUnit == InitCovarianceBiasUnit::meter2)
+    {
+        variance_bias = _initCovarianceBias;
+    }
+    else if (_initCovarianceBiasUnit == InitCovarianceBiasUnit::meter)
+    {
+        variance_bias = std::pow(_initCovarianceBias, 2);
+    }
+    if (_estimateBias)
+    {
+        _kalmanFilter.P.diagonal() << variance_pos, variance_vel, variance_bias;
+    }
+    else
+    {
+        _kalmanFilter.P.diagonal() << variance_pos, variance_vel;
+    }
+    if (_estimateBias)
+    {
+        _kalmanFilter.x << _state.e_position, _state.e_velocity, _state.bias;
+    }
+    else
+    {
+        _kalmanFilter.x << _state.e_position, _state.e_velocity;
+    }
     if (_measurementNoiseUnit == MeasurementNoiseUnit::meter2)
     {
         _kalmanFilter.R << _measurementNoise;
@@ -611,6 +737,7 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             {
                 deviceExists = true;
                 device.distance = obs->distance * _deviceScale.at(index) + _deviceBias.at(index);
+                device.distanceStd = obs->distanceStd * _deviceScale.at(index);
                 device.time = obs->insTime;
                 break;
             }
@@ -621,19 +748,11 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
         {
             if (_frame == Frame::LLA)
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
+                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index), obs->distanceStd * _deviceScale.at(index) });
             }
             else if (_frame == Frame::ECEF)
             {
-                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
-            }
-            else if (_frame == Frame::ENU)
-            {
-                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
-            }
-            else if (_frame == Frame::NED)
-            {
-                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index) });
+                _devices.push_back({ _devicePositions.at(index), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index), obs->distanceStd * _deviceScale.at(index) });
             }
         }
 
@@ -644,8 +763,12 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             if (_devices.size() == _numOfDevices)
             {
                 LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
-                wifiPositioningSolution->setPositionAndStdDev_e(_state.e_position, lsqSolution.variance.cwiseSqrt());
-                wifiPositioningSolution->setCovarianceMatrix(lsqSolution.variance);
+                wifiPositioningSolution->setPositionAndStdDev_e(_state.e_position.block<3, 1>(0, 0), lsqSolution.variance.block<3, 3>(0, 0).cwiseSqrt());
+                wifiPositioningSolution->setCovarianceMatrix(lsqSolution.variance.block<3, 3>(0, 0));
+                if (_estimateBias)
+                {
+                    wifiPositioningSolution->setBiasAndStdDev(_state.bias, lsqSolution.variance(3, 3));
+                }
                 invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
             }
         }
@@ -653,12 +776,15 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
         {
             WiFiPositioning::kfSolution();
             wifiPositioningSolution->setPositionAndStdDev_e(_kalmanFilter.x.block<3, 1>(0, 0), _kalmanFilter.P.block<3, 3>(0, 0).cwiseSqrt());
+            if (_estimateBias)
+            {
+                wifiPositioningSolution->setBiasAndStdDev(_kalmanFilter.x(6), _kalmanFilter.P(6, 6));
+            }
             wifiPositioningSolution->setVelocityAndStdDev_e(_kalmanFilter.x.block<3, 1>(3, 0), _kalmanFilter.P.block<3, 3>(3, 3).cwiseSqrt());
             wifiPositioningSolution->setCovarianceMatrix(_kalmanFilter.P);
             invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
         }
 
-        // print // TODO delete
         LOG_DEBUG("{}: Received distance to device {} at position {} with distance {}", nameId(), obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
     }
 }
@@ -666,30 +792,31 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
 NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::lsqSolution()
 {
     LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsq;
+    int n = (_estimateBias) ? 4 : 3; // Number of unknowns
 
-    if (_devices.size() < 4)
+    if ((_estimateBias && _devices.size() < 5) || (!_estimateBias && _devices.size() < 4))
     {
-        LOG_DEBUG("{}: Received less than 4 observations. Can't compute position", nameId());
+        LOG_DEBUG("{}: Received less than {} observations. Can't compute position", nameId(), (_estimateBias ? 5 : 4));
         return lsq;
     }
     else
     {
         LOG_DEBUG("{}: Received {} observations", nameId(), _devices.size());
     }
-    _state.e_position = { 10.0, 10.0, 10.0 }; // TODO Initialwerte
 
-    // calculate the centroid of device positions
-    Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
-    for (const auto& device : _devices)
-    {
-        centroid += device.position;
-    }
-    centroid /= _devices.size();
-    _state.e_position = centroid;
-
-    Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(_devices.size()), static_cast<int>(3));
+    Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(_devices.size()), n);
+    Eigen::MatrixXd W = Eigen::MatrixXd::Identity(static_cast<int>(_devices.size()), static_cast<int>(_devices.size()));
     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(_devices.size()));
     size_t numMeasurements = _devices.size();
+
+    if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)))
+    {
+        _state.e_position << _initialState.e_position;
+        if (_estimateBias)
+        {
+            _state.bias = _initialState.bias;
+        }
+    }
 
     for (size_t o = 0; o < 10; o++)
     {
@@ -698,6 +825,10 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
         {
             // calculate the distance between the device and the estimated position
             double distEst = (_devices.at(i).position - _state.e_position).norm();
+            if (_estimateBias)
+            {
+                distEst += _state.bias;
+            }
             // calculate the residual vector
             ddist(static_cast<int>(i)) = _devices.at(i).distance - distEst;
 
@@ -708,14 +839,34 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             }
             // calculate the design matrix
             e_H.block<1, 3>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
+            if (_estimateBias)
+            {
+                e_H(static_cast<int>(i), 3) = 1;
+            }
+            W(static_cast<int>(i), static_cast<int>(i)) = 1 / std::pow(_devices.at(i).distanceStd, 2);
         }
         // solve the linear least squares problem
-        lsq = solveLinearLeastSquaresUncertainties(e_H, ddist);
-        LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2));
-        LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+
+        lsq = solveWeightedLinearLeastSquaresUncertainties(e_H, W, ddist);
+
+        if (_estimateBias)
+        {
+            LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2), lsq.solution(3));
+            LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
+        else
+        {
+            LOG_DATA("{}:     [{}] dx (lsq) {}, {}, {}", nameId(), o, lsq.solution(0), lsq.solution(1), lsq.solution(2));
+            LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
+        }
 
         // update the estimated position
-        _state.e_position += lsq.solution;
+        _state.e_position += lsq.solution.block<3, 1>(0, 0);
+        // update the estimated bias
+        if (_estimateBias)
+        {
+            _state.bias += lsq.solution(3);
+        }
 
         bool solInaccurate = lsq.solution.norm() > 1e-3;
         if (!solInaccurate) // Solution is accurate enough
@@ -723,6 +874,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             break;
         }
     }
+
     _devices.clear();
     LOG_DEBUG("{}: Position: {}", nameId(), _state.e_position.transpose());
 
@@ -742,21 +894,20 @@ void NAV::WiFiPositioning::kfSolution()
     if (tau_i > 0)
     {
         // Transition matrix
-        Eigen::MatrixXd F = Eigen::MatrixXd::Zero(6, 6);
+        Eigen::MatrixXd F = Eigen::MatrixXd::Zero(_numStates, _numStates);
         F(0, 3) = 1;
         F(1, 4) = 1;
         F(2, 5) = 1;
         _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, 1);
-        // std::cout << F << std::endl; // TODO delete
-        // std::cout << _kalmanFilter.Phi << std::endl;
         // Process noise covariance matrix
-        Eigen::Matrix3d Q1 = Eigen::Matrix3d::Zero();
-        Q1.diagonal() = Eigen::Vector3d(std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0, std::pow(tau_i, 3) / 3.0);
-        Eigen::Matrix3d Q2 = Eigen::Matrix3d::Zero();
-        Q2.diagonal() = Eigen::Vector3d(std::pow(tau_i, 2) / 2.0, std::pow(tau_i, 2) / 2.0, std::pow(tau_i, 2) / 2.0);
-        Eigen::Matrix3d Q4 = Eigen::Matrix3d::Zero();
-        Q4.diagonal() = Eigen::Vector3d(tau_i, tau_i, tau_i);
-        _kalmanFilter.Q << Q1, Q2, Q2, Q4;
+        _kalmanFilter.Q.block(0, 0, 3, 3) = std::pow(tau_i, 3) / 3.0 * Eigen::Matrix3d::Identity();
+        _kalmanFilter.Q.block(3, 0, 3, 3) = std::pow(tau_i, 2) / 2.0 * Eigen::Matrix3d::Identity();
+        _kalmanFilter.Q.block(0, 3, 3, 3) = std::pow(tau_i, 2) / 2.0 * Eigen::Matrix3d::Identity();
+        _kalmanFilter.Q.block(3, 3, 3, 3) = tau_i * Eigen::Matrix3d::Identity();
+        if (_estimateBias)
+        {
+            _kalmanFilter.Q(6, 6) = tau_i;
+        }
         if (_processNoiseUnit == ProcessNoiseUnit::meter2)
         {
             _kalmanFilter.Q *= _processNoise;
@@ -766,9 +917,6 @@ void NAV::WiFiPositioning::kfSolution()
             _kalmanFilter.Q *= std::pow(_processNoise, 2);
         }
         // Predict
-        // std::cout << _kalmanFilter.Q << std::endl; // TODO delete
-        // std::cout << _kalmanFilter.x << std::endl;
-        // std::cout << _kalmanFilter.P << std::endl;
         _kalmanFilter.predict();
     }
 
@@ -777,17 +925,26 @@ void NAV::WiFiPositioning::kfSolution()
     // ###########################################################################################################
     // Measurement
     double estimatedDistance = (_devices.at(0).position - _kalmanFilter.x.block<3, 1>(0, 0)).norm();
+    if (_estimateBias)
+    {
+        estimatedDistance += _kalmanFilter.x(6);
+    }
     _kalmanFilter.z << _devices.at(0).distance - estimatedDistance;
     // Design matrix
-    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(1, 6);
+    Eigen::MatrixXd H = Eigen::MatrixXd::Zero(1, _numStates);
     H.block<1, 3>(0, 0) = -e_calcLineOfSightUnitVector(_kalmanFilter.x.block<3, 1>(0, 0), _devices.at(0).position);
+    if (_estimateBias)
+    {
+        H(0, 6) = 1;
+    }
     _kalmanFilter.H << H;
     // Correct
-    // std::cout << _kalmanFilter.Q << std::endl; // TODO delete
-    // std::cout << _kalmanFilter.x << std::endl;
-    // std::cout << _kalmanFilter.P << std::endl;
-    // std::cout << _kalmanFilter.z << std::endl;
-    // std::cout << _kalmanFilter.H << std::endl;
+    std::cout << _kalmanFilter.R << std::endl;
+    if (_weightedSolution)
+    {
+        _kalmanFilter.R << std::pow(_devices.at(0).distanceStd, 2);
+    }
+    std::cout << _kalmanFilter.R << std::endl;
     _kalmanFilter.correctWithMeasurementInnovation();
 
     _devices.clear();
