@@ -60,6 +60,11 @@ void NAV::WiFiPositioningSolutionLogger::guiConfig()
         flow::ApplyChanges();
         doDeinitialize();
     }
+
+    if (ImGui::Checkbox(fmt::format("Log NaN values##{}", nameId()).c_str(), &_logNanValues))
+    {
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::WiFiPositioningSolutionLogger::save() const
@@ -69,6 +74,7 @@ void NAV::WiFiPositioningSolutionLogger::guiConfig()
     json j;
 
     j["FileWriter"] = FileWriter::save();
+    j["logNanValues"] = _logNanValues;
 
     return j;
 }
@@ -80,6 +86,10 @@ void NAV::WiFiPositioningSolutionLogger::restore(json const& j)
     if (j.contains("FileWriter"))
     {
         FileWriter::restore(j.at("FileWriter"));
+    }
+    if (j.contains("logNanValues"))
+    {
+        _logNanValues = j.at("logNanValues");
     }
 }
 
@@ -153,101 +163,194 @@ void NAV::WiFiPositioningSolutionLogger::writeObservation(NAV::InputPin::NodeDat
     }
     _filestream << "," << std::setprecision(valuePrecision);
 
-    // -------------------------------------------------------- Position -----------------------------------------------------------
-
-    if (!std::isnan(obs->e_position().x())) { _filestream << obs->e_position().x(); } // Pos ECEF X [m]
-    _filestream << ",";
-    if (!std::isnan(obs->e_position().y())) { _filestream << obs->e_position().y(); } // Pos ECEF Y [m]
-    _filestream << ",";
-    if (!std::isnan(obs->e_position().z())) { _filestream << obs->e_position().z(); } // Pos ECEF Z [m]
-    _filestream << ",";
-    if (!std::isnan(obs->lla_position().x())) { _filestream << rad2deg(obs->lla_position().x()); } // Latitude [deg]
-    _filestream << ",";
-    if (!std::isnan(obs->lla_position().y())) { _filestream << rad2deg(obs->lla_position().y()); } // Longitude [deg]
-    _filestream << ",";
-    if (!std::isnan(obs->lla_position().z())) { _filestream << obs->lla_position().z(); } // Altitude [m]
-    _filestream << ",";
-    if (!std::isnan(obs->lla_position().x()) && !std::isnan(obs->lla_position().y()))
+    if (_logNanValues)
     {
+        // -------------------------------------------------------- Position -----------------------------------------------------------
+
+        _filestream << obs->e_position().x(); // Pos ECEF X [m]
+        _filestream << ",";
+        _filestream << obs->e_position().y(); // Pos ECEF Y [m]
+        _filestream << ",";
+        _filestream << obs->e_position().z(); // Pos ECEF Z [m]
+        _filestream << ",";
+        _filestream << rad2deg(obs->lla_position().x()); // Latitude [deg]
+        _filestream << ",";
+        _filestream << rad2deg(obs->lla_position().y()); // Longitude [deg]
+        _filestream << ",";
+        _filestream << obs->lla_position().z(); // Altitude [m]
+        _filestream << ",";
         auto localPosition = calcLocalPosition(obs->lla_position());
         _filestream << localPosition.northSouth << ","; // North/South [m]
         _filestream << localPosition.eastWest << ",";   // East/West [m]
+
+        // -------------------------------------------------------- Bias -----------------------------------------------------------
+        _filestream << obs->bias(); // Bias [m]
+        _filestream << ",";
+        _filestream << obs->biasStdev(); // Bias StDev [m]
+        _filestream << ",";
+        // -------------------------------------------------------- Velocity -----------------------------------------------------------
+
+        _filestream << obs->e_velocity().x(); // Vel ECEF X [m/s]
+        _filestream << ",";
+        _filestream << obs->e_velocity().y(); // Vel ECEF Y [m/s]
+        _filestream << ",";
+        _filestream << obs->e_velocity().z(); // Vel ECEF Z [m/s]
+        _filestream << ",";
+        _filestream << obs->n_velocity().x(); // Vel N [m/s]
+        _filestream << ",";
+        _filestream << obs->n_velocity().y(); // Vel E [m/s]
+        _filestream << ",";
+        _filestream << obs->n_velocity().z(); // Vel D [m/s]
+        _filestream << ",";
+        // -------------------------------------------------------- Standard Deviation -----------------------------------------------------------
+        _filestream << obs->e_positionStdev()(0); // X-ECEF StDev [m]
+        _filestream << ",";
+        _filestream << obs->e_positionStdev()(1); // Y-ECEF StDev [m]
+        _filestream << ",";
+        _filestream << obs->e_positionStdev()(2); // Z-ECEF StDev [m]
+        _filestream << ",";
+        // _filestream << obs->e_positionStdev()(0, 1); // XY-ECEF StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->e_positionStdev()(0, 2); // XZ-ECEF StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->e_positionStdev()(1, 2); // YZ-ECEF StDev [m]
+        // _filestream << ",";
+        _filestream << obs->n_positionStdev()(0); // North StDev [m]
+        _filestream << ",";
+        _filestream << obs->n_positionStdev()(1); // East StDev [m]
+        _filestream << ",";
+        _filestream << obs->n_positionStdev()(2); // Down StDev [m]
+        _filestream << ",";
+        // _filestream << obs->n_positionStdev()(0, 1); // NE-ECEF StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->n_positionStdev()(0, 2); // ND-ECEF StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->n_positionStdev()(1, 2); // ED-ECEF StDev [m]
+        // _filestream << ",";
+        _filestream << obs->e_velocityStdev()(0); // X velocity ECEF StDev [m/s]
+        _filestream << ",";
+        _filestream << obs->e_velocityStdev()(1); // Y velocity ECEF StDev [m/s]
+        _filestream << ",";
+        _filestream << obs->e_velocityStdev()(2); // Z velocity ECEF StDev [m/s]
+        _filestream << ",";
+        // _filestream << obs->e_velocityStdev()(0, 1); // XY velocity StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->e_velocityStdev()(0, 2); // XZ velocity StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->e_velocityStdev()(1, 2); // YZ velocity StDev [m]
+        // _filestream << ",";
+        _filestream << obs->n_velocityStdev()(0); // North velocity StDev [m/s]
+        _filestream << ",";
+        _filestream << obs->n_velocityStdev()(1); // East velocity StDev [m/s]
+        _filestream << ",";
+        _filestream << obs->n_velocityStdev()(2); // Down velocity StDev [m/s]
+        _filestream << ",";
+        // _filestream << obs->n_velocityStdev()(0, 1); // NE velocity StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->n_velocityStdev()(0, 2); // ND velocity StDev [m]
+        // _filestream << ",";
+        // _filestream << obs->n_velocityStdev()(1, 2); // ED velocity StDev [m]
+        // _filestream << ",";
+        _filestream << '\n';
     }
     else
     {
-        _filestream << ",,";
+        // -------------------------------------------------------- Position -----------------------------------------------------------
+
+        if (!std::isnan(obs->e_position().x())) { _filestream << obs->e_position().x(); } // Pos ECEF X [m]
+        _filestream << ",";
+        if (!std::isnan(obs->e_position().y())) { _filestream << obs->e_position().y(); } // Pos ECEF Y [m]
+        _filestream << ",";
+        if (!std::isnan(obs->e_position().z())) { _filestream << obs->e_position().z(); } // Pos ECEF Z [m]
+        _filestream << ",";
+        if (!std::isnan(obs->lla_position().x())) { _filestream << rad2deg(obs->lla_position().x()); } // Latitude [deg]
+        _filestream << ",";
+        if (!std::isnan(obs->lla_position().y())) { _filestream << rad2deg(obs->lla_position().y()); } // Longitude [deg]
+        _filestream << ",";
+        if (!std::isnan(obs->lla_position().z())) { _filestream << obs->lla_position().z(); } // Altitude [m]
+        _filestream << ",";
+        if (!std::isnan(obs->lla_position().x()) && !std::isnan(obs->lla_position().y()))
+        {
+            auto localPosition = calcLocalPosition(obs->lla_position());
+            _filestream << localPosition.northSouth << ","; // North/South [m]
+            _filestream << localPosition.eastWest << ",";   // East/West [m]
+        }
+        else
+        {
+            _filestream << ",,";
+        }
+
+        // -------------------------------------------------------- Bias -----------------------------------------------------------
+        if (!std::isnan(obs->bias())) { _filestream << obs->bias(); } // Bias [m]
+        _filestream << ",";
+        if (!std::isnan(obs->biasStdev())) { _filestream << obs->biasStdev(); } // Bias StDev [m]
+        _filestream << ",";
+
+        // -------------------------------------------------------- Velocity -----------------------------------------------------------
+
+        if (!std::isnan(obs->e_velocity().x())) { _filestream << obs->e_velocity().x(); } // Vel ECEF X [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->e_velocity().y())) { _filestream << obs->e_velocity().y(); } // Vel ECEF Y [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->e_velocity().z())) { _filestream << obs->e_velocity().z(); } // Vel ECEF Z [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->n_velocity().x())) { _filestream << obs->n_velocity().x(); } // Vel N [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->n_velocity().y())) { _filestream << obs->n_velocity().y(); } // Vel E [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->n_velocity().z())) { _filestream << obs->n_velocity().z(); } // Vel D [m/s]
+        _filestream << ",";
+
+        // -------------------------------------------------------- Standard Deviation -----------------------------------------------------------
+        if (!std::isnan(obs->e_positionStdev()(0))) { _filestream << obs->e_positionStdev()(0); }; // X-ECEF StDev [m]
+        _filestream << ",";
+        if (!std::isnan(obs->e_positionStdev()(1))) { _filestream << obs->e_positionStdev()(1); }; // Y-ECEF StDev [m]
+        _filestream << ",";
+        if (!std::isnan(obs->e_positionStdev()(2))) { _filestream << obs->e_positionStdev()(2); }; // Z-ECEF StDev [m]
+        _filestream << ",";
+        // if (!std::isnan(obs->e_positionStdev()(0, 1))) { _filestream << obs->e_positionStdev()(0, 1); }; // XY-ECEF StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->e_positionStdev()(0, 2))) { _filestream << obs->e_positionStdev()(0, 2); }; // XZ-ECEF StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->e_positionStdev()(1, 2))) { _filestream << obs->e_positionStdev()(1, 2); }; // YZ-ECEF StDev [m]
+        // _filestream << ",";
+        if (!std::isnan(obs->n_positionStdev()(0))) { _filestream << obs->n_positionStdev()(0); }; // North StDev [m]
+        _filestream << ",";
+        if (!std::isnan(obs->n_positionStdev()(1))) { _filestream << obs->n_positionStdev()(1); }; // East StDev [m]
+        _filestream << ",";
+        if (!std::isnan(obs->n_positionStdev()(2))) { _filestream << obs->n_positionStdev()(2); }; // Down StDev [m]
+        _filestream << ",";
+        // if (!std::isnan(obs->n_positionStdev()(0, 1))) { _filestream << obs->n_positionStdev()(0, 1); }; // NE-ECEF StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->n_positionStdev()(0, 2))) { _filestream << obs->n_positionStdev()(0, 2); }; // ND-ECEF StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->n_positionStdev()(1, 2))) { _filestream << obs->n_positionStdev()(1, 2); }; // ED-ECEF StDev [m]
+        // _filestream << ",";
+        if (!std::isnan(obs->e_velocityStdev()(0))) { _filestream << obs->e_velocityStdev()(0); }; // X velocity ECEF StDev [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->e_velocityStdev()(1))) { _filestream << obs->e_velocityStdev()(1); }; // Y velocity ECEF StDev [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->e_velocityStdev()(2))) { _filestream << obs->e_velocityStdev()(2); }; // Z velocity ECEF StDev [m/s]
+        _filestream << ",";
+        // if (!std::isnan(obs->e_velocityStdev()(0, 1))) { _filestream << obs->e_velocityStdev()(0, 1); }; // XY velocity StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->e_velocityStdev()(0, 2))) { _filestream << obs->e_velocityStdev()(0, 2); }; // XZ velocity StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->e_velocityStdev()(1, 2))) { _filestream << obs->e_velocityStdev()(1, 2); }; // YZ velocity StDev [m]
+        // _filestream << ",";
+        if (!std::isnan(obs->n_velocityStdev()(0))) { _filestream << obs->n_velocityStdev()(0); }; // North velocity StDev [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->n_velocityStdev()(1))) { _filestream << obs->n_velocityStdev()(1); }; // East velocity StDev [m/s]
+        _filestream << ",";
+        if (!std::isnan(obs->n_velocityStdev()(2))) { _filestream << obs->n_velocityStdev()(2); }; // Down velocity StDev [m/s]
+        _filestream << ",";
+        // if (!std::isnan(obs->n_velocityStdev()(0, 1))) { _filestream << obs->n_velocityStdev()(0, 1); }; // NE velocity StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->n_velocityStdev()(0, 2))) { _filestream << obs->n_velocityStdev()(0, 2); }; // ND velocity StDev [m]
+        // _filestream << ",";
+        // if (!std::isnan(obs->n_velocityStdev()(1, 2))) { _filestream << obs->n_velocityStdev()(1, 2); }; // ED velocity StDev [m]
+        // _filestream << ",";
+
+        _filestream << '\n';
     }
-
-    // -------------------------------------------------------- Bias -----------------------------------------------------------
-    if (!std::isnan(obs->bias())) { _filestream << obs->bias(); } // Bias [m]
-    _filestream << ",";
-    if (!std::isnan(obs->biasStdev())) { _filestream << obs->biasStdev(); } // Bias StDev [m]
-    _filestream << ",";
-
-    // -------------------------------------------------------- Velocity -----------------------------------------------------------
-
-    if (!std::isnan(obs->e_velocity().x())) { _filestream << obs->e_velocity().x(); } // Vel ECEF X [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->e_velocity().y())) { _filestream << obs->e_velocity().y(); } // Vel ECEF Y [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->e_velocity().z())) { _filestream << obs->e_velocity().z(); } // Vel ECEF Z [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->n_velocity().x())) { _filestream << obs->n_velocity().x(); } // Vel N [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->n_velocity().y())) { _filestream << obs->n_velocity().y(); } // Vel E [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->n_velocity().z())) { _filestream << obs->n_velocity().z(); } // Vel D [m/s]
-    _filestream << ",";
-
-    // -------------------------------------------------------- Standard Deviation -----------------------------------------------------------
-    if (!std::isnan(obs->e_positionStdev()(0))) { _filestream << obs->e_positionStdev()(0); }; // X-ECEF StDev [m]
-    _filestream << ",";
-    if (!std::isnan(obs->e_positionStdev()(1))) { _filestream << obs->e_positionStdev()(1); }; // Y-ECEF StDev [m]
-    _filestream << ",";
-    if (!std::isnan(obs->e_positionStdev()(2))) { _filestream << obs->e_positionStdev()(2); }; // Z-ECEF StDev [m]
-    _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(0, 1))) { _filestream << obs->e_positionStdev()(0, 1); }; // XY-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(0, 2))) { _filestream << obs->e_positionStdev()(0, 2); }; // XZ-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_positionStdev()(1, 2))) { _filestream << obs->e_positionStdev()(1, 2); }; // YZ-ECEF StDev [m]
-    // _filestream << ",";
-    if (!std::isnan(obs->n_positionStdev()(0))) { _filestream << obs->n_positionStdev()(0); }; // North StDev [m]
-    _filestream << ",";
-    if (!std::isnan(obs->n_positionStdev()(1))) { _filestream << obs->n_positionStdev()(1); }; // East StDev [m]
-    _filestream << ",";
-    if (!std::isnan(obs->n_positionStdev()(2))) { _filestream << obs->n_positionStdev()(2); }; // Down StDev [m]
-    _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(0, 1))) { _filestream << obs->n_positionStdev()(0, 1); }; // NE-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(0, 2))) { _filestream << obs->n_positionStdev()(0, 2); }; // ND-ECEF StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_positionStdev()(1, 2))) { _filestream << obs->n_positionStdev()(1, 2); }; // ED-ECEF StDev [m]
-    // _filestream << ",";
-    if (!std::isnan(obs->e_velocityStdev()(0))) { _filestream << obs->e_velocityStdev()(0); }; // X velocity ECEF StDev [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->e_velocityStdev()(1))) { _filestream << obs->e_velocityStdev()(1); }; // Y velocity ECEF StDev [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->e_velocityStdev()(2))) { _filestream << obs->e_velocityStdev()(2); }; // Z velocity ECEF StDev [m/s]
-    _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(0, 1))) { _filestream << obs->e_velocityStdev()(0, 1); }; // XY velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(0, 2))) { _filestream << obs->e_velocityStdev()(0, 2); }; // XZ velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->e_velocityStdev()(1, 2))) { _filestream << obs->e_velocityStdev()(1, 2); }; // YZ velocity StDev [m]
-    // _filestream << ",";
-    if (!std::isnan(obs->n_velocityStdev()(0))) { _filestream << obs->n_velocityStdev()(0); }; // North velocity StDev [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->n_velocityStdev()(1))) { _filestream << obs->n_velocityStdev()(1); }; // East velocity StDev [m/s]
-    _filestream << ",";
-    if (!std::isnan(obs->n_velocityStdev()(2))) { _filestream << obs->n_velocityStdev()(2); }; // Down velocity StDev [m/s]
-    _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(0, 1))) { _filestream << obs->n_velocityStdev()(0, 1); }; // NE velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(0, 2))) { _filestream << obs->n_velocityStdev()(0, 2); }; // ND velocity StDev [m]
-    // _filestream << ",";
-    // if (!std::isnan(obs->n_velocityStdev()(1, 2))) { _filestream << obs->n_velocityStdev()(1, 2); }; // ED velocity StDev [m]
-    // _filestream << ",";
-
-    _filestream << '\n';
 }

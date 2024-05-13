@@ -69,6 +69,9 @@ class WiFiPositioningSolutionLogger : public Node, public FileWriter, public Com
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Selection weather to log nan values or not
+    bool _logNanValues = false;
+
     /// @brief Write Observation to the file
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on

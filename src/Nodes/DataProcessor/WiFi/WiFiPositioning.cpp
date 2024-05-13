@@ -30,6 +30,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 #include "Navigation/Math/LeastSquares.hpp"
 
@@ -257,12 +258,27 @@ void NAV::WiFiPositioning::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("x0 - Initial State##{}", size_t(id)).c_str()))
         {
+            Eigen::Vector3d llaPos = trafo::ecef2lla_WGS84(_initialState.e_position);
+            llaPos.block<2, 1>(0, 0) = rad2deg(llaPos.block<2, 1>(0, 0));
+
             ImGui::SetNextItemWidth(configWidth);
-            if (ImGui::InputDouble3(fmt::format("Position (m)##{}", "m",
+            if (ImGui::InputDouble3(fmt::format("Position ECEF (m)##{}", "m",
                                                 size_t(id))
                                         .c_str(),
-                                    _initialState.e_position.data(), "%.3e", ImGuiInputTextFlags_CharsScientific))
+                                    _initialState.e_position.data(), "%.4f", ImGuiInputTextFlags_CharsScientific))
             {
+                LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
+                flow::ApplyChanges();
+            }
+
+            ImGui::SetNextItemWidth(configWidth);
+            if (ImGui::InputDouble3(fmt::format("Position LLA (°,°,m)##{}", "(°,°,m)",
+                                                size_t(id))
+                                        .c_str(),
+                                    llaPos.data(), "%.8f", ImGuiInputTextFlags_CharsScientific))
+            {
+                llaPos.block<2, 1>(0, 0) = deg2rad(llaPos.block<2, 1>(0, 0));
+                _initialState.e_position = trafo::lla2ecef_WGS84(llaPos);
                 LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
                 flow::ApplyChanges();
             }
@@ -341,12 +357,27 @@ void NAV::WiFiPositioning::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("x0 - Initial State##{}", size_t(id)).c_str()))
         {
+            Eigen::Vector3d llaPos = trafo::ecef2lla_WGS84(_initialState.e_position);
+            llaPos.block<2, 1>(0, 0) = rad2deg(llaPos.block<2, 1>(0, 0));
+
             ImGui::SetNextItemWidth(configWidth);
-            if (ImGui::InputDouble3(fmt::format("Position (m)##{}", "m",
+            if (ImGui::InputDouble3(fmt::format("Position ECEF (m)##{}", "m",
                                                 size_t(id))
                                         .c_str(),
-                                    _initialState.e_position.data(), "%.3e", ImGuiInputTextFlags_CharsScientific))
+                                    _initialState.e_position.data(), "%.4f", ImGuiInputTextFlags_CharsScientific))
             {
+                LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
+                flow::ApplyChanges();
+            }
+
+            ImGui::SetNextItemWidth(configWidth);
+            if (ImGui::InputDouble3(fmt::format("Position LLA ##{}", "m",
+                                                size_t(id))
+                                        .c_str(),
+                                    llaPos.data(), "%.8f°", ImGuiInputTextFlags_CharsScientific))
+            {
+                llaPos.block<2, 1>(0, 0) = deg2rad(llaPos.block<2, 1>(0, 0));
+                _initialState.e_position = trafo::lla2ecef_WGS84(llaPos);
                 LOG_DEBUG("{}: e_position changed to {}", nameId(), _initialState.e_position);
                 flow::ApplyChanges();
             }
@@ -468,6 +499,25 @@ void NAV::WiFiPositioning::guiConfig()
         }
     }
     flow::ApplyChanges();
+
+    // ###########################################################################################################
+    //                                        Use Initial Values
+    // ###########################################################################################################
+    if (_solutionMode == SolutionMode::LSQ)
+    {
+        if (ImGui::Checkbox(fmt::format("Use Initial Values##{}", size_t(id)).c_str(), &_useInitialValues))
+        {
+            if (_useInitialValues)
+            {
+                LOG_DEBUG("{}: Use Initial Values changed to Yes", nameId());
+            }
+            else
+            {
+                LOG_DEBUG("{}: Use Initial Values changed to No", nameId());
+            }
+        }
+    }
+    flow::ApplyChanges();
 }
 
 [[nodiscard]] json NAV::WiFiPositioning::save() const
@@ -482,6 +532,7 @@ void NAV::WiFiPositioning::guiConfig()
     j["frame"] = _frame;
     j["estimateBias"] = _estimateBias;
     j["weightedSolution"] = _weightedSolution;
+    j["useInitialValues"] = _useInitialValues;
     j["deviceMacAddresses"] = _deviceMacAddresses;
     j["devicePositions"] = _devicePositions;
     j["deviceBias"] = _deviceBias;
@@ -536,6 +587,10 @@ void NAV::WiFiPositioning::restore(json const& j)
     if (j.contains("weightedSolution"))
     {
         j.at("weightedSolution").get_to(_weightedSolution);
+    }
+    if (j.contains("useInitialValues"))
+    {
+        j.at("useInitialValues").get_to(_useInitialValues);
     }
     if (j.contains("deviceMacAddresses"))
     {
@@ -724,7 +779,7 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
 {
     auto obs = std::static_pointer_cast<const WiFiObs>(queue.extract_front());
     auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs->macAddress);
-    if (it != _deviceMacAddresses.end()) // Device exists
+    if (it != _deviceMacAddresses.end()) // Check if the MAC address is in the list
     {
         // Get the index of the found element
         size_t index = static_cast<size_t>(std::distance(_deviceMacAddresses.begin(), it));
@@ -733,13 +788,30 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
         bool deviceExists = false;
         for (auto& device : _devices)
         {
-            if (device.position == _devicePositions.at(index))
+            if (_frame == Frame::ECEF)
             {
-                deviceExists = true;
-                device.distance = obs->distance * _deviceScale.at(index) + _deviceBias.at(index);
-                device.distanceStd = obs->distanceStd * _deviceScale.at(index);
-                device.time = obs->insTime;
-                break;
+                if (device.position == _devicePositions.at(index))
+                {
+                    deviceExists = true;
+                    device.distance = obs->distance * _deviceScale.at(index) + _deviceBias.at(index);
+                    device.distanceStd = obs->distanceStd * _deviceScale.at(index);
+                    device.time = obs->insTime;
+                    break;
+                }
+            }
+            else if (_frame == Frame::LLA)
+            {
+                Eigen::Vector3d ecefPos = _devicePositions.at(index);
+                ecefPos.block<2, 1>(0, 0) = deg2rad(ecefPos.block<2, 1>(0, 0));
+                ecefPos = trafo::lla2ecef_WGS84(ecefPos);
+                if (device.position == ecefPos)
+                {
+                    deviceExists = true;
+                    device.distance = obs->distance * _deviceScale.at(index) + _deviceBias.at(index);
+                    device.distanceStd = obs->distanceStd * _deviceScale.at(index);
+                    device.time = obs->insTime;
+                    break;
+                }
             }
         }
 
@@ -748,7 +820,9 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
         {
             if (_frame == Frame::LLA)
             {
-                _devices.push_back({ trafo::lla2ecef_WGS84(_devicePositions.at(index)), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index), obs->distanceStd * _deviceScale.at(index) });
+                Eigen::Vector3d llaPos = _devicePositions.at(index);
+                llaPos.block<2, 1>(0, 0) = deg2rad(llaPos.block<2, 1>(0, 0));
+                _devices.push_back({ trafo::lla2ecef_WGS84(llaPos), obs->insTime, obs->distance * _deviceScale.at(index) + _deviceBias.at(index), obs->distanceStd * _deviceScale.at(index) });
             }
             else if (_frame == Frame::ECEF)
             {
@@ -763,7 +837,7 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             if (_devices.size() == _numOfDevices)
             {
                 LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
-                wifiPositioningSolution->setPositionAndStdDev_e(_state.e_position.block<3, 1>(0, 0), lsqSolution.variance.block<3, 3>(0, 0).cwiseSqrt());
+                wifiPositioningSolution->setPositionAndStdDev_e(lsqSolution.solution.block<3, 1>(0, 0), lsqSolution.variance.block<3, 3>(0, 0).cwiseSqrt());
                 wifiPositioningSolution->setCovarianceMatrix(lsqSolution.variance.block<3, 3>(0, 0));
                 if (_estimateBias)
                 {
@@ -809,14 +883,14 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(_devices.size()));
     size_t numMeasurements = _devices.size();
 
-    if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)))
-    {
-        _state.e_position << _initialState.e_position;
-        if (_estimateBias)
-        {
-            _state.bias = _initialState.bias;
-        }
-    }
+    // if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)) || _useInitialValues)
+    // {
+    //     _state.e_position << _initialState.e_position;
+    //     if (_estimateBias)
+    //     {
+    //         _state.bias = _initialState.bias;
+    //     }
+    // }
 
     for (size_t o = 0; o < 10; o++)
     {
@@ -839,15 +913,27 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             }
             // calculate the design matrix
             e_H.block<1, 3>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
+
             if (_estimateBias)
             {
                 e_H(static_cast<int>(i), 3) = 1;
             }
-            W(static_cast<int>(i), static_cast<int>(i)) = 1 / std::pow(_devices.at(i).distanceStd, 2);
+            if (_weightedSolution)
+            {
+                W(static_cast<int>(i), static_cast<int>(i)) = 1 / std::pow(_devices.at(i).distanceStd, 2);
+                // W /= W.sum(); // normalize the weights
+            }
         }
         // solve the linear least squares problem
+        // std::cout << "e_h" << std::endl; // TODO delete
+        // std::cout << e_H << std::endl;
+        // std::cout << "o" << o << std::endl;
+        // std::cout << ddist << std::endl;
+        // std::cout << "Gewichtung" << std::endl;
+        // std::cout << W << std::endl;
 
         lsq = solveWeightedLinearLeastSquaresUncertainties(e_H, W, ddist);
+        // std::cout << lsq.solution << std::endl; // TODO delete
 
         if (_estimateBias)
         {
@@ -868,10 +954,26 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             _state.bias += lsq.solution(3);
         }
 
-        bool solInaccurate = lsq.solution.norm() > 1e-3;
+        bool solInaccurate = pow(lsq.solution.norm(), 2) > 1e-3;
         if (!solInaccurate) // Solution is accurate enough
         {
+            lsq.solution.block<3, 1>(0, 0) = _state.e_position;
             break;
+        }
+        if (o == 9)
+        {
+            LOG_DEBUG("{}: Solution did not converge", nameId());
+            lsq.solution.setConstant(std::numeric_limits<double>::quiet_NaN());
+            lsq.variance.setConstant(std::numeric_limits<double>::quiet_NaN());
+            if (_estimateBias)
+            {
+                _state.bias = std::numeric_limits<double>::quiet_NaN();
+            }
+            _state.e_position = _initialState.e_position;
+            if (_estimateBias)
+            {
+                _state.bias = _initialState.bias;
+            }
         }
     }
 

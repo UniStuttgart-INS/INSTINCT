@@ -117,6 +117,9 @@ class WiFiPositioning : public Node
     /// Selection of whether the solution will be weighted
     bool _weightedSolution = false;
 
+    /// Selection of whether the initial values should always be used or those of the last position
+    bool _useInitialValues = false;
+
     /// @brief State estimated by the positioning algorithm
     struct State
     {
