@@ -129,8 +129,8 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
     std::string cell;
 
     uint16_t gpsCycle = 0;
-    uint16_t gpsWeek;
-    long double gpsToW;
+    uint16_t gpsWeek = 0;
+    long double gpsToW = 0.0;
     InsTime time;
 
     bool gpsCycleSet = false;
@@ -190,10 +190,7 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
         LOG_ERROR("{}: Not all columns are set", nameId());
         return nullptr;
     }
-    else
-    {
-        time = InsTime(gpsCycle, gpsWeek, gpsToW);
-    }
+    time = InsTime(gpsCycle, gpsWeek, gpsToW);
     obs->insTime = time;
     invokeCallbacks(OUTPUT_PORT_INDEX_WiFiObs_OBS, obs);
     return obs;

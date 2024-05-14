@@ -291,7 +291,7 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
         bytesRead = static_cast<size_t>(ssh_channel_read_timeout(node->_channel, buffer, sizeof(buffer), 0, 10)); // timeout in ms
         if (bytesRead > 0)
         {
-            receivedData.append(buffer, static_cast<size_t>(bytesRead));
+            receivedData.append(buffer, bytesRead);
         }
     } while (bytesRead > 0);
     // Send command to clear output
@@ -301,8 +301,7 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
     std::istringstream iss(receivedData);
     std::string line;
 
-    while (std::getline(iss, line) && line.find("Peer-bssid") == std::string::npos)
-        ; // Skip lines until the header "Peer-bssid" is found
+    while (std::getline(iss, line) && line.find("Peer-bssid") == std::string::npos); // Skip lines until the header "Peer-bssid" is found
 
     // Skip the header lines
     std::getline(iss, line);
