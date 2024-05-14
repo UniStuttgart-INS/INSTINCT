@@ -143,7 +143,7 @@ void NAV::WiFiPositioning::guiConfig()
             std::regex macRegex("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
 
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputText(fmt::format("##Mac{}", size_t(rowIndex)).c_str(), &_deviceMacAddresses.at(rowIndex), ImGuiInputTextFlags_None))
+            if (ImGui::InputText(fmt::format("##Mac{}", rowIndex).c_str(), &_deviceMacAddresses.at(rowIndex), ImGuiInputTextFlags_None))
             {
                 std::transform(_deviceMacAddresses.at(rowIndex).begin(), _deviceMacAddresses.at(rowIndex).end(), _deviceMacAddresses.at(rowIndex).begin(), ::toupper); // Convert to uppercase
                 if (!std::regex_match(_deviceMacAddresses.at(rowIndex), macRegex))
@@ -160,19 +160,19 @@ void NAV::WiFiPositioning::guiConfig()
             {
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputX{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[0], 0.0, 0.0, "%.4fm"))
+                if (ImGui::InputDouble(fmt::format("##InputX{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[0], 0.0, 0.0, "%.4fm"))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputY{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[1], 0.0, 0.0, "%.4fm"))
+                if (ImGui::InputDouble(fmt::format("##InputY{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[1], 0.0, 0.0, "%.4fm"))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputZ{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
+                if (ImGui::InputDouble(fmt::format("##InputZ{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
                 {
                     flow::ApplyChanges();
                 }
@@ -181,32 +181,32 @@ void NAV::WiFiPositioning::guiConfig()
             {
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDoubleL(fmt::format("##InputLat{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[0], -180, 180, 0.0, 0.0, "%.8f°"))
+                if (ImGui::InputDoubleL(fmt::format("##InputLat{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[0], -180, 180, 0.0, 0.0, "%.8f°"))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDoubleL(fmt::format("##InputLon{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[1], -180, 180, 0.0, 0.0, "%.8f°"))
+                if (ImGui::InputDoubleL(fmt::format("##InputLon{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[1], -180, 180, 0.0, 0.0, "%.8f°"))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("##InputHeight{}", size_t(rowIndex)).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
+                if (ImGui::InputDouble(fmt::format("##InputHeight{}", rowIndex).c_str(), &_devicePositions.at(rowIndex)[2], 0.0, 0.0, "%.4fm"))
                 {
                     flow::ApplyChanges();
                 }
             }
             ImGui::TableNextColumn();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##InputBias{}", size_t(rowIndex)).c_str(), &_deviceBias.at(rowIndex), 0.0, 0.0, "%.4fm"))
+            if (ImGui::InputDouble(fmt::format("##InputBias{}", rowIndex).c_str(), &_deviceBias.at(rowIndex), 0.0, 0.0, "%.4fm"))
             {
                 flow::ApplyChanges();
             }
             ImGui::TableNextColumn();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##InputScale{}", size_t(rowIndex)).c_str(), &_deviceScale.at(rowIndex), 0.0, 0.0, "%.4f"))
+            if (ImGui::InputDouble(fmt::format("##InputScale{}", rowIndex).c_str(), &_deviceScale.at(rowIndex), 0.0, 0.0, "%.4f"))
             {
                 flow::ApplyChanges();
             }

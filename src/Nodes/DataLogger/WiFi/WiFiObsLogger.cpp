@@ -117,7 +117,7 @@ void NAV::WiFiObsLogger::deinitialize()
 
 void NAV::WiFiObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
-    if (auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
+    if ([[maybe_unused]] auto* sourcePin = inputPins[pinIdx].link.getConnectedPin())
     {
         constexpr int gpsCyclePrecision = 3;
         constexpr int gpsTimePrecision = 12;
