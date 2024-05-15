@@ -43,12 +43,11 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
         obs->timeOutputs.syncInCnt = packet.extractUint32();
         obs->timeOutputs.timeSyncIn = packet.extractUint64();
         // Log the measurement details
-        LOG_DATA("WiFiObs mac Address: {}, measured distance: {}", obs->macAddress, obs->distance);
-        LOG_DEBUG("WiFiObs mac Address: {}, measured distance: {}, time of measurement: {}", obs->macAddress, obs->distance, obs->insTime);
+        LOG_DATA("WiFiObs mac Address: {}, measured distance: {}, time of measurement: {}", obs->macAddress, obs->distance, obs->insTime);
     }
     else
     {
-        LOG_DEBUG("Received non-binary packet. Ignoring.");
+        LOG_DATA("Received non-binary packet. Ignoring.");
         return false;
     }
     return true;

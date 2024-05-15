@@ -145,7 +145,7 @@ void NAV::EspressifSensor::deinitialize()
 
 void NAV::EspressifSensor::binaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
 {
-    LOG_INFO("binaryAsyncMessageReceived");
+    LOG_DATA("binaryAsyncMessageReceived");
     auto* ubSensor = static_cast<EspressifSensor*>(userData);
 
     auto obs = std::make_shared<UartPacket>(p);
