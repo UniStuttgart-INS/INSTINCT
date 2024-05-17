@@ -698,7 +698,7 @@ TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
 
         REQUIRE(mat(all, all) == eigMat);
         REQUIRE(mat("1"s, "1"s) == 1.0);
-        REQUIRE(mat({ "1"s, "3"s }, "1"s) == Eigen::Vector2d(1, 7));
+        REQUIRE(mat(std::vector<std::string>{ "1"s, "3"s }, "1"s) == Eigen::Vector2d(1, 7));
         REQUIRE(mat("2"s, { "2"s, "3"s }) == Eigen::RowVector2d(5, 6));
         REQUIRE(mat({ "2"s, "3"s }, { "2"s, "3"s }) == (Eigen::Matrix2d(2, 2) << 5, 6, 8, 9).finished());
     }
