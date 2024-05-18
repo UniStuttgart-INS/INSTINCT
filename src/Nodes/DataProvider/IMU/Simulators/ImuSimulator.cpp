@@ -37,7 +37,7 @@ NAV::ImuSimulator::ImuSimulator()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 677, 580 };
+    _guiConfigDefaultWindowSize = { 677, 508 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsSimulated::type() }, &ImuSimulator::pollImuObs);
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
@@ -105,10 +105,18 @@ void NAV::ImuSimulator::guiConfig()
     }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode("Output datarate"))
+    if (ImGui::TreeNode("Output data-rate"))
     {
         ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::InputDoubleL(fmt::format("IMU output rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
+        if (ImGui::InputDoubleL(fmt::format("IMU internal rate##{}", size_t(id)).c_str(), &_imuInternalFrequency, 1e-3, 1e4, 0.0, 0.0, "%.3f Hz"))
+        {
+            LOG_DEBUG("{}: imuInternalFrequency changed to {}", nameId(), _imuInternalFrequency);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Used to calculate the dTime, dTheta, dVel fields");
+        ImGui::SetNextItemWidth(columnWidth);
+        if (ImGui::InputDoubleL(fmt::format("IMU output rate##{}", size_t(id)).c_str(), &_imuFrequency, 1e-3, _imuInternalFrequency, 0.0, 0.0, "%.3f Hz"))
         {
             LOG_DEBUG("{}: imuFrequency changed to {}", nameId(), _imuFrequency);
             flow::ApplyChanges();
@@ -536,7 +544,7 @@ void NAV::ImuSimulator::guiConfig()
         else if (_trajectoryType == TrajectoryType::Circular)
         {
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDoubleL(fmt::format("Amount of Circles##{}", size_t(id)).c_str(), &_circularTrajectoryCircleCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
+            if (ImGui::InputDoubleL(fmt::format("Number of Circles##{}", size_t(id)).c_str(), &_circularTrajectoryCircleCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
             {
                 LOG_DEBUG("{}: circularTrajectoryCircleCountForStop changed to {}", nameId(), _circularTrajectoryCircleCountForStop);
                 flow::ApplyChanges();
@@ -546,7 +554,7 @@ void NAV::ImuSimulator::guiConfig()
         else if (_trajectoryType == TrajectoryType::RoseFigure)
         {
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDoubleL(fmt::format("Amount of rose figures##{}", size_t(id)).c_str(), &_roseTrajectoryCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
+            if (ImGui::InputDoubleL(fmt::format("Number of rose figures##{}", size_t(id)).c_str(), &_roseTrajectoryCountForStop, 0.0, std::numeric_limits<double>::max(), 1.0, 1.0, "%.3f"))
             {
                 LOG_DEBUG("{}: RoseTrajectoryCountForStop changed to {}", nameId(), _roseTrajectoryCountForStop);
                 flow::ApplyChanges();
@@ -556,7 +564,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Simulation models"))
     {
         if (_trajectoryType != TrajectoryType::Fixed && _trajectoryType != TrajectoryType::Csv && _trajectoryType != TrajectoryType::RoseFigure)
@@ -565,9 +573,11 @@ void NAV::ImuSimulator::guiConfig()
             {
                 ImGui::Indent();
                 ImGui::SetNextItemWidth(columnWidth - ImGui::GetStyle().IndentSpacing);
-                if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &_splines.sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
+                auto sampleInterval = static_cast<double>(_splines.sampleInterval);
+                if (ImGui::InputDoubleL(fmt::format("Sample Interval##{}", size_t(id)).c_str(), &sampleInterval, 0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.3e s"))
                 {
-                    LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), _splines.sampleInterval);
+                    LOG_DEBUG("{}: spline sample interval changed to {}", nameId(), sampleInterval);
+                    _splines.sampleInterval = sampleInterval;
                     flow::ApplyChanges();
                     doDeinitialize();
                 }
@@ -643,6 +653,7 @@ json NAV::ImuSimulator::save() const
     j["startTimeEditFormat"] = _startTimeEditFormat;
     j["startTime"] = _startTime;
     // ###########################################################################################################
+    j["imuInternalFrequency"] = _imuInternalFrequency;
     j["imuFrequency"] = _imuFrequency;
     j["gnssFrequency"] = _gnssFrequency;
     // ###########################################################################################################
@@ -696,6 +707,10 @@ void NAV::ImuSimulator::restore(json const& j)
         j.at("startTime").get_to(_startTime);
     }
     // ###########################################################################################################
+    if (j.contains("imuInternalFrequency"))
+    {
+        j.at("imuInternalFrequency").get_to(_imuInternalFrequency);
+    }
     if (j.contains("imuFrequency"))
     {
         j.at("imuFrequency").get_to(_imuFrequency);
@@ -823,13 +838,6 @@ void NAV::ImuSimulator::restore(json const& j)
     }
 }
 
-bool NAV::ImuSimulator::initialize()
-{
-    LOG_TRACE("{}: called", nameId());
-
-    return initializeSplines();
-}
-
 NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
 {
     auto gpsCycleIter = std::find(description.begin(), description.end(), "GpsCycle");
@@ -865,7 +873,7 @@ NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line,
     return {};
 }
 
-Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
+Eigen::Vector3<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
 {
     auto posXIter = std::find(description.begin(), description.end(), "Pos ECEF X [m]");
     auto posYIter = std::find(description.begin(), description.end(), "Pos ECEF Y [m]");
@@ -886,23 +894,23 @@ Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLi
         auto lat = deg2rad(std::get<double>(line.at(static_cast<size_t>(latIter - description.begin()))));
         auto lon = deg2rad(std::get<double>(line.at(static_cast<size_t>(lonIter - description.begin()))));
         auto alt = std::get<double>(line.at(static_cast<size_t>(altIter - description.begin())));
-        return trafo::lla2ecef_WGS84(Eigen::Vector3d{ lat, lon, alt });
+        return trafo::lla2ecef_WGS84(Eigen::Vector3<Scalar>(lat, lon, alt));
     }
 
     LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the position.", nameId());
     return { std::nan(""), std::nan(""), std::nan("") };
 }
 
-Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description)
+Eigen::Quaternion<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description)
 {
     auto rollIter = std::find(description.begin(), description.end(), "Roll [deg]");
     auto pitchIter = std::find(description.begin(), description.end(), "Pitch [deg]");
     auto yawIter = std::find(description.begin(), description.end(), "Yaw [deg]");
     if (rollIter != description.end() && pitchIter != description.end() && yawIter != description.end())
     {
-        auto roll = std::get<double>(line.at(static_cast<size_t>(rollIter - description.begin())));
-        auto pitch = std::get<double>(line.at(static_cast<size_t>(pitchIter - description.begin())));
-        auto yaw = std::get<double>(line.at(static_cast<size_t>(yawIter - description.begin())));
+        auto roll = static_cast<Scalar>(std::get<double>(line.at(static_cast<size_t>(rollIter - description.begin()))));
+        auto pitch = static_cast<Scalar>(std::get<double>(line.at(static_cast<size_t>(pitchIter - description.begin()))));
+        auto yaw = static_cast<Scalar>(std::get<double>(line.at(static_cast<size_t>(yawIter - description.begin()))));
         return trafo::n_Quat_b(deg2rad(roll), deg2rad(pitch), deg2rad(yaw));
     }
 
@@ -924,10 +932,10 @@ Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const
 
 bool NAV::ImuSimulator::initializeSplines()
 {
-    std::vector<double> splineTime;
+    std::vector<Scalar> splineTime;
 
-    auto unwrapAngle = [](double angle, double prevAngle, double rangeMax) {
-        double x = angle - prevAngle;
+    auto unwrapAngle = [](auto angle, auto prevAngle, auto rangeMax) {
+        auto x = angle - prevAngle;
         x = std::fmod(x + rangeMax, 2 * rangeMax);
         if (x < 0)
         {
@@ -949,13 +957,13 @@ bool NAV::ImuSimulator::initializeSplines()
         splineTime.push_back(_simulationDuration + 20.0); // 10 seconds past simulation end; simply to define the derivative at end node
         splineTime.push_back(_simulationDuration + 30.0); // 10 seconds past simulation end; simply to define the derivative at end node
 
-        const Eigen::Vector3d& e_startPosition = _startPosition.e_position;
-        std::vector<double> X(splineTime.size(), e_startPosition[0]);
-        std::vector<double> Y(splineTime.size(), e_startPosition[1]);
-        std::vector<double> Z(splineTime.size(), e_startPosition[2]);
-        std::vector<double> Roll(splineTime.size(), _fixedTrajectoryStartOrientation.x());
-        std::vector<double> Pitch(splineTime.size(), _fixedTrajectoryStartOrientation.y());
-        std::vector<double> Yaw(splineTime.size(), _fixedTrajectoryStartOrientation.z());
+        Eigen::Vector3<Scalar> e_startPosition = _startPosition.e_position.cast<Scalar>();
+        std::vector<Scalar> X(splineTime.size(), e_startPosition[0]);
+        std::vector<Scalar> Y(splineTime.size(), e_startPosition[1]);
+        std::vector<Scalar> Z(splineTime.size(), e_startPosition[2]);
+        std::vector<Scalar> Roll(splineTime.size(), _fixedTrajectoryStartOrientation.x());
+        std::vector<Scalar> Pitch(splineTime.size(), _fixedTrajectoryStartOrientation.y());
+        std::vector<Scalar> Yaw(splineTime.size(), _fixedTrajectoryStartOrientation.z());
 
         _splines.x.setPoints(splineTime, X);
         _splines.y.setPoints(splineTime, Y);
@@ -967,27 +975,27 @@ bool NAV::ImuSimulator::initializeSplines()
     }
     else if (_trajectoryType == TrajectoryType::Linear)
     {
-        double roll = 0.0;
-        double pitch = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
-        double yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
-        const Eigen::Vector3d& e_startPosition = _startPosition.e_position;
+        Scalar roll = 0.0;
+        Scalar pitch = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
+        Scalar yaw = _n_linearTrajectoryStartVelocity.head<2>().norm() > 1e-8 ? calcYawFromVelocity(_n_linearTrajectoryStartVelocity) : 0;
+        const auto& e_startPosition = _startPosition.e_position;
 
         size_t nOverhead = static_cast<size_t>(std::round(1.0 / _splines.sampleInterval)) + 1;
 
-        splineTime = std::vector<double>(nOverhead, 0.0);
-        std::vector<double> splineX(nOverhead, e_startPosition[0]);
-        std::vector<double> splineY(nOverhead, e_startPosition[1]);
-        std::vector<double> splineZ(nOverhead, e_startPosition[2]);
-        std::vector<double> splineRoll(nOverhead, roll);
-        std::vector<double> splinePitch(nOverhead, pitch);
-        std::vector<double> splineYaw(nOverhead, yaw);
+        splineTime = std::vector<Scalar>(nOverhead, 0.0);
+        std::vector<Scalar> splineX(nOverhead, e_startPosition[0]);
+        std::vector<Scalar> splineY(nOverhead, e_startPosition[1]);
+        std::vector<Scalar> splineZ(nOverhead, e_startPosition[2]);
+        std::vector<Scalar> splineRoll(nOverhead, roll);
+        std::vector<Scalar> splinePitch(nOverhead, pitch);
+        std::vector<Scalar> splineYaw(nOverhead, yaw);
 
         // @brief Calculates the derivative of the curvilinear position and velocity
         // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
         // @param[in] n_acceleration Acceleration in local-navigation frame coordinates [m/s^s]
         // @return The curvilinear position and velocity derivatives ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
-        auto f = [](const Eigen::Vector<double, 6>& y, const Eigen::Vector3d& n_acceleration) {
-            Eigen::Vector<double, 6> y_dot;
+        auto f = [](const Eigen::Vector<Scalar, 6>& y, const Eigen::Vector3<Scalar>& n_acceleration) {
+            Eigen::Vector<Scalar, 6> y_dot;
             y_dot << lla_calcTimeDerivativeForPosition(y.tail<3>(),              // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
                                                        y(0),                     // 𝜙 Latitude in [rad]
                                                        y(2),                     // h Altitude in [m]
@@ -998,17 +1006,17 @@ bool NAV::ImuSimulator::initializeSplines()
             return y_dot;
         };
 
-        Eigen::Vector3d lla_lastPosition = _startPosition.latLonAlt();
+        Eigen::Vector3<Scalar> lla_lastPosition = _startPosition.latLonAlt().cast<Scalar>();
         for (size_t i = 2; i <= nOverhead; i++) // Calculate one second backwards
         {
-            Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
+            Eigen::Vector<Scalar, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
             y << lla_lastPosition,
-                _n_linearTrajectoryStartVelocity;
+                _n_linearTrajectoryStartVelocity.cast<Scalar>();
 
-            y = RungeKutta1(f, -_splines.sampleInterval, y, Eigen::Vector3d::Zero());
+            y += -_splines.sampleInterval * f(y, Eigen::Vector<Scalar, 3>::Zero());
             lla_lastPosition = y.head<3>();
 
-            Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
+            Eigen::Vector3<Scalar> e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
             splineTime.at(nOverhead - i) = -_splines.sampleInterval * static_cast<double>(i - 1);
             splineX.at(nOverhead - i) = e_position(0);
@@ -1016,19 +1024,19 @@ bool NAV::ImuSimulator::initializeSplines()
             splineZ.at(nOverhead - i) = e_position(2);
         }
 
-        lla_lastPosition = _startPosition.latLonAlt();
+        lla_lastPosition = _startPosition.latLonAlt().cast<Scalar>();
         for (size_t i = 1;; i++)
         {
-            Eigen::Vector<double, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
+            Eigen::Vector<Scalar, 6> y; // [𝜙, λ, h, v_N, v_E, v_D]^T
             y << lla_lastPosition,
-                _n_linearTrajectoryStartVelocity;
+                _n_linearTrajectoryStartVelocity.cast<Scalar>();
 
-            y = RungeKutta1(f, _splines.sampleInterval, y, Eigen::Vector3d::Zero());
+            y += _splines.sampleInterval * f(y, Eigen::Vector<Scalar, 3>::Zero());
             lla_lastPosition = y.head<3>();
 
-            Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
+            auto e_position = trafo::lla2ecef_WGS84(lla_lastPosition);
 
-            double simTime = _splines.sampleInterval * static_cast<double>(i);
+            auto simTime = _splines.sampleInterval * static_cast<Scalar>(i);
             splineTime.push_back(simTime);
             splineX.push_back(e_position(0));
             splineY.push_back(e_position(1));
@@ -1044,7 +1052,8 @@ bool NAV::ImuSimulator::initializeSplines()
             }
             if (_simulationStopCondition == StopCondition::DistanceOrCirclesOrRoses)
             {
-                auto horizontalDistance = calcGeographicalDistance(_startPosition.latitude(), _startPosition.longitude(), lla_lastPosition(0), lla_lastPosition(1));
+                auto horizontalDistance = calcGeographicalDistance(static_cast<Scalar>(_startPosition.latitude()), static_cast<Scalar>(_startPosition.longitude()),
+                                                                   lla_lastPosition(0), lla_lastPosition(1));
                 auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_startPosition.altitude() - lla_lastPosition(2), 2))
                                 - _n_linearTrajectoryStartVelocity.norm() * 1.0;
                 if (distance > _linearTrajectoryDistanceForStop)
@@ -1064,7 +1073,7 @@ bool NAV::ImuSimulator::initializeSplines()
     }
     else if (_trajectoryType == TrajectoryType::Circular)
     {
-        double simDuration{};
+        Scalar simDuration{};
         if (_simulationStopCondition == StopCondition::Duration)
         {
             simDuration = _simulationDuration;
@@ -1075,33 +1084,37 @@ bool NAV::ImuSimulator::initializeSplines()
             simDuration = _circularTrajectoryCircleCountForStop * 2 * M_PI / omega;
         }
 
-        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0) / _splines.sampleInterval)); i++)
+        constexpr Scalar OFFSET = 1.0; // [s]
+
+        for (size_t i = 0; i <= static_cast<size_t>(std::round((simDuration + 2.0 * OFFSET) / _splines.sampleInterval)); i++)
         {
-            splineTime.push_back(_splines.sampleInterval * static_cast<double>(i) - 1.0);
+            splineTime.push_back(_splines.sampleInterval * static_cast<Scalar>(i) - OFFSET);
         }
+        LOG_DATA("{}: Sim Time [{:.3f}, {:.3f}] with dt = {:.3f} (simDuration = {:.3f})", nameId(), splineTime.front(), splineTime.back(), splineTime.at(1) - splineTime.at(0), simDuration);
 
-        std::vector<double> splineX(splineTime.size());
-        std::vector<double> splineY(splineTime.size());
-        std::vector<double> splineZ(splineTime.size());
+        std::vector<Scalar> splineX(splineTime.size());
+        std::vector<Scalar> splineY(splineTime.size());
+        std::vector<Scalar> splineZ(splineTime.size());
 
-        const Eigen::Vector3d& e_origin = _startPosition.e_position;
-        Eigen::Vector3d lla_origin = _startPosition.latLonAlt();
+        Eigen::Vector3<Scalar> e_origin = _startPosition.e_position.cast<Scalar>();
+        Eigen::Vector3<Scalar> lla_origin = _startPosition.latLonAlt().cast<Scalar>();
 
-        Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(lla_origin(0), lla_origin(1));
+        Eigen::Quaternion<Scalar> e_quatCenter_n = trafo::e_Quat_n(lla_origin(0), lla_origin(1));
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
             auto phi = _trajectoryHorizontalSpeed * splineTime[i] / _trajectoryRadius; // Angle of the current point on the circle
             phi *= _trajectoryDirection == Direction::CW ? -1 : 1;
             phi += _trajectoryRotationAngle;
+            LOG_DATA("{}: [t={:.3f}] phi = {:.3f}°", nameId(), splineTime.at(i), rad2deg(phi));
 
-            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
-                                                _trajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
-                                                -_trajectoryVerticalSpeed * splineTime[i] };                                                                                             // [m]
+            Eigen::Vector3<Scalar> n_relativePosition{ _trajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * std::sin(phi * static_cast<Scalar>(_circularHarmonicFrequency))), // [m]
+                                                       _trajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * std::sin(phi * static_cast<Scalar>(_circularHarmonicFrequency))), // [m]
+                                                       -_trajectoryVerticalSpeed * splineTime[i] };                                                                                                  // [m]
 
-            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3<Scalar> e_relativePosition = e_quatCenter_n * n_relativePosition;
 
-            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+            Eigen::Vector3<Scalar> e_position = e_origin + e_relativePosition;
 
             splineX[i] = e_position[0];
             splineY[i] = e_position[1];
@@ -1157,15 +1170,15 @@ bool NAV::ImuSimulator::initializeSplines()
             else { integrationFactor = 2.0 * static_cast<double>(d); }
         }
 
-        constexpr size_t nVirtPoints = 10;
+        auto nVirtPoints = static_cast<size_t>(1.0 / (_roseStepLengthMax / 50.0));
         splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-        std::vector<double> splineX(splineTime.size());
-        std::vector<double> splineY(splineTime.size());
-        std::vector<double> splineZ(splineTime.size());
+        std::vector<Scalar> splineX(splineTime.size());
+        std::vector<Scalar> splineY(splineTime.size());
+        std::vector<Scalar> splineZ(splineTime.size());
 
-        Eigen::Vector3d e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt());
+        Eigen::Vector3<Scalar> e_origin = trafo::lla2ecef_WGS84(_startPosition.latLonAlt()).cast<Scalar>();
 
-        Eigen::Quaterniond e_quatCenter_n = trafo::e_Quat_n(_startPosition.latLonAlt()(0), _startPosition.latLonAlt()(1));
+        Eigen::Quaternion<Scalar> e_quatCenter_n = trafo::e_Quat_n(_startPosition.latLonAlt()(0), _startPosition.latLonAlt()(1)).cast<Scalar>();
 
         double lengthOld = -_roseStepLengthMax / 2.0;            // n-1 length
         double dPhi = 0.001;                                     // Angle step size
@@ -1181,7 +1194,7 @@ bool NAV::ImuSimulator::initializeSplines()
         _roseSimDuration = 0.0;
 
         // We cannot input negative values or zero
-        for (double phi = dPhi; phi <= maxPhi + 10 * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
+        for (double phi = dPhi; phi <= maxPhi + static_cast<double>(nVirtPoints) * dPhi; phi += dPhi) // NOLINT(clang-analyzer-security.FloatLoopCounter, cert-flp30-c)
         {
             double length = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * phi, 1.0 - std::pow(roseK, 2.0));
             double dL = length - lengthOld;
@@ -1202,14 +1215,14 @@ bool NAV::ImuSimulator::initializeSplines()
 
             double time = length / _trajectoryHorizontalSpeed;
             splineTime.push_back(time);
-            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+            Eigen::Vector3<Scalar> n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                       _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                       -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
 
-            LOG_DATA("{}: t={:8.6}s | l={:8.6}m", nameId(), time, length);
+            Eigen::Vector3<Scalar> e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3<Scalar> e_position = e_origin + e_relativePosition;
 
-            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
-            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+            LOG_DATA("{}: t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), time, length, rad2deg(phi));
 
             splineX.push_back(e_position[0]);
             splineY.push_back(e_position[1]);
@@ -1227,8 +1240,10 @@ bool NAV::ImuSimulator::initializeSplines()
             }
         }
 
-        maxPhi = integrationFactor * M_PI;
+        maxPhi = integrationFactor * M_PI + 1e-15; // For exactly 2*pi the elliptical integral is failing. Bug in the function.
+        LOG_DATA("maxPhi {:6.2f}", rad2deg(maxPhi));
         double endLength = _trajectoryRadius / roseK * math::calcEllipticalIntegral(roseK * maxPhi, 1.0 - std::pow(roseK, 2.0));
+        LOG_DATA("endLength {:8.6}m", endLength);
         for (size_t i = 0; i < nVirtPoints; i++)
         {
             double phi = maxPhi - static_cast<double>(i) * dPhi;
@@ -1236,14 +1251,14 @@ bool NAV::ImuSimulator::initializeSplines()
             double time = (length - endLength) / _trajectoryHorizontalSpeed;
             splineTime[nVirtPoints - i - 1] = time;
 
-            Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
-                                                -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
+            Eigen::Vector3<Scalar> n_relativePosition{ _trajectoryRadius * std::cos(roseK * phi) * std::sin(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                       _trajectoryRadius * std::cos(roseK * phi) * std::cos(phi * (_trajectoryDirection == Direction::CW ? -1.0 : 1.0) + _trajectoryRotationAngle), // [m]
+                                                       -_trajectoryVerticalSpeed * time };                                                                                                          // [m]
 
-            LOG_DATA("{}: t={:8.6}s | l={:8.6}m", nameId(), time, length);
+            Eigen::Vector3<Scalar> e_relativePosition = e_quatCenter_n * n_relativePosition;
+            Eigen::Vector3<Scalar> e_position = e_origin + e_relativePosition;
 
-            Eigen::Vector3d e_relativePosition = e_quatCenter_n * n_relativePosition;
-            Eigen::Vector3d e_position = e_origin + e_relativePosition;
+            LOG_DATA("{}: t={: 8.3f}s | l={:8.6}m | phi={:6.3f}", nameId(), time, length, rad2deg(phi));
 
             splineX[nVirtPoints - i - 1] = e_position[0];
             splineY[nVirtPoints - i - 1] = e_position[1];
@@ -1264,25 +1279,25 @@ bool NAV::ImuSimulator::initializeSplines()
 
             constexpr size_t nVirtPoints = 10;
             splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
-            std::vector<double> splineX(splineTime.size());
-            std::vector<double> splineY(splineTime.size());
-            std::vector<double> splineZ(splineTime.size());
-            std::vector<double> splineRoll(splineTime.size());
-            std::vector<double> splinePitch(splineTime.size());
-            std::vector<double> splineYaw(splineTime.size());
+            std::vector<Scalar> splineX(splineTime.size());
+            std::vector<Scalar> splineY(splineTime.size());
+            std::vector<Scalar> splineZ(splineTime.size());
+            std::vector<Scalar> splineRoll(splineTime.size());
+            std::vector<Scalar> splinePitch(splineTime.size());
+            std::vector<Scalar> splineYaw(splineTime.size());
 
             for (size_t i = 0; i < csvData->v->lines.size(); i++)
             {
                 InsTime insTime = getTimeFromCsvLine(csvData->v->lines[i], csvData->v->description);
                 if (insTime.empty()) { return false; }
                 LOG_DATA("{}: Time {}", nameId(), insTime);
-                double time = static_cast<double>((insTime - _startTime).count());
+                Scalar time = (insTime - _startTime).count();
 
-                Eigen::Vector3d e_pos = e_getPositionFromCsvLine(csvData->v->lines[i], csvData->v->description);
+                Eigen::Vector3<Scalar> e_pos = e_getPositionFromCsvLine(csvData->v->lines[i], csvData->v->description);
                 if (std::isnan(e_pos.x())) { return false; }
                 LOG_DATA("{}: e_pos {}", nameId(), e_pos);
 
-                Eigen::Quaterniond n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->v->lines[i], csvData->v->description);
+                Eigen::Quaternion<Scalar> n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->v->lines[i], csvData->v->description);
                 if (std::isnan(n_Quat_b.w()))
                 {
                     // TODO: Calculate with rotation minimizing frame instead of returning false
@@ -1304,10 +1319,10 @@ bool NAV::ImuSimulator::initializeSplines()
             }
             _csvDuration = splineTime.back();
 
-            double dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
+            Scalar dt = splineTime[nVirtPoints + 1] - splineTime[nVirtPoints];
             for (size_t i = 0; i < nVirtPoints; i++)
             {
-                double h = 0.001;
+                Scalar h = 0.001;
                 splineTime[nVirtPoints - i - 1] = splineTime[nVirtPoints - i] - h;
                 splineX[nVirtPoints - i - 1] = splineX[nVirtPoints - i] - h * (splineX[nVirtPoints + 1] - splineX[nVirtPoints]) / dt;
                 splineY[nVirtPoints - i - 1] = splineY[nVirtPoints - i] - h * (splineY[nVirtPoints + 1] - splineY[nVirtPoints]) / dt;
@@ -1341,35 +1356,36 @@ bool NAV::ImuSimulator::initializeSplines()
 
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::RoseFigure)
     {
-        std::vector<double> splineRoll(splineTime.size());
-        std::vector<double> splinePitch(splineTime.size());
-        std::vector<double> splineYaw(splineTime.size());
+        std::vector<Scalar> splineRoll(splineTime.size());
+        std::vector<Scalar> splinePitch(splineTime.size());
+        std::vector<Scalar> splineYaw(splineTime.size());
 
         for (uint64_t i = 0; i < splineTime.size(); i++)
         {
-            Eigen::Vector3d e_pos{ _splines.x(splineTime[i]),
-                                   _splines.y(splineTime[i]),
-                                   _splines.z(splineTime[i]) };
-            Eigen::Vector3d e_vel{ _splines.x.derivative(1, splineTime[i]),
-                                   _splines.y.derivative(1, splineTime[i]),
-                                   _splines.z.derivative(1, splineTime[i]) };
+            Eigen::Vector3<Scalar> e_pos{ _splines.x(splineTime[i]),
+                                          _splines.y(splineTime[i]),
+                                          _splines.z(splineTime[i]) };
+            Eigen::Vector3<Scalar> e_vel{ _splines.x.derivative(1, splineTime[i]),
+                                          _splines.y.derivative(1, splineTime[i]),
+                                          _splines.z.derivative(1, splineTime[i]) };
 
-            Eigen::Vector3d lla_position = trafo::ecef2lla_WGS84(e_pos);
-            Eigen::Vector3d n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
+            Eigen::Vector3<Scalar> lla_position = trafo::ecef2lla_WGS84(e_pos);
+            Eigen::Vector3<Scalar> n_velocity = trafo::n_Quat_e(lla_position(0), lla_position(1)) * e_vel;
 
-            Eigen::Vector3d e_normalVectorCenterCircle{ std::cos(_startPosition.latLonAlt()(0)) * std::cos(_startPosition.latLonAlt()(1)),
-                                                        std::cos(_startPosition.latLonAlt()(0)) * std::sin(_startPosition.latLonAlt()(1)),
-                                                        std::sin(_startPosition.latLonAlt()(0)) };
+            Eigen::Vector3<Scalar> e_normalVectorCenterCircle{ std::cos(_startPosition.latLonAlt()(0)) * std::cos(_startPosition.latLonAlt()(1)),
+                                                               std::cos(_startPosition.latLonAlt()(0)) * std::sin(_startPosition.latLonAlt()(1)),
+                                                               std::sin(_startPosition.latLonAlt()(0)) };
 
-            Eigen::Vector3d e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
-                                                           std::cos(lla_position(0)) * std::sin(lla_position(1)),
-                                                           std::sin(lla_position(0)) };
+            Eigen::Vector3<Scalar> e_normalVectorCurrentPosition{ std::cos(lla_position(0)) * std::cos(lla_position(1)),
+                                                                  std::cos(lla_position(0)) * std::sin(lla_position(1)),
+                                                                  std::sin(lla_position(0)) };
 
-            double yaw = calcYawFromVelocity(n_velocity);
+            auto yaw = calcYawFromVelocity(n_velocity);
 
             splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
             splineRoll[i] = 0.0;
             splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
+            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), splineTime.at(i), rad2deg(splineYaw[i]));
         }
 
         _splines.roll.setPoints(splineTime, splineRoll);
@@ -1378,6 +1394,13 @@ bool NAV::ImuSimulator::initializeSplines()
     }
 
     return true;
+}
+
+bool NAV::ImuSimulator::initialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    return initializeSplines();
 }
 
 void NAV::ImuSimulator::deinitialize()
@@ -1389,13 +1412,17 @@ bool NAV::ImuSimulator::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _imuInternalUpdateCnt = 0;
     _imuUpdateCnt = 0;
     _gnssUpdateCnt = 0;
 
     _imuLastUpdateTime = 0.0;
     _gnssLastUpdateTime = 0.0;
-    _lla_imuLastLinearPosition = _startPosition.latLonAlt();
-    _lla_gnssLastLinearPosition = _startPosition.latLonAlt();
+    _lla_imuLastLinearPosition = _startPosition.latLonAlt().cast<Scalar>();
+    _lla_gnssLastLinearPosition = _startPosition.latLonAlt().cast<Scalar>();
+
+    _p_lastImuAccelerationMeas = Eigen::Vector3<Scalar>::Ones() * std::nan("");
+    _p_lastImuAngularRateMeas = Eigen::Vector3<Scalar>::Ones() * std::nan("");
 
     if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1428,7 +1455,7 @@ bool NAV::ImuSimulator::resetNode()
     return true;
 }
 
-bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& lla_position)
+bool NAV::ImuSimulator::checkStopCondition(Scalar time, const Eigen::Vector3<Scalar>& lla_position)
 {
     if (_trajectoryType == TrajectoryType::Csv)
     {
@@ -1443,7 +1470,8 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& l
     {
         if (_trajectoryType == TrajectoryType::Linear)
         {
-            auto horizontalDistance = calcGeographicalDistance(_startPosition.latitude(), _startPosition.longitude(), lla_position(0), lla_position(1));
+            auto horizontalDistance = calcGeographicalDistance(static_cast<Scalar>(_startPosition.latitude()), static_cast<Scalar>(_startPosition.longitude()),
+                                                               lla_position(0), lla_position(1));
             auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(_startPosition.altitude() - lla_position(2), 2));
             return distance > _linearTrajectoryDistanceForStop;
         }
@@ -1465,14 +1493,11 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 {
     double imuUpdateTime = static_cast<double>(_imuUpdateCnt) / _imuFrequency;
 
-    Eigen::Vector3d lla_position = lla_calcPosition(imuUpdateTime);
-
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
-    if (checkStopCondition(imuUpdateTime, lla_position))
+    if (checkStopCondition(imuUpdateTime, lla_calcPosition(imuUpdateTime)))
     {
         return nullptr;
     }
-
     // ------------------------------------- Early return in case of peeking to avoid heavy calculations ---------------------------------------
     if (peek)
     {
@@ -1484,100 +1509,128 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
     auto obs = std::make_shared<ImuObsSimulated>(_imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
-    LOG_DATA("{}: Simulating IMU data for time [{}]", nameId(), obs->insTime.toYMDHMS());
+    LOG_DATA("{}: Simulated IMU data for time [{}] (_imuUpdateCnt {}, _imuInternalUpdateCnt {})", nameId(), obs->insTime.toYMDHMS(),
+             _imuUpdateCnt, _imuInternalUpdateCnt);
 
-    // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
-    LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
-    Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
-    auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
+    double dTime = 0.0;
+    Eigen::Vector3<Scalar> p_deltaVel = Eigen::Vector3<Scalar>::Zero();
+    Eigen::Vector3<Scalar> p_deltaTheta = Eigen::Vector3<Scalar>::Zero();
 
-    Eigen::Vector3d n_vel = n_calcVelocity(imuUpdateTime, n_Quat_e);
-    LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuUpdateTime, n_vel.transpose());
+    double imuInternalUpdateTime = 0.0;
+    do {
+        imuInternalUpdateTime = static_cast<double>(_imuInternalUpdateCnt) / _imuInternalFrequency - 1.0 / _imuFrequency;
+        LOG_DATA("{}:   Simulated internal IMU data for time [{}] (_imuUpdateCnt {}, _imuInternalUpdateCnt {})", nameId(),
+                 (_startTime + std::chrono::duration<double>(imuInternalUpdateTime)).toYMDHMS(), _imuUpdateCnt, _imuInternalUpdateCnt);
 
-    auto [roll, pitch, yaw] = calcFlightAngles(imuUpdateTime);
-    LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuUpdateTime, rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
+        // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
+        Eigen::Vector3<Scalar> lla_position = lla_calcPosition(imuInternalUpdateTime);
+        LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), imuInternalUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
+        Eigen::Vector3<Scalar> e_position = trafo::lla2ecef_WGS84(lla_position);
+        Eigen::Quaternion<Scalar> n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
 
-    auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+        Eigen::Vector3<Scalar> n_vel = n_calcVelocity(imuInternalUpdateTime, n_Quat_e);
+        LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), imuInternalUpdateTime, n_vel.transpose());
 
-    Eigen::Vector3d n_omega_ie = n_Quat_e * InsConst<>::e_omega_ie;
-    LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), imuUpdateTime, n_omega_ie.transpose());
-    double R_N = calcEarthRadius_N(lla_position(0));
-    LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), imuUpdateTime, R_N);
-    double R_E = calcEarthRadius_E(lla_position(0));
-    LOG_DATA("{}: [{:8.3f}] R_E = {} [m]", nameId(), imuUpdateTime, R_E);
-    Eigen::Vector3d n_omega_en = n_calcTransportRate(lla_position, n_vel, R_N, R_E);
-    LOG_DATA("{}: [{:8.3f}] n_omega_en = {} [rad/s]", nameId(), imuUpdateTime, n_omega_en.transpose());
+        auto [roll, pitch, yaw] = calcFlightAngles(imuInternalUpdateTime);
+        LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), imuInternalUpdateTime, rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
 
-    // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
+        Eigen::Quaternion<Scalar> b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
 
-    // Force to keep vehicle on track
-    Eigen::Vector3d n_trajectoryAccel = n_calcTrajectoryAccel(imuUpdateTime, n_Quat_e, lla_position, n_vel);
-    LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), imuUpdateTime, n_trajectoryAccel.transpose());
+        Eigen::Vector3<Scalar> n_omega_ie = n_Quat_e * InsConst<Scalar>::e_omega_ie;
+        LOG_DATA("{}: [{:8.3f}] n_omega_ie = {} [rad/s]", nameId(), imuInternalUpdateTime, n_omega_ie.transpose());
+        auto R_N = calcEarthRadius_N(lla_position(0));
+        LOG_DATA("{}: [{:8.3f}] R_N = {} [m]", nameId(), imuInternalUpdateTime, R_N);
+        auto R_E = calcEarthRadius_E(lla_position(0));
+        LOG_DATA("{}: [{:8.3f}] R_E = {} [m]", nameId(), imuInternalUpdateTime, R_E);
+        Eigen::Vector3<Scalar> n_omega_en = n_calcTransportRate(lla_position, n_vel, R_N, R_E);
+        LOG_DATA("{}: [{:8.3f}] n_omega_en = {} [rad/s]", nameId(), imuInternalUpdateTime, n_omega_en.transpose());
 
-    // Measured acceleration in local-navigation frame coordinates [m/s^2]
-    Eigen::Vector3d n_accel = n_trajectoryAccel;
-    if (_coriolisAccelerationEnabled) // Apply Coriolis Acceleration
-    {
-        Eigen::Vector3d n_coriolisAcceleration = n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, n_vel);
-        LOG_DATA("{}: [{:8.3f}] n_coriolisAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_coriolisAcceleration.transpose());
-        n_accel += n_coriolisAcceleration;
-    }
+        // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
 
-    // Mass attraction of the Earth (gravitation)
-    Eigen::Vector3d n_gravitation = n_calcGravitation(lla_position, _gravitationModel);
-    LOG_DATA("{}: [{:8.3f}] n_gravitation = {} [m/s^2] ({})", nameId(), imuUpdateTime, n_gravitation.transpose(), NAV::to_string(_gravitationModel));
-    n_accel -= n_gravitation; // Apply the local gravity vector
+        // Force to keep vehicle on track
+        Eigen::Vector3<Scalar> n_trajectoryAccel = n_calcTrajectoryAccel(imuInternalUpdateTime, n_Quat_e, lla_position, n_vel);
+        LOG_DATA("{}: [{:8.3f}] n_trajectoryAccel = {} [m/s^2]", nameId(), imuInternalUpdateTime, n_trajectoryAccel.transpose());
 
-    if (_centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
-    {
-        Eigen::Vector3d e_centrifugalAcceleration = e_calcCentrifugalAcceleration(e_position);
-        LOG_DATA("{}: [{:8.3f}] e_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, e_centrifugalAcceleration.transpose());
-        Eigen::Vector3d n_centrifugalAcceleration = n_Quat_e * e_centrifugalAcceleration;
-        LOG_DATA("{}: [{:8.3f}] n_centrifugalAcceleration = {} [m/s^2]", nameId(), imuUpdateTime, n_centrifugalAcceleration.transpose());
-        n_accel += n_centrifugalAcceleration;
-    }
+        // Measured acceleration in local-navigation frame coordinates [m/s^2]
+        Eigen::Vector3<Scalar> n_accel = n_trajectoryAccel;
+        if (_coriolisAccelerationEnabled) // Apply Coriolis Acceleration
+        {
+            Eigen::Vector3<Scalar> n_coriolisAcceleration = n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, n_vel);
+            LOG_DATA("{}: [{:8.3f}] n_coriolisAcceleration = {} [m/s^2]", nameId(), imuInternalUpdateTime, n_coriolisAcceleration.transpose());
+            n_accel += n_coriolisAcceleration;
+        }
 
-    // Acceleration measured by the accelerometer in platform coordinates
-    Eigen::Vector3d accel_p = _imuPos.p_quatAccel_b() * b_Quat_n * n_accel;
-    LOG_DATA("{}: [{:8.3f}] accel_p = {} [m/s^2]", nameId(), imuUpdateTime, accel_p.transpose());
+        // Mass attraction of the Earth (gravitation)
+        Eigen::Vector3<Scalar> n_gravitation = n_calcGravitation(lla_position, _gravitationModel);
+        LOG_DATA("{}: [{:8.3f}] n_gravitation = {} [m/s^2] ({})", nameId(), imuInternalUpdateTime, n_gravitation.transpose(), NAV::to_string(_gravitationModel));
+        n_accel -= n_gravitation; // Apply the local gravity vector
 
-    // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
+        if (_centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
+        {
+            Eigen::Vector3<Scalar> e_centrifugalAcceleration = e_calcCentrifugalAcceleration(e_position);
+            LOG_DATA("{}: [{:8.3f}] e_centrifugalAcceleration = {} [m/s^2]", nameId(), imuInternalUpdateTime, e_centrifugalAcceleration.transpose());
+            Eigen::Vector3<Scalar> n_centrifugalAcceleration = n_Quat_e * e_centrifugalAcceleration;
+            LOG_DATA("{}: [{:8.3f}] n_centrifugalAcceleration = {} [m/s^2]", nameId(), imuInternalUpdateTime, n_centrifugalAcceleration.transpose());
+            n_accel += n_centrifugalAcceleration;
+        }
 
-    Eigen::Vector3d n_omega_nb = n_calcOmega_nb(imuUpdateTime, Eigen::Vector3d{ roll, pitch, yaw }, b_Quat_n.conjugate());
+        // Acceleration measured by the accelerometer in platform coordinates
+        Eigen::Vector3<Scalar> p_accel = _imuPos.p_quatAccel_b().cast<Scalar>() * b_Quat_n * n_accel;
+        LOG_DATA("{}: [{:8.3f}] p_accel = {} [m/s^2]", nameId(), imuInternalUpdateTime, p_accel.transpose());
 
-    //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + ω_nb_n
-    Eigen::Vector3d n_omega_ib = n_omega_nb;
-    if (_angularRateEarthRotationEnabled)
-    {
-        n_omega_ib += n_omega_ie;
-    }
-    if (_angularRateTransportRateEnabled)
-    {
-        n_omega_ib += n_omega_en;
-    }
+        // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    // ω_ib_b = b_Quat_n * ω_ib_n
-    //                            = 0
-    // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
-    Eigen::Vector3d p_omega_ip = _imuPos.p_quatGyro_b() * b_Quat_n * n_omega_ib;
-    LOG_DATA("{}: [{:8.3f}] p_omega_ip = {} [rad/s]", nameId(), imuUpdateTime, p_omega_ip.transpose());
+        Eigen::Vector3<Scalar> n_omega_nb = n_calcOmega_nb(imuInternalUpdateTime, Eigen::Vector3<Scalar>{ roll, pitch, yaw }, b_Quat_n.conjugate());
 
-    // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
+        //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + ω_nb_n
+        Eigen::Vector3<Scalar> n_omega_ib = n_omega_nb;
+        if (_angularRateEarthRotationEnabled)
+        {
+            n_omega_ib += n_omega_ie;
+        }
+        if (_angularRateTransportRateEnabled)
+        {
+            n_omega_ib += n_omega_en;
+        }
 
-    obs->accelCompXYZ = accel_p;
-    obs->accelUncompXYZ = accel_p;
-    obs->gyroCompXYZ = p_omega_ip;
-    obs->gyroUncompXYZ = p_omega_ip;
-    // obs->magCompXYZ.emplace(0, 0, 0);
-    // obs->magUncompXYZ.emplace(0, 0, 0);
+        // ω_ib_b = b_Quat_n * ω_ib_n
+        //                            = 0
+        // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
+        Eigen::Vector3<Scalar> p_omega_ip = _imuPos.p_quatGyro_b().cast<Scalar>() * b_Quat_n * n_omega_ib;
+        LOG_DATA("{}: [{:8.3f}] p_omega_ip = {} [rad/s]", nameId(), imuInternalUpdateTime, p_omega_ip.transpose());
 
-    auto e_Quat_n = n_Quat_e.conjugate();
+        // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
-    obs->n_accelDynamics = n_trajectoryAccel;
-    obs->n_angularRateDynamics = n_omega_nb;
+        obs->p_acceleration = p_accel.cast<double>();
+        obs->p_angularRate = p_omega_ip.cast<double>();
+        // obs->p_magneticField.emplace(0, 0, 0);
 
-    obs->e_accelDynamics = e_Quat_n * n_trajectoryAccel;
-    obs->e_angularRateDynamics = e_Quat_n * n_omega_nb;
+        Eigen::Quaternion<Scalar> e_Quat_n = n_Quat_e.conjugate();
+
+        obs->n_accelDynamics = n_trajectoryAccel.cast<double>();
+        obs->n_angularRateDynamics = n_omega_nb.cast<double>();
+
+        obs->e_accelDynamics = (e_Quat_n * n_trajectoryAccel).cast<double>();
+        obs->e_angularRateDynamics = (e_Quat_n * n_omega_nb).cast<double>();
+
+        double dt = 1.0 / _imuInternalFrequency;
+        if (_imuInternalUpdateCnt != 0)
+        {
+            dTime += dt;
+
+            p_deltaVel += (p_accel + _p_lastImuAccelerationMeas) / 2 * dt;
+            p_deltaTheta += (p_omega_ip + _p_lastImuAngularRateMeas) / 2 * dt;
+        }
+        _p_lastImuAccelerationMeas = p_accel;
+        _p_lastImuAngularRateMeas = p_omega_ip;
+
+        _imuInternalUpdateCnt++;
+    } while (imuInternalUpdateTime + 1e-6 < imuUpdateTime);
+
+    obs->dtime = dTime;
+    obs->dvel = p_deltaVel.cast<double>();
+    obs->dtheta = p_deltaTheta.cast<double>();
+    LOG_DATA("{}: dt = {}, dvel = {}, dtheta = {}", nameId(), obs->dtime, obs->dvel.transpose(), obs->dtheta.transpose());
 
     _imuUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
@@ -1587,9 +1640,9 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(size_t /* pinIdx */, bool peek)
 {
-    double gnssUpdateTime = static_cast<double>(_gnssUpdateCnt) / _gnssFrequency;
+    auto gnssUpdateTime = static_cast<double>(_gnssUpdateCnt) / _gnssFrequency;
 
-    Eigen::Vector3d lla_position = lla_calcPosition(gnssUpdateTime);
+    Eigen::Vector3<Scalar> lla_position = lla_calcPosition(gnssUpdateTime);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
     if (checkStopCondition(gnssUpdateTime, lla_position))
@@ -1610,15 +1663,15 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(size_t /* 
 
     // --------------------------------------------------------- Calculation of data -----------------------------------------------------------
     LOG_DATA("{}: [{:8.3f}] lla_position = {}°, {}°, {} m", nameId(), gnssUpdateTime, rad2deg(lla_position(0)), rad2deg(lla_position(1)), lla_position(2));
-    auto n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
-    Eigen::Vector3d n_vel = n_calcVelocity(gnssUpdateTime, n_Quat_e);
+    Eigen::Quaternion<Scalar> n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
+    Eigen::Vector3<Scalar> n_vel = n_calcVelocity(gnssUpdateTime, n_Quat_e);
     LOG_DATA("{}: [{:8.3f}] n_vel = {} [m/s]", nameId(), gnssUpdateTime, n_vel.transpose());
     auto [roll, pitch, yaw] = calcFlightAngles(gnssUpdateTime);
     LOG_DATA("{}: [{:8.3f}] roll = {}°, pitch = {}°, yaw = {}°", nameId(), gnssUpdateTime, rad2deg(roll), rad2deg(pitch), rad2deg(yaw));
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
-    obs->setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
+    obs->setState_n(lla_position.cast<double>(), n_vel.cast<double>(), trafo::n_Quat_b(roll, pitch, yaw).cast<double>());
 
     _gnssUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, obs);
@@ -1626,79 +1679,79 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(size_t /* 
     return obs;
 }
 
-std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(double time) const
+std::array<NAV::ImuSimulator::Scalar, 3> NAV::ImuSimulator::calcFlightAngles(Scalar time) const
 {
-    double roll = _splines.roll(time);
-    double pitch = _splines.pitch(time);
-    double yaw = _splines.yaw(time);
-    return { roll, pitch, yaw };
+    return { _splines.roll(time), _splines.pitch(time), _splines.yaw(time) };
 }
 
-Eigen::Vector3d NAV::ImuSimulator::lla_calcPosition(double time) const
+Eigen::Vector3<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::lla_calcPosition(Scalar time) const
 {
-    Eigen::Vector3d e_pos(_splines.x(time), _splines.y(time), _splines.z(time));
+    Eigen::Vector3<Scalar> e_pos(_splines.x(time), _splines.y(time), _splines.z(time));
     return trafo::ecef2lla_WGS84(e_pos);
 }
 
-Eigen::Vector3d NAV::ImuSimulator::n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e) const
+Eigen::Vector3<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::n_calcVelocity(Scalar time, const Eigen::Quaternion<Scalar>& n_Quat_e) const
 {
-    Eigen::Vector3d e_vel(_splines.x.derivative(1, time), _splines.y.derivative(1, time), _splines.z.derivative(1, time));
+    Eigen::Vector3<Scalar> e_vel(_splines.x.derivative(1, time), _splines.y.derivative(1, time), _splines.z.derivative(1, time));
     return n_Quat_e * e_vel;
 }
 
-Eigen::Vector3d NAV::ImuSimulator::n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e, const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity) const
+Eigen::Vector3<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::n_calcTrajectoryAccel(Scalar time,
+                                                                                   const Eigen::Quaternion<Scalar>& n_Quat_e,
+                                                                                   const Eigen::Vector3<Scalar>& lla_position,
+                                                                                   const Eigen::Vector3<Scalar>& n_velocity) const
 {
-    Eigen::Vector3d e_accel(_splines.x.derivative(2, time), _splines.y.derivative(2, time), _splines.z.derivative(2, time));
-    Eigen::Quaterniond e_Quat_n = n_Quat_e.conjugate();
-    Eigen::Vector3d e_vel = e_Quat_n * n_velocity;
+    Eigen::Vector3<Scalar> e_accel(_splines.x.derivative(2, time), _splines.y.derivative(2, time), _splines.z.derivative(2, time));
+    Eigen::Quaternion<Scalar> e_Quat_n = n_Quat_e.conjugate();
+    Eigen::Vector3<Scalar> e_vel = e_Quat_n * n_velocity;
 
     // Math: \dot{C}_n^e = C_n^e \cdot \Omega_{en}^n
-    Eigen::Matrix3d n_DCM_dot_e = e_Quat_n.toRotationMatrix()
-                                  * math::skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
-                                                                                  calcEarthRadius_N(lla_position(0)),
-                                                                                  calcEarthRadius_E(lla_position(0))));
+    Eigen::Matrix3<Scalar> n_DCM_dot_e = e_Quat_n.toRotationMatrix()
+                                         * math::skewSymmetricMatrix(n_calcTransportRate(lla_position, n_velocity,
+                                                                                         calcEarthRadius_N(lla_position(0)),
+                                                                                         calcEarthRadius_E(lla_position(0))));
 
     // Math: \dot{C}_e^n = (\dot{C}_n^e)^T
-    Eigen::Matrix3d e_DCM_dot_n = n_DCM_dot_e.transpose();
+    Eigen::Matrix3<Scalar> e_DCM_dot_n = n_DCM_dot_e.transpose();
 
     // Math: a^n = \frac{\partial}{\partial t} \left( \dot{x}^n \right) = \frac{\partial}{\partial t} \left( C_e^n \cdot \dot{x}^e \right) = \dot{C}_e^n \cdot \dot{x}^e + C_e^n \cdot \ddot{x}^e
     return e_DCM_dot_n * e_vel + n_Quat_e * e_accel;
 }
 
-Eigen::Vector3d NAV::ImuSimulator::n_calcOmega_nb(double time, const Eigen::Vector3d& rollPitchYaw, const Eigen::Quaterniond& n_Quat_b) const
+Eigen::Vector3<NAV::ImuSimulator::Scalar> NAV::ImuSimulator::n_calcOmega_nb(Scalar time, const Eigen::Vector3<Scalar>& rollPitchYaw, const Eigen::Quaternion<Scalar>& n_Quat_b) const
 {
     const auto& R = rollPitchYaw(0);
     const auto& P = rollPitchYaw(1);
 
     // #########################################################################################################################################
 
-    double R_dot = _splines.roll.derivative(1, time);
-    double Y_dot = _splines.yaw.derivative(1, time);
-    double P_dot = _splines.pitch.derivative(1, time);
+    auto R_dot = _splines.roll.derivative(1, time);
+    auto Y_dot = _splines.yaw.derivative(1, time);
+    auto P_dot = _splines.pitch.derivative(1, time);
 
-    auto C_3 = [](double R) {
-        // Eigen::Matrix3d C;
+    auto C_3 = [](auto R) {
+        // Eigen::Matrix3<Scalar> C;
         // C << 1,       0     ,      0     ,
         //      0,  std::cos(R), std::sin(R),
         //      0, -std::sin(R), std::cos(R);
         // return C;
-        return Eigen::AngleAxisd{ -R, Eigen::Vector3d::UnitX() };
+        return Eigen::AngleAxis<Scalar>{ -R, Eigen::Vector3<Scalar>::UnitX() };
     };
-    auto C_2 = [](double P) {
-        // Eigen::Matrix3d C;
+    auto C_2 = [](auto P) {
+        // Eigen::Matrix3<Scalar> C;
         // C << std::cos(P), 0 , -std::sin(P),
         //           0     , 1 ,       0     ,
         //      std::sin(P), 0 ,  std::cos(P);
         // return C;
-        return Eigen::AngleAxisd{ -P, Eigen::Vector3d::UnitY() };
+        return Eigen::AngleAxis<Scalar>{ -P, Eigen::Vector3<Scalar>::UnitY() };
     };
 
     // ω_nb_b = [∂/∂t R] + C_3 [   0  ] + C_3 C_2 [   0  ]
     //          [   0  ]       [∂/∂t P]           [   0  ]
     //          [   0  ]       [   0  ]           [∂/∂t Y]
-    Eigen::Vector3d b_omega_nb = Eigen::Vector3d{ R_dot, 0, 0 }
-                                 + C_3(R) * Eigen::Vector3d{ 0, P_dot, 0 }
-                                 + C_3(R) * C_2(P) * Eigen::Vector3d{ 0, 0, Y_dot };
+    Eigen::Vector3<Scalar> b_omega_nb = Eigen::Vector3<Scalar>{ R_dot, 0, 0 }
+                                        + C_3(R) * Eigen::Vector3<Scalar>{ 0, P_dot, 0 }
+                                        + C_3(R) * C_2(P) * Eigen::Vector3<Scalar>{ 0, 0, Y_dot };
 
     return n_Quat_b * b_omega_nb;
 }

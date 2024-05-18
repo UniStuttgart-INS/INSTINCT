@@ -48,30 +48,21 @@ class ImuObs : public NodeData
     {
         return {
             "Time since startup [ns]",
-            "Mag uncomp X [Gauss]",
-            "Mag uncomp Y [Gauss]",
-            "Mag uncomp Z [Gauss]",
-            "Accel uncomp X [m/s^2]",
-            "Accel uncomp Y [m/s^2]",
-            "Accel uncomp Z [m/s^2]",
-            "Gyro uncomp X [rad/s]",
-            "Gyro uncomp Y [rad/s]",
-            "Gyro uncomp Z [rad/s]",
-            "Mag Comp X [Gauss]",
-            "Mag Comp Y [Gauss]",
-            "Mag Comp Z [Gauss]",
-            "Accel Comp X [m/s^2]",
-            "Accel Comp Y [m/s^2]",
-            "Accel Comp Z [m/s^2]",
-            "Gyro Comp X [rad/s]",
-            "Gyro Comp Y [rad/s]",
-            "Gyro Comp Z [rad/s]",
+            "Accel X [m/s^2]",
+            "Accel Y [m/s^2]",
+            "Accel Z [m/s^2]",
+            "Gyro X [rad/s]",
+            "Gyro Y [rad/s]",
+            "Gyro Z [rad/s]",
+            "Mag X [Gauss]",
+            "Mag Y [Gauss]",
+            "Mag Z [Gauss]",
             "Temperature [°C]",
         };
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 20; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 11; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -90,61 +81,28 @@ class ImuObs : public NodeData
         case 0: // Time since startup [ns]
             if (timeSinceStartup.has_value()) { return static_cast<double>(timeSinceStartup.value()); }
             break;
-        case 1: // Mag uncomp X [Gauss]
-            if (magUncompXYZ.has_value()) { return magUncompXYZ->x(); }
+        case 1: // Accel X [m/s^2]
+            return p_acceleration.x();
+        case 2: // Accel Y [m/s^2]
+            return p_acceleration.y();
+        case 3: // Accel Z [m/s^2]
+            return p_acceleration.z();
+        case 4: // Gyro X [rad/s]
+            return p_angularRate.x();
+        case 5: // Gyro Y [rad/s]
+            return p_angularRate.y();
+        case 6: // Gyro Z [rad/s]
+            return p_angularRate.z();
+        case 7: // Mag X [Gauss]
+            if (p_magneticField.has_value()) { return p_magneticField->x(); }
             break;
-        case 2: // Mag uncomp Y [Gauss]
-            if (magUncompXYZ.has_value()) { return magUncompXYZ->y(); }
+        case 8: // Mag Y [Gauss]
+            if (p_magneticField.has_value()) { return p_magneticField->y(); }
             break;
-        case 3: // Mag uncomp Z [Gauss]
-            if (magUncompXYZ.has_value()) { return magUncompXYZ->z(); }
+        case 9: // Mag Z [Gauss]
+            if (p_magneticField.has_value()) { return p_magneticField->z(); }
             break;
-        case 4: // Accel uncomp X [m/s^2]
-            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->x(); }
-            break;
-        case 5: // Accel uncomp Y [m/s^2]
-            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->y(); }
-            break;
-        case 6: // Accel uncomp Z [m/s^2]
-            if (accelUncompXYZ.has_value()) { return accelUncompXYZ->z(); }
-            break;
-        case 7: // Gyro uncomp X [rad/s]
-            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->x(); }
-            break;
-        case 8: // Gyro uncomp Y [rad/s]
-            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->y(); }
-            break;
-        case 9: // Gyro uncomp Z [rad/s]
-            if (gyroUncompXYZ.has_value()) { return gyroUncompXYZ->z(); }
-            break;
-        case 10: // Mag Comp X [Gauss]
-            if (magCompXYZ.has_value()) { return magCompXYZ->x(); }
-            break;
-        case 11: // Mag Comp Y [Gauss]
-            if (magCompXYZ.has_value()) { return magCompXYZ->y(); }
-            break;
-        case 12: // Mag Comp Z [Gauss]
-            if (magCompXYZ.has_value()) { return magCompXYZ->z(); }
-            break;
-        case 13: // Accel Comp X [m/s^2]
-            if (accelCompXYZ.has_value()) { return accelCompXYZ->x(); }
-            break;
-        case 14: // Accel Comp Y [m/s^2]
-            if (accelCompXYZ.has_value()) { return accelCompXYZ->y(); }
-            break;
-        case 15: // Accel Comp Z [m/s^2]
-            if (accelCompXYZ.has_value()) { return accelCompXYZ->z(); }
-            break;
-        case 16: // Gyro Comp X [rad/s]
-            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->x(); }
-            break;
-        case 17: // Gyro Comp Y [rad/s]
-            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->y(); }
-            break;
-        case 18: // Gyro Comp Z [rad/s]
-            if (gyroCompXYZ.has_value()) { return gyroCompXYZ->z(); }
-            break;
-        case 19: // Temperature [°C]
+        case 10: // Temperature [°C]
             if (temperature.has_value()) { return temperature.value(); }
             break;
         default:
@@ -159,20 +117,13 @@ class ImuObs : public NodeData
     /// The system time since startup measured in [nano seconds].
     std::optional<uint64_t> timeSinceStartup;
 
-    /// The IMU magnetic field measured in units of [Gauss], given in the platform frame.
-    std::optional<Eigen::Vector3d> magUncompXYZ;
     /// The IMU acceleration measured in units of [m/s^2], given in the platform frame.
-    std::optional<Eigen::Vector3d> accelUncompXYZ;
+    Eigen::Vector3d p_acceleration;
     /// The IMU angular rate measured in units of [rad/s], given in the platform frame.
-    std::optional<Eigen::Vector3d> gyroUncompXYZ;
+    Eigen::Vector3d p_angularRate;
 
-    /// The compensated magnetic field measured in units of [Gauss], and given in the platform frame.
-    std::optional<Eigen::Vector3d> magCompXYZ;
-    /// The compensated acceleration measured in units of [m/s^2], and given in the platform frame.
-    std::optional<Eigen::Vector3d> accelCompXYZ;
-    /// The compensated angular rate measured in units of [rad/s], and given in the platform frame.
-    std::optional<Eigen::Vector3d> gyroCompXYZ;
-
+    /// The IMU magnetic field measured in units of [Gauss], given in the platform frame.
+    std::optional<Eigen::Vector3d> p_magneticField;
     /// The IMU temperature measured in units of [Celsius].
     std::optional<double> temperature = 0.0;
 };

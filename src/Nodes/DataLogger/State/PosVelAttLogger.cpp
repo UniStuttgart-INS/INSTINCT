@@ -9,7 +9,6 @@
 #include "PosVelAttLogger.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
 
 #include "Navigation/Transformations/Units.hpp"
 

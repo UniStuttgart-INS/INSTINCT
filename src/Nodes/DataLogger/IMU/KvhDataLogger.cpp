@@ -98,9 +98,9 @@ bool NAV::KvhDataLogger::initialize()
     CommonLog::initialize();
 
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],TimeStartup [ns],"
-                << "UnCompMagX [Gauss],UnCompMagY [Gauss],UnCompMagZ [Gauss],"
-                << "UnCompAccX [m/s^2],UnCompAccY [m/s^2],UnCompAccZ [m/s^2],"
-                << "UnCompGyroX [rad/s],UnCompGyroY [rad/s],UnCompGyroZ [rad/s],"
+                << "MagX [Gauss],MagY [Gauss],MagZ [Gauss],"
+                << "AccX [m/s^2],AccY [m/s^2],AccZ [m/s^2],"
+                << "GyroX [rad/s],GyroY [rad/s],GyroZ [rad/s],"
                 << "Temperature [Celsius],Status,SequenceNumber" << std::endl; // NOLINT(performance-avoid-endl)
 
     return true;
@@ -146,50 +146,28 @@ void NAV::KvhDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
         _filestream << std::setprecision(valuePrecision) << obs->timeSinceStartup.value();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField.has_value())
     {
-        _filestream << obs->magUncompXYZ.value().x();
+        _filestream << obs->p_magneticField.value().x();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField.has_value())
     {
-        _filestream << obs->magUncompXYZ.value().y();
+        _filestream << obs->p_magneticField.value().y();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField.has_value())
     {
-        _filestream << obs->magUncompXYZ.value().z();
+        _filestream << obs->p_magneticField.value().z();
     }
-    _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().x();
-    }
-    _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().y();
-    }
-    _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().z();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().x();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().y();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().z();
-    }
+    _filestream << "," << obs->p_acceleration.x();
+    _filestream << "," << obs->p_acceleration.y();
+    _filestream << "," << obs->p_acceleration.z();
+
+    _filestream << "," << obs->p_angularRate.x();
+    _filestream << "," << obs->p_angularRate.y();
+    _filestream << "," << obs->p_angularRate.z();
+
     _filestream << ",";
     if (obs->temperature.has_value())
     {

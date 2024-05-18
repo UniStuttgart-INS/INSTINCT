@@ -6,41 +6,41 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file TcKfInsGnssErrors.hpp
+/// @file InsGnssTCKFSolution.hpp
 /// @brief Tightly-coupled Kalman Filter INS/GNSS errors
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2023-02-24
 
 #pragma once
 
-#include "LcKfInsGnssErrors.hpp"
+#include "InsGnssLCKFSolution.hpp"
 
 namespace NAV
 {
 /// Tightly-coupled Kalman Filter INS/GNSS errors
-class TcKfInsGnssErrors : public LcKfInsGnssErrors
+class InsGnssTCKFSolution : public InsGnssLCKFSolution
 {
   public:
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return "TcKfInsGnssErrors";
+        return "InsGnssTCKFSolution";
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        auto parent = LcKfInsGnssErrors::parentTypes();
-        parent.push_back(LcKfInsGnssErrors::type());
+        auto parent = InsGnssLCKFSolution::parentTypes();
+        parent.push_back(InsGnssLCKFSolution::type());
         return parent;
     }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
-        auto desc = LcKfInsGnssErrors::GetStaticDataDescriptors();
+        auto desc = InsGnssLCKFSolution::GetStaticDataDescriptors();
         desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Receiver clock offset [m]");
         desc.emplace_back("Receiver clock drift [m/s]");
@@ -91,7 +91,7 @@ class TcKfInsGnssErrors : public LcKfInsGnssErrors
         case 21: // Gyroscope bias b_X [rad/s]
         case 22: // Gyroscope bias b_Y [rad/s]
         case 23: // Gyroscope bias b_Z [rad/s]
-            return LcKfInsGnssErrors::getValueAt(idx);
+            return InsGnssLCKFSolution::getValueAt(idx);
         case 24: // Receiver clock offset [m]
             return recvClkOffset;
         case 25: // Receiver clock drift [m/s]

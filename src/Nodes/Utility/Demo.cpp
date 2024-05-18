@@ -504,13 +504,13 @@ void NAV::Demo::readSensorDataThread(void* userData)
     std::default_random_engine generator(rd());
 
     std::uniform_real_distribution<double> distribution(-9.0, 9.0);
-    obs->accelUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+    obs->p_acceleration = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
 
     distribution = std::uniform_real_distribution<double>(-3.0, 3.0);
-    obs->gyroUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+    obs->p_angularRate = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
 
     distribution = std::uniform_real_distribution<double>(-1.0, 1.0);
-    obs->magUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+    obs->p_magneticField = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
 
     distribution = std::uniform_real_distribution<double>(15.0, 25.0);
     obs->temperature = distribution(generator);

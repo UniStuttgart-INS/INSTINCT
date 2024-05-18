@@ -269,7 +269,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
-    registerNodeType<TightlyCoupledKF>();
+    // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     // Data Provider
     registerNodeType<CsvFile>();
@@ -317,9 +317,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -344,9 +343,8 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<KvhObs>();
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
-    registerNodeDataType<InertialNavSol>();
-    registerNodeDataType<LcKfInsGnssErrors>();
-    registerNodeDataType<TcKfInsGnssErrors>();
+    registerNodeDataType<InsGnssLCKFSolution>();
+    registerNodeDataType<InsGnssTCKFSolution>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();

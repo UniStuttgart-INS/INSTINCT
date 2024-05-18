@@ -9,6 +9,7 @@
 #include "ImuFile.hpp"
 
 #include "util/Logger.hpp"
+#include "util/StringUtil.hpp"
 
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 
@@ -17,6 +18,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
 
 NAV::ImuFile::ImuFile()
     : Imu(typeStatic())
@@ -26,7 +28,7 @@ NAV::ImuFile::ImuFile()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 377, 201 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuFile::pollData);
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &ImuFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
@@ -74,12 +76,15 @@ void NAV::ImuFile::guiConfig()
     {
         ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
-        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Delta IMU", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
-            if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
+            if (alwaysNormal
+                || std::find_if(_headerColumns.begin(), _headerColumns.end(), [&searchText](const std::string& header) {
+                       return header.starts_with(searchText);
+                   }) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
             }
@@ -91,19 +96,19 @@ void NAV::ImuFile::guiConfig()
 
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsCycle", "GpsCycle");
-        TextColoredIfExists(1, "UnCompMag", "UnCompMagX [Gauss]");
-        TextColoredIfExists(2, "CompMag", "MagX [Gauss]");
+        TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+        TextColoredIfExists(2, "DeltaTime", "DeltaTime");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsWeek", "GpsWeek");
-        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX [m/s^2]");
-        TextColoredIfExists(2, "CompAcc", "AccX [m/s^2]");
+        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+        TextColoredIfExists(2, "DeltaTheta", "DeltaThetaX");
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsToW", "GpsToW [s]");
-        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX [rad/s]");
-        TextColoredIfExists(2, "CompGyro", "GyroX [rad/s]");
+        TextColoredIfExists(0, "GpsToW", "GpsToW");
+        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+        TextColoredIfExists(2, "DeltaVel", "DeltaVelX");
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "TimeStartup", "TimeStartup [ns]");
-        TextColoredIfExists(1, "Temperature", "Temperature [Celsius]");
+        TextColoredIfExists(0, "TimeStartup", "TimeStartup");
+        TextColoredIfExists(1, "Temperature", "Temperature");
 
         ImGui::EndTable();
     }
@@ -139,7 +144,32 @@ bool NAV::ImuFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    return FileReader::initialize();
+    if (FileReader::initialize())
+    {
+        for (auto& col : _headerColumns)
+        {
+            str::replace(col, "GpsTow", "GpsToW");
+        }
+
+        size_t nDelta = 0;
+        for (const auto& col : _headerColumns)
+        {
+            if (col.starts_with("DeltaTime")
+                || col.starts_with("DeltaThetaX") || col.starts_with("DeltaThetaY") || col.starts_with("DeltaThetaZ")
+                || col.starts_with("DeltaVelX") || col.starts_with("DeltaVelY") || col.starts_with("DeltaVelZ"))
+            {
+                nDelta++;
+            }
+        }
+
+        _withDelta = nDelta == 7;
+
+        outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = _withDelta ? std::vector{ NAV::ImuObsWDelta::type() } : std::vector{ NAV::ImuObs::type() };
+        return true;
+    }
+
+    outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() };
+    return false;
 }
 
 void NAV::ImuFile::deinitialize()
@@ -158,7 +188,9 @@ bool NAV::ImuFile::resetNode()
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
 {
-    auto obs = std::make_shared<ImuObs>(_imuPos);
+    std::shared_ptr<ImuObs> obs;
+    if (_withDelta) { obs = std::make_shared<ImuObsWDelta>(_imuPos); }
+    else { obs = std::make_shared<ImuObs>(_imuPos); }
 
     // Read line
     std::string line;
@@ -178,24 +210,23 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
     std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
     std::optional<long double> gpsToW;
-    std::optional<double> magUncompX;
-    std::optional<double> magUncompY;
-    std::optional<double> magUncompZ;
-    std::optional<double> accelUncompX;
-    std::optional<double> accelUncompY;
-    std::optional<double> accelUncompZ;
-    std::optional<double> gyroUncompX;
-    std::optional<double> gyroUncompY;
-    std::optional<double> gyroUncompZ;
-    std::optional<double> magCompX;
-    std::optional<double> magCompY;
-    std::optional<double> magCompZ;
-    std::optional<double> accelCompX;
-    std::optional<double> accelCompY;
-    std::optional<double> accelCompZ;
-    std::optional<double> gyroCompX;
-    std::optional<double> gyroCompY;
-    std::optional<double> gyroCompZ;
+    std::optional<double> magX;
+    std::optional<double> magY;
+    std::optional<double> magZ;
+    std::optional<double> accelX;
+    std::optional<double> accelY;
+    std::optional<double> accelZ;
+    std::optional<double> gyroX;
+    std::optional<double> gyroY;
+    std::optional<double> gyroZ;
+
+    std::optional<double> deltaTime;
+    std::optional<double> deltaThetaX;
+    std::optional<double> deltaThetaY;
+    std::optional<double> deltaThetaZ;
+    std::optional<double> deltaVelX;
+    std::optional<double> deltaVelY;
+    std::optional<double> deltaVelZ;
 
     // Split line at comma
     for (const auto& column : _headerColumns)
@@ -204,133 +235,134 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
         {
             // Remove any trailing non text characters
             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            if (cell.empty())
-            {
-                continue;
-            }
 
-            if (column == "GpsCycle")
+            if (cell.empty()) { continue; }
+
+            if (column.starts_with("GpsCycle"))
             {
                 gpsCycle = static_cast<uint16_t>(std::stoul(cell));
             }
-            else if (column == "GpsWeek")
+            else if (column.starts_with("GpsWeek"))
             {
                 gpsWeek = static_cast<uint16_t>(std::stoul(cell));
             }
-            else if (column == "GpsToW [s]")
+            else if (column.starts_with("GpsToW"))
             {
                 gpsToW = std::stold(cell);
             }
-            else if (column == "TimeStartup [ns]")
+            else if (column.starts_with("TimeStartup"))
             {
                 obs->timeSinceStartup.emplace(std::stoull(cell));
             }
-            else if (column == "UnCompMagX [Gauss]")
+            else if (column.starts_with("MagX"))
             {
-                magUncompX = std::stod(cell);
+                magX = std::stod(cell);
             }
-            else if (column == "UnCompMagY [Gauss]")
+            else if (column.starts_with("MagY"))
             {
-                magUncompY = std::stod(cell);
+                magY = std::stod(cell);
             }
-            else if (column == "UnCompMagZ [Gauss]")
+            else if (column.starts_with("MagZ"))
             {
-                magUncompZ = std::stod(cell);
+                magZ = std::stod(cell);
             }
-            else if (column == "UnCompAccX [m/s^2]")
+            else if (column.starts_with("AccX"))
             {
-                accelUncompX = std::stod(cell);
+                accelX = std::stod(cell);
             }
-            else if (column == "UnCompAccY [m/s^2]")
+            else if (column.starts_with("AccY"))
             {
-                accelUncompY = std::stod(cell);
+                accelY = std::stod(cell);
             }
-            else if (column == "UnCompAccZ [m/s^2]")
+            else if (column.starts_with("AccZ"))
             {
-                accelUncompZ = std::stod(cell);
+                accelZ = std::stod(cell);
             }
-            else if (column == "UnCompGyroX [rad/s]")
+            else if (column.starts_with("GyroX"))
             {
-                gyroUncompX = std::stod(cell);
+                gyroX = std::stod(cell);
             }
-            else if (column == "UnCompGyroY [rad/s]")
+            else if (column.starts_with("GyroY"))
             {
-                gyroUncompY = std::stod(cell);
+                gyroY = std::stod(cell);
             }
-            else if (column == "UnCompGyroZ [rad/s]")
+            else if (column.starts_with("GyroZ"))
             {
-                gyroUncompZ = std::stod(cell);
+                gyroZ = std::stod(cell);
             }
-            else if (column == "Temperature [Celsius]")
+            else if (column.starts_with("Temperature"))
             {
                 obs->temperature.emplace(std::stod(cell));
             }
-            else if (column == "MagX [Gauss]")
+            else if (column.starts_with("DeltaTime"))
             {
-                magCompX = std::stod(cell);
+                deltaTime = std::stod(cell);
             }
-            else if (column == "MagY [Gauss]")
+            else if (column.starts_with("DeltaThetaX"))
             {
-                magCompY = std::stod(cell);
+                deltaThetaX = std::stod(cell);
             }
-            else if (column == "MagZ [Gauss]")
+            else if (column.starts_with("DeltaThetaY"))
             {
-                magCompZ = std::stod(cell);
+                deltaThetaY = std::stod(cell);
             }
-            else if (column == "AccX [m/s^2]")
+            else if (column.starts_with("DeltaThetaZ"))
             {
-                accelCompX = std::stod(cell);
+                deltaThetaZ = std::stod(cell);
             }
-            else if (column == "AccY [m/s^2]")
+            else if (column.starts_with("DeltaVelX"))
             {
-                accelCompY = std::stod(cell);
+                deltaVelX = std::stod(cell);
             }
-            else if (column == "AccZ [m/s^2]")
+            else if (column.starts_with("DeltaVelY"))
             {
-                accelCompZ = std::stod(cell);
+                deltaVelY = std::stod(cell);
             }
-            else if (column == "GyroX [rad/s]")
+            else if (column.starts_with("DeltaVelZ"))
             {
-                gyroCompX = std::stod(cell);
-            }
-            else if (column == "GyroY [rad/s]")
-            {
-                gyroCompY = std::stod(cell);
-            }
-            else if (column == "GyroZ [rad/s]")
-            {
-                gyroCompZ = std::stod(cell);
+                deltaVelZ = std::stod(cell);
             }
         }
     }
 
-    if (gpsWeek.has_value() && gpsToW.has_value())
+    if (_withDelta && deltaTime && deltaThetaX && deltaThetaY && deltaThetaZ && deltaVelX && deltaVelY && deltaVelZ)
     {
-        obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+        if (auto obsWDelta = std::reinterpret_pointer_cast<ImuObsWDelta>(obs))
+        {
+            obsWDelta->dtime = deltaTime.value();
+            obsWDelta->dtheta = { deltaThetaX.value(), deltaThetaY.value(), deltaThetaZ.value() };
+            obsWDelta->dvel = { deltaVelX.value(), deltaVelY.value(), deltaVelZ.value() };
+        }
     }
-    if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
+    else
     {
-        obs->magUncompXYZ.emplace(magUncompX.value(), magUncompY.value(), magUncompZ.value());
+        LOG_ERROR("{}: Columns 'DeltaTime', 'DeltaThetaX', 'DeltaThetaY', 'DeltaThetaZ', 'DeltaVelX', 'DeltaVelY', 'DeltaVelZ' are needed.", nameId());
+        return nullptr;
     }
-    if (accelUncompX.has_value() && accelUncompY.has_value() && accelUncompZ.has_value())
+
+    if (!gpsCycle || !gpsWeek || !gpsToW)
     {
-        obs->accelUncompXYZ.emplace(accelUncompX.value(), accelUncompY.value(), accelUncompZ.value());
+        LOG_ERROR("{}: Fields 'GpsCycle', 'GpsWeek', 'GpsToW' are needed.", nameId());
+        return nullptr;
     }
-    if (gyroUncompX.has_value() && gyroUncompY.has_value() && gyroUncompZ.has_value())
+    if (!accelX || !accelY || !accelZ)
     {
-        obs->gyroUncompXYZ.emplace(gyroUncompX.value(), gyroUncompY.value(), gyroUncompZ.value());
+        LOG_ERROR("{}: Fields 'AccX', 'AccY', 'AccZ' are needed.", nameId());
+        return nullptr;
     }
-    if (magCompX.has_value() && magCompY.has_value() && magCompZ.has_value())
+    if (!gyroX || !gyroY || !gyroZ)
     {
-        obs->magCompXYZ.emplace(magCompX.value(), magCompY.value(), magCompZ.value());
+        LOG_ERROR("{}: Fields 'GyroX', 'GyroY', 'GyroZ' are needed.", nameId());
+        return nullptr;
     }
-    if (accelCompX.has_value() && accelCompY.has_value() && accelCompZ.has_value())
+
+    obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+    obs->p_acceleration = { accelX.value(), accelY.value(), accelZ.value() };
+    obs->p_angularRate = { gyroX.value(), gyroY.value(), gyroZ.value() };
+
+    if (magX && magY && magZ)
     {
-        obs->accelCompXYZ.emplace(accelCompX.value(), accelCompY.value(), accelCompZ.value());
-    }
-    if (gyroCompX.has_value() && gyroCompY.has_value() && gyroCompZ.has_value())
-    {
-        obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
+        obs->p_magneticField.emplace(magX.value(), magY.value(), magZ.value());
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);

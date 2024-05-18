@@ -16,6 +16,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/EnumCombo.hpp"
+
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
@@ -28,7 +30,7 @@ NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
-    nm::CreateInputPin(this, "VectorNavBinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinaryConverter::receiveObs);
+    nm::CreateInputPin(this, "BinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinaryConverter::receiveObs);
 }
 
 NAV::VectorNavBinaryConverter::~VectorNavBinaryConverter()
@@ -53,21 +55,25 @@ std::string NAV::VectorNavBinaryConverter::category()
 
 void NAV::VectorNavBinaryConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0GnssObs\0\0"))
+    if (gui::widgets::EnumCombo(fmt::format("Output Type##{}", size_t(id)).c_str(), _outputType))
     {
-        LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType ? "PosVelAtt" : "ImuObsWDelta");
-
-        if (_outputType == OutputType_ImuObsWDelta)
+        LOG_DEBUG("{}: Output Type changed to {}", nameId(), to_string(_outputType));
+        if (_outputType == OutputType::ImuObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObs::type();
+        }
+        else if (_outputType == OutputType::ImuObsWDelta)
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObsWDelta::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObsWDelta::type();
         }
-        else if (_outputType == OutputType_PosVelAtt)
+        else if (_outputType == OutputType::PosVelAtt)
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
         }
-        else if (_outputType == OutputType_GnssObs)
+        else if (_outputType == OutputType::GnssObs)
         {
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
@@ -83,8 +89,15 @@ void NAV::VectorNavBinaryConverter::guiConfig()
 
         flow::ApplyChanges();
     }
-
-    if (_outputType == OutputType_PosVelAtt)
+    if (_outputType == OutputType::ImuObsWDelta || _outputType == OutputType::ImuObs)
+    {
+        if (ImGui::Checkbox(fmt::format("Use compensated data##{}", size_t(id)).c_str(), &_useCompensatedData))
+        {
+            LOG_DEBUG("{}: _useCompensatedData changed to {}", nameId(), _useCompensatedData);
+            flow::ApplyChanges();
+        }
+    }
+    else if (_outputType == OutputType::PosVelAtt)
     {
         if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
         {
@@ -108,6 +121,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
     j["outputType"] = _outputType;
     j["posVelSource"] = _posVelSource;
     j["forceStatic"] = _forceStatic;
+    j["useCompensatedData"] = _useCompensatedData;
 
     return j;
 }
@@ -122,17 +136,22 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
 
         if (!outputPins.empty())
         {
-            if (_outputType == OutputType_ImuObsWDelta)
+            if (_outputType == OutputType::ImuObsWDelta)
             {
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObsWDelta::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObsWDelta::type();
             }
-            else if (_outputType == OutputType_PosVelAtt)
+            else if (_outputType == OutputType::ImuObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObs::type();
+            }
+            else if (_outputType == OutputType::PosVelAtt)
             {
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
             }
-            else if (_outputType == OutputType_GnssObs)
+            else if (_outputType == OutputType::GnssObs)
             {
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::GnssObs::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::GnssObs::type();
@@ -146,6 +165,10 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
     if (j.contains("forceStatic"))
     {
         _forceStatic = j.at("forceStatic");
+    }
+    if (j.contains("useCompensatedData"))
+    {
+        _useCompensatedData = j.at("useCompensatedData");
     }
 }
 
@@ -164,15 +187,19 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
 
     std::shared_ptr<const NodeData> convertedData = nullptr;
 
-    if (_outputType == OutputType_ImuObsWDelta)
+    if (_outputType == OutputType::ImuObsWDelta)
     {
         convertedData = convert2ImuObsWDelta(vnObs);
     }
-    else if (_outputType == OutputType_PosVelAtt)
+    else if (_outputType == OutputType::ImuObs)
+    {
+        convertedData = convert2ImuObs(vnObs);
+    }
+    else if (_outputType == OutputType::PosVelAtt)
     {
         convertedData = convert2PosVelAtt(vnObs);
     }
-    else if (_outputType == OutputType_GnssObs)
+    else if (_outputType == OutputType::GnssObs)
     {
         convertedData = convert2GnssObs(vnObs);
     }
@@ -215,31 +242,45 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
             imuObs->timeSinceStartup = vnObs->timeOutputs->timeStartup;
         }
     }
+    bool accelFound = false;
+    bool gyroFound = false;
+    bool dThetaFound = false;
+    bool dVelFound = false;
     if (vnObs->imuOutputs)
     {
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+        if (!_useCompensatedData)
         {
-            imuObs->magUncompXYZ = vnObs->imuOutputs->uncompMag.cast<double>();
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+            {
+                imuObs->p_magneticField = vnObs->imuOutputs->uncompMag.cast<double>();
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+            {
+                imuObs->p_acceleration = vnObs->imuOutputs->uncompAccel.cast<double>();
+                accelFound = true;
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
+            {
+                imuObs->p_angularRate = vnObs->imuOutputs->uncompGyro.cast<double>();
+                gyroFound = true;
+            }
         }
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+        else
         {
-            imuObs->accelUncompXYZ = vnObs->imuOutputs->uncompAccel.cast<double>();
-        }
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
-        {
-            imuObs->gyroUncompXYZ = vnObs->imuOutputs->uncompGyro.cast<double>();
-        }
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
-        {
-            imuObs->magCompXYZ = vnObs->imuOutputs->mag.cast<double>();
-        }
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
-        {
-            imuObs->accelCompXYZ = vnObs->imuOutputs->accel.cast<double>();
-        }
-        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
-        {
-            imuObs->gyroCompXYZ = vnObs->imuOutputs->angularRate.cast<double>();
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
+            {
+                imuObs->p_magneticField = vnObs->imuOutputs->mag.cast<double>();
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
+            {
+                imuObs->p_acceleration = vnObs->imuOutputs->accel.cast<double>();
+                accelFound = true;
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
+            {
+                imuObs->p_angularRate = vnObs->imuOutputs->angularRate.cast<double>();
+                gyroFound = true;
+            }
         }
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
         {
@@ -249,21 +290,107 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
         {
             imuObs->dtime = vnObs->imuOutputs->deltaTime;
             imuObs->dtheta = vnObs->imuOutputs->deltaTheta.cast<double>();
+            dThetaFound = true;
         }
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
         {
             imuObs->dvel = vnObs->imuOutputs->deltaV.cast<double>();
+            dVelFound = true;
         }
     }
 
-    if (imuObs->magUncompXYZ.has_value() || imuObs->accelUncompXYZ.has_value() || imuObs->gyroUncompXYZ.has_value()
-        || imuObs->magCompXYZ.has_value() || imuObs->accelCompXYZ.has_value() || imuObs->gyroCompXYZ.has_value()
-        || (!std::isnan(imuObs->dtime) && (imuObs->dtheta.has_value() || imuObs->dvel.has_value())))
+    if (accelFound && gyroFound && dThetaFound && dVelFound)
     {
         return imuObs;
     }
 
-    LOG_ERROR("{}: Conversion failed. No relevant data found in the input data.", nameId());
+    LOG_ERROR("{}: Conversion failed. Need {} acceleration and gyroscope measurements and deltaTheta and deltaVel in the input data.",
+              nameId(), _useCompensatedData ? "compensated" : "uncompensated");
+    return nullptr;
+}
+
+std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
+{
+    auto imuObs = std::make_shared<ImuObs>(vnObs->imuPos);
+
+    if (vnObs->gnss1Outputs || vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Imu messages should still be sent out. The VN-100 will not provide any data otherwise.
+    {
+        if (!vnObs->timeOutputs
+            || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+            || !vnObs->timeOutputs->timeStatus.dateOk()
+            || !vnObs->timeOutputs->timeStatus.timeOk()
+            || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+            || !(vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
+        {
+            return nullptr;
+        }
+        imuObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
+    }
+    else
+    {
+        // VN-100 vnObs->insTime is set from
+        // - 'timeSyncMaster->ppsTime + timeSyncIn' when working together with the VN-310E or
+        // - the computer time
+        imuObs->insTime = vnObs->insTime;
+    }
+
+    if (vnObs->timeOutputs)
+    {
+        if (vnObs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+        {
+            imuObs->timeSinceStartup = vnObs->timeOutputs->timeStartup;
+        }
+    }
+    bool accelFound = false;
+    bool gyroFound = false;
+    if (vnObs->imuOutputs)
+    {
+        if (!_useCompensatedData)
+        {
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+            {
+                imuObs->p_magneticField = vnObs->imuOutputs->uncompMag.cast<double>();
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+            {
+                imuObs->p_acceleration = vnObs->imuOutputs->uncompAccel.cast<double>();
+                accelFound = true;
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
+            {
+                imuObs->p_angularRate = vnObs->imuOutputs->uncompGyro.cast<double>();
+                gyroFound = true;
+            }
+        }
+        else
+        {
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
+            {
+                imuObs->p_magneticField = vnObs->imuOutputs->mag.cast<double>();
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
+            {
+                imuObs->p_acceleration = vnObs->imuOutputs->accel.cast<double>();
+                accelFound = true;
+            }
+            if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
+            {
+                imuObs->p_angularRate = vnObs->imuOutputs->angularRate.cast<double>();
+                gyroFound = true;
+            }
+        }
+        if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
+        {
+            imuObs->temperature = vnObs->imuOutputs->temp;
+        }
+    }
+
+    if (accelFound && gyroFound)
+    {
+        return imuObs;
+    }
+
+    LOG_ERROR("{}: Conversion failed. Need {} acceleration and gyroscope measurements in the input data.", nameId(), _useCompensatedData ? "compensated" : "uncompensated");
     return nullptr;
 }
 
@@ -282,7 +409,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
-            auto ypr = deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
+            Eigen::Vector3d ypr = deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
             n_Quat_b = trafo::n_Quat_b(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
@@ -991,4 +1118,22 @@ std::shared_ptr<const NAV::GnssObs> NAV::VectorNavBinaryConverter::convert2GnssO
     }
 
     return gnssObs;
+}
+
+const char* NAV::to_string(NAV::VectorNavBinaryConverter::OutputType value)
+{
+    switch (value)
+    {
+    case NAV::VectorNavBinaryConverter::OutputType::ImuObs:
+        return "ImuObs";
+    case NAV::VectorNavBinaryConverter::OutputType::ImuObsWDelta:
+        return "ImuObsWDelta";
+    case NAV::VectorNavBinaryConverter::OutputType::PosVelAtt:
+        return "PosVelAtt";
+    case NAV::VectorNavBinaryConverter::OutputType::GnssObs:
+        return "GnssObs";
+    case NAV::VectorNavBinaryConverter::OutputType::COUNT:
+        return "";
+    }
+    return "";
 }

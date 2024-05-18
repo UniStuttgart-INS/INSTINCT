@@ -21,19 +21,18 @@
 
 #include "Navigation/Math/PolynomialRegressor.hpp"
 
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
 #include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
-#include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsSimulated.hpp"
-#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 #include "util/Logger/CommonLog.hpp"
 #include "util/Container/ScrollingBuffer.hpp"
@@ -85,8 +84,8 @@ class Combiner : public Node, public CommonLog
     static inline std::vector<std::string> _dataIdentifier = { Pos::type(),
                                                                PosVel::type(),
                                                                PosVelAtt::type(),
-                                                               LcKfInsGnssErrors::type(),
-                                                               TcKfInsGnssErrors::type(),
+                                                               InsGnssLCKFSolution::type(),
+                                                               InsGnssTCKFSolution::type(),
                                                                GnssCombination::type(),
                                                                GnssObs::type(),
                                                                SppSolution::type(),

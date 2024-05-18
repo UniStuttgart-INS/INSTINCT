@@ -62,6 +62,8 @@ class ImuFile : public Imu, public FileReader
     constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;        ///< @brief Flow (ImuObs)
     constexpr static size_t OUTPUT_PORT_INDEX_HEADER_COLUMNS = 1; ///< @brief Object (std::vector<std::string>)
 
+    bool _withDelta = false; ///< Flag if the header has delta values
+
     /// @brief Initialize the node
     bool initialize() override;
 

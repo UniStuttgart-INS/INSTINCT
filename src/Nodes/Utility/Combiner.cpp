@@ -407,8 +407,8 @@ std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
         if (sourcePin->dataIdentifier.front() == Pos::type()) { dataDescriptors = Pos::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == PosVel::type()) { dataDescriptors = PosVel::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()) { dataDescriptors = PosVelAtt::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type()) { dataDescriptors = LcKfInsGnssErrors::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type()) { dataDescriptors = TcKfInsGnssErrors::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == InsGnssLCKFSolution::type()) { dataDescriptors = InsGnssLCKFSolution::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == InsGnssTCKFSolution::type()) { dataDescriptors = InsGnssTCKFSolution::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == SppSolution::type()) { dataDescriptors = SppSolution::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type()) { dataDescriptors = RtklibPosObs::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == ImuObs::type()) { dataDescriptors = ImuObs::GetStaticDataDescriptors(); }

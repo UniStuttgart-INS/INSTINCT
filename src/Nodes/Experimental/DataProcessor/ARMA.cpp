@@ -318,9 +318,9 @@ void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue,
         _k = 0;
         for (auto& obs : _buffer) // read observations from buffer to y
         {
-            const Eigen::Vector3d acc = obs->accelCompXYZ.value(); // acceleration in x, y and z
-            const Eigen::Vector3d gyro = obs->gyroCompXYZ.value(); // gyro in x, y and z
-            _y.row(_k) << acc.transpose(), gyro.transpose();       // write to y
+            const Eigen::Vector3d acc = obs->p_acceleration; // acceleration in x, y and z
+            const Eigen::Vector3d gyro = obs->p_angularRate; // gyro in x, y and z
+            _y.row(_k) << acc.transpose(), gyro.transpose(); // write to y
             _k++;
         }
         for (int obs_nr = 0; obs_nr < _num_obs; obs_nr++) // build ARMA-model for each observation
@@ -376,8 +376,8 @@ void NAV::experimental::ARMA::receiveImuObs(NAV::InputPin::NodeDataQueue& queue,
         // output
         LOG_TRACE("{}: called {}", nameId(), obs->insTime.toYMDHMS());
         newImuObs->insTime = obs->insTime;
-        newImuObs->accelCompXYZ = Eigen::Vector3d(_y_hat_t.head(3)); // output estimations of accelerometer observations
-        newImuObs->gyroCompXYZ = Eigen::Vector3d(_y_hat_t.tail(3));  // output estimations of gyro observations
+        newImuObs->p_acceleration = Eigen::Vector3d(_y_hat_t.head(3)); // output estimations of accelerometer observations
+        newImuObs->p_angularRate = Eigen::Vector3d(_y_hat_t.tail(3));  // output estimations of gyro observations
         invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, newImuObs);
         _buffer.pop_front();
     }

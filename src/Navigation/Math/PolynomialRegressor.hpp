@@ -110,6 +110,18 @@ class PolynomialRegressor
     /// @param[in] y Y Value
     void push_back(const Scalar& x, const Scalar& y)
     {
+        if (!_data.empty() && _data.back().first == x)
+        {
+            if (_strategy == Strategy::IncrementalLeastSquares)
+            {
+                _incrementalLSQ.removeDataPoint(_data.back().first, _data.back().second);
+                _incrementalLSQ.addDataPoint(x, y);
+            }
+            _data.back().second = y;
+
+            return;
+        }
+
         if (_data.full()) { pop_front(); }
 
         if (_strategy == Strategy::IncrementalLeastSquares)

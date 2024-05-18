@@ -15,9 +15,12 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
+
 #include "Navigation/Time/InsTime.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "Navigation/INS/InertialIntegrator.hpp"
+
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 #include "Navigation/Math/KeyedKalmanFilter.hpp"
 
@@ -108,17 +111,18 @@ class LooselyCoupledKF : public Node
     };
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;   ///< @brief Flow (PosVel)
-    constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0; ///< @brief Flow (LcKfInsGnssErrors)
-    constexpr static size_t OUTPUT_PORT_INDEX_SYNC = 1;  ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;     ///< @brief x̂ State vector
-    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;     ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;   ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;     ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;     ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;     ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;     ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;     ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t INPUT_PORT_INDEX_IMU = 0;              ///< @brief Flow (ImuObs)
+    constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;             ///< @brief Flow (PosVel)
+    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 2; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_SOLUTION = 0;        ///< @brief Flow (InsGnssLCKFSolution)
+    constexpr static size_t OUTPUT_PORT_INDEX_x = 1;               ///< @brief x̂ State vector
+    constexpr static size_t OUTPUT_PORT_INDEX_P = 2;               ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 3;             ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Q = 4;               ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_z = 5;               ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_H = 6;               ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_R = 7;               ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_K = 8;               ///< @brief 𝐊 Kalman gain matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -126,24 +130,34 @@ class LooselyCoupledKF : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Receive Function for the inertial navigation solution
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void recvInertialNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    /// @brief Invoke the callback with a PosVelAtt solution (without LCKF specific output)
+    /// @param[in] posVelAtt PosVelAtt solution
+    void invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt);
 
-    /// @brief Receive Function for the GNSS navigation solution
+    /// @brief Receive Function for the IMU observation
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void recvImuObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the PosVel observation
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvPosVelObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the PosVelAtt observation
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Predicts the state from the InertialNavSol
     /// @param[in] inertialNavSol Inertial navigation solution triggering the prediction
     /// @param[in] tau_i Time since the last prediction in [s]
-    void looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i);
+    /// @param[in] imuPos IMU platform frame position with respect to body frame
+    void looselyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos);
 
-    /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
-    /// @param[in] gnssMeasurement Gnss measurement triggering the update
-    void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement);
+    /// @brief Updates the predicted state from the InertialNavSol with the PosVel observation
+    /// @param[in] posVelObs PosVel measurement triggering the update
+    void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& posVelObs);
 
     /// @brief Add the output pins for the Kalman matrices
     void addKalmanMatricesPins();
@@ -151,19 +165,23 @@ class LooselyCoupledKF : public Node
     /// @brief Removes the output pins for the Kalman matrices
     void removeKalmanMatricesPins();
 
-    /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
-    std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
+    /// Add or remove the external PVA Init pin
+    void updateExternalPvaInitPin();
 
-    /// Time when the last prediction was triggered
-    InsTime _lastPredictTime;
+    /// @brief Inertial Integrator
+    InertialIntegrator _inertialIntegrator;
+    /// Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
+    bool _preferAccelerationOverDeltaMeasurements = false;
 
-    /// Time when the last GNSS message came and a prediction was requested
-    InsTime _lastPredictRequestedTime;
+    /// Last received IMU observation (to get ImuPos)
+    std::shared_ptr<const ImuObs> _lastImuObs = nullptr;
 
-    /// Accumulated Accelerometer biases
-    Eigen::Vector3d _accumulatedAccelBiases;
-    /// Accumulated Gyroscope biases
-    Eigen::Vector3d _accumulatedGyroBiases;
+    /// Roll, Pitch and Yaw angles in [deg] used for initialization if not taken from separate pin
+    std::array<double, 3> _initalRollPitchYaw{};
+    /// Whether to initialize the state over an external pin
+    bool _initializeStateOverExternalPin{};
+    /// Time from the external init
+    InsTime _externalInitTime;
 
     /// @brief Vector with all state keys
     inline static const std::vector<KFStates> States = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw,
@@ -195,15 +213,6 @@ class LooselyCoupledKF : public Node
     // #########################################################################################################################################
     //                                                              GUI settings
     // #########################################################################################################################################
-
-    /// @brief Available Frames
-    enum class Frame : int
-    {
-        ECEF, ///< Earth-Centered Earth-Fixed frame
-        NED,  ///< Local North-East-Down frame
-    };
-    /// Frame to calculate the Kalman filter in
-    Frame _frame = Frame::NED;
 
     /// @brief Show output pins for the Kalman matrices
     bool _showKalmanFilterOutputPins = false;
@@ -349,7 +358,7 @@ class LooselyCoupledKF : public Node
     InitCovariancePositionUnit _initCovariancePositionUnit = InitCovariancePositionUnit::meter;
 
     /// GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovariancePosition{ 100, 100, 100 };
+    Eigen::Vector3d _initCovariancePosition{ 100.0, 100.0, 100.0 };
 
     // ###########################################################################################################
 
@@ -363,7 +372,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceVelocityUnit _initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
 
     /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceVelocity{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceVelocity{ 10.0, 10.0, 10.0 };
 
     // ###########################################################################################################
 
@@ -379,7 +388,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceAttitudeAnglesUnit _initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
 
     /// GUI selection of the initial covariance diagonal values for attitude angles (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10.0, 10.0, 10.0 };
 
     // ###########################################################################################################
 
@@ -393,7 +402,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceBiasAccelUnit _initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
 
     /// GUI selection of the initial covariance diagonal values for accelerometer biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasAccel{ 1, 1, 1 };
+    Eigen::Vector3d _initCovarianceBiasAccel{ 1.0, 1.0, 1.0 };
 
     // ###########################################################################################################
 
@@ -410,6 +419,33 @@ class LooselyCoupledKF : public Node
 
     /// GUI selection of the initial covariance diagonal values for gyroscope biases (standard deviation σ or Variance σ²)
     Eigen::Vector3d _initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial accelerometer biases
+    enum class InitBiasAccelUnit
+    {
+        m_s2, ///< acceleration [m/s^2]
+    };
+    /// Gui selection for the unit of the initial accelerometer biases
+    InitBiasAccelUnit _initBiasAccelUnit = InitBiasAccelUnit::m_s2;
+
+    /// GUI selection of the initial accelerometer biases
+    Eigen::Vector3d _initBiasAccel{ 0.0, 0.0, 0.0 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial gyroscope biases
+    enum class InitBiasGyroUnit
+    {
+        rad_s, ///< angular rate [rad/s]
+        deg_s, ///< angular rate [deg/s]
+    };
+    /// Gui selection for the unit of the initial gyroscope biases
+    InitBiasGyroUnit _initBiasGyroUnit = InitBiasGyroUnit::deg_s;
+
+    /// GUI selection of the initial gyroscope biases
+    Eigen::Vector3d _initBiasGyro{ 0.0, 0.0, 0.0 };
 
     // ###########################################################################################################
 
@@ -531,8 +567,8 @@ class LooselyCoupledKF : public Node
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
-    /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @param[in] tau_bad Correlation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @param[in] e_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
     /// @param[in] tau_s Time interval in [s]

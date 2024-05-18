@@ -545,14 +545,19 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
 
             obs->insTime = _startTime + std::chrono::duration<double>(timeStamp);
 
-            if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
+            if (!accelX || !accelY || !accelZ)
             {
-                obs->accelUncompXYZ.emplace(accelX.value(), accelY.value(), accelZ.value());
+                LOG_ERROR("{}: Fields 'accelX', 'accelY', 'accelZ' are needed.", nameId());
+                return nullptr;
             }
-            if (gyroX.has_value() && gyroY.has_value() && gyroZ.has_value())
+            if (!gyroX || !gyroY || !gyroZ)
             {
-                obs->gyroUncompXYZ.emplace(gyroX.value(), gyroY.value(), gyroZ.value());
+                LOG_ERROR("{}: Fields 'gyroX', 'gyroY', 'gyroZ' are needed.", nameId());
+                return nullptr;
             }
+
+            obs->p_acceleration = { accelX.value(), accelY.value(), accelZ.value() };
+            obs->p_angularRate = { gyroX.value(), gyroY.value(), gyroZ.value() };
 
             if (sensorId - 1 != pinIdx)
             {

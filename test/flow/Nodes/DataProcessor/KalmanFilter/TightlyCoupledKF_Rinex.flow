@@ -378,7 +378,7 @@
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "TcKfInsGnssErrors",
+                        "dataIdentifier": "InsGnssTCKFSolution",
                         "pinType": 0,
                         "plotData": [
                             {
