@@ -17,6 +17,7 @@
 
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
 #include "util/Random/RandomNumberGenerator.hpp"
@@ -71,10 +72,11 @@ class ErrorModel : public Node
     /// Input type
     enum class InputType
     {
-        None,      ///< None
-        ImuObs,    ///< ImuObs
-        PosVelAtt, ///< PosVelAtt
-        GnssObs,   ///< GnssObs
+        None,         ///< None
+        ImuObs,       ///< ImuObs
+        ImuObsWDelta, ///< ImuObsWDelta
+        PosVelAtt,    ///< PosVelAtt
+        GnssObs,      ///< GnssObs
     };
 
     /// Input type
@@ -100,15 +102,19 @@ class ErrorModel : public Node
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again
-    void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    [[nodiscard]] std::shared_ptr<ImuObs> receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+
+    /// @brief Callback when receiving an ImuObsWDelta
+    /// @param[in] imuObs Copied data to modify and send out again
+    [[nodiscard]] std::shared_ptr<ImuObsWDelta> receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
-    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+    [[nodiscard]] std::shared_ptr<PosVelAtt> receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
 
     /// @brief Callback when receiving an GnssObs
     /// @param[in] gnssObs Copied data to modify and send out again
-    void receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
+    [[nodiscard]] std::shared_ptr<GnssObs> receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
 
     /// Last observation time
     InsTime _lastObservationTime;
@@ -171,6 +177,9 @@ class ErrorModel : public Node
     Eigen::Vector3d _imuGyroscopeNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the gyroscope noise
     RandomNumberGenerator _imuGyroscopeRng;
+
+    /// How many measurements are averaged for the deltaVel and deltaTheta values
+    double _imuObsWDeltaAverageWindow = 10;
 
     // #########################################################################################################################################
     //                                                                PosVelAtt

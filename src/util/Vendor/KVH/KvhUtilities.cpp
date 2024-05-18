@@ -102,13 +102,13 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
     {
         if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_A)
         {
-            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
-                                       obs->raw.extractFloat(),
-                                       obs->raw.extractFloat());
+            obs->p_angularRate = { obs->raw.extractFloat(),
+                                   obs->raw.extractFloat(),
+                                   obs->raw.extractFloat() };
 
-            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
-                                        obs->raw.extractFloat(),
-                                        obs->raw.extractFloat());
+            obs->p_acceleration = { obs->raw.extractFloat(),
+                                    obs->raw.extractFloat(),
+                                    obs->raw.extractFloat() };
 
             obs->status = obs->raw.extractUint8();
             obs->sequenceNumber = obs->raw.extractUint8();
@@ -116,13 +116,13 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
         }
         else if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_B)
         {
-            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
-                                       obs->raw.extractFloat(),
-                                       obs->raw.extractFloat());
+            obs->p_angularRate = { obs->raw.extractFloat(),
+                                   obs->raw.extractFloat(),
+                                   obs->raw.extractFloat() };
 
-            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
-                                        obs->raw.extractFloat(),
-                                        obs->raw.extractFloat());
+            obs->p_acceleration = { obs->raw.extractFloat(),
+                                    obs->raw.extractFloat(),
+                                    obs->raw.extractFloat() };
 
             obs->timeSinceStartup.emplace(obs->raw.extractUint32() * 1000);
             obs->status = obs->raw.extractUint8();
@@ -131,13 +131,13 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
         }
         else if (headerType == vendor::kvh::KvhUartSensor::HEADER_FMT_C)
         {
-            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
-                                       obs->raw.extractFloat(),
-                                       obs->raw.extractFloat());
+            obs->p_angularRate = { obs->raw.extractFloat(),
+                                   obs->raw.extractFloat(),
+                                   obs->raw.extractFloat() };
 
-            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
-                                        obs->raw.extractFloat(),
-                                        obs->raw.extractFloat());
+            obs->p_acceleration = { obs->raw.extractFloat(),
+                                    obs->raw.extractFloat(),
+                                    obs->raw.extractFloat() };
 
             auto OneOfTempMagXYZ = obs->raw.extractFloat();
 
@@ -150,9 +150,9 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
             tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
 
             obs->temperature = tempMagXYZ[0];
-            obs->magUncompXYZ.emplace(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
+            obs->p_magneticField.emplace(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
         }
 
-        obs->accelUncompXYZ.value() *= InsConst<>::G_NORM;
+        obs->p_acceleration *= InsConst<>::G_NORM;
     }
 }

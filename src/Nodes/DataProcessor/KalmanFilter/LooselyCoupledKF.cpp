@@ -20,6 +20,7 @@
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "NodeRegistry.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
@@ -31,6 +32,11 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "util/Logger.hpp"
+#include "util/Assert.h"
+
+#include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
@@ -47,19 +53,24 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 822, 721 };
+    _guiConfigDefaultWindowSize = { 822, 936 };
 
-    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
-    inputPins.back().neededForTemporalQueueCheck = false;
-    nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution,
-                       [](const Node* node, const InputPin& inputPin) {
-                           const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-                           return !inputPin.queue.empty() && lckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
-                       });
-    inputPins.back().dropQueueIfNotFirable = false;
-    nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
-    outputPins.back().blocksConnectedNodeFromFinishing = false; // To prevent a deadlock between ImuIntegrator and this node
-    nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
+    nm::CreateInputPin(
+        this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &LooselyCoupledKF::recvImuObservation,
+        [](const Node* node, const InputPin& inputPin) {
+            const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+            return !inputPin.queue.empty() && lckf->_inertialIntegrator.hasInitialPosition();
+        },
+        1); // Priority 1 ensures, that the IMU obs (prediction) is evaluated before the PosVel obs (update)
+    nm::CreateInputPin(
+        this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvPosVelObservation,
+        [](const Node* node, const InputPin& inputPin) {
+            const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+            return !inputPin.queue.empty() && (!lckf->_initializeStateOverExternalPin || lckf->_inertialIntegrator.hasInitialPosition());
+        },
+        2); // Initially this has higher priority than the IMU obs, to initialize the position from it
+
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -69,7 +80,7 @@ NAV::LooselyCoupledKF::~LooselyCoupledKF()
 
 std::string NAV::LooselyCoupledKF::typeStatic()
 {
-    return "LooselyCoupledKF";
+    return "INS/GNSS LCKF"; // Loosely-coupled Kalman Filter
 }
 
 std::string NAV::LooselyCoupledKF::type() const
@@ -86,7 +97,7 @@ void NAV::LooselyCoupledKF::addKalmanMatricesPins()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (outputPins.size() == 2)
+    if (outputPins.size() == OUTPUT_PORT_INDEX_x)
     {
         nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::VectorXd" }, &_kalmanFilter.x(all));
         nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P(all, all));
@@ -102,9 +113,24 @@ void NAV::LooselyCoupledKF::addKalmanMatricesPins()
 void NAV::LooselyCoupledKF::removeKalmanMatricesPins()
 {
     LOG_TRACE("{}: called", nameId());
-    while (outputPins.size() > 2)
+    while (outputPins.size() > OUTPUT_PORT_INDEX_x)
     {
         nm::DeleteOutputPin(outputPins.back());
+    }
+}
+
+void NAV::LooselyCoupledKF::updateExternalPvaInitPin()
+{
+    if (_initializeStateOverExternalPin && inputPins.size() <= INPUT_PORT_INDEX_POS_VEL_ATT_INIT)
+    {
+        nm::CreateInputPin(
+            this, "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvPosVelAttInit,
+            nullptr,
+            3);
+    }
+    else if (!_initializeStateOverExternalPin && inputPins.size() > INPUT_PORT_INDEX_POS_VEL_ATT_INIT)
+    {
+        nm::DeleteInputPin(inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT]);
     }
 }
 
@@ -115,322 +141,396 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
 
-    if (ImGui::Checkbox(fmt::format("Show Kalman Filter matrices as output pins##{}", size_t(id)).c_str(), &_showKalmanFilterOutputPins))
+    if (ImGui::CollapsingHeader(fmt::format("Initialization##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
     {
-        LOG_DEBUG("{}: showKalmanFilterOutputPins {}", nameId(), _showKalmanFilterOutputPins);
-        if (_showKalmanFilterOutputPins)
+        if (ImGui::Checkbox(fmt::format("Initialize over pin##{}", size_t(id)).c_str(), &_initializeStateOverExternalPin))
         {
-            addKalmanMatricesPins();
+            updateExternalPvaInitPin();
+            flow::ApplyChanges();
+        }
+        if (!_initializeStateOverExternalPin)
+        {
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(0) {}", size_t(id)).c_str(),
+                                  _initalRollPitchYaw.data(), 1.0F, -180.0, 180.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(1) {}", size_t(id)).c_str(),
+                                  &_initalRollPitchYaw[1], 1.0F, -90.0, 90.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(2) {}", size_t(id)).c_str(),
+                                  &_initalRollPitchYaw[2], 1.0, -180.0, 180.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::TextUnformatted("Roll, Pitch, Yaw");
+        }
+    }
+
+    if (ImGui::CollapsingHeader(fmt::format("IMU Integrator settings##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator))
+        {
+            flow::ApplyChanges();
+        }
+        if (inputPins.at(INPUT_PORT_INDEX_IMU).isPinLinked()
+            && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
+        {
+            ImGui::Separator();
+            if (ImGui::Checkbox(fmt::format("Prefer raw measurements over delta##{}", size_t(id)).c_str(), &_preferAccelerationOverDeltaMeasurements))
+            {
+                flow::ApplyChanges();
+            }
+        }
+    }
+    if (ImGui::CollapsingHeader(fmt::format("Kalman Filter settings##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+        {
+            ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
         }
         else
         {
-            removeKalmanMatricesPins();
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
         }
-        flow::ApplyChanges();
-    }
-    if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
-    {
-        LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
-        flow::ApplyChanges();
-    }
+        if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
+        {
+            LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
+            flow::ApplyChanges();
+        }
 
-    ImGui::Separator();
+        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+        {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(taylorOrderWidth);
+            if (ImGui::InputIntL(fmt::format("##Phi calculation Taylor Order {}", size_t(id)).c_str(), &_phiCalculationTaylorOrder, 1, 9))
+            {
+                LOG_DEBUG("{}: Phi calculation  Taylor Order changed to {}", nameId(), _phiCalculationTaylorOrder);
+                flow::ApplyChanges();
+            }
+        }
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+        ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
 
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0NED\0\0"))
-    {
-        LOG_DEBUG("{}: Frame changed to {}", nameId(), _frame == Frame::NED ? "NED" : "ECEF");
-        flow::ApplyChanges();
-    }
-
-    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
-    {
-        ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
-    }
-    else
-    {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    }
-    if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
-    {
-        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
-        flow::ApplyChanges();
-    }
-
-    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
-    {
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(taylorOrderWidth);
-        if (ImGui::InputIntL(fmt::format("##Phi calculation Taylor Order {}", size_t(id)).c_str(), &_phiCalculationTaylorOrder, 1, 9))
+        if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
         {
-            LOG_DEBUG("{}: Phi calculation  Taylor Order changed to {}", nameId(), _phiCalculationTaylorOrder);
+            LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
             flow::ApplyChanges();
         }
-    }
-    ImGui::SameLine();
-    ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
 
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
-    {
-        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
-        flow::ApplyChanges();
-    }
+        ImGui::Separator();
 
-    ImGui::Separator();
+        // ###########################################################################################################
+        //                                Q - System/Process noise covariance matrix
+        // ###########################################################################################################
 
-    // ###########################################################################################################
-    //                                Q - System/Process noise covariance matrix
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
-    {
-        // --------------------------------------------- Accelerometer -----------------------------------------------
-        if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
         {
-            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-            if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
-                                                                                                                                                "Gauss-Markov 1st Order\0\0"))
+            // --------------------------------------------- Accelerometer -----------------------------------------------
+            if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
             {
-                LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
+                ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+                if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
+                                                                                                                                                    "Gauss-Markov 1st Order\0\0"))
+                {
+                    LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
+                    flow::ApplyChanges();
+                }
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
+                LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
                 flow::ApplyChanges();
             }
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
-            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
-            flow::ApplyChanges();
-        }
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the accel {}##{}",
-                                                           _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
-                                                               ? "dynamic bias, in σ²/τ"
-                                                               : (_randomProcessAccel == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
-            LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
-            flow::ApplyChanges();
-        }
-
-        if (_randomProcessAccel == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
-        {
-            int unitCorrelationLength = 0;
-            if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the accel {}##Correlation length τ of the accel dynamic bias {}",
-                                                                _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
-                                                        .c_str(),
-                                                    configWidth, unitWidth, _tau_bad.data(), 0., std::numeric_limits<double>::max(),
-                                                    &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the accel {}##{}",
+                                                               _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
+                                                                   ? "dynamic bias, in σ²/τ"
+                                                                   : (_randomProcessAccel == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
+                LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
+                LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
                 flow::ApplyChanges();
             }
-        }
 
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
-
-        // ----------------------------------------------- Gyroscope -------------------------------------------------
-
-        if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
-        {
-            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-            if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
-                                                                                                                                           "Gauss-Markov 1st Order\0\0"))
+            if (_randomProcessAccel == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
             {
-                LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
+                int unitCorrelationLength = 0;
+                if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the accel {}##Correlation length τ of the accel dynamic bias {}",
+                                                                    _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
+                                                            .c_str(),
+                                                        configWidth, unitWidth, _tau_bad.data(), 0., std::numeric_limits<double>::max(),
+                                                        &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
+                    flow::ApplyChanges();
+                }
+            }
+
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
+
+            // ----------------------------------------------- Gyroscope -------------------------------------------------
+
+            if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
+            {
+                ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+                if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
+                                                                                                                                               "Gauss-Markov 1st Order\0\0"))
+                {
+                    LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
+                    flow::ApplyChanges();
+                }
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
+                LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
                 flow::ApplyChanges();
             }
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
-                                               configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
-            LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
-            flow::ApplyChanges();
-        }
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the gyro {}##{}",
-                                                           _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
-                                                               ? "dynamic bias, in σ²/τ"
-                                                               : (_randomProcessGyro == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
-            LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
-            flow::ApplyChanges();
-        }
-
-        if (_randomProcessGyro == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
-        {
-            int unitCorrelationLength = 0;
-            if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the gyro {}##Correlation length τ of the gyro dynamic bias {}",
-                                                                _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
-                                                        .c_str(),
-                                                    configWidth, unitWidth, _tau_bgd.data(), 0., std::numeric_limits<double>::max(),
-                                                    &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the gyro {}##{}",
+                                                               _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
+                                                                   ? "dynamic bias, in σ²/τ"
+                                                                   : (_randomProcessGyro == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
+                LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
+                LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
                 flow::ApplyChanges();
             }
+
+            if (_randomProcessGyro == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
+            {
+                int unitCorrelationLength = 0;
+                if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the gyro {}##Correlation length τ of the gyro dynamic bias {}",
+                                                                    _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
+                                                            .c_str(),
+                                                        configWidth, unitWidth, _tau_bgd.data(), 0., std::numeric_limits<double>::max(),
+                                                        &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
+                    flow::ApplyChanges();
+                }
+            }
+
+            ImGui::TreePop();
         }
 
-        ImGui::TreePop();
-    }
+        // ###########################################################################################################
+        //                                        Measurement Uncertainties 𝐑
+        // ###########################################################################################################
 
-    // ###########################################################################################################
-    //                                        Measurement Uncertainties 𝐑
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
-    {
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS position measurements##{}",
-                                                           _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
-                                                                   || _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2
-                                                               ? "Variance"
-                                                               : "Standard deviation",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                                                     "rad, rad, m\0"
-                                                                                                                                                                                     "m^2, m^2, m^2\0"
-                                                                                                                                                                                     "m, m, m\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
         {
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPositionUnit));
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS position measurements##{}",
+                                                               _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
+                                                                       || _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2
+                                                                   ? "Variance"
+                                                                   : "Standard deviation",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                                         "rad, rad, m\0"
+                                                                                                                                                                                         "m^2, m^2, m^2\0"
+                                                                                                                                                                                         "m, m, m\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPositionUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", _gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                                         "m/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
+                LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyVelocityUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+
+        // ###########################################################################################################
+        //                                        𝐏 Error covariance matrix
+        // ###########################################################################################################
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+        {
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
+                                                               _initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
+                                                                       || _initCovariancePositionUnit == InitCovariancePositionUnit::meter2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                 "rad, rad, m\0"
+                                                                                                                                                                 "m^2, m^2, m^2\0"
+                                                                                                                                                                 "m, m, m\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
+                LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_initCovariancePositionUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity covariance ({})##{}",
+                                                               _initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                 "m/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
+                LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_initCovarianceVelocityUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Flight Angles covariance ({})##{}",
+                                                               _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
+                                                                       || _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&_initCovarianceAttitudeAnglesUnit), "rad^2\0"
+                                                                                                                                                                             "deg^2\0"
+                                                                                                                                                                             "rad\0"
+                                                                                                                                                                             "deg\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
+                LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), fmt::underlying(_initCovarianceAttitudeAnglesUnit));
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker(_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF
+                                         ? "Angles rotating the ECEF frame into the body frame."
+                                         : "Angles rotating the local navigation frame into the body frame (Roll, Pitch, Yaw)");
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias covariance ({})##{}",
+                                                               _initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccelUnit), "m^2/s^4\0"
+                                                                                                                                                                   "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
+                LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasAccelUnit));
+                flow::ApplyChanges();
+            }
+
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias covariance ({})##{}",
+                                                               _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
+                                                                       || _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2
+                                                                   ? "Variance σ²"
+                                                                   : "Standard deviation σ",
+                                                               size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&_initCovarianceBiasGyroUnit), "rad^2/s^2\0"
+                                                                                                                                                                 "deg^2/s^2\0"
+                                                                                                                                                                 "rad/s\0"
+                                                                                                                                                                 "deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
+                LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+
+        // ###########################################################################################################
+        //                                                IMU biases
+        // ###########################################################################################################
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("IMU biases (init)##{}", size_t(id)).c_str()))
+        {
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer biases##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _initBiasAccel.data(), reinterpret_cast<int*>(&_initBiasAccelUnit), "m/s^2\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initBiasAccel changed to {}", nameId(), _initBiasAccel.transpose());
+                LOG_DEBUG("{}: initBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initBiasAccelUnit));
+                flow::ApplyChanges();
+            }
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyro biases##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _initBiasGyro.data(), reinterpret_cast<int*>(&_initBiasGyroUnit), "rad/s\0deg/s\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: initBiasGyro changed to {}", nameId(), _initBiasGyro.transpose());
+                LOG_DEBUG("{}: initBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initBiasGyroUnit));
+                flow::ApplyChanges();
+            }
+
+            ImGui::TreePop();
+        }
+
+        ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Kalman Filter matrices##{}", size_t(id)).c_str()))
+        {
+            _kalmanFilter.showKalmanFilterMatrixViews(std::to_string(size_t(id)).c_str());
+            ImGui::TreePop();
+        }
+
+        ImGui::Separator();
+
+        if (ImGui::Checkbox(fmt::format("Show Kalman Filter matrices as output pins##{}", size_t(id)).c_str(), &_showKalmanFilterOutputPins))
+        {
+            LOG_DEBUG("{}: showKalmanFilterOutputPins {}", nameId(), _showKalmanFilterOutputPins);
+            if (_showKalmanFilterOutputPins)
+            {
+                addKalmanMatricesPins();
+            }
+            else
+            {
+                removeKalmanMatricesPins();
+            }
             flow::ApplyChanges();
         }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", _gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                                     "m/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
         {
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyVelocityUnit));
+            LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
             flow::ApplyChanges();
         }
-
-        ImGui::TreePop();
-    }
-
-    // ###########################################################################################################
-    //                                        𝐏 Error covariance matrix
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
-    {
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
-                                                           _initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
-                                                                   || _initCovariancePositionUnit == InitCovariancePositionUnit::meter2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                             "rad, rad, m\0"
-                                                                                                                                                             "m^2, m^2, m^2\0"
-                                                                                                                                                             "m, m, m\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
-            LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), fmt::underlying(_initCovariancePositionUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity covariance ({})##{}",
-                                                           _initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                             "m/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
-            LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), fmt::underlying(_initCovarianceVelocityUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Flight Angles covariance ({})##{}",
-                                                           _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
-                                                                   || _initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&_initCovarianceAttitudeAnglesUnit), "rad^2\0"
-                                                                                                                                                                         "deg^2\0"
-                                                                                                                                                                         "rad\0"
-                                                                                                                                                                         "deg\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
-            LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), fmt::underlying(_initCovarianceAttitudeAnglesUnit));
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker(_frame == Frame::ECEF
-                                     ? "Angles rotating the ECEF frame into the body frame."
-                                     : "Angles rotating the local navigation frame into the body frame (Roll, Pitch, Yaw)");
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias covariance ({})##{}",
-                                                           _initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccelUnit), "m^2/s^4\0"
-                                                                                                                                                               "m/s^2\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
-            LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasAccelUnit));
-            flow::ApplyChanges();
-        }
-
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias covariance ({})##{}",
-                                                           _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
-                                                                   || _initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2
-                                                               ? "Variance σ²"
-                                                               : "Standard deviation σ",
-                                                           size_t(id))
-                                                   .c_str(),
-                                               configWidth, unitWidth, _initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&_initCovarianceBiasGyroUnit), "rad^2/s^2\0"
-                                                                                                                                                             "deg^2/s^2\0"
-                                                                                                                                                             "rad/s\0"
-                                                                                                                                                             "deg/s\0\0",
-                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
-        {
-            LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
-            LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
-            flow::ApplyChanges();
-        }
-
-        ImGui::TreePop();
-    }
-
-    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("Kalman Filter matrices##{}", size_t(id)).c_str()))
-    {
-        _kalmanFilter.showKalmanFilterMatrixViews(std::to_string(size_t(id)).c_str());
-        ImGui::TreePop();
     }
 }
 
@@ -440,10 +540,14 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     json j;
 
+    j["inertialIntegrator"] = _inertialIntegrator;
+    j["preferAccelerationOverDeltaMeasurements"] = _preferAccelerationOverDeltaMeasurements;
+    j["initalRollPitchYaw"] = _initalRollPitchYaw;
+    j["initializeStateOverExternalPin"] = _initializeStateOverExternalPin;
+
     j["showKalmanFilterOutputPins"] = _showKalmanFilterOutputPins;
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
 
-    j["frame"] = _frame;
     j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
     j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
     j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
@@ -477,12 +581,35 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["initCovarianceBiasGyroUnit"] = _initCovarianceBiasGyroUnit;
     j["initCovarianceBiasGyro"] = _initCovarianceBiasGyro;
 
+    j["initBiasAccel"] = _initBiasAccel;
+    j["initBiasAccelUnit"] = _initBiasAccelUnit;
+    j["initBiasGyro"] = _initBiasGyro;
+    j["initBiasGyroUnit"] = _initBiasGyroUnit;
+
     return j;
 }
 
 void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("inertialIntegrator"))
+    {
+        j.at("inertialIntegrator").get_to(_inertialIntegrator);
+    }
+    if (j.contains("preferAccelerationOverDeltaMeasurements"))
+    {
+        j.at("preferAccelerationOverDeltaMeasurements").get_to(_preferAccelerationOverDeltaMeasurements);
+    }
+    if (j.contains("initalRollPitchYaw"))
+    {
+        j.at("initalRollPitchYaw").get_to(_initalRollPitchYaw);
+    }
+    if (j.contains("initializeStateOverExternalPin"))
+    {
+        j.at("initializeStateOverExternalPin").get_to(_initializeStateOverExternalPin);
+        updateExternalPvaInitPin();
+    }
 
     if (j.contains("showKalmanFilterOutputPins"))
     {
@@ -497,10 +624,6 @@ void NAV::LooselyCoupledKF::restore(json const& j)
         j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
     }
 
-    if (j.contains("frame"))
-    {
-        j.at("frame").get_to(_frame);
-    }
     if (j.contains("phiCalculationAlgorithm"))
     {
         j.at("phiCalculationAlgorithm").get_to(_phiCalculationAlgorithm);
@@ -620,19 +743,37 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         _initCovarianceBiasGyro = j.at("initCovarianceBiasGyro");
     }
+
+    // ---------------------------------------- Initial IMU biases -------------------------------------------
+    if (j.contains("initBiasAccel"))
+    {
+        _initBiasAccel = j.at("initBiasAccel");
+    }
+    if (j.contains("initBiasAccelUnit"))
+    {
+        _initBiasAccelUnit = j.at("initBiasAccelUnit");
+    }
+    if (j.contains("initBiasGyro"))
+    {
+        _initBiasGyro = j.at("initBiasGyro");
+    }
+    if (j.contains("initBiasGyroUnit"))
+    {
+        _initBiasGyroUnit = j.at("initBiasGyroUnit");
+    }
 }
 
 bool NAV::LooselyCoupledKF::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _kalmanFilter.setZero();
+    inputPins[INPUT_PORT_INDEX_GNSS].priority = 2; // PosVel used for initialization
 
-    _latestInertialNavSol = nullptr;
-    _lastPredictTime.reset();
-    _lastPredictRequestedTime.reset();
-    _accumulatedAccelBiases.setZero();
-    _accumulatedGyroBiases.setZero();
+    _inertialIntegrator.reset();
+    _lastImuObs = nullptr;
+    _externalInitTime.reset();
+
+    _kalmanFilter.setZero();
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -720,11 +861,35 @@ bool NAV::LooselyCoupledKF::initialize()
     }
 
     // 𝐏 Error covariance matrix
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angles,                                  // Flight Angles covariance
-                                                      variance_vel,                                     // Velocity covariance
-                                                      _frame == Frame::NED ? lla_variance : e_variance, // Position (Lat, Lon, Alt) / ECEF covariance
-                                                      variance_accelBias,                               // Accelerometer Bias covariance
-                                                      variance_gyroBias);                               // Gyroscope Bias covariance
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angles, // Flight Angles covariance
+                                                      variance_vel,    // Velocity covariance
+                                                      _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                                                          ? lla_variance
+                                                          : e_variance,   // Position (Lat, Lon, Alt) / ECEF covariance
+                                                      variance_accelBias, // Accelerometer Bias covariance
+                                                      variance_gyroBias); // Gyroscope Bias covariance
+
+    // Initial acceleration bias in [m/s^2]
+    Eigen::Vector3d accelBias = Eigen::Vector3d::Zero();
+    if (_initBiasAccelUnit == InitBiasAccelUnit::m_s2)
+    {
+        accelBias = _initBiasAccel;
+    }
+
+    // Initial angular rate bias in [rad/s]
+    Eigen::Vector3d gyroBias = Eigen::Vector3d::Zero();
+    if (_initBiasGyroUnit == InitBiasGyroUnit::deg_s)
+    {
+        gyroBias = deg2rad(_initBiasGyro);
+    }
+    else if (_initBiasGyroUnit == InitBiasGyroUnit::rad_s)
+    {
+        gyroBias = _initBiasGyro;
+    }
+
+    // Initial bias states
+    _kalmanFilter.x.segment<3>(AccBias) = accelBias;
+    _kalmanFilter.x.segment<3>(GyrBias) = gyroBias;
 
     LOG_DEBUG("{}: initialized", nameId());
     LOG_DATA("{}: P_0 =\n{}", nameId(), _kalmanFilter.P);
@@ -737,63 +902,126 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::LooselyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
+void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt)
 {
-    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
-    LOG_DATA("{}: recvInertialNavigationSolution at time [{} - {}]", nameId(), inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow());
+    auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
+    lckfSolution->insTime = posVelAtt.insTime;
+    lckfSolution->setState_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
 
-    double tau_i = !_lastPredictTime.empty()
-                       ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
-                       : 0.0;
-
-    if (tau_i > 0)
+    lckfSolution->frame = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                              ? InsGnssLCKFSolution::Frame::NED
+                              : InsGnssLCKFSolution::Frame::ECEF;
+    if (_lastImuObs)
     {
-        _lastPredictTime = _latestInertialNavSol->insTime + std::chrono::duration<double>(tau_i);
-        looselyCoupledPrediction(_latestInertialNavSol, tau_i);
+        lckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * _inertialIntegrator.p_getLastAccelerationBias();
+        lckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * _inertialIntegrator.p_getLastAngularRateBias();
+    }
+    invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+}
+
+void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto nodeData = queue.extract_front();
+    if (nodeData->insTime.empty())
+    {
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime)", nameId());
+        return;
+    }
+
+    std::shared_ptr<NAV::PosVelAtt> inertialNavSol = nullptr;
+
+    _lastImuObs = std::static_pointer_cast<const ImuObs>(nodeData);
+
+    if (!_preferAccelerationOverDeltaMeasurements
+        && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
+    {
+        auto obs = std::static_pointer_cast<const ImuObsWDelta>(nodeData);
+        LOG_DATA("{}: recvImuObsWDelta at time [{}]", nameId(), obs->insTime.toYMDHMS());
+
+        inertialNavSol = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
     }
     else
     {
-        _lastPredictTime = inertialNavSol->insTime;
-    }
-    _latestInertialNavSol = inertialNavSol;
+        auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+        LOG_DATA("{}: recvImuObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-    if (!inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].queue.front()->insTime == _lastPredictTime)
+        inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+    }
+    if (inertialNavSol && _inertialIntegrator.getMeasurements().back().dt > 1e-8)
     {
-        looselyCoupledUpdate(std::static_pointer_cast<const PosVel>(inputPins[INPUT_PORT_INDEX_GNSS].queue.extract_front()));
-        if (inputPins[INPUT_PORT_INDEX_GNSS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS].link.getConnectedPin()->noMoreDataAvailable)
-        {
-            outputPins[OUTPUT_PORT_INDEX_SYNC].noMoreDataAvailable = true;
-            for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
-            {
-                link.connectedNode->wakeWorker();
-            }
-        }
+        looselyCoupledPrediction(inertialNavSol, _inertialIntegrator.getMeasurements().back().dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
+
+        LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
+        LOG_DATA("{}:   e_velocity   = {}", nameId(), inertialNavSol->e_velocity().transpose());
+        LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(inertialNavSol->rollPitchYaw()).transpose());
+        invokeCallbackWithPosVelAtt(*inertialNavSol);
     }
 }
 
-void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssMeasurement = queue.front();
-    LOG_DATA("{}: recvGNSSNavigationSolution at time [{} - {}]", nameId(), gnssMeasurement->insTime.toYMDHMS(), gnssMeasurement->insTime.toGPSweekTow());
+    auto obs = std::static_pointer_cast<const PosVel>(queue.extract_front());
+    LOG_DATA("{}: recvPosVelObservation at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-    auto nodeData = std::make_shared<NodeData>();
-    nodeData->insTime = gnssMeasurement->insTime;
-    _lastPredictRequestedTime = gnssMeasurement->insTime;
+    if (!_initializeStateOverExternalPin && !_inertialIntegrator.hasInitialPosition())
+    {
+        inputPins[INPUT_PORT_INDEX_GNSS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
+        PosVelAtt posVelAtt;
+        posVelAtt.insTime = obs->insTime;
+        posVelAtt.setState_n(obs->lla_position(), obs->n_velocity(),
+                             trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
+
+        _inertialIntegrator.setInitialState(posVelAtt);
+        LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt.e_position().transpose());
+        LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt.e_velocity().transpose());
+        LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt.rollPitchYaw()).transpose());
+
+        invokeCallbackWithPosVelAtt(posVelAtt);
+        return;
+    }
+
+    if (_externalInitTime == obs->insTime) { return; }
+    if (!_lastImuObs)
+    {
+        PosVelAtt posVelAtt;
+        posVelAtt.insTime = obs->insTime;
+        posVelAtt.setState_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().n_Quat_b());
+        _inertialIntegrator.setState(posVelAtt);
+
+        invokeCallbackWithPosVelAtt(posVelAtt);
+        return;
+    }
+
+    looselyCoupledUpdate(obs);
+}
+
+void NAV::LooselyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queue.clear();
+
+    LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
+
+    inputPins[INPUT_PORT_INDEX_GNSS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+    _externalInitTime = posVelAtt->insTime;
+
+    _inertialIntegrator.setInitialState(*posVelAtt);
+    LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt->e_position().transpose());
+    LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt->e_velocity().transpose());
+    LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt->rollPitchYaw()).transpose());
+
+    invokeCallbackWithPosVelAtt(*posVelAtt);
 }
 
 // ###########################################################################################################
 //                                               Kalman Filter
 // ###########################################################################################################
 
-void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i)
+void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos)
 {
-    auto dt = fmt::format("{:0.5f}", tau_i);
-    dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
-
-    InsTime predictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
-    LOG_DATA("{}: Predicting to [{}] (dt = {}s)", nameId(), predictTime, dt);
+    LOG_DATA("{}: Predicting to [{}]", nameId(), inertialNavSol->insTime);
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
@@ -870,14 +1098,14 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     double r_eS_e = calcGeocentricRadius(lla_position(0), R_E);
     LOG_DATA("{}:     r_eS_e = {} [m]", nameId(), r_eS_e);
 
-    // a_p Acceleration in [m/s^2], in body coordinates
-    auto b_acceleration = _latestInertialNavSol->imuObs == nullptr
-                              ? Eigen::Vector3d::Zero()
-                              : Eigen::Vector3d(inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
-                                                - _accumulatedAccelBiases);
+    auto p_acceleration = _inertialIntegrator.p_calcCurrentAcceleration();
+    // Acceleration in [m/s^2], in body coordinates
+    Eigen::Vector3d b_acceleration = p_acceleration
+                                         ? imuPos.b_quatAccel_p() * p_acceleration.value()
+                                         : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
-    if (_frame == Frame::NED)
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
         const Eigen::Vector3d& n_velocity = inertialNavSol->n_velocity();
@@ -917,7 +1145,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                                   _tau_bad, _tau_bgd,
                                                                   _kalmanFilter.F.block<3>(Vel, Att), T_rn_p,
                                                                   n_Quat_b.toRotationMatrix(), tau_i);
-                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, inertialNavSol->insTime, guard);
             }
             else
             {
@@ -929,7 +1157,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             }
         }
     }
-    else // if (_frame == Frame::ECEF)
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         // e_position (tₖ₋₁) Position in [m/s], in ECEF coordinates, at the time tₖ₋₁
         const Eigen::Vector3d& e_position = inertialNavSol->e_position();
@@ -956,7 +1184,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                                   _tau_bad, _tau_bgd,
                                                                   _kalmanFilter.F.block<3>(Vel, Att),
                                                                   e_Quat_b.toRotationMatrix(), tau_i);
-                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, inertialNavSol->insTime, guard);
             }
             else
             {
@@ -972,7 +1200,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        _kalmanFilter.G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
+        _kalmanFilter.G = noiseInputMatrix_G(_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                                                 ? inertialNavSol->n_Quat_b()
+                                                 : inertialNavSol->e_Quat_b());
         LOG_DATA("{}:     G =\n{}", nameId(), _kalmanFilter.G);
 
         _kalmanFilter.W(all, all) = noiseScaleMatrix_W(sigma_ra, sigma_rg,
@@ -989,8 +1219,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
             _kalmanFilter.calcPhiAndQWithVanLoanMethod(tau_i);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard1);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard2);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, inertialNavSol->insTime, guard1);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, inertialNavSol->insTime, guard2);
         }
         else
         {
@@ -1021,7 +1251,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
             calcPhi();
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, inertialNavSol->insTime, guard);
         }
         else
         {
@@ -1041,8 +1271,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.predict();
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime, guard1);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime, guard2);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, inertialNavSol->insTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, inertialNavSol->insTime, guard2);
     }
     else
     {
@@ -1077,14 +1307,17 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
 }
 
-void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement)
+void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& posVelObs)
 {
-    LOG_DATA("{}: Updating to [{}] (lastInertial at [{}])", nameId(), gnssMeasurement->insTime, _latestInertialNavSol->insTime);
+    INS_ASSERT_USER_ERROR(_inertialIntegrator.getLatestState().has_value(), "The update should not even trigger without an initial state.");
+    const auto& latestInertialNavSol = _inertialIntegrator.getLatestState().value().get();
+
+    LOG_DATA("{}: Updating to [{}] (lastInertial at [{}])", nameId(), posVelObs->insTime, latestInertialNavSol.insTime);
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position = _latestInertialNavSol->lla_position();
+    const Eigen::Vector3d& lla_position = latestInertialNavSol.lla_position();
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // GNSS measurement uncertainty for the position (Variance σ²) in [m^2]
@@ -1102,11 +1335,11 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position)) - lla_position).array().pow(2);
         break;
     case GnssMeasurementUncertaintyPositionUnit::rad_rad_m:
-        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - _latestInertialNavSol->e_position()).array().pow(2);
+        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - latestInertialNavSol.e_position()).array().pow(2);
         gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition.array().pow(2);
         break;
     case GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2:
-        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - _latestInertialNavSol->e_position()).array().pow(2);
+        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - latestInertialNavSol.e_position()).array().pow(2);
         gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition;
         break;
     }
@@ -1128,14 +1361,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // ---------------------------------------------- Correction -------------------------------------------------
 
+    auto p_omega_ip = _inertialIntegrator.p_calcCurrentAngularRate();
     // Angular rate measured in units of [rad/s], and given in the body frame
-    auto b_omega_ip = _latestInertialNavSol->imuObs == nullptr
-                          ? Eigen::Vector3d::Zero()
-                          : Eigen::Vector3d(_latestInertialNavSol->imuObs->imuPos.b_quatGyro_p() * _latestInertialNavSol->imuObs->gyroUncompXYZ.value()
-                                            - _accumulatedGyroBiases);
+    Eigen::Vector3d b_omega_ip = p_omega_ip
+                                     ? _lastImuObs->imuPos.b_quatGyro_p() * p_omega_ip.value()
+                                     : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
-    if (_frame == Frame::NED)
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         // Prime vertical radius of curvature (East/West) [m]
         double R_E = calcEarthRadius_E(lla_position(0));
@@ -1145,7 +1378,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d n_Dcm_b = _latestInertialNavSol->n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_Dcm_b = latestInertialNavSol.n_Quat_b().toRotationMatrix();
         LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
         // Conversion matrix between cartesian and curvilinear perturbations to the position
@@ -1153,7 +1386,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_latestInertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie);
+        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(latestInertialNavSol.n_Quat_e() * InsConst<>::e_omega_ie);
         LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
@@ -1161,7 +1394,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_H);
             _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime, guard);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, posVelObs->insTime, guard);
         }
         else
         {
@@ -1173,7 +1406,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_R);
             _kalmanFilter.R = n_measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime, guard);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, posVelObs->insTime, guard);
         }
         else
         {
@@ -1184,22 +1417,22 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         if (_showKalmanFilterOutputPins)
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_z);
-            _kalmanFilter.z = n_measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
-                                                         gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
-                                                         T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime, guard);
+            _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), latestInertialNavSol.lla_position(),
+                                                         posVelObs->n_velocity(), latestInertialNavSol.n_velocity(),
+                                                         T_rn_p, latestInertialNavSol.n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, posVelObs->insTime, guard);
         }
         else
         {
-            _kalmanFilter.z = n_measurementInnovation_dz(gnssMeasurement->lla_position(), _latestInertialNavSol->lla_position(),
-                                                         gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
-                                                         T_rn_p, _latestInertialNavSol->n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+            _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), latestInertialNavSol.lla_position(),
+                                                         posVelObs->n_velocity(), latestInertialNavSol.n_velocity(),
+                                                         T_rn_p, latestInertialNavSol.n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
         }
     }
-    else // if (_frame == Frame::ECEF)
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d e_Dcm_b = _latestInertialNavSol->e_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d e_Dcm_b = latestInertialNavSol.e_Quat_b().toRotationMatrix();
         LOG_DATA("{}:     e_Dcm_b =\n{}", nameId(), e_Dcm_b);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
@@ -1211,7 +1444,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_H);
             _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, e_Omega_ie);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssMeasurement->insTime, guard);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, posVelObs->insTime, guard);
         }
         else
         {
@@ -1223,7 +1456,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_R);
             _kalmanFilter.R = e_measurementNoiseCovariance_R(gnssSigmaSquaredPosition, gnssSigmaSquaredVelocity);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssMeasurement->insTime, guard);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, posVelObs->insTime, guard);
         }
         else
         {
@@ -1234,16 +1467,16 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         if (_showKalmanFilterOutputPins)
         {
             auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_z);
-            _kalmanFilter.z = e_measurementInnovation_dz(gnssMeasurement->e_position(), _latestInertialNavSol->e_position(),
-                                                         gnssMeasurement->e_velocity(), _latestInertialNavSol->e_velocity(),
-                                                         _latestInertialNavSol->e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
-            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssMeasurement->insTime, guard);
+            _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), latestInertialNavSol.e_position(),
+                                                         posVelObs->e_velocity(), latestInertialNavSol.e_velocity(),
+                                                         latestInertialNavSol.e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, posVelObs->insTime, guard);
         }
         else
         {
-            _kalmanFilter.z = e_measurementInnovation_dz(gnssMeasurement->e_position(), _latestInertialNavSol->e_position(),
-                                                         gnssMeasurement->e_velocity(), _latestInertialNavSol->e_velocity(),
-                                                         _latestInertialNavSol->e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+            _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), latestInertialNavSol.e_position(),
+                                                         posVelObs->e_velocity(), latestInertialNavSol.e_velocity(),
+                                                         latestInertialNavSol.e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
         }
     }
 
@@ -1270,9 +1503,9 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         auto guard3 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
         _kalmanFilter.correctWithMeasurementInnovation();
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssMeasurement->insTime, guard1);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime, guard2);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssMeasurement->insTime, guard3);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, posVelObs->insTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, posVelObs->insTime, guard2);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, posVelObs->insTime, guard3);
     }
     else
     {
@@ -1305,36 +1538,42 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // LOG_DEBUG("{}: H\n{}\n", nameId(), _kalmanFilter.H);
     // LOG_DEBUG("{}: R\n{}\n", nameId(), _kalmanFilter.R);
-    // LOG_DEBUG("{}: z = {}", nameId(), _kalmanFilter.z.transpose());
+    // LOG_DEBUG("{}: z =\n{}", nameId(), _kalmanFilter.z.transposed());
 
     // LOG_DEBUG("{}: K\n{}\n", nameId(), _kalmanFilter.K);
-    // LOG_DEBUG("{}: x = {}", nameId(), _kalmanFilter.x.transpose());
+    // LOG_DEBUG("{}: x =\n{}", nameId(), _kalmanFilter.x.transposed());
     // LOG_DEBUG("{}: P\n{}\n", nameId(), _kalmanFilter.P);
 
-    // LOG_DEBUG("{}: K * z = {}", nameId(), (_kalmanFilter.K * _kalmanFilter.z).transpose());
+    // LOG_DEBUG("{}: K * z =\n{}", nameId(), (_kalmanFilter.K(all, all) * _kalmanFilter.z(all)).transpose());
 
-    // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P - _kalmanFilter.P.transpose());
-
-    _accumulatedAccelBiases += _kalmanFilter.x.segment<3>(AccBias) * (1. / SCALE_FACTOR_ACCELERATION);
-    _accumulatedGyroBiases += _kalmanFilter.x.segment<3>(GyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE);
+    // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P(all, all) - _kalmanFilter.P(all, all).transpose());
 
     // Push out the new data
-    auto lcKfInsGnssErrors = std::make_shared<LcKfInsGnssErrors>();
-    lcKfInsGnssErrors->insTime = gnssMeasurement->insTime;
-    lcKfInsGnssErrors->positionError = _kalmanFilter.x.segment<3>(Pos);
-    lcKfInsGnssErrors->velocityError = _kalmanFilter.x.segment<3>(Vel);
-    lcKfInsGnssErrors->attitudeError = _kalmanFilter.x.segment<3>(Att) * (1. / SCALE_FACTOR_ATTITUDE);
-    lcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
-    lcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
+    auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
+    lckfSolution->insTime = posVelObs->insTime;
+    lckfSolution->positionError = _kalmanFilter.x.segment<3>(Pos);
+    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(Vel);
+    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(Att) * (1. / SCALE_FACTOR_ATTITUDE);
 
-    if (_frame == Frame::NED)
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(AccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(GyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    lckfSolution->b_biasAccel = _inertialIntegrator.p_getLastAccelerationBias();
+    lckfSolution->b_biasGyro = _inertialIntegrator.p_getLastAngularRateBias();
+
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
-        lcKfInsGnssErrors->positionError = lcKfInsGnssErrors->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
-        lcKfInsGnssErrors->frame = LcKfInsGnssErrors::Frame::NED;
+        lckfSolution->positionError = lckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
+        lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
+        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
+        const auto& state = _inertialIntegrator.getLatestState().value().get();
+        lckfSolution->setState_n(state.lla_position(), state.n_velocity(), state.n_Quat_b());
     }
-    else // if (_frame == Frame::ECEF)
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
-        lcKfInsGnssErrors->frame = LcKfInsGnssErrors::Frame::ECEF;
+        lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
+        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
+        const auto& state = _inertialIntegrator.getLatestState().value().get();
+        lckfSolution->setState_e(state.e_position(), state.e_velocity(), state.e_Quat_b());
     }
 
     // Closed loop
@@ -1342,14 +1581,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     {
         auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
         _kalmanFilter.x(all).setZero();
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssMeasurement->insTime, guard);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, posVelObs->insTime, guard);
     }
     else
     {
         _kalmanFilter.x(all).setZero();
     }
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, lcKfInsGnssErrors);
+    invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
 }
 
 // ###########################################################################################################
@@ -1477,7 +1716,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^{i,e,n} & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^{i,e,n} & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix}
     KeyedMatrix<double, KFStates, KFStates, 15, 15> G(Eigen::Matrix<double, 15, 15>::Zero(), States, States);
 
-    G.block<3>(Att, Att) = SCALE_FACTOR_ATTITUDE * -ien_Dcm_b;
+    G.block<3>(Att, Att) = SCALE_FACTOR_ATTITUDE * ien_Dcm_b;
     G.block<3>(Vel, Vel) = ien_Dcm_b;
     G.block<3>(AccBias, AccBias) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
     G.block<3>(GyrBias, GyrBias) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
@@ -1491,11 +1730,11 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Ei
 {
     Eigen::Matrix<double, 15, 15> W = Eigen::Matrix<double, 15, 15>::Zero();
 
-    W.diagonal() << sigma_rg,
-        sigma_ra,
+    W.diagonal() << sigma_rg.array().square(),
+        sigma_ra.array().square(),
         Eigen::Vector3d::Zero(),
-        _randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad), // S_bad
-        _randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd);  // S_bgd
+        (_randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad)).array().square(), // S_bad
+        (_randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd)).array().square();  // S_bgd
 
     return W;
 }
@@ -1613,7 +1852,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
                                                            const Eigen::Vector3d& variance_accelBias,
                                                            const Eigen::Vector3d& variance_gyroBias) const
 {
-    double scaleFactorPosition = _frame == Frame::NED ? SCALE_FACTOR_LAT_LON : 1.0;
+    double scaleFactorPosition = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED ? SCALE_FACTOR_LAT_LON : 1.0;
 
     // 𝐏 Error covariance matrix
     Eigen::Matrix<double, 15, 15> P = Eigen::Matrix<double, 15, 15>::Zero();

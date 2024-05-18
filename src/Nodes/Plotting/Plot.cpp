@@ -1722,17 +1722,13 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             for (const auto& desc : PosVelAtt::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
-        else if (startPin.dataIdentifier.front() == InertialNavSol::type())
+        else if (startPin.dataIdentifier.front() == InsGnssLCKFSolution::type())
         {
-            for (const auto& desc : InertialNavSol::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : InsGnssLCKFSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
-        else if (startPin.dataIdentifier.front() == LcKfInsGnssErrors::type())
+        else if (startPin.dataIdentifier.front() == InsGnssTCKFSolution::type())
         {
-            for (const auto& desc : LcKfInsGnssErrors::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (startPin.dataIdentifier.front() == TcKfInsGnssErrors::type())
-        {
-            for (const auto& desc : TcKfInsGnssErrors::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            for (const auto& desc : InsGnssTCKFSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == GnssCombination::type())
         {
@@ -1754,6 +1750,10 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         else if (startPin.dataIdentifier.front() == ImuObs::type())
         {
             for (const auto& desc : ImuObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+        }
+        else if (startPin.dataIdentifier.front() == ImuObsWDelta::type())
+        {
+            for (const auto& desc : ImuObsWDelta::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == ImuObsSimulated::type())
         {
@@ -2156,6 +2156,10 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotData(std::static_pointer_cast<const ImuObs>(nodeData), pinIdx, i);
         }
+        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
+        {
+            plotData(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIdx, i);
+        }
         else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
         {
             plotData(std::static_pointer_cast<const ImuObsSimulated>(nodeData), pinIdx, i);
@@ -2189,10 +2193,13 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
             {
                 plotData(std::static_pointer_cast<const PosVel>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
-            else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
-                     || sourcePin->dataIdentifier.front() == InertialNavSol::type())
+            else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
             {
                 plotData(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
+            }
+            else if (sourcePin->dataIdentifier.front() == InsGnssLCKFSolution::type())
+            {
+                plotData(std::static_pointer_cast<const InsGnssLCKFSolution>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
             // ------------------------------------------- GNSS ----------------------------------------------
             else if (sourcePin->dataIdentifier.front() == SppSolution::type())
@@ -2205,13 +2212,9 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
                 plotData(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIdx, i, Pos::GetStaticDescriptorCount());
             }
         }
-        else if (sourcePin->dataIdentifier.front() == LcKfInsGnssErrors::type())
+        else if (sourcePin->dataIdentifier.front() == InsGnssTCKFSolution::type())
         {
-            plotData(std::static_pointer_cast<const LcKfInsGnssErrors>(nodeData), pinIdx, i);
-        }
-        else if (sourcePin->dataIdentifier.front() == TcKfInsGnssErrors::type())
-        {
-            plotData(std::static_pointer_cast<const TcKfInsGnssErrors>(nodeData), pinIdx, i);
+            plotData(std::static_pointer_cast<const InsGnssTCKFSolution>(nodeData), pinIdx, i);
         }
 
         for (const auto& event : nodeData->events())

@@ -15,7 +15,7 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -787,7 +787,7 @@ void NAV::ImuFusion::updateNumberOfInputPins()
         _pinData.emplace_back();
         if (outputPins.size() < _nInputPins)
         {
-            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::LcKfInsGnssErrors::type() });
+            nm::CreateOutputPin(this, fmt::format("ImuBiases {}1", outputPins.size() + 1).c_str(), Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
         }
     }
     while (inputPins.size() > _nInputPins) // TODO: while loop still necessary here? guiConfig also deletes pins
@@ -1052,22 +1052,19 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     LOG_DATA("{}: called", nameId());
 
     auto imuObsFiltered = std::make_shared<ImuObs>(this->_imuPos);
-    auto imuRelativeBiases = std::make_shared<LcKfInsGnssErrors>();
+    auto imuRelativeBiases = std::make_shared<InsGnssLCKFSolution>();
 
     LOG_DATA("{}: Estimated state before prediction: x =\n{}", nameId(), _kalmanFilter.x);
 
     _kalmanFilter.predict();
 
-    if (imuObs->gyroUncompXYZ.has_value() && imuObs->accelUncompXYZ.has_value())
-    {
-        _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->gyroUncompXYZ.value();
-        _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->accelUncompXYZ.value();
+    _kalmanFilter.z.block<3, 1>(0, 0) = imuObs->p_angularRate;
+    _kalmanFilter.z.block<3, 1>(3, 0) = imuObs->p_acceleration;
 
-        LOG_DATA("{}: Measurements z =\n{}", nameId(), _kalmanFilter.z);
+    LOG_DATA("{}: Measurements z =\n{}", nameId(), _kalmanFilter.z);
 
-        _kalmanFilter.correct();
-        LOG_DATA("{}: Estimated state after correction: x =\n{}", nameId(), _kalmanFilter.x);
-    }
+    _kalmanFilter.correct();
+    LOG_DATA("{}: Estimated state after correction: x =\n{}", nameId(), _kalmanFilter.x);
 
     if (_checkKalmanMatricesRanks)
     {
@@ -1092,8 +1089,8 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
 
     // Construct imuObs
     imuObsFiltered->insTime = imuObs->insTime;
-    imuObsFiltered->accelUncompXYZ.emplace(_kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0));
-    imuObsFiltered->gyroUncompXYZ.emplace(_kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0));
+    imuObsFiltered->p_acceleration = { _kalmanFilter.x(6, 0), _kalmanFilter.x(7, 0), _kalmanFilter.x(8, 0) };
+    imuObsFiltered->p_angularRate = { _kalmanFilter.x(0, 0), _kalmanFilter.x(1, 0), _kalmanFilter.x(2, 0) };
 
     // Detect jumps back in time
     if (imuObsFiltered->insTime < _lastFiltObs)
@@ -1387,11 +1384,11 @@ void NAV::ImuFusion::initializeKalmanFilterAuto()
             {
                 if (axisIndex < 3) // Accelerations X/Y/Z
                 {
-                    sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->accelUncompXYZ.value()[static_cast<uint32_t>(axisIndex)]);
+                    sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->p_acceleration[static_cast<uint32_t>(axisIndex)]);
                 }
                 else // Gyro X/Y/Z
                 {
-                    sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->gyroUncompXYZ.value()[static_cast<uint32_t>(axisIndex - 3)]);
+                    sensorComponents[pinIndex][axisIndex].push_back(sensorMeasurements[pinIndex][msgIndex]->p_angularRate[static_cast<uint32_t>(axisIndex - 3)]);
                 }
             }
         }
@@ -1498,7 +1495,7 @@ Eigen::Vector3d NAV::ImuFusion::variance(const std::vector<std::vector<double>>&
 {
     Eigen::Vector3d varianceVector = Eigen::Vector3d::Zero();
 
-    auto means = mean(sensorType, containerPos); // mean values for each axis
+    Eigen::Vector3d means = mean(sensorType, containerPos); // mean values for each axis
 
     for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
     {

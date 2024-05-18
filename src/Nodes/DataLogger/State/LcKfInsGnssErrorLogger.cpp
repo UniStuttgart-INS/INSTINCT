@@ -8,7 +8,7 @@
 
 #include "LcKfInsGnssErrorLogger.hpp"
 
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 
 #include "Navigation/Transformations/Units.hpp"
 
@@ -30,7 +30,7 @@ NAV::LcKfInsGnssErrorLogger::LcKfInsGnssErrorLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { LcKfInsGnssErrors::type() }, &LcKfInsGnssErrorLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { InsGnssLCKFSolution::type() }, &LcKfInsGnssErrorLogger::writeObservation);
 }
 
 NAV::LcKfInsGnssErrorLogger::~LcKfInsGnssErrorLogger()
@@ -128,7 +128,7 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(NAV::InputPin::NodeDataQueue&
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 9;
 
-    auto obs = std::static_pointer_cast<const LcKfInsGnssErrors>(queue.extract_front());
+    auto obs = std::static_pointer_cast<const InsGnssLCKFSolution>(queue.extract_front());
     if (!obs->insTime.empty())
     {
         _filestream << std::setprecision(valuePrecision) << std::round(calcTimeIntoRun(obs->insTime) * 1e9) / 1e9;
@@ -152,41 +152,41 @@ void NAV::LcKfInsGnssErrorLogger::writeObservation(NAV::InputPin::NodeDataQueue&
 
     // ----------------------------------------------- PVAError --------------------------------------------------
 
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->attitudeError(0))) { _filestream << rad2deg(obs->attitudeError(0)); }; // Roll error [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->attitudeError(0))) { _filestream << rad2deg(obs->attitudeError(0)); }; // Roll error [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->attitudeError(1))) { _filestream << rad2deg(obs->attitudeError(1)); }; // Pitch error [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->attitudeError(1))) { _filestream << rad2deg(obs->attitudeError(1)); }; // Pitch error [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->attitudeError(2))) { _filestream << rad2deg(obs->attitudeError(2)); }; // Yaw error [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->attitudeError(2))) { _filestream << rad2deg(obs->attitudeError(2)); }; // Yaw error [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->velocityError(0))) { _filestream << obs->velocityError(0); }; // North velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->velocityError(0))) { _filestream << obs->velocityError(0); }; // North velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->velocityError(1))) { _filestream << obs->velocityError(1); }; // East velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->velocityError(1))) { _filestream << obs->velocityError(1); }; // East velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->velocityError(2))) { _filestream << obs->velocityError(2); }; // Down velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->velocityError(2))) { _filestream << obs->velocityError(2); }; // Down velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->positionError(0))) { _filestream << rad2deg(obs->positionError(0)); }; // Latitude error [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->positionError(0))) { _filestream << rad2deg(obs->positionError(0)); }; // Latitude error [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->positionError(1))) { _filestream << rad2deg(obs->positionError(1)); }; // Longitude error [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->positionError(1))) { _filestream << rad2deg(obs->positionError(1)); }; // Longitude error [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::NED && !std::isnan(obs->positionError(2))) { _filestream << obs->positionError(2); }; // Altitude error [m]
+    if (obs->frame == InsGnssLCKFSolution::Frame::NED && !std::isnan(obs->positionError(2))) { _filestream << obs->positionError(2); }; // Altitude error [m]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->attitudeError(0))) { _filestream << rad2deg(obs->attitudeError(0)); }; // Alpha_eb [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->attitudeError(0))) { _filestream << rad2deg(obs->attitudeError(0)); }; // Alpha_eb [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->attitudeError(1))) { _filestream << rad2deg(obs->attitudeError(1)); }; // Beta_eb [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->attitudeError(1))) { _filestream << rad2deg(obs->attitudeError(1)); }; // Beta_eb [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->attitudeError(2))) { _filestream << rad2deg(obs->attitudeError(2)); }; // Gamma_eb [deg]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->attitudeError(2))) { _filestream << rad2deg(obs->attitudeError(2)); }; // Gamma_eb [deg]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->velocityError(0))) { _filestream << obs->velocityError(0); }; // ECEF X velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->velocityError(0))) { _filestream << obs->velocityError(0); }; // ECEF X velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->velocityError(1))) { _filestream << obs->velocityError(1); }; // ECEF Y velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->velocityError(1))) { _filestream << obs->velocityError(1); }; // ECEF Y velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->velocityError(2))) { _filestream << obs->velocityError(2); }; // ECEF Z velocity error [m/s]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->velocityError(2))) { _filestream << obs->velocityError(2); }; // ECEF Z velocity error [m/s]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->positionError(0))) { _filestream << obs->positionError(0); }; // ECEF X error [m]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->positionError(0))) { _filestream << obs->positionError(0); }; // ECEF X error [m]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->positionError(1))) { _filestream << obs->positionError(1); }; // ECEF Y error [m]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->positionError(1))) { _filestream << obs->positionError(1); }; // ECEF Y error [m]
     _filestream << ",";
-    if (obs->frame == LcKfInsGnssErrors::Frame::ECEF && !std::isnan(obs->positionError(2))) { _filestream << obs->positionError(2); }; // ECEF Z error [m]
+    if (obs->frame == InsGnssLCKFSolution::Frame::ECEF && !std::isnan(obs->positionError(2))) { _filestream << obs->positionError(2); }; // ECEF Z error [m]
     _filestream << ",";
 
     // ----------------------------------------------- ImuBiases -------------------------------------------------

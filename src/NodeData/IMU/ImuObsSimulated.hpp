@@ -13,18 +13,18 @@
 
 #pragma once
 
-#include "ImuObs.hpp"
+#include "ImuObsWDelta.hpp"
 
 namespace NAV
 {
 /// VectorNav Observation storage Class
-class ImuObsSimulated final : public ImuObs
+class ImuObsSimulated final : public ImuObsWDelta
 {
   public:
     /// @brief Constructor
     /// @param[in] imuPos Reference to the position and rotation info of the Imu
     explicit ImuObsSimulated(const ImuPos& imuPos)
-        : ImuObs(imuPos) {}
+        : ImuObsWDelta(imuPos) {}
 
     /// @brief Returns the type of the data class
     /// @return The data type
@@ -37,13 +37,15 @@ class ImuObsSimulated final : public ImuObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { ImuObs::type() };
+        auto parent = ImuObsWDelta::parentTypes();
+        parent.push_back(ImuObsWDelta::type());
+        return parent;
     }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
-        auto desc = ImuObs::GetStaticDataDescriptors();
+        auto desc = ImuObsWDelta::GetStaticDataDescriptors();
         desc.emplace_back("AccelDynamicsN [m/s^2]");
         desc.emplace_back("AccelDynamicsE [m/s^2]");
         desc.emplace_back("AccelDynamicsD [m/s^2]");
@@ -60,7 +62,7 @@ class ImuObsSimulated final : public ImuObs
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 32; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 30; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -77,49 +79,47 @@ class ImuObsSimulated final : public ImuObs
         switch (idx)
         {
         case 0:  // Time since startup [ns]
-        case 1:  // Mag uncomp X [Gauss]
-        case 2:  // Mag uncomp Y [Gauss]
-        case 3:  // Mag uncomp Z [Gauss]
-        case 4:  // Accel uncomp X [m/s^2]
-        case 5:  // Accel uncomp Y [m/s^2]
-        case 6:  // Accel uncomp Z [m/s^2]
-        case 7:  // Gyro uncomp X [rad/s]
-        case 8:  // Gyro uncomp Y [rad/s]
-        case 9:  // Gyro uncomp Z [rad/s]
-        case 10: // Mag Comp X [Gauss]
-        case 11: // Mag Comp Y [Gauss]
-        case 12: // Mag Comp Z [Gauss]
-        case 13: // Accel Comp X [m/s^2]
-        case 14: // Accel Comp Y [m/s^2]
-        case 15: // Accel Comp Z [m/s^2]
-        case 16: // Gyro Comp X [rad/s]
-        case 17: // Gyro Comp Y [rad/s]
-        case 18: // Gyro Comp Z [rad/s]
-        case 19: // Temperature [°C]
-            return ImuObs::getValueAt(idx);
-        case 20: // AccelDynamicsN [m/s^2]
+        case 1:  // Accel X [m/s^2]
+        case 2:  // Accel Y [m/s^2]
+        case 3:  // Accel Z [m/s^2]
+        case 4:  // Gyro X [rad/s]
+        case 5:  // Gyro Y [rad/s]
+        case 6:  // Gyro Z [rad/s]
+        case 7:  // Mag X [Gauss]
+        case 8:  // Mag Y [Gauss]
+        case 9:  // Mag Z [Gauss]
+        case 10: // Temperature [°C]
+        case 11: // dTime [s]
+        case 12: // dTheta X [deg]
+        case 13: // dTheta Y [deg]
+        case 14: // dTheta Z [deg]
+        case 15: // dVelocity X [m/s]
+        case 16: // dVelocity Y [m/s]
+        case 17: // dVelocity Z [m/s]
+            return ImuObsWDelta::getValueAt(idx);
+        case 18: // AccelDynamicsN [m/s^2]
             return n_accelDynamics.x();
-        case 21: // AccelDynamicsE [m/s^2]
+        case 19: // AccelDynamicsE [m/s^2]
             return n_accelDynamics.y();
-        case 22: // AccelDynamicsD [m/s^2]
+        case 20: // AccelDynamicsD [m/s^2]
             return n_accelDynamics.z();
-        case 23: // AngularRateN (ω_nb_n) [rad/s]
+        case 21: // AngularRateN (ω_nb_n) [rad/s]
             return n_angularRateDynamics.x();
-        case 24: // AngularRateE (ω_nb_n) [rad/s]
+        case 22: // AngularRateE (ω_nb_n) [rad/s]
             return n_angularRateDynamics.y();
-        case 25: // AngularRateD (ω_nb_n) [rad/s]
+        case 23: // AngularRateD (ω_nb_n) [rad/s]
             return n_angularRateDynamics.z();
-        case 26: // AccelDynamicsX ECEF [m/s^2]
+        case 24: // AccelDynamicsX ECEF [m/s^2]
             return e_accelDynamics.x();
-        case 27: // AccelDynamicsY ECEF [m/s^2]
+        case 25: // AccelDynamicsY ECEF [m/s^2]
             return e_accelDynamics.y();
-        case 28: // AccelDynamicsZ ECEF [m/s^2]
+        case 26: // AccelDynamicsZ ECEF [m/s^2]
             return e_accelDynamics.z();
-        case 29: // AngularRateX ECEF (ω_nb_e) [rad/s]
+        case 27: // AngularRateX ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.x();
-        case 30: // AngularRateY ECEF (ω_nb_e) [rad/s]
+        case 28: // AngularRateY ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.y();
-        case 31: // AngularRateZ ECEF (ω_nb_e) [rad/s]
+        case 29: // AngularRateZ ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.z();
         default:
             return std::nullopt;

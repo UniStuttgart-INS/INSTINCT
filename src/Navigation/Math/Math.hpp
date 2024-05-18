@@ -294,6 +294,17 @@ T sign(const T& x, const T& y)
     return -1.0 * fabs(x);
 }
 
+/// @brief Linear interpolation between vectors
+/// @param a Left value
+/// @param b Right value
+/// @param t Multiplier. [0, 1] for interpolation
+/// @return a + t * (b - a)
+template<typename Derived>
+typename Derived::PlainObject lerp(const Eigen::MatrixBase<Derived>& a, const Eigen::MatrixBase<Derived>& b, const typename Derived::Scalar& t)
+{
+    return a + t * (b - a);
+}
+
 /// @brief Calculates the incomplete elliptical integral of the second kind
 /// @param[in] phi Interval bound the integration uses from 0 to phi
 /// @param[in] m Function parameter that is integrated 1-m*sin(t)^2

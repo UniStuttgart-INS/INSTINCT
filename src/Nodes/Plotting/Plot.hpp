@@ -37,10 +37,9 @@
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
 
 namespace NAV
 {
@@ -392,11 +391,11 @@ class Plot : public Node, public CommonLog
         KvhObs::type(),
         VectorNavBinaryOutput::type(),
         // State
-        LcKfInsGnssErrors::type(),
+        InsGnssLCKFSolution::type(),
         Pos::type(),
         PosVel::type(),
         PosVelAtt::type(),
-        TcKfInsGnssErrors::type(),
+        InsGnssTCKFSolution::type(),
     };
 
     /// Index of the Collapsible Header currently being dragged

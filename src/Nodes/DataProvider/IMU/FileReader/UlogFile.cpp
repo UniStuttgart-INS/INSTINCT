@@ -1072,18 +1072,21 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                     LOG_DATA("{}: [{}] {}: {}", nameId(), timestamp, measurement.multi_id, measurement.message_name);
                 }
 
+                bool accelFound = false;
+                bool angularRateFound = false;
                 // Construct ImuObs
                 for (auto it = _epochData.begin(); it != _epochData.end();)
                 {
                     // Add accel data to ImuObs
                     if (std::holds_alternative<SensorAccel>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
-                        && !obs->accelUncompXYZ.has_value())
+                        && !accelFound)
                     {
+                        accelFound = true;
                         timeSinceStartupNew = it->first;
                         float accelX = std::get<SensorAccel>(it->second.data).x;
                         float accelY = std::get<SensorAccel>(it->second.data).y;
                         float accelZ = std::get<SensorAccel>(it->second.data).z;
-                        obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
+                        obs->p_acceleration = { accelX, accelY, accelZ };
                         auto delIt = it;
                         ++it;
                         _epochData.erase(delIt);
@@ -1091,13 +1094,14 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                     }
                     // Add gyro data to ImuObs
                     else if (std::holds_alternative<SensorGyro>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
-                             && !obs->gyroUncompXYZ.has_value())
+                             && !angularRateFound)
                     {
+                        angularRateFound = true;
                         timeSinceStartupNew = it->first;
                         float gyroX = std::get<SensorGyro>(it->second.data).x;
                         float gyroY = std::get<SensorGyro>(it->second.data).y;
                         float gyroZ = std::get<SensorGyro>(it->second.data).z;
-                        obs->gyroUncompXYZ.emplace(gyroX, gyroY, gyroZ);
+                        obs->p_angularRate = { gyroX, gyroY, gyroZ };
                         auto delIt = it;
                         ++it;
                         _epochData.erase(delIt);
@@ -1105,12 +1109,12 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                     }
                     // Add mag data to ImuObs
                     else if (std::holds_alternative<SensorMag>(it->second.data) && (it->second.multi_id == static_cast<uint8_t>(multi_id))
-                             && !obs->magUncompXYZ.has_value()) // TODO: Find out what is multi_id = 1. Px4 Mini is supposed to have only one magnetometer
+                             && !obs->p_magneticField.has_value()) // TODO: Find out what is multi_id = 1. Px4 Mini is supposed to have only one magnetometer
                     {
                         float magX = std::get<SensorMag>(it->second.data).x;
                         float magY = std::get<SensorMag>(it->second.data).y;
                         float magZ = std::get<SensorMag>(it->second.data).z;
-                        obs->magUncompXYZ.emplace(magX, magY, magZ);
+                        obs->p_magneticField.emplace(magX, magY, magZ);
                         auto delIt = it;
                         ++it;
                         _epochData.erase(delIt);

@@ -62,20 +62,22 @@ class VectorNavBinaryConverter : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// Enum specifying the type of the output message
+    enum class OutputType
+    {
+        ImuObs,       ///< Extract ImuObs data
+        ImuObsWDelta, ///< Extract ImuObsWDelta data
+        PosVelAtt,    ///< Extract PosVelAtt data
+        GnssObs,      ///< Extract GnssObs data
+        COUNT,        ///< Number of items in the enum
+    };
+
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;              ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT = 0; ///< @brief Flow (VectorNavBinaryOutput)
 
-    /// Enum specifying the type of the output message
-    enum OutputType
-    {
-        OutputType_ImuObsWDelta, ///< Extract ImuObsWDelta data
-        OutputType_PosVelAtt,    ///< Extract PosVelAtt data
-        OutputType_GnssObs,      ///< Extract GnssObs data
-    };
-
     /// The selected output type in the GUI
-    OutputType _outputType = OutputType_ImuObsWDelta;
+    OutputType _outputType = OutputType::ImuObsWDelta;
 
     /// Enum specifying the source for the PosVelAtt conversion
     enum PosVelSource
@@ -91,6 +93,9 @@ class VectorNavBinaryConverter : public Node
 
     /// GUI option. If checked forces position to a static value and velocity to 0
     bool _forceStatic = false;
+
+    /// Whether to extract the compensated data or the uncompensated
+    bool _useCompensatedData = false;
 
     /// Position, Velocity and Attitude at initialization (needed for static data)
     std::shared_ptr<const PosVelAtt> _posVelAtt__init = nullptr;
@@ -108,6 +113,11 @@ class VectorNavBinaryConverter : public Node
     /// @return The converted data
     std::shared_ptr<const ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 
+    /// @brief Converts the VectorNavBinaryOutput to a ImuObs observation
+    /// @param[in] vnObs VectorNavBinaryOutput to process
+    /// @return The converted data
+    std::shared_ptr<const ImuObs> convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
+
     /// @brief Converts the VectorNavBinaryOutput to a PosVelAtt observation
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
@@ -118,5 +128,10 @@ class VectorNavBinaryConverter : public Node
     /// @return The converted data
     static std::shared_ptr<const GnssObs> convert2GnssObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 };
+
+/// @brief Converts the enum to a string
+/// @param[in] value Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(NAV::VectorNavBinaryConverter::OutputType value);
 
 } // namespace NAV

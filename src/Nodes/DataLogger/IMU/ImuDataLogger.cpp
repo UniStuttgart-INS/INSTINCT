@@ -9,12 +9,14 @@
 #include "ImuDataLogger.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/ImuObsSimulated.hpp"
 
 #include "util/Logger.hpp"
 
 #include <iomanip> // std::setprecision
 
+#include "NodeRegistry.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -29,7 +31,7 @@ NAV::ImuDataLogger::ImuDataLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsSimulated::type() }, &ImuDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type(), NAV::ImuObsSimulated::type() }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()
@@ -110,14 +112,23 @@ bool NAV::ImuDataLogger::initialize()
                 << "AccX [m/s^2],AccY [m/s^2],AccZ [m/s^2],"
                 << "GyroX [rad/s],GyroY [rad/s],GyroZ [rad/s],"
                 << "Temperature [Celsius]";
-    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin();
-        sourcePin && sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
+    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin())
     {
-        _filestream << ","
-                    << "AccelDynamicsN [m/s^2],AccelDynamicsE [m/s^2],AccelDynamicsD [m/s^2],"
-                    << "AngularRateN (ω_nb_n) [rad/s],AngularRateE (ω_nb_n) [rad/s],AngularRateD (ω_nb_n) [rad/s],"
-                    << "AccelDynamicsX ECEF [m/s^2],AccelDynamicsY ECEF [m/s^2],AccelDynamicsZ ECEF [m/s^2],"
-                    << "AngularRateX ECEF (ω_nb_e) [rad/s],AngularRateY ECEF (ω_nb_e) [rad/s],AngularRateZ ECEF (ω_nb_e) [rad/s]";
+        if (NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { ImuObsWDelta::type() }))
+        {
+            _filestream << ","
+                        << "DeltaTime [s],"
+                        << "DeltaThetaX [deg],DeltaThetaY [deg],DeltaThetaZ [deg],"
+                        << "DeltaVelX [m/s],DeltaVelY [m/s],DeltaVelZ [m/s]";
+        }
+        if (NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { ImuObsSimulated::type() }))
+        {
+            _filestream << ","
+                        << "AccelDynamicsN [m/s^2],AccelDynamicsE [m/s^2],AccelDynamicsD [m/s^2],"
+                        << "AngularRateN (ω_nb_n) [rad/s],AngularRateE (ω_nb_n) [rad/s],AngularRateD (ω_nb_n) [rad/s],"
+                        << "AccelDynamicsX ECEF [m/s^2],AccelDynamicsY ECEF [m/s^2],AccelDynamicsZ ECEF [m/s^2],"
+                        << "AngularRateX ECEF (ω_nb_e) [rad/s],AngularRateY ECEF (ω_nb_e) [rad/s],AngularRateZ ECEF (ω_nb_e) [rad/s]";
+        }
     }
     _filestream << std::endl; // NOLINT(performance-avoid-endl)
 
@@ -159,70 +170,56 @@ void NAV::ImuDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, s
         _filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.toGPSweekTow().tow;
     }
     _filestream << ",";
-    if (obs->timeSinceStartup.has_value())
+    if (obs->timeSinceStartup)
     {
         _filestream << std::setprecision(valuePrecision) << obs->timeSinceStartup.value();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField)
     {
-        _filestream << obs->magUncompXYZ.value().x();
+        _filestream << obs->p_magneticField.value().x();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField)
     {
-        _filestream << obs->magUncompXYZ.value().y();
+        _filestream << obs->p_magneticField.value().y();
     }
     _filestream << ",";
-    if (obs->magUncompXYZ.has_value())
+    if (obs->p_magneticField)
     {
-        _filestream << obs->magUncompXYZ.value().z();
+        _filestream << obs->p_magneticField.value().z();
     }
+    _filestream << "," << obs->p_acceleration.x();
+    _filestream << "," << obs->p_acceleration.y();
+    _filestream << "," << obs->p_acceleration.z();
+    _filestream << "," << obs->p_angularRate.x();
+    _filestream << "," << obs->p_angularRate.y();
+    _filestream << "," << obs->p_angularRate.z();
     _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().x();
-    }
-    _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().y();
-    }
-    _filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
-    {
-        _filestream << obs->accelUncompXYZ.value().z();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().x();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().y();
-    }
-    _filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
-    {
-        _filestream << obs->gyroUncompXYZ.value().z();
-    }
-    _filestream << ",";
-    if (obs->temperature.has_value())
+    if (obs->temperature)
     {
         _filestream << obs->temperature.value();
     }
 
-    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin();
-        sourcePin && sourcePin->dataIdentifier.front() == ImuObsSimulated::type())
+    if (auto* sourcePin = inputPins[INPUT_PORT_INDEX_IMU_OBS].link.getConnectedPin())
     {
-        auto simObs = std::static_pointer_cast<const ImuObsSimulated>(obs);
+        if (NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { ImuObsWDelta::type() }))
+        {
+            auto simObs = std::static_pointer_cast<const ImuObsWDelta>(obs);
 
-        _filestream << "," << simObs->n_accelDynamics.x() << "," << simObs->n_accelDynamics.y() << "," << simObs->n_accelDynamics.z();
-        _filestream << "," << simObs->n_angularRateDynamics.x() << "," << simObs->n_angularRateDynamics.y() << "," << simObs->n_angularRateDynamics.z();
-        _filestream << "," << simObs->e_accelDynamics.x() << "," << simObs->e_accelDynamics.y() << "," << simObs->e_accelDynamics.z();
-        _filestream << "," << simObs->e_angularRateDynamics.x() << "," << simObs->e_angularRateDynamics.y() << "," << simObs->e_angularRateDynamics.z();
+            _filestream << "," << simObs->dtime;
+            _filestream << "," << simObs->dtheta.x() << "," << simObs->dtheta.y() << "," << simObs->dtheta.z();
+            _filestream << "," << simObs->dvel.x() << "," << simObs->dvel.y() << "," << simObs->dvel.z();
+        }
+        if (NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { ImuObsSimulated::type() }))
+        {
+            auto simObs = std::static_pointer_cast<const ImuObsSimulated>(obs);
+
+            _filestream << "," << simObs->n_accelDynamics.x() << "," << simObs->n_accelDynamics.y() << "," << simObs->n_accelDynamics.z();
+            _filestream << "," << simObs->n_angularRateDynamics.x() << "," << simObs->n_angularRateDynamics.y() << "," << simObs->n_angularRateDynamics.z();
+            _filestream << "," << simObs->e_accelDynamics.x() << "," << simObs->e_accelDynamics.y() << "," << simObs->e_accelDynamics.z();
+            _filestream << "," << simObs->e_angularRateDynamics.x() << "," << simObs->e_angularRateDynamics.y() << "," << simObs->e_angularRateDynamics.z();
+        }
     }
 
     _filestream << '\n';
