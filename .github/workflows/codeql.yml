@@ -80,7 +80,7 @@ jobs:
 
     - name: Installing conan dependencies
       run: |
-        conan install . --build=missing -s build_type=${{matrix.build_type}}
+        conan install . --build=missing -s build_type=${{matrix.build_type}} -v 2
     - name: Configure CMake
       run: |
         cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
