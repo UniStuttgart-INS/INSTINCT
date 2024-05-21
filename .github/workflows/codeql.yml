@@ -85,13 +85,16 @@ jobs:
       run: |
         conan remove -f '*/system'
 
-    - name: Initialize Conan (Create default profile)
+    - name: Create default Conan profile
       run: |
-        conan profile detect --force
-        
+        conan profile new default --force
+
     - name: Update Conan profile
       run: |
+        conan profile update settings.compiler=gcc default
+        conan profile update settings.compiler.version=13 default
         conan profile update settings.compiler.libcxx=libstdc++11 default
+        conan profile update settings.build_type=${{matrix.build_type}} default
 
     - name: Installing conan dependencies
       run: |
