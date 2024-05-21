@@ -84,6 +84,10 @@ jobs:
     - name: Cleanup Conan system packages (they are not properly cached)
       run: |
         conan remove -f '*/system'
+
+    - name: Initialize Conan (Create default profile)
+      run: |
+        conan profile detect --force
         
     - name: Update Conan profile
       run: |
