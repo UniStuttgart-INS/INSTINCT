@@ -70,6 +70,13 @@ jobs:
         ccache: true
         gcovr: true
 
+    - name: Install Conan 2.0.17
+      run: |
+        pip install conan==2.0.17
+
+    - name: Check Conan Version
+      run: conan --version
+
     - name: Setup Linux
       run: |
         sudo apt install -y libglfw3-dev libglfw3
@@ -77,10 +84,15 @@ jobs:
     - name: Cleanup Conan system packages (they are not properly cached)
       run: |
         conan remove -f '*/system'
+        
+    - name: Update Conan profile
+      run: |
+        conan profile update settings.compiler.libcxx=libstdc++11 default
 
     - name: Installing conan dependencies
       run: |
         conan install . --build=missing -s build_type=${{matrix.build_type}} -v 2
+        
     - name: Configure CMake
       run: |
         cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
