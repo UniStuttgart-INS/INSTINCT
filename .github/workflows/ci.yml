@@ -4,10 +4,10 @@ on:
   release:
     types: [published]
   push:
-    tags:
-    branches:
-      - main
-      - develop
+#    tags:
+#    branches:
+#      - main
+#      - develop
 
 
 env:
@@ -20,79 +20,111 @@ jobs:
   Clang-tidy:
     runs-on: ubuntu-22.04
     steps:
+    
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
+          
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
           compiler: llvm
           build_type: Release
           doxygen: "OFF"
+          
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
           compiler: llvm
           cmake: true
-          conan: true
+          conan: "2.2.2"
           clangtidy: true
+          
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
+          
+      - name: Checking conan version
+        run: |
+          conan --version
+          
+      - name: Create default conan profile
+        run: |
+          conan profile detect
+          
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
+          
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+      
       - name: Copy compile commands
         run: |
           cmake --build ./build --target copy-compile-commands --config Release
+      
       - name: Run clang-tidy on ./src
         run: |
           python3 ./tools/run-clang-tidy.py $PWD/src
+      
       - name: Run clang-tidy on ./test
         run: |
           python3 ./tools/run-clang-tidy.py $PWD/test
-
+  
   Documentation:
     runs-on: ubuntu-22.04
     steps:
+    
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
+          
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
-          compiler: gcc
+          compiler: gcc-11
           build_type: Release
           doxygen: "ON"
+          
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: gcc
+          compiler: gcc-11
           cmake: true
-          conan: true
+          conan: "2.2.2"
           doxygen: true
+          
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
           sudo apt install -y flex bison graphviz dia mscgen pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
+     
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
-          conan remove -f '*/system'
+          conan remove -f '*/system/*' || true
+      
+      - name: Checking conan version
+        run: |
+          conan --version
+      
+      - name: Create default conan profile
+        run: |
+          conan profile detect  
+     
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
+     
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    
       - name: Check documentation
         run: |
           cmake --build ./build --target doc --config Release
-
   Test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -105,8 +137,8 @@ jobs:
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
           - llvm
-          - gcc
-          - msvc
+          - gcc-11
+          - msvc-2022
         build_type:
           - Release
           - Debug
@@ -115,35 +147,36 @@ jobs:
 
         exclude:
           - os: ubuntu-22.04
-            compiler: msvc
+            compiler: msvc-2022
           - os: macos-12
-            compiler: gcc
+            compiler: gcc-11
           - os: macos-12
-            compiler: msvc
+            compiler: msvc-2022
           - os: windows-2022
-            compiler: gcc
+            compiler: gcc-11
           - os: windows-2022
             compiler: llvm
 
         include:
           # Add appropriate variables for gcov version required. This will intentionally break
           # if you try to use a compiler that does not have gcov set
-          - compiler: gcc
-            gcov_executable: gcov
+          - compiler: gcc-11
+            gcov_executable: gcov-11
           - compiler: llvm
-            gcov_executable: "llvm-cov gcov"
+            gcov_executable: "llvm-cov gcov-11"
 
           - os: ubuntu-22.04
-            compiler: gcc
+            compiler: gcc-11
             build_type: Release
             log-level: "OFF"
 
     steps:
+     
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
-
+      
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
@@ -157,36 +190,80 @@ jobs:
           compiler: ${{ matrix.compiler }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
           cmake: true
-          brew: true
-          conan: true
+#         brew: true
+          conan: "2.2.2"
           ccache: true
-          gcovr: true
+          gcovr: "7.2"
 
       - name: Setup MacOS
         if: ${{ runner.os == 'macOS' }}
         run: |
           brew install glfw
+
       - name: Setup Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
-          sudo apt install -y libglfw3-dev libglfw3
+          sudo apt install -y libglfw3-dev libglfw3     
 
+      - name: Setup Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install ninja
+          choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional"
+          choco install visualstudio2019-workload-vctools
+          choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
+      
+      - name: Configure MSVC environment
+        if: ${{ runner.os == 'Windows' }}
+        shell: cmd
+        run: |
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          set
+          
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
-          conan remove -f '*/system'
+          conan remove -f '*/system/*' || true
+    
+      - name: Create default conan profile
+        run: |
+          conan profile detect
+          
+      - name: Create custom conan profile
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          mkdir -p ~/.conan/profiles
+          conan profile detect --force
+          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default 
+
+      - name: Create Conan profile for Windows
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          conan profile detect --force
+          conan profile show default
+          sed -i 's/compiler.cppstd=[0-9]*/compiler.cppstd=17/' ~/.conan2/profiles/default
+          sed -i 's/compiler.version=[0-9]*/compiler.version=193/' ~/.conan2/profiles/default
+          sed -i 's/compiler.runtime=[a-zA-Z]*/compiler.runtime=dynamic/' ~/.conan2/profiles/default
+          sed -i 's/compiler.toolset=[a-zA-Z0-9]*/compiler.toolset=v142/' ~/.conan2/profiles/default
+          cat ~/.conan2/profiles/default
+  
       - name: Installing conan dependencies
         run: |
-          conan install . --build=missing -s build_type=${{matrix.build_type}}
+          conan install . --build=missing -s build_type=${{matrix.build_type}} -s compiler.cppstd=17
+     
       - name: Configure CMake
         run: |
           cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+      
       - name: Build
         run: |
           cmake --build ./build --config ${{matrix.build_type}}
+    
       - name: Test
         working-directory: ./build
         run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180 
+   
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
