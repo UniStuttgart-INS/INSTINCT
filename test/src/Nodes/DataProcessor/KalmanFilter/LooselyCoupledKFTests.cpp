@@ -115,18 +115,24 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
         });
 
-        // INS/GNSS LCKF (10) |> ImuObsIn (7) // FIXME: Why is this watcherCallback not working? Pin ID 7 is correct in the flow, but 'messageCounter_LCKF_ImuObs' is never incremented
-        nm::RegisterWatcherCallbackToInputPin(7, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        // INS/GNSS LCKF (10) |> ImuObsIn (7)
+        nm::RegisterWatcherCallbackToInputPin(7, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            LOG_DEBUG("ImuObsIn [{}]: ImuObsIn: {}", messageCounter_LCKF_ImuObs, node->inputPins[0].queue.size());
+            LOG_DEBUG("ImuObsIn [{}]: PosVel:   {}", messageCounter_LCKF_ImuObs, node->inputPins[1].queue.size());
             messageCounter_LCKF_ImuObs++;
         });
 
         // INS/GNSS LCKF (10) |> Init PVA (19)
-        nm::RegisterWatcherCallbackToInputPin(19, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        nm::RegisterWatcherCallbackToInputPin(19, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            LOG_DEBUG("Init PVA [{}]: ImuObsIn: {}", messageCounter_LCKF_InitPVA, node->inputPins[0].queue.size());
+            LOG_DEBUG("Init PVA [{}]: PosVel:   {}", messageCounter_LCKF_InitPVA, node->inputPins[1].queue.size());
             messageCounter_LCKF_InitPVA++;
         });
 
         // INS/GNSS LCKF (10) |> PosVel (8)
-        nm::RegisterWatcherCallbackToInputPin(8, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        nm::RegisterWatcherCallbackToInputPin(8, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+            LOG_DEBUG("PosVel   [{}]: ImuObsIn: {}", messageCounter_LCKF_PosVel, node->inputPins[0].queue.size());
+            LOG_DEBUG("PosVel   [{}]: PosVel:   {}", messageCounter_LCKF_PosVel, node->inputPins[1].queue.size());
             messageCounter_LCKF_PosVel++;
 
             auto obs = std::static_pointer_cast<const PosVelAtt>(queue.front());
@@ -167,10 +173,11 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         // ###########################################################################################################
         //
         // VectorNavFile - IMU (2)           VectorNavBinaryConverter (5)
-        //    (1) Binary Output |> --(6)-->  |> Binary Intput (4)   (3) ImuObsWDelta |> \         INS/GNSS LCKF (10)                           Plot (26)
-        //                                                                               \(36)--> |> ImuObsIn (7)   (9) PosVelAtt |> --(27)--> |> Pin 1 (21)
-        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(18)--> |> PosVel (8)
-        //     (12) Binary Output |> --(17)-->  |> Binary Intput (15) (14) PosVelAtt |> --(20)--> |> Init PVA (19)
+        //    (1) Binary Output |> --(6)-->  |> Binary Input (4)    (3) ImuObsWDelta |> \         INS/GNSS LCKF (10)                           Plot (26)
+        //                                                                               \(36)--> |> ImuObsIn (7)   (9) PosVelAtt |> --(27)--> |> LCKF (21)
+        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(18)--> |> PosVel (8)                               -|> VectorNav (37)
+        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(20)--> |> Init PVA (19)                           /
+        //                                                                              \---------------------------(38)--------------------/
         //
         // ###########################################################################################################
         REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));

@@ -417,7 +417,7 @@ bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, fl
     ImGui::SetNextItemWidth(width * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", label).c_str(), to_string(integrator._integrationAlgorithm)))
     {
-        for (size_t i = 0; i < static_cast<size_t>(InertialIntegrator::IntegrationAlgorithm::COUNT); i++)
+        for (size_t i = 0; i < static_cast<size_t>(InertialIntegrator::IntegrationAlgorithm::MultiStepRK3); i++) // TODO: InertialIntegrator::IntegrationAlgorithm::COUNT
         {
             const bool is_selected = (static_cast<size_t>(integrator._integrationAlgorithm) == i);
             if (ImGui::Selectable(to_string(static_cast<InertialIntegrator::IntegrationAlgorithm>(i)), is_selected))

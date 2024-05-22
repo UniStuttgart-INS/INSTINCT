@@ -26,6 +26,11 @@
             "id": 36,
             "startPinId": 3
         },
+        "link-38": {
+            "endPinId": 37,
+            "id": 38,
+            "startPinId": 14
+        },
         "link-6": {
             "endPinId": 4,
             "id": 6,
@@ -521,7 +526,7 @@
         "node-26": {
             "data": {
                 "dynamicInputPins": {
-                    "nDynamicInputPins": 1
+                    "nDynamicInputPins": 2
                 },
                 "nPlots": 7,
                 "overridePositionStartValues": false,
@@ -677,6 +682,86 @@
                         ],
                         "size": 0,
                         "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
                     }
                 ],
                 "plots": [
@@ -721,7 +806,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "x",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "North/South [m]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -750,8 +896,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -813,7 +960,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "y",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 6,
+                                "displayName": "East/West [m]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -842,8 +1050,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -905,7 +1114,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "z",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 4,
+                                "displayName": "Altitude [m]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -934,8 +1204,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -997,7 +1268,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Roll",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 17,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 17,
+                                "displayName": "Roll [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 17,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1026,8 +1358,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1089,7 +1422,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Pitch",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 18,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 18,
+                                "displayName": "Pitch [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 18,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1118,8 +1512,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1181,7 +1576,68 @@
                                     "eventMarkerWeight": 1.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Yaw",
+                                    "legendName": "LCKF",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 19,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 19,
+                                "displayName": "Yaw [deg]",
+                                "pinIndex": 1,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 19,
+                                    "eventMarkerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 1.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "VectorNav",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
@@ -1210,8 +1666,9 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1426,6 +1883,7 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
+                            0,
                             0
                         ],
                         "size": {
@@ -1453,7 +1911,11 @@
             "inputPins": [
                 {
                     "id": 21,
-                    "name": "Pin 1"
+                    "name": "LCKF"
+                },
+                {
+                    "id": 37,
+                    "name": "VectorNav"
                 }
             ],
             "kind": "Blueprint",
