@@ -98,6 +98,14 @@ jobs:
         conan profile update settings.arch=x86_64 default
         conan profile update settings.os=Linux default
 
+    - name: Set up working directory
+      run: |
+        cd /home/runner/work/INSTINCT/INSTINCT
+
+    - name: Create required directories
+      run: |
+        mkdir -p /home/runner/work/INSTINCT/INSTINCT/conan-cache
+
     - name: Installing conan dependencies
       run: |
         conan install . --build=missing -s build_type=${{matrix.build_type}} -v 2
