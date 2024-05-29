@@ -76,6 +76,9 @@ jobs:
         ccache: true
         gcovr: true
 
+    - name: Uninstall Conan 1.62.0
+      run: pip uninstall -y conan
+      
     - name: Install Conan 2.0.17
       run: |
         pip install conan==2.0.17
