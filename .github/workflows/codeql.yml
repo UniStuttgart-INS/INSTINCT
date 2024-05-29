@@ -53,11 +53,42 @@ jobs:
         submodules: recursive
 
     - name: Setup Cache
-      uses: ./.github/actions/setup_cache
+      uses: actions/cache@v3
       with:
-        compiler: ${{ matrix.compiler }}
-        build_type: ${{ matrix.build_type }}
-        doxygen: "OFF"
+        path: ${{ github.workspace }}/conan-cache
+        key: ${{ runner.os }}-conan-${{ matrix.language }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+        restore-keys: |
+          ${{ runner.os }}-conan-
+#      uses: ./.github/actions/setup_cache
+#      with:
+#        compiler: ${{ matrix.compiler }}
+#        build_type: ${{ matrix.build_type }}
+#        doxygen: "OFF"
+
+    - name: Check if Homebrew is installed
+      id: check_brew
+      run: |
+        if ! command -v brew &> /dev/null
+        then
+            echo "Homebrew is not installed"
+            echo "::set-output name=brew_installed::false"
+        else
+            echo "Homebrew is installed"
+            echo "::set-output name=brew_installed::true"
+        fi
+      shell: bash
+
+    - name: Install Homebrew
+      if: steps.check_brew.outputs.brew_installed != 'true'
+      run: |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> $HOME/.profile
+        eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+
+    - name: Install Brew Packages
+      if: steps.check_brew.outputs.brew_installed == 'true'
+      run: |
+        brew install cmake conan ccache gcovr
 
     - name: Setup Cpp
       uses: aminya/setup-cpp@v1
@@ -65,7 +96,7 @@ jobs:
         compiler: ${{ matrix.compiler }}
         vcvarsall: ${{ contains(matrix.os, 'windows' )}}
         cmake: true
-        brew: true
+#        brew: true
         conan: true
         ccache: true
         gcovr: true
@@ -97,10 +128,6 @@ jobs:
         conan profile update settings.build_type=${{matrix.build_type}} default
         conan profile update settings.arch=x86_64 default
         conan profile update settings.os=Linux default
-
-    - name: Set up working directory
-      run: |
-        cd /home/runner/work/INSTINCT/INSTINCT
 
     - name: Create required directories
       run: |
