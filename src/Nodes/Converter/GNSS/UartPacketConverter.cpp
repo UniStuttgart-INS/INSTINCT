@@ -201,22 +201,30 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, [
             auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(1);
             if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
             {
+                _syncOutCntCorr = 0;
                 _syncInCntCorr = timeSyncMaster->syncOutCnt;
             }
             else if (_lastSyncOutCnt > timeSyncMaster->syncOutCnt) // reset of the master
             {
+                _syncInCntCorr = 0;
                 _syncOutCntCorr = obs->timeOutputs.syncInCnt;
             }
-            else if (_lastSyncInCnt == 0 && _lastSyncOutCnt > 1) // slave counter started later
+            else if (_lastSyncOutCnt == 0 && timeSyncMaster->syncOutCnt > 1) // slave counter started later
             {
                 _syncInCntCorr = timeSyncMaster->syncOutCnt;
             }
+            else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
+            {
+                _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+            }
+            _lastSyncOutCnt = timeSyncMaster->syncOutCnt;
+            _lastSyncInCnt = obs->timeOutputs.syncInCnt;
             int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->syncOutCnt - _syncOutCntCorr;
             obs->insTime = timeSyncMaster->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
                            + std::chrono::seconds(syncCntDiff);
-            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
-                     vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
-                     timeSyncMaster->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
+            // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
+            //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+            //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
         }
         convertedData = obs;
     }

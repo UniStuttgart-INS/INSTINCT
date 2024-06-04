@@ -84,7 +84,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::espressif::EspressifUartSen
             _binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             _binaryPayloadLength = uart::stoh(_binaryPayloadLength, ENDIANNESS);
             _numOfBytesRemainingForCompletePacket = _binaryPayloadLength + 2U;
-            LOG_DEBUG("{}: Binary packet:  payload length={}", _name, _binaryPayloadLength);
+            LOG_DATA("{}: Binary packet:  payload length={}", _name, _binaryPayloadLength);
         }
         else
         {
