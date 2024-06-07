@@ -53,6 +53,10 @@
 		"mathover.forwardSkip": 9,
 		"todo-tree.filtering.excludeGlobs": [
 			"**/lib"
-		]
+		],
+		"rainbow_csv.autodetect_separators": [
+			","
+		],
+		"rainbow_csv.comment_prefix": "#"
 	}
 }
