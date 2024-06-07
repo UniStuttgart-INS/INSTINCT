@@ -883,16 +883,16 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(_devices.size()));
     size_t numMeasurements = _devices.size();
 
-    // if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)) || _useInitialValues)
-    // {
-    //     _state.e_position << _initialState.e_position;
-    //     if (_estimateBias)
-    //     {
-    //         _state.bias = _initialState.bias;
-    //     }
-    // }
+    if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)) || _useInitialValues)
+    {
+        _state.e_position << _initialState.e_position;
+        if (_estimateBias)
+        {
+            _state.bias = _initialState.bias;
+        }
+    }
 
-    for (size_t o = 0; o < 10; o++)
+    for (size_t o = 0; o < 15; o++)
     {
         LOG_DATA("{}: Iteration {}", nameId(), o);
         for (size_t i = 0; i < numMeasurements; i++)
@@ -921,7 +921,6 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             if (_weightedSolution)
             {
                 W(static_cast<int>(i), static_cast<int>(i)) = 1 / std::pow(_devices.at(i).distanceStd, 2);
-                // W /= W.sum(); // normalize the weights
             }
         }
         // solve the linear least squares problem
@@ -960,7 +959,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             lsq.solution.block<3, 1>(0, 0) = _state.e_position;
             break;
         }
-        if (o == 9)
+        if (o == 14)
         {
             LOG_DEBUG("{}: Solution did not converge", nameId());
             lsq.solution.setConstant(std::numeric_limits<double>::quiet_NaN());

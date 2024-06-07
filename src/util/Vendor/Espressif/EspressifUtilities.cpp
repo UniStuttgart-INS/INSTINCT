@@ -24,7 +24,7 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
     obs->insTime = util::time::GetCurrentInsTime();
     if (packet.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        obs->payloadLength = packet.extractUint16(); // TODO remove
+        obs->payloadLength = packet.extractUint16();
         // Mac address
         obs->macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}", packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8(), packet.extractUint8());
         std::transform(obs->macAddress.begin(), obs->macAddress.end(), obs->macAddress.begin(), ::toupper); // Convert to uppercase
