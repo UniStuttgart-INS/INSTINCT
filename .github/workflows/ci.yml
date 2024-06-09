@@ -82,7 +82,7 @@ jobs:
           sudo apt install -y flex bison graphviz dia mscgen pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
-          conan remove -f '*/system'
+          conan remove -f '*/system/*'
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
@@ -173,7 +173,7 @@ jobs:
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
-          conan remove -f '*/system'
+          conan remove -f '*/system/*'
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=${{matrix.build_type}}
