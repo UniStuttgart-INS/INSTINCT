@@ -35,7 +35,7 @@ jobs:
         with:
           compiler: llvm
           cmake: true
-            --conan "2.0.17"
+          conan: "2.0.17"
           clangtidy: true
       - name: Setup Linux
         run: |
@@ -74,7 +74,7 @@ jobs:
         with:
           compiler: gcc
           cmake: true
-            --conan "2.0.17"
+          conan: "2.0.17"
           doxygen: true
       - name: Setup Linux
         run: |
@@ -158,7 +158,7 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
           cmake: true
           brew: true
-            --conan "2.0.17"
+          conan: "2.0.17"
           ccache: true
           gcovr: true
 
