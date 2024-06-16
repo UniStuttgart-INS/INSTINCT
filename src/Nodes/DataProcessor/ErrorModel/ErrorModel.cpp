@@ -61,6 +61,11 @@ NAV::ErrorModel::ErrorModel()
     _imuAccelerometerRng.seed = dist(gen);
     _imuGyroscopeRng.seed = dist(gen);
 
+    _imuAccelerometerRWRng.seed = dist(gen);
+    _imuGyroscopeRWRng.seed = dist(gen);
+    _imuAccelerometerIRWRng.seed = dist(gen);
+    _imuGyroscopeIRWRng.seed = dist(gen);
+
     _positionRng.seed = dist(gen);
     _velocityRng.seed = dist(gen);
     _attitudeRng.seed = dist(gen);
@@ -234,6 +239,19 @@ void NAV::ErrorModel::guiConfig()
         }
         ImGui::Unindent();
     }
+    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+    {
+        ImGui::TextUnformatted("Random walk noise:");
+        ImGui::Indent();
+        noiseGuiInput("Accelerometer RW (Std. dev)", _imuAccelerometerRW, _imuAccelerometerRWUnit, "m/s^2/√(s)\0m/s^2/√(h)\0\0", "%.2g", _imuAccelerometerRWRng);
+        noiseGuiInput("Gyroscope RW (Std. dev)", _imuGyroscopeRW, _imuGyroscopeRWUnit, "rad/s/√(s)\0rad/s/√(h))\0deg/s/√(s)\0deg/s/√(h)\0\0", "%.2g", _imuGyroscopeRWRng);
+        ImGui::Unindent();
+        ImGui::TextUnformatted("Integrated Random walk noise:");
+        ImGui::Indent();
+        noiseGuiInput("Accelerometer IRW (Std. dev)", _imuAccelerometerIRW, _imuAccelerometerIRWUnit, "m/s^3/√(s)\0m/s^3/√(h)\0\0", "%.2g", _imuAccelerometerIRWRng);
+        noiseGuiInput("Gyroscope IRW (Std. dev)", _imuGyroscopeIRW, _imuGyroscopeIRWUnit, "rad/s^2/√(s)\0rad/s^2/√(h)\0deg/s^2/√(s)\0deg/s^2/√(h)\0\0", "%.2g", _imuGyroscopeIRWRng);
+        ImGui::Unindent();
+    }
 
     if (_inputType == InputType::GnssObs)
     {
@@ -397,6 +415,20 @@ json NAV::ErrorModel::save() const
     j["imuGyroscopeNoiseUnit"] = _imuGyroscopeNoiseUnit;
     j["imuGyroscopeNoise"] = _imuGyroscopeNoise;
     j["imuGyroscopeRng"] = _imuGyroscopeRng;
+    j["imuAccelerometerRWUnit"] = _imuAccelerometerRWUnit;
+    j["imuAccelerometerRW"] = _imuAccelerometerRW;
+    j["imuAccelerometerRWRng"] = _imuAccelerometerRWRng;
+
+    j["imuGyroscopeRWUnit"] = _imuGyroscopeRWUnit;
+    j["imuGyroscopeRW"] = _imuGyroscopeRW;
+    j["imuGyroscopeRWRng"] = _imuGyroscopeRWRng;
+    j["imuAccelerometerIRWUnit"] = _imuAccelerometerIRWUnit;
+    j["imuAccelerometerIRW"] = _imuAccelerometerIRW;
+    j["imuAccelerometerIRWRng"] = _imuAccelerometerIRWRng;
+    j["imuGyroscopeIRWUnit"] = _imuGyroscopeIRWUnit;
+    j["imuGyroscopeIRW"] = _imuGyroscopeIRW;
+    j["imuGyroscopeIRWRng"] = _imuGyroscopeIRWRng;
+
     // #########################################################################################################################################
     j["positionBiasUnit"] = _positionBiasUnit;
     j["positionBias"] = _positionBias;
@@ -452,6 +484,19 @@ void NAV::ErrorModel::restore(json const& j)
     if (j.contains("imuGyroscopeNoiseUnit")) { j.at("imuGyroscopeNoiseUnit").get_to(_imuGyroscopeNoiseUnit); }
     if (j.contains("imuGyroscopeNoise")) { j.at("imuGyroscopeNoise").get_to(_imuGyroscopeNoise); }
     if (j.contains("imuGyroscopeRng")) { j.at("imuGyroscopeRng").get_to(_imuGyroscopeRng); }
+
+    if (j.contains("imuAccelerometerRWUnit")) { j.at("imuAccelerometerRWUnit").get_to(_imuAccelerometerRWUnit); }
+    if (j.contains("imuAccelerometerRW")) { j.at("imuAccelerometerRW").get_to(_imuAccelerometerRW); }
+    if (j.contains("imuAccelerometerRWRng")) { j.at("imuAccelerometerRWRng").get_to(_imuAccelerometerRWRng); }
+    if (j.contains("imuGyroscopeRWUnit")) { j.at("imuGyroscopeRWUnit").get_to(_imuGyroscopeRWUnit); }
+    if (j.contains("imuGyroscopeRW")) { j.at("imuGyroscopeRW").get_to(_imuGyroscopeRW); }
+    if (j.contains("imuGyroscopeRWRng")) { j.at("imuGyroscopeRWRng").get_to(_imuGyroscopeRWRng); }
+    if (j.contains("imuAccelerometerIRWUnit")) { j.at("imuAccelerometerIRWUnit").get_to(_imuAccelerometerIRWUnit); }
+    if (j.contains("imuAccelerometerIRW")) { j.at("imuAccelerometerIRW").get_to(_imuAccelerometerIRW); }
+    if (j.contains("imuAccelerometerIRWRng")) { j.at("imuAccelerometerIRWRng").get_to(_imuAccelerometerIRWRng); }
+    if (j.contains("imuGyroscopeIRWUnit")) { j.at("imuGyroscopeIRWUnit").get_to(_imuGyroscopeIRWUnit); }
+    if (j.contains("imuGyroscopeIRW")) { j.at("imuGyroscopeIRW").get_to(_imuGyroscopeIRW); }
+    if (j.contains("imuGyroscopeIRWRng")) { j.at("imuGyroscopeIRWRng").get_to(_imuGyroscopeIRWRng); }
     // #########################################################################################################################################
     if (j.contains("positionBiasUnit")) { j.at("positionBiasUnit").get_to(_positionBiasUnit); }
     if (j.contains("positionBias")) { j.at("positionBias").get_to(_positionBias); }
@@ -503,6 +548,21 @@ bool NAV::ErrorModel::resetNode()
     {
         _imuAccelerometerRng.resetSeed(size_t(id));
         _imuGyroscopeRng.resetSeed(size_t(id));
+
+        _imuAccelerometerRWRng.resetSeed(size_t(id));
+        _imuGyroscopeRWRng.resetSeed(size_t(id));
+        _imuAccelerometerIRWRng.resetSeed(size_t(id));
+        _imuGyroscopeIRWRng.resetSeed(size_t(id));
+
+        RandomWalkAccelerometer.setZero();
+        RandomWalkGyroscope.setZero();
+
+        IntegratedRandomWalkAccelerometer.setZero();
+        IntegratedRandomWalkGyroscope.setZero();
+        IntegratedRandomWalkAccelerometer_velocity.setZero();
+        IntegratedRandomWalkGyroscope_velocity.setZero();
+
+        _lastObservationTime.reset();
     }
     else if (_inputType == InputType::PosVelAtt)
     {
@@ -693,16 +753,122 @@ std::shared_ptr<NAV::ImuObs> NAV::ErrorModel::receiveImuObs(const std::shared_pt
     }
     LOG_DATA("{}: gyroscopeNoiseStd = {} [rad/s]", nameId(), gyroscopeNoiseStd.transpose());
 
+    if (!_lastObservationTime.empty())
+    {
+        long double dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
+
+        // Accelerometer RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d accelerometerRWStd = Eigen::Vector3d::Zero();
+        switch (_imuAccelerometerRWUnit)
+        {
+        case ImuAccelerometerRWUnits::m_s2_sqrts:
+            accelerometerRWStd = _imuAccelerometerRW * sqrt(dt);
+            break;
+        case ImuAccelerometerRWUnits::m_s2_sqrth:
+            accelerometerRWStd = _imuAccelerometerRW / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: accelerometerRWStd = {} [m/s^2/sqrt(s)]", nameId(), accelerometerRWStd.transpose());
+
+        RandomWalkAccelerometer += Eigen::Vector3d{
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(0)),
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(1)),
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(2))
+        };
+
+        // Accelerometer IRW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d accelerometerIRWStd = Eigen::Vector3d::Zero();
+        switch (_imuAccelerometerIRWUnit)
+        {
+        case ImuAccelerometerIRWUnits::m_s3_sqrts:
+            accelerometerIRWStd = _imuAccelerometerIRW * sqrt(dt);
+            break;
+        case ImuAccelerometerIRWUnits::m_s3_sqrth:
+            accelerometerIRWStd = _imuAccelerometerIRW / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: accelerometerIRWStd = {} [m/s^3/sqrt(s)]", nameId(), accelerometerIRWStd.transpose());
+
+        // compute velocity RW first
+        IntegratedRandomWalkAccelerometer_velocity += Eigen::Vector3d{
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(0)),
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(1)),
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(2))
+        };
+
+        // then compute IRW
+        IntegratedRandomWalkAccelerometer = IntegratedRandomWalkAccelerometer + IntegratedRandomWalkAccelerometer_velocity * dt;
+
+        // Gyro RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d gyroscopeRWStd = Eigen::Vector3d::Zero();
+        switch (_imuGyroscopeRWUnit)
+        {
+        case ImuGyroscopeRWUnits::rad_s_sqrts:
+            gyroscopeRWStd = _imuGyroscopeRW * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::rad_s_sqrth:
+            gyroscopeRWStd = _imuGyroscopeRW / 60.0 * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::deg_s_sqrts:
+            gyroscopeRWStd = deg2rad(_imuGyroscopeRW) * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::deg_s_sqrth:
+            gyroscopeRWStd = deg2rad(_imuGyroscopeRW) / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: gyroscopeRWStd = {} [rad/s/sqrt(s)]", nameId(), gyroscopeRWStd.transpose());
+
+        RandomWalkGyroscope += Eigen::Vector3d{
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(0)),
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(1)),
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(2))
+        };
+
+        // Gyro RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d gyroscopeIRWStd = Eigen::Vector3d::Zero();
+        switch (_imuGyroscopeIRWUnit)
+        {
+        case ImuGyroscopeIRWUnits::rad_s2_sqrts:
+            gyroscopeIRWStd = _imuGyroscopeIRW * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::rad_s2_sqrth:
+            gyroscopeIRWStd = _imuGyroscopeIRW / 60.0 * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::deg_s2_sqrts:
+            gyroscopeIRWStd = deg2rad(_imuGyroscopeIRW) * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::deg_s2_sqrth:
+            gyroscopeIRWStd = deg2rad(_imuGyroscopeIRW) / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: gyroscopeIRWStd = {} [rad/s2/sqrt(s)]", nameId(), gyroscopeIRWStd.transpose());
+
+        // compute velocity RW first
+        IntegratedRandomWalkGyroscope_velocity += Eigen::Vector3d{
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(0)),
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(1)),
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(2))
+        };
+
+        // then compute IRW
+        IntegratedRandomWalkGyroscope += IntegratedRandomWalkGyroscope_velocity * dt;
+    }
+
     // #########################################################################################################################################
 
     imuObs->p_acceleration += accelerometerBias_p
                               + Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0)),
                                                  _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1)),
-                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) };
+                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) }
+                              + RandomWalkAccelerometer
+                              + IntegratedRandomWalkAccelerometer;
     imuObs->p_angularRate += gyroscopeBias_p
                              + Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0)),
                                                 _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1)),
-                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) };
+                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) }
+                             + RandomWalkGyroscope
+                             + IntegratedRandomWalkGyroscope;
+
     return imuObs;
 }
 
@@ -765,25 +931,132 @@ std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const st
     }
     LOG_DATA("{}: gyroscopeNoiseStd = {} [rad/s]", nameId(), gyroscopeNoiseStd.transpose());
 
+    if (!_lastObservationTime.empty())
+    {
+        long double dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
+
+        // Accelerometer RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d accelerometerRWStd = Eigen::Vector3d::Zero();
+        switch (_imuAccelerometerRWUnit)
+        {
+        case ImuAccelerometerRWUnits::m_s2_sqrts:
+            accelerometerRWStd = _imuAccelerometerRW * sqrt(dt);
+            break;
+        case ImuAccelerometerRWUnits::m_s2_sqrth:
+            accelerometerRWStd = _imuAccelerometerRW / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: accelerometerRWStd = {} [m/s^2/sqrt(s)]", nameId(), accelerometerRWStd.transpose());
+
+        RandomWalkAccelerometer += Eigen::Vector3d{
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(0)),
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(1)),
+            _imuAccelerometerRWRng.getRand_normalDist(0.0, accelerometerRWStd(2))
+        };
+
+        // Accelerometer IRW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d accelerometerIRWStd = Eigen::Vector3d::Zero();
+        switch (_imuAccelerometerIRWUnit)
+        {
+        case ImuAccelerometerIRWUnits::m_s3_sqrts:
+            accelerometerIRWStd = _imuAccelerometerIRW * sqrt(dt);
+            break;
+        case ImuAccelerometerIRWUnits::m_s3_sqrth:
+            accelerometerIRWStd = _imuAccelerometerIRW / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: accelerometerIRWStd = {} [m/s^3/sqrt(s)]", nameId(), accelerometerIRWStd.transpose());
+
+        // compute velocity RW first
+        IntegratedRandomWalkAccelerometer_velocity += Eigen::Vector3d{
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(0)),
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(1)),
+            _imuAccelerometerIRWRng.getRand_normalDist(0.0, accelerometerIRWStd(2))
+        };
+
+        // then compute IRW
+        IntegratedRandomWalkAccelerometer = IntegratedRandomWalkAccelerometer + IntegratedRandomWalkAccelerometer_velocity * dt;
+
+        // Gyro RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d gyroscopeRWStd = Eigen::Vector3d::Zero();
+        switch (_imuGyroscopeRWUnit)
+        {
+        case ImuGyroscopeRWUnits::rad_s_sqrts:
+            gyroscopeRWStd = _imuGyroscopeRW * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::rad_s_sqrth:
+            gyroscopeRWStd = _imuGyroscopeRW / 60.0 * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::deg_s_sqrts:
+            gyroscopeRWStd = deg2rad(_imuGyroscopeRW) * sqrt(dt);
+            break;
+        case ImuGyroscopeRWUnits::deg_s_sqrth:
+            gyroscopeRWStd = deg2rad(_imuGyroscopeRW) / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: gyroscopeRWStd = {} [rad/s/sqrt(s)]", nameId(), gyroscopeRWStd.transpose());
+
+        RandomWalkGyroscope += Eigen::Vector3d{
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(0)),
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(1)),
+            _imuGyroscopeRWRng.getRand_normalDist(0.0, gyroscopeRWStd(2))
+        };
+
+        // Gyro RW standard deviation in platform frame coordinates [m/s^2]
+        Eigen::Vector3d gyroscopeIRWStd = Eigen::Vector3d::Zero();
+        switch (_imuGyroscopeIRWUnit)
+        {
+        case ImuGyroscopeIRWUnits::rad_s2_sqrts:
+            gyroscopeIRWStd = _imuGyroscopeIRW * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::rad_s2_sqrth:
+            gyroscopeIRWStd = _imuGyroscopeIRW / 60.0 * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::deg_s2_sqrts:
+            gyroscopeIRWStd = deg2rad(_imuGyroscopeIRW) * sqrt(dt);
+            break;
+        case ImuGyroscopeIRWUnits::deg_s2_sqrth:
+            gyroscopeIRWStd = deg2rad(_imuGyroscopeIRW) / 60.0 * sqrt(dt);
+            break;
+        }
+        LOG_DATA("{}: gyroscopeIRWStd = {} [rad/s2/sqrt(s)]", nameId(), gyroscopeIRWStd.transpose());
+
+        // compute velocity RW first
+        IntegratedRandomWalkGyroscope_velocity += Eigen::Vector3d{
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(0)),
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(1)),
+            _imuGyroscopeIRWRng.getRand_normalDist(0.0, gyroscopeIRWStd(2))
+        };
+
+        // then compute IRW
+        IntegratedRandomWalkGyroscope += IntegratedRandomWalkGyroscope_velocity * dt;
+    }
+
     // #########################################################################################################################################
 
     imuObs->dvel += accelerometerBias_p * imuObs->dtime
                     + Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0) / std::sqrt(_imuObsWDeltaAverageWindow)),
                                        _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1) / std::sqrt(_imuObsWDeltaAverageWindow)),
-                                       _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(_imuObsWDeltaAverageWindow)) };
+                                       _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(_imuObsWDeltaAverageWindow)) }
+                    + imuObs->dtime * (RandomWalkAccelerometer + IntegratedRandomWalkAccelerometer);
     imuObs->dtheta += gyroscopeBias_p * imuObs->dtime
                       + Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0) / std::sqrt(_imuObsWDeltaAverageWindow)),
                                          _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1) / std::sqrt(_imuObsWDeltaAverageWindow)),
-                                         _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(_imuObsWDeltaAverageWindow)) };
+                                         _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(_imuObsWDeltaAverageWindow)) }
+                      + imuObs->dtime * (RandomWalkGyroscope + IntegratedRandomWalkGyroscope);
 
     imuObs->p_acceleration += accelerometerBias_p
                               + Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0)),
                                                  _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1)),
-                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) };
+                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) }
+                              + RandomWalkAccelerometer
+                              + IntegratedRandomWalkAccelerometer;
     imuObs->p_angularRate += gyroscopeBias_p
                              + Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0)),
                                                 _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1)),
-                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) };
+                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) }
+                             + RandomWalkGyroscope
+                             + IntegratedRandomWalkGyroscope;
     return imuObs;
 }
 
