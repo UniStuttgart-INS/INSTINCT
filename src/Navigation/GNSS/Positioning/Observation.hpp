@@ -145,11 +145,15 @@ struct Observations
         int8_t _freqNum = -128;                               ///< Frequency number. Only used for GLONASS G1 and G2
     };
 
-    unordered_map<SatSigId, SignalObservation> signals;                               ///< Observations and calculated data for each signal
+    unordered_map<SatSigId, SignalObservation> signals; ///< Observations and calculated data for each signal
+
     std::set<SatelliteSystem> systems;                                                ///< Satellite systems used
     std::unordered_set<SatId> satellites;                                             ///< Satellites used
     std::array<size_t, GnssObs::ObservationType_COUNT> nObservables{};                ///< Number of observables
     std::array<size_t, GnssObs::ObservationType_COUNT> nObservablesUniqueSatellite{}; ///< Number of observables (counted once for each satellite)
+
+    /// @brief Calculates/Recalculates the number of observables
+    void recalcObservableCounts();
 };
 
 } // namespace NAV

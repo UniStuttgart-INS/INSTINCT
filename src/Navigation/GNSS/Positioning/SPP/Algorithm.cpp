@@ -41,7 +41,7 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
     changed |= ImGui::Checkbox(fmt::format("Estimate inter-frequency biases##{}", id).c_str(), &_estimateInterFreqBiases);
     if (!canEstimateInterFrequencyBias()) { ImGui::EndDisabled(); }
 
-    changed |= _obsEstimator.ShowGuiWidgets(id, itemWidth);
+    changed |= _obsEstimator.ShowGuiWidgets<ReceiverType>(id, itemWidth);
 
     if (_estimatorType == EstimatorType::KalmanFilter)
     {
@@ -56,6 +56,7 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
 void Algorithm::reset()
 {
     for (auto& receiver : _receiver) { receiver = Receiver(receiver.type); }
+    _obsFilter.reset();
     _kalmanFilter.reset();
     _lastUpdate.reset();
 }
@@ -85,20 +86,20 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
     if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
     {
-        _kalmanFilter.predict(dt, _receiver[Rover].lla_pos, nameId);
+        _kalmanFilter.predict(dt, _receiver[Rover].lla_posMarker, nameId);
         assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
     }
 
     constexpr size_t N_ITER_MAX_LSQ = 10;
     size_t nIter = _estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized() ? 1 : N_ITER_MAX_LSQ;
-    Eigen::Vector3d e_oldPos = _receiver[Rover].e_pos;
+    Eigen::Vector3d e_oldPos = _receiver[Rover].e_posMarker;
     for (size_t iteration = 0; iteration < nIter; iteration++)
     {
         LOG_DATA("{}: [{}] iteration {}/{}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), iteration + 1, nIter);
-        LOG_DATA("{}: [{}]   e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_pos.transpose());
+        LOG_DATA("{}: [{}]   e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
         LOG_DATA("{}: [{}]   e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
         LOG_DATA("{}: [{}] lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 rad2deg(_receiver[Rover].lla_pos.x()), rad2deg(_receiver[Rover].lla_pos.y()), _receiver[Rover].lla_pos.z());
+                 rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
         LOG_DATA("{}: [{}]   clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
         LOG_DATA("{}: [{}]   clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
         for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); i++)
@@ -207,7 +208,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     KeyedVectorXd<States::StateKeyTypes> x(Eigen::VectorXd::Zero(lsq.solution.rows()), lsq.solution.rowKeys());
                     KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> P(Eigen::MatrixXd::Zero(lsq.variance.rows(), lsq.variance.cols()),
                                                                                   lsq.variance.rowKeys(), lsq.variance.colKeys());
-                    x.segment<3>(States::Pos) = _receiver[Rover].e_pos;
+                    x.segment<3>(States::Pos) = _receiver[Rover].e_posMarker;
                     if (x.hasAnyRows(States::Vel)) { x.segment<3>(States::Vel) = _receiver[Rover].e_vel; }
                     x(States::RecvClkErr) = _receiver[Rover].recvClk.bias.value * InsConst<>::C;
                     if (x.hasRow(States::RecvClkDrift)) { x(States::RecvClkDrift) = _receiver[Rover].recvClk.drift.value * InsConst<>::C; }
@@ -231,7 +232,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     LOG_DATA("{}: x =\n{}", nameId, _kalmanFilter.getState().transposed());
                     LOG_DATA("{}: P =\n{}", nameId, _kalmanFilter.getErrorCovarianceMatrix());
                 }
-                sppSol->setPositionAndStdDev_e(_receiver[Rover].e_pos, lsq.variance.block<3>(States::Pos, States::Pos));
+                sppSol->setPositionAndStdDev_e(_receiver[Rover].e_posMarker, lsq.variance.block<3>(States::Pos, States::Pos));
                 if (canCalculateVelocity(observations.nObservables[GnssObs::Doppler]))
                 {
                     sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, lsq.variance.block<3>(States::Vel, States::Vel));
@@ -256,7 +257,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         {
             _kalmanFilter.update(measKeys, H, R, dz, nameId);
 
-            if (double posDiff = (_kalmanFilter.getState()(States::Pos) - _receiver[Rover].e_pos).norm();
+            if (double posDiff = (_kalmanFilter.getState()(States::Pos) - _receiver[Rover].e_posMarker).norm();
                 posDiff > 100)
             {
                 std::string msg = fmt::format("Potential clock jump detected. Reinitializing KF with WLSQ.\nPosition difference to previous epoch {:.1f}m", posDiff);
@@ -268,7 +269,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             }
 
             assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
-            sppSol->setPositionAndStdDev_e(_receiver[Rover].e_pos, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Pos, States::Pos));
+            sppSol->setPositionAndStdDev_e(_receiver[Rover].e_posMarker, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Pos, States::Pos));
             sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Vel, States::Vel));
             sppSol->setCovarianceMatrix(_kalmanFilter.getErrorCovarianceMatrix());
 
@@ -290,12 +291,12 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
     sppSol->interFrequencyBias = _receiver[Rover].interFrequencyBias;
 
 #if LOG_LEVEL <= LOG_LEVEL_DATA
-    if (sppSol->e_position() != _receiver[Rover].e_pos)
+    if (sppSol->e_position() != _receiver[Rover].e_posMarker)
     {
         LOG_DATA("{}: [{}] Receiver:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 _receiver[Rover].e_pos(0), _receiver[Rover].e_pos(1), _receiver[Rover].e_pos(2));
+                 _receiver[Rover].e_posMarker(0), _receiver[Rover].e_posMarker(1), _receiver[Rover].e_posMarker(2));
         LOG_DATA("{}: [{}] Receiver: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 rad2deg(_receiver[Rover].lla_pos.x()), rad2deg(_receiver[Rover].lla_pos.y()), _receiver[Rover].lla_pos.z());
+                 rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
     }
     if (sppSol->e_velocity() != _receiver[Rover].e_vel)
     {
@@ -651,8 +652,8 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
                                          size_t nParams, size_t nUniqueDopplerMeas, double dt,
                                          [[maybe_unused]] const std::string& nameId)
 {
-    _receiver[Rover].e_pos += state.segment<3>(States::Pos);
-    _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
+    _receiver[Rover].e_posMarker += state.segment<3>(States::Pos);
+    _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
     _receiver[Rover].recvClk.bias.value += state(States::RecvClkErr) / InsConst<>::C;
     _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
     for (const auto& s : state.rowKeys())
@@ -699,18 +700,18 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
                           nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), nUniqueDopplerMeas, nParams);
             }
             LOG_DATA("{}: [{}] e_oldPos = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), e_oldPos.transpose());
-            LOG_DATA("{}: [{}] e_newPos = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_pos.transpose());
+            LOG_DATA("{}: [{}] e_newPos = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
             LOG_DATA("{}: [{}] dt = {}s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), dt);
-            _receiver[Rover].e_vel = (_receiver[Rover].e_pos - e_oldPos) / dt;
+            _receiver[Rover].e_vel = (_receiver[Rover].e_posMarker - e_oldPos) / dt;
             LOG_DATA("{}: [{}] e_vel = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
         }
     }
 
     LOG_DATA("{}: [{}] Assigning solution to _receiver[Rover]", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
-    LOG_DATA("{}: [{}]     e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_pos.transpose());
+    LOG_DATA("{}: [{}]     e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
     LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
     LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             rad2deg(_receiver[Rover].lla_pos.x()), rad2deg(_receiver[Rover].lla_pos.y()), _receiver[Rover].lla_pos.z());
+             rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
     LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
     LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
     for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); i++)
@@ -740,8 +741,8 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
                                          const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
                                          [[maybe_unused]] const std::string& nameId)
 {
-    _receiver[Rover].e_pos = state(States::Pos);
-    _receiver[Rover].lla_pos = trafo::ecef2lla_WGS84(_receiver[Rover].e_pos);
+    _receiver[Rover].e_posMarker = state(States::Pos);
+    _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
     _receiver[Rover].e_vel = state(States::Vel);
     _receiver[Rover].recvClk.bias.value = state(States::RecvClkErr) / InsConst<>::C;
     _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
@@ -774,10 +775,10 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
 
     LOG_DATA("{}: [{}] Assigning solution to _receiver[Rover]", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
     LOG_DATA("{}: [{}]     e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             _receiver[Rover].e_pos(0), _receiver[Rover].e_pos(1), _receiver[Rover].e_pos(2));
+             _receiver[Rover].e_posMarker(0), _receiver[Rover].e_posMarker(1), _receiver[Rover].e_posMarker(2));
     LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
     LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             rad2deg(_receiver[Rover].lla_pos.x()), rad2deg(_receiver[Rover].lla_pos.y()), _receiver[Rover].lla_pos.z());
+             rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
     LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
     LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
 

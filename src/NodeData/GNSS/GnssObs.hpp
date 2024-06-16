@@ -17,6 +17,7 @@
 #include <optional>
 #include <vector>
 #include <algorithm>
+#include <Eigen/Core>
 
 #include "NodeData/NodeData.hpp"
 
@@ -320,6 +321,25 @@ class GnssObs : public NodeData
         }
         return dynData;
     }
+
+    /// Receiver Information, e.g. from RINEX header
+    struct ReceiverInfo
+    {
+        ///< Approximate receiver position in [m], e.g. from RINEX header
+        std::optional<Eigen::Vector3d> e_approxPos;
+
+        /// Antenna Type. Empty if unknown
+        std::string antennaType;
+
+        /// @brief Antenna Delta (North, East, Up) in [m]
+        ///
+        /// - Horizontal eccentricity of ARP relative to the marker (north/east)
+        /// - Height of the antenna reference point (ARP) above the marker
+        Eigen::Vector3d antennaDeltaNEU = Eigen::Vector3d::Zero();
+    };
+
+    /// Optional Receiver Information, e.g. from RINEX header
+    std::optional<std::reference_wrapper<ReceiverInfo>> receiverInfo;
 
   private:
     /// @brief Useful information of the satellites

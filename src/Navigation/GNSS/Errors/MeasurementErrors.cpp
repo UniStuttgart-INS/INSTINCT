@@ -93,7 +93,7 @@ double GnssMeasurementErrorModel::weightingFunction(Model model, double elevatio
         return _modelParametersSineCN0.a / std::sin(elevation) * (_modelParametersSineCN0.b + _modelParametersSineCN0.c / std::sqrt(cn0));
     case Model::RTKLIB:
         elevation = std::max(elevation, deg2rad(5.0));
-        return std::sqrt(std::pow(_modelParametersRtklib.a, 2) + std::pow(_modelParametersRtklib.b, 2) / std::sin(elevation));
+        return std::sqrt(std::pow(_modelParametersRtklib.a, 2) + std::pow(_modelParametersRtklib.b / std::sin(elevation), 2));
     case Model::SINE_TYPE:
         return std::sqrt(_modelParametersSineType.a + _modelParametersSineType.b / elevation);
     case Model::SINE_SQRT:
@@ -106,7 +106,7 @@ double GnssMeasurementErrorModel::weightingFunction(Model model, double elevatio
     case Model::COUNT:
         break;
     }
-    return 0.0;
+    return 1.0;
 }
 
 void GnssMeasurementErrorModel::updateStdDevCurvePlot(Model model)

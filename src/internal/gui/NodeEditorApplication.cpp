@@ -105,6 +105,8 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     ImPlot::CreateContext();
+    ImPlot::GetStyle().Use24HourClock = true;
+
     imPlotReferenceStyle = ImPlot::GetStyle();
 
     std::filesystem::path imPlotConfigFilepath = flow::GetConfigPath();

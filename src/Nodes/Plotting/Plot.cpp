@@ -7,10 +7,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Plot.hpp"
+#include <array>
+#include <cmath>
+#include <cstddef>
+#include <imgui.h>
+#include <implot.h>
+#include <utility>
 
 #include "util/Logger.hpp"
 
 #include "internal/NodeManager.hpp"
+#include <fmt/core.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/ConfigManager.hpp"
@@ -574,6 +581,7 @@ void NAV::Plot::guiConfig()
                 ImGui::EndDragDropSource();
             }
 
+            bool saveForceXaxisRange = false;
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
             if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotIdx).c_str()))
             {
@@ -658,6 +666,23 @@ void NAV::Plot::guiConfig()
                                     {
                                         flow::ApplyChanges();
                                         plot.selectedXdata.at(pinIndex) = plotDataIndex;
+                                        if (plotDataIndex == GPST_PLOT_IDX) // GPST Time
+                                        {
+                                            // Set all data to plot over GPST Time
+                                            for (auto& selectedX : plot.selectedXdata)
+                                            {
+                                                selectedX = plotDataIndex;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // Remove all GPST Time on the x axis
+                                            for (auto& selectedX : plot.selectedXdata)
+                                            {
+                                                if (selectedX == GPST_PLOT_IDX) { selectedX = 0; }
+                                            }
+                                        }
+
                                         for (auto& plotItem : plot.plotItems)
                                         {
                                             plotItem.eventMarker.clear();
@@ -707,6 +732,22 @@ void NAV::Plot::guiConfig()
                 {
                     flow::ApplyChanges();
                 }
+                ImGui::SameLine();
+                if (ImGui::Button(fmt::format("Same X range all plots##{} - {}", size_t(id), plotIdx).c_str()))
+                {
+                    saveForceXaxisRange = true;
+                    _forceXaxisRange.first.clear();
+                    size_t pinIdx = plot.plotItems.empty() ? 0 : plot.plotItems.front().pinIndex;
+                    const auto& xName = _pinData.at(pinIdx).plotData.at(plot.selectedXdata.at(pinIdx)).displayName;
+                    for (size_t p = 0; p < _plots.size(); p++)
+                    {
+                        if (p == plotIdx) { continue; }
+                        auto& plot = _plots.at(p);
+                        size_t pinIdx = plot.plotItems.empty() ? 0 : plot.plotItems.front().pinIndex;
+                        const auto& dispName = _pinData.at(pinIdx).plotData.at(plot.selectedXdata.at(pinIdx)).displayName;
+                        if (xName == dispName) { _forceXaxisRange.first.insert(p); }
+                    }
+                }
 
                 auto axisScaleCombo = [&](const char* label, ImPlotScale& axisScale) {
                     auto getImPlotScaleString = [](ImPlotScale scale) {
@@ -714,8 +755,8 @@ void NAV::Plot::guiConfig()
                         {
                         case ImPlotScale_Linear: // default linear scale
                             return "Linear";
-                        case ImPlotScale_Time: // date/time scale
-                            return "Time";
+                        // case ImPlotScale_Time: // date/time scale
+                        //     return "Time";
                         case ImPlotScale_Log10: // base 10 logartithmic scale
                             return "Log10";
                         case ImPlotScale_SymLog: // symmetric log scale
@@ -731,6 +772,7 @@ void NAV::Plot::guiConfig()
                     {
                         for (size_t n = 0; n < 4; ++n)
                         {
+                            if (n == ImPlotScale_Time) { continue; }
                             const bool is_selected = (static_cast<size_t>(axisScale) == n);
                             if (ImGui::Selectable(getImPlotScaleString(static_cast<ImPlotScale>(n)), is_selected))
                             {
@@ -847,15 +889,18 @@ void NAV::Plot::guiConfig()
                             label += fmt::format(" (Y{})", iter->axis + 1 - 3);
                         }
 
-                        ImGui::Selectable(label.c_str(), false, 0);
-                        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                        if (!label.empty())
                         {
-                            // Data is copied into heap inside the drag and drop
-                            auto pinAndDataIndex = std::make_tuple(plot.selectedPin, dataIndex, &plotData.displayName);
-                            ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
-                                                      &pinAndDataIndex, sizeof(pinAndDataIndex));
-                            ImGui::TextUnformatted(label.c_str());
-                            ImGui::EndDragDropSource();
+                            ImGui::Selectable(label.c_str(), false, 0);
+                            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                            {
+                                // Data is copied into heap inside the drag and drop
+                                auto pinAndDataIndex = std::make_tuple(plot.selectedPin, dataIndex, &plotData.displayName);
+                                ImGui::SetDragDropPayload(fmt::format("DND PlotItem {} - {}", size_t(id), plotIdx).c_str(),
+                                                          &pinAndDataIndex, sizeof(pinAndDataIndex));
+                                ImGui::TextUnformatted(label.c_str());
+                                ImGui::EndDragDropSource();
+                            }
                         }
 
                         if (!plotDataHasData)
@@ -878,10 +923,45 @@ void NAV::Plot::guiConfig()
             const char* y2Label = (plot.plotFlags & ImPlotFlags_YAxis2) && !plot.y2AxisLabel.empty() ? plot.y2AxisLabel.c_str() : nullptr;
             const char* y3Label = (plot.plotFlags & ImPlotFlags_YAxis3) && !plot.y3AxisLabel.empty() ? plot.y3AxisLabel.c_str() : nullptr;
 
+            bool timeScaleXaxis = false;
+            std::array<double, 2> timeAxisMinMax = { std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity() };
+            for (auto& plotItem : plot.plotItems)
+            {
+                if (plot.selectedXdata.at(plotItem.pinIndex) == GPST_PLOT_IDX)
+                {
+                    auto& pinData = _pinData.at(plotItem.pinIndex);
+                    const auto& plotDataX = pinData.plotData.at(plot.selectedXdata.at(plotItem.pinIndex));
+
+                    // Lock the buffer so no data can be inserted
+                    std::scoped_lock<std::mutex> guard(pinData.mutex);
+                    if (!plotDataX.buffer.empty())
+                    {
+                        timeScaleXaxis = true;
+                        timeAxisMinMax[0] = std::min(timeAxisMinMax[0], plotDataX.buffer.front());
+                        timeAxisMinMax[1] = std::max(timeAxisMinMax[1], plotDataX.buffer.back());
+                    }
+                }
+            }
+
             if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plot.title, size_t(id), plotIdx).c_str(), plot.size, plot.plotFlags))
             {
+                if (saveForceXaxisRange)
+                {
+                    std::get<ImPlotRange>(_forceXaxisRange) = ImPlot::GetCurrentPlot()->XAxis(ImAxis_X1).Range;
+                }
+                else if (_forceXaxisRange.first.contains(plotIdx))
+                {
+                    if (plot.xAxisFlags & ImPlotAxisFlags_AutoFit)
+                    {
+                        plot.xAxisFlags &= ~ImPlotAxisFlags_AutoFit;
+                        flow::ApplyChanges();
+                    }
+                    ImPlot::GetCurrentPlot()->XAxis(ImAxis_X1).SetRange(std::get<ImPlotRange>(_forceXaxisRange));
+                    _forceXaxisRange.first.erase(plotIdx);
+                }
+
                 ImPlot::SetupAxis(ImAxis_X1, xLabel, plot.xAxisFlags);
-                ImPlot::SetupAxisScale(ImAxis_X1, plot.xAxisScale);
+                ImPlot::SetupAxisScale(ImAxis_X1, timeScaleXaxis ? ImPlotScale_Time : plot.xAxisScale);
                 ImPlot::SetupAxis(ImAxis_Y1, y1Label, plot.yAxisFlags);
                 ImPlot::SetupAxisScale(ImAxis_Y1, plot.yAxesScale[0]);
                 if (plot.plotFlags & ImPlotFlags_YAxis2)
@@ -1708,6 +1788,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        _pinData.at(pinIndex).addPlotDataItem(i++, "GPST Time");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
 
         if (startPin.dataIdentifier.front() == Pos::type())
@@ -1778,6 +1859,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
 
         // NodeData
         _pinData.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        _pinData.at(pinIndex).addPlotDataItem(i++, "GPST Time");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
 
         if (inputPins.at(pinIndex).type == Pin::Type::Bool)
@@ -2003,6 +2085,7 @@ void NAV::Plot::plotBoolean(const InsTime& insTime, size_t pinIdx)
 
         // NodeData
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toUnixTime() + insTime.differenceToUTC(GPST)));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Boolean
         addData(pinIdx, i++, static_cast<double>(*value->v));
@@ -2028,6 +2111,7 @@ void NAV::Plot::plotInteger(const InsTime& insTime, size_t pinIdx)
 
         // NodeData
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toUnixTime() + insTime.differenceToUTC(GPST)));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Integer
         addData(pinIdx, i++, static_cast<double>(*value->v));
@@ -2053,6 +2137,7 @@ void NAV::Plot::plotFloat(const InsTime& insTime, size_t pinIdx)
 
         // NodeData
         addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+        addData(pinIdx, i++, static_cast<double>(insTime.toUnixTime() + insTime.differenceToUTC(GPST)));
         addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
         // Double
         addData(pinIdx, i++, *value->v);
@@ -2082,6 +2167,7 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
 
                 // NodeData
                 addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+                addData(pinIdx, i++, static_cast<double>(insTime.toUnixTime() + insTime.differenceToUTC(GPST)));
                 addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
                 // Matrix
                 for (int row = 0; row < value->v->rows(); row++)
@@ -2105,6 +2191,7 @@ void NAV::Plot::plotMatrix(const InsTime& insTime, size_t pinIdx)
 
                 // NodeData
                 addData(pinIdx, i++, static_cast<double>((insTime - _startTime).count()));
+                addData(pinIdx, i++, static_cast<double>(insTime.toUnixTime() + insTime.differenceToUTC(GPST)));
                 addData(pinIdx, i++, static_cast<double>(insTime.toGPSweekTow().tow));
                 // Vector
                 for (int row = 0; row < value->v->rows(); row++)
@@ -2132,6 +2219,7 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
     // NodeData
     size_t i = 0;
     addData(pinIdx, i++, CommonLog::calcTimeIntoRun(nodeData->insTime));
+    addData(pinIdx, i++, static_cast<double>(nodeData->insTime.toUnixTime() + nodeData->insTime.differenceToUTC(GPST)));
     addData(pinIdx, i++, static_cast<double>(nodeData->insTime.toGPSweekTow(GPST).tow));
 
     if (auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin())

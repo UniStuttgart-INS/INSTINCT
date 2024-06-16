@@ -133,7 +133,7 @@ Logger::Logger(const std::string& logpath)
     spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", dist_filter_sink));
 
     // Level should be smaller or equal to the level of the sinks
-    spdlog::set_level(spdlog::level::level_enum::trace);
+    spdlog::set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("global-log-level", "trace")));
     // Minimum level which automatically triggers a flush
     spdlog::flush_on(spdlog::level::trace);
 

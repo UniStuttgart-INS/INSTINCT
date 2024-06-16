@@ -117,8 +117,8 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
         std::string nameId = "SPP TEST";
         SPP::Algorithm algorithm = spp->_algorithm;
         algorithm._receiver[SPP::Algorithm::Rover].gnssObs = gnssObs;
-        algorithm._receiver[SPP::Algorithm::Rover].e_pos = e_refRecvPos;
-        algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
+        algorithm._receiver[SPP::Algorithm::Rover].e_posMarker = e_refRecvPos;
+        algorithm._receiver[SPP::Algorithm::Rover].lla_posMarker = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
         auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
@@ -302,8 +302,8 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
         std::string nameId = "ObservationEstimator TEST";
         SPP::Algorithm algorithm = spp->_algorithm;
         algorithm._receiver[SPP::Algorithm::Rover].gnssObs = gnssObs;
-        algorithm._receiver[SPP::Algorithm::Rover].e_pos = e_refRecvPos;
-        algorithm._receiver[SPP::Algorithm::Rover].lla_pos = lla_refRecvPos;
+        algorithm._receiver[SPP::Algorithm::Rover].e_posMarker = e_refRecvPos;
+        algorithm._receiver[SPP::Algorithm::Rover].lla_posMarker = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
         auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
@@ -732,8 +732,8 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS -
     auto tropoModel = TroposphereModelSelection{
         .zhdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
         .zwdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
-        .zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
-        .zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, atmosphere),
+        .zhdMappingFunction = std::make_pair(MappingFunction::GMF, atmosphere),
+        .zwdMappingFunction = std::make_pair(MappingFunction::GMF, atmosphere),
     };
 
     const Eigen::Vector3d lla_refRecvPos(deg2rad(30.0), deg2rad(95.0), 0.0);
@@ -747,7 +747,7 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS -
                                                        .satElevation = 3.2e-3, // High because Satellite position is calculated in ECEF frame at transmit time
                                                        .satAzimuth = 4.5e-3,
                                                        .dpsr_I = 3.9e-4,
-                                                       .dpsr_T = 4.1e-1,
+                                                       .dpsr_T = 3.5e-1,
                                                        .pseudorange = 5.0e-1,
                                                        .geometricDist = 1.8e-4 } },
     };

@@ -40,6 +40,7 @@ namespace InsTimeUtil
 constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;   ///< Modified Julian Date of the end of the century (15.01.2954)
 constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;        ///< Weeks per GPS cycle
 constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;      ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t DIFF_TO_1_1_1970_MJD = 40587;      ///< 01.01.1970 00:00:00 UTC in Modified Julian Date (UNIX epoch)
 constexpr int32_t DIFF_BDT_WEEK_TO_GPST_WEEK = 1356; ///< BeiDou starts zero at 1-Jan-2006 and GPS starts 6-Jan-1980
 
 constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;  ///< Difference of the days between MJD and JD
@@ -881,6 +882,13 @@ class InsTime
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
         return InsTime(InsTime_MJD(_mjd.mjd_day, 0.0L));
+    }
+
+    /// @brief Converts this time object into a UNIX timestamp in [s]
+    [[nodiscard]] constexpr long double toUnixTime() const
+    {
+        return static_cast<long double>((_mjd.mjd_day - InsTimeUtil::DIFF_TO_1_1_1970_MJD) * InsTimeUtil::SECONDS_PER_DAY)
+               + _mjd.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
     }
 
     /* ----------------------------- Leap functions ----------------------------- */

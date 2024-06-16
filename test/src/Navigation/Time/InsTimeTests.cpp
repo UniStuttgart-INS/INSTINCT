@@ -564,6 +564,25 @@ TEST_CASE("[InsTime] Constructors & Conversion constexpr", "[InsTime]")
     STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS_YDoySod_GPSweekTow_JD_MJD));
 }
 
+TEST_CASE("[InsTime] Unix Timestamp conversion", "[InsTime]")
+{
+    auto logger = initializeTestLogger();
+
+    REQUIRE(InsTime(1970, 1, 1, 0, 0, 0.0, UTC).toUnixTime() == 0.0L);
+
+    LOG_INFO("{:.9f} == 1716365512.123456789", InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime());
+    REQUIRE(InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime() == 1716365512.123456789L);
+}
+
+TEST_CASE("[InsTime] Unix Timestamp conversion (constexpr)", "[InsTime]")
+{
+    auto logger = initializeTestLogger();
+
+    STATIC_REQUIRE(InsTime(1970, 1, 1, 0, 0, 0.0, UTC).toUnixTime() == 0.0L);
+
+    STATIC_REQUIRE(InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime() == 1716365512.123456789L);
+}
+
 TEST_CASE("[InsTime] Leap Seconds constexpr", "[InsTime]")
 {
     auto logger = initializeTestLogger();

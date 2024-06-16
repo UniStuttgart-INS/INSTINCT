@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <string>
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include <fmt/chrono.h>
 #include <fmt/format.h>
 using namespace fmt::literals; // NOLINT(google-build-using-namespace)
@@ -488,7 +489,8 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
 
     for (const auto& satId : satellites)
     {
-        _filestream << fmt::format("{}", satId);
+        _filestream << fmt::format("{0}{1:02d}", satId.satSys.toChar(),
+                                   satId.satSys == SBAS && satId.satNum > 100 ? satId.satNum - 100 : satId.satNum);
         const auto& obsDescriptions = _header.systemObsTypes.at(satId.satSys);
         for (size_t i = 0; i < obsDescriptions.size(); i++)
         {

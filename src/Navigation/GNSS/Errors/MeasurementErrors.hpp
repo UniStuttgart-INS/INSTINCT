@@ -125,8 +125,8 @@ class GnssMeasurementErrorModel
     /// Model parameters for the 'RTKLIB' model
     struct ModelParametersRtklib
     {
-        double a = 0.7; ///< Coefficient
-        double b = 0.7; ///< Coefficient
+        double a = 1.0; ///< Coefficient
+        double b = 1.0; ///< Coefficient
     };
     /// Model parameters for the 'RTKLIB' model
     ModelParametersRtklib _modelParametersRtklib;

@@ -76,7 +76,7 @@ class Algorithm
                                   /*   needed  */ std::unordered_set{ GnssObs::Pseudorange } };
 
     /// Observation Estimator
-    ObservationEstimator _obsEstimator;
+    ObservationEstimator _obsEstimator{ ReceiverType_COUNT };
 
   private:
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver

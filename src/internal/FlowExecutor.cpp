@@ -8,6 +8,7 @@
 
 #include "FlowExecutor.hpp"
 
+#include "Navigation/GNSS/Positioning/AntexReader.hpp"
 #include "util/Logger.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
@@ -140,6 +141,8 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
+
+    AntexReader::Get().reset();
 
     for (Node* node : nm::m_Nodes())
     {

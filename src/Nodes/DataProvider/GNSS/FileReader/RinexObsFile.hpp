@@ -107,6 +107,9 @@ class RinexObsFile : public Node, public FileReader
     /// @brief Whether to remove less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
     bool _eraseLessPreciseCodes = true;
 
+    /// Receiver Info transmitted with the observation
+    GnssObs::ReceiverInfo _receiverInfo;
+
     /// @brief Removes less precise codes (e.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data))
     /// @param[in] gnssObs GnssObs to search for less precise codes
     /// @param[in] freq Signal frequency (also identifies the satellite system)

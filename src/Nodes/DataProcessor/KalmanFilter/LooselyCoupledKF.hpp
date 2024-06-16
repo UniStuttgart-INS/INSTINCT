@@ -115,14 +115,6 @@ class LooselyCoupledKF : public Node
     constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;             ///< @brief Flow (PosVel)
     constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 2; ///< @brief Flow (PosVelAtt)
     constexpr static size_t OUTPUT_PORT_INDEX_SOLUTION = 0;        ///< @brief Flow (InsGnssLCKFSolution)
-    constexpr static size_t OUTPUT_PORT_INDEX_x = 1;               ///< @brief x̂ State vector
-    constexpr static size_t OUTPUT_PORT_INDEX_P = 2;               ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 3;             ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Q = 4;               ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_z = 5;               ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OUTPUT_PORT_INDEX_H = 6;               ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_R = 7;               ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_K = 8;               ///< @brief 𝐊 Kalman gain matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -158,12 +150,6 @@ class LooselyCoupledKF : public Node
     /// @brief Updates the predicted state from the InertialNavSol with the PosVel observation
     /// @param[in] posVelObs PosVel measurement triggering the update
     void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& posVelObs);
-
-    /// @brief Add the output pins for the Kalman matrices
-    void addKalmanMatricesPins();
-
-    /// @brief Removes the output pins for the Kalman matrices
-    void removeKalmanMatricesPins();
 
     /// Add or remove the external PVA Init pin
     void updateExternalPvaInitPin();
@@ -213,9 +199,6 @@ class LooselyCoupledKF : public Node
     // #########################################################################################################################################
     //                                                              GUI settings
     // #########################################################################################################################################
-
-    /// @brief Show output pins for the Kalman matrices
-    bool _showKalmanFilterOutputPins = false;
 
     /// @brief Check the rank of the Kalman matrices every iteration (computational expensive)
     bool _checkKalmanMatricesRanks = true;

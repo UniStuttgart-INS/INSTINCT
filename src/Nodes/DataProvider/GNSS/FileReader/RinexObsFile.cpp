@@ -127,6 +127,7 @@ void RinexObsFile::deinitialize()
     _timeSystem = TimeSys_None;
     _obsDescription.clear();
     _rcvClockOffsAppl = false;
+    _receiverInfo = {};
 }
 
 bool RinexObsFile::resetNode()
@@ -302,28 +303,36 @@ void RinexObsFile::readHeader()
             {
                 LOG_DATA("{}: antNum '{}', antType '{}'", nameId(), antennaNumber, antennaType);
             }
+            if (!antennaType.empty() || antennaType != "Unknown")
+            {
+                _receiverInfo.antennaType = antennaType;
+            }
         }
         else if (headerLabel == "APPROX POSITION XYZ")
         {
             // Geocentric approximate marker position (Units: Meters, System: ITRS recommended)
             // Optional for moving platforms
-            [[maybe_unused]] Eigen::Vector3d position_xyz{ std::stod(str::trim_copy(line.substr(0, 14))),
-                                                           std::stod(str::trim_copy(line.substr(14, 14))),
-                                                           std::stod(str::trim_copy(line.substr(28, 14))) }; // FORMAT: 3F14.4
+            Eigen::Vector3d position_xyz{ std::stod(str::trim_copy(line.substr(0, 14))),
+                                          std::stod(str::trim_copy(line.substr(14, 14))),
+                                          std::stod(str::trim_copy(line.substr(28, 14))) }; // FORMAT: 3F14.4
 
             LOG_DATA("{}: Approx Position XYZ: {} (not used yet)", nameId(), position_xyz.transpose());
+
+            _receiverInfo.e_approxPos = position_xyz;
         }
         else if (headerLabel == "ANTENNA: DELTA H/E/N")
         {
             // Antenna height: Height of the antenna reference point (ARP) above the marker [m]
-            [[maybe_unused]] double antennaHeight = std::stod(str::trim_copy(line.substr(0, 14))); // FORMAT: F14.4,
+            double antennaHeight = std::stod(str::trim_copy(line.substr(0, 14))); // FORMAT: F14.4,
             // Horizontal eccentricity of ARP relative to the marker (east) [m]
-            [[maybe_unused]] double antennaEccentricityEast = std::stod(str::trim_copy(line.substr(14, 14))); // FORMAT: 2F14.4,
+            double antennaEccentricityEast = std::stod(str::trim_copy(line.substr(14, 14))); // FORMAT: 2F14.4,
             // Horizontal eccentricity of ARP relative to the marker (north) [m]
-            [[maybe_unused]] double antennaEccentricityNorth = std::stod(str::trim_copy(line.substr(28, 14)));
+            double antennaEccentricityNorth = std::stod(str::trim_copy(line.substr(28, 14)));
 
             LOG_DATA("{}: Antenna delta H/E/N: {}, {}, {} (not used yet)", nameId(),
                      antennaHeight, antennaEccentricityEast, antennaEccentricityNorth);
+
+            _receiverInfo.antennaDeltaNEU = Eigen::Vector3d(antennaEccentricityNorth, antennaEccentricityEast, antennaHeight);
         }
         else if (headerLabel == "ANTENNA: DELTA X/Y/Z")
         {
@@ -714,6 +723,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
             }
         }
     }
+
+    gnssObs->receiverInfo = _receiverInfo;
 
     invokeCallbacks(OUTPUT_PORT_INDEX_GNSS_OBS, gnssObs);
     return gnssObs;

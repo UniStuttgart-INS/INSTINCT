@@ -513,14 +513,14 @@ NAV::Code NAV::vendor::ublox::getCode(uint8_t gnssId, uint8_t sigId)
     }
     else if (gnssId == 3) // Beidou
     {
-        if (sigId == 0) { return Code::None; } // BeiDou B1I D1 // TODO: Add this, but do not know which one
-        if (sigId == 1) { return Code::None; } // BeiDou B1I D2 // TODO: Add this, but do not know which one
-        if (sigId == 2) { return Code::None; } // BeiDou B2I D1 // TODO: Add this, but do not know which one
-        if (sigId == 3) { return Code::None; } // BeiDou B2I D2 // TODO: Add this, but do not know which one
-        if (sigId == 5) { return Code::B1P; }  // BeiDou B1 Cp (pilot)
-        if (sigId == 6) { return Code::B1D; }  // BeiDou B1 Cd (data)
-        if (sigId == 7) { return Code::B5P; }  // BeiDou B2 ap (pilot)
-        if (sigId == 8) { return Code::B5D; }  // BeiDou B2 ad (data)
+        if (sigId == 0) { return Code::B2I; } // BeiDou B1I D1
+        if (sigId == 1) { return Code::B2X; } // BeiDou B1I D2
+        if (sigId == 2) { return Code::B7I; } // BeiDou B2I D1
+        if (sigId == 3) { return Code::B7X; } // BeiDou B2I D2
+        if (sigId == 5) { return Code::B1P; } // BeiDou B1 Cp (pilot)
+        if (sigId == 6) { return Code::B1D; } // BeiDou B1 Cd (data)
+        if (sigId == 7) { return Code::B5P; } // BeiDou B2 ap (pilot)
+        if (sigId == 8) { return Code::B5D; } // BeiDou B2 ad (data)
     }
     else if (gnssId == 5) // QZSS
     {

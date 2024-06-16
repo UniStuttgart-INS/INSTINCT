@@ -62,6 +62,10 @@ class NodeData
     /// @brief Returns a vector of string events associated with this data
     [[nodiscard]] const std::vector<std::string>& events() const { return _events; }
 
+    /// @brief Adds the event to the list
+    /// @param[in] text Event text
+    void addEvent(const std::string& text) { _events.push_back(text); }
+
     /// @brief Get the value at the index
     /// @return Value if in the observation
     [[nodiscard]] virtual std::optional<double> getValueAt(size_t /* idx */) const { return std::nullopt; }

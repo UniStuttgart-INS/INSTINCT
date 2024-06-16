@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <cstddef>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <array>
@@ -108,6 +110,12 @@ class ObservationFilter
         return *this;
     }
 
+    /// @brief Reset the temporary settings
+    void reset()
+    {
+        _temporarilyExcludedSignalsSatellites.clear();
+    }
+
     /// @brief Returns a list of satellites and observations filtered by GUI settings & NAV data available & ...)
     /// @param[in] receivers List of receivers
     /// @param[in] gnssNavInfos Collection of navigation data providers
@@ -129,11 +137,17 @@ class ObservationFilter
         {
             SatId satId = obsData.satSigId.toSatId();
 
-            if (!(obsData.satSigId.freq() & _filterFreq)                                                                  // frequency is not selected in GUI
-                || !(obsData.satSigId.code & _filterCode)                                                                 // code is not selected in GUI
-                || !obsData.pseudorange                                                                                   // has an invalid pseudorange
+            if (!(obsData.satSigId.freq() & _filterFreq)  // frequency is not selected in GUI
+                || !(obsData.satSigId.code & _filterCode) // code is not selected in GUI
+                || !obsData.pseudorange                   // has an invalid pseudorange
+                || _temporarilyExcludedSignalsSatellites.contains(obsData.satSigId)
                 || std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) != _excludedSatellites.end()) // is excluded
             {
+                if (_temporarilyExcludedSignalsSatellites.contains(obsData.satSigId))
+                {
+                    _temporarilyExcludedSignalsSatellites.at(obsData.satSigId)--;
+                    if (_temporarilyExcludedSignalsSatellites.at(obsData.satSigId) == 0) { _temporarilyExcludedSignalsSatellites.erase(obsData.satSigId); }
+                }
                 LOG_DATA("{}:  [{}] Skipping obs due to GUI filter selections", nameId, obsData.satSigId);
                 continue;
             }
@@ -221,7 +235,7 @@ class ObservationFilter
 
                 LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, obsData.satSigId, recv.type);
                 sigObs.recvObs.emplace_back(recv.gnssObs, static_cast<size_t>(recvObsData - recv.gnssObs->data.begin()),
-                                            recv.e_pos, recv.lla_pos, recv.e_vel,
+                                            recv.e_posMarker, recv.lla_posMarker, recv.e_vel,
                                             satPosVel.e_pos, satPosVel.e_vel, satClk);
 
                 if (!ignoreElevationMask)
@@ -438,6 +452,14 @@ class ObservationFilter
         else if (_neededObsTypes.contains(obsType)) { _neededObsTypes.erase(obsType); }
     }
 
+    /// @brief Temporarily excludes a signal
+    /// @param[in] satSigId Satellite Signal Id
+    /// @param[in] count Amount of function calls to exclude
+    void excludeSignalTemporarily(const SatSigId& satSigId, size_t count)
+    {
+        _temporarilyExcludedSignalsSatellites.emplace(satSigId, count);
+    }
+
     /// @brief Get the Frequency Filter
     [[nodiscard]] const Frequency& getFrequencyFilter() const
     {
@@ -476,6 +498,9 @@ class ObservationFilter
     std::unordered_set<GnssObs::ObservationType> _neededObsTypes;
     /// Utilized observations
     std::unordered_set<GnssObs::ObservationType> _usedObsTypes;
+
+    /// List of signals to exclude temporarily
+    std::unordered_map<SatSigId, size_t> _temporarilyExcludedSignalsSatellites;
 
     /// @brief Converts the provided object into json
     /// @param[out] j Json object which gets filled with the info
