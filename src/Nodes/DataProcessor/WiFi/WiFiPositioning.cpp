@@ -830,8 +830,10 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             }
         }
 
+        // Calculate the solution
         auto wifiPositioningSolution = std::make_shared<NAV::WiFiPositioningSolution>();
         wifiPositioningSolution->insTime = obs->insTime;
+        // Least Squares
         if (_solutionMode == SolutionMode::LSQ)
         {
             if (_devices.size() == _numOfDevices)
@@ -846,6 +848,7 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
                 invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
             }
         }
+        // Kalman Filter
         else if (_solutionMode == SolutionMode::KF)
         {
             WiFiPositioning::kfSolution();
@@ -868,6 +871,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsq;
     int n = (_estimateBias) ? 4 : 3; // Number of unknowns
 
+    // Check if the number of devices is sufficient to compute the position
     if ((_estimateBias && _devices.size() < 5) || (!_estimateBias && _devices.size() < 4))
     {
         LOG_DEBUG("{}: Received less than {} observations. Can't compute position", nameId(), (_estimateBias ? 5 : 4));
@@ -883,6 +887,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     Eigen::VectorXd ddist = Eigen::VectorXd::Zero(static_cast<int>(_devices.size()));
     size_t numMeasurements = _devices.size();
 
+    // Check if the initial position is NaN
     if (std::isnan(_state.e_position(0)) || std::isnan(_state.e_position(1)) || std::isnan(_state.e_position(2)) || _useInitialValues)
     {
         _state.e_position << _initialState.e_position;
@@ -892,18 +897,20 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
         }
     }
 
+    // Iteratively solve the linear least squares problem
     for (size_t o = 0; o < 15; o++)
     {
         LOG_DATA("{}: Iteration {}", nameId(), o);
         for (size_t i = 0; i < numMeasurements; i++)
         {
-            // calculate the distance between the device and the estimated position
+            // Calculate the distance between the device and the estimated position
             double distEst = (_devices.at(i).position - _state.e_position).norm();
             if (_estimateBias)
             {
                 distEst += _state.bias;
             }
-            // calculate the residual vector
+
+            // Calculate the residual vector
             ddist(static_cast<int>(i)) = _devices.at(i).distance - distEst;
 
             Eigen::Vector3d e_lineOfSightUnitVector = Eigen::Vector3d::Zero();
@@ -911,28 +918,22 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             {
                 e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(_state.e_position, _devices.at(i).position);
             }
-            // calculate the design matrix
-            e_H.block<1, 3>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
 
+            // Calculate the design matrix
+            e_H.block<1, 3>(static_cast<int>(i), 0) = -e_lineOfSightUnitVector;
             if (_estimateBias)
             {
                 e_H(static_cast<int>(i), 3) = 1;
             }
+
+            // Calculate the weight matrix
             if (_weightedSolution)
             {
                 W(static_cast<int>(i), static_cast<int>(i)) = 1 / std::pow(_devices.at(i).distanceStd, 2);
             }
         }
-        // solve the linear least squares problem
-        // std::cout << "e_h" << std::endl; // TODO delete
-        // std::cout << e_H << std::endl;
-        // std::cout << "o" << o << std::endl;
-        // std::cout << ddist << std::endl;
-        // std::cout << "Gewichtung" << std::endl;
-        // std::cout << W << std::endl;
-
+        // Solve the linear least squares problem
         lsq = solveWeightedLinearLeastSquaresUncertainties(e_H, W, ddist);
-        // std::cout << lsq.solution << std::endl; // TODO delete
 
         if (_estimateBias)
         {
@@ -945,9 +946,10 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
             LOG_DATA("{}:     [{}] stdev_dx (lsq)\n{}", nameId(), o, lsq.variance.cwiseSqrt());
         }
 
-        // update the estimated position
+        // Update the estimated position
         _state.e_position += lsq.solution.block<3, 1>(0, 0);
-        // update the estimated bias
+
+        // Update the estimated bias
         if (_estimateBias)
         {
             _state.bias += lsq.solution(3);
@@ -991,6 +993,7 @@ void NAV::WiFiPositioning::kfSolution()
     // ###########################################################################################################
     // Prediction
     // ###########################################################################################################
+
     _lastPredictTime = _devices.at(0).time;
     if (tau_i > 0)
     {
@@ -1000,6 +1003,7 @@ void NAV::WiFiPositioning::kfSolution()
         F(1, 4) = 1;
         F(2, 5) = 1;
         _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, 1);
+
         // Process noise covariance matrix
         _kalmanFilter.Q.block(0, 0, 3, 3) = std::pow(tau_i, 3) / 3.0 * Eigen::Matrix3d::Identity();
         _kalmanFilter.Q.block(3, 0, 3, 3) = std::pow(tau_i, 2) / 2.0 * Eigen::Matrix3d::Identity();
@@ -1024,6 +1028,7 @@ void NAV::WiFiPositioning::kfSolution()
     // ###########################################################################################################
     // Update
     // ###########################################################################################################
+
     // Measurement
     double estimatedDistance = (_devices.at(0).position - _kalmanFilter.x.block<3, 1>(0, 0)).norm();
     if (_estimateBias)
@@ -1031,6 +1036,11 @@ void NAV::WiFiPositioning::kfSolution()
         estimatedDistance += _kalmanFilter.x(6);
     }
     _kalmanFilter.z << _devices.at(0).distance - estimatedDistance;
+    if (_weightedSolution)
+    {
+        _kalmanFilter.R << std::pow(_devices.at(0).distanceStd, 2);
+    }
+
     // Design matrix
     Eigen::MatrixXd H = Eigen::MatrixXd::Zero(1, _numStates);
     H.block<1, 3>(0, 0) = -e_calcLineOfSightUnitVector(_kalmanFilter.x.block<3, 1>(0, 0), _devices.at(0).position);
@@ -1039,13 +1049,8 @@ void NAV::WiFiPositioning::kfSolution()
         H(0, 6) = 1;
     }
     _kalmanFilter.H << H;
-    // Correct
-    std::cout << _kalmanFilter.R << std::endl;
-    if (_weightedSolution)
-    {
-        _kalmanFilter.R << std::pow(_devices.at(0).distanceStd, 2);
-    }
-    std::cout << _kalmanFilter.R << std::endl;
+
+    // Update
     _kalmanFilter.correctWithMeasurementInnovation();
 
     _devices.clear();

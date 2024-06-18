@@ -221,7 +221,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/EspressifSensor.hpp"
 #include "Nodes/DataProvider/WiFi/Sensors/ArubaSensor.hpp"
-#include "Nodes/DataProvider/WiFi/FileReader/EspressifFile.hpp"
 #include "Nodes/DataProvider/WiFi/FileReader/WiFiObsFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
@@ -293,7 +292,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<MultiImuFile>();
     registerNodeType<EspressifSensor>();
     registerNodeType<ArubaSensor>();
-    registerNodeType<EspressifFile>();
     registerNodeType<WiFiObsFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();

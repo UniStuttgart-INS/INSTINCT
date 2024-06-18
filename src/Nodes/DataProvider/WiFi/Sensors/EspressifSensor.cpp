@@ -125,11 +125,6 @@ void NAV::EspressifSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    // if (!isInitialized()) // TODO: Sensor is not correctly initialized
-    // {
-    //     return;
-    // }
-
     if (_sensor->isConnected())
     {
         try
