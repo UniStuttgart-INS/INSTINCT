@@ -261,27 +261,85 @@
         "node-50": {
             "data": {
                 "algorithm": {
+                    "estimateInterFrequencyBiases": true,
                     "estimatorType": 1,
+                    "kalmanFilter": {
+                        "covarianceAccel": [
+                            3.0,
+                            1.5
+                        ],
+                        "covarianceAccelUnit": 0,
+                        "covarianceClkFrequencyDrift": 0.04,
+                        "covarianceClkFrequencyDriftUnit": 1,
+                        "covarianceClkPhaseDrift": 0.01,
+                        "covarianceClkPhaseDriftUnit": 1,
+                        "covarianceInterInterFrequencyBias": 1e-06,
+                        "covarianceInterInterFrequencyBiasUnit": 1,
+                        "covarianceInterSysClkFrequencyDrift": 0.04,
+                        "covarianceInterSysClkFrequencyDriftUnit": 1,
+                        "covarianceInterSysClkPhaseDrift": 0.01,
+                        "covarianceInterSysClkPhaseDriftUnit": 1,
+                        "qCalculationAlgorithm": 0
+                    },
                     "obsEstimator": {
-                        "gnssMeasurementError": {
-                            "groves2013Params": {
-                                "sigmaR": [
-                                    0.1,
-                                    0.1
-                                ],
-                                "sigmaRho": [
-                                    0.1,
-                                    0.1
-                                ]
-                            },
-                            "model": 1,
-                            "rtklibParams": {
-                                "carrierPhaseErrorAB": [
-                                    0.003,
-                                    0.003
-                                ],
-                                "dopplerFrequency": 1.0
+                        "antenna": [
+                            {
+                                "autoDetermine": true,
+                                "enabled": true,
+                                "hen_delta": {
+                                    "0": {
+                                        "0": 0.0
+                                    },
+                                    "1": {
+                                        "0": 0.0
+                                    },
+                                    "2": {
+                                        "0": 0.0
+                                    }
+                                },
+                                "name": ""
                             }
+                        ],
+                        "gnssMeasurementError": {
+                            "carrierStdDev": 0.001,
+                            "codeStdDev": 0.1,
+                            "dopplerStdDev": 1.0,
+                            "model": 1,
+                            "modelParametersCosineType": {
+                                "a": 1.0,
+                                "b": 4.0,
+                                "n": 8
+                            },
+                            "modelParametersExponential": {
+                                "a": 1.0,
+                                "b": 3.5,
+                                "e0": 9.0
+                            },
+                            "modelParametersRtklib": {
+                                "a": 1.0,
+                                "b": 1.0
+                            },
+                            "modelParametersSine": {
+                                "a": 1.0
+                            },
+                            "modelParametersSineCN0": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "c": 1.0
+                            },
+                            "modelParametersSineOffset": {
+                                "a": 0.5,
+                                "b": 0.5
+                            },
+                            "modelParametersSineSqrt": {
+                                "a": 0.3,
+                                "b": 0.5
+                            },
+                            "modelParametersSineType": {
+                                "a": 0.64,
+                                "b": 0.36
+                            },
+                            "plotCN0": 30.0
                         },
                         "ionosphereModel": 0,
                         "troposphereModels": {
@@ -836,8 +894,8 @@
                             }
                         ],
                         "usedObsTypes": [
-                            0,
-                            2
+                            2,
+                            0
                         ]
                     }
                 },
@@ -952,6 +1010,9 @@
                         "plotData": [
                             {
                                 "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
                             },
                             {
                                 "displayName": "GPS time of week [s]"
@@ -1187,16 +1248,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1212,6 +1267,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1260,27 +1345,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -1330,16 +1394,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1355,6 +1413,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1403,27 +1491,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -1473,16 +1540,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1498,6 +1559,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1546,27 +1637,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -1616,16 +1686,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1641,6 +1705,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1689,27 +1783,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -1759,16 +1832,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1784,6 +1851,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1832,27 +1929,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -1902,16 +1978,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -1927,6 +1997,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -1975,27 +2075,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -2045,16 +2124,10 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
                             },
                             {
                                 "displayName": "Latitude [deg]"
@@ -2070,6 +2143,36 @@
                             },
                             {
                                 "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "Q [-]"
@@ -2118,27 +2221,6 @@
                             },
                             {
                                 "displayName": "ratio [-]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF X [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Y [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity ECEF Z [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity North [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity East [m/s]"
-                            },
-                            {
-                                "displayName": "Velocity Down [m/s]"
                             },
                             {
                                 "displayName": "sdvn [m/s]"
@@ -2185,12 +2267,13 @@
                     {
                         "headerText": "Position",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 5,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -2251,7 +2334,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
@@ -2312,7 +2395,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
@@ -2373,7 +2456,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
@@ -2434,7 +2517,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 4,
                                 "style": {
@@ -2495,7 +2578,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 5,
                                 "style": {
@@ -2556,7 +2639,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 6,
                                 "style": {
@@ -2617,7 +2700,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 7,
                                 "style": {
@@ -2680,14 +2763,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            6,
-                            9,
-                            9,
-                            9,
-                            9,
-                            9,
-                            9,
-                            9
+                            7,
+                            7,
+                            7,
+                            7,
+                            7,
+                            7,
+                            7,
+                            7
                         ],
                         "size": {
                             "x": -1.0,
@@ -2710,12 +2793,13 @@
                     {
                         "headerText": "North/South",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 5,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -2776,7 +2860,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 1,
                                 "style": {
@@ -2837,7 +2921,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 2,
                                 "style": {
@@ -2898,7 +2982,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 3,
                                 "style": {
@@ -2959,7 +3043,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 4,
                                 "style": {
@@ -3020,7 +3104,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 5,
                                 "style": {
@@ -3081,7 +3165,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 6,
                                 "style": {
@@ -3142,7 +3226,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 7,
                                 "style": {
@@ -3205,14 +3289,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -3235,12 +3319,13 @@
                     {
                         "headerText": "East/West",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 6,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -3301,7 +3386,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 1,
                                 "style": {
@@ -3362,7 +3447,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 2,
                                 "style": {
@@ -3423,7 +3508,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 3,
                                 "style": {
@@ -3484,7 +3569,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 4,
                                 "style": {
@@ -3545,7 +3630,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 5,
                                 "style": {
@@ -3606,7 +3691,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 6,
                                 "style": {
@@ -3667,7 +3752,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 7,
                                 "displayName": "East/West [m]",
                                 "pinIndex": 7,
                                 "style": {
@@ -3730,14 +3815,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -3760,12 +3845,13 @@
                     {
                         "headerText": "Altitude",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 4,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -3826,7 +3912,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 1,
                                 "style": {
@@ -3887,7 +3973,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 2,
                                 "style": {
@@ -3948,7 +4034,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 3,
                                 "style": {
@@ -4009,7 +4095,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 4,
                                 "style": {
@@ -4070,7 +4156,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 5,
                                 "style": {
@@ -4131,7 +4217,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 6,
                                 "style": {
@@ -4192,7 +4278,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 7,
                                 "style": {
@@ -4255,14 +4341,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -4285,12 +4371,13 @@
                     {
                         "headerText": "# Satellites",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 17,
+                                "dataIndex": 18,
                                 "displayName": "Number satellites",
                                 "pinIndex": 0,
                                 "style": {
@@ -4351,7 +4438,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 1,
                                 "style": {
@@ -4412,7 +4499,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 2,
                                 "style": {
@@ -4473,7 +4560,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 3,
                                 "style": {
@@ -4534,7 +4621,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 4,
                                 "style": {
@@ -4595,7 +4682,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 5,
                                 "style": {
@@ -4656,7 +4743,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 6,
                                 "style": {
@@ -4717,7 +4804,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 11,
+                                "dataIndex": 19,
                                 "displayName": "ns [-]",
                                 "pinIndex": 7,
                                 "style": {
@@ -4780,14 +4867,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -4810,12 +4897,13 @@
                     {
                         "headerText": "Clock Bias",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 1048576,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 18,
+                                "dataIndex": 19,
                                 "displayName": "Receiver clock bias [s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -4875,69 +4963,8 @@
                                 }
                             },
                             {
-                                "axis": 3,
-                                "dataIndex": 48,
-                                "displayName": "GAL system time difference [s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "eventMarkerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "eventMarkerSize": 1.0,
-                                    "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 1.0,
-                                    "eventTooltipFilterRegex": "",
-                                    "eventsEnabled": false,
-                                    "legendName": "GAL system time difference [s] (INSTINCT)",
-                                    "lineType": 1,
-                                    "markerColormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "markerColormapMaskDataCmpIdx": 0,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
                                 "axis": 4,
-                                "dataIndex": 46,
+                                "dataIndex": 47,
                                 "displayName": "System time reference system",
                                 "pinIndex": 0,
                                 "style": {
@@ -4951,22 +4978,22 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
+                                    "colormapMaskDataCmpIdx": 47,
                                     "eventMarkerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "eventMarkerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerSize": 6.0,
                                     "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 1.0,
+                                    "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
                                     "legendName": "System time reference system (INSTINCT)",
@@ -4975,7 +5002,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 0,
+                                    "markerColormapMaskDataCmpIdx": 47,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5000,14 +5027,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -5030,12 +5057,13 @@
                     {
                         "headerText": "Velocity North",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 14,
+                                "dataIndex": 15,
                                 "displayName": "North velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5096,8 +5124,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -5157,8 +5185,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -5218,8 +5246,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -5279,8 +5307,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -5340,8 +5368,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5401,8 +5429,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 6,
                                 "style": {
                                     "color": {
@@ -5462,8 +5490,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 30,
-                                "displayName": "Velocity North [m/s]",
+                                "dataIndex": 15,
+                                "displayName": "North velocity [m/s]",
                                 "pinIndex": 7,
                                 "style": {
                                     "color": {
@@ -5525,14 +5553,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -5542,7 +5570,7 @@
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity North [m/s]",
+                        "y1AxisLabel": "North velocity [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -5555,12 +5583,13 @@
                     {
                         "headerText": "Velocity East",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
+                                "dataIndex": 16,
                                 "displayName": "East velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5621,8 +5650,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -5682,8 +5711,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -5743,8 +5772,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -5804,8 +5833,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -5865,8 +5894,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -5926,8 +5955,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 6,
                                 "style": {
                                     "color": {
@@ -5987,8 +6016,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 31,
-                                "displayName": "Velocity East [m/s]",
+                                "dataIndex": 16,
+                                "displayName": "East velocity [m/s]",
                                 "pinIndex": 7,
                                 "style": {
                                     "color": {
@@ -6050,14 +6079,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -6067,7 +6096,7 @@
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity East [m/s]",
+                        "y1AxisLabel": "East velocity [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -6080,12 +6109,13 @@
                     {
                         "headerText": "Velocity Down",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 16,
+                                "dataIndex": 17,
                                 "displayName": "Down velocity [m/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -6146,8 +6176,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 1,
                                 "style": {
                                     "color": {
@@ -6207,8 +6237,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 2,
                                 "style": {
                                     "color": {
@@ -6268,8 +6298,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 3,
                                 "style": {
                                     "color": {
@@ -6329,8 +6359,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 4,
                                 "style": {
                                     "color": {
@@ -6390,8 +6420,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 5,
                                 "style": {
                                     "color": {
@@ -6451,8 +6481,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 6,
                                 "style": {
                                     "color": {
@@ -6512,8 +6542,8 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 32,
-                                "displayName": "Velocity Down [m/s]",
+                                "dataIndex": 17,
+                                "displayName": "Down velocity [m/s]",
                                 "pinIndex": 7,
                                 "style": {
                                     "color": {
@@ -6575,14 +6605,14 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 7,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
@@ -6592,7 +6622,7 @@
                         "xAxisFlags": 2048,
                         "xAxisLabel": "",
                         "xAxisScale": 0,
-                        "y1AxisLabel": "Velocity Down [m/s]",
+                        "y1AxisLabel": "Down velocity [m/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": "",
                         "yAxesScale": [
@@ -6605,12 +6635,13 @@
                     {
                         "headerText": "StDev North",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 26,
+                                "dataIndex": 27,
                                 "displayName": "North StDev [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -6624,31 +6655,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
+                                    "colormapMaskDataCmpIdx": 27,
                                     "eventMarkerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "eventMarkerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerSize": 6.0,
                                     "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 1.0,
+                                    "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "INSTINCT",
+                                    "legendName": "North StDev [m] (INSTINCT)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 0,
+                                    "markerColormapMaskDataCmpIdx": 27,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6671,7 +6702,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 15,
+                                "dataIndex": 23,
                                 "displayName": "sdn [m]",
                                 "pinIndex": 1,
                                 "style": {
@@ -6685,31 +6716,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
+                                    "colormapMaskDataCmpIdx": 23,
                                     "eventMarkerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
                                     "eventMarkerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
+                                        "w": 1.0,
+                                        "x": 1.0,
                                         "y": 0.0,
                                         "z": 0.0
                                     },
-                                    "eventMarkerSize": 1.0,
+                                    "eventMarkerSize": 6.0,
                                     "eventMarkerStyle": 7,
-                                    "eventMarkerWeight": 1.0,
+                                    "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "RTKLIB - GPS",
+                                    "legendName": "sdn [m] (RTKLIB - GPS)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 0,
+                                    "markerColormapMaskDataCmpIdx": 23,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -6732,16 +6763,16 @@
                             }
                         ],
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1
                         ],
                         "size": {
                             "x": -1.0,
