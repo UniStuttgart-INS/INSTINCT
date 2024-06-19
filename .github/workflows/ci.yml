@@ -40,6 +40,12 @@ jobs:
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
+      - name: Installing conan 
+        run: |
+          pip install conan
+      - name: Checking conan version
+        run: |
+          conan --version
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
