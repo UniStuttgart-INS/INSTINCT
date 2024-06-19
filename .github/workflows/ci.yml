@@ -46,6 +46,9 @@ jobs:
       - name: Checking conan version
         run: |
           conan --version
+      - name: Create default conan profile
+        run: |
+          conan profile detect
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
