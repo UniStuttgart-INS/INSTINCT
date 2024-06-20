@@ -25,7 +25,7 @@ namespace NAV
 
 GnssMeasurementErrorModel::GnssMeasurementErrorModel()
 {
-    for (size_t i = 1; i < Model::COUNT; i++)
+    for (size_t i = 0; i < Model::COUNT; i++)
     {
         updateStdDevCurvePlot(static_cast<Model>(i));
     }
@@ -113,7 +113,7 @@ void GnssMeasurementErrorModel::updateStdDevCurvePlot(Model model)
 {
     for (size_t i = 0; i < _elevation.size(); ++i)
     {
-        _stdDevCurvePlot.at(static_cast<size_t>(model) - 1).at(i) = weightingFunction(model, _elevation.at(i), _plotCN0);
+        _stdDevCurvePlot.at(static_cast<size_t>(model)).at(i) = weightingFunction(model, _elevation.at(i), _plotCN0);
     }
 }
 
@@ -130,21 +130,18 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
         ImGui::OpenPopup(fmt::format("{} GnssMeasurementError Popup", id).c_str());
     }
     ImGui::SameLine(0.0F, ImGui::GetStyle().ItemInnerSpacing.x);
-    ImGui::TextUnformatted("GNSS Measurement Error Model");
+    ImGui::TextUnformatted("Weighting Function");
 
-    if (_model != Model::None)
-    {
-        int combo_current_item = 0;
-        changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                     &_carrierStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
-        changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                     &_codeStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    int combo_current_item = 0;
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+                                                 &_carrierStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+                                                 &_codeStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
 
-        changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                     &_dopplerStdDev, &combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
-        ImGui::SameLine();
-        ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(_dopplerStdDev, G01, -128)));
-    }
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+                                                 &_dopplerStdDev, &combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    ImGui::SameLine();
+    ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(_dopplerStdDev, G01, -128)));
 
     if (ImGui::BeginPopup(fmt::format("{} GnssMeasurementError Popup", id).c_str()))
     {
@@ -164,9 +161,9 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
                 ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0.0, std::numeric_limits<double>::max());
                 ImPlot::SetupAxes("Elevation [deg]", "Weighting function [-]");
                 ImPlot::SetupLegend(ImPlotLocation_NorthEast);
-                for (size_t i = 1; i < Model::COUNT; i++)
+                for (size_t i = 0; i < Model::COUNT; i++)
                 {
-                    ImPlot::PlotLine(to_string(static_cast<Model>(i)), _elevation_deg.data(), _stdDevCurvePlot.at(i - 1).data(), static_cast<int>(_elevation_deg.size()));
+                    ImPlot::PlotLine(to_string(static_cast<Model>(i)), _elevation_deg.data(), _stdDevCurvePlot.at(i).data(), static_cast<int>(_elevation_deg.size()));
                 }
                 ImPlot::EndPlot();
             }

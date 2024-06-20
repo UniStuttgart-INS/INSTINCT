@@ -60,7 +60,7 @@ class PolynomialCycleSlipDetector
     /// @param[in] measurementDifference Measurement difference
     /// @param[in] threshold Threshold to categorize a measurement as cycle slip
     /// @return Cycle-slip result
-    [[nodiscard]] PolynomialCycleSlipDetectorResult checkForCycleSlip(const Key& key, InsTime insTime, double measurementDifference, double threshold = 0.1)
+    [[nodiscard]] PolynomialCycleSlipDetectorResult checkForCycleSlip(const Key& key, InsTime insTime, double measurementDifference, double threshold)
     {
         if (!_enabled) { return PolynomialCycleSlipDetectorResult::Disabled; }
         if (!_detectors.contains(key))

@@ -9,6 +9,8 @@
 #include "ErrorModel.hpp"
 
 #include "NodeRegistry.hpp"
+#include <algorithm>
+#include <imgui.h>
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -294,10 +296,15 @@ void NAV::ErrorModel::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The chance that the Lock-of-Loss (LLI) indicator is set, when a cycle-slip occurs");
 
-            if (ImGui::Checkbox(fmt::format("Single cycle steps when slip occurs##{}", size_t(id)).c_str(), &_gui_cycleSlipSingleCycle))
+            ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::DragInt(fmt::format("Ambiguity Range to slip to##{}", size_t(id)).c_str(), &_gui_cycleSlipRange,
+                               1.0F, 1, std::numeric_limits<int>::max(), "+/- %d"))
             {
+                LOG_DEBUG("{}: Cycle-slip ambiguity range changed to {}", nameId(), _gui_cycleSlipRange);
                 flow::ApplyChanges();
             }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("If the ambiguity range is set, the cycle-slips are bound by it too");
 
             ImGui::SetNextItemWidth(itemWidth);
             if (ShowFrequencySelector(fmt::format("Satellite Frequencies##{}", size_t(id)).c_str(), _filterFreq))
@@ -334,9 +341,8 @@ void NAV::ErrorModel::guiConfig()
                 {
                     ImGui::PushFont(Application::MonoFont());
 
-                    ImVec2 outer_size = ImVec2(0.0F, ImGui::GetTextLineHeightWithSpacing() * 2 + ImGui::GetTextLineHeightWithSpacing() * static_cast<float>(10));
                     if (ImGui::BeginTable(fmt::format("Ambiguities##{}", size_t(id)).c_str(), static_cast<int>(ambiguityTimes.size() + 1),
-                                          ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY, outer_size))
+                                          ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
                     {
                         ImGui::TableSetupColumn("");
                         for (const auto& time : ambiguityTimes)
@@ -459,7 +465,7 @@ json NAV::ErrorModel::save() const
     j["ambiguityRng"] = _ambiguityRng;
     j["cycleSlipFrequencyUnit"] = _gui_cycleSlipFrequencyUnit;
     j["cycleSlipFrequency"] = _gui_cycleSlipFrequency;
-    j["cycleSlipSingleCycle"] = _gui_cycleSlipSingleCycle;
+    j["cycleSlipRange"] = _gui_cycleSlipRange;
     j["cycleSlipDetectionProbabilityUnit"] = _gui_cycleSlipDetectionProbabilityUnit;
     j["cycleSlipDetectionProbability"] = _gui_cycleSlipDetectionProbability;
     j["cycleSlipRng"] = _cycleSlipRng;
@@ -527,7 +533,7 @@ void NAV::ErrorModel::restore(json const& j)
     if (j.contains("ambiguityRng")) { j.at("ambiguityRng").get_to(_ambiguityRng); }
     if (j.contains("cycleSlipFrequencyUnit")) { j.at("cycleSlipFrequencyUnit").get_to(_gui_cycleSlipFrequencyUnit); }
     if (j.contains("cycleSlipFrequency")) { j.at("cycleSlipFrequency").get_to(_gui_cycleSlipFrequency); }
-    if (j.contains("cycleSlipSingleCycle")) { j.at("cycleSlipSingleCycle").get_to(_gui_cycleSlipSingleCycle); }
+    if (j.contains("cycleSlipRange")) { j.at("cycleSlipRange").get_to(_gui_cycleSlipRange); }
     if (j.contains("cycleSlipDetectionProbabilityUnit")) { j.at("cycleSlipDetectionProbabilityUnit").get_to(_gui_cycleSlipDetectionProbabilityUnit); }
     if (j.contains("cycleSlipDetectionProbability")) { j.at("cycleSlipDetectionProbability").get_to(_gui_cycleSlipDetectionProbability); }
     if (j.contains("cycleSlipRng")) { j.at("cycleSlipRng").get_to(_cycleSlipRng); }
@@ -1280,7 +1286,6 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
             if (obs.satSigId.freq() & _filterFreq                                                // GUI selected frequencies
                 && obs.satSigId.code & _filterCode                                               // GUI selected codes
                 && _gui_cycleSlipFrequency != 0.0                                                // 0 Frequency means disabled
-                && _gui_ambiguityLimits[0] < _gui_ambiguityLimits[1]                             // We generating ambiguities
                 && !_lastObservationTime.empty()                                                 // Do not apply a cycle slip on the first message
                 && (_cycleSlips.empty() || _cycleSlips.back().time < _cycleSlipWindowStartTime)) // In the current window, there was no cycle-slip yet
             {
@@ -1290,17 +1295,29 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
                     || (gnssObs->insTime >= _cycleSlipWindowStartTime + dtCycleSlip - std::chrono::nanoseconds(static_cast<int64_t>((dtMessage + 0.001) * 1e9)))) // Last message this window
                 {
                     int newAmbiguity = 0;
-                    if (_gui_cycleSlipSingleCycle && !_ambiguities[obs.satSigId].empty())
+                    int oldAmbiguity = !_ambiguities[obs.satSigId].empty()
+                                           ? _ambiguities[obs.satSigId].back().second
+                                           : static_cast<int>(_ambiguityRng.getRand_uniformIntDist(_gui_ambiguityLimits[0], _gui_ambiguityLimits[1]));
+                    auto deltaAmbiguity = static_cast<int>(_cycleSlipRng.getRand_uniformIntDist(1, _gui_cycleSlipRange));
+                    auto signAmbiguity = _cycleSlipRng.getRand_uniformIntDist(0, 1) == 0.0 ? 1 : -1;
+
+                    if (_gui_ambiguityLimits[0] == _gui_ambiguityLimits[1]) // Ambiguities disabled
                     {
-                        int oldAmbiguity = _ambiguities[obs.satSigId].back().second;
-                        if (oldAmbiguity == _gui_ambiguityLimits[0]) { newAmbiguity = std::min(oldAmbiguity + 1, _gui_ambiguityLimits[1]); }
-                        else if (oldAmbiguity == _gui_ambiguityLimits[1]) { newAmbiguity = std::max(oldAmbiguity - 1, _gui_ambiguityLimits[0]); }
-                        else { newAmbiguity = oldAmbiguity + (_cycleSlipRng.getRand_uniformIntDist(0, 1) == 0 ? -1 : +1); }
+                        newAmbiguity = oldAmbiguity + signAmbiguity * deltaAmbiguity;
+                    }
+                    else if (oldAmbiguity == _gui_ambiguityLimits[0])
+                    {
+                        newAmbiguity = std::min(oldAmbiguity + deltaAmbiguity, _gui_ambiguityLimits[1]);
+                    }
+                    else if (oldAmbiguity == _gui_ambiguityLimits[1])
+                    {
+                        newAmbiguity = std::max(oldAmbiguity - deltaAmbiguity, _gui_ambiguityLimits[0]);
                     }
                     else
                     {
-                        newAmbiguity = static_cast<int>(_ambiguityRng.getRand_uniformIntDist(_gui_ambiguityLimits[0], _gui_ambiguityLimits[1]));
+                        newAmbiguity = std::clamp(oldAmbiguity + signAmbiguity * deltaAmbiguity, _gui_ambiguityLimits[0], _gui_ambiguityLimits[1]);
                     }
+
                     _ambiguities[obs.satSigId].emplace_back(gnssObs->insTime, newAmbiguity);
 
                     if (_cycleSlipRng.getRand_uniformRealDist(0.0, 1.0) <= cycleSlipDetectionProbability)
@@ -1314,12 +1331,12 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
             }
 
             // ----------------------------------------- Ambiguity -------------------------------------------
-            if (_gui_ambiguityLimits[0] != _gui_ambiguityLimits[1])
+            if (!_ambiguities.contains(obs.satSigId) && _gui_ambiguityLimits[0] != _gui_ambiguityLimits[1])
             {
-                if (!_ambiguities.contains(obs.satSigId))
-                {
-                    _ambiguities[obs.satSigId].emplace_back(gnssObs->insTime, _ambiguityRng.getRand_uniformIntDist(_gui_ambiguityLimits[0], _gui_ambiguityLimits[1]));
-                }
+                _ambiguities[obs.satSigId].emplace_back(gnssObs->insTime, _ambiguityRng.getRand_uniformIntDist(_gui_ambiguityLimits[0], _gui_ambiguityLimits[1]));
+            }
+            if (_ambiguities.contains(obs.satSigId))
+            {
                 obs.carrierPhase.value().value += _ambiguities.at(obs.satSigId).back().second;
             }
         }

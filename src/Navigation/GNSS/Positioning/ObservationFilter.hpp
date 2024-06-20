@@ -325,14 +325,35 @@ class ObservationFilter
         LOG_DATA("{}: Using {} measurements ({}) from {} satellites", nameId, nMeasTotal, nMeasStr, observations.satellites.size());
 
         unordered_map<SatId, std::pair<Frequency, Code>> satData;
+        unordered_map<SatSigId, std::set<GnssObs::ObservationType>> sigData;
         for (const auto& obs : observations.signals)
         {
             satData[obs.first.toSatId()].first |= obs.first.freq();
             satData[obs.first.toSatId()].second |= obs.first.code;
+            for (size_t obsType = 0; obsType < GnssObs::ObservationType_COUNT; obsType++)
+            {
+                if (std::all_of(obs.second.recvObs.begin(), obs.second.recvObs.end(), [&obsType](const Observations::SignalObservation::ReceiverSpecificData& recvObs) {
+                        return recvObs.obs.contains(static_cast<GnssObs::ObservationType>(obsType));
+                    }))
+                {
+                    sigData[obs.first].insert(static_cast<GnssObs::ObservationType>(obsType));
+                }
+            }
         }
-        for (const auto& [satId, freqCode] : satData)
+        for ([[maybe_unused]] const auto& [satId, freqCode] : satData)
         {
             LOG_DATA("{}:   [{}] on frequencies [{}] with codes [{}]", nameId, satId, freqCode.first, freqCode.second);
+            for (const auto& [satSigId, obs] : sigData)
+            {
+                if (satSigId.toSatId() != satId) { continue; }
+                std::string str;
+                for (const auto& o : obs)
+                {
+                    if (!str.empty()) { str += ", "; }
+                    str += fmt::format("{}", o);
+                }
+                LOG_DATA("{}:       [{}] has obs: {}", nameId, satSigId.code, str);
+            }
         }
 #endif
 
@@ -457,6 +478,7 @@ class ObservationFilter
     /// @param[in] count Amount of function calls to exclude
     void excludeSignalTemporarily(const SatSigId& satSigId, size_t count)
     {
+        if (count == 0) { return; }
         _temporarilyExcludedSignalsSatellites.emplace(satSigId, count);
     }
 
@@ -464,6 +486,11 @@ class ObservationFilter
     [[nodiscard]] const Frequency& getFrequencyFilter() const
     {
         return _filterFreq;
+    }
+    /// @brief Get the Code Filter
+    [[nodiscard]] const Code& getCodeFilter() const
+    {
+        return _filterCode;
     }
 
     /// @brief Get the Satellite System Filter

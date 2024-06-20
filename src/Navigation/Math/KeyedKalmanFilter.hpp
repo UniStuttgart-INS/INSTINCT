@@ -16,6 +16,7 @@
 #include <boost/math/distributions/chi_squared.hpp>
 #include <imgui.h>
 
+#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/KeyedMatrix.hpp"
 #include "util/Eigen.hpp"
@@ -319,11 +320,17 @@ class KeyedKalmanFilter
 
         _savedPreUpdate.x = x;
         _savedPreUpdate.P = P;
+        _savedPreUpdate.Phi = Phi;
+        _savedPreUpdate.Q = Q;
         _savedPreUpdate.z = z;
         _savedPreUpdate.H = H;
         _savedPreUpdate.R = R;
         _savedPreUpdate.S = S;
         _savedPreUpdate.K = K;
+
+        _savedPreUpdate.F = F;
+        _savedPreUpdate.G = G;
+        _savedPreUpdate.W = W;
     }
 
     /// @brief Restores the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update)
@@ -334,11 +341,17 @@ class KeyedKalmanFilter
 
         x = _savedPreUpdate.x;
         P = _savedPreUpdate.P;
+        Phi = _savedPreUpdate.Phi;
+        Q = _savedPreUpdate.Q;
         z = _savedPreUpdate.z;
         H = _savedPreUpdate.H;
         R = _savedPreUpdate.R;
         S = _savedPreUpdate.S;
         K = _savedPreUpdate.K;
+
+        F = _savedPreUpdate.F;
+        G = _savedPreUpdate.G;
+        W = _savedPreUpdate.W;
     }
     /// @brief Discards the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update)
     void discardPreUpdate()
@@ -399,30 +412,19 @@ class KeyedKalmanFilter
     {
         bool changed = false;
 
-        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-        if (ImGui::TreeNode(fmt::format("Kalman Filter##{}", id).c_str()))
+        changed |= ImGui::Checkbox(fmt::format("Enable outlier NIS check##{}", id).c_str(), &_checkNIS);
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("If the check has too many false positives, try increasing the process noise.");
+
+        if (_checkNIS)
         {
-            changed |= ImGui::Checkbox(fmt::format("Enable outlier NIS check##{}", id).c_str(), &_checkNIS);
-
-            if (_checkNIS)
+            double alpha = _alphaNIS * 100.0;
+            ImGui::SetNextItemWidth(width - ImGui::GetStyle().IndentSpacing);
+            if (ImGui::DragDouble(fmt::format("NIS alpha (failure rate)##{}", id).c_str(), &alpha, 1.0F, 0.0, 100.0, "%.2f %%"))
             {
-                double alpha = _alphaNIS * 100.0;
-                ImGui::SetNextItemWidth(width - ImGui::GetStyle().IndentSpacing);
-                if (ImGui::DragDouble(fmt::format("NIS alpha (failure rate)##{}", id).c_str(), &alpha, 1.0F, 0.0, 100.0, "%.2f %%"))
-                {
-                    _alphaNIS = alpha / 100.0;
-                    changed = true;
-                }
+                _alphaNIS = alpha / 100.0;
+                changed = true;
             }
-
-            ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-            if (ImGui::TreeNode(fmt::format("Matrices##Kalman Filter {}", id).c_str()))
-            {
-                showKalmanFilterMatrixViews(id);
-                ImGui::TreePop();
-            }
-
-            ImGui::TreePop();
         }
 
         return changed;
@@ -505,13 +507,19 @@ class KeyedKalmanFilter
     {
         bool saved = false; ///< Flag whether the state was saved
 
-        KeyedVectorX<Scalar, StateKeyType> x;               ///< x̂ State vector (n x 1)
-        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> P; ///< 𝐏 Error covariance matrix (n x n)
-        KeyedVectorX<Scalar, MeasKeyType> z;                ///< 𝐳 Measurement vector (m x 1)
-        KeyedMatrixX<Scalar, MeasKeyType, StateKeyType> H;  ///< 𝐇 Measurement sensitivity matrix (m x n)
-        KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> R;   ///< 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m)
-        KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> S;   ///< 𝗦 Measurement prediction covariance matrix (m x m)
-        KeyedMatrixX<Scalar, StateKeyType, MeasKeyType> K;  ///< 𝐊 Kalman gain matrix (n x m)
+        KeyedVectorX<Scalar, StateKeyType> x;                 ///< x̂ State vector (n x 1)
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> P;   ///< 𝐏 Error covariance matrix (n x n)
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> Phi; ///< 𝚽 State transition matrix (n x n)
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> Q;   ///< 𝐐 System/Process noise covariance matrix (n x n)
+        KeyedVectorX<Scalar, MeasKeyType> z;                  ///< 𝐳 Measurement vector (m x 1)
+        KeyedMatrixX<Scalar, MeasKeyType, StateKeyType> H;    ///< 𝐇 Measurement sensitivity matrix (m x n)
+        KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> R;     ///< 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m)
+        KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType> S;     ///< 𝗦 Measurement prediction covariance matrix (m x m)
+        KeyedMatrixX<Scalar, StateKeyType, MeasKeyType> K;    ///< 𝐊 Kalman gain matrix (n x m)
+                                                              ///
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> F;   ///< 𝐅 System model matrix (n x n)
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> G;   ///< 𝐆 Noise input matrix (n x o)
+        KeyedMatrixX<Scalar, StateKeyType, StateKeyType> W;   ///< 𝐖 Noise scale matrix (o x o)
     };
 
     /// @brief Accesses the saved pre-update matrices

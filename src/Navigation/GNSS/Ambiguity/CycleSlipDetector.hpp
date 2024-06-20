@@ -168,8 +168,9 @@ class CycleSlipDetector
     /// @brief Checks for a cycle slip
     /// @param[in] insTime Time of the measurement
     /// @param[in] satObs Satellite observations
+    /// @param[in] nameId Node nameId for log messages
     /// @return Cycle-slip result
-    [[nodiscard]] std::vector<Result> checkForCycleSlip(InsTime insTime, const std::vector<SatelliteObservation>& satObs);
+    [[nodiscard]] std::vector<Result> checkForCycleSlip(InsTime insTime, const std::vector<SatelliteObservation>& satObs, const std::string& nameId);
 
     /// @brief Resets all data related to the provided signal
     /// @param satSigId Satellite signal identifier
@@ -206,8 +207,8 @@ class CycleSlipDetector
     /// @brief Whether to check for LLI flag
     bool _enableLLICheck = true;
 
-    double _singleFrequencyThresholdPercentage = 0.9; ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
-    double _dualFrequencyThresholdPercentage = 0.6;   ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
+    double _singleFrequencyThresholdPercentage = 11.0; ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
+    double _dualFrequencyThresholdPercentage = 0.6;    ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
 
     /// Single Frequency carrier-phase cycle-slip detector using polynomial fits
     PolynomialCycleSlipDetector<SatSigId> _singleFrequencyDetector{ /* windowSize = */ 4, /* polyDegree = */ 2 };

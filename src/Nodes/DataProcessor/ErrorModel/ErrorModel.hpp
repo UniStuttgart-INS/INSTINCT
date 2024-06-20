@@ -410,8 +410,8 @@ class ErrorModel : public Node
     CycleSlipFrequencyUnits _gui_cycleSlipFrequencyUnit = CycleSlipFrequencyUnits::per_hour;
     /// The cycle-slip frequency (Unit as selected)
     double _gui_cycleSlipFrequency{ 0.0 };
-    /// Make a single ambiguity cycle as slip or reroll new ambiguity
-    bool _gui_cycleSlipSingleCycle = false;
+    /// Ambiguity limits cycle-slip
+    int _gui_cycleSlipRange = 20;
     /// The time frame which is considered for a cycle slip
     InsTime _cycleSlipWindowStartTime;
 

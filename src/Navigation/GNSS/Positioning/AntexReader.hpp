@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <filesystem>
 #include <fstream>
 #include <mutex>
 #include <set>
@@ -90,6 +91,11 @@ class AntexReader
         LOG_DEBUG("Reading ANTEX files started...");
 
         auto path = flow::GetProgramRootPath() / "resources" / "gnss" / "antex";
+        if (!std::filesystem::exists(path))
+        {
+            LOG_WARN("Not reading ANTEX files because path does not exist: {}", path);
+            return;
+        }
         for (const auto& entry : std::filesystem::directory_iterator(path))
         {
             if (entry.path().extension() != ".atx") { continue; }
