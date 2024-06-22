@@ -193,14 +193,6 @@ jobs:
           build_type: ${{ matrix.build_type }}
           doxygen: "OFF"
 
-      - name: Install or Update gcov and Compiler
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo apt update
-          sudo apt install -y gcov  
-          sudo apt install -y gcc    
-          sudo apt install -y g++
-
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
