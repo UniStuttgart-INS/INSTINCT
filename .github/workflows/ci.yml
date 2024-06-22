@@ -203,6 +203,7 @@ jobs:
           conan profile detect
       - name: Create custom conan profile
         run: |
+          conan profile new default --detect || true
           conan profile update settings.compiler.cppstd=17 default          
       - name: Installing conan dependencies
         run: |
