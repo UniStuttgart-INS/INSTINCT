@@ -201,6 +201,9 @@ jobs:
       - name: Create default conan profile
         run: |
           conan profile detect
+      - name: Create custom conan profile
+        run: |
+          conan profile update settings.compiler.cppstd=17 default          
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=${{matrix.build_type}}
