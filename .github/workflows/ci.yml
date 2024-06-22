@@ -20,16 +20,19 @@ jobs:
   Clang-tidy:
     runs-on: ubuntu-22.04
     steps:
+    
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
+          
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
           compiler: llvm
           build_type: Release
           doxygen: "OFF"
+          
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -37,30 +40,39 @@ jobs:
           cmake: true
           conan: "2.0.17"
           clangtidy: true
+          
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
+          
       - name: Installing conan 
         run: |
           pip install conan
+          
       - name: Checking conan version
         run: |
           conan --version
+          
       - name: Create default conan profile
         run: |
           conan profile detect
+          
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
+          
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+      
       - name: Copy compile commands
         run: |
           cmake --build ./build --target copy-compile-commands --config Release
+      
       - name: Run clang-tidy on ./src
         run: |
           python3 ./tools/run-clang-tidy.py $PWD/src
+      
       - name: Run clang-tidy on ./test
         run: |
           python3 ./tools/run-clang-tidy.py $PWD/test
@@ -68,16 +80,19 @@ jobs:
   Documentation:
     runs-on: ubuntu-22.04
     steps:
+    
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
+          
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
           compiler: gcc
           build_type: Release
           doxygen: "ON"
+          
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -85,28 +100,36 @@ jobs:
           cmake: true
           conan: "2.0.17"
           doxygen: true
+          
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
           sudo apt install -y flex bison graphviz dia mscgen pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
+     
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system/*' || true
+      
       - name: Installing conan 
         run: |
           pip install conan
+      
       - name: Checking conan version
         run: |
           conan --version
+      
       - name: Create default conan profile
         run: |
           conan profile detect  
+     
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=Release
+     
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    
       - name: Check documentation
         run: |
           cmake --build ./build --target doc --config Release
@@ -157,11 +180,12 @@ jobs:
             log-level: "OFF"
 
     steps:
+     
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
-
+      
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
@@ -184,6 +208,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         run: |
           brew install glfw
+     
       - name: Setup Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
@@ -192,32 +217,42 @@ jobs:
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system/*' || true
+     
       - name: Installing conan 
         run: |
           pip install conan
+     
       - name: Checking conan version
         run: |
           conan --version
+    
       - name: Create default conan profile
         run: |
           conan profile detect
+    
       - name: Create custom conan profile
         run: |
-          conan profile new default --detect || true
-          conan profile update settings.compiler.cppstd=17 default          
+          mkdir -p ~/.conan/profiles
+          conan profile detect --force
+          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default         
+    
       - name: Installing conan dependencies
         run: |
           conan install . --build=missing -s build_type=${{matrix.build_type}}
+     
       - name: Configure CMake
         run: |
           cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+     
       - name: Build
         run: |
           cmake --build ./build --config ${{matrix.build_type}}
+    
       - name: Test
         working-directory: ./build
         run: |
           ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180
+     
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
