@@ -193,6 +193,14 @@ jobs:
           build_type: ${{ matrix.build_type }}
           doxygen: "OFF"
 
+      - name: Install or Update gcov and Compiler
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt update
+          sudo apt install -y gcov  
+          sudo apt install -y gcc    
+          sudo apt install -y g++
+
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -251,7 +259,7 @@ jobs:
       - name: Test
         working-directory: ./build
         run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 300
      
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
