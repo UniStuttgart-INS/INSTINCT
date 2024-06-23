@@ -259,13 +259,18 @@ jobs:
       - name: Test
         working-directory: ./build
         run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 300
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 300 --exclude-regex 'LooselyCoupledKF'
+
+      - name: Test LooselyCoupledKF
+        working-directory: ./build
+        run: |
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 600 --tests-regex 'LooselyCoupledKF'
      
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
           mkdir -p build/coverage
-          gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=append --verbose
+          gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=merge-use-line-0 --verbose
 
       - name: Publish to codecov
         uses: codecov/codecov-action@v3
