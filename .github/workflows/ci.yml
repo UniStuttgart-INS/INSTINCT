@@ -235,6 +235,10 @@ jobs:
           mkdir -p ~/.conan/profiles
           conan profile detect --force
           echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default         
+      
+      - name: Clean previous builds
+        run: |
+          rm -rf build
     
       - name: Installing conan dependencies
         run: |
@@ -242,7 +246,11 @@ jobs:
      
       - name: Configure CMake
         run: |
-          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          if [ "${{matrix.build_type}}" = "Release" ]; then
+            cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          else
+            cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+          fi
      
       - name: Build
         run: |
@@ -257,7 +265,7 @@ jobs:
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
           mkdir -p build/coverage
-          gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}'
+          gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=append --verbose
 
       - name: Publish to codecov
         uses: codecov/codecov-action@v3
