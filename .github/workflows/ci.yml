@@ -266,12 +266,22 @@ jobs:
         run: |
           ctest -C ${{matrix.build_type}} --output-on-failure --timeout 600 --tests-regex 'LooselyCoupledKF'
      
+      - name: Test ExampleFlow
+        working-directory: ./build
+        run: ctest -C ${{matrix.build_type}} --output-on-failure --timeout 600 --tests-regex 'ExampleFlow'  
+      
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
           mkdir -p build/coverage
+          find ./build -name "*.gcno" -o -name "*.gcda"
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=merge-use-line-0 --verbose
 
+      - name: Debug gcov
+        if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
+        run: |
+          find ./build -name "*.gcno" -exec gcov -o {} \;
+      
       - name: Publish to codecov
         uses: codecov/codecov-action@v3
         with:
