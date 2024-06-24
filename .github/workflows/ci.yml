@@ -274,13 +274,13 @@ jobs:
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
           mkdir -p build/coverage
-          find ./build -name "*.gcno" -o -name "*.gcda"
+          find ./build -name "*.gcno" -o -name "*.gcda"  > /dev/null
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=merge-use-line-0 --verbose
 
       - name: Debug gcov
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
-          find ./build -name "*.gcno" -exec gcov -o {} \;
+          find ./build -name "*.gcno" -exec gcov -o {} \;  > /dev/null
       
       - name: Publish to codecov
         uses: codecov/codecov-action@v3
