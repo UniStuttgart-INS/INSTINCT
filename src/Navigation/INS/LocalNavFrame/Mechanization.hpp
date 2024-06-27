@@ -35,7 +35,7 @@ namespace NAV
 ///
 /// \anchor eq-INS-Mechanization-n_Quat_b-dot \f{equation}{ \label{eq:eq-INS-Mechanization-n_Quat_b-dot}
 ///   \mathbf{\dot{q}}_b^n
-///    = \begin{bmatrix} \dotup{w} \\ \dotup{x} \\ \dotup{y} \\ \dotup{z} \end{bmatrix}
+///    = \begin{bmatrix} \dot{w} \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix}
 ///    = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b \\
 ///                                  \omega_{nb,x}^b &        0         &  \omega_{nb,z}^b & -\omega_{nb,y}^b \\
 ///                                  \omega_{nb,y}^b & -\omega_{nb,z}^b &        0         &  \omega_{nb,x}^b \\
@@ -47,7 +47,7 @@ namespace NAV
 /// @param[in] n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 /// @return The time derivative of the coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 ///
-/// @note See \ref ImuIntegrator-Mechanization-n-Attitude-Quaternion equation \eqref{eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
+/// @note See \ref ImuIntegrator-Mechanization-n-Attitude-Quaternion equation \ref eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton
 template<typename DerivedA, typename DerivedB>
 Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_n_Quat_b(const Eigen::MatrixBase<DerivedA>& b_omega_nb,
                                                                          const Eigen::MatrixBase<DerivedB>& n_Quat_b_coeffs)
@@ -70,9 +70,9 @@ Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_n_Quat_b(const E
 ///
 /// \anchor eq-INS-Mechanization-v_n-dot \f{equation}{ \label{eq:eq-INS-Mechanization-v_n-dot}
 ///   \boldsymbol{\dot{v}}^n
-///       = \overbrace{\boldsymbol{f}^n}^{\hidewidth\text{measured}\hidewidth}
+///       = \overbrace{\boldsymbol{f}^n}^{\text{measured}}
 ///         -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
-///         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
+///         +\ \overbrace{\mathbf{g}^n}^{\text{gravitation}}
 ///         -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 /// \f}
 ///
@@ -82,7 +82,7 @@ Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_n_Quat_b(const E
 /// @param[in] n_centrifugalAcceleration Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 /// @return The time derivative of the velocity in local-navigation frame coordinates
 ///
-/// @note See \ref ImuIntegrator-Mechanization-n-Velocity equation \eqref{eq-ImuIntegrator-Mechanization-n-Velocity}
+/// @note See \ref ImuIntegrator-Mechanization-n-Velocity equation \ref eq-ImuIntegrator-Mechanization-n-Velocity
 template<typename DerivedA, typename DerivedB, typename DerivedC, typename DerivedD>
 Eigen::Vector3<typename DerivedA::Scalar> n_calcTimeDerivativeForVelocity(const Eigen::MatrixBase<DerivedA>& n_measuredForce,
                                                                           const Eigen::MatrixBase<DerivedB>& n_coriolisAcceleration,
@@ -99,9 +99,9 @@ Eigen::Vector3<typename DerivedA::Scalar> n_calcTimeDerivativeForVelocity(const 
 ///
 /// \anchor eq-INS-Mechanization-p_lla-dot \f{equation}{ \label{eq:eq-INS-Mechanization-p_lla-dot}
 /// \begin{aligned}
-///   \dotup{\phi}    &= \frac{v_N}{R_N + h} \\
-///   \dotup{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
-///   \dotup{h}       &= -v_D
+///   \dot{\phi}    &= \frac{v_N}{R_N + h} \\
+///   \dot{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
+///   \dot{h}       &= -v_D
 /// \end{aligned}
 /// \f}
 ///
@@ -112,7 +112,7 @@ Eigen::Vector3<typename DerivedA::Scalar> n_calcTimeDerivativeForVelocity(const 
 /// @param[in] R_E East/West (prime vertical) earth radius [m]
 /// @return The time derivative of the curvilinear position
 ///
-/// @note See \ref ImuIntegrator-Mechanization-n-Position equation \eqref{eq-ImuIntegrator-Mechanization-n-Position}
+/// @note See \ref ImuIntegrator-Mechanization-n-Position equation \ref eq-ImuIntegrator-Mechanization-n-Position
 template<typename Derived>
 Eigen::Vector3<typename Derived::Scalar> lla_calcTimeDerivativeForPosition(const Eigen::MatrixBase<Derived>& n_velocity,
                                                                            const typename Derived::Scalar& phi, const typename Derived::Scalar& h,

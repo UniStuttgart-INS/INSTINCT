@@ -25,27 +25,27 @@ namespace Instinct {
 The solution is obtained by iteratively performing
 
 -# Cofactor matrix:
-    \fl{equation,eq-SPP-LseAlgorithm-Q}
+    \anchor eq-SPP-LseAlgorithm-Q \f{equation}{
     \boldsymbol{Q} = \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \boldsymbol{H}(\boldsymbol{x})
     \f}
 
 -# Least squares solution:
-    \fl{equation,eq-SPP-LseAlgorithm-dx}
+    \anchor eq-SPP-LseAlgorithm-dx \f{equation}{
     \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
     \f}
 
 -# Unknowns:
-    \fl{equation,eq-SPP-LseAlgorithm-xhat}
+    \anchor eq-SPP-LseAlgorithm-xhat \f{equation}{
     \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
     \f}
 
 -# Residuals:
-    \fl{equation,eq-SPP-LseAlgorithm-e}
+    \anchor eq-SPP-LseAlgorithm-e \f{equation}{
     \boldsymbol{e} = \delta\boldsymbol{z}(\boldsymbol{x}) - \boldsymbol{H}(\boldsymbol{x}) \cdot \delta\boldsymbol{x}
     \f}
 
 -# Covariance of the unknowns:
-    \fl{equation,eq-SPP-LseAlgorithm-Sigma}
+    \anchor eq-SPP-LseAlgorithm-Sigma \f{equation}{
     \boldsymbol{\Sigma}_{x} = \hat{\sigma}_{apost}^2 \cdot \boldsymbol{Q}^{-1} \text{ where } \hat{\sigma}_{apost}^2 = \frac{\boldsymbol{e}^T\boldsymbol{W}\boldsymbol{e}}{m-n}
     \f}
 
@@ -61,60 +61,44 @@ Pseudorange and Doppler observations are processed separately.
 
 <b> Pseudorange </b>
 
-\fl{equation,eq-SppLSE-unknowns-pseudorange}
+\anchor eq-SppLSE-unknowns-pseudorange \f{equation}{
 \mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \begin{bmatrix}
     \mathbf{r}^e \\
     dt_R \\
     dt_{ISB}^{S_2 \rightarrow S_1} \\
     \vdots \\
-    dt_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
+    dt_{ISB}^{S_o \rightarrow S_1}
+  \end{bmatrix}
   =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
+  \begin{bmatrix}
     \text{Position [m]} \\
     \text{Receiver clock error [m]} \\
     \text{Inter-system clock error (System 2 to 1) [m]} \\
     \vdots \\
     \text{Inter-system clock error (System o to 1) [m]} \\
-    };
-
-  \end{tikzpicture}
+  \end{bmatrix}
 \f}
 
 <b> Doppler </b>
 
-\fl{equation,eq-SppLSE-unknowns-doppler}
+\anchor eq-SppLSE-unknowns-doppler \f{equation}{
 \mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \begin{bmatrix}
     \mathbf{v}^e \\
-    d\dotup{t}_R \\
-    d\dotup{t}_{ISB}^{S_2 \rightarrow S_1} \\
+    d\dot{t}_R \\
+    d\dot{t}_{ISB}^{S_2 \rightarrow S_1} \\
     \vdots \\
-    d\dotup{t}_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
+    d\dot{t}_{ISB}^{S_o \rightarrow S_1} \\
+  \end{bmatrix}
   =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
+  \begin{bmatrix}
     \text{Velocity [m/s]} \\
     \text{Receiver clock drift [m/s]} \\
     \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
     \vdots \\
     \text{Inter-system clock drift (System o to 1)  [m/s]} \\
-    };
-
-  \end{tikzpicture}
+  \end{bmatrix}
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -133,31 +117,31 @@ In detail for Least squares estimation
 
 <b> Pseudorange </b>
 
-\fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorange}
-\begin{aligned}
-\mathbf{H}_k
-&=
-\left[\begin{array}{ccccc}
-  \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 0 \\
-  \frac{-x^s+x_r}{\rho_r^s} & \frac{-y^s+y_r}{\rho_r^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 1 \\
-  \ldots & \ldots & \ldots & \ldots & \ldots
-\end{array}\right] \\
-&=
-\left[\begin{array}{ccccc}
-  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
-  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
-  \ldots & \ldots & \ldots & \ldots & \ldots
-\end{array}\right]
-\end{aligned}
+\anchor eq-SppLSE-measurementModel-designMatrix-pseudorange \f{equation}{
+  \begin{aligned}
+  \mathbf{H}_k
+  &=
+  \left[\begin{array}{ccccc}
+    \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 0 \\
+    \frac{-x^s+x_r}{\rho_r^s} & \frac{-y^s+y_r}{\rho_r^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 1 \\
+    \ldots & \ldots & \ldots & \ldots & \ldots
+  \end{array}\right] \\
+  &=
+  \left[\begin{array}{ccccc}
+    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
+    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
+    \ldots & \ldots & \ldots & \ldots & \ldots
+  \end{array}\right]
+  \end{aligned}
 \f}
 
 <b> Doppler </b>
 
-\fl{equation,eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
-\begin{aligned}
-\mathbf{H}_k
-&=
-\left[\begin{array}{ccccc}
+\anchor eq-SppLSE-measurementModel-designMatrix-pseudorangeRate \f{equation}{
+  \begin{aligned}
+  \mathbf{H}_k
+  &=
+  \left[\begin{array}{ccccc}
     -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 0 \\
     -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 1 \\
     \ldots & \ldots & \ldots & \ldots & \ldots
@@ -174,7 +158,7 @@ In detail for Least squares estimation
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection SppLSE-measurmentModel-weightMatrix Weight matrix
-See \ref GNSS-MeasErrorModel
+See \ref NAV::GnssMeasurementErrorModel
 
 
 */

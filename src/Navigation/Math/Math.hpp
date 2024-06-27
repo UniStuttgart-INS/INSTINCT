@@ -268,7 +268,7 @@ typename DerivedA::Scalar squaredNormVectorMatrix(const Eigen::MatrixBase<Derive
 /// \anchor eq-erfc \f{equation}{ \label{eq:eq-erfc}
 ///  \text{erfc}{\left( x \right)} = 1 - \text{erf}{\left( x \right)}
 /// \f}
-/// we can simplify equation \eqref{eq-normalDistCDF-erf} to
+/// we can simplify equation \ref eq-normalDistCDF-erf to
 /// \anchor eq-normalDistCDF-erfc \f{equation}{ \label{eq:eq-normalDistCDF-erfc}
 /// \begin{aligned}
 ///  \Phi(x) &= \frac{1}{2} \left[ 1 - \text{erf}{\left(-\frac{x}{\sqrt{2}}\right)} \right] \\

@@ -289,9 +289,7 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "eqref{1}=\link \1 \f(\eqref{eq:\1}\f) \endlink" \
-                         "fl{2}=\anchor \2 \f{\1}{ \label{eq:\2}" \
-                         "deprecated=@attention <b>Deprecated:</b>"
+ALIASES                = "deprecated=@attention <b>Deprecated:</b>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -1753,7 +1751,7 @@ FORMULA_FONTSIZE       = 14
 # to create new LaTeX commands to be used in formulas as building blocks. See
 # the section "Including formulas" for details.
 
-FORMULA_MACROFILE      = ${INSTINCT_SOURCE_DIR}/doc/LatexHeader.tex
+FORMULA_MACROFILE      =
 
 # Enable the USE_MATHJAX option to render LaTeX formulas using MathJax (see
 # https://www.mathjax.org) which uses client side JavaScript for the rendering
@@ -1764,7 +1762,7 @@ FORMULA_MACROFILE      = ${INSTINCT_SOURCE_DIR}/doc/LatexHeader.tex
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-USE_MATHJAX            = NO
+USE_MATHJAX            = YES
 
 # With MATHJAX_VERSION it is possible to specify the MathJax version to be used.
 # Note that the different versions of MathJax have different requirements with
@@ -1819,7 +1817,8 @@ MATHJAX_RELPATH        =
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
 MATHJAX_EXTENSIONS     = ams \
-                         color
+                         color \
+                         colortbl
 
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
 # of code that will be used on startup of the MathJax code. See the MathJax site
@@ -1945,7 +1944,7 @@ LATEX_OUTPUT           = latex
 # the output language.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_CMD_NAME         = ${INSTINCT_SOURCE_DIR}/doc/latex2
+LATEX_CMD_NAME         =
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to generate
 # index for LaTeX.

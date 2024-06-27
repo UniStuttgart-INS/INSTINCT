@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ $# -lt 1]; then
-    echo $0: usage: latex2 args
-    exit 1
-fi
-
-latex $*
-latex $*

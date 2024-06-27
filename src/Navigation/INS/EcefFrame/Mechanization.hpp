@@ -34,7 +34,7 @@ namespace NAV
 ///
 /// \anchor eq-INS-Mechanization-e_Quat_b-dot \f{equation}{ \label{eq:eq-INS-Mechanization-e_Quat_b-dot}
 ///   \mathbf{\dot{q}}_b^e
-///    = \begin{bmatrix} \dotup{w} \\ \dotup{x} \\ \dotup{y} \\ \dotup{z} \end{bmatrix}
+///    = \begin{bmatrix} \dot{w} \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix}
 ///    = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
 ///                                  \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
 ///                                  \omega_{eb,y}^b & -\omega_{eb,z}^b &        0         &  \omega_{eb,x}^b \\
@@ -46,7 +46,7 @@ namespace NAV
 /// @param[in] e_Quat_b_coeffs Coefficients of the quaternion e_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 /// @return The time derivative of the coefficients of the quaternion e_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
 ///
-/// @note See \ref ImuIntegrator-Mechanization-e-Attitude-Quaternion equation \eqref{eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
+/// @note See \ref ImuIntegrator-Mechanization-e-Attitude-Quaternion equation \ref eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix
 template<typename DerivedA, typename DerivedB>
 Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_e_Quat_b(const Eigen::MatrixBase<DerivedA>& b_omega_eb,
                                                                          const Eigen::MatrixBase<DerivedB>& e_Quat_b_coeffs)
@@ -69,9 +69,9 @@ Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_e_Quat_b(const E
 ///
 /// \anchor eq-INS-Mechanization-v_e-dot \f{equation}{ \label{eq:eq-INS-Mechanization-v_e-dot}
 ///   \boldsymbol{\dot{v}}^e
-///       = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
+///       = \overbrace{\boldsymbol{f}^e}^{\text{measured}}
 ///         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\text{coriolis acceleration}}
-///         +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravitation}\hidewidth}
+///         +\ \overbrace{\mathbf{g}^e}^{\text{gravitation}}
 ///         -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 /// \f}
 ///
@@ -81,7 +81,7 @@ Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_e_Quat_b(const E
 /// @param[in] e_centrifugalAcceleration Centrifugal acceleration in ECEF coordinates in [m/s^2]
 /// @return The time derivative of the velocity in ECEF frame coordinates
 ///
-/// @note See \ref ImuIntegrator-Mechanization-e-Velocity equation \eqref{eq-ImuIntegrator-Mechanization-e-Velocity}
+/// @note See \ref ImuIntegrator-Mechanization-e-Velocity equation \ref eq-ImuIntegrator-Mechanization-e-Velocity
 template<typename DerivedA, typename DerivedB, typename DerivedC, typename DerivedD>
 Eigen::Vector3<typename DerivedA::Scalar> e_calcTimeDerivativeForVelocity(const Eigen::MatrixBase<DerivedA>& e_measuredForce,
                                                                           const Eigen::MatrixBase<DerivedB>& e_coriolisAcceleration,
@@ -103,7 +103,7 @@ Eigen::Vector3<typename DerivedA::Scalar> e_calcTimeDerivativeForVelocity(const 
 /// @param[in] e_velocity Velocity with respect to the Earth in ECEF frame coordinates [m/s]
 /// @return The time derivative of the ECEF position
 ///
-/// @note See \ref ImuIntegrator-Mechanization-e-Position equation \eqref{eq-ImuIntegrator-Mechanization-e-Position}
+/// @note See \ref ImuIntegrator-Mechanization-e-Position equation \ref eq-ImuIntegrator-Mechanization-e-Position
 template<typename Derived>
 Eigen::Vector3<typename Derived::Scalar> e_calcTimeDerivativeForPosition(const Eigen::MatrixBase<Derived>& e_velocity)
 {
