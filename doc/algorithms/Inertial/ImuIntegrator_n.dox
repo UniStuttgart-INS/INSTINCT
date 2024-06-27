@@ -13,9 +13,7 @@
 
 namespace Instinct {
 
-/** \defgroup ImuIntegrator_n IMU Integrator (local-navigation frame)
-
-\tableofcontents
+/** \page ImuIntegrator_n IMU Integrator (local-navigation frame)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section ImuIntegrator-Mechanization-n Local-navigation frame mechanization

@@ -14,9 +14,7 @@
 
 namespace Instinct {
 
-/** \defgroup LooselyCoupledKF_n INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)
-
-\tableofcontents
+/** \page LooselyCoupledKF_n INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)
 
 \section LooselyCoupledKF_n-ErrorStateEquations-LocalLevelFrame Local-Level Frame Error State Equations
 

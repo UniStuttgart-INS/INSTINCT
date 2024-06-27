@@ -14,9 +14,7 @@
 
 namespace Instinct {
 
-  /** \defgroup SppKF Single Point Positioning using Kalman Filtering
-
-  \tableofcontents
+  /** \page SppKF Single Point Positioning using Kalman Filtering
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section SppKF-KfAlgorithm Algorithm - Extended Kalman Filter

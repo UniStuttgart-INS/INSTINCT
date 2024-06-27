@@ -13,9 +13,7 @@
 
 namespace Instinct {
 
-/** \defgroup ImuIntegrator_e IMU Integrator (Earth-fixed frame)
-
-\tableofcontents
+/** \page ImuIntegrator_e IMU Integrator (Earth-fixed frame)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section ImuIntegrator-Mechanization-e Earth-fixed frame mechanization

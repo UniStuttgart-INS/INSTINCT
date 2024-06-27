@@ -13,9 +13,7 @@
 
 namespace Instinct {
 
-/** \defgroup ImuSimulator IMU Simulator
-
-\tableofcontents
+/** \page ImuSimulator IMU Simulator
 
 <!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
 \section ImuSimulator-Acceleration-Measurements Acceleration Measurements
