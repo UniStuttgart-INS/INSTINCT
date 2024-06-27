@@ -23,8 +23,6 @@ Nodes, also known as "modules" in flow-based programming, are the primary encaps
 
 Each node starts a thread during its Constructor which handles state transitions. Later on the thread will also handle data processing.
 
-//TODO: \f$ \textcolor{red}{\text{Update the documentation here when this is implemented.}} \f$
-
 \section Core_Node_State Node States
 
 The \link NAV::Node::State State \endlink enum defines all possible state a node can be in within its lifetime.

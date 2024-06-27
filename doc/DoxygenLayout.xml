@@ -7,7 +7,7 @@
     <!-- <tab type="user" url="@ref GettingStarted" title="Getting started" /> -->
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="pages" visible="yes" title="" intro=""/>
-    <tab type="topics" visible="yes" title="Nodes" intro=""/>
+    <tab type="topics" visible="yes" title="Algorithm Descriptions" intro=""/>
     <tab type="modules" visible="yes" title="" intro="">
       <tab type="modulelist" visible="yes" title="" intro=""/>
       <tab type="modulemembers" visible="yes" title="" intro=""/>

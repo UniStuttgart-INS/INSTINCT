@@ -16,8 +16,11 @@
 /** \page developer_manual Developer Manual
 
 \tableofcontents
+  - [Getting started](https://github.com/UniStuttgart-INS/INSTINCT?tab=readme-ov-file#getting-started)
 
-//TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
+  Internal processes of INSTINCT:
+  - \subpage Core_Node
+*/
 
 ________
 <i>Last updated: 2024-03-18</i>

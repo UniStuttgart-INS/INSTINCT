@@ -14,6 +14,11 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ## Getting Started
 
+### Read the documentation
+
+Read the docs on
+[![](https://img.shields.io/badge/view-documentation-blue)](https://instinct.pages.ins.uni-stuttgart.de/instinct/)
+
 ### Working with the Repository
 
 ##### Git (either clone or update)
@@ -258,10 +263,6 @@ Recommended changes to the User's ```keybindings.json```
 * [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-
-## Version History
-
-- **v1.0.0:** Public Release
 
 ## License
 
