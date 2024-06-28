@@ -206,8 +206,6 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 {
                     LOG_TRACE("{}: [{}] Initializing KF with LSQ solution", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
                     KeyedVectorXd<States::StateKeyTypes> x(Eigen::VectorXd::Zero(lsq.solution.rows()), lsq.solution.rowKeys());
-                    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> P(Eigen::MatrixXd::Zero(lsq.variance.rows(), lsq.variance.cols()),
-                                                                                  lsq.variance.rowKeys(), lsq.variance.colKeys());
                     x.segment<3>(States::Pos) = _receiver[Rover].e_posMarker;
                     if (x.hasAnyRows(States::Vel)) { x.segment<3>(States::Vel) = _receiver[Rover].e_vel; }
                     x(States::RecvClkErr) = _receiver[Rover].recvClk.bias.value * InsConst<>::C;

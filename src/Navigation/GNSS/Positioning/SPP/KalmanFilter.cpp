@@ -161,7 +161,7 @@ void KalmanFilter::reset()
 void KalmanFilter::initialize(const KeyedVectorXd<States::StateKeyTypes>& states, const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance)
 {
     _kalmanFilter.x(states.rowKeys()) = states(all);
-    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all);
+    _kalmanFilter.P(variance.rowKeys(), variance.colKeys()) = variance(all, all) * 100.0; // LSQ variance is very small. So make bigger
 
     if (!states.hasAnyRows(States::Vel)) // We always estimate velocity in the KF, but LSQ could not, so set a default value
     {
