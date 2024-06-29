@@ -170,6 +170,10 @@ jobs:
             compiler: gcc
             build_type: Release
             log-level: "OFF"
+    env:
+      CC: /usr/bin/gcc-11
+      CXX: /usr/bin/g++-11
+      GCOV: gcov-11
 
     steps:
      
@@ -207,11 +211,6 @@ jobs:
           sudo apt install -y gcc-11 g++-11 libglfw3-dev libglfw3
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 11
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
-
-        env:
-          CC: /usr/bin/gcc-11
-          CXX: /usr/bin/g++-11
-          GCOV: gcov-11
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
