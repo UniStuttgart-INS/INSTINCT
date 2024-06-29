@@ -38,16 +38,16 @@ jobs:
         with:
           compiler: llvm
           cmake: true
-          conan: "2.0.17"
+          conan: "2.2.2"
           clangtidy: true
           
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
           
-      - name: Installing conan 
-        run: |
-          pip install conan
+#     - name: Installing conan 
+#       run: |
+#          pip install conan
           
       - name: Checking conan version
         run: |
@@ -98,7 +98,7 @@ jobs:
         with:
           compiler: gcc
           cmake: true
-          conan: "2.0.17"
+          conan: "2.2.2"
           doxygen: true
           
       - name: Setup Linux
@@ -110,9 +110,9 @@ jobs:
         run: |
           conan remove -f '*/system/*' || true
       
-      - name: Installing conan 
-        run: |
-          pip install conan
+#      - name: Installing conan 
+#        run: |
+#          pip install conan
       
       - name: Checking conan version
         run: |
@@ -200,7 +200,7 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
           cmake: true
           brew: true
-          conan: "2.0.17"
+          conan: "2.2.2"
           ccache: true
           gcovr: true
 
@@ -213,14 +213,15 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt install -y libglfw3-dev libglfw3
+          sudo apt install -y gcov=11.4.0
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system/*' || true
      
-      - name: Installing conan 
-        run: |
-          pip install conan
+#      - name: Installing conan 
+#        run: |
+#          pip install conan
      
       - name: Checking conan version
         run: |
@@ -230,27 +231,33 @@ jobs:
         run: |
           conan profile detect
     
-      - name: Create custom conan profile
-        run: |
-          mkdir -p ~/.conan/profiles
-          conan profile detect --force
-          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default         
+#      - name: Create custom conan profile
+#        run: |
+#          mkdir -p ~/.conan/profiles
+#          conan profile detect --force
+#          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default     
+
+#      - name: Update Conan profile
+#        run: |
+#          conan profile update settings.compiler=gcc default
+#          conan profile update settings.compiler.version=11 default
+#          conan profile update settings.compiler.libcxx=libstdc++11 default
+#          conan profile update settings.build_type=${{matrix.build_type}} default
+#          conan profile update settings.arch=x86_64 default
+#          conan profile update settings.os=Linux default
+
       
-      - name: Clean previous builds
-        run: |
-          rm -rf build
+#      - name: Clean previous builds
+#        run: |
+#          rm -rf build
     
       - name: Installing conan dependencies
         run: |
-          conan install . --build=missing -s build_type=${{matrix.build_type}}
+          conan install . --build=missing -s build_type=${{matrix.build_type}} 
      
       - name: Configure CMake
         run: |
-          if [ "${{matrix.build_type}}" = "Release" ]; then
-            cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-          else
-            cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-          fi
+          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
      
       - name: Build
         run: |
@@ -259,20 +266,12 @@ jobs:
       - name: Test
         working-directory: ./build
         run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 300 --exclude-regex 'LooselyCoupledKF'
-
-      - name: Test LooselyCoupledKF
-        working-directory: ./build
-        run: |
-          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 600 --tests-regex 'LooselyCoupledKF'
-     
-      - name: Test ExampleFlow
-        working-directory: ./build
-        run: ctest -C ${{matrix.build_type}} --output-on-failure --timeout 600 --tests-regex 'ExampleFlow'  
-      
+          ctest -C ${{matrix.build_type}} --output-on-failure --timeout 180 
+   
       - name: Coverage
         if: ${{ runner.os != 'Windows' && matrix.build_type == 'Debug' }}
         run: |
+          pip install gcovr==7.2
           mkdir -p build/coverage
           find ./build -name "*.gcno" -o -name "*.gcda"  > /dev/null
           gcovr --config doc/coverage/gcovr.cfg --gcov-executable '${{ matrix.gcov_executable }}' --merge-mode-functions=merge-use-line-0 --verbose
