@@ -205,6 +205,11 @@ jobs:
         run: |
           brew install glfw
      
+      - name: Remove existing GCC and G++
+        run: |
+          sudo apt remove --purge gcc g++
+          sudo apt autoremove
+      
       - name: Setup Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
