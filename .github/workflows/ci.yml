@@ -138,7 +138,7 @@ jobs:
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
           - llvm
-          - gcc
+          - gcc-11
           - msvc
         build_type:
           - Release
