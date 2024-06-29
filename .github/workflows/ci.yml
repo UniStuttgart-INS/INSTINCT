@@ -212,8 +212,8 @@ jobs:
       - name: Setup Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
-          sudo apt install -y libglfw3-dev libglfw3
-          sudo apt install -y gcov=11.4.0
+          sudo apt update
+          sudo apt install -y g++-11 libglfw3-dev libglfw3
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
