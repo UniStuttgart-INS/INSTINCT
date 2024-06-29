@@ -204,19 +204,11 @@ jobs:
       - name: Setup Linux
         if: ${{ runner.os == 'Linux' }}
         run: |
-          sudo apt update
-          sudo apt install -y g++-11 gcc-11 libglfw3-dev libglfw3
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 60
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60
-          sudo ln -sf /usr/bin/gcov-11 /usr/bin/gcov
+          sudo apt install -y libglfw3-dev libglfw3
 
       - name: Cleanup Conan system packages (they are not properly cached)
         run: |
           conan remove -f '*/system/*' || true
-     
-#      - name: Installing conan 
-#        run: |
-#          pip install conan
      
       - name: Checking conan version
         run: |
@@ -226,18 +218,16 @@ jobs:
         run: |
           conan profile detect
           
-      - name: Update Conan profile for cppstd
+      - name: Create custom conan profile
         run: |
-          profile_name=$(conan profile detect --force)
-          echo 'settings.compiler.cppstd=17' >> ~/.conan2/profiles/${profile_name} 
-      
-#      - name: Clean previous builds
-#        run: |
-#          rm -rf build
+          mkdir -p ~/.conan/profiles
+          conan profile detect --force
+          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default 
     
       - name: Installing conan dependencies
         run: |
-          conan install . --build=missing -s build_type=${{matrix.build_type}} 
+          conan install . --build=missing -s build_type=${{matrix.build_type}} -s compiler.cppstd=17
+          #conan install . --build=missing -s build_type=Debug -s compiler.cppstd=17
      
       - name: Configure CMake
         run: |
