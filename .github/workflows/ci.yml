@@ -205,7 +205,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: |
           sudo apt update
-          sudo apt install -y g++-11 gcc-11 gcov-11 libglfw3-dev libglfw3
+          sudo apt install -y g++-11 gcc-11 libglfw3-dev libglfw3
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 60
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60
           sudo ln -sf /usr/bin/gcov-11 /usr/bin/gcov
@@ -228,8 +228,8 @@ jobs:
           
       - name: Update Conan profile for cppstd
         run: |
-          conan profile show default
-          echo 'settings.compiler.cppstd=17' >> ~/.conan/profiles/default    
+          profile_name=$(conan profile detect --force)
+          echo 'settings.compiler.cppstd=17' >> ~/.conan2/profiles/${profile_name} 
       
 #      - name: Clean previous builds
 #        run: |
