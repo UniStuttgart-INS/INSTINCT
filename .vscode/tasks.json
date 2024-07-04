@@ -570,7 +570,7 @@
                 "--exclude-regex",
                 "'\\[flow\\]'",
                 // "--tests-regex",
-                // "'ScrollingBuffer'"
+                // "'ScrollingBuffer'",
                 // "--verbose",
             ],
             "options": {

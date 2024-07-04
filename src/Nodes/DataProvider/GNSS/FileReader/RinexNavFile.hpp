@@ -75,6 +75,48 @@ class RinexNavFile : public Node, public FileReader
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() override;
 
+    /// @brief Read the header of the file with correct version
+    /// @param[in] version RINEX version
+    void executeHeaderParser(double version);
+
+    /// @brief Aborts RINEX file reading and deinitializes node
+    /// @return True if deinitialization successful
+    inline auto abortReading()
+    {
+        LOG_ERROR("{}: The file '{}' is corrupt in line {}.", nameId(), _path, getCurrentLineNumber());
+        _gnssNavInfo.reset();
+        doDeinitialize();
+    };
+
+    /// @brief Read the messages of the file with correct version
+    /// @param[in] version RINEX version
+    void executeOrbitParser(double version);
+
+    /// @brief Parses RINEX version 2.* headers
+    void parseHeader2();
+
+    /// @brief Parses RINEX version 3.* headers
+    void parseHeader3();
+
+    /// @brief Parses RINEX version 4.00 headers
+    void parseHeader4();
+
+    /// @brief Parses RINEX version 2.* messages
+    void parseOrbit2();
+
+    /// @brief Parses RINEX version 3.* messages
+    void parseOrbit3();
+
+    /// @brief Parses RINEX version 4.00 messages
+    void parseOrbit4();
+
+    /// @brief Parses ephemeris message since version 3
+    /// @param[in] line string
+    /// @param[in] satSys Satellite System
+    /// @param[in] satNum uint8_t Satellite Number
+    /// @return False if message should be skipped
+    bool parseEphemeris(std::string& line, SatelliteSystem satSys, uint8_t satNum);
+
     /// @brief Read the Header of the file
     void readHeader() override;
 
@@ -82,7 +124,42 @@ class RinexNavFile : public Node, public FileReader
     void readOrbits();
 
     /// @brief Supported RINEX versions
-    static inline const std::set<double> _supportedVersions = { 3.05, 3.04, 3.03, 3.02, 2.11, 2.10, 2.01 }; // TODO version 4.00
+    static inline const std::set<double> _supportedVersions = { 4.00, 3.05, 3.04, 3.03, 3.02, 2.11, 2.10, 2.01 };
+
+    /// @brief RINEX navigation message types enumeration with continuous range
+    enum class NavMsgType
+    {
+        EPH,    ///< Ephemeris
+        STO,    ///< System Time Offset
+        EOP,    ///< Earth Orientation Parameter
+        ION,    ///< Ionosphere
+        UNKNOWN ///< Unknown message type
+    };
+
+    /// @brief Converts RINEX navigation message string to enum type
+    /// @param[in] type string
+    /// @return navMsgType enum
+    static inline NavMsgType getNavMsgType(const std::string& type)
+    {
+        NavMsgType navMsgType = NavMsgType::UNKNOWN;
+        if (type == "EPH")
+        {
+            navMsgType = NavMsgType::EPH;
+        }
+        else if (type == "STO")
+        {
+            navMsgType = NavMsgType::STO;
+        }
+        else if (type == "EOP")
+        {
+            navMsgType = NavMsgType::EOP;
+        }
+        else if (type == "ION")
+        {
+            navMsgType = NavMsgType::ION;
+        }
+        return navMsgType;
+    }
 
     /// @brief Data object to share over the output pin
     GnssNavInfo _gnssNavInfo;
