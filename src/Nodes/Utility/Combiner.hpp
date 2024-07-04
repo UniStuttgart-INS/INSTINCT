@@ -91,9 +91,9 @@ class Combiner : public Node, public CommonLog
                                                                SppSolution::type(),
                                                                RtklibPosObs::type(),
                                                                ImuObs::type(),
+                                                               ImuObsWDelta::type(),
                                                                ImuObsSimulated::type(),
                                                                KvhObs::type(),
-                                                               ImuObsWDelta::type(),
                                                                VectorNavBinaryOutput::type() };
 
     /// Combination of data

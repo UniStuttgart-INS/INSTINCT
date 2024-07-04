@@ -412,9 +412,9 @@ std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
         else if (sourcePin->dataIdentifier.front() == SppSolution::type()) { dataDescriptors = SppSolution::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type()) { dataDescriptors = RtklibPosObs::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == ImuObs::type()) { dataDescriptors = ImuObs::GetStaticDataDescriptors(); }
+        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type()) { dataDescriptors = ImuObsWDelta::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type()) { dataDescriptors = ImuObsSimulated::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == KvhObs::type()) { dataDescriptors = KvhObs::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type()) { dataDescriptors = ImuObsWDelta::GetStaticDataDescriptors(); }
         else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type()) { dataDescriptors = VectorNavBinaryOutput::GetStaticDataDescriptors(); }
     }
     if (!_pinData.at(pinIndex).dynDataDescriptors.empty())
