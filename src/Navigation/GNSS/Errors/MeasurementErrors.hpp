@@ -84,9 +84,9 @@ class GnssMeasurementErrorModel
     Model _model = RTKLIB;
 
     /// Carrier Measurement error standard deviation per Frequency [m]
-    double _carrierStdDev = 0.001;
+    double _carrierStdDev = 0.003;
     /// Code/Pseudorange Measurement error standard deviation per Frequency [m]
-    double _codeStdDev = 0.1;
+    double _codeStdDev = 0.9;
     /// Doppler Frequency error factor [Hz] - Measurement error standard deviation
     double _dopplerStdDev = 1;
 

@@ -302,7 +302,7 @@ class Plot : public Node, public CommonLog
         /// @param[in] title Title of the ImPlot
         /// @param[in] nInputPins Amount of inputPins
         PlotInfo(const std::string& title, size_t nInputPins)
-            : title(title), headerText(title), selectedXdata(nInputPins, 0) {}
+            : title(title), headerText(title), selectedXdata(nInputPins, 1) {}
 
         /// Size of the plot
         ImVec2 size{ -1, 300 };
@@ -417,7 +417,7 @@ class Plot : public Node, public CommonLog
 
     /// @brief Dynamic input pins
     /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
-    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback, 5 };
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback, 1 };
 
     /// @brief Adds a event to a certain point in time
     /// @param[in] pinIndex Index of the input pin where the data was received

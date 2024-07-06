@@ -51,8 +51,9 @@ class PolynomialCycleSlipDetector
     /// @brief Constructor
     /// @param[in] windowSize Amount of points to use for the fit (sliding window)
     /// @param[in] polyDegree Polynomial degree to fit
-    explicit PolynomialCycleSlipDetector(size_t windowSize, size_t polyDegree)
-        : _windowSize(windowSize), _polyDegree(polyDegree) {}
+    /// @param[in] enabled Whether the detector is enabled
+    explicit PolynomialCycleSlipDetector(size_t windowSize, size_t polyDegree, bool enabled = true)
+        : _enabled(enabled), _windowSize(windowSize), _polyDegree(polyDegree) {}
 
     /// @brief Checks for a cycle slip
     /// @param[in] key Key of the detector

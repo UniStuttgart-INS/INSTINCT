@@ -353,26 +353,26 @@ NAV::Plot::Plot()
     inputPins.at(0).type = Pin::Type::Flow;
     inputPins.at(0).dataIdentifier = _dataIdentifier;
     inputPins.at(0).callback = static_cast<InputPin::FlowFirableCallbackFunc>(&Plot::plotFlowData);
-    // PinData::PinType::Bool:
-    _pinData.at(1).pinType = PinData::PinType::Bool;
-    inputPins.at(1).type = Pin::Type::Bool;
-    inputPins.at(1).dataIdentifier.clear();
-    inputPins.at(1).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotBoolean);
-    // PinData::PinType::Int:
-    _pinData.at(2).pinType = PinData::PinType::Int;
-    inputPins.at(2).type = Pin::Type::Int;
-    inputPins.at(2).dataIdentifier.clear();
-    inputPins.at(2).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotInteger);
-    // PinData::PinType::Float:
-    _pinData.at(3).pinType = PinData::PinType::Float;
-    inputPins.at(3).type = Pin::Type::Float;
-    inputPins.at(3).dataIdentifier.clear();
-    inputPins.at(3).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotFloat);
-    // PinData::PinType::Matrix:
-    _pinData.at(4).pinType = PinData::PinType::Matrix;
-    inputPins.at(4).type = Pin::Type::Matrix;
-    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
-    inputPins.at(4).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
+    // // PinData::PinType::Bool:
+    // _pinData.at(1).pinType = PinData::PinType::Bool;
+    // inputPins.at(1).type = Pin::Type::Bool;
+    // inputPins.at(1).dataIdentifier.clear();
+    // inputPins.at(1).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotBoolean);
+    // // PinData::PinType::Int:
+    // _pinData.at(2).pinType = PinData::PinType::Int;
+    // inputPins.at(2).type = Pin::Type::Int;
+    // inputPins.at(2).dataIdentifier.clear();
+    // inputPins.at(2).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotInteger);
+    // // PinData::PinType::Float:
+    // _pinData.at(3).pinType = PinData::PinType::Float;
+    // inputPins.at(3).type = Pin::Type::Float;
+    // inputPins.at(3).dataIdentifier.clear();
+    // inputPins.at(3).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotFloat);
+    // // PinData::PinType::Matrix:
+    // _pinData.at(4).pinType = PinData::PinType::Matrix;
+    // inputPins.at(4).type = Pin::Type::Matrix;
+    // inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "Eigen::VectorXd" };
+    // inputPins.at(4).callback = static_cast<InputPin::DataChangedNotifyFunc>(&Plot::plotMatrix);
 }
 
 NAV::Plot::~Plot()
@@ -1930,7 +1930,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     {
         if (plot.selectedXdata.at(pinIndex) > _pinData.at(pinIndex).plotData.size())
         {
-            plot.selectedXdata.at(pinIndex) = 0;
+            plot.selectedXdata.at(pinIndex) = 1;
         }
     }
 }
@@ -1955,7 +1955,7 @@ void NAV::Plot::pinAddCallback(Node* node)
     plotNode->_pinData.emplace_back();
     for (auto& plot : plotNode->_plots)
     {
-        plot.selectedXdata.emplace_back(0);
+        plot.selectedXdata.emplace_back(1);
     }
 }
 

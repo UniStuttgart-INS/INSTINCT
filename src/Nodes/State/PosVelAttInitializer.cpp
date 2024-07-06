@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "PosVelAttInitializer.hpp"
+#include "NodeRegistry.hpp"
 
 #include "util/Logger.hpp"
 
@@ -691,26 +692,21 @@ void NAV::PosVelAttInitializer::receiveGnssObs(InputPin::NodeDataQueue& queue, s
 
     const auto* sourcePin = inputPins.at(pinIdx).link.getConnectedPin();
 
-    if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
-    {
-        receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData));
-    }
-    else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
+    if (sourcePin->dataIdentifier.front() == UbloxObs::type())
     {
         receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
     }
-    else if (sourcePin->dataIdentifier.front() == Pos::type())
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { PosVelAtt::type() }))
     {
-        receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
+        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
     }
-    else if (sourcePin->dataIdentifier.front() == PosVel::type()
-             || sourcePin->dataIdentifier.front() == SppSolution::type())
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { PosVel::type() }))
     {
         receivePosVelObs(std::static_pointer_cast<const PosVel>(nodeData));
     }
-    else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { Pos::type() }))
     {
-        receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
+        receivePosObs(std::static_pointer_cast<const Pos>(nodeData));
     }
 
     finalizeInit();
@@ -783,35 +779,6 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
 
                 _posVelAttInitialized.at(1) = true;
             }
-        }
-    }
-}
-
-void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs)
-{
-    if (!std::isnan(obs->e_position().x()))
-    {
-        if (!std::isnan(obs->sdXYZ.x()))
-        {
-            _lastPositionAccuracy.at(0) = static_cast<float>(obs->sdXYZ.x() * 1e2);
-            _lastPositionAccuracy.at(1) = static_cast<float>(obs->sdXYZ.y() * 1e2);
-            _lastPositionAccuracy.at(2) = static_cast<float>(obs->sdXYZ.z() * 1e2);
-        }
-        else if (!std::isnan(obs->sdNED.x()))
-        {
-            _lastPositionAccuracy.at(0) = static_cast<float>(obs->sdNED.x() * 1e2);
-            _lastPositionAccuracy.at(1) = static_cast<float>(obs->sdNED.y() * 1e2);
-            _lastPositionAccuracy.at(2) = static_cast<float>(obs->sdNED.z() * 1e2);
-        }
-
-        if (_lastPositionAccuracy.at(0) <= _positionAccuracyThreshold
-            && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
-            && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
-        {
-            _e_initPosition = obs->e_position();
-            _initTime = obs->insTime;
-
-            _posVelAttInitialized.at(0) = true;
         }
     }
 }
