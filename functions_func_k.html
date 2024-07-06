@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -123,9 +144,9 @@ $(function(){initNavTree('functions_func_k.html',''); initResizable(); });
 <li>KeyedVector()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedVector.html#a7cd7b40cd26bdb80e051ae8d5eddc991">NAV::KeyedVector&lt; Scalar, RowKeyType, Rows &gt;</a>, <a class="el" href="classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html#a24b6afeecf54236f53554f2aca25e075">NAV::KeyedVector&lt; Scalar, RowKeyType, Eigen::Dynamic &gt;</a></li>
 <li>KeyedVectorBase()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedVectorBase.html#af095e65b167b34799fc5411495133e60">NAV::internal::KeyedVectorBase&lt; Scalar, RowKeyType, Rows &gt;</a></li>
 <li>Kind()&#160;:&#160;<a class="el" href="structNAV_1_1Node_1_1Kind.html#a15ec9510f23085e6f288b8322f19abd0">NAV::Node::Kind</a>, <a class="el" href="structNAV_1_1Pin_1_1Kind.html#aba35d6f93a061401f675050ad016cb66">NAV::Pin::Kind</a></li>
+<li>KmlLogger()&#160;:&#160;<a class="el" href="classNAV_1_1KmlLogger.html#abb3c82e472b773187cbb376455e73957">NAV::KmlLogger</a></li>
 <li>knownAccelDisturbance()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#ac75325ee0f9e3797b8f429598b205f44">NAV::vendor::vectornav::VpeStatus</a></li>
 <li>knownMagDisturbance()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#acded18fefbdbd7685f5a320c96504462">NAV::vendor::vectornav::VpeStatus</a></li>
-<li>KvhDataLogger()&#160;:&#160;<a class="el" href="classNAV_1_1KvhDataLogger.html#ab784fc493b292f0e1499b7eb9c7a9aaa">NAV::KvhDataLogger</a></li>
 <li>KvhFile()&#160;:&#160;<a class="el" href="classNAV_1_1KvhFile.html#a1fedd13d8548919dcbb72f06846e3b55">NAV::KvhFile</a></li>
 <li>KvhObs()&#160;:&#160;<a class="el" href="classNAV_1_1KvhObs.html#a8dd5fa6a79da076de70a6f54a1de7c31">NAV::KvhObs</a></li>
 <li>KvhSensor()&#160;:&#160;<a class="el" href="classNAV_1_1KvhSensor.html#a612cf1dff8655a3e5aec47bf3fd0c478">NAV::KvhSensor</a></li>

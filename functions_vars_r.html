@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,19 +135,21 @@ $(function(){initNavTree('functions_vars_r.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div>
 
 <h3><a id="index_r" name="index_r"></a>- r -</h3><ul>
-<li>R&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#aa2909ac6c6afbe106dc3588c486f43d1">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#ae62ceae71096894c8c9035d1e45c89f7">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>R&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#aa2909ac6c6afbe106dc3588c486f43d1">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#ae62ceae71096894c8c9035d1e45c89f7">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#add4f499d2da58c3a2c092ceb90f8cef3">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a></li>
+<li>r2&#160;:&#160;<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#ad790fa80182fc5b5eda2aa3717730f07">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::NISResult</a></li>
 <li>R_E&#160;:&#160;<a class="el" href="classNAV_1_1InsConst_1_1GPS.html#a27b77963884a989c0e3665484c987b18">NAV::InsConst&lt; Scalar &gt;::GPS</a></li>
 <li>ratio&#160;:&#160;<a class="el" href="classNAV_1_1RtklibPosObs.html#a4ced8f97a54152a9d0eef1a5b7298fbd">NAV::RtklibPosObs</a></li>
 <li>raw&#160;:&#160;<a class="el" href="classNAV_1_1KvhObs.html#a046472271d7dbf6f9fd2f61700f3db02">NAV::KvhObs</a>, <a class="el" href="classNAV_1_1UartPacket.html#a9f407bdb5f94e7ae2ff41c07597e4492">NAV::UartPacket</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html#abec8aaf0d49b3c5455b60efa71c6b32e">NAV::vendor::vectornav::GnssOutputs</a></li>
 <li>rcvTow&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx.html#a8a1dcfc98a7d5431d043bd482df8698a">NAV::vendor::ublox::UbxRxmRawx</a></li>
 <li>receivedDuringRun&#160;:&#160;<a class="el" href="structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#affa0f073e18c29dba4ef664eaefc8c0b">NAV::GnssAnalyzer::Combination::Term</a></li>
+<li>receiverInfo&#160;:&#160;<a class="el" href="classNAV_1_1GnssObs.html#a873192200367aa6d8f27f159006db96b">NAV::GnssObs</a></li>
 <li>receiverNumber&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#ae7f427cf832ff5941222f830abb489b5">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>receiverType&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#aea6ac3dc31a1e420d6812f51c71fc75b">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>receiverVersion&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a856d017572382573abc7c22a58844fd2">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>recStat&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx.html#a6dcd04a97d55de3f03649c31efefabf1">NAV::vendor::ublox::UbxRxmRawx</a></li>
 <li>recvClk&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#af98a2f587e9850f44744e7af68a3d71a">NAV::Receiver&lt; ReceiverType &gt;</a>, <a class="el" href="classNAV_1_1SppSolution.html#a7a878d3afcb27a09527990ffc6560ecc">NAV::SppSolution</a></li>
-<li>recvClkDrift&#160;:&#160;<a class="el" href="classNAV_1_1TcKfInsGnssErrors.html#afef14b607934dc4bf6a605c0dbb8ce49">NAV::TcKfInsGnssErrors</a></li>
-<li>recvClkOffset&#160;:&#160;<a class="el" href="classNAV_1_1TcKfInsGnssErrors.html#a11964b924830a25994439de86bec3819">NAV::TcKfInsGnssErrors</a></li>
+<li>recvClkDrift&#160;:&#160;<a class="el" href="classNAV_1_1InsGnssTCKFSolution.html#a9337aae76e8f20a724e34b3383473e67">NAV::InsGnssTCKFSolution</a></li>
+<li>recvClkOffset&#160;:&#160;<a class="el" href="classNAV_1_1InsGnssTCKFSolution.html#aba7feb8d65648a3f83b7b7e17a73e0c1">NAV::InsGnssTCKFSolution</a></li>
 <li>recvObs&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation.html#ada6e6d444262a676476d33a3486f501f">NAV::Observations::SignalObservation</a></li>
 <li>referenceTimeSatelliteSystem&#160;:&#160;<a class="el" href="structNAV_1_1ReceiverClock.html#a6570aff96940eb62941f8ecf3598d079">NAV::ReceiverClock</a></li>
 <li>refTime&#160;:&#160;<a class="el" href="classNAV_1_1SatNavData.html#a4c6dbdf8021bdb44b918e7f400cf9839">NAV::SatNavData</a></li>
@@ -137,7 +160,7 @@ $(function(){initNavTree('functions_vars_r.html',''); initResizable(); });
 <li>Rg&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#af704ac7cae9e282b0e36eefe9dc4442c">NAV::InsConst&lt; Scalar &gt;</a></li>
 <li>rho_r_s&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1CalcTerms.html#ab5cbddf08ddcd8d448054c6f9c4fdfd0">NAV::Observations::SignalObservation::ReceiverSpecificData::CalcTerms</a></li>
 <li>rightPaneWidth&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#ac17050a079c0cfe7e5c68896592c7123">NAV::gui::NodeEditorApplication</a>, <a class="el" href="structNAV_1_1Plot_1_1PlotInfo.html#ad80c644d6c42dd7b5fcc2d694d9c9bf1">NAV::Plot::PlotInfo</a></li>
-<li>roll&#160;:&#160;<a class="el" href="classNAV_1_1ImuSimulator.html#a3587c8b784ce82e3dce626249c00f7f0">NAV::ImuSimulator</a>, <a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavAtt.html#a588c1e50bfd2d9d0586563cfc44c460c">NAV::vendor::ublox::UbxNavAtt</a></li>
+<li>roll&#160;:&#160;<a class="el" href="classNAV_1_1ImuSimulator.html#af49686d6e931092125f79a72fa7d9e53">NAV::ImuSimulator</a>, <a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavAtt.html#a588c1e50bfd2d9d0586563cfc44c460c">NAV::vendor::ublox::UbxNavAtt</a></li>
 <li>rowIndices&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a5bbd34952067b5aee774de2e2d258fff">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>rowKeysVector&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#ad8a5f64adb5b7bf181db464d4230ffba">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>rowSlice&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a2dfdbdca44016266d4cebd90a5765938">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>

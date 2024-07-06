@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -257,17 +278,18 @@ $(function(){initNavTree('GnssNavInfo_8hpp_source.html',''); initResizable(); })
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    {</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno"><a class="line" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#ab36cda35f88558c9e2ff2eba7d66d7d7">  151</a></span>        <span class="keywordtype">double</span> <a class="code hl_variable" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#ab36cda35f88558c9e2ff2eba7d66d7d7">a0</a> = std::nan(<span class="stringliteral">&quot;&quot;</span>); </div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno"><a class="line" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#abbcd0cf1e6c203eac88015c1c08074c2">  152</a></span>        <span class="keywordtype">double</span> <a class="code hl_variable" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#abbcd0cf1e6c203eac88015c1c08074c2">a1</a> = std::nan(<span class="stringliteral">&quot;&quot;</span>); </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    };</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="comment">// TODO: Add a2 value</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    };</div>
 </div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno"><a class="line" href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">  156</a></span>    std::unordered_map&lt;std::pair&lt;TimeSystem, TimeSystem&gt;, <a class="code hl_struct" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html">TimeSystemCorrections</a>&gt; <a class="code hl_variable" href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">timeSysCorr</a>;</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    std::unordered_map&lt;SatId, Satellite&gt; m_satellites;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>};</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span> </div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno"><a class="line" href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">  157</a></span>    std::unordered_map&lt;std::pair&lt;TimeSystem, TimeSystem&gt;, <a class="code hl_struct" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html">TimeSystemCorrections</a>&gt; <a class="code hl_variable" href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">timeSysCorr</a>;</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    std::unordered_map&lt;SatId, Satellite&gt; m_satellites;</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>};</div>
 </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>} <span class="comment">// namespace NAV</span></div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aIonosphericCorrections_8hpp_html"><div class="ttname"><a href="IonosphericCorrections_8hpp.html">IonosphericCorrections.hpp</a></div><div class="ttdoc">Ionospheric Correction data.</div></div>
 <div class="ttc" id="aLogger_8hpp_html"><div class="ttname"><a href="Logger_8hpp.html">Logger.hpp</a></div><div class="ttdoc">Utility class for logging to console and file.</div></div>
 <div class="ttc" id="aLogger_8hpp_html_af7abc145380f1916838e42f9272aa0f6"><div class="ttname"><a href="Logger_8hpp.html#af7abc145380f1916838e42f9272aa0f6">LOG_TRACE</a></div><div class="ttdeci">#define LOG_TRACE</div><div class="ttdoc">Detailled info to trace the execution of the program. Should not be called on functions which receive...</div><div class="ttdef"><b>Definition</b> Logger.hpp:65</div></div>
@@ -284,7 +306,7 @@ $(function(){initNavTree('GnssNavInfo_8hpp_source.html',''); initResizable(); })
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_a5f319b07a93016435b9de3b0b7844f3a"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#a5f319b07a93016435b9de3b0b7844f3a">NAV::GnssNavInfo::addSatelliteNavData</a></div><div class="ttdeci">void addSatelliteNavData(const SatId &amp;satId, const std::shared_ptr&lt; SatNavData &gt; &amp;satNavData)</div><div class="ttdoc">Adds the provided satellite navigation data to the satellite.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:90</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_a80c4e7c3811676870658e4d9e8df750f"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#a80c4e7c3811676870658e4d9e8df750f">NAV::GnssNavInfo::calcSatellitePositionVariance</a></div><div class="ttdeci">double calcSatellitePositionVariance(const SatId &amp;satId, const InsTime &amp;recvTime) const</div><div class="ttdoc">Calculates the Variance of the satellite position in [m].</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:74</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_a9eb816330885abc673f3e940c4a2c7d4"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#a9eb816330885abc673f3e940c4a2c7d4">NAV::GnssNavInfo::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:34</div></div>
-<div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_aafda102355fc740e5bec4e1f4f2abd7c"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">NAV::GnssNavInfo::timeSysCorr</a></div><div class="ttdeci">std::unordered_map&lt; std::pair&lt; TimeSystem, TimeSystem &gt;, TimeSystemCorrections &gt; timeSysCorr</div><div class="ttdoc">Time system correction parameters. Difference between GNSS system time and UTC or other time systems.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:156</div></div>
+<div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_aafda102355fc740e5bec4e1f4f2abd7c"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c">NAV::GnssNavInfo::timeSysCorr</a></div><div class="ttdeci">std::unordered_map&lt; std::pair&lt; TimeSystem, TimeSystem &gt;, TimeSystemCorrections &gt; timeSysCorr</div><div class="ttdoc">Time system correction parameters. Difference between GNSS system time and UTC or other time systems.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:157</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_ac44db9835703b3a83244585531cdd29a"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#ac44db9835703b3a83244585531cdd29a">NAV::GnssNavInfo::satellites</a></div><div class="ttdeci">const auto &amp; satellites() const</div><div class="ttdoc">Get the satellites.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:128</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_ac67ca479dfb053e71e9cff7ea8e1f858"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#ac67ca479dfb053e71e9cff7ea8e1f858">NAV::GnssNavInfo::calcSatelliteClockCorrections</a></div><div class="ttdeci">Clock::Corrections calcSatelliteClockCorrections(const SatId &amp;satId, const InsTime &amp;recvTime, double dist, const Frequency &amp;freq) const</div><div class="ttdoc">Calculates clock bias and drift of the satellite.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:66</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_ad606ad7006040a86f231ed5bae8dd416"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#ad606ad7006040a86f231ed5bae8dd416">NAV::GnssNavInfo::searchNavigationData</a></div><div class="ttdeci">std::shared_ptr&lt; NAV::SatNavData &gt; searchNavigationData(const SatId &amp;satId, const InsTime &amp;recvTime) const</div><div class="ttdoc">Checks whether the satellite is included in the internal data.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:98</div></div>
@@ -294,8 +316,8 @@ $(function(){initNavTree('GnssNavInfo_8hpp_source.html',''); initResizable(); })
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_af37f7f965e436aaab1fd8578e7a67f19"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#af37f7f965e436aaab1fd8578e7a67f19">NAV::GnssNavInfo::calcSatellitePosVelAccel</a></div><div class="ttdeci">Orbit::PosVelAccel calcSatellitePosVelAccel(const SatId &amp;satId, const InsTime &amp;transTime) const</div><div class="ttdoc">Calculates position, velocity and acceleration of the satellite at transmission time.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:56</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_af3c86436c13c6c94ca6915226357815a"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#af3c86436c13c6c94ca6915226357815a">NAV::GnssNavInfo::ionosphericCorrections</a></div><div class="ttdeci">IonosphericCorrections ionosphericCorrections</div><div class="ttdoc">Ionospheric correction values.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:146</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_afa35f8287ddcc5a2ff6a113aea055136"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#afa35f8287ddcc5a2ff6a113aea055136">NAV::GnssNavInfo::satelliteSystems</a></div><div class="ttdeci">SatelliteSystem satelliteSystems</div><div class="ttdoc">Satellite Systems available.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:143</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html_a849f11a9974ee7e96932c6a282f7d319"><div class="ttname"><a href="classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319">NAV::InsTime::toYMDHMS</a></div><div class="ttdeci">constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys=UTC, int digits=-1) const</div><div class="ttdoc">Converts this time object into a different format.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:827</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html_a849f11a9974ee7e96932c6a282f7d319"><div class="ttname"><a href="classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319">NAV::InsTime::toYMDHMS</a></div><div class="ttdeci">constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys=UTC, int digits=-1) const</div><div class="ttdoc">Converts this time object into a different format.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:828</div></div>
 <div class="ttc" id="aclassNAV_1_1IonosphericCorrections_html"><div class="ttname"><a href="classNAV_1_1IonosphericCorrections.html">NAV::IonosphericCorrections</a></div><div class="ttdoc">Ionospheric Corrections.</div><div class="ttdef"><b>Definition</b> IonosphericCorrections.hpp:30</div></div>
 <div class="ttc" id="aclassNAV_1_1IonosphericCorrections_html_a9a5f0c9dacb5aa69d8e300010ff7b17c"><div class="ttname"><a href="classNAV_1_1IonosphericCorrections.html#a9a5f0c9dacb5aa69d8e300010ff7b17c">NAV::IonosphericCorrections::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Empties the data.</div><div class="ttdef"><b>Definition</b> IonosphericCorrections.hpp:111</div></div>
 <div class="ttc" id="astructNAV_1_1Clock_1_1Corrections_html"><div class="ttname"><a href="structNAV_1_1Clock_1_1Corrections.html">NAV::Clock::Corrections</a></div><div class="ttdoc">Satellite clock corrections.</div><div class="ttdef"><b>Definition</b> Clock.hpp:28</div></div>

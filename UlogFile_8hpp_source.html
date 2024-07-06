@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -396,7 +417,7 @@ $(function(){initNavTree('UlogFile_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aclassNAV_1_1FileReader_html"><div class="ttname"><a href="classNAV_1_1FileReader.html">NAV::FileReader</a></div><div class="ttdoc">Abstract File Reader class.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:31</div></div>
 <div class="ttc" id="aclassNAV_1_1FileReader_html_af2e5120198c08c760522fdccd1ac8c2e"><div class="ttname"><a href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e">NAV::FileReader::FileType</a></div><div class="ttdeci">FileType</div><div class="ttdoc">File Type Enumeration.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:35</div></div>
 <div class="ttc" id="aclassNAV_1_1Imu_html"><div class="ttname"><a href="classNAV_1_1Imu.html">NAV::Imu</a></div><div class="ttdoc">Abstract IMU Class.</div><div class="ttdef"><b>Definition</b> Imu.hpp:24</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1UlogFile_html"><div class="ttname"><a href="classNAV_1_1UlogFile.html">NAV::UlogFile</a></div><div class="ttdoc">File Reader for ULog files ('.ulg')</div><div class="ttdef"><b>Definition</b> UlogFile.hpp:31</div></div>
 <div class="ttc" id="aclassNAV_1_1UlogFile_html_a06a8e73cd6cb8f9d60ed6eb1a0cc8fbc"><div class="ttname"><a href="classNAV_1_1UlogFile.html#a06a8e73cd6cb8f9d60ed6eb1a0cc8fbc">NAV::UlogFile::operator=</a></div><div class="ttdeci">UlogFile &amp; operator=(const UlogFile &amp;)=delete</div><div class="ttdoc">Copy assignment operator.</div></div>
 <div class="ttc" id="aclassNAV_1_1UlogFile_html_a0c851b1b390f9d398c71645c74ae94a7"><div class="ttname"><a href="classNAV_1_1UlogFile.html#a0c851b1b390f9d398c71645c74ae94a7">NAV::UlogFile::gnssTime</a></div><div class="ttdeci">InsTime gnssTime</div><div class="ttdoc">Absolute timestamp.</div><div class="ttdef"><b>Definition</b> UlogFile.hpp:323</div></div>

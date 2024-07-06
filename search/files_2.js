@@ -16,6 +16,7 @@ var searchData=
   ['cosecant_2ehpp_13',['Cosecant.hpp',['../Cosecant_8hpp.html',1,'']]],
   ['csvdata_2ehpp_14',['CsvData.hpp',['../CsvData_8hpp.html',1,'']]],
   ['csvfile_2ehpp_15',['CsvFile.hpp',['../CsvFile_8hpp.html',1,'']]],
-  ['cubicspline_2ehpp_16',['CubicSpline.hpp',['../CubicSpline_8hpp.html',1,'']]],
-  ['cycleslipdetector_2ehpp_17',['CycleSlipDetector.hpp',['../CycleSlipDetector_8hpp.html',1,'']]]
+  ['csvlogger_2ehpp_16',['CsvLogger.hpp',['../CsvLogger_8hpp.html',1,'']]],
+  ['cubicspline_2ehpp_17',['CubicSpline.hpp',['../CubicSpline_8hpp.html',1,'']]],
+  ['cycleslipdetector_2ehpp_18',['CycleSlipDetector.hpp',['../CycleSlipDetector_8hpp.html',1,'']]]
 ];

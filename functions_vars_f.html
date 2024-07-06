@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -116,7 +137,7 @@ $(function(){initNavTree('functions_vars_f.html',''); initResizable(); });
 <h3><a id="index_f" name="index_f"></a>- f -</h3><ul>
 <li>F&#160;:&#160;<a class="el" href="classNAV_1_1InsConst_1_1GAL.html#a3438bdfbf679e83741a60b148552bde8">NAV::InsConst&lt; Scalar &gt;::GAL</a>, <a class="el" href="classNAV_1_1InsConst_1_1GPS.html#aae0082680cfa8746d6976787c310c526">NAV::InsConst&lt; Scalar &gt;::GPS</a></li>
 <li>f&#160;:&#160;<a class="el" href="classNAV_1_1InsConst_1_1GRS80.html#a17b01c5e06834b2c05c3f4cb5977eb21">NAV::InsConst&lt; Scalar &gt;::GRS80</a>, <a class="el" href="classNAV_1_1InsConst_1_1PZ90.html#a90c8cc0fe875b088389ab7c77727830b">NAV::InsConst&lt; Scalar &gt;::PZ90</a>, <a class="el" href="classNAV_1_1InsConst_1_1WGS84.html#a981420e65ca46a3e3601382b16205eb1">NAV::InsConst&lt; Scalar &gt;::WGS84</a></li>
-<li>F&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a94fb5d33ccef28e1bad65099e16e3fbe">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>F&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a94fb5d33ccef28e1bad65099e16e3fbe">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a2cefb945cd8e564eca36bd57c484a84e">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a></li>
 <li>factor&#160;:&#160;<a class="el" href="structNAV_1_1Combiner_1_1Combination_1_1Term.html#a48a569589da24d6abdbd6b759eea1099">NAV::Combiner::Combination::Term</a></li>
 <li>faults&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfStatus_1_1UbxEsfStatusSensor.html#a6cf0b88e5f07389ef28992cd1d1d4399">NAV::vendor::ublox::UbxEsfStatus::UbxEsfStatusSensor</a></li>
 <li>fileMagic&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1ulog__Header__s.html#ad47522863e6885d186e24adf6bceb2ee">NAV::vendor::pixhawk::ulog_Header_s</a></li>
@@ -128,14 +149,16 @@ $(function(){initNavTree('functions_vars_f.html',''); initResizable(); });
 <li>fixType&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbStat.html#a98a3009d2dfd3b163d08cdb5b5ba72e6">NAV::vendor::emlid::ErbStat</a></li>
 <li>flags&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas.html#a57ce93bdaf38f4e3d2cac93a6729ec2a">NAV::vendor::ublox::UbxEsfMeas</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a15ad08934d4fc24537a0f7d90770c42d">NAV::vendor::vectornav::RawMeas::SatRawElement</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a19574e29af895903006ba06d12cc1210">NAV::vendor::vectornav::SatInfo::SatInfoElement</a></li>
 <li>format&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html#aa69f534fe68a1ac42ff3895f489beeb1">NAV::gui::widgets::TimeEditFormat</a>, <a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__format__s.html#ae71db74e1f3606cb47b39853ed05c40e">NAV::vendor::pixhawk::message_format_s</a></li>
-<li>frame&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#af77195603fac2ab3feda04abc25f34d4">NAV::gui::widgets::PositionWithFrame</a>, <a class="el" href="classNAV_1_1LcKfInsGnssErrors.html#aab179a1bc31b9853246ce2408aa37824">NAV::LcKfInsGnssErrors</a></li>
+<li>frame&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#af77195603fac2ab3feda04abc25f34d4">NAV::gui::widgets::PositionWithFrame</a>, <a class="el" href="classNAV_1_1InsGnssLCKFSolution.html#a6d739a907a03ec2e80f8984bf2e2dab5">NAV::InsGnssLCKFSolution</a></li>
 <li>frameCountNavigate&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#ae894355927e1602b958aa740757d8746">NAV::gui::NodeEditorApplication</a></li>
 <li>freq&#160;:&#160;<a class="el" href="structNAV_1_1SPP_1_1States_1_1InterFreqBias.html#a79d748732e6b3cad31a3aabcaa964d22">NAV::SPP::States::InterFreqBias</a>, <a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfStatus_1_1UbxEsfStatusSensor.html#a8a2ca4fbe16fd056ebc525fc9fa33d2a">NAV::vendor::ublox::UbxEsfStatus::UbxEsfStatusSensor</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#aa07fec349ea5532ea0420dac504cc86b">NAV::vendor::vectornav::RawMeas::SatRawElement</a></li>
 <li>freqD&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbSvi.html#a52332643ca22cdf2ef960afdb46c45fb">NAV::vendor::emlid::ErbSvi</a></li>
 <li>freqId&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#afb20cc30df5f813930d68f6b6c30eec7">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a>, <a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a3480a0a697ff011451d3031b6e656af4">NAV::vendor::ublox::UbxRxmSfrbx</a></li>
+<li>freqInformation&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html#af3da47264905fc65b30e3e3278beffbe">NAV::AntexReader::Antenna::AntennaInfo</a></li>
 <li>freqNum&#160;:&#160;<a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html#a0567ed1352367c29dda763c37ace6223">NAV::CycleSlipDetector::SatelliteObservation</a>, <a class="el" href="structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a0caa30ba40cc26c1062e898f2827b7af">NAV::GnssAnalyzer::Combination::Term</a></li>
 <li>frequencies&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1SatelliteData.html#a6e155aefdce48cfb02c3d1e1c0d1d461">NAV::GnssObs::SatelliteData</a></li>
 <li>frequencyNumber&#160;:&#160;<a class="el" href="classNAV_1_1GLONASSEphemeris.html#ae8a6b4162cc1c0764e21193afd2e8d00">NAV::GLONASSEphemeris</a></li>
+<li>from&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html#ad96959caf6758456cafee6296a9587f2">NAV::AntexReader::Antenna::AntennaInfo</a></li>
 <li>fusionMode&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfStatus.html#aa8e376fcb7cb8b809291a68a5a5b618f">NAV::vendor::ublox::UbxEsfStatus</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['coupled_20kalman_20filter_20earth_20fixed_20frame_0',['INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)',['../group__LooselyCoupledKF__e.html',1,'']]],
-  ['coupled_20kalman_20filter_20local_20navigation_20frame_1',['INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)',['../group__LooselyCoupledKF__n.html',1,'']]]
+  ['imu_0',['Imu',['../group__DataProvider__Imu__chapter.html',1,'']]],
+  ['imuintegrator_5fe_1',['ImuIntegrator_e',['../group__ImuIntegrator__e.html',1,'']]],
+  ['imuintegrator_5fn_2',['ImuIntegrator_n',['../group__ImuIntegrator__n.html',1,'']]],
+  ['imusimulator_3',['ImuSimulator',['../group__ImuSimulator.html',1,'']]],
+  ['integrator_4',['Integrator',['../group__DataProcessor__Integrator__chapter.html',1,'']]]
 ];

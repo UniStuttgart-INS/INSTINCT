@@ -1,6 +1,7 @@
 var structNAV_1_1Observations =
 [
     [ "SignalObservation", "structNAV_1_1Observations_1_1SignalObservation.html", "structNAV_1_1Observations_1_1SignalObservation" ],
+    [ "recalcObservableCounts", "structNAV_1_1Observations.html#a1f293ddac5324b823df81bcfc6cb6772", null ],
     [ "nObservables", "structNAV_1_1Observations.html#a3b4872ec7c1b1f152a531b182371369e", null ],
     [ "nObservablesUniqueSatellite", "structNAV_1_1Observations.html#a96d198acfaaca62a1bf4216c3e4abfce", null ],
     [ "satellites", "structNAV_1_1Observations.html#a8cead6f25a362ee0d14ccf1747d207a7", null ],

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -169,6 +190,9 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>payloadLength</b>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>

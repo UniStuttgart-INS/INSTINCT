@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -204,7 +225,7 @@ $(function(){initNavTree('Orbit_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aCode_8hpp_html_a57ca19dd201c32a685f61559cc839dd2"><div class="ttname"><a href="Code_8hpp.html#a57ca19dd201c32a685f61559cc839dd2">NAV::operator&amp;</a></div><div class="ttdeci">Code operator&amp;(const Code::Enum &amp;lhs, const Code::Enum &amp;rhs)</div><div class="ttdoc">Allows combining flags of the Code enum.</div></div>
 <div class="ttc" id="aEigen_8hpp_html"><div class="ttname"><a href="Eigen_8hpp.html">Eigen.hpp</a></div><div class="ttdoc">Vector space operations.</div></div>
 <div class="ttc" id="aInsTime_8hpp_html"><div class="ttname"><a href="InsTime_8hpp.html">InsTime.hpp</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html"><div class="ttname"><a href="classNAV_1_1Orbit.html">NAV::Orbit</a></div><div class="ttdoc">Abstract satellite orbit information.</div><div class="ttdef"><b>Definition</b> Orbit.hpp:24</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html_a07db010f06b2b1740557a33232d49ffb"><div class="ttname"><a href="classNAV_1_1Orbit.html#a07db010f06b2b1740557a33232d49ffb">NAV::Orbit::calcSatellitePosVel</a></div><div class="ttdeci">PosVel calcSatellitePosVel(const InsTime &amp;transTime) const</div><div class="ttdoc">Calculates position and velocity of the satellite at transmission time.</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html_a4e38837112e19a4a42e13dab13266ae7"><div class="ttname"><a href="classNAV_1_1Orbit.html#a4e38837112e19a4a42e13dab13266ae7">NAV::Orbit::calcSatellitePosVelAccel</a></div><div class="ttdeci">PosVelAccel calcSatellitePosVelAccel(const InsTime &amp;transTime) const</div><div class="ttdoc">Calculates position, velocity and acceleration of the satellite at transmission time.</div></div>

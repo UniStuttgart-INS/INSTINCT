@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -157,9 +178,10 @@ $(function(){initNavTree('classNAV_1_1InsTime.html',''); initResizable(); });
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a5e127746836eef682f2102c00713b8da">toGPSweekTow</a>(TimeSystem timesys=GPST) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a22e6696f2a5caa36352caca87c3048f1">toJD</a>(TimeSystem timesys=UTC) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a976c5549d2f7187b88f50799e565e08d">toMJD</a>(TimeSystem timesys=UTC) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a514b88c304dab940ff3f06cbe60642ee">toYDoySod</a>(TimeSystem timesys=UTC) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319">toYMDHMS</a>(TimeSystem timesys=UTC, int digits=-1) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a8f4df14d94b8771d72692848f8ea5b36">~InsTime</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#acf85a6bb7ffb0062201324ce0bcbe197">toUnixTime</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a514b88c304dab940ff3f06cbe60642ee">toYDoySod</a>(TimeSystem timesys=UTC) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319">toYMDHMS</a>(TimeSystem timesys=UTC, int digits=-1) const</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1InsTime.html#a8f4df14d94b8771d72692848f8ea5b36">~InsTime</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1InsTime.html">NAV::InsTime</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

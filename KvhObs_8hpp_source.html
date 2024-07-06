@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -233,8 +254,8 @@ $(function(){initNavTree('KvhObs_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aclassNAV_1_1ImuObs_html"><div class="ttname"><a href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></div><div class="ttdoc">IMU Observation storage class.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:25</div></div>
 <div class="ttc" id="aclassNAV_1_1ImuObs_html_a23c32b23405b8196f8387d30c1b39dbf"><div class="ttname"><a href="classNAV_1_1ImuObs.html#a23c32b23405b8196f8387d30c1b39dbf">NAV::ImuObs::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:34</div></div>
 <div class="ttc" id="aclassNAV_1_1ImuObs_html_aaf121e1efaecaf3008e09755a00f457a"><div class="ttname"><a href="classNAV_1_1ImuObs.html#aaf121e1efaecaf3008e09755a00f457a">NAV::ImuObs::GetStaticDataDescriptors</a></div><div class="ttdeci">static std::vector&lt; std::string &gt; GetStaticDataDescriptors()</div><div class="ttdoc">Returns a vector of data descriptors.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:47</div></div>
-<div class="ttc" id="aclassNAV_1_1ImuObs_html_abbd8d95b53c89985efe24d85689260b3"><div class="ttname"><a href="classNAV_1_1ImuObs.html#abbd8d95b53c89985efe24d85689260b3">NAV::ImuObs::getValueAt</a></div><div class="ttdeci">std::optional&lt; double &gt; getValueAt(size_t idx) const override</div><div class="ttdoc">Get the value at the index.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:85</div></div>
-<div class="ttc" id="aclassNAV_1_1ImuObs_html_aeebb869562cb3544a976278a576f0fc4"><div class="ttname"><a href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">NAV::ImuObs::imuPos</a></div><div class="ttdeci">const ImuPos &amp; imuPos</div><div class="ttdoc">Position and rotation information for conversion from platform to body frame.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:157</div></div>
+<div class="ttc" id="aclassNAV_1_1ImuObs_html_abbd8d95b53c89985efe24d85689260b3"><div class="ttname"><a href="classNAV_1_1ImuObs.html#abbd8d95b53c89985efe24d85689260b3">NAV::ImuObs::getValueAt</a></div><div class="ttdeci">std::optional&lt; double &gt; getValueAt(size_t idx) const override</div><div class="ttdoc">Get the value at the index.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:76</div></div>
+<div class="ttc" id="aclassNAV_1_1ImuObs_html_aeebb869562cb3544a976278a576f0fc4"><div class="ttname"><a href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">NAV::ImuObs::imuPos</a></div><div class="ttdeci">const ImuPos &amp; imuPos</div><div class="ttdoc">Position and rotation information for conversion from platform to body frame.</div><div class="ttdef"><b>Definition</b> ImuObs.hpp:115</div></div>
 <div class="ttc" id="aclassNAV_1_1ImuPos_html"><div class="ttname"><a href="classNAV_1_1ImuPos.html">NAV::ImuPos</a></div><div class="ttdoc">IMU Position.</div><div class="ttdef"><b>Definition</b> ImuPos.hpp:26</div></div>
 <div class="ttc" id="aclassNAV_1_1KvhObs_html"><div class="ttname"><a href="classNAV_1_1KvhObs.html">NAV::KvhObs</a></div><div class="ttdoc">Kvh Observation storage Class.</div><div class="ttdef"><b>Definition</b> KvhObs.hpp:24</div></div>
 <div class="ttc" id="aclassNAV_1_1KvhObs_html_a046472271d7dbf6f9fd2f61700f3db02"><div class="ttname"><a href="classNAV_1_1KvhObs.html#a046472271d7dbf6f9fd2f61700f3db02">NAV::KvhObs::raw</a></div><div class="ttdeci">uart::protocol::Packet raw</div><div class="ttdoc">Complete message raw binary data including header and checksum.</div><div class="ttdef"><b>Definition</b> KvhObs.hpp:110</div></div>

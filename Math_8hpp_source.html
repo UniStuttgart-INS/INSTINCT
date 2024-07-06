@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -353,9 +374,17 @@ $(function(){initNavTree('Math_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>}</div>
 </div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno"><a class="line" href="Math_8hpp.html#aaa0529db5ffee060ff9a12dc06e50905">  302</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="Math_8hpp.html#aaa0529db5ffee060ff9a12dc06e50905">calcEllipticalIntegral</a>(<span class="keywordtype">double</span> phi, <span class="keywordtype">double</span> m);</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>} <span class="comment">// namespace NAV::math</span></div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Derived&gt;</div>
+<div class="foldopen" id="foldopen00303" data-start="{" data-end="}">
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno"><a class="line" href="Math_8hpp.html#ae98f1b318674f18c3db18969664cf020">  303</a></span><span class="keyword">typename</span> Derived::PlainObject <a class="code hl_function" href="Math_8hpp.html#ae98f1b318674f18c3db18969664cf020">lerp</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;Derived&gt;&amp; a, <span class="keyword">const</span> Eigen::MatrixBase&lt;Derived&gt;&amp; b, <span class="keyword">const</span> <span class="keyword">typename</span> Derived::Scalar&amp; t)</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>{</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    <span class="keywordflow">return</span> a + t * (b - a);</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>}</div>
+</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno"><a class="line" href="Math_8hpp.html#aaa0529db5ffee060ff9a12dc06e50905">  313</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="Math_8hpp.html#aaa0529db5ffee060ff9a12dc06e50905">calcEllipticalIntegral</a>(<span class="keywordtype">double</span> phi, <span class="keywordtype">double</span> m);</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>} <span class="comment">// namespace NAV::math</span></div>
 <div class="ttc" id="aAssert_8h_html"><div class="ttname"><a href="Assert_8h.html">Assert.h</a></div><div class="ttdoc">Assertion helpers.</div></div>
 <div class="ttc" id="aAssert_8h_html_a45532da602b4922a478b7d7eef4a8b3e"><div class="ttname"><a href="Assert_8h.html#a45532da602b4922a478b7d7eef4a8b3e">INS_ASSERT_USER_ERROR</a></div><div class="ttdeci">#define INS_ASSERT_USER_ERROR(_EXP, _MSG)</div><div class="ttdoc">Assert function with message.</div><div class="ttdef"><b>Definition</b> Assert.h:21</div></div>
 <div class="ttc" id="aMath_8hpp_html_a1ff5df016cfe7e50edb8e40ca358ff49"><div class="ttname"><a href="Math_8hpp.html#a1ff5df016cfe7e50edb8e40ca358ff49">NAV::math::LtDLdecomp_choleskyFact</a></div><div class="ttdeci">std::pair&lt; Eigen::Matrix&lt; typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime &gt;, Eigen::Vector&lt; typename Derived::Scalar, Derived::RowsAtCompileTime &gt; &gt; LtDLdecomp_choleskyFact(const Eigen::MatrixBase&lt; Derived &gt; &amp;Q)</div><div class="ttdoc">Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method ...</div><div class="ttdef"><b>Definition</b> Math.hpp:199</div></div>
@@ -371,6 +400,7 @@ $(function(){initNavTree('Math_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aMath_8hpp_html_acd1ebb5f929fa22c2673a1fd1acb1219"><div class="ttname"><a href="Math_8hpp.html#acd1ebb5f929fa22c2673a1fd1acb1219">NAV::math::sec</a></div><div class="ttdeci">T sec(const T &amp;x)</div><div class="ttdoc">Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))</div><div class="ttdef"><b>Definition</b> Math.hpp:125</div></div>
 <div class="ttc" id="aMath_8hpp_html_ad64f8224de9c852f448ef8f3b743aa63"><div class="ttname"><a href="Math_8hpp.html#ad64f8224de9c852f448ef8f3b743aa63">NAV::math::factorial</a></div><div class="ttdeci">uint64_t factorial(uint64_t n)</div><div class="ttdoc">Calculates the factorial of an unsigned integer.</div></div>
 <div class="ttc" id="aMath_8hpp_html_ae181d87069a370277de7f93842994cc9"><div class="ttname"><a href="Math_8hpp.html#ae181d87069a370277de7f93842994cc9">NAV::math::normalCDF</a></div><div class="ttdeci">double normalCDF(double value)</div><div class="ttdoc">Calculates the cumulative distribution function (CDF) of the standard normal distribution.</div></div>
+<div class="ttc" id="aMath_8hpp_html_ae98f1b318674f18c3db18969664cf020"><div class="ttname"><a href="Math_8hpp.html#ae98f1b318674f18c3db18969664cf020">NAV::math::lerp</a></div><div class="ttdeci">Derived::PlainObject lerp(const Eigen::MatrixBase&lt; Derived &gt; &amp;a, const Eigen::MatrixBase&lt; Derived &gt; &amp;b, const typename Derived::Scalar &amp;t)</div><div class="ttdoc">Linear interpolation between vectors.</div><div class="ttdef"><b>Definition</b> Math.hpp:303</div></div>
 <div class="ttc" id="aMath_8hpp_html_ae9f6f8d102108244fa6f9b53863249af"><div class="ttname"><a href="Math_8hpp.html#ae9f6f8d102108244fa6f9b53863249af">NAV::math::LtDLdecomp_outerProduct</a></div><div class="ttdeci">std::pair&lt; Eigen::Matrix&lt; typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime &gt;, Eigen::Vector&lt; typename Derived::Scalar, Derived::RowsAtCompileTime &gt; &gt; LtDLdecomp_outerProduct(const Eigen::MatrixBase&lt; Derived &gt; &amp;Qmatrix)</div><div class="ttdoc">Find (L^T D L)-decomposition of Q-matrix via outer product method.</div><div class="ttdef"><b>Definition</b> Math.hpp:156</div></div>
 <div class="ttc" id="aMath_8hpp_html_af1a5f9d24b27b3050734693872cc4ed5"><div class="ttname"><a href="Math_8hpp.html#af1a5f9d24b27b3050734693872cc4ed5">NAV::math::round</a></div><div class="ttdeci">constexpr T round(const T &amp;value, size_t digits)</div><div class="ttdoc">Round the number to the specified amount of digits.</div><div class="ttdef"><b>Definition</b> Math.hpp:39</div></div>
 </div><!-- fragment --></div><!-- contents -->

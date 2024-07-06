@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,12 +138,12 @@ $(function(){initNavTree('functions_n.html',''); initResizable(); });
 <li>N_A&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#a53b209178ad1982712cfb79e6e8977c0">NAV::InsConst&lt; Scalar &gt;</a></li>
 <li>n_accelDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#adca10e607336d3f2134459f2326d1b9a">NAV::ImuObsSimulated</a></li>
 <li>n_angularRateDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#a717566badf4e4f59fe0bb98ff4ad278f">NAV::ImuObsSimulated</a></li>
-<li>n_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#ad4d79bfbca1838782b77d8871135226d">NAV::SppSolution</a></li>
-<li>n_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a137e5042fdc47b1a4472f519f6d5dc61">NAV::SppSolution</a></li>
+<li>n_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a6c727c5c529eb11a86879ba6ade27756">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#ac7a656df2dcb5930acdec6a8745b71c0">NAV::PosVel</a></li>
+<li>n_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#acd3f38485096d92ea9101079147950c7">NAV::Pos</a></li>
 <li>n_Quat_b()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAtt.html#a74e10519b9cbd935217fe53bc650bb5e">NAV::PosVelAtt</a></li>
 <li>n_Quat_e()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#aab9530d76d0352ca3f4370e69a67d9d2">NAV::Pos</a></li>
 <li>n_velocity()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a0f7c98f2a86399d9eed559b63f216773">NAV::PosVel</a></li>
-<li>n_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a230a48a2b0f08afd028d31e39ee629cc">NAV::SppSolution</a></li>
+<li>n_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a8232cb6b757875309e83dc373e917829">NAV::PosVel</a></li>
 <li>name&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#aaf0fa887ebf81d6db2fedc4d016500e2">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">NAV::Node</a>, <a class="el" href="classNAV_1_1Pin.html#a3712500dcc13207c821726378398aea2">NAV::Pin</a></li>
 <li>nameId()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">NAV::Node</a></li>
 <li>NAV::ColormapButton&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#a5448e82353855ac88479c9c3aa4d7fe0">NAV::Colormap</a></li>
@@ -136,12 +157,13 @@ $(function(){initNavTree('functions_n.html',''); initResizable(); });
 <li>Navio2Sensor()&#160;:&#160;<a class="el" href="classNAV_1_1Navio2Sensor.html#a58dfba7d479ea2d435826c84cf564326">NAV::Navio2Sensor</a></li>
 <li>nDop&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1DOP.html#a7c2c63cc0caf220a76099c5b2566d4cb">NAV::vendor::vectornav::DOP</a></li>
 <li>neededForTemporalQueueCheck&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#af61c91f121ca580c6e998afad57d6d97">NAV::InputPin</a></li>
+<li>NIS&#160;:&#160;<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#a02983ca7a67dedb9877d62310b760f04">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::NISResult</a></li>
 <li>NmeaFile()&#160;:&#160;<a class="el" href="classNAV_1_1NmeaFile.html#a72dc0ff1714e1320827be7a2342c4b8c">NAV::NmeaFile</a></li>
 <li>nMeasDopp&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#af9b49dcca4a86e6d48e58f24147a224a">NAV::SppSolution</a></li>
 <li>nMeasPsr&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#af5c2a36b190a4a121dd1bddd0cc51545">NAV::SppSolution</a></li>
 <li>nObservables&#160;:&#160;<a class="el" href="structNAV_1_1Observations.html#a3b4872ec7c1b1f152a531b182371369e">NAV::Observations</a></li>
 <li>nObservablesUniqueSatellite&#160;:&#160;<a class="el" href="structNAV_1_1Observations.html#a96d198acfaaca62a1bf4216c3e4abfce">NAV::Observations</a></li>
-<li>Node()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a3d78d6d4d18c462b8e8ab95af6dbd22b">NAV::Node</a></li>
+<li>Node()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#abbbeda13d269d7676d223ee809af05e8">NAV::Node</a></li>
 <li>NodeData()&#160;:&#160;<a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NAV::NodeData</a></li>
 <li>NodeDataQueue&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">NAV::InputPin</a></li>
 <li>NodeEditorApplication()&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#aacd4d0ad6460e622fadf19a91d08c124">NAV::gui::NodeEditorApplication</a></li>
@@ -151,7 +173,7 @@ $(function(){initNavTree('functions_n.html',''); initResizable(); });
 <li>NONE&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eaf95d110903dd742fcbe22539bb897b30">NAV::FileReader</a></li>
 <li>None&#160;:&#160;<a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a4818411c6ad1cc9c446b5928433c3744a2486fa83dcd2d0dd7bd3c31cc47d73cc">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204adaa8fcd19d34c22448b7f2e03bafc78e">NAV::Pin::Kind</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a210193c1b330d859a5ca03a37779bba5">NAV::Pin::Type</a></li>
 <li>northSouth&#160;:&#160;<a class="el" href="structNAV_1_1CommonLog_1_1LocalPosition.html#aa52645b80ddd0e14fefe508fa1d80d7b">NAV::CommonLog::LocalPosition</a></li>
-<li>NotAKnot&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee13a841986f5b081126792709d9dfe7">NAV::CubicSpline::BoundaryCondition</a></li>
+<li>NotAKnot&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea9636a8b2f42bc0ddd37f25e48cc8ca31">NAV::CubicSpline&lt; Scalar &gt;::BoundaryCondition</a></li>
 <li>notifyOutputValueChanged()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a396244f9194d08c5f6c7726ff872e9f5">NAV::Node</a></li>
 <li>nParam&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a4448316e6aa107751ae9cf27bf11f324">NAV::SppSolution</a></li>
 <li>ns&#160;:&#160;<a class="el" href="classNAV_1_1RtklibPosObs.html#a64ebc731a0701e2634eb69c6951f8bd1">NAV::RtklibPosObs</a></li>

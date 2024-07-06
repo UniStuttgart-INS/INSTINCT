@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -218,6 +239,10 @@ constexpr int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>NAV::Ins
 constexpr long double&#160;</td><td class="memItemRight" valign="bottom"><b>NAV::InsTimeUtil::DIFF_MJD_TO_JD_FRAC</b></td></tr>
 <tr class="memdesc:a310667f05b5f99ab8aacc99d6fce28fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Difference of the fraction between MJD and JD. <br /></td></tr>
 <tr class="separator:a310667f05b5f99ab8aacc99d6fce28fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdb11eb545cfe7b1982e62dce5b0513c" id="r_afdb11eb545cfe7b1982e62dce5b0513c"><td class="memItemLeft" align="right" valign="top"><a id="afdb11eb545cfe7b1982e62dce5b0513c" name="afdb11eb545cfe7b1982e62dce5b0513c"></a>
+constexpr int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>NAV::InsTimeUtil::DIFF_TO_1_1_1970_MJD</b></td></tr>
+<tr class="memdesc:afdb11eb545cfe7b1982e62dce5b0513c"><td class="mdescLeft">&#160;</td><td class="mdescRight">01.01.1970 00:00:00 UTC in Modified Julian Date (UNIX epoch) <br /></td></tr>
+<tr class="separator:afdb11eb545cfe7b1982e62dce5b0513c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a817d8227a4ca0b112d1ccd88ca31cd3f" id="r_a817d8227a4ca0b112d1ccd88ca31cd3f"><td class="memItemLeft" align="right" valign="top"><a id="a817d8227a4ca0b112d1ccd88ca31cd3f" name="a817d8227a4ca0b112d1ccd88ca31cd3f"></a>
 constexpr int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>NAV::InsTimeUtil::DIFF_TO_6_1_1980_MJD</b></td></tr>
 <tr class="memdesc:a817d8227a4ca0b112d1ccd88ca31cd3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">06.01.1980 in Modified Julian Date <br /></td></tr>

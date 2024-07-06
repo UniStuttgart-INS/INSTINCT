@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_vars_x.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div>
 
 <h3><a id="index_x" name="index_x"></a>- x -</h3><ul>
-<li>x&#160;:&#160;<a class="el" href="classNAV_1_1ImuSimulator.html#a84b112a4676e77445c32977f200f6abd">NAV::ImuSimulator</a>, <a class="el" href="classNAV_1_1KalmanFilter.html#a367f24779f8f22c84d58a902c81c2702">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a8629c6e5a1fde3860e2fb21db1902975">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>x&#160;:&#160;<a class="el" href="classNAV_1_1ImuSimulator.html#aec3a87f7dcc6a8af6d78c1c49f1dc849">NAV::ImuSimulator</a>, <a class="el" href="classNAV_1_1KalmanFilter.html#a367f24779f8f22c84d58a902c81c2702">NAV::KalmanFilter</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#ae12bb28f84a2e918a462f20499c75d8e">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a8629c6e5a1fde3860e2fb21db1902975">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>xAccel&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfIns.html#a9b4b67e8ff843e6b523757a26ebd6cb6">NAV::vendor::ublox::UbxEsfIns</a></li>
 <li>xAngRate&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfIns.html#a0486af1818b427886d2058b4247d7c6c">NAV::vendor::ublox::UbxEsfIns</a></li>
 <li>xAxisFlags&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo.html#a64880e9f1fbefd93a2624ccf68bc14ed">NAV::Plot::PlotInfo</a></li>

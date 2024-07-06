@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -303,7 +324,7 @@ $(function(){initNavTree('NodeManager_8hpp_source.html',''); initResizable(); })
 <div class="ttc" id="aclassNAV_1_1InputPin_html_aa0c3c5cfa65d98c5939883adcaec1b0c"><div class="ttname"><a href="classNAV_1_1InputPin.html#aa0c3c5cfa65d98c5939883adcaec1b0c">NAV::InputPin::Callback</a></div><div class="ttdeci">std::variant&lt; FlowFirableCallbackFunc, DataChangedNotifyFunc &gt; Callback</div><div class="ttdoc">Callback function types.</div><div class="ttdef"><b>Definition</b> Pin.hpp:714</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html_aa6d4352ff2778ef7ebf054227bf4be3f"><div class="ttname"><a href="classNAV_1_1InputPin.html#aa6d4352ff2778ef7ebf054227bf4be3f">NAV::InputPin::FlowFirableCheckFunc</a></div><div class="ttdeci">bool(*)(const Node *, const InputPin &amp;) FlowFirableCheckFunc</div><div class="ttdoc">Function type to call when checking if a pin is firable.</div><div class="ttdef"><b>Definition</b> Pin.hpp:721</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html_aad297efc11ba6f608c9157bf3d75378d"><div class="ttname"><a href="classNAV_1_1InputPin.html#aad297efc11ba6f608c9157bf3d75378d">NAV::InputPin::DataChangedNotifyFunc</a></div><div class="ttdeci">void(Node::*)(const InsTime &amp;, size_t) DataChangedNotifyFunc</div><div class="ttdef"><b>Definition</b> Pin.hpp:712</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a355d74c9bf39e9b763078c2710059075"><div class="ttname"><a href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">NAV::Node::outputPins</a></div><div class="ttdeci">std::vector&lt; OutputPin &gt; outputPins</div><div class="ttdoc">List of output pins.</div><div class="ttdef"><b>Definition</b> Node.hpp:382</div></div>
 <div class="ttc" id="aclassNAV_1_1OutputPin_html"><div class="ttname"><a href="classNAV_1_1OutputPin.html">NAV::OutputPin</a></div><div class="ttdoc">Output pins of nodes.</div><div class="ttdef"><b>Definition</b> Pin.hpp:338</div></div>

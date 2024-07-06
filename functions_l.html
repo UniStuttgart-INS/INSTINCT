@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -128,8 +149,7 @@ $(function(){initNavTree('functions_l.html',''); initResizable(); });
 <li>latitude_deg()&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#a30603795dec9ab27931a550b6e76d53a">NAV::gui::widgets::PositionWithFrame</a></li>
 <li>latLonAlt()&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#a96d78f0547d0c0d05305bbe891c31870">NAV::gui::widgets::PositionWithFrame</a></li>
 <li>latLonAlt_deg()&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#a4c76aa245b031e93dd4a8e5b410fd86d">NAV::gui::widgets::PositionWithFrame</a></li>
-<li>LcKfInsGnssErrorLogger()&#160;:&#160;<a class="el" href="classNAV_1_1LcKfInsGnssErrorLogger.html#a1f990d8bd0b2f8dc4ec012bfa3e6effe">NAV::LcKfInsGnssErrorLogger</a></li>
-<li>leapGps2UTC()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#a8e43fb38bca868042fe13fda8bb8b1c7">NAV::InsTime</a></li>
+<li>leapGps2UTC()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#a7fcb61a6dfc38eb29fc09ae135fb292b">NAV::InsTime</a></li>
 <li>leapS&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx.html#af163b89ed8c7f444e838197b58a9e268">NAV::vendor::ublox::UbxRxmRawx</a></li>
 <li>leapSeconds&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeInfo.html#aca38dcaf663a4975320322ab2170b26e">NAV::vendor::vectornav::TimeInfo</a></li>
 <li>LeastSquares()&#160;:&#160;<a class="el" href="classNAV_1_1LeastSquares.html#ab075f0646d2ad53383b1988453165908">NAV::LeastSquares&lt; Scalar &gt;</a></li>
@@ -147,8 +167,10 @@ $(function(){initNavTree('functions_l.html',''); initResizable(); });
 <li>Link()&#160;:&#160;<a class="el" href="structNAV_1_1Pin_1_1Link.html#a1c235bc9f88f1533672a0258c88e46bc">NAV::Pin::Link</a></li>
 <li>linkId&#160;:&#160;<a class="el" href="structNAV_1_1Pin_1_1Link.html#a4cef346967b7b3306d27100280014f60">NAV::Pin::Link</a></li>
 <li>links&#160;:&#160;<a class="el" href="classNAV_1_1OutputPin.html#ab1e7b109f0d4c7ea9660a76079ef4700">NAV::OutputPin</a></li>
-<li>lla_pos&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a48039f282b53cf513e648139fdace090">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>lla_posAntennaPhaseCenter()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a4c485e74ae92d83f5fb673b530b36ddc">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>lla_posARP()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a6d8e1569d91e1971d95758c9c25779b0">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>lla_position()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#abbe7fbe77f4fd525dcd2b7f923fc24c6">NAV::Pos</a></li>
+<li>lla_posMarker&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a4a5e37da54ea4090f88d623548c0ed7b">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>LLI&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ObservationData_1_1CarrierPhase.html#a32cd42b80132b27f22d64746cd04897d">NAV::GnssObs::ObservationData::CarrierPhase</a></li>
 <li>locktime&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a3b3685872a2d2b002fe34a6833e8d86e">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a></li>
 <li>log_level&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__logging__s.html#a2771234e60c52e8bffbfd44ad5d29877">NAV::vendor::pixhawk::message_logging_s</a>, <a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__logging__tagged__s.html#aa39758ecd17a96882e43b1e84e85cee2">NAV::vendor::pixhawk::message_logging_tagged_s</a></li>

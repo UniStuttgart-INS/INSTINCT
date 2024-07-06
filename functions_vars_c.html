@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -123,7 +144,7 @@ $(function(){initNavTree('functions_vars_c.html',''); initResizable(); });
 <li>callbacksEnabled&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a6fd6e00cf5d6229eea0de4a8d13b0e4f">NAV::Node</a></li>
 <li>carPh&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbSvi.html#a29ab09178a4510923231394a6c55b352">NAV::vendor::emlid::ErbSvi</a></li>
 <li>carrierPhase&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html#a1d051d8a07974f0d4e0b432db2a3e122">NAV::GnssObs::ObservationData</a></li>
-<li>centrifgalAccelerationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html#a629259d11720a8d69c77b66387885808">NAV::PosVelAttDerivativeConstants_e</a>, <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__n.html#abb7690e7e7e17669ad4ea1077847ad9d">NAV::PosVelAttDerivativeConstants_n</a></li>
+<li>centrifgalAccelerationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#a194b9cf71dde34d8399a1902b6151fa8">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
 <li>chan&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a580b6201106af78bc45e78108bbf3e4f">NAV::vendor::vectornav::RawMeas::SatRawElement</a></li>
 <li>chn&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#ab2735b55c0418f7d4e768a656a628008">NAV::vendor::ublox::UbxRxmSfrbx</a></li>
 <li>Cic&#160;:&#160;<a class="el" href="classNAV_1_1BDSEphemeris.html#ad50c55be0db1f264e5f119f440d4a7e7">NAV::BDSEphemeris</a>, <a class="el" href="classNAV_1_1GalileoEphemeris.html#ab1a736ceb855ea8729cdb865f57d6ed9">NAV::GalileoEphemeris</a>, <a class="el" href="classNAV_1_1GPSEphemeris.html#a306914e580ce0fc5eeb368152d8d9b15">NAV::GPSEphemeris</a></li>
@@ -147,7 +168,7 @@ $(function(){initNavTree('functions_vars_c.html',''); initResizable(); });
 <li>connectedPinId&#160;:&#160;<a class="el" href="structNAV_1_1Pin_1_1Link.html#ad3739723ad09de74f3e4544e346c8bc5">NAV::Pin::Link</a></li>
 <li>constructor&#160;:&#160;<a class="el" href="structNAV_1_1NodeRegistry_1_1NodeInfo.html#a23c3e6d2d174ce05e97a8b141f8cc352">NAV::NodeRegistry::NodeInfo</a></li>
 <li>content&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins_1_1ExtraColumn.html#ae56798c2ccaa7931e26b81ecec836996">NAV::gui::widgets::DynamicInputPins::ExtraColumn</a></li>
-<li>coriolisAccelerationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html#a69f4c0c2b9451f95cac9d9c985371b31">NAV::PosVelAttDerivativeConstants_e</a>, <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__n.html#a57fb89074ed653073c9d68493bdc4dad">NAV::PosVelAttDerivativeConstants_n</a></li>
+<li>coriolisAccelerationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#af8b8349331bea9782868acea585859b3">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
 <li>cp&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ab248203d530fd2228e3952b15b8c76f6">NAV::vendor::vectornav::RawMeas::SatRawElement</a></li>
 <li>cpMes&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#aec59bf65ea3741bf17a441d7132edc5d">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a></li>
 <li>cpStdev&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a767df48d03dfd73d9a54f0f5e6c7be79">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a></li>

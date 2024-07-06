@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -128,10 +149,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9fc0a5d2122d92d4e70bba251ee9f51d">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration, size_t startIdx=0)</td></tr>
 <tr class="memdesc:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combo representing an enumeration.  <br /></td></tr>
 <tr class="separator:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89eac45a3673e2131dde06df52d95d0b" id="r_a89eac45a3673e2131dde06df52d95d0b"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a89eac45a3673e2131dde06df52d95d0b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a89eac45a3673e2131dde06df52d95d0b">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration1, T &amp;enumeration2)</td></tr>
-<tr class="memdesc:a89eac45a3673e2131dde06df52d95d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combo representing two enumerations. Values will be displayed appended and set to the same value.  <br /></td></tr>
-<tr class="separator:a89eac45a3673e2131dde06df52d95d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b5392c6420fb1c608a31673fc4d97de" id="r_a9b5392c6420fb1c608a31673fc4d97de"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a9b5392c6420fb1c608a31673fc4d97de"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9b5392c6420fb1c608a31673fc4d97de">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration1, T &amp;enumeration2, const char *previewAppendix=&quot;&quot;)</td></tr>
+<tr class="memdesc:a9b5392c6420fb1c608a31673fc4d97de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combo representing two enumerations. Values will be displayed appended and set to the same value.  <br /></td></tr>
+<tr class="separator:a9b5392c6420fb1c608a31673fc4d97de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Combo representing an enumeration. </p>
@@ -184,8 +205,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a89eac45a3673e2131dde06df52d95d0b" name="a89eac45a3673e2131dde06df52d95d0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89eac45a3673e2131dde06df52d95d0b">&#9670;&#160;</a></span>EnumCombo() <span class="overload">[2/2]</span></h2>
+<a id="a9b5392c6420fb1c608a31673fc4d97de" name="a9b5392c6420fb1c608a31673fc4d97de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b5392c6420fb1c608a31673fc4d97de">&#9670;&#160;</a></span>EnumCombo() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,7 +226,12 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>enumeration2</em></span>&#160;)</td>
+          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>enumeration2</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>previewAppendix</em><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -222,6 +248,7 @@ template&lt;typename T &gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show beside the combo box. This has to be a unique id for ImGui. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enumeration1</td><td>Reference to the first enumeration variable to select </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enumeration2</td><td>Reference to the second enumeration variable to set to the same value as the first one </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">previewAppendix</td><td>Additional text to show in the combo preview </td></tr>
   </table>
   </dd>
 </dl>

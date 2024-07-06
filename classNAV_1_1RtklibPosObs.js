@@ -10,21 +10,5 @@ var classNAV_1_1RtklibPosObs =
     [ "age", "classNAV_1_1RtklibPosObs.html#a4e23752a68664e6d50297be83c8158cc", null ],
     [ "ns", "classNAV_1_1RtklibPosObs.html#a64ebc731a0701e2634eb69c6951f8bd1", null ],
     [ "Q", "classNAV_1_1RtklibPosObs.html#a36f505e009f8dc287d427fa3290dd640", null ],
-    [ "ratio", "classNAV_1_1RtklibPosObs.html#a4ced8f97a54152a9d0eef1a5b7298fbd", null ],
-    [ "sddn", "classNAV_1_1RtklibPosObs.html#a25d70e96774143d9ca07c4e93dffed39", null ],
-    [ "sded", "classNAV_1_1RtklibPosObs.html#a5b6daf96552e1155b0c795d988e4a887", null ],
-    [ "sdne", "classNAV_1_1RtklibPosObs.html#ab6a5a8bb01b56e299395d03f12be61a5", null ],
-    [ "sdNED", "classNAV_1_1RtklibPosObs.html#aae1e302601ef272f8fa89cd36fbee809", null ],
-    [ "sdvdn", "classNAV_1_1RtklibPosObs.html#acdf4bd18c9619c448231b09c88468272", null ],
-    [ "sdved", "classNAV_1_1RtklibPosObs.html#a3c2c44c985807117409f11beb0cae219", null ],
-    [ "sdvne", "classNAV_1_1RtklibPosObs.html#a9a5c887ddf02cdd1c28425891ca9860c", null ],
-    [ "sdvNED", "classNAV_1_1RtklibPosObs.html#a02da5c6efa549be541decd6db30fcc81", null ],
-    [ "sdvxy", "classNAV_1_1RtklibPosObs.html#a7536a271c8cb0f6f68809e984456d0fd", null ],
-    [ "sdvXYZ", "classNAV_1_1RtklibPosObs.html#a817580c1b8b739e72241eb8eef9da246", null ],
-    [ "sdvyz", "classNAV_1_1RtklibPosObs.html#a3207d7cbcf78e53fb75aaddc2eee7866", null ],
-    [ "sdvzx", "classNAV_1_1RtklibPosObs.html#a5d83124cedcdf0edc6962c295b881c9d", null ],
-    [ "sdxy", "classNAV_1_1RtklibPosObs.html#a75d535a53d6d3abd28dc50e9a3937775", null ],
-    [ "sdXYZ", "classNAV_1_1RtklibPosObs.html#a14192db7e47c77669bbbd506785a25e5", null ],
-    [ "sdyz", "classNAV_1_1RtklibPosObs.html#aaab43761fa1885491aebc62d564b78f9", null ],
-    [ "sdzx", "classNAV_1_1RtklibPosObs.html#a7243563eece79586ff38d05fbffa22e9", null ]
+    [ "ratio", "classNAV_1_1RtklibPosObs.html#a4ced8f97a54152a9d0eef1a5b7298fbd", null ]
 ];

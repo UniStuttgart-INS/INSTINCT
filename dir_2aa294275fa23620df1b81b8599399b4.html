@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,6 +138,12 @@ $(function(){initNavTree('dir_2aa294275fa23620df1b81b8599399b4.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="CsvLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CsvLogger_8hpp.html">CsvLogger.hpp</a></td></tr>
+<tr class="memdesc:CsvLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data <a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for CSV files. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="KmlLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="KmlLogger_8hpp.html">KmlLogger.hpp</a></td></tr>
+<tr class="memdesc:KmlLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data <a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for Pos data as KML (Keyhole Markup Language) files (input for Google Earth) <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="MatrixLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="MatrixLogger_8hpp.html">MatrixLogger.hpp</a></td></tr>
 <tr class="memdesc:MatrixLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data <a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for matrices. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>

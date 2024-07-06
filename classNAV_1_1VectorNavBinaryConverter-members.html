@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -163,23 +184,24 @@ $(function(){initNavTree('classNAV_1_1VectorNavBinaryConverter.html',''); initRe
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a188e504f08f21e9bfb51696f27503400">outputPinFromId</a>(ax::NodeEditor::PinId pinId)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5d5bb7d6f49f551206a23b71e43876cf">outputPinIndexFromId</a>(ax::NodeEditor::PinId pinId) const</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a></td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a></td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a0cd0580a18d21f578e75bb5f230ee85e">releaseInputValue</a>(size_t portIndex)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#ac4549feccdf13207e2b06267d8b5cb5f">requestOutputValueLock</a>(size_t pinIdx)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#acce3d37504f6ce1731cb44f95ffbabd5">resetNode</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a810df57b5362c6ed31bc8c7dbcabe286">restore</a>(const json &amp;j) override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a8dff960e9111edd4510f0ef016bf3b1e">restoreAtferLink</a>(const json &amp;j)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a9e803c0f9e15624b07f2b91961f22ada">save</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">State</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5b4f8d7291273c38be7d134c27e2195f">toString</a>(State state)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#acbf8403a539e80645854a71926ef47ad">type</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#aef913ee1bf96b8c05c0a46628957bc88">typeStatic</a>()</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a00217d4178b0501ee94789c477eb3efd">VectorNavBinaryConverter</a>()</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a151696c0119de6d76ce65a8e80d8eb50">VectorNavBinaryConverter</a>(const VectorNavBinaryConverter &amp;)=delete</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#ade4e40363b2806cfbdb7deaef9831fd1">VectorNavBinaryConverter</a>(VectorNavBinaryConverter &amp;&amp;)=delete</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#abc11472b9b7519bed44fa424609935b3">~Node</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#ac1b13e096313f758f17e9740bca1f227">~VectorNavBinaryConverter</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">OutputType</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a></td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a0cd0580a18d21f578e75bb5f230ee85e">releaseInputValue</a>(size_t portIndex)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#ac4549feccdf13207e2b06267d8b5cb5f">requestOutputValueLock</a>(size_t pinIdx)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#acce3d37504f6ce1731cb44f95ffbabd5">resetNode</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a810df57b5362c6ed31bc8c7dbcabe286">restore</a>(const json &amp;j) override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a8dff960e9111edd4510f0ef016bf3b1e">restoreAtferLink</a>(const json &amp;j)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a9e803c0f9e15624b07f2b91961f22ada">save</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">State</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5b4f8d7291273c38be7d134c27e2195f">toString</a>(State state)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#acbf8403a539e80645854a71926ef47ad">type</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#aef913ee1bf96b8c05c0a46628957bc88">typeStatic</a>()</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a00217d4178b0501ee94789c477eb3efd">VectorNavBinaryConverter</a>()</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a151696c0119de6d76ce65a8e80d8eb50">VectorNavBinaryConverter</a>(const VectorNavBinaryConverter &amp;)=delete</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#ade4e40363b2806cfbdb7deaef9831fd1">VectorNavBinaryConverter</a>(VectorNavBinaryConverter &amp;&amp;)=delete</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#abc11472b9b7519bed44fa424609935b3">~Node</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#ac1b13e096313f758f17e9740bca1f227">~VectorNavBinaryConverter</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

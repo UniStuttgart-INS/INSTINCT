@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -139,7 +160,7 @@ T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'
 <dl class="section date"><dt>Date</dt><dd>2023-02-22 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a href="https://vmf.geo.tuwien.ac.at/codes/">https://vmf.geo.tuwien.ac.at/codes/</a> for code sources in matlab. </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Böhm2006">[7]</a> Böhm2006 </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_Böhm2006">[8]</a> Böhm2006 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="ad579081c06ceedd79dbe5494d23167db" name="ad579081c06ceedd79dbe5494d23167db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad579081c06ceedd79dbe5494d23167db">&#9670;&#160;</a></span>vmf1h()</h2>

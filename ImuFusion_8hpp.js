@@ -1,5 +1,5 @@
 var ImuFusion_8hpp =
 [
     [ "NAV::ImuFusion", "classNAV_1_1ImuFusion.html", "classNAV_1_1ImuFusion" ],
-    [ "NAV::ImuFusion::PinData", "structNAV_1_1ImuFusion_1_1PinData.html", "structNAV_1_1ImuFusion_1_1PinData" ]
+    [ "to_string", "ImuFusion_8hpp.html#a3b94af9f2ebfac60f7162806359c536d", null ]
 ];

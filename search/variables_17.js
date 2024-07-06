@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['W',['../classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352',1,'NAV::KeyedKalmanFilter']]],
+  ['w_0',['W',['../classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352',1,'NAV::KeyedKalmanFilter::W'],['../structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#ae0530c09a9b9245c7c96dd7ee523267a',1,'NAV::KeyedKalmanFilter::SavedPreUpdate::W']]],
   ['w_5fa0_1',['w_A0',['../structNAV_1_1internal_1_1GPT2Data.html#a1e6d7e5bb0d907f67f844a3d52948e51',1,'NAV::internal::GPT2Data::w_A0'],['../structNAV_1_1internal_1_1GPT3Data.html#abbc1863240594eaf3364e54d101eef4c',1,'NAV::internal::GPT3Data::w_A0']]],
   ['w_5fa1_2',['w_A1',['../structNAV_1_1internal_1_1GPT2Data.html#a8c51a1a0e373de00ff6113f8e24dadcb',1,'NAV::internal::GPT2Data::w_A1'],['../structNAV_1_1internal_1_1GPT3Data.html#a3a94e22673f2f9b337a43335a70dc7da',1,'NAV::internal::GPT3Data::w_A1']]],
   ['w_5fa2_3',['w_A2',['../structNAV_1_1internal_1_1GPT2Data.html#a136ac30c4fd659a302288cfb7035ec62',1,'NAV::internal::GPT2Data::w_A2'],['../structNAV_1_1internal_1_1GPT3Data.html#a3f2e7b04981466e2098f61dfdad95f1d',1,'NAV::internal::GPT3Data::w_A2']]],

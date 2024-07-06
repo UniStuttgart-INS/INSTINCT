@@ -1,20 +1,22 @@
 var searchData=
 [
   ['b_0',['b',['../classNAV_1_1InsConst_1_1WGS84.html#aea0492b5d3acf4ff369816cec11cf792',1,'NAV::InsConst::WGS84::b'],['../classNAV_1_1InsConst_1_1GRS80.html#ab3feb938755c6f003932a0326ed08baa',1,'NAV::InsConst::GRS80::b'],['../classNAV_1_1InsConst_1_1PZ90.html#a5b96b6dced8750edf575d35c34de36a4',1,'NAV::InsConst::PZ90::b']]],
-  ['b_5fbiasaccel_1',['b_biasAccel',['../classNAV_1_1LcKfInsGnssErrors.html#a315124b0da8304baa93137482f010194',1,'NAV::LcKfInsGnssErrors']]],
-  ['b_5fbiasgyro_2',['b_biasGyro',['../classNAV_1_1LcKfInsGnssErrors.html#a8b7acbeeb3371dcdd6ae2bbbc382a718',1,'NAV::LcKfInsGnssErrors']]],
-  ['b_5fmeasuredforce_5fdot_3',['b_measuredForce_dot',['../structNAV_1_1PosVelAttDerivativeConstants__e.html#aa5ff997d9623e7cbe8ece8bd0bd151fb',1,'NAV::PosVelAttDerivativeConstants_e::b_measuredForce_dot'],['../structNAV_1_1PosVelAttDerivativeConstants__n.html#ab04bc02d9e4cd04b4a2df4bb5651e0ae',1,'NAV::PosVelAttDerivativeConstants_n::b_measuredForce_dot']]],
-  ['b_5fomega_5fib_5fdot_4',['b_omega_ib_dot',['../structNAV_1_1PosVelAttDerivativeConstants__e.html#ae53a8facd24328ec73e695a79e19507c',1,'NAV::PosVelAttDerivativeConstants_e::b_omega_ib_dot'],['../structNAV_1_1PosVelAttDerivativeConstants__n.html#ace45fed529ccd4d2afb66a983a9affa0',1,'NAV::PosVelAttDerivativeConstants_n::b_omega_ib_dot']]],
-  ['baselined_5',['baselineD',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a546b70ca39da131bdbff121272718e7f',1,'NAV::vendor::emlid::ErbRtk']]],
-  ['baselinee_6',['baselineE',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a91af9c579d5e30ff0f6256651867b441',1,'NAV::vendor::emlid::ErbRtk']]],
-  ['baselinen_7',['baselineN',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a077a4d985c0e5cbbf5f9747732fb8880',1,'NAV::vendor::emlid::ErbRtk']]],
-  ['bgd_5fe1_5fe5a_8',['BGD_E1_E5a',['../classNAV_1_1GalileoEphemeris.html#adaaf6d17e5484312a5661eeff464efc8',1,'NAV::GalileoEphemeris']]],
-  ['bgd_5fe1_5fe5b_9',['BGD_E1_E5b',['../classNAV_1_1GalileoEphemeris.html#a362c750b8a15f45f20130829a705177e',1,'NAV::GalileoEphemeris']]],
+  ['b_5fbiasaccel_1',['b_biasAccel',['../classNAV_1_1InsGnssLCKFSolution.html#a314b4b451e8eef949ded8f3edaab0a9d',1,'NAV::InsGnssLCKFSolution']]],
+  ['b_5fbiasgyro_2',['b_biasGyro',['../classNAV_1_1InsGnssLCKFSolution.html#a3088ef3b39d5fd9284189a5c311f7ee8',1,'NAV::InsGnssLCKFSolution']]],
+  ['baselined_3',['baselineD',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a546b70ca39da131bdbff121272718e7f',1,'NAV::vendor::emlid::ErbRtk']]],
+  ['baselinee_4',['baselineE',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a91af9c579d5e30ff0f6256651867b441',1,'NAV::vendor::emlid::ErbRtk']]],
+  ['baselinen_5',['baselineN',['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a077a4d985c0e5cbbf5f9747732fb8880',1,'NAV::vendor::emlid::ErbRtk']]],
+  ['bgd_5fe1_5fe5a_6',['BGD_E1_E5a',['../classNAV_1_1GalileoEphemeris.html#adaaf6d17e5484312a5661eeff464efc8',1,'NAV::GalileoEphemeris']]],
+  ['bgd_5fe1_5fe5b_7',['BGD_E1_E5b',['../classNAV_1_1GalileoEphemeris.html#a362c750b8a15f45f20130829a705177e',1,'NAV::GalileoEphemeris']]],
+  ['bh_5famp_8',['bh_amp',['../GMFCoeffs_8hpp.html#a8883e61c9a6c24ef4fd37dafbebbf638',1,'NAV::internal::GMF']]],
+  ['bh_5fmean_9',['bh_mean',['../GMFCoeffs_8hpp.html#a7b297fa982960718d600d4b754782b5e',1,'NAV::internal::GMF']]],
   ['bias_10',['bias',['../structNAV_1_1ReceiverClock.html#af290e5744a414ebcba70db9a563a401b',1,'NAV::ReceiverClock::bias'],['../structNAV_1_1Clock_1_1Corrections.html#ac584986be67f9d7e02b1eb78a5f88349',1,'NAV::Clock::Corrections::bias']]],
   ['binary_5fsync_5fchar_5f1_11',['BINARY_SYNC_CHAR_1',['../classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#af40f54005cb90ba7bf3c134ec11c4ff1',1,'NAV::vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_1'],['../classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html#ab9acf5db99405c95cac73700df72d041',1,'NAV::vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_1']]],
   ['binary_5fsync_5fchar_5f2_12',['BINARY_SYNC_CHAR_2',['../classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#a762dfc40867a6abea8de7c86fb79ec97',1,'NAV::vendor::emlid::EmlidUartSensor::BINARY_SYNC_CHAR_2'],['../classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html#a00f6ff0ac3a8e6da2d6f0f7721bfa0bd',1,'NAV::vendor::ublox::UbloxUartSensor::BINARY_SYNC_CHAR_2']]],
   ['bitfield0_13',['bitfield0',['../structNAV_1_1vendor_1_1ublox_1_1UbxEsfIns.html#a512d70cdc90c75a7da9bd2a5f2cd0070',1,'NAV::vendor::ublox::UbxEsfIns']]],
   ['blocksconnectednodefromfinishing_14',['blocksConnectedNodeFromFinishing',['../classNAV_1_1OutputPin.html#acee5fdaa70ee5261b91cb3952de54f5a',1,'NAV::OutputPin']]],
   ['boolean_15',['boolean',['../structNAV_1_1Demo_1_1DemoData.html#a4c52e569c1711607fb2fbdb2868c9743',1,'NAV::Demo::DemoData']]],
-  ['buffer_16',['buffer',['../structNAV_1_1Plot_1_1PinData_1_1PlotData.html#aa3390dd52034026afda89d53569d0c77',1,'NAV::Plot::PinData::PlotData']]]
+  ['buffer_16',['buffer',['../structNAV_1_1Plot_1_1PinData_1_1PlotData.html#aa3390dd52034026afda89d53569d0c77',1,'NAV::Plot::PinData::PlotData']]],
+  ['bw_5famp_17',['bw_amp',['../GMFCoeffs_8hpp.html#a515ca2948a928134ccd891e809e4ecb1',1,'NAV::internal::GMF']]],
+  ['bw_5fmean_18',['bw_mean',['../GMFCoeffs_8hpp.html#a0f6b1dbdc31e31aff70877cf7edb948d',1,'NAV::internal::GMF']]]
 ];

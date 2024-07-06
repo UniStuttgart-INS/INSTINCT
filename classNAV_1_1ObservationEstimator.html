@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -141,9 +162,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35eab10fe280caf9a287ddab0d9e21cc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a35eab10fe280caf9a287ddab0d9e21cc">calcObservationEstimates</a> (<a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::array&lt; <a class="el" href="structNAV_1_1Receiver.html">Receiver</a>&lt; ReceiverType &gt;, ReceiverType::ReceiverType_COUNT &gt; &amp;receivers, const <a class="el" href="classNAV_1_1IonosphericCorrections.html">IonosphericCorrections</a> &amp;ionosphericCorrections, const std::string &amp;nameId, <a class="el" href="#a77c391cc52ff42498ba86239f54df25a">ObservationDifference</a> obsDiff)</td></tr>
 <tr class="memdesc:a35eab10fe280caf9a287ddab0d9e21cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the observation estimates.  <br /></td></tr>
 <tr class="separator:a35eab10fe280caf9a287ddab0d9e21cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a153bf9d75c60bef59ac3ae43115bf28a" id="r_a153bf9d75c60bef59ac3ae43115bf28a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a153bf9d75c60bef59ac3ae43115bf28a">ShowGuiWidgets</a> (const char *id, float itemWidth)</td></tr>
-<tr class="memdesc:a153bf9d75c60bef59ac3ae43115bf28a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows the GUI input to select the options.  <br /></td></tr>
-<tr class="separator:a153bf9d75c60bef59ac3ae43115bf28a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fba0180c7afb7b3bb13a6ffcc592e9c" id="r_a1fba0180c7afb7b3bb13a6ffcc592e9c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1fba0180c7afb7b3bb13a6ffcc592e9c">ObservationEstimator</a> (size_t receiverCount)</td></tr>
+<tr class="memdesc:a1fba0180c7afb7b3bb13a6ffcc592e9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a1fba0180c7afb7b3bb13a6ffcc592e9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abff20c09ac89e9ee580b405d59570e4f" id="r_abff20c09ac89e9ee580b405d59570e4f"><td class="memTemplParams" colspan="2">template&lt;typename ReceiverType &gt; </td></tr>
+<tr class="memitem:abff20c09ac89e9ee580b405d59570e4f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abff20c09ac89e9ee580b405d59570e4f">ShowGuiWidgets</a> (const char *id, float itemWidth)</td></tr>
+<tr class="memdesc:abff20c09ac89e9ee580b405d59570e4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows the GUI input to select the options.  <br /></td></tr>
+<tr class="separator:abff20c09ac89e9ee580b405d59570e4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Calculates Observation estimates. </p>
@@ -169,6 +194,40 @@ Public Member Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a77c391cc52ff42498ba86239f54df25aababf20fd66c9f69d6565e28b0d1bab92" name="a77c391cc52ff42498ba86239f54df25aababf20fd66c9f69d6565e28b0d1bab92"></a>DoubleDifference&#160;</td><td class="fielddoc"><p>Double Difference. </p>
 </td></tr>
 </table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a1fba0180c7afb7b3bb13a6ffcc592e9c" name="a1fba0180c7afb7b3bb13a6ffcc592e9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fba0180c7afb7b3bb13a6ffcc592e9c">&#9670;&#160;</a></span>ObservationEstimator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::ObservationEstimator::ObservationEstimator </td>
+          <td>(</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>receiverCount</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">receiverCount</td><td>Number of receivers </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -231,11 +290,13 @@ template&lt;typename ReceiverType &gt; </div>
 
 </div>
 </div>
-<a id="a153bf9d75c60bef59ac3ae43115bf28a" name="a153bf9d75c60bef59ac3ae43115bf28a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a153bf9d75c60bef59ac3ae43115bf28a">&#9670;&#160;</a></span>ShowGuiWidgets()</h2>
+<a id="abff20c09ac89e9ee580b405d59570e4f" name="abff20c09ac89e9ee580b405d59570e4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abff20c09ac89e9ee580b405d59570e4f">&#9670;&#160;</a></span>ShowGuiWidgets()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename ReceiverType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -116,76 +137,85 @@ $(function(){initNavTree('pages.html',''); initResizable(); });
 <div class="contents">
 <div class="textblock">Here is a list of all related documentation pages:</div><div class="directory">
 <div class="levels">[detail level <span onclick="javascript:dynsection.toggleLevel(1);">1</span><span onclick="javascript:dynsection.toggleLevel(2);">2</span><span onclick="javascript:dynsection.toggleLevel(3);">3</span><span onclick="javascript:dynsection.toggleLevel(4);">4</span>]</div><table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="dynsection.toggleFolder('0_')">&#9660;</span><a class="el" href="Core.html" target="_self">Core</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="Core_Node.html" target="_self">Node</a></td><td class="desc"></td></tr>
-<tr id="row_1_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="developer_manual.html" target="_self">Developer Manual</a></td><td class="desc"></td></tr>
-<tr id="row_2_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="main_introduction.html" target="_self">Project Introduction</a></td><td class="desc"></td></tr>
-<tr id="row_3_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_3_" class="arrow" onclick="dynsection.toggleFolder('3_')">&#9660;</span><a class="el" href="user_manual_landing_page.html" target="_self">User Manual</a></td><td class="desc"></td></tr>
-<tr id="row_3_0_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="getting_started.html" target="_self">Getting Started</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_3_1_" class="arrow" onclick="dynsection.toggleFolder('3_1_')">&#9660;</span><a class="el" href="gui_landing_page.html" target="_self">GUI</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_0_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="main_menu_bar.html" target="_self">Main Menu Bar</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_1_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="left_panel.html" target="_self">Left Panel</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_2_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="work_space.html" target="_self">Workspace</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_3_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="log_output.html" target="_self">Log Output</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_3_1_4_" class="arrow" onclick="dynsection.toggleFolder('3_1_4_')">&#9660;</span><a class="el" href="advanced_gui_landing_page.html" target="_self">Advanced GUI</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_0_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_colormap_editor.html" target="_self">Colormap Editor</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_1_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_implot_style.html" target="_self">ImPlot Style</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_2_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_node_editor_style.html" target="_self">Node Editor Style</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_3_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="dear_imgui_demo_window.html" target="_self">Dear ImGui Demo Window</a></td><td class="desc"></td></tr>
-<tr id="row_3_1_4_4_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="implot_demo_window.html" target="_self">ImPlot Demo Window</a></td><td class="desc"></td></tr>
-<tr id="row_3_2_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="node_connections.html" target="_self">Pins and Connections</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_3_3_" class="arrow" onclick="dynsection.toggleFolder('3_3_')">&#9660;</span><a class="el" href="node_guide_landing_page.html" target="_self">Node Guide</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_0_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="node_guide_introduction.html" target="_self">Nodes Introduction</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_1_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rtklib_pos_converter_node.html" target="_self">RtklibPosConverter Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_2_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="uart_packet_converter_node.html" target="_self">UartPacketConverter Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_3_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_binary_converter_node.html" target="_self">VectorNavBinaryConverter Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_4_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="udp_recv_node.html" target="_self">udpRecv Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_5_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="udp_send_node.html" target="_self">udpSend Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_6_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="matrix_logger_node.html" target="_self">MatrixLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_7_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_obs_logger_node.html" target="_self">RinexObsLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_8_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="spp_solution_logger_node.html" target="_self">SppSolutionLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_9_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="uart_data_logger_node.html" target="_self">UartDataLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_10_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_data_logger_node.html" target="_self">ImuDataLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_11_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_data_logger_node.html" target="_self">KvhDataLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_12_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_data_logger_node.html" target="_self">VectorNavDataLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_13_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="lc_kf_ins_gnss_error_logger_node.html" target="_self">LcKfInsGnssErrorLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_14_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_logger_node.html" target="_self">PosVelAttLogger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_15_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="error_model_node.html" target="_self">ErrorModel Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_16_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="gnss_analyzer_node.html" target="_self">GnssAnalyzer Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_17_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="single_point_positioning_node.html" target="_self">SPP Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_18_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_integrator_node.html" target="_self">ImuIntegrator Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_19_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="loosely_coupled_kf_node.html" target="_self">LooselyCoupledKf Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_20_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="tightly_coupled_kf_node.html" target="_self">TightlyCoupledKf Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_21_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_fusion_node.html" target="_self">ImuFusion Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_22_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="csv_file_node.html" target="_self">CsvFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_23_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="emlid_file_node.html" target="_self">EmlidFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_24_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="nmea_file_node.html" target="_self">NmeaFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_25_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_nav_file_node.html" target="_self">RinexNavFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_26_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_obs_file_node.html" target="_self">RinexObsFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_27_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rtklib_pos_file_node.html" target="_self">RtklibPosFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_28_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ublox_file_node.html" target="_self">UbloxFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_29_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="emlid_sensor_node.html" target="_self">EmlidSensor Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_30_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ublox_sensor_node.html" target="_self">UbloxSensor Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_31_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_file_node.html" target="_self">ImuFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_32_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_file_node.html" target="_self">KvhFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_33_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="multi_imu_file_node.html" target="_self">MultiImuFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_34_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ulog_file_node.html" target="_self">UlogFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_35_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_file_node.html" target="_self">VectorNavFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_36_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_sensor_node.html" target="_self">KvhSensor Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_37_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="navio_2_sensor_node.html" target="_self">Navio2Sensor Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_38_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_sensor_node.html" target="_self">VectorNavSensor Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_39_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_simulator_node.html" target="_self">Imu Simulator Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_40_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_file_node.html" target="_self">PosVelAttFile Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_41_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="experimental_node.html" target="_self">Experimental Node(s)</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_42_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="plot_node.html" target="_self">Plot Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_43_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_initializer_node.html" target="_self">PosVelAttInitializer Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_44_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="combiner_node.html" target="_self">Combiner Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_45_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="demo_node.html" target="_self">Demo Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_46_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group_box.html" target="_self">Group Box</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_47_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="merger_node.html" target="_self">Merger Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_48_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="terminator_node.html" target="_self">Terminator Node</a></td><td class="desc"></td></tr>
-<tr id="row_3_3_49_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="time_window_node.html" target="_self">TimeWindow Node</a></td><td class="desc"></td></tr>
-<tr id="row_4_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="citelist.html" target="_self">Bibliography</a></td><td class="desc"></td></tr>
+<tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="dynsection.toggleFolder('0_')">&#9660;</span><a class="el" href="algorithms_landing_page.html" target="_self">Algorithms</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="KalmanFilterBasics.html" target="_self">Basics about Kalman Filtering and how it is used in INSTINCT</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="SppBasics.html" target="_self">Single Point Positioning Basics</a></td><td class="desc"></td></tr>
+<tr id="row_0_2_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="SppLSE.html" target="_self">Single Point Positioning using (Weighed) Least Squares Estimation</a></td><td class="desc"></td></tr>
+<tr id="row_0_3_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="SppKF.html" target="_self">Single Point Positioning using Kalman Filtering</a></td><td class="desc"></td></tr>
+<tr id="row_0_4_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="ImuIntegrator_e.html" target="_self">IMU Integrator (Earth-fixed frame)</a></td><td class="desc"></td></tr>
+<tr id="row_0_5_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="ImuIntegrator_n.html" target="_self">IMU Integrator (local-navigation frame)</a></td><td class="desc"></td></tr>
+<tr id="row_0_6_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="LooselyCoupledKF_e.html" target="_self">INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)</a></td><td class="desc"></td></tr>
+<tr id="row_0_7_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="LooselyCoupledKF_n.html" target="_self">INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)</a></td><td class="desc"></td></tr>
+<tr id="row_0_8_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="ImuSimulator.html" target="_self">IMU Simulator</a></td><td class="desc"></td></tr>
+<tr id="row_1_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_1_" class="arrow" onclick="dynsection.toggleFolder('1_')">&#9660;</span><a class="el" href="developer_manual.html" target="_self">Developer Manual</a></td><td class="desc"></td></tr>
+<tr id="row_1_0_" class="odd"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="Core_Node.html" target="_self">Node</a></td><td class="desc"></td></tr>
+<tr id="row_2_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="main_introduction.html" target="_self">Project Introduction</a></td><td class="desc"></td></tr>
+<tr id="row_3_" class="odd"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_3_" class="arrow" onclick="dynsection.toggleFolder('3_')">&#9660;</span><a class="el" href="user_manual_landing_page.html" target="_self">User Manual</a></td><td class="desc"></td></tr>
+<tr id="row_3_0_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="getting_started.html" target="_self">Getting Started</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_3_1_" class="arrow" onclick="dynsection.toggleFolder('3_1_')">&#9660;</span><a class="el" href="gui_landing_page.html" target="_self">GUI</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="main_menu_bar.html" target="_self">Main Menu Bar</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_1_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="left_panel.html" target="_self">Left Panel</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="work_space.html" target="_self">Workspace</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_3_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="log_output.html" target="_self">Log Output</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_3_1_4_" class="arrow" onclick="dynsection.toggleFolder('3_1_4_')">&#9660;</span><a class="el" href="advanced_gui_landing_page.html" target="_self">Advanced GUI</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_0_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_colormap_editor.html" target="_self">Colormap Editor</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_1_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_implot_style.html" target="_self">ImPlot Style</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_2_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="bar_edit_node_editor_style.html" target="_self">Node Editor Style</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_3_" class="even"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="dear_imgui_demo_window.html" target="_self">Dear ImGui Demo Window</a></td><td class="desc"></td></tr>
+<tr id="row_3_1_4_4_" class="odd"><td class="entry"><span style="width:64px;display:inline-block;">&#160;</span><a class="el" href="implot_demo_window.html" target="_self">ImPlot Demo Window</a></td><td class="desc"></td></tr>
+<tr id="row_3_2_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="node_connections.html" target="_self">Pins and Connections</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_3_3_" class="arrow" onclick="dynsection.toggleFolder('3_3_')">&#9660;</span><a class="el" href="node_guide_landing_page.html" target="_self">Node Guide</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="node_guide_introduction.html" target="_self">Nodes Introduction</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_1_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rtklib_pos_converter_node.html" target="_self">RtklibPosConverter Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="uart_packet_converter_node.html" target="_self">UartPacketConverter Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_3_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_binary_converter_node.html" target="_self">VectorNavBinaryConverter Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_4_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="udp_recv_node.html" target="_self">udpRecv Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_5_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="udp_send_node.html" target="_self">udpSend Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_6_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="matrix_logger_node.html" target="_self">MatrixLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_7_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_obs_logger_node.html" target="_self">RinexObsLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_8_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="spp_solution_logger_node.html" target="_self">SppSolutionLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_9_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="uart_data_logger_node.html" target="_self">UartDataLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_10_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_data_logger_node.html" target="_self">ImuDataLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_11_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_data_logger_node.html" target="_self">KvhDataLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_12_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_data_logger_node.html" target="_self">VectorNavDataLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_13_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="lc_kf_ins_gnss_error_logger_node.html" target="_self">LcKfInsGnssErrorLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_14_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_logger_node.html" target="_self">PosVelAttLogger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_15_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="error_model_node.html" target="_self">ErrorModel Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_16_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="gnss_analyzer_node.html" target="_self">GnssAnalyzer Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_17_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="single_point_positioning_node.html" target="_self">SPP Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_18_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_integrator_node.html" target="_self">ImuIntegrator Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_19_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="loosely_coupled_kf_node.html" target="_self">LooselyCoupledKf Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_20_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="tightly_coupled_kf_node.html" target="_self">TightlyCoupledKf Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_21_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_fusion_node.html" target="_self">ImuFusion Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_22_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="csv_file_node.html" target="_self">CsvFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_23_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="emlid_file_node.html" target="_self">EmlidFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_24_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="nmea_file_node.html" target="_self">NmeaFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_25_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_nav_file_node.html" target="_self">RinexNavFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_26_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rinex_obs_file_node.html" target="_self">RinexObsFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_27_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="rtklib_pos_file_node.html" target="_self">RtklibPosFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_28_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ublox_file_node.html" target="_self">UbloxFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_29_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="emlid_sensor_node.html" target="_self">EmlidSensor Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_30_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ublox_sensor_node.html" target="_self">UbloxSensor Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_31_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_file_node.html" target="_self">ImuFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_32_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_file_node.html" target="_self">KvhFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_33_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="multi_imu_file_node.html" target="_self">MultiImuFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_34_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="ulog_file_node.html" target="_self">UlogFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_35_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_file_node.html" target="_self">VectorNavFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_36_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="kvh_sensor_node.html" target="_self">KvhSensor Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_37_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="navio_2_sensor_node.html" target="_self">Navio2Sensor Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_38_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="vector_nav_sensor_node.html" target="_self">VectorNavSensor Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_39_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="imu_simulator_node.html" target="_self">Imu Simulator Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_40_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_file_node.html" target="_self">PosVelAttFile Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_41_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="experimental_node.html" target="_self">Experimental Node(s)</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_42_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="plot_node.html" target="_self">Plot Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_43_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="pos_vel_att_initializer_node.html" target="_self">PosVelAttInitializer Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_44_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="combiner_node.html" target="_self">Combiner Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_45_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="demo_node.html" target="_self">Demo Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_46_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group_box.html" target="_self">Group Box</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_47_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="merger_node.html" target="_self">Merger Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_48_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="terminator_node.html" target="_self">Terminator Node</a></td><td class="desc"></td></tr>
+<tr id="row_3_3_49_" class="odd"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="time_window_node.html" target="_self">TimeWindow Node</a></td><td class="desc"></td></tr>
+<tr id="row_4_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="citelist.html" target="_self">Bibliography</a></td><td class="desc"></td></tr>
 </table>
 </div><!-- directory -->
 </div><!-- contents -->

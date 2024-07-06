@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -172,7 +193,7 @@ $(function(){initNavTree('Clock_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aclassNAV_1_1Clock_html_aa12905d12fa1651f1f3db1201eec6d08"><div class="ttname"><a href="classNAV_1_1Clock.html#aa12905d12fa1651f1f3db1201eec6d08">NAV::Clock::Clock</a></div><div class="ttdeci">Clock(Clock &amp;&amp;)=default</div><div class="ttdoc">Move constructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1Clock_html_aab564c989566d0ec480eb1d9c9aa32d5"><div class="ttname"><a href="classNAV_1_1Clock.html#aab564c989566d0ec480eb1d9c9aa32d5">NAV::Clock::calcClockCorrections</a></div><div class="ttdeci">virtual Corrections calcClockCorrections(const InsTime &amp;recvTime, double dist, const Frequency &amp;freq) const =0</div><div class="ttdoc">Calculates clock bias and drift of the satellite.</div></div>
 <div class="ttc" id="aclassNAV_1_1Frequency_html"><div class="ttname"><a href="classNAV_1_1Frequency.html">NAV::Frequency</a></div><div class="ttdoc">Frequency definition for different satellite systems.</div><div class="ttdef"><b>Definition</b> Frequency.hpp:59</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="astructNAV_1_1Clock_1_1Corrections_html"><div class="ttname"><a href="structNAV_1_1Clock_1_1Corrections.html">NAV::Clock::Corrections</a></div><div class="ttdoc">Satellite clock corrections.</div><div class="ttdef"><b>Definition</b> Clock.hpp:28</div></div>
 <div class="ttc" id="astructNAV_1_1Clock_1_1Corrections_html_a052c7e5c5eddd05dad8da62969aab633"><div class="ttname"><a href="structNAV_1_1Clock_1_1Corrections.html#a052c7e5c5eddd05dad8da62969aab633">NAV::Clock::Corrections::drift</a></div><div class="ttdeci">double drift</div><div class="ttdoc">Satellite clock drift [s/s].</div><div class="ttdef"><b>Definition</b> Clock.hpp:31</div></div>
 <div class="ttc" id="astructNAV_1_1Clock_1_1Corrections_html_a9539035a289c46d7fff933b913d2f080"><div class="ttname"><a href="structNAV_1_1Clock_1_1Corrections.html#a9539035a289c46d7fff933b913d2f080">NAV::Clock::Corrections::transmitTime</a></div><div class="ttdeci">InsTime transmitTime</div><div class="ttdoc">Transmit time of the signal.</div><div class="ttdef"><b>Definition</b> Clock.hpp:29</div></div>

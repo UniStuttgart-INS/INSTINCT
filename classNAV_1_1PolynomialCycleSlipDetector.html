@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -131,9 +152,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Strategy</b></td></t
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae5c700e2f1cf8d4d7483b3f792bf29fe" id="r_ae5c700e2f1cf8d4d7483b3f792bf29fe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="PolynomialCycleSlipDetector_8hpp.html#ac2db38ee6de820e1e1868628e8a99428">PolynomialCycleSlipDetectorResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5c700e2f1cf8d4d7483b3f792bf29fe">checkForCycleSlip</a> (const Key &amp;key, <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> insTime, double measurementDifference, double threshold=0.1)</td></tr>
-<tr class="memdesc:ae5c700e2f1cf8d4d7483b3f792bf29fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for a cycle slip.  <br /></td></tr>
-<tr class="separator:ae5c700e2f1cf8d4d7483b3f792bf29fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6cdf1febd5f1a6e5864e552835fa425" id="r_ab6cdf1febd5f1a6e5864e552835fa425"><td class="memItemLeft" align="right" valign="top"><a class="el" href="PolynomialCycleSlipDetector_8hpp.html#ac2db38ee6de820e1e1868628e8a99428">PolynomialCycleSlipDetectorResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6cdf1febd5f1a6e5864e552835fa425">checkForCycleSlip</a> (const Key &amp;key, <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> insTime, double measurementDifference, double threshold)</td></tr>
+<tr class="memdesc:ab6cdf1febd5f1a6e5864e552835fa425"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for a cycle slip.  <br /></td></tr>
+<tr class="separator:ab6cdf1febd5f1a6e5864e552835fa425"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af329eb1c387fe2f6d933e1aae02948f4" id="r_af329eb1c387fe2f6d933e1aae02948f4"><td class="memItemLeft" align="right" valign="top"><a id="af329eb1c387fe2f6d933e1aae02948f4" name="af329eb1c387fe2f6d933e1aae02948f4"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="memdesc:af329eb1c387fe2f6d933e1aae02948f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the collected polynomials. <br /></td></tr>
@@ -154,9 +175,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getWindowSize</b> (
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isEnabled</b> () const</td></tr>
 <tr class="memdesc:a85929df95ac0ae98a4580f8e124c659c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the cycle-slip detector enabled? <br /></td></tr>
 <tr class="separator:a85929df95ac0ae98a4580f8e124c659c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cbfe9373074ce889da82a36e2c44fdb" id="r_a8cbfe9373074ce889da82a36e2c44fdb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cbfe9373074ce889da82a36e2c44fdb">PolynomialCycleSlipDetector</a> (size_t windowSize, size_t polyDegree)</td></tr>
-<tr class="memdesc:a8cbfe9373074ce889da82a36e2c44fdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:a8cbfe9373074ce889da82a36e2c44fdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf906eb42f8374eeccf65724ec7e84ff" id="r_adf906eb42f8374eeccf65724ec7e84ff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf906eb42f8374eeccf65724ec7e84ff">PolynomialCycleSlipDetector</a> (size_t windowSize, size_t polyDegree, bool enabled=true)</td></tr>
+<tr class="memdesc:adf906eb42f8374eeccf65724ec7e84ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:adf906eb42f8374eeccf65724ec7e84ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0333bd458a5bde9475508b27a255bc8" id="r_ad0333bd458a5bde9475508b27a255bc8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0333bd458a5bde9475508b27a255bc8">reset</a> (const Key &amp;key)</td></tr>
 <tr class="memdesc:ad0333bd458a5bde9475508b27a255bc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the polynomial for the given combination.  <br /></td></tr>
 <tr class="separator:ad0333bd458a5bde9475508b27a255bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,8 +198,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isEnabled</b> () cons
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Key&gt;<br />
 class NAV::PolynomialCycleSlipDetector&lt; Key &gt;</div><p>Cycle-slip detection. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a8cbfe9373074ce889da82a36e2c44fdb" name="a8cbfe9373074ce889da82a36e2c44fdb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8cbfe9373074ce889da82a36e2c44fdb">&#9670;&#160;</a></span>PolynomialCycleSlipDetector()</h2>
+<a id="adf906eb42f8374eeccf65724ec7e84ff" name="adf906eb42f8374eeccf65724ec7e84ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf906eb42f8374eeccf65724ec7e84ff">&#9670;&#160;</a></span>PolynomialCycleSlipDetector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,7 +217,12 @@ template&lt;typename Key &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>polyDegree</em></span>&#160;)</td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>polyDegree</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>enabled</em><span class="paramdefsep"> = </span><span class="paramdefval">true</span></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -211,6 +237,7 @@ template&lt;typename Key &gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">windowSize</td><td>Amount of points to use for the fit (sliding window) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">polyDegree</td><td><a class="el" href="classNAV_1_1Polynomial.html" title="Polynomial.">Polynomial</a> degree to fit </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">enabled</td><td>Whether the detector is enabled </td></tr>
   </table>
   </dd>
 </dl>
@@ -218,8 +245,8 @@ template&lt;typename Key &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae5c700e2f1cf8d4d7483b3f792bf29fe" name="ae5c700e2f1cf8d4d7483b3f792bf29fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5c700e2f1cf8d4d7483b3f792bf29fe">&#9670;&#160;</a></span>checkForCycleSlip()</h2>
+<a id="ab6cdf1febd5f1a6e5864e552835fa425" name="ab6cdf1febd5f1a6e5864e552835fa425"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6cdf1febd5f1a6e5864e552835fa425">&#9670;&#160;</a></span>checkForCycleSlip()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -247,7 +274,7 @@ template&lt;typename Key &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>threshold</em><span class="paramdefsep"> = </span><span class="paramdefval">0.1</span></span>&#160;)</td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>threshold</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

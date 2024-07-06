@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -132,8 +153,7 @@ $(function(){initNavTree('GPT2Coeffs_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="foldopen" id="foldopen00020" data-start="{" data-end="}">
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1internal.html">   20</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1internal.html">NAV::internal</a></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1internal.html">NAV::internal</a></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
@@ -189,8 +209,7 @@ $(function(){initNavTree('GPT2Coeffs_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keyword">extern</span> std::array&lt;GPT2Data, 64800&gt; <a class="code hl_variable" href="namespaceNAV_1_1internal.html#ac8e78c8afbbd5a9e64349ae8fd87329e">GPT2_grid</a>;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>} <span class="comment">// namespace NAV::internal</span></div>
-</div>
-<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:21</div></div>
+<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GMFCoeffs.hpp:21</div></div>
 <div class="ttc" id="anamespaceNAV_1_1internal_html_ac8e78c8afbbd5a9e64349ae8fd87329e"><div class="ttname"><a href="namespaceNAV_1_1internal.html#ac8e78c8afbbd5a9e64349ae8fd87329e">NAV::internal::GPT2_grid</a></div><div class="ttdeci">std::array&lt; GPT2Data, 64800 &gt; GPT2_grid</div><div class="ttdoc">GPT2 grid.</div></div>
 <div class="ttc" id="astructNAV_1_1internal_1_1GPT2Data_html"><div class="ttname"><a href="structNAV_1_1internal_1_1GPT2Data.html">NAV::internal::GPT2Data</a></div><div class="ttdoc">Parameters of the GP2 grid in in 1 degree x 1 degree resolution.</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:25</div></div>
 <div class="ttc" id="astructNAV_1_1internal_1_1GPT2Data_html_a08552f00e63b1d34a7a537c9ce2e3289"><div class="ttname"><a href="structNAV_1_1internal_1_1GPT2Data.html#a08552f00e63b1d34a7a537c9ce2e3289">NAV::internal::GPT2Data::p_A1</a></div><div class="ttdeci">double p_A1</div><div class="ttdoc">pressure: cosine amplitude for the annual variation</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:29</div></div>

@@ -4,6 +4,7 @@ var Math_8hpp =
     [ "csc", "Math_8hpp.html#a34ed1e6a8d5125326ee896e6633e7b39", null ],
     [ "factorial", "Math_8hpp.html#ad64f8224de9c852f448ef8f3b743aa63", null ],
     [ "interpretAs", "Math_8hpp.html#a301ee1e7c2ad143abc40847fc6de6f7f", null ],
+    [ "lerp", "Math_8hpp.html#ae98f1b318674f18c3db18969664cf020", null ],
     [ "LtDLdecomp_choleskyFact", "Math_8hpp.html#a1ff5df016cfe7e50edb8e40ca358ff49", null ],
     [ "LtDLdecomp_outerProduct", "Math_8hpp.html#ae9f6f8d102108244fa6f9b53863249af", null ],
     [ "normalCDF", "Math_8hpp.html#ae181d87069a370277de7f93842994cc9", null ],

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -118,10 +139,8 @@ $(function(){initNavTree('functions_vars_a.html',''); initResizable(); });
 <li>a0&#160;:&#160;<a class="el" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#ab36cda35f88558c9e2ff2eba7d66d7d7">NAV::GnssNavInfo::TimeSystemCorrections</a></li>
 <li>a1&#160;:&#160;<a class="el" href="structNAV_1_1GnssNavInfo_1_1TimeSystemCorrections.html#abbcd0cf1e6c203eac88015c1c08074c2">NAV::GnssNavInfo::TimeSystemCorrections</a></li>
 <li>accel&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#a49a20824258d73e37fb473098a476ad5">NAV::vendor::vectornav::ImuOutputs</a></li>
-<li>accelCompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#a10172066046ec5004acbf3193e9a014a">NAV::ImuObs</a></li>
 <li>accelEcef&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html#a554ae98bb42f87cb26e459e603e7a105">NAV::vendor::vectornav::InsOutputs</a></li>
 <li>accelNed&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ada3be19e86a3aad21c19a09cad357c46">NAV::vendor::vectornav::AttitudeOutputs</a></li>
-<li>accelUncompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#a33300ff714ac0121cf3a4624ed34ad79">NAV::ImuObs</a></li>
 <li>accHeading&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavAtt.html#a569561a5e5687dfbb374f9d3eb8389e3">NAV::vendor::ublox::UbxNavAtt</a></li>
 <li>accPitch&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavAtt.html#aac676faa0aa28e874e771b5349d3bbb2">NAV::vendor::ublox::UbxNavAtt</a></li>
 <li>accRoll&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavAtt.html#a86b385b2ed72cbd4b9d4df075bb28b54">NAV::vendor::ublox::UbxNavAtt</a></li>
@@ -130,11 +149,13 @@ $(function(){initNavTree('functions_vars_a.html',''); initResizable(); });
 <li>ah&#160;:&#160;<a class="el" href="structNAV_1_1GPT2output.html#a0621611250539c0a56574b778034ea66">NAV::GPT2output</a></li>
 <li>alphaBeta&#160;:&#160;<a class="el" href="structNAV_1_1IonosphericCorrections_1_1Corrections.html#a369a985a071b9a9b764f241fee4601ab">NAV::IonosphericCorrections::Corrections</a></li>
 <li>angularRate&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#ab0b545722813063cd1d12184861b3147">NAV::vendor::vectornav::ImuOutputs</a></li>
-<li>angularRateEarthRotationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html#ad34a350e2e1bb03eaed84d60e8899bab">NAV::PosVelAttDerivativeConstants_e</a>, <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__n.html#a5d86a161c299780b1b11b775dcb988b2">NAV::PosVelAttDerivativeConstants_n</a></li>
-<li>angularRateTransportRateCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__n.html#a8b487e6aea917271b7517bbe00bbf059">NAV::PosVelAttDerivativeConstants_n</a></li>
+<li>angularRateEarthRotationCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#a9aac072d80ce815a15aba4c2f87bd1f2">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
+<li>angularRateTransportRateCompensationEnabled&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#a1fe755f8bf8a5c2bc3928e6ec390dee1">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
 <li>antennaDeltaHeightEastNorth&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#aa4efacde8ea059f6c9dd4ec35ad337d7">NAV::vendor::RINEX::ObsHeader</a></li>
+<li>antennaDeltaNEU&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html#a802a9ac8e11de3f78919d196a173fc76">NAV::GnssObs::ReceiverInfo</a></li>
+<li>antennaInfo&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html#ac28aa5e91a43a0b09eaebc8dbc79b2a0">NAV::AntexReader::Antenna</a></li>
 <li>antennaNumber&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a64ee239777a5307b6cbf3c325fb3dad8">NAV::vendor::RINEX::ObsHeader</a></li>
-<li>antennaType&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#af8ffc8f4c40653815c4e8e7119e263fe">NAV::vendor::RINEX::ObsHeader</a></li>
+<li>antennaType&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html#afafff7a69d252189c2198fed42387fc0">NAV::GnssObs::ReceiverInfo</a>, <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#af8ffc8f4c40653815c4e8e7119e263fe">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>AODC&#160;:&#160;<a class="el" href="classNAV_1_1BDSEphemeris.html#adb216c8bf3f1bf79fdf625684ffcbe23">NAV::BDSEphemeris</a></li>
 <li>AODE&#160;:&#160;<a class="el" href="classNAV_1_1BDSEphemeris.html#ae3b467f0b922f660d0140271005e0017">NAV::BDSEphemeris</a></li>
 <li>appended_offsets&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__flag__bits__s.html#aa9e1da2239065e3ff6f9f0419fba5c1f">NAV::vendor::pixhawk::ulog_message_flag_bits_s</a></li>
@@ -142,7 +163,7 @@ $(function(){initNavTree('functions_vars_a.html',''); initResizable(); });
 <li>approxPositionXYZ&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a0c9cb939329bde994e3c90773e6c50e5">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>arRatio&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a464813985360b350cd5a561e5ab92ec4">NAV::vendor::emlid::ErbRtk</a></li>
 <li>ASCII_START_CHAR&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#aad2bc84f0a8f5be1c5a53dac3996082a">NAV::vendor::emlid::EmlidUartSensor</a>, <a class="el" href="classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html#a9d1030172c38eb1f2afbe65cc2fa5dd6">NAV::vendor::ublox::UbloxUartSensor</a></li>
-<li>attitudeError&#160;:&#160;<a class="el" href="classNAV_1_1LcKfInsGnssErrors.html#afb14f2d56ee7ced05ba1a49aa813b397">NAV::LcKfInsGnssErrors</a></li>
+<li>attitudeError&#160;:&#160;<a class="el" href="classNAV_1_1InsGnssLCKFSolution.html#ad504bfd8eec205c5238494dcd0b7c7e4">NAV::InsGnssLCKFSolution</a></li>
 <li>attitudeField&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ae4ceef64654acfbc7398acf4327f9132">NAV::vendor::vectornav::AttitudeOutputs</a></li>
 <li>attitudeOutputs&#160;:&#160;<a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#afe0491de4f73cb373b8ce00a1bfbdb71">NAV::VectorNavBinaryOutput</a></li>
 <li>aw&#160;:&#160;<a class="el" href="structNAV_1_1GPT2output.html#aa7265278ab1692d1a8b2f9fcdb322593">NAV::GPT2output</a></li>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -124,16 +145,30 @@ $(function(){initNavTree('structNAV_1_1Receiver.html',''); initResizable(); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ae7771b794b73aa7915d29da2103b0c22" id="r_ae7771b794b73aa7915d29da2103b0c22"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7771b794b73aa7915d29da2103b0c22">e_posAntennaPhaseCenter</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId) const</td></tr>
+<tr class="memdesc:ae7771b794b73aa7915d29da2103b0c22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marker position in ECEF frame [m] (ARP + antenna phase center)  <br /></td></tr>
+<tr class="separator:ae7771b794b73aa7915d29da2103b0c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35c5766aa8294ccaa379dad61ab52e20" id="r_a35c5766aa8294ccaa379dad61ab52e20"><td class="memItemLeft" align="right" valign="top"><a id="a35c5766aa8294ccaa379dad61ab52e20" name="a35c5766aa8294ccaa379dad61ab52e20"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_posARP</b> () const</td></tr>
+<tr class="memdesc:a35c5766aa8294ccaa379dad61ab52e20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna Reference Point position in ECEF frame [m] (Marker + antennaDeltaNEU) <br /></td></tr>
+<tr class="separator:a35c5766aa8294ccaa379dad61ab52e20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c485e74ae92d83f5fb673b530b36ddc" id="r_a4c485e74ae92d83f5fb673b530b36ddc"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c485e74ae92d83f5fb673b530b36ddc">lla_posAntennaPhaseCenter</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId) const</td></tr>
+<tr class="memdesc:a4c485e74ae92d83f5fb673b530b36ddc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marker position in LLA frame [rad, rad, m] (ARP + antenna phase center)  <br /></td></tr>
+<tr class="separator:a4c485e74ae92d83f5fb673b530b36ddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d8e1569d91e1971d95758c9c25779b0" id="r_a6d8e1569d91e1971d95758c9c25779b0"><td class="memItemLeft" align="right" valign="top"><a id="a6d8e1569d91e1971d95758c9c25779b0" name="a6d8e1569d91e1971d95758c9c25779b0"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>lla_posARP</b> () const</td></tr>
+<tr class="memdesc:a6d8e1569d91e1971d95758c9c25779b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna Reference Point position in LLA frame [rad, rad, m] (Marker + antennaDeltaNEU) <br /></td></tr>
+<tr class="separator:a6d8e1569d91e1971d95758c9c25779b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f31b2ce8ea1eb0fd81876378e8ab8b9" id="r_a2f31b2ce8ea1eb0fd81876378e8ab8b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f31b2ce8ea1eb0fd81876378e8ab8b9">Receiver</a> (ReceiverType <a class="el" href="#ac2f17f4d376bd5edaa7b9d3eda2ac1f9">type</a>)</td></tr>
 <tr class="memdesc:a2f31b2ce8ea1eb0fd81876378e8ab8b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a2f31b2ce8ea1eb0fd81876378e8ab8b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a5aea70e8e03b0feeb5623abeb1c1dc49" id="r_a5aea70e8e03b0feeb5623abeb1c1dc49"><td class="memItemLeft" align="right" valign="top"><a id="a5aea70e8e03b0feeb5623abeb1c1dc49" name="a5aea70e8e03b0feeb5623abeb1c1dc49"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_pos</b></td></tr>
-<tr class="memdesc:a5aea70e8e03b0feeb5623abeb1c1dc49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in ECEF frame [m]. <br /></td></tr>
-<tr class="separator:a5aea70e8e03b0feeb5623abeb1c1dc49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acba871d5bc7ae43d7537845bc6aa9301" id="r_acba871d5bc7ae43d7537845bc6aa9301"><td class="memItemLeft" align="right" valign="top"><a id="acba871d5bc7ae43d7537845bc6aa9301" name="acba871d5bc7ae43d7537845bc6aa9301"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_posMarker</b></td></tr>
+<tr class="memdesc:acba871d5bc7ae43d7537845bc6aa9301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marker Position in ECEF frame [m]. <br /></td></tr>
+<tr class="separator:acba871d5bc7ae43d7537845bc6aa9301"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7930a781b010e1221c5a0ce26c7aa3d" id="r_ad7930a781b010e1221c5a0ce26c7aa3d"><td class="memItemLeft" align="right" valign="top"><a id="ad7930a781b010e1221c5a0ce26c7aa3d" name="ad7930a781b010e1221c5a0ce26c7aa3d"></a>
 Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_vel</b></td></tr>
 <tr class="memdesc:ad7930a781b010e1221c5a0ce26c7aa3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity in ECEF frame [m/s]. <br /></td></tr>
@@ -146,10 +181,10 @@ std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs<
 std::unordered_map&lt; <a class="el" href="classNAV_1_1Frequency.html">Frequency</a>, <a class="el" href="structNAV_1_1UncertainValue.html">UncertainValue</a>&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>interFrequencyBias</b></td></tr>
 <tr class="memdesc:a7e9605304fdc9a443a21e7e8dd9533b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inter frequency biases. <br /></td></tr>
 <tr class="separator:a7e9605304fdc9a443a21e7e8dd9533b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48039f282b53cf513e648139fdace090" id="r_a48039f282b53cf513e648139fdace090"><td class="memItemLeft" align="right" valign="top"><a id="a48039f282b53cf513e648139fdace090" name="a48039f282b53cf513e648139fdace090"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>lla_pos</b></td></tr>
-<tr class="memdesc:a48039f282b53cf513e648139fdace090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in LLA frame [rad, rad, m]. <br /></td></tr>
-<tr class="separator:a48039f282b53cf513e648139fdace090"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a5e37da54ea4090f88d623548c0ed7b" id="r_a4a5e37da54ea4090f88d623548c0ed7b"><td class="memItemLeft" align="right" valign="top"><a id="a4a5e37da54ea4090f88d623548c0ed7b" name="a4a5e37da54ea4090f88d623548c0ed7b"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>lla_posMarker</b></td></tr>
+<tr class="memdesc:a4a5e37da54ea4090f88d623548c0ed7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marker Position in LLA frame [rad, rad, m]. <br /></td></tr>
+<tr class="separator:a4a5e37da54ea4090f88d623548c0ed7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af98a2f587e9850f44744e7af68a3d71a" id="r_af98a2f587e9850f44744e7af68a3d71a"><td class="memItemLeft" align="right" valign="top"><a id="af98a2f587e9850f44744e7af68a3d71a" name="af98a2f587e9850f44744e7af68a3d71a"></a>
 <a class="el" href="structNAV_1_1ReceiverClock.html">ReceiverClock</a>&#160;</td><td class="memItemRight" valign="bottom"><b>recvClk</b></td></tr>
 <tr class="memdesc:af98a2f587e9850f44744e7af68a3d71a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimated receiver clock parameters. <br /></td></tr>
@@ -192,6 +227,99 @@ template&lt;typename ReceiverType &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type</td><td><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> enum type </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae7771b794b73aa7915d29da2103b0c22" name="ae7771b794b73aa7915d29da2103b0c22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7771b794b73aa7915d29da2103b0c22">&#9670;&#160;</a></span>e_posAntennaPhaseCenter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ReceiverType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d <a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver</a>&lt; ReceiverType &gt;::e_posAntennaPhaseCenter </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>antennaType</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Marker position in ECEF frame [m] (ARP + antenna phase center) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> of the observation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">antennaType</td><td>Antenna type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId of the calling node for Log output </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4c485e74ae92d83f5fb673b530b36ddc" name="a4c485e74ae92d83f5fb673b530b36ddc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c485e74ae92d83f5fb673b530b36ddc">&#9670;&#160;</a></span>lla_posAntennaPhaseCenter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ReceiverType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d <a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver</a>&lt; ReceiverType &gt;::lla_posAntennaPhaseCenter </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>antennaType</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Marker position in LLA frame [rad, rad, m] (ARP + antenna phase center) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> of the observation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">antennaType</td><td>Antenna type </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId of the calling node for Log output </td></tr>
   </table>
   </dd>
 </dl>

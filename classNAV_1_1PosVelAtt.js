@@ -13,6 +13,8 @@ var classNAV_1_1PosVelAtt =
     [ "setAttitude_n_Quat_b", "classNAV_1_1PosVelAtt.html#a5bdebe220a71d56471a45bc845b0ee16", null ],
     [ "setState_e", "classNAV_1_1PosVelAtt.html#a71dcd4bdce71c18726ca803292dce297", null ],
     [ "setState_n", "classNAV_1_1PosVelAtt.html#aa0e31d3578a79c250ff38d2fe8fc2af6", null ],
+    [ "setStateAndCovariance_e", "classNAV_1_1PosVelAtt.html#a1abffea2dd2ee9a8ce01fed62971ad7d", null ],
+    [ "setStateAndCovariance_n", "classNAV_1_1PosVelAtt.html#a1179e5f3850fa5c5d56e31de24fbe117", null ],
     [ "staticDataDescriptors", "classNAV_1_1PosVelAtt.html#a271e76a6e61414d5546cdd5ff2a30461", null ],
     [ "staticDescriptorCount", "classNAV_1_1PosVelAtt.html#a19af55d93503925b2e0a8f8970aeafa2", null ],
     [ "type", "classNAV_1_1PosVelAtt.html#a7c573b5e3b6834302863806c674fd5f0", null ]

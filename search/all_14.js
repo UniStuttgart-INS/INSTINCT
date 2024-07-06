@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['q_0',['Q',['../group__LooselyCoupledKF__e.html#LooselyCoupledKF_e-KF-Q',1,'Process noise covariance matrix Q'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-KF-Q',1,'Process noise covariance matrix Q'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-Units-Q',1,'Process noise covariance matrix Q'],['../classNAV_1_1KalmanFilter.html#aa7b743e375cee1eb857c087187a083bd',1,'NAV::KalmanFilter::Q'],['../classNAV_1_1KeyedKalmanFilter.html#aa36b1f206f5e7cac21f53a0c79565b40',1,'NAV::KeyedKalmanFilter::Q'],['../classNAV_1_1RtklibPosObs.html#a36f505e009f8dc287d427fa3290dd640',1,'NAV::RtklibPosObs::Q'],['../group__LooselyCoupledKF__e.html#LooselyCoupledKF_e-KF-Phi-Q',1,'State transition matrix 𝚽 &amp; Process noise covariance matrix Q'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-KF-Phi-Q',1,'State transition matrix 𝚽 &amp; Process noise covariance matrix Q']]],
+  ['q_0',['Q',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Q',1,'Process noise covariance matrix Q'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Q',1,'Process noise covariance matrix Q'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Units-Q',1,'Process noise covariance matrix Q'],['../classNAV_1_1KalmanFilter.html#aa7b743e375cee1eb857c087187a083bd',1,'NAV::KalmanFilter::Q'],['../classNAV_1_1KeyedKalmanFilter.html#aa36b1f206f5e7cac21f53a0c79565b40',1,'NAV::KeyedKalmanFilter::Q'],['../structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a90ea2e49c2f8ed380f6469789d93d59b',1,'NAV::KeyedKalmanFilter::SavedPreUpdate::Q'],['../classNAV_1_1RtklibPosObs.html#a36f505e009f8dc287d427fa3290dd640',1,'NAV::RtklibPosObs::Q'],['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q',1,'State transition matrix 𝚽 &amp; Process noise covariance matrix Q'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q',1,'State transition matrix 𝚽 &amp; Process noise covariance matrix Q']]],
   ['q_5fa0_1',['Q_A0',['../structNAV_1_1internal_1_1GPT2Data.html#a796b88afe79d31b25ff00f115a057fe6',1,'NAV::internal::GPT2Data::Q_A0'],['../structNAV_1_1internal_1_1GPT3Data.html#a34a96eb4cfddd9b4c4fefeb57cb33b61',1,'NAV::internal::GPT3Data::Q_A0']]],
   ['q_5fa1_2',['Q_A1',['../structNAV_1_1internal_1_1GPT2Data.html#a6933fb68b0e1b0e095909424f2d8105a',1,'NAV::internal::GPT2Data::Q_A1'],['../structNAV_1_1internal_1_1GPT3Data.html#a9386e6bd13900f3e74bfa5d02ffa3cbd',1,'NAV::internal::GPT3Data::Q_A1']]],
   ['q_5fa2_3',['Q_A2',['../structNAV_1_1internal_1_1GPT2Data.html#a088416dadbb6e81aa4f608836d1e649e',1,'NAV::internal::GPT2Data::Q_A2'],['../structNAV_1_1internal_1_1GPT3Data.html#ab7468c729f06dfefad8982949812bd6d',1,'NAV::internal::GPT3Data::Q_A2']]],
@@ -15,16 +15,18 @@ var searchData=
   ['q_5fpsi_5fpsi_12',['Q_psi_psi',['../ProcessNoise_8hpp.html#a8ebeaa3c5a938cb3cbd844e694e517d5',1,'NAV']]],
   ['qi_13',['qi',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a767f5778c0bfe5c727913a10611adad0',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
   ['qtn_14',['qtn',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ac35e86181a13e350ab20be59fad7c1ca',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
-  ['qualityindicator_15',['QualityIndicator',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#ae16495b8f32ef5e3c93422bd99b99d59',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['quat2eulerzyx_16',['quat2eulerZYX',['../CoordinateFrames_8hpp.html#ad2298fc268b3715de0e69dd55b9c6f9c',1,'NAV::trafo']]],
-  ['quaternion_20propagation_20comparison_17',['Quaternion propagation comparison',['../group__ImuIntegrator__n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison',1,'']]],
-  ['quaternion_20with_20time_18',['Quaternion with time',['../group__ImuIntegrator__n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion',1,'Propagation of quaternion with time'],['../group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion',1,'Propagation of quaternion with time']]],
-  ['quaternionld_19',['Quaternionld',['../Eigen_8hpp.html#a03ee6984f8056babca48ca3943aee509',1,'Eigen']]],
-  ['queue_20',['queue',['../classNAV_1_1InputPin.html#af7a59e5c82986d1980ffe0335f5b61ad',1,'NAV::InputPin']]],
-  ['queueblocked_21',['queueBlocked',['../classNAV_1_1InputPin.html#acfb8536e839011248ce13774caf6d346',1,'NAV::InputPin']]],
-  ['quit_22',['Quit',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabca97642e598f3dc7002a0adf410590a8d8',1,'GlobalActions.hpp']]],
-  ['quitunsaved_23',['QuitUnsaved',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabca72072f9922aaafeb6057e03fe1144871',1,'GlobalActions.hpp']]],
-  ['qzss_24',['QZSS',['../SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411ea20a937d5ea4fc748573aa9987594a829',1,'NAV::QZSS'],['../VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a10b5ac7cdca8f06ca82238f8f3b2d119',1,'QZSSNAV::vendor::vectornav']]],
-  ['qzssephemeris_25',['QZSSEphemeris',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa04e912b18afae3d1a6bd6e9bd4e2527b',1,'NAV::SatNavData']]],
-  ['qzsst_26',['QZSST',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2af1fb46a09410b77db84a479241dfa2d4',1,'NAV::TimeSystem::QZSST'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a9284147e8640bbd87de2fbdfb892ade8',1,'NAV::QZSST']]]
+  ['quadraticbsplines_15',['quadraticBsplines',['../QuadraticBsplines_8hpp.html#a32329b7d4c3a30b82bf76e2f3ebb571d',1,'NAV::BsplineKF']]],
+  ['quadraticbsplines_2ehpp_16',['QuadraticBsplines.hpp',['../QuadraticBsplines_8hpp.html',1,'']]],
+  ['qualityindicator_17',['QualityIndicator',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#ae16495b8f32ef5e3c93422bd99b99d59',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
+  ['quat2eulerzyx_18',['quat2eulerZYX',['../CoordinateFrames_8hpp.html#ad2298fc268b3715de0e69dd55b9c6f9c',1,'NAV::trafo']]],
+  ['quaternion_20propagation_20comparison_19',['Quaternion propagation comparison',['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison',1,'']]],
+  ['quaternion_20with_20time_20',['Quaternion with time',['../ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion',1,'Propagation of quaternion with time'],['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion',1,'Propagation of quaternion with time']]],
+  ['quaternionld_21',['Quaternionld',['../Eigen_8hpp.html#a03ee6984f8056babca48ca3943aee509',1,'Eigen']]],
+  ['queue_22',['queue',['../classNAV_1_1InputPin.html#af7a59e5c82986d1980ffe0335f5b61ad',1,'NAV::InputPin']]],
+  ['queueblocked_23',['queueBlocked',['../classNAV_1_1InputPin.html#acfb8536e839011248ce13774caf6d346',1,'NAV::InputPin']]],
+  ['quit_24',['Quit',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabca97642e598f3dc7002a0adf410590a8d8',1,'GlobalActions.hpp']]],
+  ['quitunsaved_25',['QuitUnsaved',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabca72072f9922aaafeb6057e03fe1144871',1,'GlobalActions.hpp']]],
+  ['qzss_26',['QZSS',['../SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411ea20a937d5ea4fc748573aa9987594a829',1,'NAV::QZSS'],['../VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5a10b5ac7cdca8f06ca82238f8f3b2d119',1,'QZSSNAV::vendor::vectornav']]],
+  ['qzssephemeris_27',['QZSSEphemeris',['../classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa04e912b18afae3d1a6bd6e9bd4e2527b',1,'NAV::SatNavData']]],
+  ['qzsst_28',['QZSST',['../classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2af1fb46a09410b77db84a479241dfa2d4',1,'NAV::TimeSystem::QZSST'],['../TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6a9284147e8640bbd87de2fbdfb892ade8',1,'NAV::QZSST']]]
 ];

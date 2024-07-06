@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -134,6 +155,7 @@ $(function(){initNavTree('functions_vars_t.html',''); initResizable(); });
 <li>texts&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Tooltip.html#a5b0403d93f4ef8579736854a8d1a4be5">NAV::Plot::PlotInfo::PlotItem::Tooltip</a></li>
 <li>thickness&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a8439755f38caf677efb8a372f8933525">NAV::Plot::PlotInfo::PlotItem::Style</a></li>
 <li>time&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Tooltip.html#a0c21ff5c00ab263b094751df3d753509">NAV::Plot::PlotInfo::PlotItem::Tooltip</a></li>
+<li>timeDifferenceSec&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#ac94094d997a92a3e499ef85335cafae7">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
 <li>timeField&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html#a9be037b7be4eb4d4c4447368c432a5de">NAV::vendor::vectornav::TimeOutputs</a></li>
 <li>timeFirstObs&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a1acc690ab2547aa9d186528e6c6ce30e">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>timeGPS&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#aae75bfd230c768408c541ec7c0bf2327">NAV::vendor::emlid::ErbRtk</a></li>
@@ -164,9 +186,10 @@ $(function(){initNavTree('functions_vars_t.html',''); initResizable(); });
 <li>toe&#160;:&#160;<a class="el" href="classNAV_1_1BDSEphemeris.html#a2d010181d6869a35815d360f33d96693">NAV::BDSEphemeris</a>, <a class="el" href="classNAV_1_1GalileoEphemeris.html#a02468995b4e69fa8cc6d6e10016cddde">NAV::GalileoEphemeris</a>, <a class="el" href="classNAV_1_1GPSEphemeris.html#afbc76abc08ee02c495e5de3079d39b23">NAV::GPSEphemeris</a></li>
 <li>tow&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__GPSweekTow.html#af500bbcb04456f98b7eb325742838fd1">NAV::InsTime_GPSweekTow</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html#a8c3b09b4b26da48847d0859e05a6d25b">NAV::vendor::vectornav::GnssOutputs</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas.html#a8116e55d55bf102428ba6cd0d658cd24">NAV::vendor::vectornav::RawMeas</a></li>
 <li>transmitTime&#160;:&#160;<a class="el" href="structNAV_1_1Clock_1_1Corrections.html#a9539035a289c46d7fff933b913d2f080">NAV::Clock::Corrections</a></li>
+<li>triggered&#160;:&#160;<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#a30433eebd244f549c1b930bc6eac8e00">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::NISResult</a></li>
 <li>trkStat&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a77575887eeb7fe1d3e52ff2a279417b8">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a></li>
 <li>tropoZenithDelay&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1CalcTerms.html#a618c821ce1c25e7afa0b12baa1e1d5ed">NAV::Observations::SignalObservation::ReceiverSpecificData::CalcTerms</a></li>
-<li>type&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#ac4144bd1828887de1d9229c476cb2908">NAV::CubicSpline::BoundaryCondition</a>, <a class="el" href="structNAV_1_1NodeRegistry_1_1NodeInfo.html#a7661f963c81c09ee6b1c7b1a81b0c914">NAV::NodeRegistry::NodeInfo</a>, <a class="el" href="structNAV_1_1NodeRegistry_1_1PinInfo.html#a1a0e52919ebfc08fd57ae6dbe0f38ac2">NAV::NodeRegistry::PinInfo</a>, <a class="el" href="classNAV_1_1Pin.html#a79b38dd0427dd55e6ada031030b4264b">NAV::Pin</a>, <a class="el" href="structNAV_1_1Receiver.html#ac2f17f4d376bd5edaa7b9d3eda2ac1f9">NAV::Receiver&lt; ReceiverType &gt;</a>, <a class="el" href="classNAV_1_1SatNavData.html#a620048b1447848e7a619daeb640ecb9e">NAV::SatNavData</a>, <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html#aada00f793118ae60bce8409c43e8ea86">NAV::vendor::RINEX::ObservationDescription</a></li>
+<li>type&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a3d8df04b2f6005bde75ff976db2fb244">NAV::CubicSpline&lt; Scalar &gt;::BoundaryCondition</a>, <a class="el" href="structNAV_1_1NodeRegistry_1_1NodeInfo.html#a7661f963c81c09ee6b1c7b1a81b0c914">NAV::NodeRegistry::NodeInfo</a>, <a class="el" href="structNAV_1_1NodeRegistry_1_1PinInfo.html#a1a0e52919ebfc08fd57ae6dbe0f38ac2">NAV::NodeRegistry::PinInfo</a>, <a class="el" href="classNAV_1_1Pin.html#a79b38dd0427dd55e6ada031030b4264b">NAV::Pin</a>, <a class="el" href="structNAV_1_1Receiver.html#ac2f17f4d376bd5edaa7b9d3eda2ac1f9">NAV::Receiver&lt; ReceiverType &gt;</a>, <a class="el" href="classNAV_1_1SatNavData.html#a620048b1447848e7a619daeb640ecb9e">NAV::SatNavData</a>, <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html#aada00f793118ae60bce8409c43e8ea86">NAV::vendor::RINEX::ObservationDescription</a></li>
 <li>typeSV&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbSvi.html#a5b5f7ecf0c70e56b761d82e6c28d06d6">NAV::vendor::emlid::ErbSvi</a></li>
 </ul>
 </div><!-- contents -->

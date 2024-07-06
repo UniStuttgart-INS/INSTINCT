@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -140,6 +161,8 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="#a2d4742169ca545152d5b0d42238c4e76a73671849db21f65ba4842184c366e9e7">Cosecant</a>
 , <br />
+&#160;&#160;<a class="el" href="#a2d4742169ca545152d5b0d42238c4e76a6cfb8208d5bf0f63de2ed35f05fe2d02">GMF</a>
+, <br />
 &#160;&#160;<a class="el" href="#a2d4742169ca545152d5b0d42238c4e76ac1a78bb04fa487692bc1cc0352eb9f51">VMF_GPT2</a>
 , <br />
 &#160;&#160;<a class="el" href="#a2d4742169ca545152d5b0d42238c4e76ad845695e4e392d0adaa3dfad5759f7c4">VMF_GPT3</a>
@@ -226,6 +249,8 @@ Rui Wang (<a href="#" onclick="location.href='mai'+'lto:'+'rui'+'.w'+'ang'+'@i'+
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2d4742169ca545152d5b0d42238c4e76a6adf97f83acf6453d4a6a4b1070f3754" name="a2d4742169ca545152d5b0d42238c4e76a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>Mapping Function turned off (= 1) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a2d4742169ca545152d5b0d42238c4e76a73671849db21f65ba4842184c366e9e7" name="a2d4742169ca545152d5b0d42238c4e76a73671849db21f65ba4842184c366e9e7"></a>Cosecant&#160;</td><td class="fielddoc"><p>Cosecant of elevation. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2d4742169ca545152d5b0d42238c4e76a6cfb8208d5bf0f63de2ed35f05fe2d02" name="a2d4742169ca545152d5b0d42238c4e76a6cfb8208d5bf0f63de2ed35f05fe2d02"></a>GMF&#160;</td><td class="fielddoc"><p>Global Mapping Function (GMF) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a2d4742169ca545152d5b0d42238c4e76ac1a78bb04fa487692bc1cc0352eb9f51" name="a2d4742169ca545152d5b0d42238c4e76ac1a78bb04fa487692bc1cc0352eb9f51"></a>VMF_GPT2&#160;</td><td class="fielddoc"><p>Vienna Mapping Function based on the GPT2 grid. </p>
 </td></tr>

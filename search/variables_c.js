@@ -24,7 +24,7 @@ var searchData=
   ['link_21',['link',['../classNAV_1_1InputPin.html#a1850f533f04ad6af6a22254e58d78895',1,'NAV::InputPin']]],
   ['linkid_22',['linkId',['../structNAV_1_1Pin_1_1Link.html#a4cef346967b7b3306d27100280014f60',1,'NAV::Pin::Link']]],
   ['links_23',['links',['../classNAV_1_1OutputPin.html#ab1e7b109f0d4c7ea9660a76079ef4700',1,'NAV::OutputPin']]],
-  ['lla_5fpos_24',['lla_pos',['../structNAV_1_1Receiver.html#a48039f282b53cf513e648139fdace090',1,'NAV::Receiver']]],
+  ['lla_5fposmarker_24',['lla_posMarker',['../structNAV_1_1Receiver.html#a4a5e37da54ea4090f88d623548c0ed7b',1,'NAV::Receiver']]],
   ['lli_25',['LLI',['../structNAV_1_1GnssObs_1_1ObservationData_1_1CarrierPhase.html#a32cd42b80132b27f22d64746cd04897d',1,'NAV::GnssObs::ObservationData::CarrierPhase']]],
   ['loadingframecount_26',['loadingFrameCount',['../FlowManager_8hpp.html#a6174b23a7870ff16cf7718bfbc973494',1,'NAV::flow']]],
   ['locktime_27',['locktime',['../structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a3b3685872a2d2b002fe34a6833e8d86e',1,'NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData']]],

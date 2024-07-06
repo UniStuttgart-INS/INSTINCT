@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -212,7 +233,7 @@ $(function(){initNavTree('GLONASSEphemeris_8hpp_source.html',''); initResizable(
 <div class="ttc" id="aclassNAV_1_1GLONASSEphemeris_html_aeb9a750b3d6930a70235a462df9e18da"><div class="ttname"><a href="classNAV_1_1GLONASSEphemeris.html#aeb9a750b3d6930a70235a462df9e18da">NAV::GLONASSEphemeris::gamma_n</a></div><div class="ttdeci">const double gamma_n</div><div class="ttdoc">SV relative frequency bias.</div><div class="ttdef"><b>Definition</b> GLONASSEphemeris.hpp:40</div></div>
 <div class="ttc" id="aclassNAV_1_1GLONASSEphemeris_html_aff0379b9728e9a7c28f69496309c6980"><div class="ttname"><a href="classNAV_1_1GLONASSEphemeris.html#aff0379b9728e9a7c28f69496309c6980">NAV::GLONASSEphemeris::toc</a></div><div class="ttdeci">const InsTime toc</div><div class="ttdoc">Toe Time of clock [s] (Reference time, ephemeris parameters)</div><div class="ttdef"><b>Definition</b> GLONASSEphemeris.hpp:36</div></div>
 <div class="ttc" id="aclassNAV_1_1GLONASSEphemeris_html_aff93928d295e848aee57caa26e16f858"><div class="ttname"><a href="classNAV_1_1GLONASSEphemeris.html#aff93928d295e848aee57caa26e16f858">NAV::GLONASSEphemeris::~GLONASSEphemeris</a></div><div class="ttdeci">~GLONASSEphemeris() final=default</div><div class="ttdoc">Destructor.</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html"><div class="ttname"><a href="classNAV_1_1Orbit.html">NAV::Orbit</a></div><div class="ttdoc">Abstract satellite orbit information.</div><div class="ttdef"><b>Definition</b> Orbit.hpp:24</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html_a65836420203346ce754e2ff2dfce70bc"><div class="ttname"><a href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">NAV::Orbit::Calc</a></div><div class="ttdeci">Calc</div><div class="ttdoc">Calculation flags.</div><div class="ttdef"><b>Definition</b> Orbit.hpp:74</div></div>
 <div class="ttc" id="aclassNAV_1_1SatNavData_html"><div class="ttname"><a href="classNAV_1_1SatNavData.html">NAV::SatNavData</a></div><div class="ttdoc">Satellite Navigation data (to calculate SatNavData and clock)</div><div class="ttdef"><b>Definition</b> SatNavData.hpp:26</div></div>

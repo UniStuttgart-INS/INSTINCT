@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -174,7 +195,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Navigation Data Validity and Signal Health Status. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.9.3, p. 52 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.9.3, p. 52 </dd></dl>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a74ef5f21ca722caffa2f60fe14659c4d" name="a74ef5f21ca722caffa2f60fe14659c4d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a74ef5f21ca722caffa2f60fe14659c4d">&#9670;&#160;</a></span>DataValidityStatus</h2>

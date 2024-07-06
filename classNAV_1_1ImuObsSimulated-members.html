@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +139,10 @@ $(function(){initNavTree('classNAV_1_1ImuObsSimulated.html',''); initResizable()
 <p>This is the complete list of members for <a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a>, including all inherited members.</p>
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a7e3d71ea9991be6289c3ccc02d6b5825">_events</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a10172066046ec5004acbf3193e9a014a">accelCompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a33300ff714ac0121cf3a4624ed34ad79">accelUncompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a>(const std::string &amp;text)</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a5e8148eb6a8d6395d4c1d4fdee8168af">dtheta</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a4cb95e46a54bf2da8dd7358fef9c88cd">dtime</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a803cceaccd12dabe573d3e38160d567b">dvel</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">dynamicDataDescriptors</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a1956b42eb99ddde364731656472d8b80">e_accelDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a315ea7549a15747772b2fcfe70862b0c">e_angularRateDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
@@ -130,21 +153,21 @@ $(function(){initNavTree('classNAV_1_1ImuObsSimulated.html',''); initResizable()
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a30dace76ac58bf82848b4157cad7d1bf">GetStaticDescriptorCount</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a8f93e87ff6e4efa15e8e0455f4e7f36a">getValueAt</a>(size_t idx) const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#acbf7dc114849b62234d8da3f2d220c8a">getValueAtOrNaN</a>(size_t idx) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#aaecc4fd6484437dfe194231bd4421d10">gyroCompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a24a1448b1a9bc6b591ce26bd6504c983">gyroUncompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#acb11ce2e49154e4fa9e7ac41ce0873e5">ImuObs</a>(const ImuPos &amp;imuPos)</td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#ae4463748541428937f500b96d1151172">ImuObsSimulated</a>(const ImuPos &amp;imuPos)</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">imuPos</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a850db007dc42857b04c3438a59800082">magCompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#abf8e57f5b010aef7c7fc717f2dddb557">magUncompXYZ</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#adca10e607336d3f2134459f2326d1b9a">n_accelDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a717566badf4e4f59fe0bb98ff4ad278f">n_angularRateDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a7dc176054297b0721cf0b4b403b82684">ImuObsWDelta</a>(const ImuPos &amp;imuPos)</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">imuPos</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#adca10e607336d3f2134459f2326d1b9a">n_accelDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a717566badf4e4f59fe0bb98ff4ad278f">n_angularRateDynamics</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a09e8e22c0068bf2f3c1fc36f16ff5da1">p_acceleration</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#a65aefc8dbbba7614004555315fcec16e">p_angularRate</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html#afbf713250881369de5b453e4e9e8abfd">p_magneticField</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a92954f64b00bca21f89d3725aff3d6c2">parentTypes</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#a617b82e44c9eadbcb7dc35f66c503507">staticDataDescriptors</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html#ac102b2b35d79be00e9c4a2fe3e0ec700">staticDescriptorCount</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuObsSimulated.html">NAV::ImuObsSimulated</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,9 +135,12 @@ $(function(){initNavTree('developer_manual.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Developer Manual</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{TO BE ADDED SOON.}} $" src="form_85.svg" width="187" height="16"/></p>
-<hr  />
-<p> <em>Last updated: 2024-03-18</em> </p>
+<div class="textblock"><ul>
+<li><a href="https://github.com/UniStuttgart-INS/INSTINCT?tab=readme-ov-file#getting-started">Getting started</a></li>
+</ul>
+<p>Internal processes of INSTINCT:</p><ul>
+<li><a class="el" href="Core_Node.html">Node</a> </li>
+</ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

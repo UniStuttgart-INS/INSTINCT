@@ -97,7 +97,7 @@ var searchData=
   ['keyedvectorbase_3c_20spp_3a_3astates_3a_3astatekeytypes_2c_20measkeytype_2c_20eigen_3a_3adynamic_20_3e_94',['KeyedVectorBase&lt; SPP::States::StateKeyTypes, MeasKeyType, Eigen::Dynamic &gt;',['../classNAV_1_1internal_1_1KeyedVectorBase.html',1,'NAV::internal']]],
   ['keyedvectorbase_3c_20spp_3a_3astates_3a_3astatekeytypes_2c_20spp_3a_3ameas_3a_3ameaskeytypes_2c_20eigen_3a_3adynamic_20_3e_95',['KeyedVectorBase&lt; SPP::States::StateKeyTypes, SPP::Meas::MeasKeyTypes, Eigen::Dynamic &gt;',['../classNAV_1_1internal_1_1KeyedVectorBase.html',1,'NAV::internal']]],
   ['kind_96',['Kind',['../structNAV_1_1Node_1_1Kind.html',1,'NAV::Node::Kind'],['../structNAV_1_1Pin_1_1Kind.html',1,'NAV::Pin::Kind']]],
-  ['kvhdatalogger_97',['KvhDataLogger',['../classNAV_1_1KvhDataLogger.html',1,'NAV']]],
+  ['kmllogger_97',['KmlLogger',['../classNAV_1_1KmlLogger.html',1,'NAV']]],
   ['kvhfile_98',['KvhFile',['../classNAV_1_1KvhFile.html',1,'NAV']]],
   ['kvhobs_99',['KvhObs',['../classNAV_1_1KvhObs.html',1,'NAV']]],
   ['kvhsensor_100',['KvhSensor',['../classNAV_1_1KvhSensor.html',1,'NAV']]],

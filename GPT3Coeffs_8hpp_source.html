@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -208,7 +229,7 @@ $(function(){initNavTree('GPT3Coeffs_8hpp_source.html',''); initResizable(); });
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keyword">extern</span> std::array&lt;GPT3Data, 64800&gt; <a class="code hl_variable" href="namespaceNAV_1_1internal.html#afe59622c7979eb5d2a712a85e51adb08">GPT3_grid</a>;</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>} <span class="comment">// namespace NAV::internal</span></div>
-<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:21</div></div>
+<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GMFCoeffs.hpp:21</div></div>
 <div class="ttc" id="anamespaceNAV_1_1internal_html_afe59622c7979eb5d2a712a85e51adb08"><div class="ttname"><a href="namespaceNAV_1_1internal.html#afe59622c7979eb5d2a712a85e51adb08">NAV::internal::GPT3_grid</a></div><div class="ttdeci">std::array&lt; GPT3Data, 64800 &gt; GPT3_grid</div><div class="ttdoc">GPT3 grid.</div></div>
 <div class="ttc" id="astructNAV_1_1internal_1_1GPT3Data_html"><div class="ttname"><a href="structNAV_1_1internal_1_1GPT3Data.html">NAV::internal::GPT3Data</a></div><div class="ttdoc">Parameters of the GP3 grid in in 1 degree x 1 degree resolution.</div><div class="ttdef"><b>Definition</b> GPT3Coeffs.hpp:25</div></div>
 <div class="ttc" id="astructNAV_1_1internal_1_1GPT3Data_html_a012974c729068d2b9b23b210cb6c8b83"><div class="ttname"><a href="structNAV_1_1internal_1_1GPT3Data.html#a012974c729068d2b9b23b210cb6c8b83">NAV::internal::GPT3Data::T_A2</a></div><div class="ttdeci">double T_A2</div><div class="ttdoc">temperature: cosine amplitude for the semi-annual variation</div><div class="ttdef"><b>Definition</b> GPT3Coeffs.hpp:36</div></div>

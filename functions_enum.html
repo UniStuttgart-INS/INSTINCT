@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,19 +135,19 @@ $(function(){initNavTree('functions_enum.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented enums with links to the class documentation for each member:</div>
 
 <h3><a id="index_a" name="index_a"></a>- a -</h3><ul>
-<li>AccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a142372002414baefe978103ecede7632">NAV::ImuFusion::PinData</a></li>
-<li>AccelerationVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a6668ac779c521f7f4a7ce1cb1625045f">NAV::ImuFusion::PinData</a></li>
+<li>AccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a56ce4be7ff3f1f10204953aa62f1b52c">NAV::PinData</a></li>
+<li>AccelerationVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#abe833eea3a45d64cba72cf3f0ed15ee1">NAV::PinData</a></li>
 <li>AlphaBeta&#160;:&#160;<a class="el" href="classNAV_1_1IonosphericCorrections.html#a387d1004a5d80f019ad197e82c301fec">NAV::IonosphericCorrections</a></li>
-<li>AngRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a62dacfc83de0321e190b1fcc6d9e4c93">NAV::ImuFusion::PinData</a></li>
-<li>AngRateVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409ea">NAV::ImuFusion::PinData</a></li>
-<li>AngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#ac9d1734eacf5f5c7642b8eb518d8555a">NAV::ImuFusion::PinData</a></li>
-<li>AngularAccVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aac">NAV::ImuFusion::PinData</a></li>
+<li>AngRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4">NAV::PinData</a></li>
+<li>AngRateVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116f">NAV::PinData</a></li>
+<li>AngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152">NAV::PinDataIRWKF</a></li>
+<li>AngularAccVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4e">NAV::PinDataIRWKF</a></li>
 </ul>
 
 
 <h3><a id="index_b" name="index_b"></a>- b -</h3><ul>
 <li>Baudrate&#160;:&#160;<a class="el" href="classNAV_1_1UartSensor.html#a44fab5cca5e1067d563834cb5b93fee7">NAV::UartSensor</a></li>
-<li>BoundaryType&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91e">NAV::CubicSpline::BoundaryCondition</a></li>
+<li>BoundaryType&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91e">NAV::CubicSpline&lt; Scalar &gt;::BoundaryCondition</a></li>
 </ul>
 
 
@@ -152,7 +173,7 @@ $(function(){initNavTree('functions_enum.html',''); initResizable(); });
 <li>FileType&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e">NAV::FileReader</a>, <a class="el" href="classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623">NAV::FileWriter</a></li>
 <li>Flags&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bd">NAV::vendor::vectornav::RawMeas::SatRawElement</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a7f4ccbed08d47b285c8a789d8a8426f0">NAV::vendor::vectornav::SatInfo::SatInfoElement</a></li>
 <li>Format&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html#ab215d63392b2498c2e319878798ae0be">NAV::gui::widgets::TimeEditFormat</a></li>
-<li>Frame&#160;:&#160;<a class="el" href="classNAV_1_1LcKfInsGnssErrors.html#ab2f724d372129d703088c178124977b5">NAV::LcKfInsGnssErrors</a></li>
+<li>Frame&#160;:&#160;<a class="el" href="classNAV_1_1InsGnssLCKFSolution.html#aa078f7c16abe78fb4ad7751f3a09a7ca">NAV::InsGnssLCKFSolution</a></li>
 <li>Freq&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57">NAV::vendor::vectornav::RawMeas::SatRawElement</a></li>
 </ul>
 
@@ -162,9 +183,15 @@ $(function(){initNavTree('functions_enum.html',''); initResizable(); });
 </ul>
 
 
+<h3><a id="index_i" name="index_i"></a>- i -</h3><ul>
+<li>IntegrationAlgorithm&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110">NAV::InertialIntegrator</a></li>
+<li>IntegrationFrame&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a80464716d19f500db97fc3186a81bf09">NAV::InertialIntegrator</a></li>
+</ul>
+
+
 <h3><a id="index_j" name="index_j"></a>- j -</h3><ul>
-<li>JerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a1c487d78bd0e5d01d158494498133206">NAV::ImuFusion::PinData</a></li>
-<li>JerkVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a588ad6975e388fa2d238ec5fffe0f6c5">NAV::ImuFusion::PinData</a></li>
+<li>JerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a58551a7905909de16ae30f1c561987ef">NAV::PinDataIRWKF</a></li>
+<li>JerkVarianceUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#ae8a92fc4b7c8495349e9f1d20367a42b">NAV::PinDataIRWKF</a></li>
 </ul>
 
 
@@ -189,6 +216,7 @@ $(function(){initNavTree('functions_enum.html',''); initResizable(); });
 <h3><a id="index_o" name="index_o"></a>- o -</h3><ul>
 <li>ObservationDifference&#160;:&#160;<a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25a">NAV::ObservationEstimator</a></li>
 <li>ObservationType&#160;:&#160;<a class="el" href="structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#afc4dde6d8be35372ef6a573ba75cf00a">NAV::GnssAnalyzer::Combination::Term</a>, <a class="el" href="classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7">NAV::GnssObs</a></li>
+<li>OutputType&#160;:&#160;<a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">NAV::VectorNavBinaryConverter</a></li>
 </ul>
 
 
@@ -211,6 +239,7 @@ $(function(){initNavTree('functions_enum.html',''); initResizable(); });
 <h3><a id="index_s" name="index_s"></a>- s -</h3><ul>
 <li>SignalHealthStatus&#160;:&#160;<a class="el" href="structNAV_1_1GalileoEphemeris_1_1SvHealth.html#ada9e01487f6fe957e7cfea77073c47c0">NAV::GalileoEphemeris::SvHealth</a></li>
 <li>State&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">NAV::Node</a></li>
+<li>StateKeys&#160;:&#160;<a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">NAV::Pos::States</a>, <a class="el" href="structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1e">NAV::PosVel::States</a></li>
 <li>Strategy&#160;:&#160;<a class="el" href="classNAV_1_1PolynomialRegressor.html#aeb8bcf105601dc48a420b7741b83c9cc">NAV::PolynomialRegressor&lt; Scalar &gt;</a></li>
 </ul>
 

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -120,7 +141,7 @@ $(function(){initNavTree('functions_func_a.html',''); initResizable(); });
 <li>addColor()&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#af790ae7d06c52c097c68a7867e40b704">NAV::Colormap</a></li>
 <li>addCols()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixCols_3_01Scalar_00_01ColKeyType_00_01Rows_00_01Eigen_1_1Dynamic_01_4.html#a015ba049c373e77ce2b2b7ae2158cadb">NAV::internal::KeyedMatrixCols&lt; Scalar, ColKeyType, Rows, Eigen::Dynamic &gt;</a></li>
 <li>addDataPoint()&#160;:&#160;<a class="el" href="classNAV_1_1IncrementalLeastSquares.html#acbafba837c5e2ab47ac2de2416c0f40f">NAV::IncrementalLeastSquares&lt; Scalar &gt;</a></li>
-<li>addEvent()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a7c658a98c45ff1ab6fd75ddc87743f9d">NAV::SppSolution</a></li>
+<li>addEvent()&#160;:&#160;<a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">NAV::NodeData</a>, <a class="el" href="classNAV_1_1SppSolution.html#a7c658a98c45ff1ab6fd75ddc87743f9d">NAV::SppSolution</a></li>
 <li>addInterFrequencyBias()&#160;:&#160;<a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#a7550e3de55f50fe5abc0dbaf9797d377">NAV::SPP::KalmanFilter</a></li>
 <li>addObsType()&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#afacb9d3b78c2a9e9a68af7da5b52e930">NAV::vendor::RINEX::ObsHeader</a></li>
 <li>addPin()&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html#af2104fc76db79f72edce8f95cfee4982">NAV::gui::widgets::DynamicInputPins</a></li>
@@ -132,11 +153,16 @@ $(function(){initNavTree('functions_func_a.html',''); initResizable(); });
 <li>addSatNavData()&#160;:&#160;<a class="el" href="classNAV_1_1Satellite.html#ac2ee991b049e26960bbdfdad6b546922">NAV::Satellite</a></li>
 <li>addState()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#aa8bd6fb77aec11e363d38746bb52429f">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>addStates()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#abc7215c880e383bc76ade23dd72a6124">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
-<li>afterCreateLink()&#160;:&#160;<a class="el" href="classNAV_1_1ImuDataLogger.html#a51e99fc4e7c8119952bdf15af7983a70">NAV::ImuDataLogger</a>, <a class="el" href="classNAV_1_1Node.html#a3f8fba08eba8f3a4d482de98c45b8a54">NAV::Node</a>, <a class="el" href="classNAV_1_1Plot.html#ac9e9388b737c82fb573ebdfebab46559">NAV::Plot</a></li>
+<li>afterCreateLink()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a3f8fba08eba8f3a4d482de98c45b8a54">NAV::Node</a>, <a class="el" href="classNAV_1_1Plot.html#ac9e9388b737c82fb573ebdfebab46559">NAV::Plot</a></li>
 <li>afterDeleteLink()&#160;:&#160;<a class="el" href="classNAV_1_1Merger.html#a50db64b027060a2607affd5fbfd4729b">NAV::Merger</a>, <a class="el" href="classNAV_1_1Node.html#a49b908a696b9ffb747b681d40e1d8c06">NAV::Node</a></li>
 <li>all_t()&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1all__t.html#a4c3265a813cbf2e5e885f47fb392ac2c">NAV::internal::all_t</a></li>
 <li>altitude()&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#af1f2ac3824b6a3dad20a7e1901c13e6d">NAV::gui::widgets::PositionWithFrame</a>, <a class="el" href="classNAV_1_1Pos.html#af7cffacdd7a708e5b469755a0fd0eca0">NAV::Pos</a></li>
-<li>ARMA()&#160;:&#160;<a class="el" href="classNAV_1_1experimental_1_1ARMA.html#ab26d6e6cadd07d7be136c41f2d32610b">NAV::experimental::ARMA</a></li>
+<li>AntennaInfo()&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html#a186df7d49cf0490fc39d1569142c6dec">NAV::AntexReader::Antenna::AntennaInfo</a></li>
+<li>antennas()&#160;:&#160;<a class="el" href="classNAV_1_1AntexReader.html#a2232340682e9b688cfe77ba7aab6f967">NAV::AntexReader</a></li>
+<li>applySensorBiasesIncrements()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#af78342cbcf720805e11fbdf0f68382ee">NAV::InertialIntegrator</a></li>
+<li>applyStateErrors_e()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a08e9d8d8f2fead125671baa2bc53006a">NAV::InertialIntegrator</a></li>
+<li>applyStateErrors_n()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a3fb393a7586dd8c25ac6b960a322b170">NAV::InertialIntegrator</a></li>
+<li>ARMA()&#160;:&#160;<a class="el" href="classNAV_1_1experimental_1_1ARMA.html#a77387584562b37e6ba76a64dfb2b21f5">NAV::experimental::ARMA</a></li>
 <li>assign()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#a1be94f59bc1648c3796e2cc9b1ca6f03">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>at()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer.html#a0433b8738a0cbcf0e335d651c104cd6e">NAV::ScrollingBuffer&lt; T, _Padding &gt;</a>, <a class="el" href="classNAV_1_1TsDeque.html#a5047f3cbaa74c124ad57763d12dd926a">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>attitudeQuality()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a87fc7f33e7fa53a2f04779d9b3c282fd">NAV::vendor::vectornav::VpeStatus</a></li>

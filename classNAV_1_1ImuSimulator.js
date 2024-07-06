@@ -13,11 +13,11 @@ var classNAV_1_1ImuSimulator =
     [ "save", "classNAV_1_1ImuSimulator.html#a4bd9d41e67c5b9c2f4a4514f925927b2", null ],
     [ "type", "classNAV_1_1ImuSimulator.html#abc2be75427adcdb6134f74f56a517d4f", null ],
     [ "typeStatic", "classNAV_1_1ImuSimulator.html#a1b1fa5f33ad9760e34fb8ead7a277dd9", null ],
-    [ "pitch", "classNAV_1_1ImuSimulator.html#abf9ef059957197391af48852d8bba246", null ],
-    [ "roll", "classNAV_1_1ImuSimulator.html#a3587c8b784ce82e3dce626249c00f7f0", null ],
-    [ "sampleInterval", "classNAV_1_1ImuSimulator.html#a1665bf2178d5e6f52b4d004789dc9b2c", null ],
-    [ "x", "classNAV_1_1ImuSimulator.html#a84b112a4676e77445c32977f200f6abd", null ],
-    [ "y", "classNAV_1_1ImuSimulator.html#ade924e28b9babbee7af88e9d90975424", null ],
-    [ "yaw", "classNAV_1_1ImuSimulator.html#ac93340bb96eb822368b2920672dea34f", null ],
-    [ "z", "classNAV_1_1ImuSimulator.html#ae5fe0f6dc91cfa9c0fac902a0f124e6c", null ]
+    [ "pitch", "classNAV_1_1ImuSimulator.html#a88a9ab515ecc073b180337e9210e073c", null ],
+    [ "roll", "classNAV_1_1ImuSimulator.html#af49686d6e931092125f79a72fa7d9e53", null ],
+    [ "sampleInterval", "classNAV_1_1ImuSimulator.html#a9952c9128ae0753f015ec823347637bf", null ],
+    [ "x", "classNAV_1_1ImuSimulator.html#aec3a87f7dcc6a8af6d78c1c49f1dc849", null ],
+    [ "y", "classNAV_1_1ImuSimulator.html#adbfc3a49d607f7550f8ab2ffc8e8c61b", null ],
+    [ "yaw", "classNAV_1_1ImuSimulator.html#ac9e4bd1340a7e0dcc0385299e2b7cd0b", null ],
+    [ "z", "classNAV_1_1ImuSimulator.html#a100dc2a1d5b205deb1b061832d3cddc8", null ]
 ];

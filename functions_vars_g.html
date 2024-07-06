@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_vars_g.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div>
 
 <h3><a id="index_g" name="index_g"></a>- g -</h3><ul>
-<li>G&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#aff9b6598acaaa6e376259b3a99a93af1">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>G&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#aff9b6598acaaa6e376259b3a99a93af1">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a951d133200d5aec12380485cd61c6bea">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a></li>
 <li>G_NORM&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#a3f676cffa9e05870c2798999b74a929d">NAV::InsConst&lt; Scalar &gt;</a></li>
 <li>gamma_n&#160;:&#160;<a class="el" href="classNAV_1_1GLONASSEphemeris.html#aeb9a750b3d6930a70235a462df9e18da">NAV::GLONASSEphemeris</a></li>
 <li>gDop&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1DOP.html#ac454d2356df2934d96ae5dc093acbc23">NAV::vendor::vectornav::DOP</a></li>
@@ -151,10 +172,8 @@ $(function(){initNavTree('functions_vars_g.html',''); initResizable(); });
 <li>gpsCycle&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__GPSweekTow.html#a570c45d0ba1a8b3ea3102e5c644b993f">NAV::InsTime_GPSweekTow</a></li>
 <li>gpsTow&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html#a9a8bc15f31c7aca75d6838bf6feba8d1">NAV::vendor::vectornav::TimeOutputs</a></li>
 <li>gpsWeek&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__GPSweekTow.html#a6f12e97cb1aeaecc58b73ed156a359f3">NAV::InsTime_GPSweekTow</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html#a0f28633c2fe85878b6678d41ca5e94cf">NAV::vendor::vectornav::TimeOutputs</a></li>
-<li>gravitationModel&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html#aadddd56b8ccf261fd9e458b3c8d3c171">NAV::PosVelAttDerivativeConstants_e</a>, <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__n.html#a1f36ca1937ea37e51606260712a142f7">NAV::PosVelAttDerivativeConstants_n</a></li>
+<li>gravitationModel&#160;:&#160;<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html#aadf97d2649af22bb758e577278db71f3">NAV::PosVelAttDerivativeConstants&lt; Scalar, typename &gt;</a></li>
 <li>gSpeed&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbVel.html#ad022ad47685c5b0b3a8c1ea53a379679">NAV::vendor::emlid::ErbVel</a>, <a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavVelned.html#a736801a5bfb51be337c46f7965b850c6">NAV::vendor::ublox::UbxNavVelned</a></li>
-<li>gyroCompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#aaecc4fd6484437dfe194231bd4421d10">NAV::ImuObs</a></li>
-<li>gyroUncompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#a24a1448b1a9bc6b591ce26bd6504c983">NAV::ImuObs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_vars_q.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div>
 
 <h3><a id="index_q" name="index_q"></a>- q -</h3><ul>
-<li>Q&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#aa7b743e375cee1eb857c087187a083bd">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#aa36b1f206f5e7cac21f53a0c79565b40">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#a36f505e009f8dc287d427fa3290dd640">NAV::RtklibPosObs</a></li>
+<li>Q&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#aa7b743e375cee1eb857c087187a083bd">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#aa36b1f206f5e7cac21f53a0c79565b40">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a90ea2e49c2f8ed380f6469789d93d59b">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#a36f505e009f8dc287d427fa3290dd640">NAV::RtklibPosObs</a></li>
 <li>Q_A0&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a796b88afe79d31b25ff00f115a057fe6">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a34a96eb4cfddd9b4c4fefeb57cb33b61">NAV::internal::GPT3Data</a></li>
 <li>Q_A1&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a6933fb68b0e1b0e095909424f2d8105a">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a9386e6bd13900f3e74bfa5d02ffa3cbd">NAV::internal::GPT3Data</a></li>
 <li>Q_A2&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a088416dadbb6e81aa4f608836d1e649e">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#ab7468c729f06dfefad8982949812bd6d">NAV::internal::GPT3Data</a></li>

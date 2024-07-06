@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,7 +138,7 @@ $(function(){initNavTree('classNAV_1_1CycleSlipDetector.html',''); initResizable
 
 <p>This is the complete list of members for <a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html#aaafabd4ecdd84f18dcf2a8e007efa77c">checkForCycleSlip</a>(InsTime insTime, const std::vector&lt; SatelliteObservation &gt; &amp;satObs)</td><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html#a4aa6b51311d63e2285a8cc0e1fca7b31">checkForCycleSlip</a>(InsTime insTime, const std::vector&lt; SatelliteObservation &gt; &amp;satObs, const std::string &amp;nameId)</td><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html#a3831257d220e31c76533735b1382c7fe">CycleSlipDetectorGui</a></td><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64a">Detector</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html#ad890d29c0180c76d01ea15ce9e8c207d">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1CycleSlipDetector.html">NAV::CycleSlipDetector</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>

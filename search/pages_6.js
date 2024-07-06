@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['imgui_20demo_20window_0',['Dear ImGui Demo Window',['../dear_imgui_demo_window.html',1,'advanced_gui_landing_page']]],
-  ['implot_20demo_20window_1',['ImPlot Demo Window',['../implot_demo_window.html',1,'advanced_gui_landing_page']]],
-  ['implot_20style_2',['ImPlot Style',['../bar_edit_implot_style.html',1,'advanced_gui_landing_page']]],
-  ['imu_20simulator_20node_3',['Imu Simulator Node',['../imu_simulator_node.html',1,'node_guide_landing_page']]],
-  ['imudatalogger_20node_4',['ImuDataLogger Node',['../imu_data_logger_node.html',1,'node_guide_landing_page']]],
-  ['imufile_20node_5',['ImuFile Node',['../imu_file_node.html',1,'node_guide_landing_page']]],
-  ['imufusion_20node_6',['ImuFusion Node',['../imu_fusion_node.html',1,'node_guide_landing_page']]],
-  ['imuintegrator_20node_7',['ImuIntegrator Node',['../imu_integrator_node.html',1,'node_guide_landing_page']]],
-  ['introduction_8',['Introduction',['../node_guide_introduction.html',1,'Nodes Introduction'],['../main_introduction.html',1,'Project Introduction']]]
+  ['getting_20started_0',['Getting Started',['../getting_started.html',1,'user_manual_landing_page']]],
+  ['gnss_20loosely_20coupled_20kalman_20filter_20earth_20fixed_20frame_1',['INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)',['../LooselyCoupledKF_e.html',1,'algorithms_landing_page']]],
+  ['gnss_20loosely_20coupled_20kalman_20filter_20local_20navigation_20frame_2',['INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)',['../LooselyCoupledKF_n.html',1,'algorithms_landing_page']]],
+  ['gnssanalyzer_20node_3',['GnssAnalyzer Node',['../gnss_analyzer_node.html',1,'node_guide_landing_page']]],
+  ['group_20box_4',['Group Box',['../group_box.html',1,'node_guide_landing_page']]],
+  ['gui_5',['GUI',['../advanced_gui_landing_page.html',1,'Advanced GUI'],['../gui_landing_page.html',1,'GUI']]],
+  ['guide_6',['Node Guide',['../node_guide_landing_page.html',1,'user_manual_landing_page']]]
 ];

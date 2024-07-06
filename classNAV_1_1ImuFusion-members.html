@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -180,13 +201,14 @@ $(function(){initNavTree('classNAV_1_1ImuFusion.html',''); initResizable(); });
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a8dff960e9111edd4510f0ef016bf3b1e">restoreAtferLink</a>(const json &amp;j)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a573ab2ade2d9986cbc735d8d11a0164b">save</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">State</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5b4f8d7291273c38be7d134c27e2195f">toString</a>(State state)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a347216fb854c54258e94abe2234ea95c">type</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a8f9a8262034e199233430e83880fd09c">typeStatic</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Imu.html#acee3bdba419bf3de34cc5131f28df894">~Imu</a>() override=default</td><td class="entry"><a class="el" href="classNAV_1_1Imu.html">NAV::Imu</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a691db3a2dd1ba045a617982fff7f1ee7">~ImuFusion</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#abc11472b9b7519bed44fa424609935b3">~Node</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a199449f2e130bf367916904839b2f87c">to_string</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5b4f8d7291273c38be7d134c27e2195f">toString</a>(State state)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a347216fb854c54258e94abe2234ea95c">type</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a8f9a8262034e199233430e83880fd09c">typeStatic</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Imu.html#acee3bdba419bf3de34cc5131f28df894">~Imu</a>() override=default</td><td class="entry"><a class="el" href="classNAV_1_1Imu.html">NAV::Imu</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html#a691db3a2dd1ba045a617982fff7f1ee7">~ImuFusion</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#abc11472b9b7519bed44fa424609935b3">~Node</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

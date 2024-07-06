@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['g_0',['G',['../classNAV_1_1KeyedKalmanFilter.html#aff9b6598acaaa6e376259b3a99a93af1',1,'NAV::KeyedKalmanFilter']]],
+  ['g_0',['G',['../classNAV_1_1KeyedKalmanFilter.html#aff9b6598acaaa6e376259b3a99a93af1',1,'NAV::KeyedKalmanFilter::G'],['../structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a951d133200d5aec12380485cd61c6bea',1,'NAV::KeyedKalmanFilter::SavedPreUpdate::G']]],
   ['g_5fnorm_1',['G_NORM',['../classNAV_1_1InsConst.html#a3f676cffa9e05870c2798999b74a929d',1,'NAV::InsConst']]],
   ['gamma_5fn_2',['gamma_n',['../classNAV_1_1GLONASSEphemeris.html#aeb9a750b3d6930a70235a462df9e18da',1,'NAV::GLONASSEphemeris']]],
   ['gdop_3',['gDop',['../structNAV_1_1vendor_1_1vectornav_1_1DOP.html#ac454d2356df2934d96ae5dc093acbc23',1,'NAV::vendor::vectornav::DOP']]],
@@ -40,8 +40,6 @@ var searchData=
   ['gpsweek_37',['gpsWeek',['../structNAV_1_1InsTime__GPSweekTow.html#a6f12e97cb1aeaecc58b73ed156a359f3',1,'NAV::InsTime_GPSweekTow::gpsWeek'],['../structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html#a0f28633c2fe85878b6678d41ca5e94cf',1,'NAV::vendor::vectornav::TimeOutputs::gpsWeek']]],
   ['gpt2_5fgrid_38',['GPT2_grid',['../namespaceNAV_1_1internal.html#ac8e78c8afbbd5a9e64349ae8fd87329e',1,'NAV::internal']]],
   ['gpt3_5fgrid_39',['GPT3_grid',['../namespaceNAV_1_1internal.html#afe59622c7979eb5d2a712a85e51adb08',1,'NAV::internal']]],
-  ['gravitationmodel_40',['gravitationModel',['../structNAV_1_1PosVelAttDerivativeConstants__e.html#aadddd56b8ccf261fd9e458b3c8d3c171',1,'NAV::PosVelAttDerivativeConstants_e::gravitationModel'],['../structNAV_1_1PosVelAttDerivativeConstants__n.html#a1f36ca1937ea37e51606260712a142f7',1,'NAV::PosVelAttDerivativeConstants_n::gravitationModel']]],
-  ['gspeed_41',['gSpeed',['../structNAV_1_1vendor_1_1emlid_1_1ErbVel.html#ad022ad47685c5b0b3a8c1ea53a379679',1,'NAV::vendor::emlid::ErbVel::gSpeed'],['../structNAV_1_1vendor_1_1ublox_1_1UbxNavVelned.html#a736801a5bfb51be337c46f7965b850c6',1,'NAV::vendor::ublox::UbxNavVelned::gSpeed']]],
-  ['gyrocompxyz_42',['gyroCompXYZ',['../classNAV_1_1ImuObs.html#aaecc4fd6484437dfe194231bd4421d10',1,'NAV::ImuObs']]],
-  ['gyrouncompxyz_43',['gyroUncompXYZ',['../classNAV_1_1ImuObs.html#a24a1448b1a9bc6b591ce26bd6504c983',1,'NAV::ImuObs']]]
+  ['gravitationmodel_40',['gravitationModel',['../structNAV_1_1PosVelAttDerivativeConstants.html#aadf97d2649af22bb758e577278db71f3',1,'NAV::PosVelAttDerivativeConstants']]],
+  ['gspeed_41',['gSpeed',['../structNAV_1_1vendor_1_1emlid_1_1ErbVel.html#ad022ad47685c5b0b3a8c1ea53a379679',1,'NAV::vendor::emlid::ErbVel::gSpeed'],['../structNAV_1_1vendor_1_1ublox_1_1UbxNavVelned.html#a736801a5bfb51be337c46f7965b850c6',1,'NAV::vendor::ublox::UbxNavVelned::gSpeed']]]
 ];

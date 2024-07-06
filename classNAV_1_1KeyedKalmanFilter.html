@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,6 +133,7 @@ $(function(){initNavTree('classNAV_1_1KeyedKalmanFilter.html',''); initResizable
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classNAV_1_1KeyedKalmanFilter-members.html">List of all members</a>  </div>
@@ -122,6 +144,15 @@ $(function(){initNavTree('classNAV_1_1KeyedKalmanFilter.html',''); initResizable
 <p>Keyed Kalman Filter class.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html">NISResult</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalized Innovation Squared (NIS) test results.  <a href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saved pre-update state and measurement.  <a href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa8bd6fb77aec11e363d38746bb52429f" id="r_aa8bd6fb77aec11e363d38746bb52429f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8bd6fb77aec11e363d38746bb52429f">addState</a> (const StateKeyType &amp;stateKey)</td></tr>
@@ -139,12 +170,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad7811b6b53117a590e55aa0995d853c0" id="r_ad7811b6b53117a590e55aa0995d853c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad7811b6b53117a590e55aa0995d853c0">calcTransitionMatrix_Phi_Taylor</a> (Scalar tau, size_t order)</td></tr>
 <tr class="memdesc:ad7811b6b53117a590e55aa0995d853c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ  <br /></td></tr>
 <tr class="separator:ad7811b6b53117a590e55aa0995d853c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6603631bf7e4ebe45ee7a5d944c9b030" id="r_a6603631bf7e4ebe45ee7a5d944c9b030"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6603631bf7e4ebe45ee7a5d944c9b030">checkForOutliersNIS</a> (const std::string &amp;nameId)</td></tr>
+<tr class="memdesc:a6603631bf7e4ebe45ee7a5d944c9b030"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the Normalized Innovation Squared (NIS) test on the measurement innovation 𝜹𝐳  <br /></td></tr>
+<tr class="separator:a6603631bf7e4ebe45ee7a5d944c9b030"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc2979c77f9b713fdc05775cbb03185b" id="r_adc2979c77f9b713fdc05775cbb03185b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc2979c77f9b713fdc05775cbb03185b">correct</a> ()</td></tr>
 <tr class="memdesc:adc2979c77f9b713fdc05775cbb03185b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a Measurement Update with a Measurement 𝐳  <br /></td></tr>
 <tr class="separator:adc2979c77f9b713fdc05775cbb03185b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe99cd42eeea71cb137f56cbf051a676" id="r_abe99cd42eeea71cb137f56cbf051a676"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe99cd42eeea71cb137f56cbf051a676">correctWithMeasurementInnovation</a> ()</td></tr>
 <tr class="memdesc:abe99cd42eeea71cb137f56cbf051a676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a Measurement Update with a Measurement Innovation 𝜹𝐳  <br /></td></tr>
 <tr class="separator:abe99cd42eeea71cb137f56cbf051a676"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43e1082ef52282e0e340cbda0c881a55" id="r_a43e1082ef52282e0e340cbda0c881a55"><td class="memItemLeft" align="right" valign="top"><a id="a43e1082ef52282e0e340cbda0c881a55" name="a43e1082ef52282e0e340cbda0c881a55"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>discardPreUpdate</b> ()</td></tr>
+<tr class="memdesc:a43e1082ef52282e0e340cbda0c881a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discards the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="separator:a43e1082ef52282e0e340cbda0c881a55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae84d9976e4b5d7e317dbc8218c146d2" id="r_aae84d9976e4b5d7e317dbc8218c146d2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae84d9976e4b5d7e317dbc8218c146d2">hasAnyStates</a> (const std::vector&lt; StateKeyType &gt; &amp;stateKeys) const</td></tr>
 <tr class="memdesc:aae84d9976e4b5d7e317dbc8218c146d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the filter has any of the provided keys.  <br /></td></tr>
 <tr class="separator:aae84d9976e4b5d7e317dbc8218c146d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,6 +192,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a934a1bf9df5b48d71e66267fc6bd9921" id="r_a934a1bf9df5b48d71e66267fc6bd9921"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a934a1bf9df5b48d71e66267fc6bd9921">hasStates</a> (const std::vector&lt; StateKeyType &gt; &amp;stateKeys) const</td></tr>
 <tr class="memdesc:a934a1bf9df5b48d71e66267fc6bd9921"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the filter has the keys.  <br /></td></tr>
 <tr class="separator:a934a1bf9df5b48d71e66267fc6bd9921"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6e45ab05460bbb66f87f4746b7be41a" id="r_ac6e45ab05460bbb66f87f4746b7be41a"><td class="memItemLeft" align="right" valign="top"><a id="ac6e45ab05460bbb66f87f4746b7be41a" name="ac6e45ab05460bbb66f87f4746b7be41a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isNISenabled</b> () const</td></tr>
+<tr class="memdesc:ac6e45ab05460bbb66f87f4746b7be41a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the NIS check should be performed. <br /></td></tr>
+<tr class="separator:ac6e45ab05460bbb66f87f4746b7be41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49e8b832ab029c0b140106e12efefd87" id="r_a49e8b832ab029c0b140106e12efefd87"><td class="memItemLeft" align="right" valign="top"><a id="a49e8b832ab029c0b140106e12efefd87" name="a49e8b832ab029c0b140106e12efefd87"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPreUpdateSaved</b> () const</td></tr>
+<tr class="memdesc:a49e8b832ab029c0b140106e12efefd87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a pre-update was saved. <br /></td></tr>
+<tr class="separator:a49e8b832ab029c0b140106e12efefd87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae13032a68928c47806870241e3e35869" id="r_ae13032a68928c47806870241e3e35869"><td class="memItemLeft" align="right" valign="top"><a id="ae13032a68928c47806870241e3e35869" name="ae13032a68928c47806870241e3e35869"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>KeyedKalmanFilter</b> ()=default</td></tr>
 <tr class="memdesc:ae13032a68928c47806870241e3e35869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
@@ -164,6 +210,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac35040a50530c57db76c21706ffce400" id="r_ac35040a50530c57db76c21706ffce400"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac35040a50530c57db76c21706ffce400">predict</a> ()</td></tr>
 <tr class="memdesc:ac35040a50530c57db76c21706ffce400"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a Time Update.  <br /></td></tr>
 <tr class="separator:ac35040a50530c57db76c21706ffce400"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bd5a06835f4917273ba346ca2904270" id="r_a9bd5a06835f4917273ba346ca2904270"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bd5a06835f4917273ba346ca2904270">removeMeasurement</a> (const MeasKeyType &amp;measKey)</td></tr>
+<tr class="memdesc:a9bd5a06835f4917273ba346ca2904270"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a measurement from the filter.  <br /></td></tr>
+<tr class="separator:a9bd5a06835f4917273ba346ca2904270"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab619c95fe176a4b6fe29adc17699fd7f" id="r_ab619c95fe176a4b6fe29adc17699fd7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab619c95fe176a4b6fe29adc17699fd7f">removeMeasurements</a> (const std::vector&lt; MeasKeyType &gt; &amp;measKeys)</td></tr>
+<tr class="memdesc:ab619c95fe176a4b6fe29adc17699fd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove measurements from the filter.  <br /></td></tr>
+<tr class="separator:ab619c95fe176a4b6fe29adc17699fd7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61eb848dc380a49be487640d05951745" id="r_a61eb848dc380a49be487640d05951745"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61eb848dc380a49be487640d05951745">removeState</a> (const StateKeyType &amp;stateKey)</td></tr>
 <tr class="memdesc:a61eb848dc380a49be487640d05951745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a state from the filter.  <br /></td></tr>
 <tr class="separator:a61eb848dc380a49be487640d05951745"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,6 +225,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2794b5e0b095d44672d0a767ca931c26" id="r_a2794b5e0b095d44672d0a767ca931c26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2794b5e0b095d44672d0a767ca931c26">replaceState</a> (const StateKeyType &amp;oldKey, const StateKeyType &amp;newKey)</td></tr>
 <tr class="memdesc:a2794b5e0b095d44672d0a767ca931c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the old with the new key.  <br /></td></tr>
 <tr class="separator:a2794b5e0b095d44672d0a767ca931c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3f70fa23df0e081f57b818e2ebf37c8" id="r_ab3f70fa23df0e081f57b818e2ebf37c8"><td class="memItemLeft" align="right" valign="top"><a id="ab3f70fa23df0e081f57b818e2ebf37c8" name="ab3f70fa23df0e081f57b818e2ebf37c8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>restorePreUpdate</b> ()</td></tr>
+<tr class="memdesc:ab3f70fa23df0e081f57b818e2ebf37c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="separator:ab3f70fa23df0e081f57b818e2ebf37c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8d3d8a65b5b28815eb8ae7acda0305a" id="r_af8d3d8a65b5b28815eb8ae7acda0305a"><td class="memItemLeft" align="right" valign="top"><a id="af8d3d8a65b5b28815eb8ae7acda0305a" name="af8d3d8a65b5b28815eb8ae7acda0305a"></a>
+const <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>savedPreUpdate</b> () const</td></tr>
+<tr class="memdesc:af8d3d8a65b5b28815eb8ae7acda0305a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the saved pre-update matrices. <br /></td></tr>
+<tr class="separator:af8d3d8a65b5b28815eb8ae7acda0305a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada564393acb2210371aa3a383aaf8a85" id="r_ada564393acb2210371aa3a383aaf8a85"><td class="memItemLeft" align="right" valign="top"><a id="ada564393acb2210371aa3a383aaf8a85" name="ada564393acb2210371aa3a383aaf8a85"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>savePreUpdate</b> ()</td></tr>
+<tr class="memdesc:ada564393acb2210371aa3a383aaf8a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="separator:ada564393acb2210371aa3a383aaf8a85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7491a98ac641812ad769550e51d1fd39" id="r_a7491a98ac641812ad769550e51d1fd39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7491a98ac641812ad769550e51d1fd39">setMeasurements</a> (const std::vector&lt; MeasKeyType &gt; &amp;measKeys)</td></tr>
 <tr class="memdesc:a7491a98ac641812ad769550e51d1fd39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the measurement keys and initializes matrices z, H, R, S, K with Zero.  <br /></td></tr>
 <tr class="separator:a7491a98ac641812ad769550e51d1fd39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,6 +244,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setZero</b> ()</td></tr>
 <tr class="memdesc:ab8507cad862fdb498dc0ac9c844d7f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all Vectors and matrices to 0. <br /></td></tr>
 <tr class="separator:ab8507cad862fdb498dc0ac9c844d7f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1485e152828c151cbc0f82dedfc324d1" id="r_a1485e152828c151cbc0f82dedfc324d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1485e152828c151cbc0f82dedfc324d1">showKalmanFilterGUI</a> (const char *id, float width=0.0F)</td></tr>
+<tr class="memdesc:a1485e152828c151cbc0f82dedfc324d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements for the Kalman Filter.  <br /></td></tr>
+<tr class="separator:a1485e152828c151cbc0f82dedfc324d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e8b0986ee8bd808c21c25b8eb5d89d0" id="r_a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e8b0986ee8bd808c21c25b8eb5d89d0">showKalmanFilterMatrixViews</a> (const char *id, int nRows=-2)</td></tr>
 <tr class="memdesc:a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows ImGui Tree nodes for all matrices.  <br /></td></tr>
 <tr class="separator:a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -390,7 +457,7 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_Loan1978">[45]</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_Loan1978">[46]</a> </dd></dl>
 
 </div>
 </div>
@@ -426,7 +493,7 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97 </dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>The cost of the computation is approximately 20n^3 for matrices of size n. The number 20 depends weakly on the norm of the matrix. </dd></dl>
 
 </div>
@@ -468,7 +535,44 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98 </dd></dl>
+
+</div>
+</div>
+<a id="a6603631bf7e4ebe45ee7a5d944c9b030" name="a6603631bf7e4ebe45ee7a5d944c9b030"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6603631bf7e4ebe45ee7a5d944c9b030">&#9670;&#160;</a></span>checkForOutliersNIS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::checkForOutliersNIS </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Performs the Normalized Innovation Squared (NIS) test on the measurement innovation 𝜹𝐳 </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Caller node for debug output</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>H_0: The measurement residual 𝜹𝐳 is consistent with the innovation covariance matrix 𝗦 The acceptance interval is chosen such that the probability that H_0 is accepted is (1 - alpha) </p><dl class="section return"><dt>Returns</dt><dd>The hypothesis test result if it failed, otherwise nothing. </dd></dl>
+<dl class="section attention"><dt>Attention</dt><dd>Needs to be called before the update </dd></dl>
 
 </div>
 </div>
@@ -672,6 +776,76 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
 
 </div>
 </div>
+<a id="a9bd5a06835f4917273ba346ca2904270" name="a9bd5a06835f4917273ba346ca2904270"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bd5a06835f4917273ba346ca2904270">&#9670;&#160;</a></span>removeMeasurement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::removeMeasurement </td>
+          <td>(</td>
+          <td class="paramtype">const MeasKeyType &amp;</td>          <td class="paramname"><span class="paramname"><em>measKey</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove a measurement from the filter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">measKey</td><td>Measurement key </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab619c95fe176a4b6fe29adc17699fd7f" name="ab619c95fe176a4b6fe29adc17699fd7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab619c95fe176a4b6fe29adc17699fd7f">&#9670;&#160;</a></span>removeMeasurements()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::removeMeasurements </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove measurements from the filter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">measKeys</td><td>Measurement keys </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a61eb848dc380a49be487640d05951745" name="a61eb848dc380a49be487640d05951745"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a61eb848dc380a49be487640d05951745">&#9670;&#160;</a></span>removeState()</h2>
 
@@ -817,6 +991,47 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
 
 </div>
 </div>
+<a id="a1485e152828c151cbc0f82dedfc324d1" name="a1485e152828c151cbc0f82dedfc324d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1485e152828c151cbc0f82dedfc324d1">&#9670;&#160;</a></span>showKalmanFilterGUI()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::showKalmanFilterGUI </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>id</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>width</em><span class="paramdefsep"> = </span><span class="paramdefval">0.0F</span></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Shows GUI elements for the Kalman Filter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Width of the widget </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True if something was changed </dd></dl>
+
+</div>
+</div>
 <a id="a9e8b0986ee8bd808c21c25b8eb5d89d0" name="a9e8b0986ee8bd808c21c25b8eb5d89d0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e8b0986ee8bd808c21c25b8eb5d89d0">&#9670;&#160;</a></span>showKalmanFilterMatrixViews()</h2>
 
@@ -849,8 +1064,8 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
 <p>Shows ImGui Tree nodes for all matrices. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
-    <tr><td class="paramname">nRows</td><td>Amount of rows to show </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nRows</td><td>Amount of rows to show </td></tr>
   </table>
   </dd>
 </dl>

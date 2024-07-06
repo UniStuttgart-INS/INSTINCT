@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,12 +135,12 @@ $(function(){initNavTree('functions_func_n.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div>
 
 <h3><a id="index_n" name="index_n"></a>- n -</h3><ul>
-<li>n_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#ad4d79bfbca1838782b77d8871135226d">NAV::SppSolution</a></li>
-<li>n_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a137e5042fdc47b1a4472f519f6d5dc61">NAV::SppSolution</a></li>
+<li>n_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a6c727c5c529eb11a86879ba6ade27756">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#ac7a656df2dcb5930acdec6a8745b71c0">NAV::PosVel</a></li>
+<li>n_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#acd3f38485096d92ea9101079147950c7">NAV::Pos</a></li>
 <li>n_Quat_b()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAtt.html#a74e10519b9cbd935217fe53bc650bb5e">NAV::PosVelAtt</a></li>
 <li>n_Quat_e()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#aab9530d76d0352ca3f4370e69a67d9d2">NAV::Pos</a></li>
 <li>n_velocity()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a0f7c98f2a86399d9eed559b63f216773">NAV::PosVel</a></li>
-<li>n_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a230a48a2b0f08afd028d31e39ee629cc">NAV::SppSolution</a></li>
+<li>n_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a8232cb6b757875309e83dc373e917829">NAV::PosVel</a></li>
 <li>nameId()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">NAV::Node</a></li>
 <li>navData()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation.html#aaf04e98c531dd743f46d4927e589a7e6">NAV::Observations::SignalObservation</a></li>
 <li>Navio2Sensor()&#160;:&#160;<a class="el" href="classNAV_1_1Navio2Sensor.html#a58dfba7d479ea2d435826c84cf564326">NAV::Navio2Sensor</a></li>

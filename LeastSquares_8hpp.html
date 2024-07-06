@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -133,11 +154,11 @@ Classes</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a48124cf7355bfe5c20a80aa130bcc134" id="r_a48124cf7355bfe5c20a80aa130bcc134"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA , typename DerivedB &gt; </td></tr>
 <tr class="memitem:a48124cf7355bfe5c20a80aa130bcc134"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector&lt; typename DerivedA::Scalar, DerivedA::ColsAtCompileTime &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a48124cf7355bfe5c20a80aa130bcc134">NAV::solveLinearLeastSquares</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;H, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;dz)</td></tr>
-<tr class="memdesc:a48124cf7355bfe5c20a80aa130bcc134"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>.  <br /></td></tr>
+<tr class="memdesc:a48124cf7355bfe5c20a80aa130bcc134"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \).  <br /></td></tr>
 <tr class="separator:a48124cf7355bfe5c20a80aa130bcc134"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abca5ae0d654ddf38f9186647d0e110f0" id="r_abca5ae0d654ddf38f9186647d0e110f0"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA , typename DerivedB &gt; </td></tr>
 <tr class="memitem:abca5ae0d654ddf38f9186647d0e110f0"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1LeastSquaresResult.html">LeastSquaresResult</a>&lt; Eigen::Vector&lt; typename DerivedA::Scalar, DerivedA::ColsAtCompileTime &gt;, Eigen::Matrix&lt; typename DerivedA::Scalar, DerivedA::ColsAtCompileTime, DerivedA::ColsAtCompileTime &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abca5ae0d654ddf38f9186647d0e110f0">NAV::solveLinearLeastSquaresUncertainties</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;H, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;dz)</td></tr>
-<tr class="memdesc:abca5ae0d654ddf38f9186647d0e110f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>.  <br /></td></tr>
+<tr class="memdesc:abca5ae0d654ddf38f9186647d0e110f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \).  <br /></td></tr>
 <tr class="separator:abca5ae0d654ddf38f9186647d0e110f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a623ee6697ed42ca4b02d5f75bdc787b0" id="r_a623ee6697ed42ca4b02d5f75bdc787b0"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA , typename DerivedW , typename DerivedB &gt; </td></tr>
 <tr class="memitem:a623ee6697ed42ca4b02d5f75bdc787b0"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector&lt; typename DerivedA::Scalar, DerivedA::ColsAtCompileTime &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a623ee6697ed42ca4b02d5f75bdc787b0">NAV::solveWeightedLinearLeastSquares</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;H, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;dz)</td></tr>
@@ -174,16 +195,16 @@ template&lt;typename DerivedA , typename DerivedB &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>. </p>
+<p>Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \). </p>
 <p>Minimizes the functional <a class="anchor" id="eq-LinearLeastSquares-functional"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LinearLeastSquares-functional}
+\begin{equation} \label{eq:eq-LinearLeastSquares-functional}
   J(\mathbf{x}) \equiv \sum_{i=1}^m v_i^2 = \mathbf{v}^T \mathbf{v} = (\mathbf{dz} - \mathbf{H} \mathbf{x})^T (\mathbf{dz} - \mathbf{H} \mathbf{x})
-\end{equation}" src="form_61.svg" width="1650" height="51"/>
+\end{equation}
 </p>
-<p> which has the solution (assuming that the inverse to <img class="formulaInl" alt="$ \mathbf{H}^T \mathbf{H} $" src="form_62.svg" width="42" height="18"/> exists) <a class="anchor" id="eq-LinearLeastSquares-solution"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LinearLeastSquares-solution}
+<p> which has the solution (assuming that the inverse to \( \mathbf{H}^T \mathbf{H} \) exists) <a class="anchor" id="eq-LinearLeastSquares-solution"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-LinearLeastSquares-solution}
   \mathbf{x} = \left(\mathbf{H}^T \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{dz}
-\end{equation}" src="form_63.svg" width="1552" height="28"/>
+\end{equation}
 </p>
  <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -217,7 +238,7 @@ template&lt;typename DerivedA , typename DerivedB &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>. </p>
+<p>Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
@@ -257,9 +278,9 @@ template&lt;typename DerivedA , typename DerivedW , typename DerivedB &gt; </div
 
 <p>Finds the "weighted least squares" solution. </p>
 <p><a class="anchor" id="eq-WeightedLinearLeastSquares"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-WeightedLinearLeastSquares}
+\begin{equation} \label{eq:eq-WeightedLinearLeastSquares}
   \mathbf{x} = \left(\mathbf{H}^T \mathbf{W} \mathbf{H} \right)^{-1} \mathbf{H}^T \mathbf{W} \mathbf{dz}
-\end{equation}" src="form_64.svg" width="1573" height="28"/>
+\end{equation}
 </p>
  <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

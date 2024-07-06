@@ -6,7 +6,7 @@ var searchData=
   ['keyedmatrix_2ehpp_3',['KeyedMatrix.hpp',['../internal_2gui_2widgets_2KeyedMatrix_8hpp.html',1,'(Global Namespace)'],['../util_2Container_2KeyedMatrix_8hpp.html',1,'(Global Namespace)']]],
   ['keys_2ehpp_4',['Keys.hpp',['../Keys_8hpp.html',1,'']]],
   ['klobuchar_2ehpp_5',['Klobuchar.hpp',['../Klobuchar_8hpp.html',1,'']]],
-  ['kvhdatalogger_2ehpp_6',['KvhDataLogger.hpp',['../KvhDataLogger_8hpp.html',1,'']]],
+  ['kmllogger_2ehpp_6',['KmlLogger.hpp',['../KmlLogger_8hpp.html',1,'']]],
   ['kvhfile_2ehpp_7',['KvhFile.hpp',['../KvhFile_8hpp.html',1,'']]],
   ['kvhobs_2ehpp_8',['KvhObs.hpp',['../KvhObs_8hpp.html',1,'']]],
   ['kvhsensor_2ehpp_9',['KvhSensor.hpp',['../KvhSensor_8hpp.html',1,'']]],

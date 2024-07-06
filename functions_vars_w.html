@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_vars_w.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented variables with links to the class documentation for each member:</div>
 
 <h3><a id="index_w" name="index_w"></a>- w -</h3><ul>
-<li>W&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>W&#160;:&#160;<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#ae0530c09a9b9245c7c96dd7ee523267a">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>w_A0&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a1e6d7e5bb0d907f67f844a3d52948e51">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#abbc1863240594eaf3364e54d101eef4c">NAV::internal::GPT3Data</a></li>
 <li>w_A1&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a8c51a1a0e373de00ff6113f8e24dadcb">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a3a94e22673f2f9b337a43335a70dc7da">NAV::internal::GPT3Data</a></li>
 <li>w_A2&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a136ac30c4fd659a302288cfb7035ec62">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a3f2e7b04981466e2098f61dfdad95f1d">NAV::internal::GPT3Data</a></li>

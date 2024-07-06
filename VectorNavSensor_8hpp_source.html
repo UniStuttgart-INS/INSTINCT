@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -481,7 +502,7 @@ $(function(){initNavTree('VectorNavSensor_8hpp_source.html',''); initResizable()
 <div class="ttc" id="aUartSensor_8hpp_html"><div class="ttname"><a href="UartSensor_8hpp.html">UartSensor.hpp</a></div><div class="ttdoc">Abstract Uart Sensor Class.</div></div>
 <div class="ttc" id="aVectorNavBinaryOutput_8hpp_html"><div class="ttname"><a href="VectorNavBinaryOutput_8hpp.html">VectorNavBinaryOutput.hpp</a></div><div class="ttdoc">Binary Outputs from VectorNav Sensors.</div></div>
 <div class="ttc" id="aclassNAV_1_1Imu_html"><div class="ttname"><a href="classNAV_1_1Imu.html">NAV::Imu</a></div><div class="ttdoc">Abstract IMU Class.</div><div class="ttdef"><b>Definition</b> Imu.hpp:24</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1UartSensor_html"><div class="ttname"><a href="classNAV_1_1UartSensor.html">NAV::UartSensor</a></div><div class="ttdoc">Abstract Uart Sensor Class.</div><div class="ttdef"><b>Definition</b> UartSensor.hpp:26</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavFile_html"><div class="ttname"><a href="classNAV_1_1VectorNavFile.html">NAV::VectorNavFile</a></div><div class="ttdoc">File Reader for Vector Nav log files.</div><div class="ttdef"><b>Definition</b> VectorNavFile.hpp:25</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavSensor_html"><div class="ttname"><a href="classNAV_1_1VectorNavSensor.html">NAV::VectorNavSensor</a></div><div class="ttdoc">Vector Nav Sensor Class.</div><div class="ttdef"><b>Definition</b> VectorNavSensor.hpp:35</div></div>

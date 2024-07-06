@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -194,7 +215,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Earth rotation/Sagnac correction [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[42]</a> Springer Handbook ch. 19.1.1, eq. 19.7, p. 562 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[43]</a> Springer Handbook ch. 19.1.1, eq. 19.7, p. 562 </dd></dl>
 
 </div>
 </div>
@@ -238,7 +259,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Range-rate Earth rotation/Sagnac correction [m/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves ch. 8.5.3, eq. 8.46, p. 342 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves ch. 8.5.3, eq. 8.46, p. 342 </dd></dl>
 
 </div>
 </div>
@@ -265,7 +286,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Azimuth [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
 
 </div>
 </div>
@@ -292,7 +313,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Elevation [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
 
 </div>
 </div>
@@ -330,7 +351,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The corresponding range-rate [m/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
 
 </div>
 </div>
@@ -362,7 +383,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The line-of-sight unit vector in ECEF frame coordinates</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 8.5.3, eq. 8.41, p. 341 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 8.5.3, eq. 8.41, p. 341 </dd></dl>
 
 </div>
 </div>
@@ -389,7 +410,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>SISA value in [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
 
 </div>
 </div>
@@ -416,7 +437,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The SISA index</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
 
 </div>
 </div>
@@ -443,7 +464,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>URA value in [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
 
 </div>
 </div>
@@ -470,7 +491,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The URA index</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
 
 </div>
 </div>
@@ -508,7 +529,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The corresponding doppler-shift [Hz]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
 
 </div>
 </div>
@@ -543,9 +564,9 @@ Functions</h2></td></tr>
 
 <p>Calculates the ration of the frequencies squared γ </p>
 <p><a class="anchor" id="eq-GNSS-freqRatio"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-GNSS-freqRatio}
+\begin{equation} \label{eq:eq-GNSS-freqRatio}
   \gamma = (f_1 / f_2)^2
-\end{equation}" src="form_41.svg" width="1521" height="21"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -557,7 +578,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The ratio (f1/f2)^2 [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> IS-GPS-200 ch. 20.3.3.3.3.2 p.99 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> IS-GPS-200 ch. 20.3.3.3.3.2 p.99 </dd></dl>
 
 </div>
 </div>

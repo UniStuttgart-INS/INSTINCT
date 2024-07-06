@@ -8,7 +8,7 @@ var classNAV_1_1ImuObsWDelta =
     [ "staticDataDescriptors", "classNAV_1_1ImuObsWDelta.html#afc2ad2e8fba4c6cbd9bafbea87466abe", null ],
     [ "staticDescriptorCount", "classNAV_1_1ImuObsWDelta.html#a54b1faeb384560f3e5bb9b23724a5188", null ],
     [ "type", "classNAV_1_1ImuObsWDelta.html#a5b04a2aaf16f05741e189b3aabe5f907", null ],
-    [ "dtheta", "classNAV_1_1ImuObsWDelta.html#a20f15382a891b7ad5c2193f8e2300c25", null ],
+    [ "dtheta", "classNAV_1_1ImuObsWDelta.html#a5e8148eb6a8d6395d4c1d4fdee8168af", null ],
     [ "dtime", "classNAV_1_1ImuObsWDelta.html#a4cb95e46a54bf2da8dd7358fef9c88cd", null ],
-    [ "dvel", "classNAV_1_1ImuObsWDelta.html#a8d307c5a53b4714f2fb1246d08db4da9", null ]
+    [ "dvel", "classNAV_1_1ImuObsWDelta.html#a803cceaccd12dabe573d3e38160d567b", null ]
 ];

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -186,7 +207,7 @@ $(function(){initNavTree('UbloxFile_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aUbloxUartSensor_8hpp_html"><div class="ttname"><a href="UbloxUartSensor_8hpp.html">UbloxUartSensor.hpp</a></div><div class="ttdoc">Class to read out Ublox Sensors.</div></div>
 <div class="ttc" id="aclassNAV_1_1FileReader_html"><div class="ttname"><a href="classNAV_1_1FileReader.html">NAV::FileReader</a></div><div class="ttdoc">Abstract File Reader class.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:31</div></div>
 <div class="ttc" id="aclassNAV_1_1FileReader_html_af2e5120198c08c760522fdccd1ac8c2e"><div class="ttname"><a href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e">NAV::FileReader::FileType</a></div><div class="ttdeci">FileType</div><div class="ttdoc">File Type Enumeration.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:35</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
 <div class="ttc" id="aclassNAV_1_1UbloxFile_html"><div class="ttname"><a href="classNAV_1_1UbloxFile.html">NAV::UbloxFile</a></div><div class="ttdoc">File Reader for Ublox log files.</div><div class="ttdef"><b>Definition</b> UbloxFile.hpp:25</div></div>
 <div class="ttc" id="aclassNAV_1_1UbloxFile_html_a15d68a4f783f19471b221df92ce98c0a"><div class="ttname"><a href="classNAV_1_1UbloxFile.html#a15d68a4f783f19471b221df92ce98c0a">NAV::UbloxFile::~UbloxFile</a></div><div class="ttdeci">~UbloxFile() override</div><div class="ttdoc">Destructor.</div></div>

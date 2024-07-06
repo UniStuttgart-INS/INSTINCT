@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -123,6 +144,7 @@ $(function(){initNavTree('functions_vars_d.html',''); initResizable(); });
 <li>dataIndex&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a77c4240a7a612b5aa5e893c828c0e442">NAV::Plot::PlotInfo::PlotItem</a></li>
 <li>dataSelection&#160;:&#160;<a class="el" href="structNAV_1_1Combiner_1_1Combination_1_1Term.html#aea0bbaffad51e975daa197ca04df4de7">NAV::Combiner::Combination::Term</a></li>
 <li>dataSource&#160;:&#160;<a class="el" href="classNAV_1_1GalileoEphemeris.html#a6244b2fa515afee485b3c935120ea15d">NAV::GalileoEphemeris</a></li>
+<li>date&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html#a1a6502850ca860c6209ef8a280a45345">NAV::AntexReader::Antenna::AntennaInfo</a></li>
 <li>day&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__YMDHMS.html#ae04955f5f5965735dceb1aec3b7c82bb">NAV::InsTime_YMDHMS</a>, <a class="el" href="classNAV_1_1NmeaFile.html#ad78aabc4fa9801cae71d66a4adc06185">NAV::NmeaFile</a>, <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1UTC.html#a4bfc01568259f9180fed2939b36085c3">NAV::vendor::vectornav::UTC</a></li>
 <li>dcm&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#a55d472f1f7d4dc4bb75a088506f07270">NAV::vendor::vectornav::AttitudeOutputs</a></li>
 <li>default_types&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html#a4f0ec48ce37b89faf3bbfb6c92457505">NAV::vendor::pixhawk::ulog_message_parameter_default_header_s</a></li>
@@ -150,15 +172,16 @@ $(function(){initNavTree('functions_vars_d.html',''); initResizable(); });
 <li>drift&#160;:&#160;<a class="el" href="structNAV_1_1Clock_1_1Corrections.html#a052c7e5c5eddd05dad8da62969aab633">NAV::Clock::Corrections</a>, <a class="el" href="structNAV_1_1ReceiverClock.html#a0eac3777be6dd4662811d407ddf96193">NAV::ReceiverClock</a></li>
 <li>dropQueueIfNotFirable&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#afdd16fcf2dae5ee6e46694322f69ba34">NAV::InputPin</a></li>
 <li>dT&#160;:&#160;<a class="el" href="structNAV_1_1GPT2output.html#ac34f34f6eb3397167117e8e077f1e0e3">NAV::GPT2output</a></li>
+<li>dt&#160;:&#160;<a class="el" href="structNAV_1_1InertialIntegrator_1_1Measurement.html#aedda1933417ce16bdf3c92a30aaf1774">NAV::InertialIntegrator::Measurement</a></li>
 <li>dT_A0&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a354bc6b1e50ec6618f0531b4a0628c02">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a8b7cb98fb40f856732a2aa5825c8e2b3">NAV::internal::GPT3Data</a></li>
 <li>dT_A1&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#abb3f25b5ea8d933ba112a09a40e1e9fc">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a3b9ad5916882a36712d9a5f566e48681">NAV::internal::GPT3Data</a></li>
 <li>dT_A2&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a3fc74fcfb20ce5c41c32f83917f24e44">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a51113c2b140c15559fc22043ca94fcd1">NAV::internal::GPT3Data</a></li>
 <li>dT_B1&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a182f2c949df878800fff0b3fcd50f535">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a9763c64a6960fedf1069ca6c37a40462">NAV::internal::GPT3Data</a></li>
 <li>dT_B2&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a59293f88e32d5e731e421ec8ebc44fdc">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#ab9ffc53d99c01d42981639c4e443a8a1">NAV::internal::GPT3Data</a></li>
-<li>dtheta&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a20f15382a891b7ad5c2193f8e2300c25">NAV::ImuObsWDelta</a></li>
+<li>dtheta&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a5e8148eb6a8d6395d4c1d4fdee8168af">NAV::ImuObsWDelta</a></li>
 <li>dtime&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a4cb95e46a54bf2da8dd7358fef9c88cd">NAV::ImuObsWDelta</a></li>
 <li>duration&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__dropout__s.html#abdef107f040be5d55125b42da517d766">NAV::vendor::pixhawk::message_dropout_s</a></li>
-<li>dvel&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a8d307c5a53b4714f2fb1246d08db4da9">NAV::ImuObsWDelta</a></li>
+<li>dvel&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a803cceaccd12dabe573d3e38160d567b">NAV::ImuObsWDelta</a></li>
 <li>dwrd&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html#a27eea793360347bd7b54a1e383bd659b">NAV::vendor::ublox::UbxRxmSfrbx</a></li>
 <li>dynamicDataStartIndex&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData.html#aa74a2614d1ac9e3b1f77493277d0c1dd">NAV::Plot::PinData</a></li>
 </ul>

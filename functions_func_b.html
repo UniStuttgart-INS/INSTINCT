@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +148,7 @@ $(function(){initNavTree('functions_func_b.html',''); initResizable(); });
 <li>BDCSVD()&#160;:&#160;<a class="el" href="classNAV_1_1BDCSVD.html#a0bca607cd9e312afb56de6eb6404ac77">NAV::BDCSVD&lt; Scalar &gt;</a></li>
 <li>BDSEphemeris()&#160;:&#160;<a class="el" href="classNAV_1_1BDSEphemeris.html#a609d269e526f8b458ffd1af63861a962">NAV::BDSEphemeris</a></li>
 <li>Begin()&#160;:&#160;<a class="el" href="classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a508f20901239ce8db2912d0316bd3a47">ax::NodeEditor::Utilities::BlueprintNodeBuilder</a></li>
-<li>begin()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer.html#ad64ea1fe5d60f6cc9f784ce57ea81122">NAV::ScrollingBuffer&lt; T, _Padding &gt;</a>, <a class="el" href="classNAV_1_1TsDeque.html#a0a20f23f8b306b628c1a9fbf1854167f">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
+<li>begin()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer.html#aec36c1db1ce4711e73dabbca3383db2a">NAV::ScrollingBuffer&lt; T, _Padding &gt;</a>, <a class="el" href="classNAV_1_1TsDeque.html#a3ebc66a0d8b5b36af158f638e7ae005d">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>block()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixBase.html#a356043e79b2ef383d7644726cde5583b">NAV::internal::KeyedMatrixBase&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt;</a></li>
 <li>BlueprintNodeBuilder()&#160;:&#160;<a class="el" href="classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aa35fd27274cda61cc190a904501a8f61">ax::NodeEditor::Utilities::BlueprintNodeBuilder</a></li>
 </ul>

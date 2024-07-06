@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -172,25 +193,25 @@ $(function(){initNavTree('classNAV_1_1ImuSimulator.html',''); initResizable(); }
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a188e504f08f21e9bfb51696f27503400">outputPinFromId</a>(ax::NodeEditor::PinId pinId)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5d5bb7d6f49f551206a23b71e43876cf">outputPinIndexFromId</a>(ax::NodeEditor::PinId pinId) const</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a355d74c9bf39e9b763078c2710059075">outputPins</a></td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#abf9ef059957197391af48852d8bba246">pitch</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a88a9ab515ecc073b180337e9210e073c">pitch</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a48d6ee1f296a7bc3a30d5b31c923f310">pollEvents</a></td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a0cd0580a18d21f578e75bb5f230ee85e">releaseInputValue</a>(size_t portIndex)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#ac4549feccdf13207e2b06267d8b5cb5f">requestOutputValueLock</a>(size_t pinIdx)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a953014d24f535c764d786dd1f276fd86">resetNode</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a0be3fc2d697d8db21647dd40f5963f37">restore</a>(const json &amp;j) override</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a8dff960e9111edd4510f0ef016bf3b1e">restoreAtferLink</a>(const json &amp;j)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a3587c8b784ce82e3dce626249c00f7f0">roll</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a1665bf2178d5e6f52b4d004789dc9b2c">sampleInterval</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#af49686d6e931092125f79a72fa7d9e53">roll</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a9952c9128ae0753f015ec823347637bf">sampleInterval</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a4bd9d41e67c5b9c2f4a4514f925927b2">save</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534">State</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a5b4f8d7291273c38be7d134c27e2195f">toString</a>(State state)</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#abc2be75427adcdb6134f74f56a517d4f">type</a>() const override</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a1b1fa5f33ad9760e34fb8ead7a277dd9">typeStatic</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38">wakeWorker</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a84b112a4676e77445c32977f200f6abd">x</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#ade924e28b9babbee7af88e9d90975424">y</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#ac93340bb96eb822368b2920672dea34f">yaw</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#ae5fe0f6dc91cfa9c0fac902a0f124e6c">z</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#aec3a87f7dcc6a8af6d78c1c49f1dc849">x</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#adbfc3a49d607f7550f8ab2ffc8e8c61b">y</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#ac9e4bd1340a7e0dcc0385299e2b7cd0b">yaw</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a100dc2a1d5b205deb1b061832d3cddc8">z</a></td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Imu.html#acee3bdba419bf3de34cc5131f28df894">~Imu</a>() override=default</td><td class="entry"><a class="el" href="classNAV_1_1Imu.html">NAV::Imu</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html#a4d84823a8344fb7c1c681252f053f0dd">~ImuSimulator</a>() override</td><td class="entry"><a class="el" href="classNAV_1_1ImuSimulator.html">NAV::ImuSimulator</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1Node.html#abc11472b9b7519bed44fa424609935b3">~Node</a>()</td><td class="entry"><a class="el" href="classNAV_1_1Node.html">NAV::Node</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>

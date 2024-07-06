@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,7 +133,8 @@ $(function(){initNavTree('VectorNavBinaryConverter_8hpp.html',''); initResizable
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">VectorNavBinaryConverter.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -127,12 +149,45 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html">NAV::VectorNavBinaryConverter</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html" title="IMU Observation storage class.">VectorNavBinaryOutput</a>.  <a href="classNAV_1_1VectorNavBinaryConverter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a3b0b2a7bdea622fa858b7f92c56d8bcc" id="r_a3b0b2a7bdea622fa858b7f92c56d8bcc"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b0b2a7bdea622fa858b7f92c56d8bcc">NAV::to_string</a> (<a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">NAV::VectorNavBinaryConverter::OutputType</a> value)</td></tr>
+<tr class="memdesc:a3b0b2a7bdea622fa858b7f92c56d8bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
+<tr class="separator:a3b0b2a7bdea622fa858b7f92c56d8bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Converts VectorNavBinaryOutput. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2021-07-09 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a3b0b2a7bdea622fa858b7f92c56d8bcc" name="a3b0b2a7bdea622fa858b7f92c56d8bcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b0b2a7bdea622fa858b7f92c56d8bcc">&#9670;&#160;</a></span>to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * NAV::to_string </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">NAV::VectorNavBinaryConverter::OutputType</a></td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Converts the enum to a string. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Enum value to convert into text </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

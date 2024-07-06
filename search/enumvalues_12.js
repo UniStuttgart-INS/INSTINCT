@@ -18,10 +18,10 @@ var searchData=
   ['r6a_15',['R6A',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca090d29c35ac9c5a5fb18d4965c3e585e',1,'NAV::Code']]],
   ['r6b_16',['R6B',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca970a626c6a5063badcb87bcbd004e937',1,'NAV::Code']]],
   ['r6x_17',['R6X',['../classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6cad9a4a399a3ba6582ebef24bc49cbafbf',1,'NAV::Code']]],
-  ['rad2_5fs2_18',['rad2_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa0a2b17a8bff7d8f903ffda8c0f306543',1,'NAV::ImuFusion::PinData']]],
-  ['rad2_5fs4_19',['rad2_s4',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aacacd6bc0c13dd4371f902ae8d998e6a2f8',1,'NAV::ImuFusion::PinData']]],
-  ['rad_5fs_20',['rad_s',['../structNAV_1_1ImuFusion_1_1PinData.html#a62dacfc83de0321e190b1fcc6d9e4c93a5048ae192d391e12c3401c38f2ffc497',1,'NAV::ImuFusion::PinData::rad_s'],['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa5048ae192d391e12c3401c38f2ffc497',1,'NAV::ImuFusion::PinData::rad_s']]],
-  ['rad_5fs2_21',['rad_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#ac9d1734eacf5f5c7642b8eb518d8555aad6ac8036a0bd18efad0ac6ac1725bd30',1,'NAV::ImuFusion::PinData::rad_s2'],['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aacad6ac8036a0bd18efad0ac6ac1725bd30',1,'NAV::ImuFusion::PinData::rad_s2']]],
+  ['rad2_5fs2_18',['rad2_s2',['../structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa0a2b17a8bff7d8f903ffda8c0f306543',1,'NAV::PinData']]],
+  ['rad2_5fs4_19',['rad2_s4',['../structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4eacd6bc0c13dd4371f902ae8d998e6a2f8',1,'NAV::PinDataIRWKF']]],
+  ['rad_5fs_20',['rad_s',['../structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4a5048ae192d391e12c3401c38f2ffc497',1,'NAV::PinData::rad_s'],['../structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa5048ae192d391e12c3401c38f2ffc497',1,'NAV::PinData::rad_s']]],
+  ['rad_5fs2_21',['rad_s2',['../structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152ad6ac8036a0bd18efad0ac6ac1725bd30',1,'NAV::PinDataIRWKF::rad_s2'],['../structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ead6ac8036a0bd18efad0ac6ac1725bd30',1,'NAV::PinDataIRWKF::rad_s2']]],
   ['real_5ftime_22',['REAL_TIME',['../classNAV_1_1Node.html#a3bf21eafea4312a9a11558c2180d31a6aa211f45bf313bdaed8cb10ddb5fe42f6',1,'NAV::Node::REAL_TIME'],['../TimeBase_8hpp.html#a5c85c03de6b1c2d12775311f31cced8faa211f45bf313bdaed8cb10ddb5fe42f6',1,'REAL_TIMENAV::util::time']]],
   ['receivertype_5fcount_23',['ReceiverType_COUNT',['../classNAV_1_1SPP_1_1Algorithm.html#a8dfc4c1e2c31c2792045126cfb1e2a32a0b96496cf4c95027de8194a638306d6d',1,'NAV::SPP::Algorithm']]],
   ['recvclkdrift_24',['RecvClkDrift',['../Keys_8hpp.html#acc2e8a3e7c5a6bb0effc144e2a901b19ad92a9045c4c2f6d7c4874005c345ddfb',1,'NAV::SPP::States']]],
@@ -31,9 +31,5 @@ var searchData=
   ['rover_28',['Rover',['../classNAV_1_1SPP_1_1Algorithm.html#a8dfc4c1e2c31c2792045126cfb1e2a32a409f58348b961ba9e30f3adb09a65b2a',1,'NAV::SPP::Algorithm']]],
   ['rtklib_29',['RTKLIB',['../classNAV_1_1GnssMeasurementErrorModel.html#a4818411c6ad1cc9c446b5928433c3744a71b437c9eaa4de94a319ee6f77c8879d',1,'NAV::GnssMeasurementErrorModel']]],
   ['runflow_30',['RunFlow',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabca37da3b966d5243f983b9081b0e5387d2',1,'GlobalActions.hpp']]],
-  ['rungekutta1_31',['RungeKutta1',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506',1,'NAV']]],
-  ['rungekutta2_32',['RungeKutta2',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f',1,'NAV']]],
-  ['rungekutta3_33',['RungeKutta3',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9',1,'NAV']]],
-  ['rungekutta4_34',['RungeKutta4',['../NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58',1,'NAV']]],
-  ['rxchannel_35',['RxChannel',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a181440b45b22da791a9bf5e6c7fb96e7',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]]
+  ['rxchannel_31',['RxChannel',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a181440b45b22da791a9bf5e6c7fb96e7',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]]
 ];

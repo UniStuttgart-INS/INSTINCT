@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -121,6 +142,7 @@ $(function(){initNavTree('functions_func_h.html',''); initResizable(); });
 <li>hasCol()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixColsBase.html#ae4d757c4daca21ee5b0da5993bf7eb8d">NAV::internal::KeyedMatrixColsBase&lt; Scalar, ColKeyType, Rows, Cols &gt;</a></li>
 <li>hasCols()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixColsBase.html#a6b7806d425e11b300b5b14bbb7d8de4e">NAV::internal::KeyedMatrixColsBase&lt; Scalar, ColKeyType, Rows, Cols &gt;</a></li>
 <li>hasCompatiblePin()&#160;:&#160;<a class="el" href="structNAV_1_1NodeRegistry_1_1NodeInfo.html#a876b61625115de119206276055ab38b1">NAV::NodeRegistry::NodeInfo</a></li>
+<li>hasInitialPosition()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a102324df198c6e0dac27327db2d5d826">NAV::InertialIntegrator</a></li>
 <li>hasRow()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a7fe9b03c1052169665c372bf4b3ae6a4">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>hasRows()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a927799db4f9db001afa4c724f9e77845">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>hasState()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a580665306f2a4105d59c41e3cf98e86d">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>

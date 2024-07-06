@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,7 +133,6 @@ $(function(){initNavTree('EcefFrame_2Mechanization_8hpp.html',''); initResizable
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Mechanization.hpp File Reference</div></div>
 </div><!--header-->
@@ -123,62 +143,62 @@ $(function(){initNavTree('EcefFrame_2Mechanization_8hpp.html',''); initResizable
 
 <p><a href="EcefFrame_2Mechanization_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html">NAV::PosVelAttDerivativeConstants_e</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Values needed to calculate the PosVelAttDerivative for the ECEF frame.  <a href="structNAV_1_1PosVelAttDerivativeConstants__e.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aceafac28937874d20ea166ddf38bcf4a" id="r_aceafac28937874d20ea166ddf38bcf4a"><td class="memItemLeft" align="right" valign="top">Eigen::Vector4d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aceafac28937874d20ea166ddf38bcf4a">NAV::calcTimeDerivativeFor_e_Quat_b</a> (const Eigen::Vector3d &amp;b_omega_eb, const Eigen::Vector4d &amp;e_Quat_b_coeffs)</td></tr>
-<tr class="memdesc:aceafac28937874d20ea166ddf38bcf4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the quaternion e_Quat_b.  <br /></td></tr>
-<tr class="separator:aceafac28937874d20ea166ddf38bcf4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abea527c5d81c6cf1ba21045d4d0af391" id="r_abea527c5d81c6cf1ba21045d4d0af391"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; double, 16, 1 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abea527c5d81c6cf1ba21045d4d0af391">NAV::e_calcPosVelAttDerivative</a> (const Eigen::Matrix&lt; double, 16, 1 &gt; &amp;y, const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html">PosVelAttDerivativeConstants_e</a> &amp;c)</td></tr>
-<tr class="memdesc:abea527c5d81c6cf1ba21045d4d0af391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivative of the quaternion, velocity and position in ECEF coordinates.  <br /></td></tr>
-<tr class="separator:abea527c5d81c6cf1ba21045d4d0af391"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a817e0ac029b99d08e7d7c80d393bf6b7" id="r_a817e0ac029b99d08e7d7c80d393bf6b7"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a817e0ac029b99d08e7d7c80d393bf6b7">NAV::e_calcTimeDerivativeForPosition</a> (const Eigen::Vector3d &amp;e_velocity)</td></tr>
-<tr class="memdesc:a817e0ac029b99d08e7d7c80d393bf6b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the ECEF position.  <br /></td></tr>
-<tr class="separator:a817e0ac029b99d08e7d7c80d393bf6b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b94559262d4bf4e065f57b7c743390d" id="r_a6b94559262d4bf4e065f57b7c743390d"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b94559262d4bf4e065f57b7c743390d">NAV::e_calcTimeDerivativeForVelocity</a> (const Eigen::Vector3d &amp;e_measuredForce, const Eigen::Vector3d &amp;e_coriolisAcceleration, const Eigen::Vector3d &amp;e_gravitation, const Eigen::Vector3d &amp;e_centrifugalAcceleration)</td></tr>
-<tr class="memdesc:a6b94559262d4bf4e065f57b7c743390d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the velocity in ECEF frame coordinates.  <br /></td></tr>
-<tr class="separator:a6b94559262d4bf4e065f57b7c743390d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a285a16ac49d9937fda44638e943b25bc" id="r_a285a16ac49d9937fda44638e943b25bc"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA , typename DerivedB &gt; </td></tr>
+<tr class="memitem:a285a16ac49d9937fda44638e943b25bc"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector4&lt; typename DerivedA::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a285a16ac49d9937fda44638e943b25bc">NAV::calcTimeDerivativeFor_e_Quat_b</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;b_omega_eb, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_Quat_b_coeffs)</td></tr>
+<tr class="memdesc:a285a16ac49d9937fda44638e943b25bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the quaternion e_Quat_b.  <br /></td></tr>
+<tr class="separator:a285a16ac49d9937fda44638e943b25bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a924750e693152c6210e662657908ae96" id="r_a924750e693152c6210e662657908ae96"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a924750e693152c6210e662657908ae96"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector&lt; Scalar, 10 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a924750e693152c6210e662657908ae96">NAV::e_calcPosVelAttDerivative</a> (const Eigen::Vector&lt; Scalar, 10 &gt; &amp;y, const Eigen::Vector&lt; Scalar, 6 &gt; &amp;z, const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a>&lt; Scalar &gt; &amp;c, Scalar=0.0)</td></tr>
+<tr class="memdesc:a924750e693152c6210e662657908ae96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivative of the quaternion, velocity and position in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:a924750e693152c6210e662657908ae96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea5605b413afe7b796de583056af8cbb" id="r_aea5605b413afe7b796de583056af8cbb"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:aea5605b413afe7b796de583056af8cbb"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aea5605b413afe7b796de583056af8cbb">NAV::e_calcTimeDerivativeForPosition</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_velocity)</td></tr>
+<tr class="memdesc:aea5605b413afe7b796de583056af8cbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the ECEF position.  <br /></td></tr>
+<tr class="separator:aea5605b413afe7b796de583056af8cbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc6c7982adac0cadd5abfecb69a05702" id="r_adc6c7982adac0cadd5abfecb69a05702"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA , typename DerivedB , typename DerivedC , typename DerivedD &gt; </td></tr>
+<tr class="memitem:adc6c7982adac0cadd5abfecb69a05702"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename DerivedA::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adc6c7982adac0cadd5abfecb69a05702">NAV::e_calcTimeDerivativeForVelocity</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_measuredForce, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_coriolisAcceleration, const Eigen::MatrixBase&lt; DerivedC &gt; &amp;e_gravitation, const Eigen::MatrixBase&lt; DerivedD &gt; &amp;e_centrifugalAcceleration)</td></tr>
+<tr class="memdesc:adc6c7982adac0cadd5abfecb69a05702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the time derivative of the velocity in ECEF frame coordinates.  <br /></td></tr>
+<tr class="separator:adc6c7982adac0cadd5abfecb69a05702"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Inertial Navigation Mechanization Functions in ECEF frame. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-06-12 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="aceafac28937874d20ea166ddf38bcf4a" name="aceafac28937874d20ea166ddf38bcf4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aceafac28937874d20ea166ddf38bcf4a">&#9670;&#160;</a></span>calcTimeDerivativeFor_e_Quat_b()</h2>
+<a id="a285a16ac49d9937fda44638e943b25bc" name="a285a16ac49d9937fda44638e943b25bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a285a16ac49d9937fda44638e943b25bc">&#9670;&#160;</a></span>calcTimeDerivativeFor_e_Quat_b()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename DerivedA , typename DerivedB &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Vector4d NAV::calcTimeDerivativeFor_e_Quat_b </td>
+          <td class="memname">Eigen::Vector4&lt; typename DerivedA::Scalar &gt; NAV::calcTimeDerivativeFor_e_Quat_b </td>
           <td>(</td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>b_omega_eb</em>, </span></td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedA &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>b_omega_eb</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::Vector4d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_Quat_b_coeffs</em></span>&#160;)</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedB &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_Quat_b_coeffs</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Calculates the time derivative of the quaternion e_Quat_b. </p>
 <p><a class="anchor" id="eq-INS-Mechanization-e_Quat_b-dot"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-e_Quat_b-dot}
+\begin{equation} \label{eq:eq-INS-Mechanization-e_Quat_b-dot}
   \mathbf{\dot{q}}_b^e
-   = \begin{bmatrix} \dotup{w} \\ \dotup{x} \\ \dotup{y} \\ \dotup{z} \end{bmatrix}
+   = \begin{bmatrix} \dot{w} \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix}
    = \frac{1}{2} \begin{bmatrix}        0        &amp; -\omega_{eb,x}^b &amp; -\omega_{eb,y}^b &amp; -\omega_{eb,z}^b \\
                                  \omega_{eb,x}^b &amp;        0         &amp;  \omega_{eb,z}^b &amp; -\omega_{eb,y}^b \\
                                  \omega_{eb,y}^b &amp; -\omega_{eb,z}^b &amp;        0         &amp;  \omega_{eb,x}^b \\
                                  \omega_{eb,z}^b &amp;  \omega_{eb,y}^b &amp; -\omega_{eb,x}^b &amp;        0         \end{bmatrix}
                  \begin{bmatrix} w \\ x \\ y \\ z \end{bmatrix}
-\end{equation}" src="form_42.svg" width="1682" height="89"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -188,25 +208,37 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The time derivative of the coefficients of the quaternion e_Quat_b in order w, x, y, z (q = w + ix + jy + kz)</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion">Propagation of quaternion with time</a> equation <a class="el" href="group__ImuIntegrator__e.html#eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix"><img class="formulaInl" alt="\eqref{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}" src="form_43.svg" width="44" height="19"/> </a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion">Propagation of quaternion with time</a> equation <a class="el" href="ImuIntegrator_e.html#eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix">eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix</a> </dd></dl>
 
 </div>
 </div>
-<a id="abea527c5d81c6cf1ba21045d4d0af391" name="abea527c5d81c6cf1ba21045d4d0af391"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abea527c5d81c6cf1ba21045d4d0af391">&#9670;&#160;</a></span>e_calcPosVelAttDerivative()</h2>
+<a id="a924750e693152c6210e662657908ae96" name="a924750e693152c6210e662657908ae96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a924750e693152c6210e662657908ae96">&#9670;&#160;</a></span>e_calcPosVelAttDerivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Matrix&lt; double, 16, 1 &gt; NAV::e_calcPosVelAttDerivative </td>
+          <td class="memname">Eigen::Vector&lt; Scalar, 10 &gt; NAV::e_calcPosVelAttDerivative </td>
           <td>(</td>
-          <td class="paramtype">const Eigen::Matrix&lt; double, 16, 1 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>y</em>, </span></td>
+          <td class="paramtype">const Eigen::Vector&lt; Scalar, 10 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>y</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants__e.html">PosVelAttDerivativeConstants_e</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
+          <td class="paramtype">const Eigen::Vector&lt; Scalar, 6 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a>&lt; Scalar &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar</td>          <td class="paramname"><span class="paramname"><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -214,25 +246,28 @@ Functions</h2></td></tr>
 <p>Calculates the derivative of the quaternion, velocity and position in ECEF coordinates. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>[w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">y</td><td>[w, x, y, z, v_x, v_y, v_z, x, y, z]^T </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>[fx, fy, fz, ωx, ωy, ωz]^T </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Constant values needed to calculate the derivatives </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The derivative ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z, fx, fy, fz, ωx, ωy, ωz]^T </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The derivative ∂/∂t [w, x, y, z, v_x, v_y, v_z, x, y, z]^T </dd></dl>
 
 </div>
 </div>
-<a id="a817e0ac029b99d08e7d7c80d393bf6b7" name="a817e0ac029b99d08e7d7c80d393bf6b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a817e0ac029b99d08e7d7c80d393bf6b7">&#9670;&#160;</a></span>e_calcTimeDerivativeForPosition()</h2>
+<a id="aea5605b413afe7b796de583056af8cbb" name="aea5605b413afe7b796de583056af8cbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea5605b413afe7b796de583056af8cbb">&#9670;&#160;</a></span>e_calcTimeDerivativeForPosition()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Vector3d NAV::e_calcTimeDerivativeForPosition </td>
+          <td class="memname">Eigen::Vector3&lt; typename Derived::Scalar &gt; NAV::e_calcTimeDerivativeForPosition </td>
           <td>(</td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_velocity</em></span></td><td>)</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_velocity</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -240,9 +275,9 @@ Functions</h2></td></tr>
 
 <p>Calculates the time derivative of the ECEF position. </p>
 <p><a class="anchor" id="eq-INS-Mechanization-x_e-dot"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-x_e-dot}
+\begin{equation} \label{eq:eq-INS-Mechanization-x_e-dot}
   \boldsymbol{\dot{x}}^e = \boldsymbol{v}^e
-\end{equation}" src="form_46.svg" width="1503" height="19"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -251,48 +286,50 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The time derivative of the ECEF position</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Position">Position</a> equation <a class="el" href="group__ImuIntegrator__e.html#eq-ImuIntegrator-Mechanization-e-Position"><img class="formulaInl" alt="\eqref{eq:eq-ImuIntegrator-Mechanization-e-Position}" src="form_47.svg" width="44" height="19"/> </a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Position">Position</a> equation <a class="el" href="ImuIntegrator_e.html#eq-ImuIntegrator-Mechanization-e-Position">eq-ImuIntegrator-Mechanization-e-Position</a> </dd></dl>
 
 </div>
 </div>
-<a id="a6b94559262d4bf4e065f57b7c743390d" name="a6b94559262d4bf4e065f57b7c743390d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b94559262d4bf4e065f57b7c743390d">&#9670;&#160;</a></span>e_calcTimeDerivativeForVelocity()</h2>
+<a id="adc6c7982adac0cadd5abfecb69a05702" name="adc6c7982adac0cadd5abfecb69a05702"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc6c7982adac0cadd5abfecb69a05702">&#9670;&#160;</a></span>e_calcTimeDerivativeForVelocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename DerivedA , typename DerivedB , typename DerivedC , typename DerivedD &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Eigen::Vector3d NAV::e_calcTimeDerivativeForVelocity </td>
+          <td class="memname">Eigen::Vector3&lt; typename DerivedA::Scalar &gt; NAV::e_calcTimeDerivativeForVelocity </td>
           <td>(</td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_measuredForce</em>, </span></td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedA &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_measuredForce</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_coriolisAcceleration</em>, </span></td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedB &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_coriolisAcceleration</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_gravitation</em>, </span></td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedC &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_gravitation</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_centrifugalAcceleration</em></span>&#160;)</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedD &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_centrifugalAcceleration</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Calculates the time derivative of the velocity in ECEF frame coordinates. </p>
 <p><a class="anchor" id="eq-INS-Mechanization-v_e-dot"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-v_e-dot}
+\begin{equation} \label{eq:eq-INS-Mechanization-v_e-dot}
   \boldsymbol{\dot{v}}^e
-      = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
+      = \overbrace{\boldsymbol{f}^e}^{\text{measured}}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\text{coriolis acceleration}}
-        +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravitation}\hidewidth}
+        +\ \overbrace{\mathbf{g}^e}^{\text{gravitation}}
         -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
-\end{equation}" src="form_44.svg" width="1692" height="70"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -304,7 +341,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The time derivative of the velocity in ECEF frame coordinates</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Velocity">Velocity</a> equation <a class="el" href="group__ImuIntegrator__e.html#eq-ImuIntegrator-Mechanization-e-Velocity"><img class="formulaInl" alt="\eqref{eq:eq-ImuIntegrator-Mechanization-e-Velocity}" src="form_45.svg" width="44" height="19"/> </a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Velocity">Velocity</a> equation <a class="el" href="ImuIntegrator_e.html#eq-ImuIntegrator-Mechanization-e-Velocity">eq-ImuIntegrator-Mechanization-e-Velocity</a> </dd></dl>
 
 </div>
 </div>

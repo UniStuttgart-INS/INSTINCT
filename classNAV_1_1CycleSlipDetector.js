@@ -12,7 +12,7 @@ var classNAV_1_1CycleSlipDetector =
       [ "SingleFrequency", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aad5589033925c0e4d3b4aca6b31da66fa", null ],
       [ "DualFrequency", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aafc1f61fef9d75268bbd1ad4793b205e8", null ]
     ] ],
-    [ "checkForCycleSlip", "classNAV_1_1CycleSlipDetector.html#aaafabd4ecdd84f18dcf2a8e007efa77c", null ],
+    [ "checkForCycleSlip", "classNAV_1_1CycleSlipDetector.html#a4aa6b51311d63e2285a8cc0e1fca7b31", null ],
     [ "getFitStrategy", "classNAV_1_1CycleSlipDetector.html#a58d1aebaa04755f8f910033de6972d75", null ],
     [ "getPolynomialDegree", "classNAV_1_1CycleSlipDetector.html#af41fc4daac5b6fe5415d1e812a5d1f2a", null ],
     [ "getThreshold", "classNAV_1_1CycleSlipDetector.html#aa309d97efdf7c43af4302c53e5a192f1", null ],

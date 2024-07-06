@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -133,11 +154,11 @@ Classes</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a4011f18afaee03aecfe164949504e055" id="r_a4011f18afaee03aecfe164949504e055"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </td></tr>
 <tr class="memitem:a4011f18afaee03aecfe164949504e055"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4011f18afaee03aecfe164949504e055">NAV::solveLinearLeastSquares</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
-<tr class="memdesc:a4011f18afaee03aecfe164949504e055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>.  <br /></td></tr>
+<tr class="memdesc:a4011f18afaee03aecfe164949504e055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \).  <br /></td></tr>
 <tr class="separator:a4011f18afaee03aecfe164949504e055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a190e124963aafc9ee781de628ad56b" id="r_a1a190e124963aafc9ee781de628ad56b"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </td></tr>
 <tr class="memitem:a1a190e124963aafc9ee781de628ad56b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">KeyedLeastSquaresResult</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1a190e124963aafc9ee781de628ad56b">NAV::solveLinearLeastSquaresUncertainties</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
-<tr class="memdesc:a1a190e124963aafc9ee781de628ad56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>.  <br /></td></tr>
+<tr class="memdesc:a1a190e124963aafc9ee781de628ad56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \).  <br /></td></tr>
 <tr class="separator:a1a190e124963aafc9ee781de628ad56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87eb8b9771ec9abdc03cff04bbf846a1" id="r_a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memTemplParams" colspan="2">template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; </td></tr>
 <tr class="memitem:a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a87eb8b9771ec9abdc03cff04bbf846a1">NAV::solveWeightedLinearLeastSquares</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;W, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
@@ -176,7 +197,7 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
       </table>
 </div><div class="memdoc">
 
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>. </p>
+<p>Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \). </p>
 <p>Minimizes the functional (see LeastSquares.hpp) </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
@@ -209,7 +230,7 @@ template&lt;typename Scalar , typename StateKeyType , typename MeasKeyType &gt; 
       </table>
 </div><div class="memdoc">
 
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="102" height="14"/>. </p>
+<p>Finds the "least squares" solution for the equation \( \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>

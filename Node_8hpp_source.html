@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -483,7 +504,7 @@ $(function(){initNavTree('Node_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aPin_8hpp_html"><div class="ttname"><a href="Pin_8hpp.html">Pin.hpp</a></div><div class="ttdoc">Pin class.</div></div>
 <div class="ttc" id="aclassNAV_1_1GroupBox_html"><div class="ttname"><a href="classNAV_1_1GroupBox.html">NAV::GroupBox</a></div><div class="ttdoc">Group Box.</div><div class="ttdef"><b>Definition</b> GroupBox.hpp:22</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html"><div class="ttname"><a href="classNAV_1_1InputPin.html">NAV::InputPin</a></div><div class="ttdoc">Input pins of nodes.</div><div class="ttdef"><b>Definition</b> Pin.hpp:491</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a026affb8949351dc59588a32554b5978"><div class="ttname"><a href="classNAV_1_1Node.html#a026affb8949351dc59588a32554b5978">NAV::Node::isDisabled</a></div><div class="ttdeci">bool isDisabled() const</div><div class="ttdoc">Checks if the node is disabled.</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html_a02fa8f854e97ba2c25898293166013d0"><div class="ttname"><a href="classNAV_1_1Node.html#a02fa8f854e97ba2c25898293166013d0">NAV::Node::isOnlyRealtime</a></div><div class="ttdeci">bool isOnlyRealtime() const</div><div class="ttdoc">Checks if the node is only working in real time (sensors, network interfaces, ...)</div></div>

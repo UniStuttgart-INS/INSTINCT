@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -164,9 +185,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>Strategy</b></td></t
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aaafabd4ecdd84f18dcf2a8e007efa77c" id="r_aaafabd4ecdd84f18dcf2a8e007efa77c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="#a1d2d858fe5255024fbc260e7578eae04">Result</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaafabd4ecdd84f18dcf2a8e007efa77c">checkForCycleSlip</a> (<a class="el" href="classNAV_1_1InsTime.html">InsTime</a> insTime, const std::vector&lt; <a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html">SatelliteObservation</a> &gt; &amp;satObs)</td></tr>
-<tr class="memdesc:aaafabd4ecdd84f18dcf2a8e007efa77c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for a cycle slip.  <br /></td></tr>
-<tr class="separator:aaafabd4ecdd84f18dcf2a8e007efa77c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4aa6b51311d63e2285a8cc0e1fca7b31" id="r_a4aa6b51311d63e2285a8cc0e1fca7b31"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="#a1d2d858fe5255024fbc260e7578eae04">Result</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4aa6b51311d63e2285a8cc0e1fca7b31">checkForCycleSlip</a> (<a class="el" href="classNAV_1_1InsTime.html">InsTime</a> insTime, const std::vector&lt; <a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html">SatelliteObservation</a> &gt; &amp;satObs, const std::string &amp;nameId)</td></tr>
+<tr class="memdesc:a4aa6b51311d63e2285a8cc0e1fca7b31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for a cycle slip.  <br /></td></tr>
+<tr class="separator:a4aa6b51311d63e2285a8cc0e1fca7b31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58d1aebaa04755f8f910033de6972d75" id="r_a58d1aebaa04755f8f910033de6972d75"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1PolynomialRegressor.html#aeb8bcf105601dc48a420b7741b83c9cc">Strategy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58d1aebaa04755f8f910033de6972d75">getFitStrategy</a> (const <a class="el" href="#ac50e03e3ee6671972ac2e9a5b495d64a">Detector</a> &amp;detector) const</td></tr>
 <tr class="memdesc:a58d1aebaa04755f8f910033de6972d75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the strategy used for fitting.  <br /></td></tr>
 <tr class="separator:a58d1aebaa04755f8f910033de6972d75"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,8 +262,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaafabd4ecdd84f18dcf2a8e007efa77c" name="aaafabd4ecdd84f18dcf2a8e007efa77c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaafabd4ecdd84f18dcf2a8e007efa77c">&#9670;&#160;</a></span>checkForCycleSlip()</h2>
+<a id="a4aa6b51311d63e2285a8cc0e1fca7b31" name="a4aa6b51311d63e2285a8cc0e1fca7b31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4aa6b51311d63e2285a8cc0e1fca7b31">&#9670;&#160;</a></span>checkForCycleSlip()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -255,7 +276,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html">SatelliteObservation</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>satObs</em></span>&#160;)</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html">SatelliteObservation</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>satObs</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -265,6 +291,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">insTime</td><td>Time of the measurement </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">satObs</td><td><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> observations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td><a class="el" href="classNAV_1_1Node.html" title="Abstract parent class for all nodes.">Node</a> nameId for log messages </td></tr>
   </table>
   </dd>
 </dl>

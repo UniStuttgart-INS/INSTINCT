@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -129,7 +150,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">GALILEO related constants.  <a href="classNAV_1_1InsConst_1_1GAL.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1InsConst_1_1GLO.html">GLO</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">GLONASS related constants (see <a class="el" href="citelist.html#CITEREF_GLO-ICD-5.1">[14]</a> GLONASS ICD 5.1 Table 3.2)  <a href="classNAV_1_1InsConst_1_1GLO.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">GLONASS related constants (see <a class="el" href="citelist.html#CITEREF_GLO-ICD-5.1">[15]</a> GLONASS ICD 5.1 Table 3.2)  <a href="classNAV_1_1InsConst_1_1GLO.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1InsConst_1_1GPS.html">GPS</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1InsConst_1_1GPS.html" title="GPS related constants.">GPS</a> related constants.  <a href="classNAV_1_1InsConst_1_1GPS.html#details">More...</a><br /></td></tr>
@@ -138,7 +159,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geodetic Reference System 1980.  <a href="classNAV_1_1InsConst_1_1GRS80.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1InsConst_1_1PZ90.html">PZ90</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parametry Zemli 1990 goda (see <a class="el" href="citelist.html#CITEREF_PZ-90.11">[34]</a>)  <a href="classNAV_1_1InsConst_1_1PZ90.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parametry Zemli 1990 goda (see <a class="el" href="citelist.html#CITEREF_PZ-90.11">[35]</a>)  <a href="classNAV_1_1InsConst_1_1PZ90.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1InsConst_1_1WGS84.html">WGS84</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">World Geodetic System 1984.  <a href="classNAV_1_1InsConst_1_1WGS84.html#details">More...</a><br /></td></tr>

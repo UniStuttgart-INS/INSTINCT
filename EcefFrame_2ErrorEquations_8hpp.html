@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -207,7 +228,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [rad / s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_11 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_11 </dd></dl>
 
 </div>
 </div>
@@ -234,7 +255,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_15 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_15 </dd></dl>
 
 </div>
 </div>
@@ -255,7 +276,7 @@ Functions</h2></td></tr>
 
 <p>Calculates the matrix 𝐅_𝛿r'_𝛿v. </p>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_32 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_32 </dd></dl>
 
 </div>
 </div>
@@ -282,7 +303,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_24 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_24 </dd></dl>
 
 </div>
 </div>
@@ -309,7 +330,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [m / s^2] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.49, p. 584 - 𝐅_21 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.49, p. 584 - 𝐅_21 </dd></dl>
 
 </div>
 </div>
@@ -353,7 +374,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / s^2] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.49, p. 584 - 𝐅_23 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.49, p. 584 - 𝐅_23 </dd></dl>
 
 </div>
 </div>
@@ -380,7 +401,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_22 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.48, p. 583 - 𝐅_22 </dd></dl>
 
 </div>
 </div>

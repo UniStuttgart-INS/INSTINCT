@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,26 +135,29 @@ $(function(){initNavTree('functions_func_p.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div>
 
 <h3><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>p_calcCurrentAcceleration()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a096ee7d4db016b54c54797ea69e2beb5">NAV::InertialIntegrator</a></li>
+<li>p_calcCurrentAngularRate()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a3865fd4a54d4a97590c1345be2d47353">NAV::InertialIntegrator</a></li>
+<li>p_getLastAccelerationBias()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a58ab49c9bb5c34e73b97da4da5eae347">NAV::InertialIntegrator</a></li>
+<li>p_getLastAngularRateBias()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#af27ab86da2cf7297a485d8a86e933562">NAV::InertialIntegrator</a></li>
 <li>p_quatAccel_b()&#160;:&#160;<a class="el" href="classNAV_1_1ImuPos.html#a5bdf6edefd4f4ce7c3382f21e6e71a8b">NAV::ImuPos</a></li>
 <li>p_quatGyro_b()&#160;:&#160;<a class="el" href="classNAV_1_1ImuPos.html#af2931c9aea08ad2d70eb4343c3063248">NAV::ImuPos</a></li>
 <li>p_quatMag_b()&#160;:&#160;<a class="el" href="classNAV_1_1ImuPos.html#a62a498d077ec2e45017072c813e82f75">NAV::ImuPos</a></li>
-<li>parentTypes()&#160;:&#160;<a class="el" href="classNAV_1_1DynamicData.html#af23145ec25a455c1fc2671189ea691aa">NAV::DynamicData</a>, <a class="el" href="classNAV_1_1EmlidObs.html#aa22a4deb119353ad428cc66f9899a8eb">NAV::EmlidObs</a>, <a class="el" href="classNAV_1_1GnssCombination.html#af13e0a779b79fae49107278e0d33d5a7">NAV::GnssCombination</a>, <a class="el" href="classNAV_1_1GnssObs.html#a6ed969bee2ebae53b573dccdc2569ad0">NAV::GnssObs</a>, <a class="el" href="classNAV_1_1ImuObs.html#a9ec374868aef6bc6c7d5c7eb3eb0e557">NAV::ImuObs</a>, <a class="el" href="classNAV_1_1ImuObsSimulated.html#a92954f64b00bca21f89d3725aff3d6c2">NAV::ImuObsSimulated</a>, <a class="el" href="classNAV_1_1ImuObsWDelta.html#ac74f8dbbd1e10f8d9b4c779e95e97de2">NAV::ImuObsWDelta</a>, <a class="el" href="classNAV_1_1InertialNavSol.html#a298c2204c6c1673e0853f222158db2d3">NAV::InertialNavSol</a>, <a class="el" href="classNAV_1_1KvhObs.html#a0bb1c9c0efa7e578f9b59e05f04d92d4">NAV::KvhObs</a>, <a class="el" href="classNAV_1_1LcKfInsGnssErrors.html#ad7de96ae7d4338bc24c79fcda35e5c5a">NAV::LcKfInsGnssErrors</a>, <a class="el" href="classNAV_1_1NodeData.html#ab097672ac2646837e26f9be73b7a98b7">NAV::NodeData</a>, <a class="el" href="classNAV_1_1Pos.html#a55feb7f57aaa3305ab458713ef50182b">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#a084f1a9ec257fdbf4a3ef4d43bcd267a">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#adbd6751d80c502f3b7e564fdeae3c385">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#adbc0a342935c0f9154d189357c3e47b1">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a657eb7773700f251825414dbc727da17">NAV::SppSolution</a>, <a class="el" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">NAV::StringObs</a>, <a class="el" href="classNAV_1_1TcKfInsGnssErrors.html#acbc3950223211030ad5ac1d1f50f74eb">NAV::TcKfInsGnssErrors</a>, <a class="el" href="classNAV_1_1UartPacket.html#a3280f4581a4d944d3a72c836353ea875">NAV::UartPacket</a>, <a class="el" href="classNAV_1_1UbloxObs.html#a00122d070021951d0fb63a203c1f6089">NAV::UbloxObs</a>, <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a6214b2a48d53c07bd2b4c5ac740164dd">NAV::VectorNavBinaryOutput</a></li>
+<li>parentTypes()&#160;:&#160;<a class="el" href="classNAV_1_1DynamicData.html#af23145ec25a455c1fc2671189ea691aa">NAV::DynamicData</a>, <a class="el" href="classNAV_1_1EmlidObs.html#aa22a4deb119353ad428cc66f9899a8eb">NAV::EmlidObs</a>, <a class="el" href="classNAV_1_1GnssCombination.html#af13e0a779b79fae49107278e0d33d5a7">NAV::GnssCombination</a>, <a class="el" href="classNAV_1_1GnssObs.html#a6ed969bee2ebae53b573dccdc2569ad0">NAV::GnssObs</a>, <a class="el" href="classNAV_1_1ImuObs.html#a9ec374868aef6bc6c7d5c7eb3eb0e557">NAV::ImuObs</a>, <a class="el" href="classNAV_1_1ImuObsSimulated.html#a92954f64b00bca21f89d3725aff3d6c2">NAV::ImuObsSimulated</a>, <a class="el" href="classNAV_1_1ImuObsWDelta.html#ac74f8dbbd1e10f8d9b4c779e95e97de2">NAV::ImuObsWDelta</a>, <a class="el" href="classNAV_1_1InsGnssLCKFSolution.html#af0692bbad8ffaed4415a550527a73d48">NAV::InsGnssLCKFSolution</a>, <a class="el" href="classNAV_1_1InsGnssTCKFSolution.html#ad6782968b5d4730c9281fea833c5f28b">NAV::InsGnssTCKFSolution</a>, <a class="el" href="classNAV_1_1KvhObs.html#a0bb1c9c0efa7e578f9b59e05f04d92d4">NAV::KvhObs</a>, <a class="el" href="classNAV_1_1NodeData.html#ab097672ac2646837e26f9be73b7a98b7">NAV::NodeData</a>, <a class="el" href="classNAV_1_1Pos.html#a55feb7f57aaa3305ab458713ef50182b">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#a084f1a9ec257fdbf4a3ef4d43bcd267a">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#adbd6751d80c502f3b7e564fdeae3c385">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#adbc0a342935c0f9154d189357c3e47b1">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a657eb7773700f251825414dbc727da17">NAV::SppSolution</a>, <a class="el" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">NAV::StringObs</a>, <a class="el" href="classNAV_1_1UartPacket.html#a3280f4581a4d944d3a72c836353ea875">NAV::UartPacket</a>, <a class="el" href="classNAV_1_1UbloxObs.html#a00122d070021951d0fb63a203c1f6089">NAV::UbloxObs</a>, <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a6214b2a48d53c07bd2b4c5ac740164dd">NAV::VectorNavBinaryOutput</a></li>
 <li>peek()&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#a10236b487c80a3a7e21aae4af41eb0b7">NAV::FileReader</a></li>
 <li>Pin()&#160;:&#160;<a class="el" href="classNAV_1_1Pin.html#adcb4dabcb050a833890eb536759205f9">NAV::Pin</a></li>
 <li>PinData()&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData.html#a51f397182b2feae9900e39ca7f129fbb">NAV::Plot::PinData</a></li>
 <li>PinInfo()&#160;:&#160;<a class="el" href="structNAV_1_1NodeRegistry_1_1PinInfo.html#ad09ddf9acd90dc54b6696b2ce89cd5ed">NAV::NodeRegistry::PinInfo</a></li>
-<li>Plot()&#160;:&#160;<a class="el" href="classNAV_1_1Plot.html#a96433b5b92cc7ae66ee970aa27fd4979">NAV::Plot</a></li>
-<li>PlotData()&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData_1_1PlotData.html#ac6475e04d14ad2803b67d7ebdb54ac79">NAV::Plot::PinData::PlotData</a></li>
+<li>Plot()&#160;:&#160;<a class="el" href="classNAV_1_1Plot.html#addee9cd29f75faf3aeaadc21677b2dde">NAV::Plot</a></li>
+<li>PlotData()&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a316d8369d850276b976c126fe6b7ee41">NAV::Plot::PinData::PlotData</a></li>
 <li>PlotInfo()&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo.html#acdd899a46f26b25c0e496dea421b1c7f">NAV::Plot::PlotInfo</a></li>
 <li>PlotItem()&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a108ddb73d8854c30c3da841fda2937d3">NAV::Plot::PlotInfo::PlotItem</a></li>
 <li>Polynomial()&#160;:&#160;<a class="el" href="classNAV_1_1Polynomial.html#af5c5e3ecfe8f50456128669120855820">NAV::Polynomial&lt; Scalar &gt;</a></li>
-<li>PolynomialCycleSlipDetector()&#160;:&#160;<a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html#a8cbfe9373074ce889da82a36e2c44fdb">NAV::PolynomialCycleSlipDetector&lt; Key &gt;</a></li>
+<li>PolynomialCycleSlipDetector()&#160;:&#160;<a class="el" href="classNAV_1_1PolynomialCycleSlipDetector.html#adf906eb42f8374eeccf65724ec7e84ff">NAV::PolynomialCycleSlipDetector&lt; Key &gt;</a></li>
 <li>PolynomialRegressor()&#160;:&#160;<a class="el" href="classNAV_1_1PolynomialRegressor.html#a2938d44c51f8c6e78498314b4bc82b37">NAV::PolynomialRegressor&lt; Scalar &gt;</a></li>
 <li>pop_back()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#a962c3cbb94e25d44b4b3b7a9ca8f202a">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>pop_front()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer.html#aacb95c0ab48ac944424f218bb75e57d0">NAV::ScrollingBuffer&lt; T, _Padding &gt;</a>, <a class="el" href="classNAV_1_1TsDeque.html#aede28acd1d2e912285c208d18ba93e59">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>PosVelAttFile()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttFile.html#ac34dc3edb3b6d21178774496765f32c3">NAV::PosVelAttFile</a></li>
-<li>PosVelAttInitializer()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttInitializer.html#a852268dadfd1b4383600445c05b39f85">NAV::PosVelAttInitializer</a></li>
-<li>PosVelAttLogger()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttLogger.html#a9e64c24ad7509210fb1bdc5daf01795c">NAV::PosVelAttLogger</a></li>
+<li>PosVelAttInitializer()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttInitializer.html#aa3b994b4190d73c402cc6390720eae08">NAV::PosVelAttInitializer</a></li>
 <li>predict()&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#a534c498cbc0ea456a91c4da08f2fcba1">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#ac35040a50530c57db76c21706ffce400">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#a39c17ba32ca8743676ecd4c39bfe8326">NAV::SPP::KalmanFilter</a></li>
 <li>prValid()&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx_1_1UbxRxmRawxData.html#a0230a32dc266e1355dc9fe94269b24e8">NAV::vendor::ublox::UbxRxmRawx::UbxRxmRawxData</a></li>
 <li>psrMeasErrorVar()&#160;:&#160;<a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#abb2d4d98b1902c2dab2cbe5f34c1e88e">NAV::GnssMeasurementErrorModel</a></li>

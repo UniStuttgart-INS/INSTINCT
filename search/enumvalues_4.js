@@ -1,10 +1,10 @@
 var searchData=
 [
   ['d_0',['D',['../RINEXUtilities_8hpp.html#abe9eb1497056e79316848a08e68050acaf623e75af30e62bbd73d6df5b50bb7b5',1,'NAV::vendor::RINEX']]],
-  ['deg2_5fs2_1',['deg2_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa19f2e4cdac8d4221cafd70d8f6a59861',1,'NAV::ImuFusion::PinData']]],
-  ['deg2_5fs4_2',['deg2_s4',['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aaca6ad4607fbedaea18398b7305722ba314',1,'NAV::ImuFusion::PinData']]],
-  ['deg_5fs_3',['deg_s',['../structNAV_1_1ImuFusion_1_1PinData.html#a62dacfc83de0321e190b1fcc6d9e4c93a26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::ImuFusion::PinData::deg_s'],['../structNAV_1_1ImuFusion_1_1PinData.html#a3702b5d724039c41ce853b01193409eaa26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::ImuFusion::PinData::deg_s']]],
-  ['deg_5fs2_4',['deg_s2',['../structNAV_1_1ImuFusion_1_1PinData.html#ac9d1734eacf5f5c7642b8eb518d8555aa3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::ImuFusion::PinData::deg_s2'],['../structNAV_1_1ImuFusion_1_1PinData.html#acadeab3237d157428548d5f28d758aaca3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::ImuFusion::PinData::deg_s2']]],
+  ['deg2_5fs2_1',['deg2_s2',['../structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa19f2e4cdac8d4221cafd70d8f6a59861',1,'NAV::PinData']]],
+  ['deg2_5fs4_2',['deg2_s4',['../structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ea6ad4607fbedaea18398b7305722ba314',1,'NAV::PinDataIRWKF']]],
+  ['deg_5fs_3',['deg_s',['../structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4a26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::PinData::deg_s'],['../structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa26b1fed50e629c912150cc2d1dd0dff8',1,'NAV::PinData::deg_s']]],
+  ['deg_5fs2_4',['deg_s2',['../structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152a3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::PinDataIRWKF::deg_s2'],['../structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ea3d64dbcd47d25b5437aaf41c06c0093f',1,'NAV::PinDataIRWKF::deg_s2']]],
   ['deinitialized_5',['Deinitialized',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534afd7c1706ced8bc5a714ced665d951265',1,'NAV::Node']]],
   ['deinitializing_6',['Deinitializing',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534ac72992ab2deae072d7a546fa116254b4',1,'NAV::Node']]],
   ['delegate_7',['Delegate',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a1da8908c8e8ca2cd187c7131afb41bac',1,'NAV::Pin::Type']]],

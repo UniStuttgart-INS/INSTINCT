@@ -15,9 +15,10 @@ var searchData=
   ['corrections_12',['Corrections',['../structNAV_1_1Clock_1_1Corrections.html',1,'NAV::Clock::Corrections'],['../structNAV_1_1IonosphericCorrections_1_1Corrections.html',1,'NAV::IonosphericCorrections::Corrections']]],
   ['csvdata_13',['CsvData',['../classNAV_1_1CsvData.html',1,'NAV']]],
   ['csvfile_14',['CsvFile',['../classNAV_1_1CsvFile.html',1,'NAV']]],
-  ['cubicspline_15',['CubicSpline',['../classNAV_1_1CubicSpline.html',1,'NAV']]],
-  ['cycleslipdetector_16',['CycleSlipDetector',['../classNAV_1_1CycleSlipDetector.html',1,'NAV']]],
-  ['cycleslipdualfrequency_17',['CycleSlipDualFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipDualFrequency.html',1,'NAV::CycleSlipDetector']]],
-  ['cyclesliplossoflockindicator_18',['CycleSlipLossOfLockIndicator',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipLossOfLockIndicator.html',1,'NAV::CycleSlipDetector']]],
-  ['cycleslipsinglefrequency_19',['CycleSlipSingleFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipSingleFrequency.html',1,'NAV::CycleSlipDetector']]]
+  ['csvlogger_15',['CsvLogger',['../classNAV_1_1CsvLogger.html',1,'NAV']]],
+  ['cubicspline_16',['CubicSpline',['../classNAV_1_1CubicSpline.html',1,'NAV']]],
+  ['cycleslipdetector_17',['CycleSlipDetector',['../classNAV_1_1CycleSlipDetector.html',1,'NAV']]],
+  ['cycleslipdualfrequency_18',['CycleSlipDualFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipDualFrequency.html',1,'NAV::CycleSlipDetector']]],
+  ['cyclesliplossoflockindicator_19',['CycleSlipLossOfLockIndicator',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipLossOfLockIndicator.html',1,'NAV::CycleSlipDetector']]],
+  ['cycleslipsinglefrequency_20',['CycleSlipSingleFrequency',['../structNAV_1_1CycleSlipDetector_1_1CycleSlipSingleFrequency.html',1,'NAV::CycleSlipDetector']]]
 ];

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -123,6 +144,13 @@ $(function(){initNavTree('classNAV_1_1ObservationFilter.html',''); initResizable
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:acf2bc6a9a1cb3024bf445ce10a7d9e79" id="r_acf2bc6a9a1cb3024bf445ce10a7d9e79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf2bc6a9a1cb3024bf445ce10a7d9e79">excludeSignalTemporarily</a> (const <a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a> &amp;satSigId, size_t count)</td></tr>
+<tr class="memdesc:acf2bc6a9a1cb3024bf445ce10a7d9e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporarily excludes a signal.  <br /></td></tr>
+<tr class="separator:acf2bc6a9a1cb3024bf445ce10a7d9e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b7a4b82003b0d482bb014afdca5bd2a" id="r_a3b7a4b82003b0d482bb014afdca5bd2a"><td class="memItemLeft" align="right" valign="top"><a id="a3b7a4b82003b0d482bb014afdca5bd2a" name="a3b7a4b82003b0d482bb014afdca5bd2a"></a>
+const <a class="el" href="classNAV_1_1Code.html">Code</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getCodeFilter</b> () const</td></tr>
+<tr class="memdesc:a3b7a4b82003b0d482bb014afdca5bd2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classNAV_1_1Code.html" title="Enumerate for GNSS Codes.">Code</a> Filter. <br /></td></tr>
+<tr class="separator:a3b7a4b82003b0d482bb014afdca5bd2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7ea3277823447718388e0e62cf60fcb" id="r_aa7ea3277823447718388e0e62cf60fcb"><td class="memItemLeft" align="right" valign="top"><a id="aa7ea3277823447718388e0e62cf60fcb" name="aa7ea3277823447718388e0e62cf60fcb"></a>
 const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getFrequencyFilter</b> () const</td></tr>
 <tr class="memdesc:aa7ea3277823447718388e0e62cf60fcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> Filter. <br /></td></tr>
@@ -163,6 +191,10 @@ const std::unordered_set&lt; <a class="el" href="classNAV_1_1GnssObs.html#a23a37
 <a class="el" href="classNAV_1_1ObservationFilter.html">ObservationFilter</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1ObservationFilter.html">ObservationFilter</a> &amp;&amp;other) noexcept</td></tr>
 <tr class="memdesc:a309f13e64df20b5d546dc8d9eac813a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
 <tr class="separator:a309f13e64df20b5d546dc8d9eac813a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a847723580f8b832ef3dc4efeaef69032" id="r_a847723580f8b832ef3dc4efeaef69032"><td class="memItemLeft" align="right" valign="top"><a id="a847723580f8b832ef3dc4efeaef69032" name="a847723580f8b832ef3dc4efeaef69032"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
+<tr class="memdesc:a847723580f8b832ef3dc4efeaef69032"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the temporary settings. <br /></td></tr>
+<tr class="separator:a847723580f8b832ef3dc4efeaef69032"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0afec5fedc61ad50275d84dba28a206f" id="r_a0afec5fedc61ad50275d84dba28a206f"><td class="memTemplParams" colspan="2">template&lt;typename ReceiverType &gt; </td></tr>
 <tr class="memitem:a0afec5fedc61ad50275d84dba28a206f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Observations.html">Observations</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0afec5fedc61ad50275d84dba28a206f">selectObservationsForCalculation</a> (const std::array&lt; <a class="el" href="structNAV_1_1Receiver.html">Receiver</a>&lt; ReceiverType &gt;, ReceiverType::ReceiverType_COUNT &gt; &amp;receivers, const std::vector&lt; const <a class="el" href="classNAV_1_1GnssNavInfo.html">GnssNavInfo</a> * &gt; &amp;gnssNavInfos, const std::string &amp;nameId, bool ignoreElevationMask=false)</td></tr>
 <tr class="memdesc:a0afec5fedc61ad50275d84dba28a206f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of satellites and observations filtered by GUI settings &amp; NAV data available &amp; ...)  <br /></td></tr>
@@ -227,6 +259,44 @@ const std::unordered_set&lt; <a class="el" href="classNAV_1_1GnssObs.html#a23a37
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="acf2bc6a9a1cb3024bf445ce10a7d9e79" name="acf2bc6a9a1cb3024bf445ce10a7d9e79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf2bc6a9a1cb3024bf445ce10a7d9e79">&#9670;&#160;</a></span>excludeSignalTemporarily()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::ObservationFilter::excludeSignalTemporarily </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structNAV_1_1SatSigId.html">SatSigId</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>satSigId</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Temporarily excludes a signal. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">satSigId</td><td><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> Signal Id </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Amount of function calls to exclude </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a770fbd631361d2a12c3b646ff1ca302b" name="a770fbd631361d2a12c3b646ff1ca302b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a770fbd631361d2a12c3b646ff1ca302b">&#9670;&#160;</a></span>isObsTypeUsed()</h2>
 

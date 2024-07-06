@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -140,6 +161,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>staticDescriptorCou
 <tr class="memdesc:aeeacd09377124681880dbba0103ba42f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
 <tr class="separator:aeeacd09377124681880dbba0103ba42f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>
@@ -217,34 +241,22 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a10172066046ec5004acbf3193e9a014a" id="r_a10172066046ec5004acbf3193e9a014a"><td class="memItemLeft" align="right" valign="top"><a id="a10172066046ec5004acbf3193e9a014a" name="a10172066046ec5004acbf3193e9a014a"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accelCompXYZ</b></td></tr>
-<tr class="memdesc:a10172066046ec5004acbf3193e9a014a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated acceleration measured in units of [m/s^2], and given in the platform frame. <br /></td></tr>
-<tr class="separator:a10172066046ec5004acbf3193e9a014a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33300ff714ac0121cf3a4624ed34ad79" id="r_a33300ff714ac0121cf3a4624ed34ad79"><td class="memItemLeft" align="right" valign="top"><a id="a33300ff714ac0121cf3a4624ed34ad79" name="a33300ff714ac0121cf3a4624ed34ad79"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accelUncompXYZ</b></td></tr>
-<tr class="memdesc:a33300ff714ac0121cf3a4624ed34ad79"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame. <br /></td></tr>
-<tr class="separator:a33300ff714ac0121cf3a4624ed34ad79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaecc4fd6484437dfe194231bd4421d10" id="r_aaecc4fd6484437dfe194231bd4421d10"><td class="memItemLeft" align="right" valign="top"><a id="aaecc4fd6484437dfe194231bd4421d10" name="aaecc4fd6484437dfe194231bd4421d10"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gyroCompXYZ</b></td></tr>
-<tr class="memdesc:aaecc4fd6484437dfe194231bd4421d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated angular rate measured in units of [rad/s], and given in the platform frame. <br /></td></tr>
-<tr class="separator:aaecc4fd6484437dfe194231bd4421d10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24a1448b1a9bc6b591ce26bd6504c983" id="r_a24a1448b1a9bc6b591ce26bd6504c983"><td class="memItemLeft" align="right" valign="top"><a id="a24a1448b1a9bc6b591ce26bd6504c983" name="a24a1448b1a9bc6b591ce26bd6504c983"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gyroUncompXYZ</b></td></tr>
-<tr class="memdesc:a24a1448b1a9bc6b591ce26bd6504c983"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame. <br /></td></tr>
-<tr class="separator:a24a1448b1a9bc6b591ce26bd6504c983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeebb869562cb3544a976278a576f0fc4" id="r_aeebb869562cb3544a976278a576f0fc4"><td class="memItemLeft" align="right" valign="top"><a id="aeebb869562cb3544a976278a576f0fc4" name="aeebb869562cb3544a976278a576f0fc4"></a>
 const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>imuPos</b></td></tr>
 <tr class="memdesc:aeebb869562cb3544a976278a576f0fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame. <br /></td></tr>
 <tr class="separator:aeebb869562cb3544a976278a576f0fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a850db007dc42857b04c3438a59800082" id="r_a850db007dc42857b04c3438a59800082"><td class="memItemLeft" align="right" valign="top"><a id="a850db007dc42857b04c3438a59800082" name="a850db007dc42857b04c3438a59800082"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>magCompXYZ</b></td></tr>
-<tr class="memdesc:a850db007dc42857b04c3438a59800082"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated magnetic field measured in units of [Gauss], and given in the platform frame. <br /></td></tr>
-<tr class="separator:a850db007dc42857b04c3438a59800082"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf8e57f5b010aef7c7fc717f2dddb557" id="r_abf8e57f5b010aef7c7fc717f2dddb557"><td class="memItemLeft" align="right" valign="top"><a id="abf8e57f5b010aef7c7fc717f2dddb557" name="abf8e57f5b010aef7c7fc717f2dddb557"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>magUncompXYZ</b></td></tr>
-<tr class="memdesc:abf8e57f5b010aef7c7fc717f2dddb557"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame. <br /></td></tr>
-<tr class="separator:abf8e57f5b010aef7c7fc717f2dddb557"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e8e22c0068bf2f3c1fc36f16ff5da1" id="r_a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="memItemLeft" align="right" valign="top"><a id="a09e8e22c0068bf2f3c1fc36f16ff5da1" name="a09e8e22c0068bf2f3c1fc36f16ff5da1"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_acceleration</b></td></tr>
+<tr class="memdesc:a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame. <br /></td></tr>
+<tr class="separator:a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65aefc8dbbba7614004555315fcec16e" id="r_a65aefc8dbbba7614004555315fcec16e"><td class="memItemLeft" align="right" valign="top"><a id="a65aefc8dbbba7614004555315fcec16e" name="a65aefc8dbbba7614004555315fcec16e"></a>
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_angularRate</b></td></tr>
+<tr class="memdesc:a65aefc8dbbba7614004555315fcec16e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame. <br /></td></tr>
+<tr class="separator:a65aefc8dbbba7614004555315fcec16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbf713250881369de5b453e4e9e8abfd" id="r_afbf713250881369de5b453e4e9e8abfd"><td class="memItemLeft" align="right" valign="top"><a id="afbf713250881369de5b453e4e9e8abfd" name="afbf713250881369de5b453e4e9e8abfd"></a>
+std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>p_magneticField</b></td></tr>
+<tr class="memdesc:afbf713250881369de5b453e4e9e8abfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame. <br /></td></tr>
+<tr class="separator:afbf713250881369de5b453e4e9e8abfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09fb1db7b4ffde3afccebc4c813d2792" id="r_a09fb1db7b4ffde3afccebc4c813d2792"><td class="memItemLeft" align="right" valign="top"><a id="a09fb1db7b4ffde3afccebc4c813d2792" name="a09fb1db7b4ffde3afccebc4c813d2792"></a>
 std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>temperature</b></td></tr>
 <tr class="memdesc:a09fb1db7b4ffde3afccebc4c813d2792"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU temperature measured in units of [Celsius]. <br /></td></tr>

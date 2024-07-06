@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -809,7 +830,7 @@ $(function(){initNavTree('Pin_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aclassNAV_1_1InputPin_html_af72cbff139085c525fbd8f9311ec1a41"><div class="ttname"><a href="classNAV_1_1InputPin.html#af72cbff139085c525fbd8f9311ec1a41">NAV::InputPin::priority</a></div><div class="ttdeci">int priority</div><div class="ttdoc">Priority when checking firable condition related to other pins (higher priority gets triggered first)</div><div class="ttdef"><b>Definition</b> Pin.hpp:727</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html_af7a59e5c82986d1980ffe0335f5b61ad"><div class="ttname"><a href="classNAV_1_1InputPin.html#af7a59e5c82986d1980ffe0335f5b61ad">NAV::InputPin::queue</a></div><div class="ttdeci">NodeDataQueue queue</div><div class="ttdoc">Queue with received data.</div><div class="ttdef"><b>Definition</b> Pin.hpp:739</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html_afdd16fcf2dae5ee6e46694322f69ba34"><div class="ttname"><a href="classNAV_1_1InputPin.html#afdd16fcf2dae5ee6e46694322f69ba34">NAV::InputPin::dropQueueIfNotFirable</a></div><div class="ttdeci">bool dropQueueIfNotFirable</div><div class="ttdoc">If true, drops elements from the queue if not firable, otherwise sleeps the worker.</div><div class="ttdef"><b>Definition</b> Pin.hpp:733</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
 <div class="ttc" id="aclassNAV_1_1OutputPin_html"><div class="ttname"><a href="classNAV_1_1OutputPin.html">NAV::OutputPin</a></div><div class="ttdoc">Output pins of nodes.</div><div class="ttdef"><b>Definition</b> Pin.hpp:338</div></div>
 <div class="ttc" id="aclassNAV_1_1OutputPin_html_a0285a812f2f5f16219865d45883da9d6"><div class="ttname"><a href="classNAV_1_1OutputPin.html#a0285a812f2f5f16219865d45883da9d6">NAV::OutputPin::OutputPin</a></div><div class="ttdeci">OutputPin(ax::NodeEditor::PinId id, const char *name, Type type, Node *parentNode)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> Pin.hpp:345</div></div>

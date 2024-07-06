@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,6 +133,7 @@ $(function(){initNavTree('classNAV_1_1Pos.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classNAV_1_1Pos-members.html">List of all members</a>  </div>
@@ -122,16 +144,30 @@ $(function(){initNavTree('classNAV_1_1Pos.html',''); initResizable(); });
 <p>Position, Velocity and Attitude Storage Class.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1Pos_1_1States.html">States</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pos_1_1States.html" title="States.">States</a>.  <a href="structNAV_1_1Pos_1_1States.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af7cffacdd7a708e5b469755a0fd0eca0" id="r_af7cffacdd7a708e5b469755a0fd0eca0"><td class="memItemLeft" align="right" valign="top"><a id="af7cffacdd7a708e5b469755a0fd0eca0" name="af7cffacdd7a708e5b469755a0fd0eca0"></a>
 const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>altitude</b> () const</td></tr>
 <tr class="memdesc:af7cffacdd7a708e5b469755a0fd0eca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the altitude (height above ground) in [m]. <br /></td></tr>
 <tr class="separator:af7cffacdd7a708e5b469755a0fd0eca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bea954b07183c5223965450185d1bd7" id="r_a9bea954b07183c5223965450185d1bd7"><td class="memItemLeft" align="right" valign="top"><a id="a9bea954b07183c5223965450185d1bd7" name="a9bea954b07183c5223965450185d1bd7"></a>
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a>, <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:a9bea954b07183c5223965450185d1bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in ECEF frame. <br /></td></tr>
+<tr class="separator:a9bea954b07183c5223965450185d1bd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab40818b92e6497dfc38b024179466918" id="r_ab40818b92e6497dfc38b024179466918"><td class="memItemLeft" align="right" valign="top"><a id="ab40818b92e6497dfc38b024179466918" name="ab40818b92e6497dfc38b024179466918"></a>
 const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>e_position</b> () const</td></tr>
 <tr class="memdesc:ab40818b92e6497dfc38b024179466918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the coordinates in [m]. <br /></td></tr>
 <tr class="separator:ab40818b92e6497dfc38b024179466918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fd6384fd0ea0b9770c802f711f1abe6" id="r_a0fd6384fd0ea0b9770c802f711f1abe6"><td class="memItemLeft" align="right" valign="top"><a id="a0fd6384fd0ea0b9770c802f711f1abe6" name="a0fd6384fd0ea0b9770c802f711f1abe6"></a>
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_positionStdev</b> () const</td></tr>
+<tr class="memdesc:a0fd6384fd0ea0b9770c802f711f1abe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in ECEF frame coordinates in [m]. <br /></td></tr>
+<tr class="separator:a0fd6384fd0ea0b9770c802f711f1abe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82b60003dbeabbe4ce59ff9f7f93d577" id="r_a82b60003dbeabbe4ce59ff9f7f93d577"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82b60003dbeabbe4ce59ff9f7f93d577">e_Quat_n</a> () const</td></tr>
 <tr class="memdesc:a82b60003dbeabbe4ce59ff9f7f93d577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from navigation to Earth-fixed frame.  <br /></td></tr>
 <tr class="separator:a82b60003dbeabbe4ce59ff9f7f93d577"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,15 +186,37 @@ const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><
 const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>longitude</b> () const</td></tr>
 <tr class="memdesc:afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the longitude λ in [rad]. <br /></td></tr>
 <tr class="separator:afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c727c5c529eb11a86879ba6ade27756" id="r_a6c727c5c529eb11a86879ba6ade27756"><td class="memItemLeft" align="right" valign="top"><a id="a6c727c5c529eb11a86879ba6ade27756" name="a6c727c5c529eb11a86879ba6ade27756"></a>
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a>, <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:a6c727c5c529eb11a86879ba6ade27756"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in local navigation frame. <br /></td></tr>
+<tr class="separator:a6c727c5c529eb11a86879ba6ade27756"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd3f38485096d92ea9101079147950c7" id="r_acd3f38485096d92ea9101079147950c7"><td class="memItemLeft" align="right" valign="top"><a id="acd3f38485096d92ea9101079147950c7" name="acd3f38485096d92ea9101079147950c7"></a>
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_positionStdev</b> () const</td></tr>
+<tr class="memdesc:acd3f38485096d92ea9101079147950c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in local navigation frame coordinates in [m]. <br /></td></tr>
+<tr class="separator:acd3f38485096d92ea9101079147950c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab9530d76d0352ca3f4370e69a67d9d2" id="r_aab9530d76d0352ca3f4370e69a67d9d2"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab9530d76d0352ca3f4370e69a67d9d2">n_Quat_e</a> () const</td></tr>
 <tr class="memdesc:aab9530d76d0352ca3f4370e69a67d9d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from Earth-fixed frame to navigation.  <br /></td></tr>
 <tr class="separator:aab9530d76d0352ca3f4370e69a67d9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb82482e4766ddb147b253a1bdf3dba1" id="r_afb82482e4766ddb147b253a1bdf3dba1"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:afb82482e4766ddb147b253a1bdf3dba1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afb82482e4766ddb147b253a1bdf3dba1">setPosCovarianceMatrix_e</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_covarianceMatrix)</td></tr>
+<tr class="memdesc:afb82482e4766ddb147b253a1bdf3dba1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:afb82482e4766ddb147b253a1bdf3dba1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99993ef71f1978ee758da707f61c7051" id="r_a99993ef71f1978ee758da707f61c7051"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a99993ef71f1978ee758da707f61c7051"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a99993ef71f1978ee758da707f61c7051">setPosCovarianceMatrix_n</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_covarianceMatrix)</td></tr>
+<tr class="memdesc:a99993ef71f1978ee758da707f61c7051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:a99993ef71f1978ee758da707f61c7051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb37079c91d9713756f460599d005beb" id="r_adb37079c91d9713756f460599d005beb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb37079c91d9713756f460599d005beb">setPosition_e</a> (const Eigen::Vector3d &amp;<a class="el" href="#ab40818b92e6497dfc38b024179466918">e_position</a>)</td></tr>
 <tr class="memdesc:adb37079c91d9713756f460599d005beb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in coordinates.  <br /></td></tr>
 <tr class="separator:adb37079c91d9713756f460599d005beb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3d22d46c55cecd0647109b77835813b" id="r_ae3d22d46c55cecd0647109b77835813b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3d22d46c55cecd0647109b77835813b">setPosition_lla</a> (const Eigen::Vector3d &amp;<a class="el" href="#abbe7fbe77f4fd525dcd2b7f923fc24c6">lla_position</a>)</td></tr>
 <tr class="memdesc:ae3d22d46c55cecd0647109b77835813b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position lla object.  <br /></td></tr>
 <tr class="separator:ae3d22d46c55cecd0647109b77835813b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41f1f12553ffb7c1271f020e9d3d6ab0" id="r_a41f1f12553ffb7c1271f020e9d3d6ab0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41f1f12553ffb7c1271f020e9d3d6ab0">setPositionAndStdDev_e</a> (const Eigen::Vector3d &amp;<a class="el" href="#ab40818b92e6497dfc38b024179466918">e_position</a>, const Eigen::Matrix3d &amp;e_positionCovarianceMatrix)</td></tr>
+<tr class="memdesc:a41f1f12553ffb7c1271f020e9d3d6ab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in ECEF coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:a41f1f12553ffb7c1271f020e9d3d6ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6a28a0d8c6b2126e27cd4cad6303c29" id="r_aa6a28a0d8c6b2126e27cd4cad6303c29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6a28a0d8c6b2126e27cd4cad6303c29">setPositionAndStdDev_lla</a> (const Eigen::Vector3d &amp;<a class="el" href="#abbe7fbe77f4fd525dcd2b7f923fc24c6">lla_position</a>, const Eigen::Matrix3d &amp;n_positionCovarianceMatrix)</td></tr>
+<tr class="memdesc:aa6a28a0d8c6b2126e27cd4cad6303c29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in LLA coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:aa6a28a0d8c6b2126e27cd4cad6303c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af94c0b03e09a94ea872b3e97efb6fd64" id="r_af94c0b03e09a94ea872b3e97efb6fd64"><td class="memItemLeft" align="right" valign="top"><a id="af94c0b03e09a94ea872b3e97efb6fd64" name="af94c0b03e09a94ea872b3e97efb6fd64"></a>
 std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>staticDataDescriptors</b> () const override</td></tr>
 <tr class="memdesc:af94c0b03e09a94ea872b3e97efb6fd64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
@@ -168,6 +226,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>staticDescriptorCou
 <tr class="memdesc:acaabd224bde36b0b82c07ab47e083a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
 <tr class="separator:acaabd224bde36b0b82c07ab47e083a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>
@@ -381,6 +442,78 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 </div>
 </div>
+<a id="afb82482e4766ddb147b253a1bdf3dba1" name="afb82482e4766ddb147b253a1bdf3dba1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb82482e4766ddb147b253a1bdf3dba1">&#9670;&#160;</a></span>setPosCovarianceMatrix_e()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::Pos::setPosCovarianceMatrix_e </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_covarianceMatrix</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the Covariance matrix in ECEF coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">e_covarianceMatrix</td><td>3x3 <a class="el" href="classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class.">Pos</a> Error variance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section attention"><dt>Attention</dt><dd>Position has to be set before calling this </dd></dl>
+
+</div>
+</div>
+<a id="a99993ef71f1978ee758da707f61c7051" name="a99993ef71f1978ee758da707f61c7051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99993ef71f1978ee758da707f61c7051">&#9670;&#160;</a></span>setPosCovarianceMatrix_n()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::Pos::setPosCovarianceMatrix_n </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>n_covarianceMatrix</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the Covariance matrix in ECEF coordinates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_covarianceMatrix</td><td>3x3 <a class="el" href="classNAV_1_1Pos.html" title="Position, Velocity and Attitude Storage Class.">Pos</a> Error variance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section attention"><dt>Attention</dt><dd>Position has to be set before calling this </dd></dl>
+
+</div>
+</div>
 <a id="adb37079c91d9713756f460599d005beb" name="adb37079c91d9713756f460599d005beb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adb37079c91d9713756f460599d005beb">&#9670;&#160;</a></span>setPosition_e()</h2>
 
@@ -441,6 +574,82 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lla_position</td><td>New Position in LatLonAlt coordinates </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a41f1f12553ffb7c1271f020e9d3d6ab0" name="a41f1f12553ffb7c1271f020e9d3d6ab0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41f1f12553ffb7c1271f020e9d3d6ab0">&#9670;&#160;</a></span>setPositionAndStdDev_e()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::Pos::setPositionAndStdDev_e </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_position</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Matrix3d &amp;</td>          <td class="paramname"><span class="paramname"><em>e_positionCovarianceMatrix</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the Position in ECEF coordinates and its standard deviation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">e_position</td><td>New Position in ECEF coordinates [m] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">e_positionCovarianceMatrix</td><td>Standard deviation of Position in ECEF coordinates [m] </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa6a28a0d8c6b2126e27cd4cad6303c29" name="aa6a28a0d8c6b2126e27cd4cad6303c29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6a28a0d8c6b2126e27cd4cad6303c29">&#9670;&#160;</a></span>setPositionAndStdDev_lla()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::Pos::setPositionAndStdDev_lla </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_position</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::Matrix3d &amp;</td>          <td class="paramname"><span class="paramname"><em>n_positionCovarianceMatrix</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the Position in LLA coordinates and its standard deviation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lla_position</td><td>New Position in LatLonAlt coordinates </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_positionCovarianceMatrix</td><td>Standard deviation of Position in NED coordinates [m] </td></tr>
   </table>
   </dd>
 </dl>

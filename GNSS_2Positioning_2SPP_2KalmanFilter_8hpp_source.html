@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -312,7 +333,7 @@ $(function(){initNavTree('GNSS_2Positioning_2SPP_2KalmanFilter_8hpp_source.html'
 <div class="ttc" id="aSatelliteIdentifier_8hpp_html"><div class="ttname"><a href="SatelliteIdentifier_8hpp.html">SatelliteIdentifier.hpp</a></div><div class="ttdoc">Structs identifying a unique satellite.</div></div>
 <div class="ttc" id="aclassNAV_1_1Frequency_html"><div class="ttname"><a href="classNAV_1_1Frequency.html">NAV::Frequency</a></div><div class="ttdoc">Frequency definition for different satellite systems.</div><div class="ttdef"><b>Definition</b> Frequency.hpp:59</div></div>
 <div class="ttc" id="aclassNAV_1_1InsConst_html_ac2c68f4e9dc7d576d2bb2a4893d21204"><div class="ttname"><a href="classNAV_1_1InsConst.html#ac2c68f4e9dc7d576d2bb2a4893d21204">NAV::InsConst::C</a></div><div class="ttdeci">static constexpr Scalar C</div><div class="ttdoc">Speed of light [m/s].</div><div class="ttdef"><b>Definition</b> Constants.hpp:35</div></div>
-<div class="ttc" id="aclassNAV_1_1KeyedKalmanFilter_html"><div class="ttname"><a href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a></div><div class="ttdoc">Keyed Kalman Filter class.</div><div class="ttdef"><b>Definition</b> KeyedKalmanFilter.hpp:33</div></div>
+<div class="ttc" id="aclassNAV_1_1KeyedKalmanFilter_html"><div class="ttname"><a href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a></div><div class="ttdoc">Keyed Kalman Filter class.</div><div class="ttdef"><b>Definition</b> KeyedKalmanFilter.hpp:37</div></div>
 <div class="ttc" id="aclassNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4_html"><div class="ttname"><a href="classNAV_1_1KeyedMatrix_3_01Scalar_00_01RowKeyType_00_01ColKeyType_00_01Eigen_1_1Dynamic_00_01Eigen_1_1Dynamic_01_4.html">NAV::KeyedMatrix&lt; Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic &gt;</a></div><div class="ttdoc">Dynamic sized KeyedMatrix.</div><div class="ttdef"><b>Definition</b> KeyedMatrix.hpp:2055</div></div>
 <div class="ttc" id="aclassNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4_html"><div class="ttname"><a href="classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html">NAV::KeyedVector&lt; Scalar, RowKeyType, Eigen::Dynamic &gt;</a></div><div class="ttdoc">Dynamic sized KeyedVector.</div><div class="ttdef"><b>Definition</b> KeyedMatrix.hpp:1569</div></div>
 <div class="ttc" id="aclassNAV_1_1SPP_1_1KalmanFilter_html"><div class="ttname"><a href="classNAV_1_1SPP_1_1KalmanFilter.html">NAV::SPP::KalmanFilter</a></div><div class="ttdoc">The Spp Kalman Filter related options.</div><div class="ttdef"><b>Definition</b> KalmanFilter.hpp:33</div></div>

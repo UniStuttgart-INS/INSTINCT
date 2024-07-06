@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,9 +140,10 @@ $(function(){initNavTree('structNAV_1_1Observations.html',''); initResizable(); 
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a3b4872ec7c1b1f152a531b182371369e">nObservables</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a96d198acfaaca62a1bf4216c3e4abfce">nObservablesUniqueSatellite</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a8cead6f25a362ee0d14ccf1747d207a7">satellites</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#aca4a74c3691649d0c1e93e8a2f53775a">signals</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a21998706efe735e17ef4586383717cde">systems</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a1f293ddac5324b823df81bcfc6cb6772">recalcObservableCounts</a>()</td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a8cead6f25a362ee0d14ccf1747d207a7">satellites</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#aca4a74c3691649d0c1e93e8a2f53775a">signals</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Observations.html#a21998706efe735e17ef4586383717cde">systems</a></td><td class="entry"><a class="el" href="structNAV_1_1Observations.html">NAV::Observations</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

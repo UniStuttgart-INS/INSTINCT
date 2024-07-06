@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -173,7 +194,7 @@ $(function(){initNavTree('Satellite_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aSatNavData_8hpp_html"><div class="ttname"><a href="SatNavData_8hpp.html">SatNavData.hpp</a></div><div class="ttdoc">Satellite Navigation data (to calculate SatNavData and clock)</div></div>
 <div class="ttc" id="aSatelliteIdentifier_8hpp_html"><div class="ttname"><a href="SatelliteIdentifier_8hpp.html">SatelliteIdentifier.hpp</a></div><div class="ttdoc">Structs identifying a unique satellite.</div></div>
 <div class="ttc" id="aclassNAV_1_1Frequency_html"><div class="ttname"><a href="classNAV_1_1Frequency.html">NAV::Frequency</a></div><div class="ttdoc">Frequency definition for different satellite systems.</div><div class="ttdef"><b>Definition</b> Frequency.hpp:59</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Satellite_html"><div class="ttname"><a href="classNAV_1_1Satellite.html">NAV::Satellite</a></div><div class="ttdoc">Satellite class.</div><div class="ttdef"><b>Definition</b> Satellite.hpp:30</div></div>
 <div class="ttc" id="aclassNAV_1_1Satellite_html_a283c591730ef27559be5ff5d21f98815"><div class="ttname"><a href="classNAV_1_1Satellite.html#a283c591730ef27559be5ff5d21f98815">NAV::Satellite::calcSatellitePosVelAccel</a></div><div class="ttdeci">Orbit::PosVelAccel calcSatellitePosVelAccel(const InsTime &amp;transTime) const</div><div class="ttdoc">Calculates position, velocity and acceleration of the satellite at transmission time.</div></div>
 <div class="ttc" id="aclassNAV_1_1Satellite_html_a4b516aed2368eff98acf5c7b20d618cc"><div class="ttname"><a href="classNAV_1_1Satellite.html#a4b516aed2368eff98acf5c7b20d618cc">NAV::Satellite::getNavigationData</a></div><div class="ttdeci">const std::vector&lt; std::shared_ptr&lt; SatNavData &gt; &gt; &amp; getNavigationData() const</div><div class="ttdoc">Get the navigation data list.</div></div>

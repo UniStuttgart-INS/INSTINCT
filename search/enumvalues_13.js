@@ -15,7 +15,7 @@ var searchData=
   ['scatter_12',['Scatter',['../structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a27134cc2e67fbc7b0c3dbe7e0ca57fb9a09870720ca8134284e4e305ac6ce5f19',1,'NAV::Plot::PlotInfo::PlotItem::Style']]],
   ['searching_13',['Searching',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a481070839e78dd120f89b5cc8963b3bda843627586c62e389041a4d8800143974',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['searchingsignal_14',['SearchingSignal',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#ae16495b8f32ef5e3c93422bd99b99d59a85348f252e05fb25af2ead1075660c06',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
-  ['secondderivative_15',['SecondDerivative',['../structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1',1,'NAV::CubicSpline::BoundaryCondition']]],
+  ['secondderivative_15',['SecondDerivative',['../structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557',1,'NAV::CubicSpline::BoundaryCondition']]],
   ['semicodeless_16',['SemiCodeless',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba49191b26f41c0e96aad1b8f972fdf944',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['serial_5fhandler_17',['serial_handler',['../UlogFileFormat_8hpp.html#aaf4c855fcd1042223ebe548585f34d5da9126425b1eeda3c38b230d48da9b7f04',1,'NAV::vendor::pixhawk']]],
   ['shutdown_18',['Shutdown',['../classNAV_1_1Node.html#a04c7d8fd52bb21f40d924a0b9a950534a1a4ebb180ba59b067782515ffee6e975',1,'NAV::Node']]],
@@ -35,8 +35,15 @@ var searchData=
   ['single_5frow_32',['SINGLE_ROW',['../PositionInput_8hpp.html#a45afb163a067aa307b1bdad2b8c9fe07a378d8ad48c04d2dd8b158b07d1543994',1,'NAV::gui::widgets']]],
   ['singledifference_33',['SingleDifference',['../classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25aada72672a20958dcf90284b086a3e831c',1,'NAV::ObservationEstimator']]],
   ['singlefrequency_34',['SingleFrequency',['../classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aad5589033925c0e4d3b4aca6b31da66fa',1,'NAV::CycleSlipDetector']]],
-  ['somigliana_35',['Somigliana',['../Gravity_8hpp.html#a62cedc05576bd595a348504ae729e9deabb08c06e19a2e689147bdef1ccfcf926',1,'NAV']]],
-  ['spaceborne_36',['SPACEBORNE',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a823114549e6433df98d966fceb419296ab9ba3c714ecad335bfdb4593325517a0',1,'NAV::vendor::RINEX::ObsHeader']]],
-  ['sppstates_5fcount_37',['SppStates_COUNT',['../Keys_8hpp.html#acc2e8a3e7c5a6bb0effc144e2a901b19a51ce26c3b76a0f56e22d953af45f2978',1,'NAV::SPP::States']]],
-  ['string_38',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type']]]
+  ['singlestepheun2_35',['SingleStepHeun2',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a426743f9d9a9d59b87232836b42294ba',1,'NAV::InertialIntegrator']]],
+  ['singlestepheun3_36',['SingleStepHeun3',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ae263035e72d1b3ed9dcdf764dbf5135a',1,'NAV::InertialIntegrator']]],
+  ['singlesteprungekutta1_37',['SingleStepRungeKutta1',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110af2045735cb663838a817e921497d1eda',1,'NAV::InertialIntegrator']]],
+  ['singlesteprungekutta2_38',['SingleStepRungeKutta2',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ad6912c5bf09d571d6525e69773223b24',1,'NAV::InertialIntegrator']]],
+  ['singlesteprungekutta3_39',['SingleStepRungeKutta3',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ab283dc938c8fb85bc25fc26b4c1c586c',1,'NAV::InertialIntegrator']]],
+  ['singlesteprungekutta4_40',['SingleStepRungeKutta4',['../classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a058e9ccea82c53c1bb14fc6486d5ba8b',1,'NAV::InertialIntegrator']]],
+  ['somigliana_41',['Somigliana',['../Gravity_8hpp.html#a62cedc05576bd595a348504ae729e9deabb08c06e19a2e689147bdef1ccfcf926',1,'NAV']]],
+  ['spaceborne_42',['SPACEBORNE',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a823114549e6433df98d966fceb419296ab9ba3c714ecad335bfdb4593325517a0',1,'NAV::vendor::RINEX::ObsHeader']]],
+  ['sppstates_5fcount_43',['SppStates_COUNT',['../Keys_8hpp.html#acc2e8a3e7c5a6bb0effc144e2a901b19a51ce26c3b76a0f56e22d953af45f2978',1,'NAV::SPP::States']]],
+  ['states_5fcount_44',['States_COUNT',['../structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9a5385b09ee6fc108109feef2e074ebd66',1,'NAV::Pos::States::States_COUNT'],['../structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1ea37a51eaf0fd3b39e87569dcf5d6667cb',1,'NAV::PosVel::States::States_COUNT']]],
+  ['string_45',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type']]]
 ];

@@ -1,8 +1,8 @@
 var classNAV_1_1PolynomialCycleSlipDetector =
 [
     [ "Strategy", "classNAV_1_1PolynomialCycleSlipDetector.html#a656d5f87e2dd2de8960a11957fc44b14", null ],
-    [ "PolynomialCycleSlipDetector", "classNAV_1_1PolynomialCycleSlipDetector.html#a8cbfe9373074ce889da82a36e2c44fdb", null ],
-    [ "checkForCycleSlip", "classNAV_1_1PolynomialCycleSlipDetector.html#ae5c700e2f1cf8d4d7483b3f792bf29fe", null ],
+    [ "PolynomialCycleSlipDetector", "classNAV_1_1PolynomialCycleSlipDetector.html#adf906eb42f8374eeccf65724ec7e84ff", null ],
+    [ "checkForCycleSlip", "classNAV_1_1PolynomialCycleSlipDetector.html#ab6cdf1febd5f1a6e5864e552835fa425", null ],
     [ "clear", "classNAV_1_1PolynomialCycleSlipDetector.html#af329eb1c387fe2f6d933e1aae02948f4", null ],
     [ "getFitStrategy", "classNAV_1_1PolynomialCycleSlipDetector.html#aca521f480f82ccb1d56ce3d5912c79c3", null ],
     [ "getPolynomialDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#a0f5d92ecb50210799fad875059eddeb7", null ],

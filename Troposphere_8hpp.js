@@ -5,6 +5,7 @@ var Troposphere_8hpp =
     [ "MappingFunction", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76", [
       [ "None", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76a6adf97f83acf6453d4a6a4b1070f3754", null ],
       [ "Cosecant", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76a73671849db21f65ba4842184c366e9e7", null ],
+      [ "GMF", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76a6cfb8208d5bf0f63de2ed35f05fe2d02", null ],
       [ "VMF_GPT2", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76ac1a78bb04fa487692bc1cc0352eb9f51", null ],
       [ "VMF_GPT3", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76ad845695e4e392d0adaa3dfad5759f7c4", null ],
       [ "COUNT", "Troposphere_8hpp.html#a2d4742169ca545152d5b0d42238c4e76a4905ac9d6a22bdfc1ae096094ce6248d", null ]

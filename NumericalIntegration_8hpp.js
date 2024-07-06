@@ -1,22 +1,16 @@
 var NumericalIntegration_8hpp =
 [
-    [ "IntegrationAlgorithm", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0eba", [
-      [ "Heun", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaaedd0670386cd6f4271df549bfcb93f0c", null ],
-      [ "RungeKutta1", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506", null ],
-      [ "RungeKutta2", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f", null ],
-      [ "RungeKutta3", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9", null ],
-      [ "RungeKutta4", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58", null ],
-      [ "COUNT", "NumericalIntegration_8hpp.html#ab3feb12b560d393d392c597cd47a0ebaa4905ac9d6a22bdfc1ae096094ce6248d", null ]
-    ] ],
-    [ "Heun", "NumericalIntegration_8hpp.html#ac953f160fea07529a47253569d4a1336", null ],
-    [ "Heun", "NumericalIntegration_8hpp.html#abcd33e56517eb26ea888a93f0c437702", null ],
-    [ "RungeKutta1", "NumericalIntegration_8hpp.html#a4c1f4bebc67f0ff8aa3d7ecf8942edfe", null ],
-    [ "RungeKutta1", "NumericalIntegration_8hpp.html#a06f0dfa9e9b5230aac747a1c16e7e869", null ],
-    [ "RungeKutta2", "NumericalIntegration_8hpp.html#ad3bf38381b9e0fe9b7423967ec83b87b", null ],
-    [ "RungeKutta2", "NumericalIntegration_8hpp.html#a9ae20d40717913cc0b2aa4b37091bc16", null ],
-    [ "RungeKutta3", "NumericalIntegration_8hpp.html#a03cde48b08535ca0fc1e74f128dce77c", null ],
-    [ "RungeKutta3", "NumericalIntegration_8hpp.html#a0daff17a2e745632947b79c22d5508e7", null ],
-    [ "RungeKutta4", "NumericalIntegration_8hpp.html#a22ca763c5242bad59853f19a6c7d4222", null ],
-    [ "RungeKutta4", "NumericalIntegration_8hpp.html#a33cfa0c6a868581e10972095dc63fef6", null ],
-    [ "to_string", "NumericalIntegration_8hpp.html#ae7bec43a136c261477f83acee0507ef0", null ]
+    [ "Heun2", "NumericalIntegration_8hpp.html#aca6706db0669302c501a0d5988f7eeca", null ],
+    [ "Heun3", "NumericalIntegration_8hpp.html#a989366bebe6610a6e4892b3db0c58fbd", null ],
+    [ "RungeKutta1", "NumericalIntegration_8hpp.html#a619d43af69ae6137f1363bfd99788eba", null ],
+    [ "RungeKutta2", "NumericalIntegration_8hpp.html#af9901074fb40608a248962c54bf9f563", null ],
+    [ "RungeKutta3", "NumericalIntegration_8hpp.html#a19e7171dcd116183a0833a5bb39a346c", null ],
+    [ "RungeKutta4", "NumericalIntegration_8hpp.html#a9f70b8db4262b9b0ed22849dd3b8e2cf", null ],
+    [ "RungeKuttaExplicit", "NumericalIntegration_8hpp.html#a7ab7952ae012509781d7b44d1fb69638", null ],
+    [ "Heun2", "NumericalIntegration_8hpp.html#ab22b225cf9ffaa29766b053dc8436d0a", null ],
+    [ "Heun3", "NumericalIntegration_8hpp.html#a9fbd00e0e8bbb0323ec364dbebc2b64a", null ],
+    [ "RK1", "NumericalIntegration_8hpp.html#ae9f20782cec4eba7cc631391845ee644", null ],
+    [ "RK2", "NumericalIntegration_8hpp.html#adcbf54c3e2342193f0e6bf39202622b5", null ],
+    [ "RK3", "NumericalIntegration_8hpp.html#adb7e51440d7785ca1d47bcdbf5fd5212", null ],
+    [ "RK4", "NumericalIntegration_8hpp.html#a568edc6d75398524cda6160ff4219589", null ]
 ];

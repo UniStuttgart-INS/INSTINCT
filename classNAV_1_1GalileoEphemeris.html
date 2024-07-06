@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -388,7 +409,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Broadcasted ephemeris message data. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5., p. 43ff</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5., p. 43ff</dd></dl>
 <div class="image">
 <img src="GPS-satellite-orbits.png" alt=""/>
 <div class="caption">
@@ -653,7 +674,7 @@ Description of the GPS satellite orbits</div></div>
 <li><a class="el" href="#abedd0c0a6771ae9e06c3e170acbcfac5">a(1)</a> drift [s/s]</li>
 <li><a class="el" href="#abedd0c0a6771ae9e06c3e170acbcfac5">a(2)</a> drift rate (aging) [s/s^2]</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.3, p. 46 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.3, p. 46 </dd></dl>
 
 </div>
 </div>
@@ -670,7 +691,7 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 
 <p>E1-E5a Broadcast Group Delay [s]. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.5, p. 47f </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.5, p. 47f </dd></dl>
 
 </div>
 </div>
@@ -687,7 +708,7 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 
 <p>E1-E5b Broadcast Group Delay [s]. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.5, p. 47f </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.5, p. 47f </dd></dl>
 
 </div>
 </div>
@@ -705,7 +726,7 @@ Description of the GPS satellite orbits</div></div>
 
 <p>Data sources. </p>
 <p>Bit 0 set: I/NAV E1-B Bit 1 set: F/NAV E5a-I Bit 2 set: I/NAV E5b-I Bits 0 and 2: Both can be set if the navigation messages were merged, however, bits 0-2 cannot all be set, as the I/NAV and F/NAV messages contain different information Bit 3 reserved for Galileo internal use Bit 4 reserved for Galileo internal use Bit 8 set: af0-af2, Toc, SISA are for E5a,E1 Bit 9 set: af0-af2, Toc, SISA are for E5b,E1 Bits 8-9 : exclusive (only one bit can be set)</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[36]</a> RINEX-3.04, ch. A8, p. A25 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_RINEX-3.04">[37]</a> RINEX-3.04, ch. A8, p. A25 </dd></dl>
 
 </div>
 </div>
@@ -727,7 +748,7 @@ Description of the GPS satellite orbits</div></div>
 <li>to indicate to the user receiver the validity of the data (which have to be updated using new issue of navigation data)</li>
 <li>the user receiver to compute the full batch of data even if it misses some pages or start receiving the data somewhere during the transmission</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.9.2, p. 51 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.9.2, p. 51 </dd></dl>
 
 </div>
 </div>
@@ -744,7 +765,7 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 <p>SISA (Signal in space accuracy) [m]</p>
 <p>Signal – In – Space Accuracy (SISA) is a prediction of the minimum standard deviation (1-sigma) of the unbiased Gaussian distribution which overbounds the Signal – In – Space Error (SISE) predictable distribution for all possible user locations within the satellite coverage area. When no accurate prediction is available (SISA = NAPA), this is an indicator of a potential anomalous SIS.</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.12, p.58 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.12, p.58 </dd></dl>
 
 </div>
 </div>
@@ -761,7 +782,7 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 
 <p>Signal Health. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[12]</a> GAL-ICD-2.0, ch. 5.1.9.3, p. 52 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_GAL-ICD-2.0">[13]</a> GAL-ICD-2.0, ch. 5.1.9.3, p. 52 </dd></dl>
 
 </div>
 </div>

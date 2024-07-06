@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_eval_f.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented enum values with links to the class documentation for each member:</div>
 
 <h3><a id="index_f" name="index_f"></a>- f -</h3><ul>
-<li>FirstDerivative&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea454dc68786f1cb3d29fc46189eed92d2">NAV::CubicSpline::BoundaryCondition</a></li>
+<li>FirstDerivative&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eae8f0d94c2982b30e5f7231493762d459">NAV::CubicSpline&lt; Scalar &gt;::BoundaryCondition</a></li>
 <li>Float&#160;:&#160;<a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5583645f37bc3af44074db68c3f7ff0f">NAV::Pin::Type</a></li>
 <li>Flow&#160;:&#160;<a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">NAV::Pin::Type</a></li>
 </ul>

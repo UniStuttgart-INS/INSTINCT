@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -118,27 +139,28 @@ $(function(){initNavTree('classNAV_1_1StringObs.html',''); initResizable(); });
 <p>This is the complete list of members for <a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a>, including all inherited members.</p>
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a7e3d71ea9991be6289c3ccc02d6b5825">_events</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">data</a></td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">dynamicDataDescriptors</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">events</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835">getDynamicData</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aee2a0ad51ba50c9f76736457fc1f6fa3">getDynamicDataAt</a>(const std::string &amp;) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a74c5f9a3be5207ef0c62acd233be3664">GetStaticDataDescriptors</a>()</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ae312b7542fc8dc22c23516b1941ab560">GetStaticDescriptorCount</a>()</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ab3ac4652b4aa47783833f4cd53c19506">getValueAt</a>(size_t) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#acbf7dc114849b62234d8da3f2d220c8a">getValueAtOrNaN</a>(size_t idx) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">parentTypes</a>()</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ae6329391dfa5640c57c0f043865bc476">staticDataDescriptors</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aee6028b6b6d3156fdf5a811f925064f4">staticDescriptorCount</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">StringObs</a>(std::string str)</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">type</a>()</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1">~NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a>(const std::string &amp;text)</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">data</a></td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">dynamicDataDescriptors</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">events</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835">getDynamicData</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aee2a0ad51ba50c9f76736457fc1f6fa3">getDynamicDataAt</a>(const std::string &amp;) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a74c5f9a3be5207ef0c62acd233be3664">GetStaticDataDescriptors</a>()</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ae312b7542fc8dc22c23516b1941ab560">GetStaticDescriptorCount</a>()</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ab3ac4652b4aa47783833f4cd53c19506">getValueAt</a>(size_t) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#acbf7dc114849b62234d8da3f2d220c8a">getValueAtOrNaN</a>(size_t idx) const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a>(const NodeData &amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a>(NodeData &amp;&amp;)=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">parentTypes</a>()</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#ae6329391dfa5640c57c0f043865bc476">staticDataDescriptors</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#aee6028b6b6d3156fdf5a811f925064f4">staticDescriptorCount</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">StringObs</a>(std::string str)</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">type</a>()</td><td class="entry"><a class="el" href="classNAV_1_1StringObs.html">NAV::StringObs</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1">~NodeData</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

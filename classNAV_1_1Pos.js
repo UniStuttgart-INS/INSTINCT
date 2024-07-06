@@ -1,7 +1,10 @@
 var classNAV_1_1Pos =
 [
+    [ "States", "structNAV_1_1Pos_1_1States.html", "structNAV_1_1Pos_1_1States" ],
     [ "altitude", "classNAV_1_1Pos.html#af7cffacdd7a708e5b469755a0fd0eca0", null ],
+    [ "e_CovarianceMatrix", "classNAV_1_1Pos.html#a9bea954b07183c5223965450185d1bd7", null ],
     [ "e_position", "classNAV_1_1Pos.html#ab40818b92e6497dfc38b024179466918", null ],
+    [ "e_positionStdev", "classNAV_1_1Pos.html#a0fd6384fd0ea0b9770c802f711f1abe6", null ],
     [ "e_Quat_n", "classNAV_1_1Pos.html#a82b60003dbeabbe4ce59ff9f7f93d577", null ],
     [ "GetStaticDataDescriptors", "classNAV_1_1Pos.html#a232b27e6d0645c9b5d4377d3145a3577", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1Pos.html#a47440b0849c16df0374ed6256b2c12e8", null ],
@@ -9,10 +12,16 @@ var classNAV_1_1Pos =
     [ "latitude", "classNAV_1_1Pos.html#a553493d30cf12827e1e4e833c37f50fa", null ],
     [ "lla_position", "classNAV_1_1Pos.html#abbe7fbe77f4fd525dcd2b7f923fc24c6", null ],
     [ "longitude", "classNAV_1_1Pos.html#afaf68f4b7c48bdd5eb5b4375c591ec38", null ],
+    [ "n_CovarianceMatrix", "classNAV_1_1Pos.html#a6c727c5c529eb11a86879ba6ade27756", null ],
+    [ "n_positionStdev", "classNAV_1_1Pos.html#acd3f38485096d92ea9101079147950c7", null ],
     [ "n_Quat_e", "classNAV_1_1Pos.html#aab9530d76d0352ca3f4370e69a67d9d2", null ],
     [ "parentTypes", "classNAV_1_1Pos.html#a55feb7f57aaa3305ab458713ef50182b", null ],
+    [ "setPosCovarianceMatrix_e", "classNAV_1_1Pos.html#afb82482e4766ddb147b253a1bdf3dba1", null ],
+    [ "setPosCovarianceMatrix_n", "classNAV_1_1Pos.html#a99993ef71f1978ee758da707f61c7051", null ],
     [ "setPosition_e", "classNAV_1_1Pos.html#adb37079c91d9713756f460599d005beb", null ],
     [ "setPosition_lla", "classNAV_1_1Pos.html#ae3d22d46c55cecd0647109b77835813b", null ],
+    [ "setPositionAndStdDev_e", "classNAV_1_1Pos.html#a41f1f12553ffb7c1271f020e9d3d6ab0", null ],
+    [ "setPositionAndStdDev_lla", "classNAV_1_1Pos.html#aa6a28a0d8c6b2126e27cd4cad6303c29", null ],
     [ "staticDataDescriptors", "classNAV_1_1Pos.html#af94c0b03e09a94ea872b3e97efb6fd64", null ],
     [ "staticDescriptorCount", "classNAV_1_1Pos.html#acaabd224bde36b0b82c07ab47e083a4a", null ],
     [ "type", "classNAV_1_1Pos.html#a8437c9297534e7b9c0e416b0759fe2b1", null ]

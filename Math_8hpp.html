@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -139,6 +160,10 @@ template&lt;typename T , typename  = std::enable_if_t&lt;std::is_floating_point_
 <tr class="memitem:a301ee1e7c2ad143abc40847fc6de6f7f"><td class="memTemplItemLeft" align="right" valign="top">constexpr Out&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a301ee1e7c2ad143abc40847fc6de6f7f">NAV::math::interpretAs</a> (In in)</td></tr>
 <tr class="memdesc:a301ee1e7c2ad143abc40847fc6de6f7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interprets the input integer with certain amount of Bits as Output type. Takes care of sign extension.  <br /></td></tr>
 <tr class="separator:a301ee1e7c2ad143abc40847fc6de6f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae98f1b318674f18c3db18969664cf020" id="r_ae98f1b318674f18c3db18969664cf020"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:ae98f1b318674f18c3db18969664cf020"><td class="memTemplItemLeft" align="right" valign="top">Derived::PlainObject&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae98f1b318674f18c3db18969664cf020">NAV::math::lerp</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;a, const Eigen::MatrixBase&lt; Derived &gt; &amp;b, const typename Derived::Scalar &amp;t)</td></tr>
+<tr class="memdesc:ae98f1b318674f18c3db18969664cf020"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linear interpolation between vectors.  <br /></td></tr>
+<tr class="separator:ae98f1b318674f18c3db18969664cf020"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ff5df016cfe7e50edb8e40ca358ff49" id="r_a1ff5df016cfe7e50edb8e40ca358ff49"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
 <tr class="memitem:a1ff5df016cfe7e50edb8e40ca358ff49"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; Eigen::Matrix&lt; typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime &gt;, Eigen::Vector&lt; typename Derived::Scalar, Derived::RowsAtCompileTime &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1ff5df016cfe7e50edb8e40ca358ff49">NAV::math::LtDLdecomp_choleskyFact</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;Q)</td></tr>
 <tr class="memdesc:a1ff5df016cfe7e50edb8e40ca358ff49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method formulation.  <br /></td></tr>
@@ -293,6 +318,45 @@ template&lt;typename Out , size_t Bits, typename In , typename  = std::enable_if
 
 </div>
 </div>
+<a id="ae98f1b318674f18c3db18969664cf020" name="ae98f1b318674f18c3db18969664cf020"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae98f1b318674f18c3db18969664cf020">&#9670;&#160;</a></span>lerp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Derived::PlainObject NAV::math::lerp </td>
+          <td>(</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>b</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename Derived::Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Linear interpolation between vectors. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>Left value </td></tr>
+    <tr><td class="paramname">b</td><td>Right value </td></tr>
+    <tr><td class="paramname">t</td><td>Multiplier. [0, 1] for interpolation </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a + t * (b - a) </dd></dl>
+
+</div>
+</div>
 <a id="a1ff5df016cfe7e50edb8e40ca358ff49" name="a1ff5df016cfe7e50edb8e40ca358ff49"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1ff5df016cfe7e50edb8e40ca358ff49">&#9670;&#160;</a></span>LtDLdecomp_choleskyFact()</h2>
 
@@ -320,7 +384,7 @@ template&lt;typename Derived &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>L - Factor matrix (strict lower triangular) </dd>
 <dd>
 D - Vector with entries of the diagonal matrix </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_deJonge1996">[11]</a> de Jonge 1996, Algorithm FMFAC6 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_deJonge1996">[12]</a> de Jonge 1996, Algorithm FMFAC6 </dd></dl>
 
 </div>
 </div>
@@ -351,7 +415,7 @@ template&lt;typename Derived &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>L - Factor matrix (strict lower triangular) </dd>
 <dd>
 D - Vector with entries of the diagonal matrix </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_deJonge1996">[11]</a> de Jonge 1996, Algorithm FMFAC5 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_deJonge1996">[12]</a> de Jonge 1996, Algorithm FMFAC5 </dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Consider using <a class="el" href="#a1ff5df016cfe7e50edb8e40ca358ff49" title="Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method ...">NAV::math::LtDLdecomp_choleskyFact()</a> because it is faster by up to a factor 10 </dd></dl>
 
 </div>
@@ -373,32 +437,32 @@ D - Vector with entries of the diagonal matrix </dd></dl>
 
 <p>Calculates the cumulative distribution function (CDF) of the standard normal distribution. </p>
 <p><a class="anchor" id="eq-normalDistCDF"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-normalDistCDF}
+\begin{equation} \label{eq:eq-normalDistCDF}
  \Phi(x) = \int\displaylimits_{-\infty}^x \frac{1}{\sqrt{2\pi}} \exp{\left(-\frac{1}{2} v^2\right)} \text{d}v
-\end{equation}" src="form_66.svg" width="1594" height="61"/>
+\end{equation}
 </p>
 <p> which can be expressed with the error function <a class="anchor" id="eq-normalDistCDF-erf"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-normalDistCDF-erf}
+\begin{equation} \label{eq:eq-normalDistCDF-erf}
  \Phi(x) = \frac{1}{2} \left[ 1 + \text{erf}{\left(\frac{x}{\sqrt{2}}\right)} \right]
-\end{equation}" src="form_67.svg" width="1570" height="42"/>
+\end{equation}
 </p>
 <p> Using the property <a class="anchor" id="eq-erf-minus"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-erf-minus}
+\begin{equation} \label{eq:eq-erf-minus}
  \text{erf}{\left( -x \right)} = -\text{erf}{\left( x \right)}
-\end{equation}" src="form_68.svg" width="1542" height="19"/>
+\end{equation}
 </p>
 <p> and the complementary error function <a class="anchor" id="eq-erfc"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-erfc}
+\begin{equation} \label{eq:eq-erfc}
  \text{erfc}{\left( x \right)} = 1 - \text{erf}{\left( x \right)}
-\end{equation}" src="form_69.svg" width="1547" height="19"/>
+\end{equation}
 </p>
-<p> we can simplify equation <a class="el" href="#eq-normalDistCDF-erf"><img class="formulaInl" alt="\eqref{eq:eq-normalDistCDF-erf}" src="form_70.svg" width="33" height="19"/> </a> to <a class="anchor" id="eq-normalDistCDF-erfc"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-normalDistCDF-erfc}
+<p> we can simplify equation <a class="el" href="#eq-normalDistCDF-erf">eq-normalDistCDF-erf</a> to <a class="anchor" id="eq-normalDistCDF-erfc"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-normalDistCDF-erfc}
 \begin{aligned}
  \Phi(x) &amp;= \frac{1}{2} \left[ 1 - \text{erf}{\left(-\frac{x}{\sqrt{2}}\right)} \right] \\
          &amp;= \frac{1}{2} \text{erfc}{\left(-\frac{x}{\sqrt{2}}\right)}
 \end{aligned}
-\end{equation}" src="form_71.svg" width="1577" height="91"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -644,9 +708,9 @@ template&lt;typename DerivedA , typename DerivedQ &gt; </div>
 
 <p>Calculates the squared norm of the vector and matrix. </p>
 <p><a class="anchor" id="eq-squaredNorm"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-squaredNorm}
+\begin{equation} \label{eq:eq-squaredNorm}
 ||\mathbf{\dots}||^2_{\mathbf{Q}} = (\dots)^T \mathbf{Q}^{-1} (\dots)
-\end{equation}" src="form_65.svg" width="1568" height="23"/>
+\end{equation}
 </p>
  <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

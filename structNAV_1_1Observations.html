@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -113,6 +134,7 @@ $(function(){initNavTree('structNAV_1_1Observations.html',''); initResizable(); 
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structNAV_1_1Observations-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">NAV::Observations Struct Reference</div></div>
@@ -127,6 +149,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1Observations_1_1SignalObservation.html">SignalObservation</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> specific observation of the signal.  <a href="structNAV_1_1Observations_1_1SignalObservation.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a1f293ddac5324b823df81bcfc6cb6772" id="r_a1f293ddac5324b823df81bcfc6cb6772"><td class="memItemLeft" align="right" valign="top"><a id="a1f293ddac5324b823df81bcfc6cb6772" name="a1f293ddac5324b823df81bcfc6cb6772"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>recalcObservableCounts</b> ()</td></tr>
+<tr class="memdesc:a1f293ddac5324b823df81bcfc6cb6772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates/Recalculates the number of observables. <br /></td></tr>
+<tr class="separator:a1f293ddac5324b823df81bcfc6cb6772"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>

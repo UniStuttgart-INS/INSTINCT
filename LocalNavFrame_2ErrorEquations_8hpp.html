@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -216,7 +237,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [rad / s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.64, p. 587 - 𝐅_11 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.64, p. 587 - 𝐅_11 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V07 - equation (7.22) </dd></dl>
 
@@ -268,7 +289,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.22) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [rad / s] for latitude and [1 / (m · s)] for height </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.66, p. 587 - 𝐅_13 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.66, p. 587 - 𝐅_13 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21) </dd></dl>
 
@@ -314,7 +335,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / m] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.65, p. 587 - 𝐅_12 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.65, p. 587 - 𝐅_12 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21) </dd></dl>
 
@@ -343,7 +364,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.63, p. 587 - 𝐅_15 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.63, p. 587 - 𝐅_15 </dd></dl>
 
 </div>
 </div>
@@ -393,7 +414,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / s] for latitude and [1 / (m · s)] for height </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.71, p. 588 - 𝐅_33 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.71, p. 588 - 𝐅_33 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5) </dd></dl>
 
@@ -439,7 +460,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / m] for latitude and longitude and [-] for height </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.70, p. 588 - 𝐅_32 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.70, p. 588 - 𝐅_32 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5) </dd></dl>
 
@@ -468,7 +489,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.63, p. 587 - 𝐅_24 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.63, p. 587 - 𝐅_24 </dd></dl>
 
 </div>
 </div>
@@ -495,7 +516,7 @@ See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [m / s^2] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.67, p. 587 - 𝐅_21 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.67, p. 587 - 𝐅_21 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V08 - equation (8.4) </dd></dl>
 
@@ -553,13 +574,13 @@ See T. Hobiger (2021) Inertialnavigation V08 - equation (8.4) </dd></dl>
     <tr><td class="paramdir">[in]</td><td class="paramname">height</td><td>Geodetic height of the body in [m] </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">R_N</td><td>North/South (meridian) earth radius in [m] </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">R_E</td><td>East/West (prime vertical) earth radius in [m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">g_0</td><td>Magnitude of the gravity vector in [m/s^2] (see <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 2.4.7, eq. 2.135, p. 70) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">g_0</td><td>Magnitude of the gravity vector in [m/s^2] (see <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 2.4.7, eq. 2.135, p. 70) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">r_eS_e</td><td>Geocentric radius. The distance of a point on the Earth's surface from the center of the Earth in [m] </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [m / s^2] for latitude and [1 / s^2] for height </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.69, p. 588 - 𝐅_23 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.69, p. 588 - 𝐅_23 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16) </dd></dl>
 
@@ -611,7 +632,7 @@ See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16) </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>3x3 matrix in [1 / s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 14.2.4, eq. 14.68, p. 587 - 𝐅_22 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 14.2.4, eq. 14.68, p. 587 - 𝐅_22 </dd>
 <dd>
 See T. Hobiger (2021) Inertialnavigation V08 - equation (8.6, 8.15) </dd></dl>
 

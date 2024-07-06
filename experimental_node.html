@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('experimental_node.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Experimental Node(s)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{TO BE ADDED SOON.}} $" src="form_85.svg" width="187" height="16"/> </p><hr  />
+<div class="textblock"><p>TODO: \( \textcolor{red}{\text{TO BE ADDED SOON.}} \) </p><hr  />
 <p> <em>Last updated: 2024-02-21</em> </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

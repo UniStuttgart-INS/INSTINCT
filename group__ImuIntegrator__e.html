@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=11" />
   <meta name="generator" content="Doxygen 1.10.0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>INSTINCT: IMU Integrator (Earth-fixed frame)</title>
+  <title>INSTINCT: ImuIntegrator_e</title>
   <link href="tabs.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="dynsections.js"></script>
@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -111,194 +132,9 @@ $(function(){initNavTree('group__ImuIntegrator__e.html',''); initResizable(); })
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">IMU Integrator (Earth-fixed frame)<div class="ingroups"><a class="el" href="group__DataProcessor__chapter.html">DataProcessor</a> &raquo; <a class="el" href="group__DataProcessor__Integrator__chapter.html">Integrator</a></div></div></div>
+  <div class="headertitle"><div class="title">ImuIntegrator_e<div class="ingroups"><a class="el" href="group__DataProcessor__chapter.html">DataProcessor</a> &raquo; <a class="el" href="group__DataProcessor__Integrator__chapter.html">Integrator</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-<h1><a class="anchor" id="ImuIntegrator-Mechanization-e"></a>
-Earth-fixed frame mechanization</h1>
-<h2><a class="anchor" id="ImuIntegrator-Mechanization-e-Attitude"></a>
-Attitude</h2>
-<h3><a class="anchor" id="ImuIntegrator-Mechanization-e-Attitude-DCM"></a>
-Propagation of direction cosine matrix with time</h3>
-<p><a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-DCM"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-DCM}
-  \mathbf{\dot{C}}_b^e = \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b
-\end{equation}" src="form_173.svg" width="1519" height="23"/>
-</p>
-<p> where</p><ul>
-<li><img class="formulaInl" alt="$ \boldsymbol{\Omega}_{eb}^b $" src="form_174.svg" width="28" height="23"/> is the skew symmetric form of <img class="formulaInl" alt="$ \boldsymbol{\omega}_{eb}^b $" src="form_175.svg" width="26" height="21"/>, the body rate with respect to the Earth-fixed frame</li>
-</ul>
-<p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 3.5.2, eq. 3.22, p. 29</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[21]</a> Jekeli, ch. 4.3.3, eq. 4.83, p. 126</li>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 5.3.3, eq. 5.35, p. 175</li>
-</ul>
-<p>The body rate with respect to the Earth-fixed frame <img class="formulaInl" alt="$ \boldsymbol{\omega}_{eb}^b $" src="form_175.svg" width="26" height="21"/> can be expressed as <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-omega-eb"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-omega-eb}
-  \boldsymbol{\omega}_{eb}^b = \boldsymbol{\omega}_{ib}^b - \mathbf{C}_e^b \boldsymbol{\omega}_{ie}^e
-\end{equation}" src="form_177.svg" width="1545" height="21"/>
-</p>
-<p> this together with the skew-symmetric matrix transformation (see <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 2.3.1, eq. 2.51, p. 45) <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-skew-symmetric-matrix-transform"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-skew-symmetric-matrix-transform}
-  \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma
-\end{equation}" src="form_293.svg" width="1540" height="26"/>
-</p>
-<p> leads to the skew symmetric form of <a class="el" href="#eq-ImuIntegrator-Mechanization-e-Attitude-DCM"><img class="formulaInl" alt="\eqref{eq:eq-ImuIntegrator-Mechanization-e-Attitude-DCM}" src="form_294.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-DCM-full"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-DCM-full}
-  \mathbf{\dot{C}}_b^e = \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
-\end{equation}" src="form_295.svg" width="1554" height="23"/>
-</p>
-<h3><a class="anchor" id="ImuIntegrator-Mechanization-e-Attitude-Quaternion"></a>
-Propagation of quaternion with time</h3>
-<p>The quaternion <img class="formulaInl" alt="$ \mathbf{q} = a + \mathbf{i} b + \mathbf{j} c + \mathbf{k} d $" src="form_168.svg" width="154" height="16"/> propagates as (see <a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 3.6.4.3, eq. 3.60-3.62, p. 44) <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base}
-  \mathbf{\dot{q}}_b^e = 0.5 \mathbf{q}_b^e \cdot \mathbf{p}_{eb}^b
-\end{equation}" src="form_296.svg" width="1531" height="21"/>
-</p>
-<p> where <img class="formulaInl" alt="$ \mathbf{p}_{eb}^b = \begin{pmatrix} 0 &amp; \boldsymbol{\omega}_{eb}^b \end{pmatrix}^T = \begin{pmatrix} 0 &amp; \omega_{eb,x}^b &amp; \omega_{eb,y}^b &amp; \omega_{eb,z}^b \end{pmatrix}^T $" src="form_297.svg" width="347" height="28"/></p>
-<p>This can be written in matrix form as <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base-matrix"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base-matrix}
-  \mathbf{\dot{q}}_b^e
-      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
-      = 0.5 \begin{bmatrix} a &amp; -b &amp; -c &amp; -d \\
-                            b &amp;  a &amp; -d &amp;  c \\
-                            c &amp;  d &amp;  a &amp; -b \\
-                            d &amp; -c &amp;  b &amp;  a \end{bmatrix}
-            \begin{bmatrix} 0 \\ \omega_{eb,x}^b \\ \omega_{eb,y}^b \\ \omega_{eb,z}^b \end{bmatrix}
-\end{equation}" src="form_298.svg" width="1640" height="86"/>
-</p>
-<p> that is <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-components"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-components}
-\begin{aligned}
-  \dotup{a} &amp;= -0.5 (b \omega_{eb,x}^b + c \omega_{eb,y}^b + d \omega_{eb,z}^b) &amp;=  0.5 ( 0 \cdot a - \omega_{eb,x}^b b - \omega_{eb,y}^b c - \omega_{eb,z}^b d) \\
-  \dotup{b} &amp;=  0.5 (a \omega_{eb,x}^b - d \omega_{eb,y}^b + c \omega_{eb,z}^b) &amp;=  0.5 (\omega_{eb,x}^b a +  0 \cdot b + \omega_{eb,z}^b c - \omega_{eb,y}^b d) \\
-  \dotup{c} &amp;=  0.5 (d \omega_{eb,x}^b + a \omega_{eb,y}^b - b \omega_{eb,z}^b) &amp;=  0.5 (\omega_{eb,y}^b a - \omega_{eb,z}^b b +  0 \cdot c + \omega_{eb,x}^b d) \\
-  \dotup{d} &amp;= -0.5 (c \omega_{eb,x}^b - b \omega_{eb,y}^b - a \omega_{eb,z}^b) &amp;=  0.5 (\omega_{eb,z}^b a + \omega_{eb,y}^b b - \omega_{eb,x}^b c +  0 \cdot d) \\
-\end{aligned}
-\end{equation}" src="form_299.svg" width="1750" height="112"/>
-</p>
-<p>and this can be written in matrix form again as <a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
-  \mathbf{\dot{q}}_b^e
-      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
-      = \frac{1}{2} \begin{bmatrix}        0        &amp; -\omega_{eb,x}^b &amp; -\omega_{eb,y}^b &amp; -\omega_{eb,z}^b \\
-                                    \omega_{eb,x}^b &amp;        0         &amp;  \omega_{eb,z}^b &amp; -\omega_{eb,y}^b \\
-                                    \omega_{eb,y}^b &amp; -\omega_{eb,z}^b &amp;        0         &amp;  \omega_{eb,x}^b \\
-                                    \omega_{eb,z}^b &amp;  \omega_{eb,y}^b &amp; -\omega_{eb,x}^b &amp;        0         \end{bmatrix}
-                    \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
-\end{equation}" src="form_300.svg" width="1678" height="89"/>
-</p>
-<p> see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319 (e instead of n system)</li>
-</ul>
-<h2><a class="anchor" id="ImuIntegrator-Mechanization-e-Velocity"></a>
-Velocity</h2>
-<p>The derivative of the velocity in Earth frame coordinates can be expressed as</p>
-<p><a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Velocity"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Velocity}
-  \boldsymbol{\dot{v}}^e
-      = \mathbf{C}_b^e \cdot \overbrace{\boldsymbol{f}_{ib}^b}^{\hidewidth\text{measured}\hidewidth}
-        -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
-        +\ \overbrace{\boldsymbol{\gamma}^e}^{\hidewidth\text{gravitation}\hidewidth}
-        -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\hidewidth\text{centrifugal acceleration}\hidewidth}
-\end{equation}" src="form_301.svg" width="1684" height="72"/>
-</p>
-<p> where</p><ul>
-<li><img class="formulaInl" alt="$ \boldsymbol{v}^e $" src="form_302.svg" width="18" height="14"/> is the velocity with respect to the Earth in Earth-fixed frame coordinates,</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{f}_{ib}^b $" src="form_303.svg" width="23" height="23"/> is the specific force vector as measured by a triad of accelerometers and resolved into body frame coordinates</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e = \begin{bmatrix} 0 &amp; 0 &amp; \omega_{ie} \end{bmatrix}^T $" src="form_304.svg" width="149" height="26"/> is the turn rate of the Earth expressed in Earth-fixed frame coordinates</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\gamma}^e $" src="form_305.svg" width="18" height="18"/> the local gravitation vector in Earth-fixed frame coordinates (caused by effects of mass attraction)</li>
-</ul>
-<p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 3.5.2, eq. 3.21, p. 29</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[21]</a> Jekeli, ch. 4.3.3, eq. 4.82, p. 126</li>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 5.3.3, eq. 5.35, p. 175</li>
-</ul>
-<h2><a class="anchor" id="ImuIntegrator-Mechanization-e-Position"></a>
-Position</h2>
-<p><a class="anchor" id="eq-ImuIntegrator-Mechanization-e-Position"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Position}
-  \boldsymbol{\dot{x}}^e = \boldsymbol{v}^e
-\end{equation}" src="form_306.svg" width="1503" height="19"/>
-</p>
-<p>see</p><ul>
-<li><a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 3.5.2, p. 28ff</li>
-<li><a class="el" href="citelist.html#CITEREF_Jekeli2001">[21]</a> Jekeli, ch. 4.3.3, eq. 4.82, p. 126</li>
-<li><a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 5.3.4, eq. 5.37, p. 175</li>
-</ul>
-<h1><a class="anchor" id="ImuIntegrator-e-Numerical-Integration"></a>
-Numerical Integration</h1>
-<h2><a class="anchor" id="ImuIntegrator-e-Numerical-Integration-RK4"></a>
-Runge Kutta 4th order</h2>
-<p>The universal Runge Kutta 4th order equations are</p>
-<p><a class="anchor" id="eq-ImuIntegrator-e-RK4"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-e-RK4}
-\begin{aligned}
-  y_{i} &amp;= y_{i-1} + \frac{h}{6} \left( k_1 + 2 k_2 + 2 k_3 + k_4 \right) \\
-  k_1 &amp;= f(y_{i-1}, t_{i-1}) \\
-  k_2 &amp;= f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) \\
-  k_3 &amp;= f(y_{i-1} + \frac{h}{2} k_2, t_{i-1} + \frac{h}{2}) \\
-  k_4 &amp;= f(y_{i-1} + h \cdot k_2, t_{i-1} + h) \\
-\end{aligned}
-\end{equation}" src="form_307.svg" width="1608" height="177"/>
-</p>
-<p>As the position, velocity and attitude depend on each other, the equations have to be solved simultaneously and we should not first advance <img class="formulaInl" alt="$ \boldsymbol{v} $" src="form_308.svg" width="11" height="11"/> and then advance <img class="formulaInl" alt="$ \boldsymbol{x} $" src="form_309.svg" width="11" height="11"/>.</p>
-<p><a class="anchor" id="eq-ImuIntegrator-e-ODE"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-e-ODE}
-  f =\\
-  \begin{pmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \\ \dotup{v}_x \\ \dotup{v}_y \\ \dotup{v}_z \\ \dotup{x} \\ \dotup{y} \\ \dotup{z} \end{pmatrix}
-  =
-  \begin{pmatrix}
-    \frac{1}{2} \begin{bmatrix}        0        &amp; -\omega_{eb,x}^b &amp; -\omega_{eb,y}^b &amp; -\omega_{eb,z}^b \\
-                                \omega_{eb,x}^b &amp;        0         &amp;  \omega_{eb,z}^b &amp; -\omega_{eb,y}^b \\
-                                \omega_{eb,y}^b &amp; -\omega_{eb,z}^b &amp;        0         &amp;  \omega_{eb,x}^b \\
-                                \omega_{eb,z}^b &amp;  \omega_{eb,y}^b &amp; -\omega_{eb,x}^b &amp;        0         \end{bmatrix} \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix} \\
-    \\
-    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
-    \\
-    v_x \\ v_y \\ v_z
-  \end{pmatrix}
-\end{equation}" src="form_310.svg" width="1724" height="214"/>
-</p>
-<p>Taking only the position and velocity terms and simplifying we get</p>
-<p><a class="anchor" id="eq-ImuIntegrator-e-ODE-posvel"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-e-ODE-posvel}
-  f = \begin{pmatrix} \boldsymbol{\dot{v}} \\ \boldsymbol{\dot{x}} \end{pmatrix} =
-  \begin{pmatrix}
-    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e (\mathbf{x}^e) -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
-    \boldsymbol{v}
-  \end{pmatrix} =
-  \begin{pmatrix}
-    \boldsymbol{a} (\mathbf{C}_b^e,  \boldsymbol{v}^e, \mathbf{x}^e) \\
-    \boldsymbol{v}
-  \end{pmatrix} \approx
-  \begin{pmatrix}
-    \boldsymbol{a} (\mathbf{x}^e) \\
-    \boldsymbol{v}
-  \end{pmatrix}
-\end{equation}" src="form_311.svg" width="1850" height="44"/>
-</p>
-<p>Which leads to the terms</p>
-<p><a class="anchor" id="eq-ImuIntegrator-e-RK4-ODE"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuIntegrator-e-RK4-ODE}
-\begin{aligned}
-  k_1 &amp;= \begin{pmatrix} k_{1_{v}} \\ k_{1_{x}} \end{pmatrix} = f(y_{i-1}, t_{i-1}) =
-  \begin{pmatrix}
-    \boldsymbol{a} (\mathbf{x}^e_{i-1}) \\
-    \boldsymbol{v}_{i-1}
-  \end{pmatrix} \\
-  k_2 &amp;= \begin{pmatrix} k_{2_{v}} \\ k_{2_{x}} \end{pmatrix} = f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) =
-  \begin{pmatrix}
-    \boldsymbol{a} (\mathbf{x}^e_{i-1} + \frac{h}{2} k_{1_{x}}) \\
-    \boldsymbol{v}_{i-1} + \frac{h}{2} k_{1_{v}}
-  \end{pmatrix} \\
-  k_3 &amp;= \dots
-\end{aligned}
-\end{equation}" src="form_312.svg" width="1703" height="117"/>
-</p>
-<p>These terms coincide with <a class="el" href="citelist.html#CITEREF_Voesenek2008">[46]</a> Voesenek, eq. 9,10</p>
-<h1><a class="anchor" id="ImuIntegrator-e-Appendix"></a>
-Appendix</h1>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

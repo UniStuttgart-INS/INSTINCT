@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -225,6 +246,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr
 <tr class="memitem:a976c5549d2f7187b88f50799e565e08d" id="r_a976c5549d2f7187b88f50799e565e08d"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structNAV_1_1InsTime__MJD.html">InsTime_MJD</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a976c5549d2f7187b88f50799e565e08d">toMJD</a> (<a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a> timesys=<a class="el" href="TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45">UTC</a>) const</td></tr>
 <tr class="memdesc:a976c5549d2f7187b88f50799e565e08d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts this time object into a different format.  <br /></td></tr>
 <tr class="separator:a976c5549d2f7187b88f50799e565e08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf85a6bb7ffb0062201324ce0bcbe197" id="r_acf85a6bb7ffb0062201324ce0bcbe197"><td class="memItemLeft" align="right" valign="top"><a id="acf85a6bb7ffb0062201324ce0bcbe197" name="acf85a6bb7ffb0062201324ce0bcbe197"></a>
+constexpr long double&#160;</td><td class="memItemRight" valign="bottom"><b>toUnixTime</b> () const</td></tr>
+<tr class="memdesc:acf85a6bb7ffb0062201324ce0bcbe197"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts this time object into a UNIX timestamp in [s]. <br /></td></tr>
+<tr class="separator:acf85a6bb7ffb0062201324ce0bcbe197"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a514b88c304dab940ff3f06cbe60642ee" id="r_a514b88c304dab940ff3f06cbe60642ee"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structNAV_1_1InsTime__YDoySod.html">InsTime_YDoySod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514b88c304dab940ff3f06cbe60642ee">toYDoySod</a> (<a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a> timesys=<a class="el" href="TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6ac977e58954037e7401a3d34090d32f45">UTC</a>) const</td></tr>
 <tr class="memdesc:a514b88c304dab940ff3f06cbe60642ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts this time object into a different format.  <br /></td></tr>
 <tr class="separator:a514b88c304dab940ff3f06cbe60642ee"><td class="memSeparator" colspan="2">&#160;</td></tr>

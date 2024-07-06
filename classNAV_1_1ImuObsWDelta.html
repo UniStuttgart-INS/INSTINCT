@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -116,7 +137,7 @@ $(function(){initNavTree('classNAV_1_1ImuObsWDelta.html',''); initResizable(); }
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classNAV_1_1ImuObsWDelta-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">NAV::ImuObsWDelta Class Reference<span class="mlabels"><span class="mlabel">final</span></span></div></div>
+  <div class="headertitle"><div class="title">NAV::ImuObsWDelta Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -144,6 +165,9 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>staticDescriptorCou
 <tr class="memdesc:acb11ce2e49154e4fa9e7ac41ce0873e5 inherit pub_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:acb11ce2e49154e4fa9e7ac41ce0873e5 inherit pub_methods_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>
@@ -236,43 +260,31 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a20f15382a891b7ad5c2193f8e2300c25" id="r_a20f15382a891b7ad5c2193f8e2300c25"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20f15382a891b7ad5c2193f8e2300c25">dtheta</a></td></tr>
-<tr class="separator:a20f15382a891b7ad5c2193f8e2300c25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e8148eb6a8d6395d4c1d4fdee8168af" id="r_a5e8148eb6a8d6395d4c1d4fdee8168af"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e8148eb6a8d6395d4c1d4fdee8168af">dtheta</a></td></tr>
+<tr class="separator:a5e8148eb6a8d6395d4c1d4fdee8168af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cb95e46a54bf2da8dd7358fef9c88cd" id="r_a4cb95e46a54bf2da8dd7358fef9c88cd"><td class="memItemLeft" align="right" valign="top"><a id="a4cb95e46a54bf2da8dd7358fef9c88cd" name="a4cb95e46a54bf2da8dd7358fef9c88cd"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>dtime</b></td></tr>
 <tr class="memdesc:a4cb95e46a54bf2da8dd7358fef9c88cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time interval that the delta angle and velocities are integrated over in [seconds]. <br /></td></tr>
 <tr class="separator:a4cb95e46a54bf2da8dd7358fef9c88cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d307c5a53b4714f2fb1246d08db4da9" id="r_a8d307c5a53b4714f2fb1246d08db4da9"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d307c5a53b4714f2fb1246d08db4da9">dvel</a></td></tr>
-<tr class="separator:a8d307c5a53b4714f2fb1246d08db4da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a803cceaccd12dabe573d3e38160d567b" id="r_a803cceaccd12dabe573d3e38160d567b"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a803cceaccd12dabe573d3e38160d567b">dvel</a></td></tr>
+<tr class="separator:a803cceaccd12dabe573d3e38160d567b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classNAV_1_1ImuObs"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1ImuObs')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td></tr>
-<tr class="memitem:a10172066046ec5004acbf3193e9a014a inherit pub_attribs_classNAV_1_1ImuObs" id="r_a10172066046ec5004acbf3193e9a014a"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accelCompXYZ</b></td></tr>
-<tr class="memdesc:a10172066046ec5004acbf3193e9a014a inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated acceleration measured in units of [m/s^2], and given in the platform frame. <br /></td></tr>
-<tr class="separator:a10172066046ec5004acbf3193e9a014a inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33300ff714ac0121cf3a4624ed34ad79 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a33300ff714ac0121cf3a4624ed34ad79"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>accelUncompXYZ</b></td></tr>
-<tr class="memdesc:a33300ff714ac0121cf3a4624ed34ad79 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame. <br /></td></tr>
-<tr class="separator:a33300ff714ac0121cf3a4624ed34ad79 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaecc4fd6484437dfe194231bd4421d10 inherit pub_attribs_classNAV_1_1ImuObs" id="r_aaecc4fd6484437dfe194231bd4421d10"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gyroCompXYZ</b></td></tr>
-<tr class="memdesc:aaecc4fd6484437dfe194231bd4421d10 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated angular rate measured in units of [rad/s], and given in the platform frame. <br /></td></tr>
-<tr class="separator:aaecc4fd6484437dfe194231bd4421d10 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24a1448b1a9bc6b591ce26bd6504c983 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a24a1448b1a9bc6b591ce26bd6504c983"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gyroUncompXYZ</b></td></tr>
-<tr class="memdesc:a24a1448b1a9bc6b591ce26bd6504c983 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame. <br /></td></tr>
-<tr class="separator:a24a1448b1a9bc6b591ce26bd6504c983 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs" id="r_aeebb869562cb3544a976278a576f0fc4"><td class="memItemLeft" align="right" valign="top">
 const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>imuPos</b></td></tr>
 <tr class="memdesc:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame. <br /></td></tr>
 <tr class="separator:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a850db007dc42857b04c3438a59800082 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a850db007dc42857b04c3438a59800082"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>magCompXYZ</b></td></tr>
-<tr class="memdesc:a850db007dc42857b04c3438a59800082 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The compensated magnetic field measured in units of [Gauss], and given in the platform frame. <br /></td></tr>
-<tr class="separator:a850db007dc42857b04c3438a59800082 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf8e57f5b010aef7c7fc717f2dddb557 inherit pub_attribs_classNAV_1_1ImuObs" id="r_abf8e57f5b010aef7c7fc717f2dddb557"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>magUncompXYZ</b></td></tr>
-<tr class="memdesc:abf8e57f5b010aef7c7fc717f2dddb557 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame. <br /></td></tr>
-<tr class="separator:abf8e57f5b010aef7c7fc717f2dddb557 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="memItemLeft" align="right" valign="top">
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_acceleration</b></td></tr>
+<tr class="memdesc:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame. <br /></td></tr>
+<tr class="separator:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs" id="r_a65aefc8dbbba7614004555315fcec16e"><td class="memItemLeft" align="right" valign="top">
+Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_angularRate</b></td></tr>
+<tr class="memdesc:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame. <br /></td></tr>
+<tr class="separator:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs" id="r_afbf713250881369de5b453e4e9e8abfd"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>p_magneticField</b></td></tr>
+<tr class="memdesc:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame. <br /></td></tr>
+<tr class="separator:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09fb1db7b4ffde3afccebc4c813d2792"><td class="memItemLeft" align="right" valign="top">
 std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>temperature</b></td></tr>
 <tr class="memdesc:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU temperature measured in units of [Celsius]. <br /></td></tr>
@@ -425,14 +437,14 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a20f15382a891b7ad5c2193f8e2300c25" name="a20f15382a891b7ad5c2193f8e2300c25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20f15382a891b7ad5c2193f8e2300c25">&#9670;&#160;</a></span>dtheta</h2>
+<a id="a5e8148eb6a8d6395d4c1d4fdee8168af" name="a5e8148eb6a8d6395d4c1d4fdee8168af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e8148eb6a8d6395d4c1d4fdee8168af">&#9670;&#160;</a></span>dtheta</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt;Eigen::Vector3d&gt; NAV::ImuObsWDelta::dtheta</td>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsWDelta::dtheta</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -440,14 +452,14 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 </div>
 </div>
-<a id="a8d307c5a53b4714f2fb1246d08db4da9" name="a8d307c5a53b4714f2fb1246d08db4da9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d307c5a53b4714f2fb1246d08db4da9">&#9670;&#160;</a></span>dvel</h2>
+<a id="a803cceaccd12dabe573d3e38160d567b" name="a803cceaccd12dabe573d3e38160d567b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a803cceaccd12dabe573d3e38160d567b">&#9670;&#160;</a></span>dvel</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt;Eigen::Vector3d&gt; NAV::ImuObsWDelta::dvel</td>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsWDelta::dvel</td>
         </tr>
       </table>
 </div><div class="memdoc">

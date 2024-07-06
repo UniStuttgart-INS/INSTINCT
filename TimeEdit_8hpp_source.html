@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -176,7 +197,7 @@ $(function(){initNavTree('TimeEdit_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aTimeEdit_8hpp_html_a2aab255cfd0c422e15a332d96a97ca13"><div class="ttname"><a href="TimeEdit_8hpp.html#a2aab255cfd0c422e15a332d96a97ca13">NAV::gui::widgets::TimeEdit</a></div><div class="ttdeci">bool TimeEdit(const char *str_id, InsTime &amp;insTime, TimeEditFormat &amp;timeEditFormat, float itemWidth=170.0F)</div><div class="ttdoc">Inputs to edit an InsTime object.</div></div>
 <div class="ttc" id="aTimeSystem_8hpp_html"><div class="ttname"><a href="TimeSystem_8hpp.html">TimeSystem.hpp</a></div><div class="ttdoc">Time System defintions.</div></div>
 <div class="ttc" id="aTimeSystem_8hpp_html_a3356fa3cc3daa77e1a1ad447ced1f7d6aa050a162e14eb36b74eca9f43dbbc236"><div class="ttname"><a href="TimeSystem_8hpp.html#a3356fa3cc3daa77e1a1ad447ced1f7d6aa050a162e14eb36b74eca9f43dbbc236">NAV::GPST</a></div><div class="ttdeci">@ GPST</div><div class="ttdoc">GPS Time.</div><div class="ttdef"><b>Definition</b> TimeSystem.hpp:29</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1TimeSystem_html"><div class="ttname"><a href="classNAV_1_1TimeSystem.html">NAV::TimeSystem</a></div><div class="ttdoc">Time System defintions.</div><div class="ttdef"><b>Definition</b> TimeSystem.hpp:39</div></div>
 <div class="ttc" id="astructNAV_1_1gui_1_1widgets_1_1TimeEditFormat_html"><div class="ttname"><a href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html">NAV::gui::widgets::TimeEditFormat</a></div><div class="ttdoc">Time Edit format and system.</div><div class="ttdef"><b>Definition</b> TimeEdit.hpp:29</div></div>
 <div class="ttc" id="astructNAV_1_1gui_1_1widgets_1_1TimeEditFormat_html_a22d0517eb3c9e1ef88775b23e33dcaa1"><div class="ttname"><a href="structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html#a22d0517eb3c9e1ef88775b23e33dcaa1">NAV::gui::widgets::TimeEditFormat::system</a></div><div class="ttdeci">TimeSystem system</div><div class="ttdoc">Time System.</div><div class="ttdef"><b>Definition</b> TimeEdit.hpp:39</div></div>

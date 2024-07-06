@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -143,12 +164,16 @@ $(function(){initNavTree('functions_e.html',''); initResizable(); });
 <li>e_accel&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#a6f17d0c00dc8493f851870a37a5f00f1">NAV::Orbit::PosVelAccel</a></li>
 <li>e_accelDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#a1956b42eb99ddde364731656472d8b80">NAV::ImuObsSimulated</a></li>
 <li>e_angularRateDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#a315ea7549a15747772b2fcfe70862b0c">NAV::ImuObsSimulated</a></li>
-<li>e_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a8c9865e48a06d596b09a82d55be1ed46">NAV::SppSolution</a></li>
+<li>e_approxPos&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html#ad77ac10ba50a7f493a40185ed56fb8bb">NAV::GnssObs::ReceiverInfo</a></li>
+<li>e_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a9bea954b07183c5223965450185d1bd7">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#a9e6edbc9967e1a105e49e7edd4f87083">NAV::PosVel</a></li>
 <li>e_omega_ie&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#a1d78340bc0fd69db0859626fadb22270">NAV::InsConst&lt; Scalar &gt;</a></li>
 <li>e_pLOS()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#a6f2ddb2fe97294dd6da125d461e239f4">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
-<li>e_pos&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74">NAV::Orbit::Pos</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184">NAV::Orbit::PosVelAccel</a>, <a class="el" href="structNAV_1_1Receiver.html#a5aea70e8e03b0feeb5623abeb1c1dc49">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>e_pos&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74">NAV::Orbit::Pos</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184">NAV::Orbit::PosVelAccel</a></li>
+<li>e_posAntennaPhaseCenter()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#ae7771b794b73aa7915d29da2103b0c22">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>e_posARP()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a35c5766aa8294ccaa379dad61ab52e20">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>e_position&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#ad9cdc0bc477abe30d4bac9461df2e50c">NAV::gui::widgets::PositionWithFrame</a>, <a class="el" href="classNAV_1_1Pos.html#ab40818b92e6497dfc38b024179466918">NAV::Pos</a></li>
-<li>e_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a701ded79785d607971443bf208e5e18c">NAV::SppSolution</a></li>
+<li>e_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a0fd6384fd0ea0b9770c802f711f1abe6">NAV::Pos</a></li>
+<li>e_posMarker&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#acba871d5bc7ae43d7537845bc6aa9301">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>e_Quat_b()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAtt.html#ad52ba22b9a47f9568e46ed2c8daa310c">NAV::PosVelAtt</a></li>
 <li>e_Quat_n()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a82b60003dbeabbe4ce59ff9f7f93d577">NAV::Pos</a></li>
 <li>e_satPos()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#aead7546f92b6002fbdb8a9425efb0d39">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
@@ -156,7 +181,7 @@ $(function(){initNavTree('functions_e.html',''); initResizable(); });
 <li>e_squared&#160;:&#160;<a class="el" href="classNAV_1_1InsConst_1_1GRS80.html#a4b3261d52839509636b1a08f9cb8eb86">NAV::InsConst&lt; Scalar &gt;::GRS80</a>, <a class="el" href="classNAV_1_1InsConst_1_1PZ90.html#aad1c1b02852e9c8982fa6c04d193189d">NAV::InsConst&lt; Scalar &gt;::PZ90</a>, <a class="el" href="classNAV_1_1InsConst_1_1WGS84.html#a95a6aa5451f19ea1626b94ebf5ee9bf0">NAV::InsConst&lt; Scalar &gt;::WGS84</a></li>
 <li>e_vel&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#a250906fcd03b6643547604baf198a74a">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#acd6bc09c66841dab04b36197abcf99c5">NAV::Orbit::PosVelAccel</a>, <a class="el" href="structNAV_1_1Receiver.html#ad7930a781b010e1221c5a0ce26c7aa3d">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>e_velocity()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#abceaa6b3307686c3d86b9c84d6b7cf11">NAV::PosVel</a></li>
-<li>e_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a071add9485611b1c6a67851595c9009a">NAV::SppSolution</a></li>
+<li>e_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a27eb434ba8c6fb077351f4e265b4d598">NAV::PosVel</a></li>
 <li>e_vLOS()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#a6e8d6fe7981897c818afb2549ea590e1">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
 <li>eastWest&#160;:&#160;<a class="el" href="structNAV_1_1CommonLog_1_1LocalPosition.html#ab9454b60a45ded170e1eac034424381c">NAV::CommonLog::LocalPosition</a></li>
 <li>ecefX&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxNavPosecef.html#a9da2d8ab0b42e969a47680dc3d11765d">NAV::vendor::ublox::UbxNavPosecef</a></li>
@@ -166,8 +191,8 @@ $(function(){initNavTree('functions_e.html',''); initResizable(); });
 <li>el&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a920512625feb24cfbae465d145baea84">NAV::vendor::vectornav::SatInfo::SatInfoElement</a></li>
 <li>elev&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbSvi.html#ad20facc7b97fdb537275bcec2fd3b5c7">NAV::vendor::emlid::ErbSvi</a></li>
 <li>EmlidFile()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidFile.html#a0131b2fe09d638fd511490cc055f2aa0">NAV::EmlidFile</a></li>
-<li>EmlidSensor()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidSensor.html#a222838eff62f75e3d0e348f3c91dd267">NAV::EmlidSensor</a></li>
-<li>EmlidUartSensor()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#a9314cbc732825124394054994e7fe3fc">NAV::vendor::emlid::EmlidUartSensor</a></li>
+<li>EmlidSensor()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidSensor.html#a92b6a3926a43e804f2fdaab649d56016">NAV::EmlidSensor</a></li>
+<li>EmlidUartSensor()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#aec71aad7fe514dd015f9f85458bfe2c3">NAV::vendor::emlid::EmlidUartSensor</a></li>
 <li>emplace()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#ac57f60eb6b8b1af75670ae82b95447b2">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>emplace_back()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#a1543910d3ec0189473a7143a65b5d55c">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>emplace_front()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#abbea375bf1b74058cd23ead6546a887d">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
@@ -234,6 +259,7 @@ $(function(){initNavTree('functions_e.html',''); initResizable(); });
 <li>eventsEnabled&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a7ee9bbfb47bfd69e6b11ade584b0e90e">NAV::Plot::PlotInfo::PlotItem::Style</a></li>
 <li>eventTooltipFilterRegex&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a5006021116761f29fdd3cd15f450441e">NAV::Plot::PlotInfo::PlotItem::Style</a></li>
 <li>eventTooltips&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a96ec2fa7937fa8fde477b9cff4d1104b">NAV::Plot::PlotInfo::PlotItem</a></li>
+<li>excludeSignalTemporarily()&#160;:&#160;<a class="el" href="classNAV_1_1ObservationFilter.html#acf2bc6a9a1cb3024bf445ce10a7d9e79">NAV::ObservationFilter</a></li>
 <li>EXPONENTIAL&#160;:&#160;<a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a4818411c6ad1cc9c446b5928433c3744a367809bc5e74a488abcf6fb2b68a7c38">NAV::GnssMeasurementErrorModel</a></li>
 <li>extract_front()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#ad79acf8736f97723df0081a8610a376f">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 </ul>

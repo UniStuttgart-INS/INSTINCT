@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -203,77 +224,77 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Ionospheric time delay in [s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Klobuchar1987">[24]</a> Klobuchar p. 329 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Klobuchar1987">[25]</a> Klobuchar p. 329 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> IS-GPS-200 ch. 20.3.3.5.2.5 Figure 20-4 p.131-134 <a class="anchor" id="Ionosphere-Model-Klobuchar"></a> </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> IS-GPS-200 ch. 20.3.3.5.2.5 Figure 20-4 p.131-134 <a class="anchor" id="Ionosphere-Model-Klobuchar"></a> </dd></dl>
 <h4><a class="anchor" id="autotoc_md0"></a>
 Algorithm description</h4>
-<p>Given the approximate position <img class="formulaInl" alt="$ \phi, \lambda $" src="form_0.svg" width="28" height="18"/>, the elevation angle <img class="formulaInl" alt="$ \varepsilon $" src="form_1.svg" width="9" height="11"/>, the azimuth <img class="formulaInl" alt="$ \alpha $" src="form_2.svg" width="11" height="11"/> as well as the 8 Klobuchar coefficients <img class="formulaInl" alt="$ \alpha_i, \beta_i, i = 0,...,3 $" src="form_3.svg" width="124" height="18"/> one can compute the following:</p>
+<p>Given the approximate position \( \phi, \lambda \), the elevation angle \( \varepsilon \), the azimuth \( \alpha \) as well as the 8 Klobuchar coefficients \( \alpha_i, \beta_i, i = 0,...,3 \) one can compute the following:</p>
 <ul>
 <li>earth-centred angle (elevation in semicircles) <a class="anchor" id="eq-klobuchar-earthCentredAngle"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-earthCentredAngle}
+\begin{equation} \label{eq:eq-klobuchar-earthCentredAngle}
     \psi = \frac{0.0137}{\varepsilon + 0.11} - 0.022
-    \end{equation}" src="form_4.svg" width="1552" height="39"/>
+    \end{equation}
 </p>
 </li>
 <li>latitude of the Ionospheric Pierce Point IPP (semicircles) <a class="anchor" id="eq-klobuchar-latIPP"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-latIPP}
+\begin{equation} \label{eq:eq-klobuchar-latIPP}
     \phi_\mathrm{IPP} = \phi + \psi \cos(\alpha)
-    \end{equation}" src="form_5.svg" width="1549" height="19"/>
+    \end{equation}
 </p>
- If <img class="formulaInl" alt="$ \phi_\mathrm{IPP} &gt; 0.416 $" src="form_6.svg" width="98" height="18"/>, then <img class="formulaInl" alt="$ \phi_\mathrm{IPP} = 0.416 $" src="form_7.svg" width="98" height="18"/> and if <img class="formulaInl" alt="$ \phi_\mathrm{IPP} &lt; -0.416 $" src="form_8.svg" width="112" height="18"/>, then <img class="formulaInl" alt="$ \phi_\mathrm{IPP} = -0.416 $" src="form_9.svg" width="112" height="18"/> .</li>
+ If \( \phi_\mathrm{IPP} &gt; 0.416 \), then \( \phi_\mathrm{IPP} = 0.416 \) and if \( \phi_\mathrm{IPP} &lt; -0.416 \), then \( \phi_\mathrm{IPP} = -0.416 \) .</li>
 <li>longitude of the Ionospheric Pierce Point IPP (semicircles) <a class="anchor" id="eq-klobuchar-longIPP"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-longIPP}
+\begin{equation} \label{eq:eq-klobuchar-longIPP}
     \lambda_\mathrm{IPP} = \lambda + \frac{\psi \sin(\alpha)}{\cos(\phi_\mathrm{IPP})}
-    \end{equation}" src="form_10.svg" width="1554" height="42"/>
+    \end{equation}
 </p>
 </li>
 <li>geomagnetic latitude of IPP <a class="anchor" id="eq-klobuchar-latIPP-geomag"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-latIPP-geomag}
+\begin{equation} \label{eq:eq-klobuchar-latIPP-geomag}
     \phi_\mathrm{mag} = \phi_\mathrm{IPP} + 0.064 \cos(\lambda_\mathrm{IPP}-1.617)
-    \end{equation}" src="form_11.svg" width="1619" height="19"/>
+    \end{equation}
 </p>
 </li>
 <li>local time at IPP in [s] <a class="anchor" id="eq-klobuchar-localTimeIPP"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-localTimeIPP}
+\begin{equation} \label{eq:eq-klobuchar-localTimeIPP}
     t = 43200 \lambda_\mathrm{IPP} + t_\mathrm{GPS}
-    \end{equation}" src="form_12.svg" width="1554" height="19"/>
+    \end{equation}
 </p>
- where the local time at IPP is <img class="formulaInl" alt="$ 0 \leq t &lt; 86400 $" src="form_13.svg" width="105" height="16"/>, so if <img class="formulaInl" alt="$ t \geq 86400 $" src="form_14.svg" width="74" height="16"/>, <img class="formulaInl" alt="$ t = t - 86400 $" src="form_15.svg" width="102" height="14"/> and if <img class="formulaInl" alt="$ t &lt; 0 $" src="form_16.svg" width="39" height="14"/>, <img class="formulaInl" alt="$ t = t + 86400 $" src="form_17.svg" width="102" height="14"/>.</li>
+ where the local time at IPP is \( 0 \leq t &lt; 86400 \), so if \( t \geq 86400 \), \( t = t - 86400 \) and if \( t &lt; 0 \), \( t = t + 86400 \).</li>
 <li>slant factor (elevation in semicircles) <a class="anchor" id="eq-klobuchar-slantFactor"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-slantFactor}
+\begin{equation} \label{eq:eq-klobuchar-slantFactor}
     F = 1.0 + 16.0 (0.53-\varepsilon)^{3}
-    \end{equation}" src="form_18.svg" width="1568" height="21"/>
+    \end{equation}
 </p>
 </li>
 <li>amplitude of ionospheric delay in [s] <a class="anchor" id="eq-klobuchar-amp"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-amp}
+\begin{equation} \label{eq:eq-klobuchar-amp}
     A_\mathrm{I}=\sum_{n=0}^{3} \alpha_{n} \phi_{mag}^{n}
-    \end{equation}" src="form_19.svg" width="1538" height="53"/>
+    \end{equation}
 </p>
 </li>
 <li>period of ionospheric delay in [s] <a class="anchor" id="eq-klobuchar-period"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-period}
+\begin{equation} \label{eq:eq-klobuchar-period}
     P_\mathrm{I}=\sum_{n=0}^{3} \beta_{n} \phi_{mag}^{n}
-    \end{equation}" src="form_20.svg" width="1537" height="53"/>
+    \end{equation}
 </p>
- If <img class="formulaInl" alt="$ P_\mathrm{I} &lt; 72000 $" src="form_21.svg" width="84" height="16"/>, set it to <img class="formulaInl" alt="$ P_\mathrm{I} = 72000 $" src="form_22.svg" width="84" height="16"/>.</li>
+ If \( P_\mathrm{I} &lt; 72000 \), set it to \( P_\mathrm{I} = 72000 \).</li>
 <li>phase of ionospheric delay in [rad] <a class="anchor" id="eq-klobuchar-phase"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-phase}
+\begin{equation} \label{eq:eq-klobuchar-phase}
     X_\mathrm{I} = \frac{2\pi (t-50400)}{P_\mathrm{I}}
-    \end{equation}" src="form_23.svg" width="1549" height="40"/>
+    \end{equation}
 </p>
 </li>
 <li>ionospheric time delay in [s] <a class="anchor" id="eq-klobuchar-ionoTimeDelay"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-ionoTimeDelay}
+\begin{equation} \label{eq:eq-klobuchar-ionoTimeDelay}
     I_{L1_{GPS}}= \begin{cases}{
     \left[5 \cdot 10^{-9}+ A_\mathrm{I} \cdot\left(1-\frac{X_{I}^{2}}{2}+\frac{X_{I}^{4}}{24}\right)\right] \cdot F} &amp; , \text{if} \left|X_{I}\right| &lt; 1.57 \\
     5 \cdot 10^{-9} \cdot F &amp; , \text{if} \left|X_{I}\right| \geq 1.57
     \end{cases}
-    \end{equation}" src="form_24.svg" width="1717" height="58"/>
+    \end{equation}
 </p>
 </li>
-<li>The ionospheric time delay <img class="formulaInl" alt="$ I_{L1_{GPS}} $" src="form_25.svg" width="51" height="18"/> refers to the GPS L1 frequency and gets adapted to the given frequency automatically. </li>
+<li>The ionospheric time delay \( I_{L1_{GPS}} \) refers to the GPS L1 frequency and gets adapted to the given frequency automatically. </li>
 </ul>
 
 </div>

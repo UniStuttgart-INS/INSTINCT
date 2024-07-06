@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -121,6 +142,7 @@ $(function(){initNavTree('functions_func_~.html',''); initResizable(); });
 <li>~Combiner()&#160;:&#160;<a class="el" href="classNAV_1_1Combiner.html#af2897df5c3b3b9be120947a432837513">NAV::Combiner</a></li>
 <li>~CommonLog()&#160;:&#160;<a class="el" href="classNAV_1_1CommonLog.html#a142e0f824dbc675e31441f2b1b6df3b6">NAV::CommonLog</a></li>
 <li>~CsvFile()&#160;:&#160;<a class="el" href="classNAV_1_1CsvFile.html#ac9dd17506b6b9dc13de217f4088a4718">NAV::CsvFile</a></li>
+<li>~CsvLogger()&#160;:&#160;<a class="el" href="classNAV_1_1CsvLogger.html#ad5b5464680b3898ffdcf6b5f52a92a15">NAV::CsvLogger</a></li>
 <li>~Delay()&#160;:&#160;<a class="el" href="classNAV_1_1experimental_1_1Delay.html#a88cce2190f73e778c602d1dc4c674152">NAV::experimental::Delay</a></li>
 <li>~Demo()&#160;:&#160;<a class="el" href="classNAV_1_1Demo.html#afed8d15e1a08266c2f668f37a86d5d6a">NAV::Demo</a></li>
 <li>~dist_filter_sink()&#160;:&#160;<a class="el" href="classspdlog_1_1sinks_1_1dist__filter__sink.html#a40dde856b7860ee042b0e569c4e12d2d">spdlog::sinks::dist_filter_sink&lt; Mutex &gt;</a></li>
@@ -136,7 +158,6 @@ $(function(){initNavTree('functions_func_~.html',''); initResizable(); });
 <li>~GPSEphemeris()&#160;:&#160;<a class="el" href="classNAV_1_1GPSEphemeris.html#ae4c3b68b043ac72d63e0bb6ddfde73ea">NAV::GPSEphemeris</a></li>
 <li>~GroupBox()&#160;:&#160;<a class="el" href="classNAV_1_1GroupBox.html#a61ccafdc7b37fd9bb549ca4353bf625d">NAV::GroupBox</a></li>
 <li>~Imu()&#160;:&#160;<a class="el" href="classNAV_1_1Imu.html#acee3bdba419bf3de34cc5131f28df894">NAV::Imu</a></li>
-<li>~ImuDataLogger()&#160;:&#160;<a class="el" href="classNAV_1_1ImuDataLogger.html#a724e8411da880fb64db8a0156f3c2316">NAV::ImuDataLogger</a></li>
 <li>~ImuFile()&#160;:&#160;<a class="el" href="classNAV_1_1ImuFile.html#aac607e202e6ec590f6870e6f2a4c4a04">NAV::ImuFile</a></li>
 <li>~ImuFusion()&#160;:&#160;<a class="el" href="classNAV_1_1ImuFusion.html#a691db3a2dd1ba045a617982fff7f1ee7">NAV::ImuFusion</a></li>
 <li>~ImuIntegrator()&#160;:&#160;<a class="el" href="classNAV_1_1ImuIntegrator.html#a9c19ed688191378e3bc2f09996f6fbc6">NAV::ImuIntegrator</a></li>
@@ -149,11 +170,10 @@ $(function(){initNavTree('functions_func_~.html',''); initResizable(); });
 <li>~KeyedRowVectorBase()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedRowVectorBase.html#a8962e2b8524470ac5faf609b083ee139">NAV::internal::KeyedRowVectorBase&lt; Scalar, ColKeyType, Cols &gt;</a></li>
 <li>~KeyedVector()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedVector.html#aae5f95c762370bf9f99bf28d410df570">NAV::KeyedVector&lt; Scalar, RowKeyType, Rows &gt;</a>, <a class="el" href="classNAV_1_1KeyedVector_3_01Scalar_00_01RowKeyType_00_01Eigen_1_1Dynamic_01_4.html#a280cb16aa64a31313598a20d3b5eff89">NAV::KeyedVector&lt; Scalar, RowKeyType, Eigen::Dynamic &gt;</a></li>
 <li>~KeyedVectorBase()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedVectorBase.html#a5af0685164487b87866b653aaf257e60">NAV::internal::KeyedVectorBase&lt; Scalar, RowKeyType, Rows &gt;</a></li>
-<li>~KvhDataLogger()&#160;:&#160;<a class="el" href="classNAV_1_1KvhDataLogger.html#a31b467ca03ae8495d9877c074d9a6c94">NAV::KvhDataLogger</a></li>
+<li>~KmlLogger()&#160;:&#160;<a class="el" href="classNAV_1_1KmlLogger.html#a0a17a21ecea5c960f03ea0a593d7b6e3">NAV::KmlLogger</a></li>
 <li>~KvhFile()&#160;:&#160;<a class="el" href="classNAV_1_1KvhFile.html#a09fe03cbe01fac6c70f5e5ec8ca7ad08">NAV::KvhFile</a></li>
 <li>~KvhSensor()&#160;:&#160;<a class="el" href="classNAV_1_1KvhSensor.html#af18397709098e061896fee29aa78c388">NAV::KvhSensor</a></li>
 <li>~KvhUartSensor()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html#a617fba46e66e0a3a15676dd3f0078760">NAV::vendor::kvh::KvhUartSensor</a></li>
-<li>~LcKfInsGnssErrorLogger()&#160;:&#160;<a class="el" href="classNAV_1_1LcKfInsGnssErrorLogger.html#a2bcf6aebfc16c21e2e1b01eb48c8d37a">NAV::LcKfInsGnssErrorLogger</a></li>
 <li>~Logger()&#160;:&#160;<a class="el" href="classLogger.html#acb668a9e186a25fbaad2e4af6d1ed00a">Logger</a></li>
 <li>~LooselyCoupledKF()&#160;:&#160;<a class="el" href="classNAV_1_1LooselyCoupledKF.html#a528fdaa5405742491c3afc0036bd2500">NAV::LooselyCoupledKF</a></li>
 <li>~MatrixLogger()&#160;:&#160;<a class="el" href="classNAV_1_1MatrixLogger.html#a4570e14c5fc5b1282e471b0cbb4abb97">NAV::MatrixLogger</a></li>
@@ -172,7 +192,6 @@ $(function(){initNavTree('functions_func_~.html',''); initResizable(); });
 <li>~Plot()&#160;:&#160;<a class="el" href="classNAV_1_1Plot.html#abceed6b18dbe53190bfba9fcc2656e55">NAV::Plot</a></li>
 <li>~PosVelAttFile()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttFile.html#a92338594b6f4ab7a25484e3626cfd3f8">NAV::PosVelAttFile</a></li>
 <li>~PosVelAttInitializer()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttInitializer.html#a9f5d86c8cf68458ef730cb5e0ad18181">NAV::PosVelAttInitializer</a></li>
-<li>~PosVelAttLogger()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAttLogger.html#a11a4c16640176aaaf61d0b7c9b638616">NAV::PosVelAttLogger</a></li>
 <li>~RandomNumberGenerator()&#160;:&#160;<a class="el" href="classNAV_1_1RandomNumberGenerator.html#a6e6020df28f947eaf388a541f14fa0e2">NAV::RandomNumberGenerator</a></li>
 <li>~RinexNavFile()&#160;:&#160;<a class="el" href="classNAV_1_1RinexNavFile.html#a5fd8cf84231881bb41b9d824007d7947">NAV::RinexNavFile</a></li>
 <li>~RinexObsFile()&#160;:&#160;<a class="el" href="classNAV_1_1RinexObsFile.html#aa8479e6719375e054146679bf6352af9">NAV::RinexObsFile</a></li>
@@ -182,7 +201,6 @@ $(function(){initNavTree('functions_func_~.html',''); initResizable(); });
 <li>~SatNavData()&#160;:&#160;<a class="el" href="classNAV_1_1SatNavData.html#a821732705b9d502826c4d423ed91d4bf">NAV::SatNavData</a></li>
 <li>~SinglePointPositioning()&#160;:&#160;<a class="el" href="classNAV_1_1SinglePointPositioning.html#aad2d452aab2ae72fabd3f9a5aac2d9a9">NAV::SinglePointPositioning</a></li>
 <li>~SkydelNetworkStream()&#160;:&#160;<a class="el" href="classNAV_1_1experimental_1_1SkydelNetworkStream.html#aafd8ffdabace7e876b6df06f0cebe410">NAV::experimental::SkydelNetworkStream</a></li>
-<li>~SppSolutionLogger()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolutionLogger.html#ae14861e3b5002aa2819cea1d36612cc6">NAV::SppSolutionLogger</a></li>
 <li>~Terminator()&#160;:&#160;<a class="el" href="classNAV_1_1Terminator.html#abdabc99f53d5e32fbffae0ffd84d9028">NAV::Terminator</a></li>
 <li>~TightlyCoupledKF()&#160;:&#160;<a class="el" href="classNAV_1_1TightlyCoupledKF.html#ae7b1257d4898048431354acb095e8cc0">NAV::TightlyCoupledKF</a></li>
 <li>~TimeWindow()&#160;:&#160;<a class="el" href="classNAV_1_1TimeWindow.html#a29d54b8fd28088fc6e36c7ea59ebecf0">NAV::TimeWindow</a></li>

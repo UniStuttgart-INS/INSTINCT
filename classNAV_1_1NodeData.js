@@ -4,6 +4,7 @@ var classNAV_1_1NodeData =
     [ "~NodeData", "classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1", null ],
     [ "NodeData", "classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84", null ],
     [ "NodeData", "classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534", null ],
+    [ "addEvent", "classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee", null ],
     [ "dynamicDataDescriptors", "classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b", null ],
     [ "events", "classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7", null ],
     [ "getDynamicData", "classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835", null ],

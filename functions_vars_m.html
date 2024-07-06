@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,10 +140,8 @@ $(function(){initNavTree('functions_vars_m.html',''); initResizable(); });
 <li>m_InstinctLogo&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#a1e5e8e2b5ef4a45b6b5152a3e597b386">NAV::gui::NodeEditorApplication</a></li>
 <li>m_RoseFigure&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#a65b0c959685acdec9b01d360b5d31d34">NAV::gui::NodeEditorApplication</a></li>
 <li>mag&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#a82205ae231c6bff296f7b584921c6cea">NAV::vendor::vectornav::ImuOutputs</a></li>
-<li>magCompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#a850db007dc42857b04c3438a59800082">NAV::ImuObs</a></li>
 <li>magEcef&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html#ad0fc41778252e8caf5af4f0275290687">NAV::vendor::vectornav::InsOutputs</a></li>
 <li>magNed&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#a20f511befccf550cae1b0b58f9eb9b76">NAV::vendor::vectornav::AttitudeOutputs</a></li>
-<li>magUncompXYZ&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#abf8e57f5b010aef7c7fc717f2dddb557">NAV::ImuObs</a></li>
 <li>markedForDelete&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a435d54811c8abec74a14070faefa568b">NAV::Plot::PinData::PlotData</a></li>
 <li>markerColormapMask&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a06acc9c34bd4f1614ccd35627ef63ace">NAV::Plot::PlotInfo::PlotItem::Style</a></li>
 <li>markerColormapMaskColors&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html#a0f4c5f769496fc33b9a1b2bd7b4ceb89">NAV::Plot::PlotInfo::PlotItem</a></li>
@@ -140,10 +159,10 @@ $(function(){initNavTree('functions_vars_m.html',''); initResizable(); });
 <li>markerWeight&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#ab0cdd31c9df5a8b041cd67cf2537c831">NAV::Plot::PlotInfo::PlotItem::Style</a></li>
 <li>matrix&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixStorage.html#a63421dea5ac4389fb191e76af3102584">NAV::internal::KeyedMatrixStorage&lt; Scalar, Rows, Cols &gt;</a></li>
 <li>measurement&#160;:&#160;<a class="el" href="structNAV_1_1CycleSlipDetector_1_1SatelliteObservation_1_1Signal.html#a6ee95fd153c98a9717eeebc12f8c35c9">NAV::CycleSlipDetector::SatelliteObservation::Signal</a>, <a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1Observation.html#a761dc4495c336a31635ceeb39d05e69c">NAV::Observations::SignalObservation::ReceiverSpecificData::Observation</a></li>
-<li>measurementUncertaintyAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#acac440bb40aa7d34be74ca2826e5f4cf">NAV::ImuFusion::PinData</a></li>
-<li>measurementUncertaintyAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a6d726fba8589f48fdd387ade61be1b30">NAV::ImuFusion::PinData</a></li>
-<li>measurementUncertaintyAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#afef40a2a2654aa0f219a1e04593c3928">NAV::ImuFusion::PinData</a></li>
-<li>measurementUncertaintyAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#aef5c58719e7d40348e9a2023e2aef8d3">NAV::ImuFusion::PinData</a></li>
+<li>measurementUncertaintyAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a7b024a60bf83670ff0b42f08e06513b8">NAV::PinData</a></li>
+<li>measurementUncertaintyAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a0136f1fddf6ac19f7cc45b7adf75d8c2">NAV::PinData</a></li>
+<li>measurementUncertaintyAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a27044009d91517dd53ae0af47a895aa0">NAV::PinData</a></li>
+<li>measurementUncertaintyAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a880fa07c45fefe4a8b457378edbffb0a">NAV::PinData</a></li>
 <li>measVar&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1Observation.html#a1bce52126779f476d97d6483665d4dc0">NAV::Observations::SignalObservation::ReceiverSpecificData::Observation</a></li>
 <li>menuBarHeight&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#af5ce1ea722dd0229b040571de9201483">NAV::gui::NodeEditorApplication</a></li>
 <li>message&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__logging__s.html#aa58cb4d8c32072941b006ff44f015cc5">NAV::vendor::pixhawk::message_logging_s</a>, <a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__logging__tagged__s.html#aa804e60272c6968c65535d1c88b09ff4">NAV::vendor::pixhawk::message_logging_tagged_s</a></li>

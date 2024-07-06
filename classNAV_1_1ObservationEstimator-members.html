@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,12 +140,15 @@ $(function(){initNavTree('classNAV_1_1ObservationEstimator.html',''); initResiza
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a35eab10fe280caf9a287ddab0d9e21cc">calcObservationEstimates</a>(Observations &amp;observations, const std::array&lt; Receiver&lt; ReceiverType &gt;, ReceiverType::ReceiverType_COUNT &gt; &amp;receivers, const IonosphericCorrections &amp;ionosphericCorrections, const std::string &amp;nameId, ObservationDifference obsDiff)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25aababf20fd66c9f69d6565e28b0d1bab92">DoubleDifference</a> enum value</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a17e59199c7dd797af98b2bea18a41838">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25aa1aae6eaceb22ad1551e00474187c9c1e">NoDifference</a> enum value</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25a">ObservationDifference</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a153bf9d75c60bef59ac3ae43115bf28a">ShowGuiWidgets</a>(const char *id, float itemWidth)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#aedd445aa922765cdfe61c8070f634a07">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a17e59199c7dd797af98b2bea18a41838">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25aa1aae6eaceb22ad1551e00474187c9c1e">NoDifference</a> enum value</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25a">ObservationDifference</a> enum name</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a1fba0180c7afb7b3bb13a6ffcc592e9c">ObservationEstimator</a>(size_t receiverCount)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#abff20c09ac89e9ee580b405d59570e4f">ShowGuiWidgets</a>(const char *id, float itemWidth)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25aada72672a20958dcf90284b086a3e831c">SingleDifference</a> enum value</td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#af6514c4a12d011c486ade755d57e3e50">to_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#a021be066289b7ee045903941dd6ba225">to_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html#af6514c4a12d011c486ade755d57e3e50">to_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationEstimator.html">NAV::ObservationEstimator</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

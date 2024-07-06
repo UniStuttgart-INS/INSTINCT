@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -294,7 +315,7 @@ $(function(){initNavTree('GalileoEphemeris_8hpp_source.html',''); initResizable(
 <div class="ttc" id="aclassNAV_1_1GalileoEphemeris_html_adb58b527dd4d41d0004f89c0137c8587"><div class="ttname"><a href="classNAV_1_1GalileoEphemeris.html#adb58b527dd4d41d0004f89c0137c8587">NAV::GalileoEphemeris::svHealth</a></div><div class="ttdeci">SvHealth svHealth</div><div class="ttdoc">Signal Health.</div><div class="ttdef"><b>Definition</b> GalileoEphemeris.hpp:145</div></div>
 <div class="ttc" id="aclassNAV_1_1GalileoEphemeris_html_addd02bd2d8a9aee9a9d6b4fe4e1b2b4c"><div class="ttname"><a href="classNAV_1_1GalileoEphemeris.html#addd02bd2d8a9aee9a9d6b4fe4e1b2b4c">NAV::GalileoEphemeris::i_0</a></div><div class="ttdeci">double i_0</div><div class="ttdoc">Inclination angle at reference time [rad].</div><div class="ttdef"><b>Definition</b> GalileoEphemeris.hpp:97</div></div>
 <div class="ttc" id="aclassNAV_1_1GalileoEphemeris_html_ae4754ab74fcd7fc258d1059a7b03855c"><div class="ttname"><a href="classNAV_1_1GalileoEphemeris.html#ae4754ab74fcd7fc258d1059a7b03855c">NAV::GalileoEphemeris::GalileoEphemeris</a></div><div class="ttdeci">GalileoEphemeris(const InsTime &amp;toc, const InsTime &amp;toe, const size_t &amp;IODnav, const std::array&lt; double, 3 &gt; &amp;a, const double &amp;sqrt_A, const double &amp;e, const double &amp;i_0, const double &amp;Omega_0, const double &amp;omega, const double &amp;M_0, const double &amp;delta_n, const double &amp;Omega_dot, const double &amp;i_dot, const double &amp;Cus, const double &amp;Cuc, const double &amp;Cis, const double &amp;Cic, const double &amp;Crs, const double &amp;Crc, const std::bitset&lt; 10 &gt; &amp;dataSource, const double &amp;signalAccuracy, const SvHealth &amp;svHealth, const double &amp;BGD_E1_E5a, const double &amp;BGD_E1_E5b)</div><div class="ttdoc">Constructor.</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html"><div class="ttname"><a href="classNAV_1_1Orbit.html">NAV::Orbit</a></div><div class="ttdoc">Abstract satellite orbit information.</div><div class="ttdef"><b>Definition</b> Orbit.hpp:24</div></div>
 <div class="ttc" id="aclassNAV_1_1Orbit_html_a65836420203346ce754e2ff2dfce70bc"><div class="ttname"><a href="classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc">NAV::Orbit::Calc</a></div><div class="ttdeci">Calc</div><div class="ttdoc">Calculation flags.</div><div class="ttdef"><b>Definition</b> Orbit.hpp:74</div></div>
 <div class="ttc" id="aclassNAV_1_1SatNavData_html"><div class="ttname"><a href="classNAV_1_1SatNavData.html">NAV::SatNavData</a></div><div class="ttdoc">Satellite Navigation data (to calculate SatNavData and clock)</div><div class="ttdef"><b>Definition</b> SatNavData.hpp:26</div></div>

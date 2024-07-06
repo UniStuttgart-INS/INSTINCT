@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,9 +140,6 @@ $(function(){initNavTree('dir_fc75917529ffe81deebf7eea9077beaf.html',''); initRe
 Files</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="RinexObsLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="RinexObsLogger_8hpp.html">RinexObsLogger.hpp</a></td></tr>
 <tr class="memdesc:RinexObsLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for GnssObs to RINEX observation files. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="SppSolutionLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SppSolutionLogger_8hpp.html">SppSolutionLogger.hpp</a></td></tr>
-<tr class="memdesc:SppSolutionLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data <a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for SppSolution observations. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="UartDataLogger_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="UartDataLogger_8hpp.html">UartDataLogger.hpp</a></td></tr>
 <tr class="memdesc:UartDataLogger_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data <a class="el" href="classLogger.html" title="Utility class for logging.">Logger</a> for Uart packets. <br /></td></tr>

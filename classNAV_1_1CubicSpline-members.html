@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -111,19 +132,19 @@ $(function(){initNavTree('classNAV_1_1CubicSpline.html',''); initResizable(); })
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">NAV::CubicSpline Member List</div></div>
+  <div class="headertitle"><div class="title">NAV::CubicSpline&lt; Scalar &gt; Member List</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>, including all inherited members.</p>
+<p>This is the complete list of members for <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#ac441391df0bc5270a6e15feec3c8f884">CubicSpline</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#adcd93f838a75c65c74d939588f20eab9">CubicSpline</a>(const std::vector&lt; double &gt; &amp;X, const std::vector&lt; double &gt; &amp;Y, BoundaryCondition leftBoundaryCondition={ BoundaryCondition::SecondDerivative, 0.0 }, BoundaryCondition rightBoundaryCondition={ BoundaryCondition::SecondDerivative, 0.0 })</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#ab7fb0074703b08874a5b9bfc5ac64717">derivative</a>(size_t order, double x) const</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a667a7e41e544f408a427d37b7be61959">operator()</a>(double x) const</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a88578234abb6d5cfb7c72a08c6b8accb">setBoundaries</a>(BoundaryCondition leftBoundaryCondition, BoundaryCondition rightBoundaryCondition)</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a619947ef341c5194e204fe1f6f206375">setPoints</a>(const std::vector&lt; double &gt; &amp;x, const std::vector&lt; double &gt; &amp;y)</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a937b9291bc1eba4d00a2a86a4081c778">size</a>() const noexcept</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a690c66f1655991a4e5df499b182f504a">CubicSpline</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a48d095ea5ae549c52c0d9ae9f1250a07">CubicSpline</a>(const std::vector&lt; Scalar &gt; &amp;X, const std::vector&lt; Scalar &gt; &amp;Y, BoundaryCondition leftBoundaryCondition={ BoundaryCondition::SecondDerivative, 0.0 }, BoundaryCondition rightBoundaryCondition={ BoundaryCondition::SecondDerivative, 0.0 })</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a69fb68746490256d0d88fbc65eb7a690">derivative</a>(size_t order, Scalar x) const</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#aae41c48c80e18cec72fe4c9e861579cf">operator()</a>(Scalar x) const</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a31c0b273fe3cf173acbdff8a4174ef4b">setBoundaries</a>(BoundaryCondition leftBoundaryCondition, BoundaryCondition rightBoundaryCondition)</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a0834b6dfbd7cca484e3f1555c7cbeb42">setPoints</a>(const std::vector&lt; Scalar &gt; &amp;x, const std::vector&lt; Scalar &gt; &amp;y)</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html#a81679de4194ab901a4fd4238e7a53b7b">size</a>() const noexcept</td><td class="entry"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline&lt; Scalar &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -246,8 +267,8 @@ $(function(){initNavTree('GnssCombination_8hpp_source.html',''); initResizable()
 <div class="ttc" id="aclassNAV_1_1GnssCombination_html_adb6f7e496d1f9770ab384e5da2d34578"><div class="ttname"><a href="classNAV_1_1GnssCombination.html#adb6f7e496d1f9770ab384e5da2d34578">NAV::GnssCombination::dynamicDataDescriptors</a></div><div class="ttdeci">std::vector&lt; std::string &gt; dynamicDataDescriptors() const override</div><div class="ttdoc">Returns a vector of data descriptors for the dynamic data.</div><div class="ttdef"><b>Definition</b> GnssCombination.hpp:70</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssCombination_html_af13e0a779b79fae49107278e0d33d5a7"><div class="ttname"><a href="classNAV_1_1GnssCombination.html#af13e0a779b79fae49107278e0d33d5a7">NAV::GnssCombination::parentTypes</a></div><div class="ttdeci">static std::vector&lt; std::string &gt; parentTypes()</div><div class="ttdoc">Returns the parent types of the data class.</div><div class="ttdef"><b>Definition</b> GnssCombination.hpp:39</div></div>
 <div class="ttc" id="aclassNAV_1_1GnssCombination_html_afcb99c8c202e97bf29145fc6234a18cf"><div class="ttname"><a href="classNAV_1_1GnssCombination.html#afcb99c8c202e97bf29145fc6234a18cf">NAV::GnssCombination::combinations</a></div><div class="ttdeci">std::vector&lt; Combination &gt; combinations</div><div class="ttdoc">List of combinations.</div><div class="ttdef"><b>Definition</b> GnssCombination.hpp:67</div></div>
-<div class="ttc" id="aclassNAV_1_1GnssObs_html_a23a37f1e6e5cf629278bf5d28e5502c7"><div class="ttname"><a href="classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7">NAV::GnssObs::ObservationType</a></div><div class="ttdeci">ObservationType</div><div class="ttdoc">Observation types.</div><div class="ttdef"><b>Definition</b> GnssObs.hpp:35</div></div>
-<div class="ttc" id="aclassNAV_1_1GnssObs_html_a23a37f1e6e5cf629278bf5d28e5502c7aa6489694f286b326f4ecd3dec0553861"><div class="ttname"><a href="classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7aa6489694f286b326f4ecd3dec0553861">NAV::GnssObs::Carrier</a></div><div class="ttdeci">@ Carrier</div><div class="ttdoc">Carrier-Phase.</div><div class="ttdef"><b>Definition</b> GnssObs.hpp:37</div></div>
+<div class="ttc" id="aclassNAV_1_1GnssObs_html_a23a37f1e6e5cf629278bf5d28e5502c7"><div class="ttname"><a href="classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7">NAV::GnssObs::ObservationType</a></div><div class="ttdeci">ObservationType</div><div class="ttdoc">Observation types.</div><div class="ttdef"><b>Definition</b> GnssObs.hpp:36</div></div>
+<div class="ttc" id="aclassNAV_1_1GnssObs_html_a23a37f1e6e5cf629278bf5d28e5502c7aa6489694f286b326f4ecd3dec0553861"><div class="ttname"><a href="classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7aa6489694f286b326f4ecd3dec0553861">NAV::GnssObs::Carrier</a></div><div class="ttdeci">@ Carrier</div><div class="ttdoc">Carrier-Phase.</div><div class="ttdef"><b>Definition</b> GnssObs.hpp:38</div></div>
 <div class="ttc" id="aclassNAV_1_1NodeData_html"><div class="ttname"><a href="classNAV_1_1NodeData.html">NAV::NodeData</a></div><div class="ttdoc">Parent class for all data transmitted over Flow pins.</div><div class="ttdef"><b>Definition</b> NodeData.hpp:27</div></div>
 <div class="ttc" id="aclassNAV_1_1NodeData_html_a957391e1adfd8edb28c8ccced8b0dde3"><div class="ttname"><a href="classNAV_1_1NodeData.html#a957391e1adfd8edb28c8ccced8b0dde3">NAV::NodeData::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> NodeData.hpp:44</div></div>
 <div class="ttc" id="astructNAV_1_1GnssCombination_1_1Combination_1_1Term_html"><div class="ttname"><a href="structNAV_1_1GnssCombination_1_1Combination_1_1Term.html">NAV::GnssCombination::Combination::Term</a></div><div class="ttdoc">Term of a combination equation.</div><div class="ttdef"><b>Definition</b> GnssCombination.hpp:49</div></div>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -388,7 +409,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Broadcasted ephemeris message data. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> IS-GPS-200M, Table 20-III, p. 105</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> IS-GPS-200M, Table 20-III, p. 105</dd></dl>
 <div class="image">
 <img src="GPS-satellite-orbits.png" alt=""/>
 <div class="caption">
@@ -665,7 +686,7 @@ Description of the GPS satellite orbits</div></div>
 <li><a class="el" href="#a6b9555bb51ff1b65bfc08898b86f97f2">a(1)</a> drift [s/s]</li>
 <li><a class="el" href="#a6b9555bb51ff1b65bfc08898b86f97f2">a(2)</a> drift rate (aging) [s/s^2]</li>
 </ul>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.8, p.95 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.8, p.95 </dd></dl>
 
 </div>
 </div>
@@ -682,7 +703,7 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 
 <p>Fit Interval of ephemerides [h]. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.4.1, p.102 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.4.1, p.102 </dd></dl>
 
 </div>
 </div>
@@ -699,8 +720,8 @@ Description of the GPS satellite orbits</div></div>
 </div><div class="memdoc">
 
 <p>Issue of Data, <a class="el" href="classNAV_1_1Clock.html" title="Abstract satellite clock information.">Clock</a>. </p>
-<p>Indicates the issue number of the data set and thereby provides the user with a convenient means of detecting any change in the subframe 1 core CEI data. Constraints on the IODC as well as the relationship between the IODC and the IODE (issue of data, ephemeris) terms are defined in <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.4.4.</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.5, p.95 </dd></dl>
+<p>Indicates the issue number of the data set and thereby provides the user with a convenient means of detecting any change in the subframe 1 core CEI data. Constraints on the IODC as well as the relationship between the IODC and the IODE (issue of data, ephemeris) terms are defined in <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.4.4.</p>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.5, p.95 </dd></dl>
 
 </div>
 </div>
@@ -718,7 +739,7 @@ Description of the GPS satellite orbits</div></div>
 
 <p>Issue of Data, Ephemeris. </p>
 <p>Provides the user with a convenient means for detecting any change in the ephemeris representation parameters</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.4.1, p.102 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.4.1, p.102 </dd></dl>
 
 </div>
 </div>
@@ -737,7 +758,7 @@ Description of the GPS satellite orbits</div></div>
 <p>Indicate which code(s) is (are) commanded ON for the in-phase component of the L2 channel. </p>
 <p>00 = Invalid, 01 = P-code ON, 10 = C/A-code ON, 11 = Invalid.</p>
 <p>These bits provide no indication of which code(s), if any, may be commanded ON for the quadrature component of the L2 channel.</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.2, p. 92 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.2, p. 92 </dd></dl>
 
 </div>
 </div>
@@ -755,7 +776,7 @@ Description of the GPS satellite orbits</div></div>
 
 <p>Data Flag for L2 P-Code. </p>
 <p>1 indicates that the LNAV data stream was commanded OFF on the P-code of the in-phase component of the L2 channel. This bit provides no indication of whether LNAV data is or is not present on any code modulated on the quadrature component of the L2 channel.</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.6, p. 95 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.6, p. 95 </dd></dl>
 
 </div>
 </div>
@@ -773,7 +794,7 @@ Description of the GPS satellite orbits</div></div>
 
 <p>SV accuracy [m]. </p>
 <p>Derived from an URA index of the SV for the standard positioning service user.</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.3, p.92ff </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.3, p.92ff </dd></dl>
 
 </div>
 </div>
@@ -791,9 +812,9 @@ Description of the GPS satellite orbits</div></div>
 
 <p>SV health. </p>
 <p>0 = all LNAV data are OK 1 = some or all LNAV data are bad</p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.4, p. 94 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.4, p. 94 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.5.1.3, p. 117ff </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.5.1.3, p. 117ff </dd></dl>
 
 </div>
 </div>
@@ -810,7 +831,7 @@ See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch.
 </div><div class="memdoc">
 
 <p>Estimated Group Delay Differential. L1 and L2 correction term [s]. </p>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[19]</a> GPS ICD, ch. 20.3.3.3.1.7, p. 95 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_IS-GPS-200M">[20]</a> GPS ICD, ch. 20.3.3.3.1.7, p. 95 </dd></dl>
 
 </div>
 </div>

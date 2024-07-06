@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -173,27 +194,88 @@ $(function(){initNavTree('RinexNavFile_8hpp_source.html',''); initResizable(); }
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    [[nodiscard]] <a class="code hl_enumeration" href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e">FileType</a> determineFileType() <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">void</span> readHeader() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordtype">void</span> readOrbits();</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">const</span> std::set&lt;double&gt; _supportedVersions = { 3.05, 3.04, 3.03, 3.02, 2.11, 2.10, 2.01 }; <span class="comment">// TODO version 4.00</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <a class="code hl_class" href="classNAV_1_1GnssNavInfo.html">GnssNavInfo</a> _gnssNavInfo;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordtype">double</span> _version = 0.0;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>};</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordtype">void</span> executeHeaderParser(<span class="keywordtype">double</span> version);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keyword">inline</span> <span class="keyword">auto</span> abortReading()</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <a class="code hl_define" href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a>(<span class="stringliteral">&quot;{}: The file &#39;{}&#39; is corrupt in line {}.&quot;</span>, <a class="code hl_function" href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">nameId</a>(), <a class="code hl_variable" href="classNAV_1_1FileReader.html#a2644402909ede89d66f9b519620624a5">_path</a>, <a class="code hl_function" href="classNAV_1_1FileReader.html#ad3a20cb6549a55e65a08d7495bcd32b3">getCurrentLineNumber</a>());</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        _gnssNavInfo.<a class="code hl_function" href="classNAV_1_1GnssNavInfo.html#ae944c5b1c986338dbe87097b858d722e">reset</a>();</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <a class="code hl_function" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize</a>();</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    };</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">void</span> executeOrbitParser(<span class="keywordtype">double</span> version);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordtype">void</span> parseHeader2();</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordtype">void</span> parseHeader3();</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keywordtype">void</span> parseHeader4();</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordtype">void</span> parseOrbit2();</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordtype">void</span> parseOrbit3();</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordtype">void</span> parseOrbit4();</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordtype">bool</span> parseEphemeris(std::string&amp; line, <a class="code hl_struct" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> satSys, uint8_t satNum);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordtype">void</span> readHeader() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="keywordtype">void</span> readOrbits();</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">const</span> std::set&lt;double&gt; _supportedVersions = { 4.00, 3.05, 3.04, 3.03, 3.02, 2.11, 2.10, 2.01 };</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keyword">enum class</span> NavMsgType</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        EPH,    </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        STO,    </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        EOP,    </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        ION,    </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>        UNKNOWN </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    };</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    <span class="keyword">static</span> <span class="keyword">inline</span> NavMsgType getNavMsgType(<span class="keyword">const</span> std::string&amp; <a class="code hl_function" href="classNAV_1_1RinexNavFile.html#a3a7569dd4a1f4484b33b0803705e234b">type</a>)</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    {</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        NavMsgType navMsgType = NavMsgType::UNKNOWN;</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="classNAV_1_1RinexNavFile.html#a3a7569dd4a1f4484b33b0803705e234b">type</a> == <span class="stringliteral">&quot;EPH&quot;</span>)</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        {</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>            navMsgType = NavMsgType::EPH;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        }</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_function" href="classNAV_1_1RinexNavFile.html#a3a7569dd4a1f4484b33b0803705e234b">type</a> == <span class="stringliteral">&quot;STO&quot;</span>)</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            navMsgType = NavMsgType::STO;</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        }</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_function" href="classNAV_1_1RinexNavFile.html#a3a7569dd4a1f4484b33b0803705e234b">type</a> == <span class="stringliteral">&quot;EOP&quot;</span>)</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            navMsgType = NavMsgType::EOP;</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        }</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_function" href="classNAV_1_1RinexNavFile.html#a3a7569dd4a1f4484b33b0803705e234b">type</a> == <span class="stringliteral">&quot;ION&quot;</span>)</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        {</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            navMsgType = NavMsgType::ION;</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>        }</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordflow">return</span> navMsgType;</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    }</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    GnssNavInfo _gnssNavInfo;</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordtype">double</span> _version = 0.0;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>};</div>
 </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>} <span class="comment">// namespace NAV</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aFileReader_8hpp_html"><div class="ttname"><a href="FileReader_8hpp.html">FileReader.hpp</a></div><div class="ttdoc">Abstract File Reader class.</div></div>
 <div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> FlowManager.hpp:21</div></div>
 <div class="ttc" id="aGnssNavInfo_8hpp_html"><div class="ttname"><a href="GnssNavInfo_8hpp.html">GnssNavInfo.hpp</a></div><div class="ttdoc">Navigation message information.</div></div>
+<div class="ttc" id="aLogger_8hpp_html_aced66975c154ea0e2a8ec3bc818b4e08"><div class="ttname"><a href="Logger_8hpp.html#aced66975c154ea0e2a8ec3bc818b4e08">LOG_ERROR</a></div><div class="ttdeci">#define LOG_ERROR</div><div class="ttdoc">Error occurred, which stops part of the program to work, but not everything.</div><div class="ttdef"><b>Definition</b> Logger.hpp:73</div></div>
 <div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Node Class.</div></div>
 <div class="ttc" id="aclassNAV_1_1FileReader_html"><div class="ttname"><a href="classNAV_1_1FileReader.html">NAV::FileReader</a></div><div class="ttdoc">Abstract File Reader class.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:31</div></div>
+<div class="ttc" id="aclassNAV_1_1FileReader_html_a2644402909ede89d66f9b519620624a5"><div class="ttname"><a href="classNAV_1_1FileReader.html#a2644402909ede89d66f9b519620624a5">NAV::FileReader::_path</a></div><div class="ttdeci">std::string _path</div><div class="ttdoc">Path to the file.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:155</div></div>
+<div class="ttc" id="aclassNAV_1_1FileReader_html_ad3a20cb6549a55e65a08d7495bcd32b3"><div class="ttname"><a href="classNAV_1_1FileReader.html#ad3a20cb6549a55e65a08d7495bcd32b3">NAV::FileReader::getCurrentLineNumber</a></div><div class="ttdeci">size_t getCurrentLineNumber() const</div><div class="ttdoc">Get the current line number.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:152</div></div>
 <div class="ttc" id="aclassNAV_1_1FileReader_html_af2e5120198c08c760522fdccd1ac8c2e"><div class="ttname"><a href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e">NAV::FileReader::FileType</a></div><div class="ttdeci">FileType</div><div class="ttdoc">File Type Enumeration.</div><div class="ttdef"><b>Definition</b> FileReader.hpp:35</div></div>
-<div class="ttc" id="aclassNAV_1_1GnssNavInfo_html"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html">NAV::GnssNavInfo</a></div><div class="ttdoc">GNSS Navigation message information.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:30</div></div>
+<div class="ttc" id="aclassNAV_1_1GnssNavInfo_html_ae944c5b1c986338dbe87097b858d722e"><div class="ttname"><a href="classNAV_1_1GnssNavInfo.html#ae944c5b1c986338dbe87097b858d722e">NAV::GnssNavInfo::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Resets the data by clearing the member variables.</div><div class="ttdef"><b>Definition</b> GnssNavInfo.hpp:134</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a05d65fed1964daf2e8e588de7bbbe136"><div class="ttname"><a href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">NAV::Node::doDeinitialize</a></div><div class="ttdeci">bool doDeinitialize(bool wait=false)</div><div class="ttdoc">Asks the node worker to deinitialize the node.</div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html_a858207a7dd64ea9bf1da7f850f97cc4e"><div class="ttname"><a href="classNAV_1_1Node.html#a858207a7dd64ea9bf1da7f850f97cc4e">NAV::Node::nameId</a></div><div class="ttdeci">std::string nameId() const</div><div class="ttdoc">Node name and id.</div></div>
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html">NAV::RinexNavFile</a></div><div class="ttdoc">File reader Node for RINEX Navigation messages.</div><div class="ttdef"><b>Definition</b> RinexNavFile.hpp:27</div></div>
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html_a04b1403c49181aab9e945cc91cccb660"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html#a04b1403c49181aab9e945cc91cccb660">NAV::RinexNavFile::RinexNavFile</a></div><div class="ttdeci">RinexNavFile(const RinexNavFile &amp;)=delete</div><div class="ttdoc">Copy constructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html_a1eb35e3e88b980f398091925bd3535d8"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html#a1eb35e3e88b980f398091925bd3535d8">NAV::RinexNavFile::operator=</a></div><div class="ttdeci">RinexNavFile &amp; operator=(RinexNavFile &amp;&amp;)=delete</div><div class="ttdoc">Move assignment operator.</div></div>
@@ -208,6 +290,7 @@ $(function(){initNavTree('RinexNavFile_8hpp_source.html',''); initResizable(); }
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html_acc9075aa152322dd83fce2c9eef76ecd"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html#acc9075aa152322dd83fce2c9eef76ecd">NAV::RinexNavFile::save</a></div><div class="ttdeci">json save() const override</div><div class="ttdoc">Saves the node into a json object.</div></div>
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html_ad6c3615e22df6bade19dd0b61b265489"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html#ad6c3615e22df6bade19dd0b61b265489">NAV::RinexNavFile::RinexNavFile</a></div><div class="ttdeci">RinexNavFile(RinexNavFile &amp;&amp;)=delete</div><div class="ttdoc">Move constructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1RinexNavFile_html_afadb22b3e2b168ab6a50f7b6c1ca38fc"><div class="ttname"><a href="classNAV_1_1RinexNavFile.html#afadb22b3e2b168ab6a50f7b6c1ca38fc">NAV::RinexNavFile::resetNode</a></div><div class="ttdeci">bool resetNode() override</div><div class="ttdoc">Resets the node. Moves the read cursor to the start.</div></div>
+<div class="ttc" id="astructNAV_1_1SatelliteSystem_html"><div class="ttname"><a href="structNAV_1_1SatelliteSystem.html">NAV::SatelliteSystem</a></div><div class="ttdoc">Satellite System type.</div><div class="ttdef"><b>Definition</b> SatelliteSystem.hpp:43</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

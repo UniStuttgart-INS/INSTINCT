@@ -38,6 +38,7 @@ var classNAV_1_1InsTime =
     [ "toGPSweekTow", "classNAV_1_1InsTime.html#a5e127746836eef682f2102c00713b8da", null ],
     [ "toJD", "classNAV_1_1InsTime.html#a22e6696f2a5caa36352caca87c3048f1", null ],
     [ "toMJD", "classNAV_1_1InsTime.html#a976c5549d2f7187b88f50799e565e08d", null ],
+    [ "toUnixTime", "classNAV_1_1InsTime.html#acf85a6bb7ffb0062201324ce0bcbe197", null ],
     [ "toYDoySod", "classNAV_1_1InsTime.html#a514b88c304dab940ff3f06cbe60642ee", null ],
     [ "toYMDHMS", "classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319", null ],
     [ "operator+", "classNAV_1_1InsTime.html#ab2001eaaa07698add6eb8143fa671c88", null ],

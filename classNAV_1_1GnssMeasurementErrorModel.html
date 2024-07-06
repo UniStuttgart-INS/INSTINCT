@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -190,21 +211,21 @@ Public Member Functions</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a2486fa83dcd2d0dd7bd3c31cc47d73cc" name="a4818411c6ad1cc9c446b5928433c3744a2486fa83dcd2d0dd7bd3c31cc47d73cc"></a>None&#160;</td><td class="fielddoc"><p>Measurement error model turned off. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a5f8578b7b2f0f329aa622f6caf96cc85" name="a4818411c6ad1cc9c446b5928433c3744a5f8578b7b2f0f329aa622f6caf96cc85"></a>SINE&#160;</td><td class="fielddoc"><p>Sine. See <a class="el" href="citelist.html#CITEREF_Dach2015">[35]</a> Dach 2015. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a5f8578b7b2f0f329aa622f6caf96cc85" name="a4818411c6ad1cc9c446b5928433c3744a5f8578b7b2f0f329aa622f6caf96cc85"></a>SINE&#160;</td><td class="fielddoc"><p>Sine. See <a class="el" href="citelist.html#CITEREF_Dach2015">[36]</a> Dach 2015. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744ac0df2d8b49d7be48ff5bfc2aff251072" name="a4818411c6ad1cc9c446b5928433c3744ac0df2d8b49d7be48ff5bfc2aff251072"></a>SINE_OFFSET&#160;</td><td class="fielddoc"><p>Sine with offset. See <a class="el" href="citelist.html#CITEREF_Zhang2021">[48]</a> Zhang 2021 eq. 7, p. 3. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744ac0df2d8b49d7be48ff5bfc2aff251072" name="a4818411c6ad1cc9c446b5928433c3744ac0df2d8b49d7be48ff5bfc2aff251072"></a>SINE_OFFSET&#160;</td><td class="fielddoc"><p>Sine with offset. See <a class="el" href="citelist.html#CITEREF_Zhang2021">[49]</a> Zhang 2021 eq. 7, p. 3. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a18d242ccb6db450330dd6ad0e62f44b5" name="a4818411c6ad1cc9c446b5928433c3744a18d242ccb6db450330dd6ad0e62f44b5"></a>SINE_CN0&#160;</td><td class="fielddoc"><p>Sine and CN0 dependent. See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected) </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a18d242ccb6db450330dd6ad0e62f44b5" name="a4818411c6ad1cc9c446b5928433c3744a18d242ccb6db450330dd6ad0e62f44b5"></a>SINE_CN0&#160;</td><td class="fielddoc"><p>Sine and CN0 dependent. See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected) </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a71b437c9eaa4de94a319ee6f77c8879d" name="a4818411c6ad1cc9c446b5928433c3744a71b437c9eaa4de94a319ee6f77c8879d"></a>RTKLIB&#160;</td><td class="fielddoc"><p>RTKLIB error model. See <a class="el" href="citelist.html#CITEREF_RTKLIB">[41]</a> RTKLIB ch. E.6, eq. E.6.24, p. 162. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a71b437c9eaa4de94a319ee6f77c8879d" name="a4818411c6ad1cc9c446b5928433c3744a71b437c9eaa4de94a319ee6f77c8879d"></a>RTKLIB&#160;</td><td class="fielddoc"><p>RTKLIB error model. See <a class="el" href="citelist.html#CITEREF_RTKLIB">[42]</a> RTKLIB ch. E.6, eq. E.6.24, p. 162. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a1c67effce256a127940154e8e5a2d121" name="a4818411c6ad1cc9c446b5928433c3744a1c67effce256a127940154e8e5a2d121"></a>SINE_TYPE&#160;</td><td class="fielddoc"><p>Sine Type. See <a class="el" href="citelist.html#CITEREF_KingBock2001">[37]</a> King and Bock 2001. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a1c67effce256a127940154e8e5a2d121" name="a4818411c6ad1cc9c446b5928433c3744a1c67effce256a127940154e8e5a2d121"></a>SINE_TYPE&#160;</td><td class="fielddoc"><p>Sine Type. See <a class="el" href="citelist.html#CITEREF_KingBock2001">[38]</a> King and Bock 2001. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744aab017beeaae5165e216b02b53cdb2a1c" name="a4818411c6ad1cc9c446b5928433c3744aab017beeaae5165e216b02b53cdb2a1c"></a>SINE_SQRT&#160;</td><td class="fielddoc"><p>Sine square-root. See <a class="el" href="citelist.html#CITEREF_Kiliszek2022">[23]</a> Kiliszek 2022, table 2, p. 5. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744aab017beeaae5165e216b02b53cdb2a1c" name="a4818411c6ad1cc9c446b5928433c3744aab017beeaae5165e216b02b53cdb2a1c"></a>SINE_SQRT&#160;</td><td class="fielddoc"><p>Sine square-root. See <a class="el" href="citelist.html#CITEREF_Kiliszek2022">[24]</a> Kiliszek 2022, table 2, p. 5. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a367809bc5e74a488abcf6fb2b68a7c38" name="a4818411c6ad1cc9c446b5928433c3744a367809bc5e74a488abcf6fb2b68a7c38"></a>EXPONENTIAL&#160;</td><td class="fielddoc"><p>Exponential. See <a class="el" href="citelist.html#CITEREF_EulerGoad1991">[18]</a> Euler and Goad 1991 / <a class="el" href="citelist.html#CITEREF_Li2016">[4]</a> Li et al. 2016. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a367809bc5e74a488abcf6fb2b68a7c38" name="a4818411c6ad1cc9c446b5928433c3744a367809bc5e74a488abcf6fb2b68a7c38"></a>EXPONENTIAL&#160;</td><td class="fielddoc"><p>Exponential. See <a class="el" href="citelist.html#CITEREF_EulerGoad1991">[19]</a> Euler and Goad 1991 / <a class="el" href="citelist.html#CITEREF_Li2016">[4]</a> Li et al. 2016. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a7a1b2832cd07cb2d5d5c43c37fcbe0a8" name="a4818411c6ad1cc9c446b5928433c3744a7a1b2832cd07cb2d5d5c43c37fcbe0a8"></a>COSINE_TYPE&#160;</td><td class="fielddoc"><p>Cosine Type. See <a class="el" href="citelist.html#CITEREF_Hadas2020">[17]</a> Hadas 2020 eq. 14, p. 8. </p>
+<tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a7a1b2832cd07cb2d5d5c43c37fcbe0a8" name="a4818411c6ad1cc9c446b5928433c3744a7a1b2832cd07cb2d5d5c43c37fcbe0a8"></a>COSINE_TYPE&#160;</td><td class="fielddoc"><p>Cosine Type. See <a class="el" href="citelist.html#CITEREF_Hadas2020">[18]</a> Hadas 2020 eq. 14, p. 8. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4818411c6ad1cc9c446b5928433c3744a24fcfe3ab42b47d3922010d36a1ca97a" name="a4818411c6ad1cc9c446b5928433c3744a24fcfe3ab42b47d3922010d36a1ca97a"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
 </td></tr>

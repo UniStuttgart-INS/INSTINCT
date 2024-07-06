@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -130,6 +151,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html">ObservationData</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the satellites observations.  <a href="structNAV_1_1GnssObs_1_1ObservationData.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html">ReceiverInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> Information, e.g. from RINEX header.  <a href="structNAV_1_1GnssObs_1_1ReceiverInfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1GnssObs_1_1SatelliteData.html">SatelliteData</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Useful information of the satellites.  <a href="structNAV_1_1GnssObs_1_1SatelliteData.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,6 +206,9 @@ const std::vector&lt; <a class="el" href="structNAV_1_1GnssObs_1_1SatelliteData.
 <tr class="memdesc:a71504c9e22c4edd829a32ba0de29f04d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the satellite data.  <br /></td></tr>
 <tr class="separator:a71504c9e22c4edd829a32ba0de29f04d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">
 const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>events</b> () const</td></tr>
 <tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data. <br /></td></tr>
@@ -255,6 +282,10 @@ Public Attributes</h2></td></tr>
 std::vector&lt; <a class="el" href="structNAV_1_1GnssObs_1_1ObservationData.html">ObservationData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
 <tr class="memdesc:acb643cff15145118cffd29458d71a503"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> observations. <br /></td></tr>
 <tr class="separator:acb643cff15145118cffd29458d71a503"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873192200367aa6d8f27f159006db96b" id="r_a873192200367aa6d8f27f159006db96b"><td class="memItemLeft" align="right" valign="top"><a id="a873192200367aa6d8f27f159006db96b" name="a873192200367aa6d8f27f159006db96b"></a>
+std::optional&lt; std::reference_wrapper&lt; <a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html">ReceiverInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>receiverInfo</b></td></tr>
+<tr class="memdesc:a873192200367aa6d8f27f159006db96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional <a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> Information, e.g. from RINEX header. <br /></td></tr>
+<tr class="separator:a873192200367aa6d8f27f159006db96b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
 <tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>insTime</b></td></tr>

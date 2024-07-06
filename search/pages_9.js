@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['main_20menu_20bar_0',['Main Menu Bar',['../main_menu_bar.html',1,'gui_landing_page']]],
-  ['manual_1',['Manual',['../developer_manual.html',1,'Developer Manual'],['../user_manual_landing_page.html',1,'User Manual']]],
-  ['matrixlogger_20node_2',['MatrixLogger Node',['../matrix_logger_node.html',1,'node_guide_landing_page']]],
-  ['menu_20bar_3',['Main Menu Bar',['../main_menu_bar.html',1,'gui_landing_page']]],
-  ['merger_20node_4',['Merger Node',['../merger_node.html',1,'node_guide_landing_page']]],
-  ['multiimufile_20node_5',['MultiImuFile Node',['../multi_imu_file_node.html',1,'node_guide_landing_page']]]
+  ['kalman_20filter_20earth_20fixed_20frame_0',['INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)',['../LooselyCoupledKF_e.html',1,'algorithms_landing_page']]],
+  ['kalman_20filter_20local_20navigation_20frame_1',['INS/GNSS Loosely-coupled Kalman Filter (local-navigation frame)',['../LooselyCoupledKF_n.html',1,'algorithms_landing_page']]],
+  ['kalman_20filtering_2',['Single Point Positioning using Kalman Filtering',['../SppKF.html',1,'algorithms_landing_page']]],
+  ['kalman_20filtering_20and_20how_20it_20is_20used_20in_20instinct_3',['Basics about Kalman Filtering and how it is used in INSTINCT',['../KalmanFilterBasics.html',1,'algorithms_landing_page']]],
+  ['kvhdatalogger_20node_4',['KvhDataLogger Node',['../kvh_data_logger_node.html',1,'node_guide_landing_page']]],
+  ['kvhfile_20node_5',['KvhFile Node',['../kvh_file_node.html',1,'node_guide_landing_page']]],
+  ['kvhsensor_20node_6',['KvhSensor Node',['../kvh_sensor_node.html',1,'node_guide_landing_page']]]
 ];

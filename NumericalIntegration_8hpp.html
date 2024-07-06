@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,8 +133,8 @@ $(function(){initNavTree('NumericalIntegration_8hpp.html',''); initResizable(); 
 
 <div class="header">
   <div class="summary">
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">NumericalIntegration.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -123,620 +144,590 @@ $(function(){initNavTree('NumericalIntegration_8hpp.html',''); initResizable(); 
 
 <p><a href="NumericalIntegration_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:ab3feb12b560d393d392c597cd47a0eba" id="r_ab3feb12b560d393d392c597cd47a0eba"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3feb12b560d393d392c597cd47a0eba">NAV::IntegrationAlgorithm</a> { <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaaedd0670386cd6f4271df549bfcb93f0c">Heun</a>
-, <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506">RungeKutta1</a>
-, <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f">RungeKutta2</a>
-, <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9">RungeKutta3</a>
-, <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58">RungeKutta4</a>
-, <br />
-&#160;&#160;<a class="el" href="#ab3feb12b560d393d392c597cd47a0ebaa4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>
-<br />
- }</td></tr>
-<tr class="memdesc:ab3feb12b560d393d392c597cd47a0eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Integration Algorithms.  <a href="#ab3feb12b560d393d392c597cd47a0eba">More...</a><br /></td></tr>
-<tr class="separator:ab3feb12b560d393d392c597cd47a0eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac953f160fea07529a47253569d4a1336" id="r_ac953f160fea07529a47253569d4a1336"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:ac953f160fea07529a47253569d4a1336"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac953f160fea07529a47253569d4a1336">NAV::Heun</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)</td></tr>
-<tr class="memdesc:ac953f160fea07529a47253569d4a1336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heun's method.  <br /></td></tr>
-<tr class="separator:ac953f160fea07529a47253569d4a1336"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcd33e56517eb26ea888a93f0c437702" id="r_abcd33e56517eb26ea888a93f0c437702"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:abcd33e56517eb26ea888a93f0c437702"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abcd33e56517eb26ea888a93f0c437702">NAV::Heun</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)</td></tr>
-<tr class="memdesc:abcd33e56517eb26ea888a93f0c437702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heun's method.  <br /></td></tr>
-<tr class="separator:abcd33e56517eb26ea888a93f0c437702"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c1f4bebc67f0ff8aa3d7ecf8942edfe" id="r_a4c1f4bebc67f0ff8aa3d7ecf8942edfe"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a4c1f4bebc67f0ff8aa3d7ecf8942edfe"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4c1f4bebc67f0ff8aa3d7ecf8942edfe">NAV::RungeKutta1</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)</td></tr>
-<tr class="memdesc:a4c1f4bebc67f0ff8aa3d7ecf8942edfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta First Order Algorithm.  <br /></td></tr>
-<tr class="separator:a4c1f4bebc67f0ff8aa3d7ecf8942edfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06f0dfa9e9b5230aac747a1c16e7e869" id="r_a06f0dfa9e9b5230aac747a1c16e7e869"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a06f0dfa9e9b5230aac747a1c16e7e869"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a06f0dfa9e9b5230aac747a1c16e7e869">NAV::RungeKutta1</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)</td></tr>
-<tr class="memdesc:a06f0dfa9e9b5230aac747a1c16e7e869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta First Order Algorithm.  <br /></td></tr>
-<tr class="separator:a06f0dfa9e9b5230aac747a1c16e7e869"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3bf38381b9e0fe9b7423967ec83b87b" id="r_ad3bf38381b9e0fe9b7423967ec83b87b"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:ad3bf38381b9e0fe9b7423967ec83b87b"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad3bf38381b9e0fe9b7423967ec83b87b">NAV::RungeKutta2</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)</td></tr>
-<tr class="memdesc:ad3bf38381b9e0fe9b7423967ec83b87b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Second Order Algorithm.  <br /></td></tr>
-<tr class="separator:ad3bf38381b9e0fe9b7423967ec83b87b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ae20d40717913cc0b2aa4b37091bc16" id="r_a9ae20d40717913cc0b2aa4b37091bc16"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a9ae20d40717913cc0b2aa4b37091bc16"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9ae20d40717913cc0b2aa4b37091bc16">NAV::RungeKutta2</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)</td></tr>
-<tr class="memdesc:a9ae20d40717913cc0b2aa4b37091bc16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Second Order Algorithm.  <br /></td></tr>
-<tr class="separator:a9ae20d40717913cc0b2aa4b37091bc16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03cde48b08535ca0fc1e74f128dce77c" id="r_a03cde48b08535ca0fc1e74f128dce77c"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a03cde48b08535ca0fc1e74f128dce77c"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a03cde48b08535ca0fc1e74f128dce77c">NAV::RungeKutta3</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)</td></tr>
-<tr class="memdesc:a03cde48b08535ca0fc1e74f128dce77c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Third Order Algorithm.  <br /></td></tr>
-<tr class="separator:a03cde48b08535ca0fc1e74f128dce77c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0daff17a2e745632947b79c22d5508e7" id="r_a0daff17a2e745632947b79c22d5508e7"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a0daff17a2e745632947b79c22d5508e7"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0daff17a2e745632947b79c22d5508e7">NAV::RungeKutta3</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)</td></tr>
-<tr class="memdesc:a0daff17a2e745632947b79c22d5508e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Third Order Algorithm.  <br /></td></tr>
-<tr class="separator:a0daff17a2e745632947b79c22d5508e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22ca763c5242bad59853f19a6c7d4222" id="r_a22ca763c5242bad59853f19a6c7d4222"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a22ca763c5242bad59853f19a6c7d4222"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a22ca763c5242bad59853f19a6c7d4222">NAV::RungeKutta4</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const auto &amp;c)</td></tr>
-<tr class="memdesc:a22ca763c5242bad59853f19a6c7d4222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Fourth Order Algorithm.  <br /></td></tr>
-<tr class="separator:a22ca763c5242bad59853f19a6c7d4222"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33cfa0c6a868581e10972095dc63fef6" id="r_a33cfa0c6a868581e10972095dc63fef6"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
-<tr class="memitem:a33cfa0c6a868581e10972095dc63fef6"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a33cfa0c6a868581e10972095dc63fef6">NAV::RungeKutta4</a> (const auto &amp;f, const Scalar &amp;h, const Y &amp;n_y, const Scalar &amp;n_t, const auto &amp;c)</td></tr>
-<tr class="memdesc:a33cfa0c6a868581e10972095dc63fef6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta Fourth Order Algorithm.  <br /></td></tr>
-<tr class="separator:a33cfa0c6a868581e10972095dc63fef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7bec43a136c261477f83acee0507ef0" id="r_ae7bec43a136c261477f83acee0507ef0"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7bec43a136c261477f83acee0507ef0">NAV::to_string</a> (<a class="el" href="#ab3feb12b560d393d392c597cd47a0eba">IntegrationAlgorithm</a> algorithm)</td></tr>
-<tr class="memdesc:ae7bec43a136c261477f83acee0507ef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
-<tr class="separator:ae7bec43a136c261477f83acee0507ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca6706db0669302c501a0d5988f7eeca" id="r_aca6706db0669302c501a0d5988f7eeca"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:aca6706db0669302c501a0d5988f7eeca"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aca6706db0669302c501a0d5988f7eeca">NAV::Heun2</a> (const Y &amp;y_n, const std::array&lt; Z, 2 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:aca6706db0669302c501a0d5988f7eeca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heun's method (2nd order) (explicit) <a class="anchor" id="eq-Heun2"></a>.  <br /></td></tr>
+<tr class="separator:aca6706db0669302c501a0d5988f7eeca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a989366bebe6610a6e4892b3db0c58fbd" id="r_a989366bebe6610a6e4892b3db0c58fbd"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a989366bebe6610a6e4892b3db0c58fbd"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a989366bebe6610a6e4892b3db0c58fbd">NAV::Heun3</a> (const Y &amp;y_n, const std::array&lt; Z, 3 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:a989366bebe6610a6e4892b3db0c58fbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heun's method (3nd order) (explicit) <a class="anchor" id="eq-Heun3"></a>.  <br /></td></tr>
+<tr class="separator:a989366bebe6610a6e4892b3db0c58fbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619d43af69ae6137f1363bfd99788eba" id="r_a619d43af69ae6137f1363bfd99788eba"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a619d43af69ae6137f1363bfd99788eba"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a619d43af69ae6137f1363bfd99788eba">NAV::RungeKutta1</a> (const Y &amp;y_n, const std::array&lt; Z, 1 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:a619d43af69ae6137f1363bfd99788eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta 1st order (explicit) / (Forward) Euler method <a class="anchor" id="eq-RungeKutta1-explicit"></a>.  <br /></td></tr>
+<tr class="separator:a619d43af69ae6137f1363bfd99788eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9901074fb40608a248962c54bf9f563" id="r_af9901074fb40608a248962c54bf9f563"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:af9901074fb40608a248962c54bf9f563"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af9901074fb40608a248962c54bf9f563">NAV::RungeKutta2</a> (const Y &amp;y_n, const std::array&lt; Z, 2 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:af9901074fb40608a248962c54bf9f563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta 2nd order (explicit) / Explicit midpoint method <a class="anchor" id="eq-RungeKutta2-explicit"></a>.  <br /></td></tr>
+<tr class="separator:af9901074fb40608a248962c54bf9f563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19e7171dcd116183a0833a5bb39a346c" id="r_a19e7171dcd116183a0833a5bb39a346c"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a19e7171dcd116183a0833a5bb39a346c"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a19e7171dcd116183a0833a5bb39a346c">NAV::RungeKutta3</a> (const Y &amp;y_n, const std::array&lt; Z, 3 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:a19e7171dcd116183a0833a5bb39a346c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta 3rd order (explicit) / Simpson's rule <a class="anchor" id="eq-RungeKutta3-explicit"></a>.  <br /></td></tr>
+<tr class="separator:a19e7171dcd116183a0833a5bb39a346c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f70b8db4262b9b0ed22849dd3b8e2cf" id="r_a9f70b8db4262b9b0ed22849dd3b8e2cf"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a9f70b8db4262b9b0ed22849dd3b8e2cf"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9f70b8db4262b9b0ed22849dd3b8e2cf">NAV::RungeKutta4</a> (const Y &amp;y_n, const std::array&lt; Z, 4 &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n=0)</td></tr>
+<tr class="memdesc:a9f70b8db4262b9b0ed22849dd3b8e2cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runge-Kutta 4th order (explicit) <a class="anchor" id="eq-RungeKutta4-explicit"></a>.  <br /></td></tr>
+<tr class="separator:a9f70b8db4262b9b0ed22849dd3b8e2cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ab7952ae012509781d7b44d1fb69638" id="r_a7ab7952ae012509781d7b44d1fb69638"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename Z , typename Scalar , size_t s, std::array&lt; std::array&lt; Scalar, s+1 &gt;, s+1 &gt; butcherTableau, typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </td></tr>
+<tr class="memitem:a7ab7952ae012509781d7b44d1fb69638"><td class="memTemplItemLeft" align="right" valign="top">Y&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7ab7952ae012509781d7b44d1fb69638">NAV::ButcherTableau::RungeKuttaExplicit</a> (const Y &amp;y_n, const std::array&lt; Z, s &gt; z, const Scalar &amp;h, const auto &amp;f, const auto &amp;constParam, const Scalar &amp;t_n)</td></tr>
+<tr class="memdesc:a7ab7952ae012509781d7b44d1fb69638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates explicit Runge-Kutta methods. Order is defined by the Butcher tableau.  <br /></td></tr>
+<tr class="separator:a7ab7952ae012509781d7b44d1fb69638"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:ab22b225cf9ffaa29766b053dc8436d0a" id="r_ab22b225cf9ffaa29766b053dc8436d0a"><td class="memTemplParams" colspan="2"><a id="ab22b225cf9ffaa29766b053dc8436d0a" name="ab22b225cf9ffaa29766b053dc8436d0a"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:ab22b225cf9ffaa29766b053dc8436d0a"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 3 &gt;, 3 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::Heun2</b></td></tr>
+<tr class="memdesc:ab22b225cf9ffaa29766b053dc8436d0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Heun's method (2nd order) (explicit) <br /></td></tr>
+<tr class="separator:ab22b225cf9ffaa29766b053dc8436d0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fbd00e0e8bbb0323ec364dbebc2b64a" id="r_a9fbd00e0e8bbb0323ec364dbebc2b64a"><td class="memTemplParams" colspan="2"><a id="a9fbd00e0e8bbb0323ec364dbebc2b64a" name="a9fbd00e0e8bbb0323ec364dbebc2b64a"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a9fbd00e0e8bbb0323ec364dbebc2b64a"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 4 &gt;, 4 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::Heun3</b></td></tr>
+<tr class="memdesc:a9fbd00e0e8bbb0323ec364dbebc2b64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Heun's method (3nd order) (explicit) <br /></td></tr>
+<tr class="separator:a9fbd00e0e8bbb0323ec364dbebc2b64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9f20782cec4eba7cc631391845ee644" id="r_ae9f20782cec4eba7cc631391845ee644"><td class="memTemplParams" colspan="2"><a id="ae9f20782cec4eba7cc631391845ee644" name="ae9f20782cec4eba7cc631391845ee644"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:ae9f20782cec4eba7cc631391845ee644"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 2 &gt;, 2 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::RK1</b></td></tr>
+<tr class="memdesc:ae9f20782cec4eba7cc631391845ee644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Runge-Kutta 1st order (explicit) / (Forward) Euler method. <br /></td></tr>
+<tr class="separator:ae9f20782cec4eba7cc631391845ee644"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcbf54c3e2342193f0e6bf39202622b5" id="r_adcbf54c3e2342193f0e6bf39202622b5"><td class="memTemplParams" colspan="2"><a id="adcbf54c3e2342193f0e6bf39202622b5" name="adcbf54c3e2342193f0e6bf39202622b5"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:adcbf54c3e2342193f0e6bf39202622b5"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 3 &gt;, 3 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::RK2</b></td></tr>
+<tr class="memdesc:adcbf54c3e2342193f0e6bf39202622b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Runge-Kutta 2nd order (explicit) / Explicit midpoint method. <br /></td></tr>
+<tr class="separator:adcbf54c3e2342193f0e6bf39202622b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb7e51440d7785ca1d47bcdbf5fd5212" id="r_adb7e51440d7785ca1d47bcdbf5fd5212"><td class="memTemplParams" colspan="2"><a id="adb7e51440d7785ca1d47bcdbf5fd5212" name="adb7e51440d7785ca1d47bcdbf5fd5212"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:adb7e51440d7785ca1d47bcdbf5fd5212"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 4 &gt;, 4 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::RK3</b></td></tr>
+<tr class="memdesc:adb7e51440d7785ca1d47bcdbf5fd5212"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Runge-Kutta 3rd order (explicit) / Simpson's rule. <br /></td></tr>
+<tr class="separator:adb7e51440d7785ca1d47bcdbf5fd5212"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a568edc6d75398524cda6160ff4219589" id="r_a568edc6d75398524cda6160ff4219589"><td class="memTemplParams" colspan="2"><a id="a568edc6d75398524cda6160ff4219589" name="a568edc6d75398524cda6160ff4219589"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a568edc6d75398524cda6160ff4219589"><td class="memTemplItemLeft" align="right" valign="top">constexpr std::array&lt; std::array&lt; Scalar, 5 &gt;, 5 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>NAV::ButcherTableau::RK4</b></td></tr>
+<tr class="memdesc:a568edc6d75398524cda6160ff4219589"><td class="mdescLeft">&#160;</td><td class="mdescRight">Butcher tableau for Runge-Kutta 4th order (explicit) <br /></td></tr>
+<tr class="separator:a568edc6d75398524cda6160ff4219589"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides Numerical integration methods. </p>
-<dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd>
-<dd>
-M. Maier (<a href="#" onclick="location.href='mai'+'lto:'+'mar'+'ce'+'l.m'+'ai'+'er@'+'in'+'s.u'+'ni'+'-st'+'ut'+'tga'+'rt'+'.de'; return false;">marce<span class="obfuscator">.nosp@m.</span>l.ma<span class="obfuscator">.nosp@m.</span>ier@i<span class="obfuscator">.nosp@m.</span>ns.u<span class="obfuscator">.nosp@m.</span>ni-st<span class="obfuscator">.nosp@m.</span>uttg<span class="obfuscator">.nosp@m.</span>art.d<span class="obfuscator">.nosp@m.</span>e</a>) </dd></dl>
-<dl class="section date"><dt>Date</dt><dd>2021-09-08 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ab3feb12b560d393d392c597cd47a0eba" name="ab3feb12b560d393d392c597cd47a0eba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3feb12b560d393d392c597cd47a0eba">&#9670;&#160;</a></span>IntegrationAlgorithm</h2>
+<dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-12-11 </dd></dl>
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="aca6706db0669302c501a0d5988f7eeca" name="aca6706db0669302c501a0d5988f7eeca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca6706db0669302c501a0d5988f7eeca">&#9670;&#160;</a></span>Heun2()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::Heun2 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 2 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Heun's method (2nd order) (explicit) <a class="anchor" id="eq-Heun2"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-Heun2}
+\begin{aligned}
+  y_{n+1} &amp;= y_n + \frac{h}{2} (k_1 + k_2) \\[1em]
+  k_1     &amp;= f(t_n, y_n) \\
+  k_2     &amp;= f(t_n + h, y_n + h k_1) \\
+\end{aligned}
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-Heun2-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-Heun2-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|cc}
+0 \\
+1 &amp; 1 \\ \hline
+  &amp; \frac{1}{2} &amp; \frac{1}{2} \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a989366bebe6610a6e4892b3db0c58fbd" name="a989366bebe6610a6e4892b3db0c58fbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a989366bebe6610a6e4892b3db0c58fbd">&#9670;&#160;</a></span>Heun3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::Heun3 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 3 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Heun's method (3nd order) (explicit) <a class="anchor" id="eq-Heun3"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-Heun3}
+\begin{aligned}
+  y_{n+1} &amp;= y_n + \frac{h}{4} (k_1 + 3 k_3) \\[1em]
+  k_1     &amp;= f(t_n, y_n) \\
+  k_2     &amp;= f(t_n + \frac{h}{3}, y_n + \frac{h}{3} k_1) \\
+  k_3     &amp;= f(t_n + \frac{2 h}{3}, y_n + \frac{2 h}{3} k_2) \\
+\end{aligned}
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-Heun3-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-Heun3-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|ccc}
+0 \\
+\frac{1}{3} &amp; \frac{1}{3} \\
+\frac{2}{3} &amp;      0      &amp; \frac{2}{3} \\ \hline
+            &amp; \frac{1}{4} &amp;      0      &amp; \frac{3}{4} \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a619d43af69ae6137f1363bfd99788eba" name="a619d43af69ae6137f1363bfd99788eba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a619d43af69ae6137f1363bfd99788eba">&#9670;&#160;</a></span>RungeKutta1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::RungeKutta1 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 1 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Runge-Kutta 1st order (explicit) / (Forward) Euler method <a class="anchor" id="eq-RungeKutta1-explicit"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta1-explicit}
+  y_{n+1} = y_n + h f(t_n, y_n)
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-RungeKutta1-explicit-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta1-explicit-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|c}
+0 \\ \hline
+  &amp; 1 \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af9901074fb40608a248962c54bf9f563" name="af9901074fb40608a248962c54bf9f563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9901074fb40608a248962c54bf9f563">&#9670;&#160;</a></span>RungeKutta2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::RungeKutta2 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 2 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Runge-Kutta 2nd order (explicit) / Explicit midpoint method <a class="anchor" id="eq-RungeKutta2-explicit"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta2-explicit}
+\begin{aligned}
+  y_{n+1} &amp;= y_n + h k_2 \\[1em]
+  k_1     &amp;= f(t_n, y_n) \\
+  k_2     &amp;= f(t_n + \frac{h}{2}, y_n + \frac{h}{2} k_1) \\
+\end{aligned}
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-RungeKutta2-explicit-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta2-explicit-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|cc}
+0 \\
+\frac{1}{2} &amp; \frac{1}{2} \\ \hline
+            &amp;      0      &amp; 1 \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a19e7171dcd116183a0833a5bb39a346c" name="a19e7171dcd116183a0833a5bb39a346c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19e7171dcd116183a0833a5bb39a346c">&#9670;&#160;</a></span>RungeKutta3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::RungeKutta3 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 3 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Runge-Kutta 3rd order (explicit) / Simpson's rule <a class="anchor" id="eq-RungeKutta3-explicit"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta3-explicit}
+\begin{aligned}
+  y_{n+1} &amp;= y_n + \frac{h}{6} ( k_1 + 4 k_2 + k_3 ) \\[1em]
+  k_1     &amp;= f(t_n, y_n) \\
+  k_2     &amp;= f(t_n + \frac{h}{2}, y_n + \frac{h}{2} k_1) \\
+  k_3     &amp;= f(t_n + h, y_n + h (-k_1 + 2 k_2)) \\
+\end{aligned}
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-RungeKutta3-explicit-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta3-explicit-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|ccc}
+0 \\
+\frac{1}{2} &amp; \frac{1}{2} \\
+     1      &amp;     -1      &amp; 2 \\ \hline
+            &amp; \frac{1}{6} &amp; \frac{4}{6} &amp; \frac{1}{6} \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9f70b8db4262b9b0ed22849dd3b8e2cf" name="a9f70b8db4262b9b0ed22849dd3b8e2cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f70b8db4262b9b0ed22849dd3b8e2cf">&#9670;&#160;</a></span>RungeKutta4()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Y NAV::RungeKutta4 </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, 4 &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em><span class="paramdefsep"> = </span><span class="paramdefval">0</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Runge-Kutta 4th order (explicit) <a class="anchor" id="eq-RungeKutta4-explicit"></a>. </p>
+<p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta4-explicit}
+\begin{aligned}
+  y_{n+1} &amp;= y_n + \frac{h}{6} ( k_1 + 2 k_2 + 2 k_3 + k_4 ) \\[1em]
+  k_1     &amp;= f(t_n, y_n) \\
+  k_2     &amp;= f(t_n + \frac{h}{2}, y_n + \frac{h}{2} k_1) \\
+  k_3     &amp;= f(t_n + \frac{h}{2}, y_n + \frac{h}{2} k_2) \\
+  k_4     &amp;= f(t_n + h, y_n + h k_3) \\
+\end{aligned}
+\end{equation}
+</p>
+<p> Butcher tableau: <a class="anchor" id="eq-RungeKutta4-explicit-bt"></a> </p><p class="formulaDsp">
+\begin{equation} \label{eq:eq-RungeKutta4-explicit-bt}
+\renewcommand\arraystretch{1.2}
+\begin{array}{c|cccc}
+0 \\
+\frac{1}{2} &amp; \frac{1}{2} \\
+\frac{1}{2} &amp;      0      &amp; \frac{1}{2} \\
+     1      &amp;      0      &amp;      0      &amp;      1      \\ \hline
+            &amp; \frac{1}{6} &amp; \frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{6} \\
+\end{array}
+\end{equation}
+</p>
+ <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7ab7952ae012509781d7b44d1fb69638" name="a7ab7952ae012509781d7b44d1fb69638"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ab7952ae012509781d7b44d1fb69638">&#9670;&#160;</a></span>RungeKuttaExplicit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Y , typename Z , typename Scalar , size_t s, std::array&lt; std::array&lt; Scalar, s+1 &gt;, s+1 &gt; butcherTableau, typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum class <a class="el" href="#ab3feb12b560d393d392c597cd47a0eba">NAV::IntegrationAlgorithm</a></td>
+          <td class="memname">Y NAV::ButcherTableau::RungeKuttaExplicit </td>
+          <td>(</td>
+          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>y_n</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; Z, s &gt;</td>          <td class="paramname"><span class="paramname"><em>z</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>constParam</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>t_n</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Available Integration Algorithms. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaaedd0670386cd6f4271df549bfcb93f0c" name="ab3feb12b560d393d392c597cd47a0ebaaedd0670386cd6f4271df549bfcb93f0c"></a>Heun&#160;</td><td class="fielddoc"><p>Heun's method. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506" name="ab3feb12b560d393d392c597cd47a0ebaa791e44f7cbf89248f313ef521141d506"></a>RungeKutta1&#160;</td><td class="fielddoc"><p>Runge-Kutta 1st order. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f" name="ab3feb12b560d393d392c597cd47a0ebaa082cf2b93a893c3199ef04417bc6a30f"></a>RungeKutta2&#160;</td><td class="fielddoc"><p>Runge-Kutta 2nd order. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9" name="ab3feb12b560d393d392c597cd47a0ebaa772ae238ca6c1ac8c7825cfae28216f9"></a>RungeKutta3&#160;</td><td class="fielddoc"><p>Runge-Kutta 3rd order. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58" name="ab3feb12b560d393d392c597cd47a0ebaa2ad1d4b322353ee07200045be21ffb58"></a>RungeKutta4&#160;</td><td class="fielddoc"><p>Runge-Kutta 4th order. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ab3feb12b560d393d392c597cd47a0ebaa4905ac9d6a22bdfc1ae096094ce6248d" name="ab3feb12b560d393d392c597cd47a0ebaa4905ac9d6a22bdfc1ae096094ce6248d"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of available integration algorithms. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ac953f160fea07529a47253569d4a1336" name="ac953f160fea07529a47253569d4a1336"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac953f160fea07529a47253569d4a1336">&#9670;&#160;</a></span>Heun() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::Heun </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Heun's method. </p>
+<p>Calculates explicit Runge-Kutta methods. Order is defined by the Butcher tableau. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">y_n</td><td>State vector at time t_n </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">z</td><td>Array of measurements, one for each evaluation point of the Runge Kutta </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Time derivative function </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constParam</td><td>Constant parameters passed to each time derivative function call </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t_n</td><td>Time t_n </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="abcd33e56517eb26ea888a93f0c437702" name="abcd33e56517eb26ea888a93f0c437702"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcd33e56517eb26ea888a93f0c437702">&#9670;&#160;</a></span>Heun() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::Heun </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>n_t</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Heun's method. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_t</td><td>Time to evaluate the model function at in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a4c1f4bebc67f0ff8aa3d7ecf8942edfe" name="a4c1f4bebc67f0ff8aa3d7ecf8942edfe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1f4bebc67f0ff8aa3d7ecf8942edfe">&#9670;&#160;</a></span>RungeKutta1() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta1 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta First Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a06f0dfa9e9b5230aac747a1c16e7e869" name="a06f0dfa9e9b5230aac747a1c16e7e869"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06f0dfa9e9b5230aac747a1c16e7e869">&#9670;&#160;</a></span>RungeKutta1() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta1 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>n_t</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta First Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_t</td><td>Time to evaluate the model function at in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="ad3bf38381b9e0fe9b7423967ec83b87b" name="ad3bf38381b9e0fe9b7423967ec83b87b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3bf38381b9e0fe9b7423967ec83b87b">&#9670;&#160;</a></span>RungeKutta2() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta2 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Second Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a9ae20d40717913cc0b2aa4b37091bc16" name="a9ae20d40717913cc0b2aa4b37091bc16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ae20d40717913cc0b2aa4b37091bc16">&#9670;&#160;</a></span>RungeKutta2() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta2 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>n_t</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Second Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_t</td><td>Time to evaluate the model function at in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a03cde48b08535ca0fc1e74f128dce77c" name="a03cde48b08535ca0fc1e74f128dce77c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03cde48b08535ca0fc1e74f128dce77c">&#9670;&#160;</a></span>RungeKutta3() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta3 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Third Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a0daff17a2e745632947b79c22d5508e7" name="a0daff17a2e745632947b79c22d5508e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0daff17a2e745632947b79c22d5508e7">&#9670;&#160;</a></span>RungeKutta3() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta3 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>n_t</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Third Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_t</td><td>Time to evaluate the model function at in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a22ca763c5242bad59853f19a6c7d4222" name="a22ca763c5242bad59853f19a6c7d4222"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22ca763c5242bad59853f19a6c7d4222">&#9670;&#160;</a></span>RungeKutta4() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta4 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Fourth Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="a33cfa0c6a868581e10972095dc63fef6" name="a33cfa0c6a868581e10972095dc63fef6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33cfa0c6a868581e10972095dc63fef6">&#9670;&#160;</a></span>RungeKutta4() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Y , typename Scalar , typename  = std::enable_if_t&lt;std::is_floating_point_v&lt;Scalar&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">Y NAV::RungeKutta4 </td>
-          <td>(</td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>f</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>h</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Y &amp;</td>          <td class="paramname"><span class="paramname"><em>n_y</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Scalar &amp;</td>          <td class="paramname"><span class="paramname"><em>n_t</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const auto &amp;</td>          <td class="paramname"><span class="paramname"><em>c</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Runge-Kutta Fourth Order Algorithm. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f</td><td>Model function </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>Integration step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_y</td><td>State vector at time n_t </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_t</td><td>Time to evaluate the model function at in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Vector with constant information needed to calculate the model function </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>State vector at time t_(n+1) </dd></dl>
-
-</div>
-</div>
-<a id="ae7bec43a136c261477f83acee0507ef0" name="ae7bec43a136c261477f83acee0507ef0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7bec43a136c261477f83acee0507ef0">&#9670;&#160;</a></span>to_string()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::to_string </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#ab3feb12b560d393d392c597cd47a0eba">IntegrationAlgorithm</a></td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">algorithm</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
 
 </div>
 </div>

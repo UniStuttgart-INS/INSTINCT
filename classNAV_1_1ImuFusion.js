@@ -1,6 +1,5 @@
 var classNAV_1_1ImuFusion =
 [
-    [ "PinData", "structNAV_1_1ImuFusion_1_1PinData.html", "structNAV_1_1ImuFusion_1_1PinData" ],
     [ "ImuFusion", "classNAV_1_1ImuFusion.html#aa10bf10a42dd65931325eb6d90fe0c7a", null ],
     [ "~ImuFusion", "classNAV_1_1ImuFusion.html#a691db3a2dd1ba045a617982fff7f1ee7", null ],
     [ "ImuFusion", "classNAV_1_1ImuFusion.html#a50fab146641695255a6684d569ad0ccd", null ],
@@ -13,5 +12,6 @@ var classNAV_1_1ImuFusion =
     [ "save", "classNAV_1_1ImuFusion.html#a573ab2ade2d9986cbc735d8d11a0164b", null ],
     [ "type", "classNAV_1_1ImuFusion.html#a347216fb854c54258e94abe2234ea95c", null ],
     [ "typeStatic", "classNAV_1_1ImuFusion.html#a8f9a8262034e199233430e83880fd09c", null ],
+    [ "to_string", "classNAV_1_1ImuFusion.html#a199449f2e130bf367916904839b2f87c", null ],
     [ "_imuPos", "classNAV_1_1ImuFusion.html#a76fd198850ee01deb3d1e356bfac86a4", null ]
 ];

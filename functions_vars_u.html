@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,6 +140,7 @@ $(function(){initNavTree('functions_vars_u.html',''); initResizable(); });
 <li>uncompMag&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#ae640e3e90881c6a4d8574f7a4eba7131">NAV::vendor::vectornav::ImuOutputs</a></li>
 <li>undu&#160;:&#160;<a class="el" href="structNAV_1_1GPT2output.html#a98dced6958b05fbab8527d62f8182455">NAV::GPT2output</a></li>
 <li>undulation&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#af00ace50cd781b689e999507dcd343bb">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a9ef329a0210783341fc7974682e2a31d">NAV::internal::GPT3Data</a></li>
+<li>until&#160;:&#160;<a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html#aaab885303a11026964ec84585118166f">NAV::AntexReader::Antenna::AntennaInfo</a></li>
 <li>useSeed&#160;:&#160;<a class="el" href="classNAV_1_1RandomNumberGenerator.html#a157d29917af1487d8a8c8a7a5afe3f08">NAV::RandomNumberGenerator</a></li>
 </ul>
 </div><!-- contents -->

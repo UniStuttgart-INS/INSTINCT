@@ -23,6 +23,7 @@ var InsTime_8hpp =
     [ "DIFF_BDT_WEEK_TO_GPST_WEEK", "InsTime_8hpp.html#ade84d75bc776e3ff9315f8a915d88388", null ],
     [ "DIFF_MJD_TO_JD_DAYS", "InsTime_8hpp.html#aaa0d4d9ce2fbc502e235f75dc4291587", null ],
     [ "DIFF_MJD_TO_JD_FRAC", "InsTime_8hpp.html#a310667f05b5f99ab8aacc99d6fce28fb", null ],
+    [ "DIFF_TO_1_1_1970_MJD", "InsTime_8hpp.html#afdb11eb545cfe7b1982e62dce5b0513c", null ],
     [ "DIFF_TO_6_1_1980_MJD", "InsTime_8hpp.html#a817d8227a4ca0b112d1ccd88ca31cd3f", null ],
     [ "END_OF_THE_CENTURY_MJD", "InsTime_8hpp.html#a74bb3738f76c2ff4652724a173ce5f70", null ],
     [ "EPSILON", "InsTime_8hpp.html#a21b2e9ffcd1dc6357e010ad83da66cf0", null ],

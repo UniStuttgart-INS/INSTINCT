@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -177,7 +198,7 @@ Scenario</h2>
 </div>
  <hr  />
 </li>
-<li><b>CSV</b> : trajectory generated from a <em>csv</em>-file. Instead of the input parameters, a preview of how the input file is interpreted will be generated as soon as a file is selected. TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{IMAGE TO BE ADDED SOON.}} $" src="form_473.svg" width="254" height="16"/> <hr  />
+<li><b>CSV</b> : trajectory generated from a <em>csv</em>-file. Instead of the input parameters, a preview of how the input file is interpreted will be generated as soon as a file is selected. TODO: \( \textcolor{red}{\text{IMAGE TO BE ADDED SOON.}} \) <hr  />
 </li>
 <li><b>Rose Figure</b> : Rose figure generated from input parameters. <em>See <a href="https://en.wikipedia.org/wiki/Rose_(mathematics)">https://en.wikipedia.org/wiki/Rose_(mathematics)</a> for definition</em>. <div class="image">
 <img src="imuSimulatorExampleRose.png" alt="" width="1000"/>
@@ -218,7 +239,7 @@ Simulation models</h2>
 <ul>
 <li><b>Measured angular rates</b><ol type="1">
 <li><em>Earth rotation rate</em>: Enable/Disable if the rate the earth spins should be taken into account</li>
-<li><em>Transport rate</em>: //TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{TO BE ADDED SOON.}} $" src="form_85.svg" width="187" height="16"/> </li>
+<li><em>Transport rate</em>: //TODO: \( \textcolor{red}{\text{TO BE ADDED SOON.}} \) </li>
 </ol>
 </li>
 </ul>
@@ -226,7 +247,7 @@ Simulation models</h2>
 </ul>
 <h2><a class="anchor" id="imu_simulator_node_settings_imu_position_rotation"></a>
 IMU Position &amp; Rotation</h2>
-<p>Select the position (XYZ) and rotation ( <img class="formulaInl" alt="$\underline{X}_b = \underline{\underline{R}} \cdot \underline{X}_p$" src="form_474.svg" width="98" height="19"/>) of different sensors relative to the vehicles center of mass in the boy coordinate system.</p><ol type="1">
+<p>Select the position (XYZ) and rotation ( \(\underline{X}_b = \underline{\underline{R}} \cdot \underline{X}_p\)) of different sensors relative to the vehicles center of mass in the boy coordinate system.</p><ol type="1">
 <li><em>Lever Acc [m]</em> : Set the position of the accelerometer.</li>
 <li><em>Lever Gyro [m]</em> : Set the position of the gyroscope.</li>
 <li><em>Lever Mag [m]</em> : Set the position of the magnetometer.</li>
@@ -276,7 +297,7 @@ Example Flow</h1>
 </li>
 </ol>
 <dl class="section note"><dt>Note</dt><dd>If you change <em>LLA</em> to <em>ECEF</em> , you also have to change the axis in the plots to the ECEF.</dd></dl>
-<p>TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{MORE EXAMPLES TO BE ADDED SOON.}} $" src="form_475.svg" width="352" height="16"/> </p>
+<p>TODO: \( \textcolor{red}{\text{MORE EXAMPLES TO BE ADDED SOON.}} \) </p>
 </blockquote>
 <hr  />
 <p> <em>Last updated: 2024-03-28</em> </p>

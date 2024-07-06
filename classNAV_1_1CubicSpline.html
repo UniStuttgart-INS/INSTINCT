@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=11" />
   <meta name="generator" content="Doxygen 1.10.0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>INSTINCT: NAV::CubicSpline Class Reference</title>
+  <title>INSTINCT: NAV::CubicSpline&lt; Scalar &gt; Class Template Reference</title>
   <link href="tabs.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="dynsections.js"></script>
@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -115,7 +136,7 @@ $(function(){initNavTree('classNAV_1_1CubicSpline.html',''); initResizable(); })
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classNAV_1_1CubicSpline-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">NAV::CubicSpline Class Reference</div></div>
+  <div class="headertitle"><div class="title">NAV::CubicSpline&lt; Scalar &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -130,60 +151,71 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac441391df0bc5270a6e15feec3c8f884" id="r_ac441391df0bc5270a6e15feec3c8f884"><td class="memItemLeft" align="right" valign="top"><a id="ac441391df0bc5270a6e15feec3c8f884" name="ac441391df0bc5270a6e15feec3c8f884"></a>
+<tr class="memitem:a690c66f1655991a4e5df499b182f504a" id="r_a690c66f1655991a4e5df499b182f504a"><td class="memItemLeft" align="right" valign="top"><a id="a690c66f1655991a4e5df499b182f504a" name="a690c66f1655991a4e5df499b182f504a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>CubicSpline</b> ()=default</td></tr>
-<tr class="memdesc:ac441391df0bc5270a6e15feec3c8f884"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
-<tr class="separator:ac441391df0bc5270a6e15feec3c8f884"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcd93f838a75c65c74d939588f20eab9" id="r_adcd93f838a75c65c74d939588f20eab9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adcd93f838a75c65c74d939588f20eab9">CubicSpline</a> (const std::vector&lt; double &gt; &amp;X, const std::vector&lt; double &gt; &amp;Y, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> leftBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1">BoundaryCondition::SecondDerivative</a>, 0.0 }, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> rightBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1">BoundaryCondition::SecondDerivative</a>, 0.0 })</td></tr>
-<tr class="memdesc:adcd93f838a75c65c74d939588f20eab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
-<tr class="separator:adcd93f838a75c65c74d939588f20eab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7fb0074703b08874a5b9bfc5ac64717" id="r_ab7fb0074703b08874a5b9bfc5ac64717"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7fb0074703b08874a5b9bfc5ac64717">derivative</a> (size_t order, double x) const</td></tr>
-<tr class="memdesc:ab7fb0074703b08874a5b9bfc5ac64717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivative of the spline.  <br /></td></tr>
-<tr class="separator:ab7fb0074703b08874a5b9bfc5ac64717"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a667a7e41e544f408a427d37b7be61959" id="r_a667a7e41e544f408a427d37b7be61959"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a667a7e41e544f408a427d37b7be61959">operator()</a> (double x) const</td></tr>
-<tr class="memdesc:a667a7e41e544f408a427d37b7be61959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates or extrapolates a value on the spline.  <br /></td></tr>
-<tr class="separator:a667a7e41e544f408a427d37b7be61959"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88578234abb6d5cfb7c72a08c6b8accb" id="r_a88578234abb6d5cfb7c72a08c6b8accb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88578234abb6d5cfb7c72a08c6b8accb">setBoundaries</a> (<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> leftBoundaryCondition, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> rightBoundaryCondition)</td></tr>
-<tr class="memdesc:a88578234abb6d5cfb7c72a08c6b8accb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the boundaries conditions. Has to be called before setPoints.  <br /></td></tr>
-<tr class="separator:a88578234abb6d5cfb7c72a08c6b8accb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a619947ef341c5194e204fe1f6f206375" id="r_a619947ef341c5194e204fe1f6f206375"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a619947ef341c5194e204fe1f6f206375">setPoints</a> (const std::vector&lt; double &gt; &amp;x, const std::vector&lt; double &gt; &amp;y)</td></tr>
-<tr class="memdesc:a619947ef341c5194e204fe1f6f206375"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the points/knots of the spline and calculate the spline coefficients.  <br /></td></tr>
-<tr class="separator:a619947ef341c5194e204fe1f6f206375"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a937b9291bc1eba4d00a2a86a4081c778" id="r_a937b9291bc1eba4d00a2a86a4081c778"><td class="memItemLeft" align="right" valign="top"><a id="a937b9291bc1eba4d00a2a86a4081c778" name="a937b9291bc1eba4d00a2a86a4081c778"></a>
+<tr class="memdesc:a690c66f1655991a4e5df499b182f504a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="separator:a690c66f1655991a4e5df499b182f504a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48d095ea5ae549c52c0d9ae9f1250a07" id="r_a48d095ea5ae549c52c0d9ae9f1250a07"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48d095ea5ae549c52c0d9ae9f1250a07">CubicSpline</a> (const std::vector&lt; Scalar &gt; &amp;X, const std::vector&lt; Scalar &gt; &amp;Y, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> leftBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>, 0.0 }, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> rightBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>, 0.0 })</td></tr>
+<tr class="memdesc:a48d095ea5ae549c52c0d9ae9f1250a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="separator:a48d095ea5ae549c52c0d9ae9f1250a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69fb68746490256d0d88fbc65eb7a690" id="r_a69fb68746490256d0d88fbc65eb7a690"><td class="memItemLeft" align="right" valign="top">Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69fb68746490256d0d88fbc65eb7a690">derivative</a> (size_t order, Scalar x) const</td></tr>
+<tr class="memdesc:a69fb68746490256d0d88fbc65eb7a690"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the derivative of the spline.  <br /></td></tr>
+<tr class="separator:a69fb68746490256d0d88fbc65eb7a690"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae41c48c80e18cec72fe4c9e861579cf" id="r_aae41c48c80e18cec72fe4c9e861579cf"><td class="memItemLeft" align="right" valign="top">Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae41c48c80e18cec72fe4c9e861579cf">operator()</a> (Scalar x) const</td></tr>
+<tr class="memdesc:aae41c48c80e18cec72fe4c9e861579cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates or extrapolates a value on the spline.  <br /></td></tr>
+<tr class="separator:aae41c48c80e18cec72fe4c9e861579cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31c0b273fe3cf173acbdff8a4174ef4b" id="r_a31c0b273fe3cf173acbdff8a4174ef4b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31c0b273fe3cf173acbdff8a4174ef4b">setBoundaries</a> (<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> leftBoundaryCondition, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> rightBoundaryCondition)</td></tr>
+<tr class="memdesc:a31c0b273fe3cf173acbdff8a4174ef4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the boundaries conditions. Has to be called before setPoints.  <br /></td></tr>
+<tr class="separator:a31c0b273fe3cf173acbdff8a4174ef4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0834b6dfbd7cca484e3f1555c7cbeb42" id="r_a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0834b6dfbd7cca484e3f1555c7cbeb42">setPoints</a> (const std::vector&lt; Scalar &gt; &amp;x, const std::vector&lt; Scalar &gt; &amp;y)</td></tr>
+<tr class="memdesc:a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the points/knots of the spline and calculate the spline coefficients.  <br /></td></tr>
+<tr class="separator:a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81679de4194ab901a4fd4238e7a53b7b" id="r_a81679de4194ab901a4fd4238e7a53b7b"><td class="memItemLeft" align="right" valign="top"><a id="a81679de4194ab901a4fd4238e7a53b7b" name="a81679de4194ab901a4fd4238e7a53b7b"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const noexcept</td></tr>
-<tr class="memdesc:a937b9291bc1eba4d00a2a86a4081c778"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the spline vector. <br /></td></tr>
-<tr class="separator:a937b9291bc1eba4d00a2a86a4081c778"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a81679de4194ab901a4fd4238e7a53b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the spline vector. <br /></td></tr>
+<tr class="separator:a81679de4194ab901a4fd4238e7a53b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Cubic Spline class. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Scalar&gt;<br />
+class NAV::CubicSpline&lt; Scalar &gt;</div><p>Cubic Spline class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="adcd93f838a75c65c74d939588f20eab9" name="adcd93f838a75c65c74d939588f20eab9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcd93f838a75c65c74d939588f20eab9">&#9670;&#160;</a></span>CubicSpline()</h2>
+<a id="a48d095ea5ae549c52c0d9ae9f1250a07" name="a48d095ea5ae549c52c0d9ae9f1250a07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48d095ea5ae549c52c0d9ae9f1250a07">&#9670;&#160;</a></span>CubicSpline()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">NAV::CubicSpline::CubicSpline </td>
+          <td class="memname"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::CubicSpline </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>X</em>, </span></td>
+          <td class="paramtype">const std::vector&lt; Scalar &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>X</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em>, </span></td>
+          <td class="paramtype">const std::vector&lt; Scalar &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>Y</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>leftBoundaryCondition</em><span class="paramdefsep"> = </span><span class="paramdefval">{&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1">BoundaryCondition::SecondDerivative</a>,&#160;0.0&#160;}</span>, </span></td>
+          <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>leftBoundaryCondition</em><span class="paramdefsep"> = </span><span class="paramdefval">{&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>,&#160;0.0&#160;}</span>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>rightBoundaryCondition</em><span class="paramdefsep"> = </span><span class="paramdefval">{&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1">BoundaryCondition::SecondDerivative</a>,&#160;0.0&#160;}</span></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>rightBoundaryCondition</em><span class="paramdefsep"> = </span><span class="paramdefval">{&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>,&#160;0.0&#160;}</span></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Constructor. </p>
@@ -200,23 +232,33 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const n
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab7fb0074703b08874a5b9bfc5ac64717" name="ab7fb0074703b08874a5b9bfc5ac64717"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7fb0074703b08874a5b9bfc5ac64717">&#9670;&#160;</a></span>derivative()</h2>
+<a id="a69fb68746490256d0d88fbc65eb7a690" name="a69fb68746490256d0d88fbc65eb7a690"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69fb68746490256d0d88fbc65eb7a690">&#9670;&#160;</a></span>derivative()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double NAV::CubicSpline::derivative </td>
+          <td class="memname">Scalar <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::derivative </td>
           <td>(</td>
           <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>order</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;) const</td>
+          <td class="paramtype">Scalar</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;) const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Calculates the derivative of the spline. </p>
@@ -231,19 +273,29 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const n
 
 </div>
 </div>
-<a id="a667a7e41e544f408a427d37b7be61959" name="a667a7e41e544f408a427d37b7be61959"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a667a7e41e544f408a427d37b7be61959">&#9670;&#160;</a></span>operator()()</h2>
+<a id="aae41c48c80e18cec72fe4c9e861579cf" name="aae41c48c80e18cec72fe4c9e861579cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae41c48c80e18cec72fe4c9e861579cf">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double NAV::CubicSpline::operator() </td>
+          <td class="memname">Scalar <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::operator() </td>
           <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td class="paramtype">Scalar</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Interpolates or extrapolates a value on the spline. </p>
@@ -257,14 +309,19 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const n
 
 </div>
 </div>
-<a id="a88578234abb6d5cfb7c72a08c6b8accb" name="a88578234abb6d5cfb7c72a08c6b8accb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88578234abb6d5cfb7c72a08c6b8accb">&#9670;&#160;</a></span>setBoundaries()</h2>
+<a id="a31c0b273fe3cf173acbdff8a4174ef4b" name="a31c0b273fe3cf173acbdff8a4174ef4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31c0b273fe3cf173acbdff8a4174ef4b">&#9670;&#160;</a></span>setBoundaries()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void NAV::CubicSpline::setBoundaries </td>
+          <td class="memname">void <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::setBoundaries </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>leftBoundaryCondition</em>, </span></td>
         </tr>
@@ -274,6 +331,11 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const n
           <td class="paramtype"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a></td>          <td class="paramname"><span class="paramname"><em>rightBoundaryCondition</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Set the boundaries conditions. Has to be called before setPoints. </p>
@@ -287,23 +349,33 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const n
 
 </div>
 </div>
-<a id="a619947ef341c5194e204fe1f6f206375" name="a619947ef341c5194e204fe1f6f206375"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a619947ef341c5194e204fe1f6f206375">&#9670;&#160;</a></span>setPoints()</h2>
+<a id="a0834b6dfbd7cca484e3f1555c7cbeb42" name="a0834b6dfbd7cca484e3f1555c7cbeb42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0834b6dfbd7cca484e3f1555c7cbeb42">&#9670;&#160;</a></span>setPoints()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void NAV::CubicSpline::setPoints </td>
+          <td class="memname">void <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::setPoints </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>x</em>, </span></td>
+          <td class="paramtype">const std::vector&lt; Scalar &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>x</em>, </span></td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>y</em></span>&#160;)</td>
+          <td class="paramtype">const std::vector&lt; Scalar &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>y</em></span>&#160;)</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Set the points/knots of the spline and calculate the spline coefficients. </p>

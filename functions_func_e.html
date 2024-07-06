@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,18 +135,20 @@ $(function(){initNavTree('functions_func_e.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented functions with links to the class documentation for each member:</div>
 
 <h3><a id="index_e" name="index_e"></a>- e -</h3><ul>
-<li>e_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a8c9865e48a06d596b09a82d55be1ed46">NAV::SppSolution</a></li>
+<li>e_CovarianceMatrix()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a9bea954b07183c5223965450185d1bd7">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#a9e6edbc9967e1a105e49e7edd4f87083">NAV::PosVel</a></li>
 <li>e_pLOS()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#a6f2ddb2fe97294dd6da125d461e239f4">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
+<li>e_posAntennaPhaseCenter()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#ae7771b794b73aa7915d29da2103b0c22">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>e_posARP()&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#a35c5766aa8294ccaa379dad61ab52e20">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>e_position()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#ab40818b92e6497dfc38b024179466918">NAV::Pos</a></li>
-<li>e_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a701ded79785d607971443bf208e5e18c">NAV::SppSolution</a></li>
+<li>e_positionStdev()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a0fd6384fd0ea0b9770c802f711f1abe6">NAV::Pos</a></li>
 <li>e_Quat_b()&#160;:&#160;<a class="el" href="classNAV_1_1PosVelAtt.html#ad52ba22b9a47f9568e46ed2c8daa310c">NAV::PosVelAtt</a></li>
 <li>e_Quat_n()&#160;:&#160;<a class="el" href="classNAV_1_1Pos.html#a82b60003dbeabbe4ce59ff9f7f93d577">NAV::Pos</a></li>
 <li>e_satPos()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#aead7546f92b6002fbdb8a9425efb0d39">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
 <li>e_satVel()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#a326c88635c4d50d2df2dcb7c5afffd84">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
 <li>e_velocity()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#abceaa6b3307686c3d86b9c84d6b7cf11">NAV::PosVel</a></li>
-<li>e_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#a071add9485611b1c6a67851595c9009a">NAV::SppSolution</a></li>
+<li>e_velocityStdev()&#160;:&#160;<a class="el" href="classNAV_1_1PosVel.html#a27eb434ba8c6fb077351f4e265b4d598">NAV::PosVel</a></li>
 <li>e_vLOS()&#160;:&#160;<a class="el" href="structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData.html#a6e8d6fe7981897c818afb2549ea590e1">NAV::Observations::SignalObservation::ReceiverSpecificData</a></li>
-<li>EmlidFile()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidFile.html#aa27979a946ce9538fe52daf78f651043">NAV::EmlidFile</a></li>
+<li>EmlidFile()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidFile.html#a0131b2fe09d638fd511490cc055f2aa0">NAV::EmlidFile</a></li>
 <li>EmlidSensor()&#160;:&#160;<a class="el" href="classNAV_1_1EmlidSensor.html#a222838eff62f75e3d0e348f3c91dd267">NAV::EmlidSensor</a></li>
 <li>EmlidUartSensor()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html#aec71aad7fe514dd015f9f85458bfe2c3">NAV::vendor::emlid::EmlidUartSensor</a></li>
 <li>emplace()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#ac57f60eb6b8b1af75670ae82b95447b2">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
@@ -145,6 +168,7 @@ $(function(){initNavTree('functions_func_e.html',''); initResizable(); });
 <li>errorMagPres()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#ab134deeb2719ccf60270a07b987c51f6">NAV::vendor::vectornav::InsStatus</a></li>
 <li>ErrorModel()&#160;:&#160;<a class="el" href="classNAV_1_1ErrorModel.html#ad65544b8d6ab64a42389b29dd9e95a64">NAV::ErrorModel</a></li>
 <li>events()&#160;:&#160;<a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">NAV::NodeData</a></li>
+<li>excludeSignalTemporarily()&#160;:&#160;<a class="el" href="classNAV_1_1ObservationFilter.html#acf2bc6a9a1cb3024bf445ce10a7d9e79">NAV::ObservationFilter</a></li>
 <li>extract_front()&#160;:&#160;<a class="el" href="classNAV_1_1TsDeque.html#ad79acf8736f97723df0081a8610a376f">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 </ul>
 </div><!-- contents -->

@@ -3,16 +3,16 @@ var indexSectionsWithContent =
   0: "124_abcdefghijklmnopqrstuvwxyz~𝚽𝛽𝛿",
   1: "abcdefghiklmnoprstuvwz",
   2: "n",
-  3: "abcdefghijklmnoprstuvwz",
+  3: "abcdefghijklmnopqrstuvwz",
   4: "_abcdefghijklmnopqrstuvw~",
   5: "_abcdefghijklmnopqrstuvwxyz",
   6: "acdfgijkmnpqrsuv",
   7: "abcdefgijklmnopqrstuvw",
   8: "_abcdefghijklmnopqrstuvwxyz",
-  9: "cfgnotw",
+  9: "cfginotw",
   10: "ilps",
-  11: "abcdefghiklnpsuw",
-  12: "abcdegiklmnoprstuvw",
+  11: "dgikls",
+  12: "abcdefghiklmnoprstuvw",
   13: "n"
 };
 

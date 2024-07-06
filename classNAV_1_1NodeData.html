@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -126,6 +147,9 @@ $(function(){initNavTree('classNAV_1_1NodeData.html',''); initResizable(); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top"><a id="a161795af3a587da1332cc9d513fe4c0b" name="a161795af3a587da1332cc9d513fe4c0b"></a>
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>
@@ -214,6 +238,39 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Parent class for all data transmitted over Flow pins. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6ed7c326d258f7b91e957195f1ac0eee" name="a6ed7c326d258f7b91e957195f1ac0eee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ed7c326d258f7b91e957195f1ac0eee">&#9670;&#160;</a></span>addEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::NodeData::addEvent </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Adds the event to the list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">text</td><td>Event text </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="aee2a0ad51ba50c9f76736457fc1f6fa3" name="aee2a0ad51ba50c9f76736457fc1f6fa3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee2a0ad51ba50c9f76736457fc1f6fa3">&#9670;&#160;</a></span>getDynamicDataAt()</h2>
 
@@ -270,7 +327,7 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <p>Get the value at the index. </p>
 <dl class="section return"><dt>Returns</dt><dd>Value if in the observation </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classNAV_1_1RtklibPosObs.html#af4a7e40f97c0b54e6fdd66212a1fb32a">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a35c4e473d9f5b4a515f6a25af21e467e">NAV::SppSolution</a>, <a class="el" href="classNAV_1_1ImuObs.html#abbd8d95b53c89985efe24d85689260b3">NAV::ImuObs</a>, <a class="el" href="classNAV_1_1ImuObsSimulated.html#a8f93e87ff6e4efa15e8e0455f4e7f36a">NAV::ImuObsSimulated</a>, <a class="el" href="classNAV_1_1ImuObsWDelta.html#a8ec98b2270fcc38ff72c84465a767fde">NAV::ImuObsWDelta</a>, <a class="el" href="classNAV_1_1KvhObs.html#afb6dec396e07c9a8fa8a018af5da6dfe">NAV::KvhObs</a>, <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a0df832292edb8d862ecb4571814c4ef4">NAV::VectorNavBinaryOutput</a>, <a class="el" href="classNAV_1_1LcKfInsGnssErrors.html#a1202fd4ac7a988f2218964c19cd2045c">NAV::LcKfInsGnssErrors</a>, <a class="el" href="classNAV_1_1Pos.html#a11b1c2287ad76471034cfaaa32fd8f64">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#acc148dc0272cd4b2449ccc0ff6eab9ec">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#a625bb32f1010b73f75696ed147700411">NAV::PosVelAtt</a>, and <a class="el" href="classNAV_1_1TcKfInsGnssErrors.html#ab20ee34dd91ec2db9d606f94d0a2d7ae">NAV::TcKfInsGnssErrors</a>.</p>
+<p>Reimplemented in <a class="el" href="classNAV_1_1RtklibPosObs.html#af4a7e40f97c0b54e6fdd66212a1fb32a">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a35c4e473d9f5b4a515f6a25af21e467e">NAV::SppSolution</a>, <a class="el" href="classNAV_1_1ImuObs.html#abbd8d95b53c89985efe24d85689260b3">NAV::ImuObs</a>, <a class="el" href="classNAV_1_1ImuObsSimulated.html#a8f93e87ff6e4efa15e8e0455f4e7f36a">NAV::ImuObsSimulated</a>, <a class="el" href="classNAV_1_1ImuObsWDelta.html#a8ec98b2270fcc38ff72c84465a767fde">NAV::ImuObsWDelta</a>, <a class="el" href="classNAV_1_1KvhObs.html#afb6dec396e07c9a8fa8a018af5da6dfe">NAV::KvhObs</a>, <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a0df832292edb8d862ecb4571814c4ef4">NAV::VectorNavBinaryOutput</a>, <a class="el" href="classNAV_1_1InsGnssLCKFSolution.html#aee0b0af66dc6eb7a2e3bef3b54f1c364">NAV::InsGnssLCKFSolution</a>, <a class="el" href="classNAV_1_1InsGnssTCKFSolution.html#ae219654bccd2a82dae90753b77771d53">NAV::InsGnssTCKFSolution</a>, <a class="el" href="classNAV_1_1Pos.html#a11b1c2287ad76471034cfaaa32fd8f64">NAV::Pos</a>, <a class="el" href="classNAV_1_1PosVel.html#acc148dc0272cd4b2449ccc0ff6eab9ec">NAV::PosVel</a>, and <a class="el" href="classNAV_1_1PosVelAtt.html#a625bb32f1010b73f75696ed147700411">NAV::PosVelAtt</a>.</p>
 
 </div>
 </div>

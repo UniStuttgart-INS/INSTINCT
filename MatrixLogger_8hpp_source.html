@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -183,7 +204,7 @@ $(function(){initNavTree('MatrixLogger_8hpp_source.html',''); initResizable(); }
 <div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Node Class.</div></div>
 <div class="ttc" id="aclassNAV_1_1CommonLog_html"><div class="ttname"><a href="classNAV_1_1CommonLog.html">NAV::CommonLog</a></div><div class="ttdoc">Common logging variables like time into run and local positions.</div><div class="ttdef"><b>Definition</b> CommonLog.hpp:26</div></div>
 <div class="ttc" id="aclassNAV_1_1FileWriter_html"><div class="ttname"><a href="classNAV_1_1FileWriter.html">NAV::FileWriter</a></div><div class="ttdoc">Parent class for other data loggers which manages the output filestream.</div><div class="ttdef"><b>Definition</b> FileWriter.hpp:27</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1MatrixLogger_html"><div class="ttname"><a href="classNAV_1_1MatrixLogger.html">NAV::MatrixLogger</a></div><div class="ttdoc">Data Logger for PosVelAtt observations.</div><div class="ttdef"><b>Definition</b> MatrixLogger.hpp:26</div></div>
 <div class="ttc" id="aclassNAV_1_1MatrixLogger_html_a1e41be263fd1b304d11325395bc6012d"><div class="ttname"><a href="classNAV_1_1MatrixLogger.html#a1e41be263fd1b304d11325395bc6012d">NAV::MatrixLogger::MatrixLogger</a></div><div class="ttdeci">MatrixLogger()</div><div class="ttdoc">Default constructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1MatrixLogger_html_a3c4800af12159b7a151e3ddf968a59a2"><div class="ttname"><a href="classNAV_1_1MatrixLogger.html#a3c4800af12159b7a151e3ddf968a59a2">NAV::MatrixLogger::operator=</a></div><div class="ttdeci">MatrixLogger &amp; operator=(MatrixLogger &amp;&amp;)=delete</div><div class="ttdoc">Move assignment operator.</div></div>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -254,7 +275,7 @@ $(function(){initNavTree('Demo_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aclassNAV_1_1Demo_html_af5c6899e8f6f6029c65b2c4a30ae838e"><div class="ttname"><a href="classNAV_1_1Demo.html#af5c6899e8f6f6029c65b2c4a30ae838e">NAV::Demo::operator=</a></div><div class="ttdeci">Demo &amp; operator=(Demo &amp;&amp;)=delete</div><div class="ttdoc">Move assignment operator.</div></div>
 <div class="ttc" id="aclassNAV_1_1Demo_html_afed8d15e1a08266c2f668f37a86d5d6a"><div class="ttname"><a href="classNAV_1_1Demo.html#afed8d15e1a08266c2f668f37a86d5d6a">NAV::Demo::~Demo</a></div><div class="ttdeci">~Demo() override</div><div class="ttdoc">Destructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html"><div class="ttname"><a href="classNAV_1_1InputPin.html">NAV::InputPin</a></div><div class="ttdoc">Input pins of nodes.</div><div class="ttdef"><b>Definition</b> Pin.hpp:491</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
 <div class="ttc" id="aclassNAV_1_1OutputPin_html"><div class="ttname"><a href="classNAV_1_1OutputPin.html">NAV::OutputPin</a></div><div class="ttdoc">Output pins of nodes.</div><div class="ttdef"><b>Definition</b> Pin.hpp:338</div></div>
 <div class="ttc" id="aclassNAV_1_1TsDeque_html"><div class="ttname"><a href="classNAV_1_1TsDeque.html">NAV::TsDeque&lt; std::shared_ptr&lt; const NAV::NodeData &gt; &gt;</a></div></div>

@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=11" />
   <meta name="generator" content="Doxygen 1.10.0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>INSTINCT: Single Point Positioning using (Weighed) Least Squares Estimation</title>
+  <title>INSTINCT: SppLSE</title>
   <link href="tabs.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="dynsections.js"></script>
@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -111,159 +132,9 @@ $(function(){initNavTree('group__SppLSE.html',''); initResizable(); });
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">Single Point Positioning using (Weighed) Least Squares Estimation<div class="ingroups"><a class="el" href="group__DataProcessor__chapter.html">DataProcessor</a> &raquo; <a class="el" href="group__DataProcessor__GNSS__chapter.html">GNSS</a></div></div></div>
+  <div class="headertitle"><div class="title">SppLSE<div class="ingroups"><a class="el" href="group__DataProcessor__chapter.html">DataProcessor</a> &raquo; <a class="el" href="group__DataProcessor__GNSS__chapter.html">GNSS</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-<h1><a class="anchor" id="SppLSE-LseAlgorithm"></a>
-Algorithm - Linearized (Weighed) Least Squares Estimation</h1>
-<p>The solution is obtained by iteratively performing</p>
-<ol type="1">
-<li>Cofactor matrix: <a class="anchor" id="eq-SPP-LseAlgorithm-Q"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Q}
-    \boldsymbol{Q} = \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \boldsymbol{H}(\boldsymbol{x})
-    \end{equation}" src="form_111.svg" width="1551" height="21"/>
-</p>
-</li>
-<li>Least squares solution: <a class="anchor" id="eq-SPP-LseAlgorithm-dx"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-dx}
-    \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
-    \end{equation}" src="form_112.svg" width="1577" height="21"/>
-</p>
-</li>
-<li>Unknowns: <a class="anchor" id="eq-SPP-LseAlgorithm-xhat"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-xhat}
-    \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
-    \end{equation}" src="form_113.svg" width="1516" height="19"/>
-</p>
-</li>
-<li>Residuals: <a class="anchor" id="eq-SPP-LseAlgorithm-e"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-e}
-    \boldsymbol{e} = \delta\boldsymbol{z}(\boldsymbol{x}) - \boldsymbol{H}(\boldsymbol{x}) \cdot \delta\boldsymbol{x}
-    \end{equation}" src="form_114.svg" width="1559" height="19"/>
-</p>
-</li>
-<li>Covariance of the unknowns: <a class="anchor" id="eq-SPP-LseAlgorithm-Sigma"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Sigma}
-    \boldsymbol{\Sigma}_{x} = \hat{\sigma}_{apost}^2 \cdot \boldsymbol{Q}^{-1} \text{ where } \hat{\sigma}_{apost}^2 = \frac{\boldsymbol{e}^T\boldsymbol{W}\boldsymbol{e}}{m-n}
-    \end{equation}" src="form_115.svg" width="1631" height="40"/>
-</p>
-</li>
-<li>Stop if <img class="formulaInl" alt="$ \mid \delta \boldsymbol{x} \mid &lt; 10^{-4} $" src="form_116.svg" width="91" height="21"/> or the maximum number of iterations of 10 is reached.</li>
-<li>Set <img class="formulaInl" alt="$ \boldsymbol{x} = \hat{\boldsymbol{x}} $" src="form_117.svg" width="46" height="14"/></li>
-</ol>
-<h1><a class="anchor" id="SppLSE-unknowns"></a>
-Unknowns</h1>
-<p>Pseudorange and Doppler observations are processed separately.</p>
-<p><b> Pseudorange </b></p>
-<p><a class="anchor" id="eq-SppLSE-unknowns-pseudorange"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppLSE-unknowns-pseudorange}
-\mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{r}^e \\
-    dt_R \\
-    dt_{ISB}^{S_2 \rightarrow S_1} \\
-    \vdots \\
-    dt_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Position [m]} \\
-    \text{Receiver clock error [m]} \\
-    \text{Inter-system clock error (System 2 to 1) [m]} \\
-    \vdots \\
-    \text{Inter-system clock error (System o to 1) [m]} \\
-    };
-
-  \end{tikzpicture}
-\end{equation}" src="form_118.svg" width="1748" height="189"/>
-</p>
-<p><b> Doppler </b></p>
-<p><a class="anchor" id="eq-SppLSE-unknowns-doppler"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppLSE-unknowns-doppler}
-\mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{v}^e \\
-    d\dotup{t}_R \\
-    d\dotup{t}_{ISB}^{S_2 \rightarrow S_1} \\
-    \vdots \\
-    d\dotup{t}_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Velocity [m/s]} \\
-    \text{Receiver clock drift [m/s]} \\
-    \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
-    \vdots \\
-    \text{Inter-system clock drift (System o to 1)  [m/s]} \\
-    };
-
-  \end{tikzpicture}
-\end{equation}" src="form_119.svg" width="1748" height="189"/>
-</p>
-<h1><a class="anchor" id="SppLSE-measurmentModel"></a>
-Measurement Model</h1>
-<h2><a class="anchor" id="SppLSE-measurmentModel-residuals"></a>
-Measurement residuals</h2>
-<p>See <a class="el" href="group__SppBasics.html#SppBasics-measurementModel-innovation">Measurement innovation</a></p>
-<h2><a class="anchor" id="SppLSE-measurmentModel-designMatrix"></a>
-Design matrix</h2>
-<p>See <a class="el" href="group__SppBasics.html#SppBasics-measurementModel-sensitivityMatrix">Design matrix / Measurement sensitivity matrix</a></p>
-<p>In detail for Least squares estimation</p>
-<p><b> Pseudorange </b></p>
-<p><a class="anchor" id="eq-SppLSE-measurementModel-designMatrix-pseudorange"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorange}
-\begin{aligned}
-\mathbf{H}_k
-&amp;=
-\left[\begin{array}{ccccc}
-  \frac{-x^s+x_r}{\rho_s^s} &amp; \frac{-y^s+y_r}{\rho_s^s} &amp; \frac{-z^s+z_r}{\rho_r^s} &amp; 1 &amp; 0 \\
-  \frac{-x^s+x_r}{\rho_r^s} &amp; \frac{-y^s+y_r}{\rho_r^s} &amp; \frac{-z^s+z_r}{\rho_r^s} &amp; 1 &amp; 1 \\
-  \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
-\end{array}\right] \\
-&amp;=
-\left[\begin{array}{ccccc}
-  -u_{rs,x} &amp; -u_{rs,y} &amp; -u_{rs,z} &amp; 1 &amp; 0 \\
-  -u_{rs,x} &amp; -u_{rs,y} &amp; -u_{rs,z} &amp; 1 &amp; 1 \\
-  \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
-\end{array}\right]
-\end{aligned}
-\end{equation}" src="form_120.svg" width="1654" height="145"/>
-</p>
-<p><b> Doppler </b></p>
-<p><a class="anchor" id="eq-SppLSE-measurementModel-designMatrix-pseudorangeRate"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
-\begin{aligned}
-\mathbf{H}_k
-&amp;=
-\left[\begin{array}{ccccc}
-    -\frac{x^s-x_r}{\rho_r^s} &amp; -\frac{y^s-y_r}{\rho_r^s} &amp; -\frac{z^s-z_r}{\rho_r^s} &amp; 1 &amp; 0 \\
-    -\frac{x^s-x_r}{\rho_r^s} &amp; -\frac{y^s-y_r}{\rho_r^s} &amp; -\frac{z^s-z_r}{\rho_r^s} &amp; 1 &amp; 1 \\
-    \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
-  \end{array}\right] \\
-  &amp;=
-  \left[\begin{array}{ccccc}
-    -u_{rs,x} &amp; -u_{rs,y} &amp; -u_{rs,z} &amp; 1 &amp; 0 \\
-    -u_{rs,x} &amp; -u_{rs,y} &amp; -u_{rs,z} &amp; 1 &amp; 1 \\
-    \ldots &amp; \ldots &amp; \ldots &amp; \ldots &amp; \ldots
-  \end{array}\right]
-  \end{aligned}
-\end{equation}" src="form_121.svg" width="1657" height="145"/>
-</p>
-<h2><a class="anchor" id="SppLSE-measurmentModel-weightMatrix"></a>
-Weight matrix</h2>
-<p>See <a class="el" href="MeasurementErrors_8hpp.html#GNSS-MeasErrorModel">GNSS-MeasErrorModel</a></p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

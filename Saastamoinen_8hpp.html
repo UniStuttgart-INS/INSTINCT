@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -137,53 +158,53 @@ Functions</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2022-05-26 <a class="anchor" id="Troposphere-Model-Saastamoinen"></a> </dd></dl>
 <h4><a class="anchor" id="autotoc_md1"></a>
 Algorithm description</h4>
-<p>Given the approximate position <img class="formulaInl" alt="$ \phi $" src="form_26.svg" width="11" height="18"/>, <img class="formulaInl" alt="$ \lambda $" src="form_27.svg" width="11" height="14"/>, <img class="formulaInl" alt="$ h $" src="form_28.svg" width="11" height="14"/>, the elevation <img class="formulaInl" alt="$ \varepsilon $" src="form_1.svg" width="9" height="11"/> and the relative humidity <img class="formulaInl" alt="$ h_{\mathrm{rel}} $" src="form_29.svg" width="26" height="16"/> the tropospheric delay can be calculated using Saastamoinen's formulas.</p>
+<p>Given the approximate position \( \phi \), \( \lambda \), \( h \), the elevation \( \varepsilon \) and the relative humidity \( h_{\mathrm{rel}} \) the tropospheric delay can be calculated using Saastamoinen's formulas.</p>
 <p>A standard atmosphere is applied as a reference for the necessary parameters of the atmosphere.</p>
 <ul>
 <li>total pressure in [hPa] <a class="anchor" id="eq-Saastamoinen-pressure"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-pressure}
+\begin{equation} \label{eq:eq-Saastamoinen-pressure}
         p = 1013.25 \cdot \left(1-2.2557 \cdot 10^{-5} \cdot h \right)^{5.2568}
-    \end{equation}" src="form_30.svg" width="1628" height="26"/>
+    \end{equation}
 </p>
 </li>
 <li><p class="startli">absolute temperature in [K] <a class="anchor" id="eq-Saastamoinen-temperature"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-temperature}
+\begin{equation} \label{eq:eq-Saastamoinen-temperature}
         T = 15.0 - 6.5 \cdot 10^{-3} \cdot h + 273.16
-    \end{equation}" src="form_31.svg" width="1598" height="21"/>
+    \end{equation}
 </p>
-<p class="startli">where <img class="formulaInl" alt="$ T_{0} = 15^{\circ} $" src="form_32.svg" width="67" height="16"/> temperature at sea level</p>
+<p class="startli">where \( T_{0} = 15^{\circ} \) temperature at sea level</p>
 </li>
 <li><p class="startli">partial pressure of water vapor in [hPa] <a class="anchor" id="eq-Saastamoinen-partial_pressure_water_vapor"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-partial_pressure_water_vapor}
+\begin{equation} \label{eq:eq-Saastamoinen-partial_pressure_water_vapor}
         e = 6.108 \cdot \exp \left\{ \frac{17.15 T-4684.0}{T-38.45} \right\} \cdot \frac{h_{\mathrm{rel}}}{100}
-    \end{equation}" src="form_33.svg" width="1628" height="42"/>
+    \end{equation}
 </p>
-<p class="startli">where <img class="formulaInl" alt="$ h_{\mathrm{rel}} = 0.7 $" src="form_34.svg" width="72" height="16"/> is the relative humidity</p>
+<p class="startli">where \( h_{\mathrm{rel}} = 0.7 \) is the relative humidity</p>
 </li>
-<li>zenith hydrostatic delay in [m] (see <a class="el" href="citelist.html#CITEREF_Davis1985">[10]</a> Davis, Appendix A, eq. A11, p. 1604 or <a class="el" href="citelist.html#CITEREF_Böhm2006">[7]</a> Böhm ch. 1, eq. 3, p. 1) <a class="anchor" id="eq-Saastamoinen-zhd"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-zhd}
+<li>zenith hydrostatic delay in [m] (see <a class="el" href="citelist.html#CITEREF_Davis1985">[11]</a> Davis, Appendix A, eq. A11, p. 1604 or <a class="el" href="citelist.html#CITEREF_Böhm2006">[8]</a> Böhm ch. 1, eq. 3, p. 1) <a class="anchor" id="eq-Saastamoinen-zhd"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Saastamoinen-zhd}
         \Delta L_{\mathrm{h}}^{\mathrm{z}} = \dfrac{0.0022768 \cdot p}{1-0.00266 \cdot \cos 2 \varphi-0.00028 \cdot \dfrac{ h }{1000}}
-    \end{equation}" src="form_35.svg" width="1642" height="60"/>
+    \end{equation}
 </p>
 </li>
-<li>zenith wet delay (see <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[42]</a> Springer Handbook GNSS ch. 6, eq. 6.54, p. 173) in [m] <a class="anchor" id="eq-Saastamoinen-zwd"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-zwd}
+<li>zenith wet delay (see <a class="el" href="citelist.html#CITEREF_SpringerHandbookGNSS2017">[43]</a> Springer Handbook GNSS ch. 6, eq. 6.54, p. 173) in [m] <a class="anchor" id="eq-Saastamoinen-zwd"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Saastamoinen-zwd}
         \Delta L_{\mathrm{w}}^{\mathrm{z}} = 0.002277 \cdot \left(\frac{1255.0}{T} + 0.05 \right) \cdot e
-    \end{equation}" src="form_36.svg" width="1617" height="42"/>
+    \end{equation}
 </p>
 </li>
 <li>zenith total delay in [m] <a class="anchor" id="eq-Saastamoinen-ztd"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-ztd}
+\begin{equation} \label{eq:eq-Saastamoinen-ztd}
         \Delta L^{\mathrm{z}} = \Delta L_{\mathrm{h}}^{\mathrm{z}} + \Delta L_{\mathrm{w}}^{\mathrm{z}}
-    \end{equation}" src="form_37.svg" width="1547" height="19"/>
+    \end{equation}
 </p>
 </li>
 <li><p class="startli">slant total delay along elevation angle in [m] <a class="anchor" id="eq-Saastamoinen-std"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Saastamoinen-std}
+\begin{equation} \label{eq:eq-Saastamoinen-std}
         \Delta L_{\mathrm{troposphere}} = \frac{\Delta L^{\mathrm{z}}}{\cos{ \left( z d \right) }}
-    \end{equation}" src="form_38.svg" width="1565" height="42"/>
+    \end{equation}
 </p>
-<p class="startli">where <img class="formulaInl" alt="$ zd $" src="form_39.svg" width="19" height="14"/> is the zenith angle as <img class="formulaInl" alt="$ \varepsilon=\frac{\pi}{2} - z d $" src="form_40.svg" width="84" height="19"/> in [rad] </p>
+<p class="startli">where \( zd \) is the zenith angle as \( \varepsilon=\frac{\pi}{2} - z d \) in [rad] </p>
 </li>
 </ul>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -215,13 +236,13 @@ Algorithm description</h4>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Range correction for troposphere and stratosphere for radio ranging in [m] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Saastamoinen1973">[38]</a> Saastamoinen, p. 32 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Saastamoinen1973">[39]</a> Saastamoinen, p. 32 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Davis1985">[10]</a> Davis, Appendix A, p. 1604 </dd>
+See <a class="el" href="citelist.html#CITEREF_Davis1985">[11]</a> Davis, Appendix A, p. 1604 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Böhm2006">[7]</a> Böhm ch. 1, p. 1 </dd>
+See <a class="el" href="citelist.html#CITEREF_Böhm2006">[8]</a> Böhm ch. 1, p. 1 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_RTKLIB">[41]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_RTKLIB">[42]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
 
 </div>
 </div>
@@ -253,13 +274,13 @@ See <a class="el" href="citelist.html#CITEREF_RTKLIB">[41]</a> RTKLIB ch. E.5 Tr
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Range correction for troposphere and stratosphere for radio ranging in [m] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Saastamoinen1973">[38]</a> Saastamoinen, p. 32 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Saastamoinen1973">[39]</a> Saastamoinen, p. 32 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Davis1985">[10]</a> Davis, Appendix A, p. 1604 </dd>
+See <a class="el" href="citelist.html#CITEREF_Davis1985">[11]</a> Davis, Appendix A, p. 1604 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Böhm2006">[7]</a> Böhm ch. 1, p. 1 </dd>
+See <a class="el" href="citelist.html#CITEREF_Böhm2006">[8]</a> Böhm ch. 1, p. 1 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_RTKLIB">[41]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_RTKLIB">[42]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
 
 </div>
 </div>

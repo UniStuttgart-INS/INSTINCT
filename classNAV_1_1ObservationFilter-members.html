@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,7 +138,9 @@ $(function(){initNavTree('classNAV_1_1ObservationFilter.html',''); initResizable
 
 <p>This is the complete list of members for <a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a3781a576d45ab2d4bd69155be0169538">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#acf2bc6a9a1cb3024bf445ce10a7d9e79">excludeSignalTemporarily</a>(const SatSigId &amp;satSigId, size_t count)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a3781a576d45ab2d4bd69155be0169538">from_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a3b7a4b82003b0d482bb014afdca5bd2a">getCodeFilter</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#aa7ea3277823447718388e0e62cf60fcb">getFrequencyFilter</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a7d93bd79b2224941699d32dc276ebdea">getSystemFilter</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a087d1dc0892811e55dfccfd414523754">getUsedObservationTypes</a>() const</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
@@ -129,11 +152,12 @@ $(function(){initNavTree('classNAV_1_1ObservationFilter.html',''); initResizable
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a16bd1cd262977320e49c4381e54b026c">ObservationFilter</a>(ObservationFilter &amp;&amp;other) noexcept=default</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#aaea526708a3cf25653b837907e740925">operator=</a>(const ObservationFilter &amp;other)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a309f13e64df20b5d546dc8d9eac813a7">operator=</a>(ObservationFilter &amp;&amp;other) noexcept</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a0afec5fedc61ad50275d84dba28a206f">selectObservationsForCalculation</a>(const std::array&lt; Receiver&lt; ReceiverType &gt;, ReceiverType::ReceiverType_COUNT &gt; &amp;receivers, const std::vector&lt; const GnssNavInfo * &gt; &amp;gnssNavInfos, const std::string &amp;nameId, bool ignoreElevationMask=false)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a990b27f3d1ed9103694ef8ae8dcce6be">ShowGuiWidgets</a>(const char *id, float itemWidth)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b">to_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a3d600c10bf34a9c5a14f1891d8a7e2f1">useObsType</a>(GnssObs::ObservationType obsType)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a4fad335ecc17e427225b98f8e2725994">~ObservationFilter</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a847723580f8b832ef3dc4efeaef69032">reset</a>()</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a0afec5fedc61ad50275d84dba28a206f">selectObservationsForCalculation</a>(const std::array&lt; Receiver&lt; ReceiverType &gt;, ReceiverType::ReceiverType_COUNT &gt; &amp;receivers, const std::vector&lt; const GnssNavInfo * &gt; &amp;gnssNavInfos, const std::string &amp;nameId, bool ignoreElevationMask=false)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a990b27f3d1ed9103694ef8ae8dcce6be">ShowGuiWidgets</a>(const char *id, float itemWidth)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b">to_json</a></td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a3d600c10bf34a9c5a14f1891d8a7e2f1">useObsType</a>(GnssObs::ObservationType obsType)</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html#a4fad335ecc17e427225b98f8e2725994">~ObservationFilter</a>()=default</td><td class="entry"><a class="el" href="classNAV_1_1ObservationFilter.html">NAV::ObservationFilter</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

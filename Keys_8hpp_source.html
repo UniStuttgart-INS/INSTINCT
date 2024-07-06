@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -496,8 +517,8 @@ $(function(){initNavTree('Keys_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aKeys_8hpp_html_af49677bfd2d66d3b05e3a61198cda77b"><div class="ttname"><a href="Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">NAV::SPP::Meas::MeasKeyTypes</a></div><div class="ttdeci">std::variant&lt; Psr, Doppler &gt; MeasKeyTypes</div><div class="ttdoc">Alias for the measurement key type.</div><div class="ttdef"><b>Definition</b> Keys.hpp:126</div></div>
 <div class="ttc" id="aSatelliteIdentifier_8hpp_html"><div class="ttname"><a href="SatelliteIdentifier_8hpp.html">SatelliteIdentifier.hpp</a></div><div class="ttdoc">Structs identifying a unique satellite.</div></div>
 <div class="ttc" id="aclassNAV_1_1Frequency_html"><div class="ttname"><a href="classNAV_1_1Frequency.html">NAV::Frequency</a></div><div class="ttdoc">Frequency definition for different satellite systems.</div><div class="ttdef"><b>Definition</b> Frequency.hpp:59</div></div>
-<div class="ttc" id="aclassNAV_1_1PosVel_html"><div class="ttname"><a href="classNAV_1_1PosVel.html">NAV::PosVel</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div><div class="ttdef"><b>Definition</b> PosVel.hpp:22</div></div>
-<div class="ttc" id="aclassNAV_1_1Pos_html"><div class="ttname"><a href="classNAV_1_1Pos.html">NAV::Pos</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div><div class="ttdef"><b>Definition</b> Pos.hpp:27</div></div>
+<div class="ttc" id="aclassNAV_1_1PosVel_html"><div class="ttname"><a href="classNAV_1_1PosVel.html">NAV::PosVel</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div><div class="ttdef"><b>Definition</b> PosVel.hpp:23</div></div>
+<div class="ttc" id="aclassNAV_1_1Pos_html"><div class="ttname"><a href="classNAV_1_1Pos.html">NAV::Pos</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div><div class="ttdef"><b>Definition</b> Pos.hpp:29</div></div>
 <div class="ttc" id="astructNAV_1_1SPP_1_1Meas_1_1Doppler_html"><div class="ttname"><a href="structNAV_1_1SPP_1_1Meas_1_1Doppler.html">NAV::SPP::Meas::Doppler</a></div><div class="ttdoc">Range-rate (doppler) measurement [m/s].</div><div class="ttdef"><b>Definition</b> Keys.hpp:117</div></div>
 <div class="ttc" id="astructNAV_1_1SPP_1_1Meas_1_1Doppler_html_a68c405130e1eefda7cd76c08b41ee73c"><div class="ttname"><a href="structNAV_1_1SPP_1_1Meas_1_1Doppler.html#a68c405130e1eefda7cd76c08b41ee73c">NAV::SPP::Meas::Doppler::satSigId</a></div><div class="ttdeci">SatSigId satSigId</div><div class="ttdoc">Satellite Signal Id.</div><div class="ttdef"><b>Definition</b> Keys.hpp:122</div></div>
 <div class="ttc" id="astructNAV_1_1SPP_1_1Meas_1_1Doppler_html_af4079b0763855a99eb7158130f4c0db7"><div class="ttname"><a href="structNAV_1_1SPP_1_1Meas_1_1Doppler.html#af4079b0763855a99eb7158130f4c0db7">NAV::SPP::Meas::Doppler::operator==</a></div><div class="ttdeci">bool operator==(const Doppler &amp;rhs) const</div><div class="ttdoc">Equal comparison operator.</div><div class="ttdef"><b>Definition</b> Keys.hpp:120</div></div>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -167,7 +188,7 @@ $(function(){initNavTree('TimeBase_8hpp_source.html',''); initResizable(); });
 <div class="ttc" id="aTimeBase_8hpp_html_a6fed17d3e223a94c4940cc0a2fd0ded4"><div class="ttname"><a href="TimeBase_8hpp.html#a6fed17d3e223a94c4940cc0a2fd0ded4">NAV::util::time::SetCurrentTime</a></div><div class="ttdeci">void SetCurrentTime(const InsTime &amp;insTime)</div><div class="ttdoc">Set the current time object.</div></div>
 <div class="ttc" id="aTimeBase_8hpp_html_a9c87b7639e543d1c0e92dd5c6898c3ba"><div class="ttname"><a href="TimeBase_8hpp.html#a9c87b7639e543d1c0e92dd5c6898c3ba">NAV::util::time::SetMode</a></div><div class="ttdeci">void SetMode(Mode mode)</div><div class="ttdoc">Set the time mode.</div></div>
 <div class="ttc" id="aTimeBase_8hpp_html_abec6c95906d7a5cb00eab731f60c403b"><div class="ttname"><a href="TimeBase_8hpp.html#abec6c95906d7a5cb00eab731f60c403b">NAV::util::time::SetCurrentTimeToComputerTime</a></div><div class="ttdeci">void SetCurrentTimeToComputerTime()</div><div class="ttdoc">Set the current time object to the computer time.</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:666</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:667</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

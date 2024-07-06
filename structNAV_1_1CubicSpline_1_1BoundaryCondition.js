@@ -1,10 +1,10 @@
 var structNAV_1_1CubicSpline_1_1BoundaryCondition =
 [
     [ "BoundaryType", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91e", [
-      [ "FirstDerivative", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea454dc68786f1cb3d29fc46189eed92d2", null ],
-      [ "SecondDerivative", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea23f071abf6e88fba7ff60007509f7ca1", null ],
-      [ "NotAKnot", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee13a841986f5b081126792709d9dfe7", null ]
+      [ "FirstDerivative", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eae8f0d94c2982b30e5f7231493762d459", null ],
+      [ "SecondDerivative", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee6b37b4389945f4f4627f670e34e557", null ],
+      [ "NotAKnot", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea9636a8b2f42bc0ddd37f25e48cc8ca31", null ]
     ] ],
-    [ "type", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#ac4144bd1828887de1d9229c476cb2908", null ],
-    [ "value", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a6e93d1c4e2f8cb246d26362b3b39aad9", null ]
+    [ "type", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a3d8df04b2f6005bde75ff976db2fb244", null ],
+    [ "value", "structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a5dd81d44c7af892e24604167a54627b0", null ]
 ];

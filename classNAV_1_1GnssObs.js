@@ -1,6 +1,7 @@
 var classNAV_1_1GnssObs =
 [
     [ "ObservationData", "structNAV_1_1GnssObs_1_1ObservationData.html", "structNAV_1_1GnssObs_1_1ObservationData" ],
+    [ "ReceiverInfo", "structNAV_1_1GnssObs_1_1ReceiverInfo.html", "structNAV_1_1GnssObs_1_1ReceiverInfo" ],
     [ "SatelliteData", "structNAV_1_1GnssObs_1_1SatelliteData.html", "structNAV_1_1GnssObs_1_1SatelliteData" ],
     [ "ObservationType", "classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7", [
       [ "Pseudorange", "classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7ab2415c97004d17ddfabb4c5704c2baa0", null ],
@@ -19,5 +20,6 @@ var classNAV_1_1GnssObs =
     [ "satData", "classNAV_1_1GnssObs.html#a900f2f8dd0ccea0e697f8ecec3960301", null ],
     [ "satData", "classNAV_1_1GnssObs.html#a71504c9e22c4edd829a32ba0de29f04d", null ],
     [ "type", "classNAV_1_1GnssObs.html#a623202dc3f5f2114e6e5d7f6080321bd", null ],
-    [ "data", "classNAV_1_1GnssObs.html#acb643cff15145118cffd29458d71a503", null ]
+    [ "data", "classNAV_1_1GnssObs.html#acb643cff15145118cffd29458d71a503", null ],
+    [ "receiverInfo", "classNAV_1_1GnssObs.html#a873192200367aa6d8f27f159006db96b", null ]
 ];

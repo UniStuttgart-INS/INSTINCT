@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -210,9 +231,9 @@ template&lt;typename Derived &gt; </div>
 
 <p>Calculates the Pitch angle from the trajectory defined by the given velocity. </p>
 <p><a class="anchor" id="eq-INS-Mechanization-Pitch"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-Pitch}
+\begin{equation} \label{eq:eq-INS-Mechanization-Pitch}
   P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
-\end{equation}" src="form_53.svg" width="1570" height="53"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -221,7 +242,7 @@ template&lt;typename Derived &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pitch angle in [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 6.1.4, eq. 6.17, p. 225 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 6.1.4, eq. 6.17, p. 225 </dd></dl>
 
 </div>
 </div>
@@ -273,9 +294,9 @@ template&lt;typename Derived &gt; </div>
 
 <p>Calculates the Yaw angle from the trajectory defined by the given velocity. </p>
 <p><a class="anchor" id="eq-INS-Mechanization-Yaw"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-Yaw}
+\begin{equation} \label{eq:eq-INS-Mechanization-Yaw}
   Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
-\end{equation}" src="form_52.svg" width="1540" height="42"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -284,7 +305,7 @@ template&lt;typename Derived &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Yaw angle in [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 6.1.4, eq. 6.14, p. 225 </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 6.1.4, eq. 6.14, p. 225 </dd></dl>
 
 </div>
 </div>
@@ -311,9 +332,9 @@ template&lt;typename DerivedA , typename DerivedB  = DerivedA&gt; </div>
 
 <p>Calculates the centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path) </p>
 <p><a class="anchor" id="eq-INS-Mechanization-CentrifugalAcceleration"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-CentrifugalAcceleration}
+\begin{equation} \label{eq:eq-INS-Mechanization-CentrifugalAcceleration}
   \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ]
-\end{equation}" src="form_49.svg" width="1533" height="19"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -349,9 +370,9 @@ template&lt;typename DerivedA , typename DerivedB &gt; </div>
 
 <p>Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame) </p>
 <p><a class="anchor" id="eq-INS-Mechanization-CoriolisAcceleration-e"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration-e}
+\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration-e}
   2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
-\end{equation}" src="form_51.svg" width="1509" height="19"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -392,9 +413,9 @@ template&lt;typename DerivedA , typename DerivedB , typename DerivedC &gt; </div
 
 <p>Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame) </p>
 <p><a class="anchor" id="eq-INS-Mechanization-CoriolisAcceleration"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration}
+\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration}
   (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n
-\end{equation}" src="form_50.svg" width="1542" height="19"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -441,9 +462,9 @@ template&lt;typename DerivedA , typename DerivedB &gt; </div>
 
 <p>Calculates the transport rate ω_en_n (rotation rate of the Earth frame relative to the navigation frame) </p>
 <p><a class="anchor" id="eq-INS-Mechanization-TransportRate"></a> </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-INS-Mechanization-TransportRate}
+\begin{equation} \label{eq:eq-INS-Mechanization-TransportRate}
   \boldsymbol{\omega}_{en}^n = \begin{bmatrix} \dfrac{v_E}{R_E + h} &amp; \dfrac{-v_N}{R_N + h} &amp; \dfrac{-v_E \tan{\phi}}{R_E + h} \end{bmatrix}^T
-\end{equation}" src="form_48.svg" width="1633" height="47"/>
+\end{equation}
 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -455,11 +476,11 @@ template&lt;typename DerivedA , typename DerivedB &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>ω_en_n Transport Rate in local-navigation coordinates in [rad/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[16]</a> Groves, ch. 5.4.1, eq. 5.44, p. 177 </dd>
+<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_Groves2013">[17]</a> Groves, ch. 5.4.1, eq. 5.44, p. 177 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Gleason2009">[13]</a> Gleason, ch. 6.2.3.2, eq. 6.15, p. 155 </dd>
+See <a class="el" href="citelist.html#CITEREF_Gleason2009">[14]</a> Gleason, ch. 6.2.3.2, eq. 6.15, p. 155 </dd>
 <dd>
-See <a class="el" href="citelist.html#CITEREF_Titterton2004">[44]</a> Titterton, ch. 3.7.2, eq. 3.87, p. 50 (mistake in denominator 3rd term) </dd></dl>
+See <a class="el" href="citelist.html#CITEREF_Titterton2004">[45]</a> Titterton, ch. 3.7.2, eq. 3.87, p. 50 (mistake in denominator 3rd term) </dd></dl>
 
 </div>
 </div>

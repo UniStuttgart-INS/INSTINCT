@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,12 +140,17 @@ $(function(){initNavTree('functions_rela.html',''); initResizable(); });
 
 
 <h3><a id="index_f" name="index_f"></a>- f -</h3><ul>
-<li>from_json&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#acbf75b777278df3fcc75439c825b155e">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Combiner.html#a263b3a0953ffac593b10b82cc02228f0">NAV::Combiner</a>, <a class="el" href="classNAV_1_1CycleSlipDetector.html#ad890d29c0180c76d01ea15ce9e8c207d">NAV::CycleSlipDetector</a>, <a class="el" href="classNAV_1_1GnssAnalyzer.html#a263b3a0953ffac593b10b82cc02228f0">NAV::GnssAnalyzer</a>, <a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a00b323d7b43f89f644f26eae2f94f7c8">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html#a84872322b3e50915ae560ade54943b62">NAV::gui::widgets::DynamicInputPins</a>, <a class="el" href="classNAV_1_1ImuPos.html#a1c3827f6c8d28fe8749f19398e377a48">NAV::ImuPos</a>, <a class="el" href="classNAV_1_1ObservationEstimator.html#a17e59199c7dd797af98b2bea18a41838">NAV::ObservationEstimator</a>, <a class="el" href="classNAV_1_1ObservationFilter.html#a3781a576d45ab2d4bd69155be0169538">NAV::ObservationFilter</a>, <a class="el" href="classNAV_1_1SNRMask.html#a2199c34ec085d19a2ab535bfdca86979">NAV::SNRMask</a>, <a class="el" href="classNAV_1_1SPP_1_1Algorithm.html#a71504a19a69f0d106a4d2a252e5075c0">NAV::SPP::Algorithm</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#aadf8f0866ba22c1e0db1fae46ec6cdec">NAV::SPP::KalmanFilter</a></li>
+<li>from_json&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#acbf75b777278df3fcc75439c825b155e">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Combiner.html#a263b3a0953ffac593b10b82cc02228f0">NAV::Combiner</a>, <a class="el" href="classNAV_1_1CycleSlipDetector.html#ad890d29c0180c76d01ea15ce9e8c207d">NAV::CycleSlipDetector</a>, <a class="el" href="classNAV_1_1GnssAnalyzer.html#a263b3a0953ffac593b10b82cc02228f0">NAV::GnssAnalyzer</a>, <a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a00b323d7b43f89f644f26eae2f94f7c8">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html#a84872322b3e50915ae560ade54943b62">NAV::gui::widgets::DynamicInputPins</a>, <a class="el" href="classNAV_1_1ImuPos.html#a1c3827f6c8d28fe8749f19398e377a48">NAV::ImuPos</a>, <a class="el" href="classNAV_1_1InertialIntegrator.html#a7be8ccc8da4ba614cdac5616806554eb">NAV::InertialIntegrator</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a648eafc7686cbae65c5dd9fd849a7172">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="classNAV_1_1ObservationEstimator.html#a17e59199c7dd797af98b2bea18a41838">NAV::ObservationEstimator</a>, <a class="el" href="classNAV_1_1ObservationFilter.html#a3781a576d45ab2d4bd69155be0169538">NAV::ObservationFilter</a>, <a class="el" href="classNAV_1_1SNRMask.html#a2199c34ec085d19a2ab535bfdca86979">NAV::SNRMask</a>, <a class="el" href="classNAV_1_1SPP_1_1Algorithm.html#a71504a19a69f0d106a4d2a252e5075c0">NAV::SPP::Algorithm</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#aadf8f0866ba22c1e0db1fae46ec6cdec">NAV::SPP::KalmanFilter</a></li>
 </ul>
 
 
 <h3><a id="index_g" name="index_g"></a>- g -</h3><ul>
 <li>gui::menus::ShowRunMenu&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a9c3310357b0dfab3118c8e468df0dd03">NAV::Node</a></li>
+</ul>
+
+
+<h3><a id="index_i" name="index_i"></a>- i -</h3><ul>
+<li>InertialIntegratorGui&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#ae2f5e79e3ec6082a63ae0ed40b4692e2">NAV::InertialIntegrator</a></li>
 </ul>
 
 
@@ -151,8 +177,8 @@ $(function(){initNavTree('functions_rela.html',''); initResizable(); });
 
 
 <h3><a id="index_t" name="index_t"></a>- t -</h3><ul>
-<li>to_json&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#a0b79569901ef7b4d400467eb5ba97564">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Combiner.html#aed9e0fb9698b5a9cd4787954c7eeb869">NAV::Combiner</a>, <a class="el" href="classNAV_1_1CycleSlipDetector.html#a7d53a5895eb09f628835f0ad91d0ec11">NAV::CycleSlipDetector</a>, <a class="el" href="classNAV_1_1GnssAnalyzer.html#a3a966a1301390189aab4e0b1f9627421">NAV::GnssAnalyzer</a>, <a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#ad8995e5bef85173ad3f0b936ab9cf483">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html#abbd9753fd0a868f4e342115bdfb1a789">NAV::gui::widgets::DynamicInputPins</a>, <a class="el" href="classNAV_1_1ObservationEstimator.html#af6514c4a12d011c486ade755d57e3e50">NAV::ObservationEstimator</a>, <a class="el" href="classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b">NAV::ObservationFilter</a>, <a class="el" href="classNAV_1_1SNRMask.html#a5482365fe855cd3b9c53cf4f0f5ac634">NAV::SNRMask</a>, <a class="el" href="classNAV_1_1SPP_1_1Algorithm.html#a0806a9de4b825215a3a98872d538bdc2">NAV::SPP::Algorithm</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#a905fb090463db4dbb9ab8aac3cb52501">NAV::SPP::KalmanFilter</a></li>
-<li>to_string&#160;:&#160;<a class="el" href="classNAV_1_1MultiImuFile.html#aa2d421dc94519b6c92edc6c012a69e03">NAV::MultiImuFile</a>, <a class="el" href="classNAV_1_1PosVelAttInitializer.html#a70fcc9cee5f22d18bbcdbdc48329f369">NAV::PosVelAttInitializer</a></li>
+<li>to_json&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#a0b79569901ef7b4d400467eb5ba97564">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Combiner.html#a3a966a1301390189aab4e0b1f9627421">NAV::Combiner</a>, <a class="el" href="classNAV_1_1CycleSlipDetector.html#a7d53a5895eb09f628835f0ad91d0ec11">NAV::CycleSlipDetector</a>, <a class="el" href="classNAV_1_1GnssAnalyzer.html#a3a966a1301390189aab4e0b1f9627421">NAV::GnssAnalyzer</a>, <a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a2a531bc8b68b027e739a291872a15996">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html#abbd9753fd0a868f4e342115bdfb1a789">NAV::gui::widgets::DynamicInputPins</a>, <a class="el" href="classNAV_1_1InertialIntegrator.html#a3d75aa888b74bbd216793580cf422531">NAV::InertialIntegrator</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a8189974c13501f264a5a37d7ec3058b4">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="classNAV_1_1ObservationEstimator.html#a021be066289b7ee045903941dd6ba225">NAV::ObservationEstimator</a>, <a class="el" href="classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b">NAV::ObservationFilter</a>, <a class="el" href="classNAV_1_1SNRMask.html#a5482365fe855cd3b9c53cf4f0f5ac634">NAV::SNRMask</a>, <a class="el" href="classNAV_1_1SPP_1_1Algorithm.html#a0806a9de4b825215a3a98872d538bdc2">NAV::SPP::Algorithm</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#a905fb090463db4dbb9ab8aac3cb52501">NAV::SPP::KalmanFilter</a></li>
+<li>to_string&#160;:&#160;<a class="el" href="classNAV_1_1ImuFusion.html#a199449f2e130bf367916904839b2f87c">NAV::ImuFusion</a>, <a class="el" href="classNAV_1_1MultiImuFile.html#aa2d421dc94519b6c92edc6c012a69e03">NAV::MultiImuFile</a>, <a class="el" href="classNAV_1_1PosVelAttInitializer.html#a70fcc9cee5f22d18bbcdbdc48329f369">NAV::PosVelAttInitializer</a></li>
 </ul>
 
 

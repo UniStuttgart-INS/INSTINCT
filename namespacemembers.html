@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,6 +140,7 @@ $(function(){initNavTree('namespacemembers.html',''); initResizable(); });
 <li>DIFF_BDT_WEEK_TO_GPST_WEEK&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#ade84d75bc776e3ff9315f8a915d88388">NAV::InsTimeUtil</a></li>
 <li>DIFF_MJD_TO_JD_DAYS&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#aaa0d4d9ce2fbc502e235f75dc4291587">NAV::InsTimeUtil</a></li>
 <li>DIFF_MJD_TO_JD_FRAC&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#a310667f05b5f99ab8aacc99d6fce28fb">NAV::InsTimeUtil</a></li>
+<li>DIFF_TO_1_1_1970_MJD&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#afdb11eb545cfe7b1982e62dce5b0513c">NAV::InsTimeUtil</a></li>
 <li>DIFF_TO_6_1_1980_MJD&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#a817d8227a4ca0b112d1ccd88ca31cd3f">NAV::InsTimeUtil</a></li>
 <li>egm96Coeffs&#160;:&#160;<a class="el" href="namespaceNAV_1_1internal.html#a4a206c0ab89ba4322fd611a55f34f579">NAV::internal</a></li>
 <li>END_OF_THE_CENTURY_MJD&#160;:&#160;<a class="el" href="namespaceNAV_1_1InsTimeUtil.html#a74bb3738f76c2ff4652724a173ce5f70">NAV::InsTimeUtil</a></li>

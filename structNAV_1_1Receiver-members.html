@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,11 +138,15 @@ $(function(){initNavTree('structNAV_1_1Receiver.html',''); initResizable(); });
 
 <p>This is the complete list of members for <a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a5aea70e8e03b0feeb5623abeb1c1dc49">e_pos</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#ae7771b794b73aa7915d29da2103b0c22">e_posAntennaPhaseCenter</a>(Frequency freq, const std::string &amp;antennaType, const std::string &amp;nameId) const</td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a35c5766aa8294ccaa379dad61ab52e20">e_posARP</a>() const</td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#acba871d5bc7ae43d7537845bc6aa9301">e_posMarker</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#ad7930a781b010e1221c5a0ce26c7aa3d">e_vel</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a18a3c49669903ea09213932d121c3594">gnssObs</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a7e9605304fdc9a443a21e7e8dd9533b6">interFrequencyBias</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a48039f282b53cf513e648139fdace090">lla_pos</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a4c485e74ae92d83f5fb673b530b36ddc">lla_posAntennaPhaseCenter</a>(Frequency freq, const std::string &amp;antennaType, const std::string &amp;nameId) const</td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a6d8e1569d91e1971d95758c9c25779b0">lla_posARP</a>() const</td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a4a5e37da54ea4090f88d623548c0ed7b">lla_posMarker</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#a2f31b2ce8ea1eb0fd81876378e8ab8b9">Receiver</a>(ReceiverType type)</td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">explicit</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#af98a2f587e9850f44744e7af68a3d71a">recvClk</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structNAV_1_1Receiver.html#ac2f17f4d376bd5edaa7b9d3eda2ac1f9">type</a></td><td class="entry"><a class="el" href="structNAV_1_1Receiver.html">NAV::Receiver&lt; ReceiverType &gt;</a></td><td class="entry"></td></tr>

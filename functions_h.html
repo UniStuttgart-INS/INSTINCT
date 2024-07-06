@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('functions_h.html',''); initResizable(); });
 <div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
 <h3><a id="index_h" name="index_h"></a>- h -</h3><ul>
-<li>H&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#ae84bf41f54c7416c3fd96e4c8f8ab347">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a09342276a94986eae122db2314a35b0c">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
+<li>H&#160;:&#160;<a class="el" href="classNAV_1_1KalmanFilter.html#ae84bf41f54c7416c3fd96e4c8f8ab347">NAV::KalmanFilter</a>, <a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a09342276a94986eae122db2314a35b0c">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a>, <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#a7615ba9144b624fa22c361fb78e533c3">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::SavedPreUpdate</a></li>
 <li>h_A0&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a9b98b507ad80d08a9d72c24effa2e462">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#ae75ad5a49575938a7ec112dde8728894">NAV::internal::GPT3Data</a></li>
 <li>h_A1&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a7db8552c37873af63630afd02b154df5">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a2920ae2e73bf3d96e49cce3ae42522d2">NAV::internal::GPT3Data</a></li>
 <li>h_A2&#160;:&#160;<a class="el" href="structNAV_1_1internal_1_1GPT2Data.html#a2f6b2e2f2da2dcea110b91af3ca53db1">NAV::internal::GPT2Data</a>, <a class="el" href="structNAV_1_1internal_1_1GPT3Data.html#a1269eb15b478c792caa96a181180f4b1">NAV::internal::GPT3Data</a></li>
@@ -129,6 +150,7 @@ $(function(){initNavTree('functions_h.html',''); initResizable(); });
 <li>hasCols()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixColsBase.html#a6b7806d425e11b300b5b14bbb7d8de4e">NAV::internal::KeyedMatrixColsBase&lt; Scalar, ColKeyType, Rows, Cols &gt;</a></li>
 <li>hasCompatiblePin()&#160;:&#160;<a class="el" href="structNAV_1_1NodeRegistry_1_1NodeInfo.html#a876b61625115de119206276055ab38b1">NAV::NodeRegistry::NodeInfo</a></li>
 <li>hasData&#160;:&#160;<a class="el" href="structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a42700a74683f9673a17196d37d52b2cc">NAV::Plot::PinData::PlotData</a></li>
+<li>hasInitialPosition()&#160;:&#160;<a class="el" href="classNAV_1_1InertialIntegrator.html#a102324df198c6e0dac27327db2d5d826">NAV::InertialIntegrator</a></li>
 <li>hasRow()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a7fe9b03c1052169665c372bf4b3ae6a4">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>hasRows()&#160;:&#160;<a class="el" href="classNAV_1_1internal_1_1KeyedMatrixRowsBase.html#a927799db4f9db001afa4c724f9e77845">NAV::internal::KeyedMatrixRowsBase&lt; Scalar, RowKeyType, Rows, Cols &gt;</a></li>
 <li>hasState()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a580665306f2a4105d59c41e3cf98e86d">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>

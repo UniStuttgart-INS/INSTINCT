@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['W',['../group__LooselyCoupledKF__e.html#LooselyCoupledKF_e-Noise-Scale-matrix',1,'Noise scale matrix W'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-Noise-Scale-matrix',1,'Noise scale matrix W'],['../classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352',1,'NAV::KeyedKalmanFilter::W']]],
+  ['w_0',['W',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-Noise-Scale-matrix',1,'Noise scale matrix W'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Noise-Scale-matrix',1,'Noise scale matrix W'],['../classNAV_1_1KeyedKalmanFilter.html#a898673dec1ea625c8fb53d0e4197d352',1,'NAV::KeyedKalmanFilter::W'],['../structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#ae0530c09a9b9245c7c96dd7ee523267a',1,'NAV::KeyedKalmanFilter::SavedPreUpdate::W']]],
   ['w_5fa0_1',['w_A0',['../structNAV_1_1internal_1_1GPT2Data.html#a1e6d7e5bb0d907f67f844a3d52948e51',1,'NAV::internal::GPT2Data::w_A0'],['../structNAV_1_1internal_1_1GPT3Data.html#abbc1863240594eaf3364e54d101eef4c',1,'NAV::internal::GPT3Data::w_A0']]],
   ['w_5fa1_2',['w_A1',['../structNAV_1_1internal_1_1GPT2Data.html#a8c51a1a0e373de00ff6113f8e24dadcb',1,'NAV::internal::GPT2Data::w_A1'],['../structNAV_1_1internal_1_1GPT3Data.html#a3a94e22673f2f9b337a43335a70dc7da',1,'NAV::internal::GPT3Data::w_A1']]],
   ['w_5fa2_3',['w_A2',['../structNAV_1_1internal_1_1GPT2Data.html#a136ac30c4fd659a302288cfb7035ec62',1,'NAV::internal::GPT2Data::w_A2'],['../structNAV_1_1internal_1_1GPT3Data.html#a3f2e7b04981466e2098f61dfdad95f1d',1,'NAV::internal::GPT3Data::w_A2']]],
@@ -9,7 +9,7 @@ var searchData=
   ['waitforfinish_6',['waitForFinish',['../FlowExecutor_8hpp.html#ab80f0906dc77cb55e7383e27c83402ca',1,'NAV::FlowExecutor']]],
   ['waitforsignal_7',['waitForSignal',['../Sleep_8hpp.html#a4e8aa38bfa84207d7a6de9f0f08b0d5e',1,'NAV::Sleep']]],
   ['wakeworker_8',['wakeWorker',['../classNAV_1_1Node.html#a177a8e664ee965e496c4c629376dbd38',1,'NAV::Node']]],
-  ['walk_9',['Walk',['../group__LooselyCoupledKF__e.html#LooselyCoupledKF_e-Noise-RW',1,'Random Walk'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-Noise-RW',1,'Random Walk']]],
+  ['walk_9',['Walk',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-Noise-RW',1,'Random Walk'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Noise-RW',1,'Random Walk']]],
   ['watchdog_10',['watchdog',['../UlogFileFormat_8hpp.html#aaf4c855fcd1042223ebe548585f34d5da779c708ac0843f43a54f0695e3271fdc',1,'NAV::vendor::pixhawk']]],
   ['water_5fcraft_11',['WATER_CRAFT',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a823114549e6433df98d966fceb419296adf30fa15c38b3b9729562c2e0a98ae5b',1,'NAV::vendor::RINEX::ObsHeader']]],
   ['watervapor_2ehpp_12',['WaterVapor.hpp',['../WaterVapor_8hpp.html',1,'']]],
@@ -18,8 +18,8 @@ var searchData=
   ['week_15',['week',['../structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx.html#a70d1ae7384695dae17cfa4dd2cb2a3f5',1,'NAV::vendor::ublox::UbxRxmRawx::week'],['../structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html#a7dce0f14488da3ee8dd993bc7646be44',1,'NAV::vendor::vectornav::GnssOutputs::week'],['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas.html#acf22e63cf7d8deab02816e0ef5a0aa46',1,'NAV::vendor::vectornav::RawMeas::week']]],
   ['weekgps_16',['weekGPS',['../structNAV_1_1vendor_1_1emlid_1_1ErbStat.html#a8bc1965d8f99ff1752edb012a0a89126',1,'NAV::vendor::emlid::ErbStat::weekGPS'],['../structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html#a59e757c82f844dc1727cfc6b58d13094',1,'NAV::vendor::emlid::ErbRtk::weekGPS']]],
   ['weeks_5fper_5fgps_5fcycle_17',['WEEKS_PER_GPS_CYCLE',['../namespaceNAV_1_1InsTimeUtil.html#ad36f47e687dd587d6f6f4f263c6e60d4',1,'NAV::InsTimeUtil']]],
-  ['weighed_20least_20squares_20estimation_18',['Weighed Least Squares Estimation',['../group__SppLSE.html#SppLSE-LseAlgorithm',1,'Algorithm - Linearized (Weighed) Least Squares Estimation'],['../group__SppLSE.html',1,'Single Point Positioning using (Weighed) Least Squares Estimation']]],
-  ['weight_20matrix_19',['Weight matrix',['../group__SppLSE.html#SppLSE-measurmentModel-weightMatrix',1,'']]],
+  ['weighed_20least_20squares_20estimation_18',['Weighed Least Squares Estimation',['../SppLSE.html#SppLSE-LseAlgorithm',1,'Algorithm - Linearized (Weighed) Least Squares Estimation'],['../SppLSE.html',1,'Single Point Positioning using (Weighed) Least Squares Estimation']]],
+  ['weight_20matrix_19',['Weight matrix',['../SppLSE.html#SppLSE-measurmentModel-weightMatrix',1,'']]],
   ['weightedleastsquares_20',['WeightedLeastSquares',['../classNAV_1_1SPP_1_1Algorithm.html#a6db3ea08a04532fb39fe556ce50002e6a03bf31fa8f7b6f16622ae07a0d573d2c',1,'NAV::SPP::Algorithm']]],
   ['wgs84_21',['WGS84',['../classNAV_1_1InsConst_1_1WGS84.html',1,'NAV::InsConst&lt; Scalar &gt;::WGS84'],['../classNAV_1_1InsConst_1_1WGS84.html#aa81a7b263a5bf668fed17a396051d8da',1,'NAV::InsConst::WGS84::WGS84()'],['../Gravity_8hpp.html#a62cedc05576bd595a348504ae729e9dea5dda43a21474cf33e7088b8247f19c4b',1,'WGS84NAV']]],
   ['wgs84_5fskydel_22',['WGS84_Skydel',['../Gravity_8hpp.html#a62cedc05576bd595a348504ae729e9dea22070eb9b1172183793836bbdd5f6806',1,'NAV']]],
@@ -28,11 +28,13 @@ var searchData=
   ['windowfontratio_25',['windowFontRatio',['../classNAV_1_1gui_1_1NodeEditorApplication.html#a39ca449393815b88e4a95a3dccb4ad15',1,'NAV::gui::NodeEditorApplication']]],
   ['windows_3a_3ashowfontsizeeditor_26',['ShowFontSizeEditor',['../classNAV_1_1gui_1_1NodeEditorApplication.html#a86bf1839a77fdafa8a7a4bc1c0973b48',1,'NAV::gui::NodeEditorApplication']]],
   ['windowsizereached_27',['windowSizeReached',['../classNAV_1_1PolynomialRegressor.html#a7720363eaf3e955798367634f22a6509',1,'NAV::PolynomialRegressor']]],
-  ['with_20instinct_28',['Working with INSTINCT',['../getting_started.html#working_with_instinct',1,'']]],
-  ['with_20noise_29',['With Noise',['../group__LooselyCoupledKF__e.html#LooselyCoupledKF_e-Noise',1,'Augmented State with Noise'],['../group__LooselyCoupledKF__n.html#LooselyCoupledKF_n-Noise',1,'Augmented State with Noise']]],
-  ['with_20time_30',['With time',['../group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Attitude-DCM',1,'Propagation of direction cosine matrix with time'],['../group__ImuIntegrator__n.html#ImuIntegrator-Mechanization-n-Attitude-DCM',1,'Propagation of direction cosine matrix with time'],['../group__ImuIntegrator__n.html#ImuIntegrator-Mechanization-n-Attitude-Euler',1,'Propagation of Euler angles with time'],['../group__ImuIntegrator__n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion',1,'Propagation of quaternion with time'],['../group__ImuIntegrator__e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion',1,'Propagation of quaternion with time']]],
-  ['worker_20thread_31',['Worker Thread',['../Core_Node.html#Core_Node_Worker',1,'']]],
-  ['working_20with_20instinct_32',['Working with INSTINCT',['../getting_started.html#working_with_instinct',1,'']]],
-  ['workingwithoutguarantee_33',['WorkingWithoutGuarantee',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a74ef5f21ca722caffa2f60fe14659c4daddacc7a97b0e56fff53fb382cac221e8',1,'NAV::GalileoEphemeris::SvHealth']]],
-  ['workspace_34',['Workspace',['../work_space.html',1,'gui_landing_page']]]
+  ['with_20higher_20priority_20found_20gps_20gal_20glo_28',['Case 1: New Sat System with higher priority found (GPS &gt; GAL &gt; GLO &gt; ...)',['../SppKF.html#SppKF-InterChange-Case1',1,'']]],
+  ['with_20instinct_29',['Working with INSTINCT',['../getting_started.html#working_with_instinct',1,'']]],
+  ['with_20noise_30',['With Noise',['../LooselyCoupledKF_e.html#LooselyCoupledKF_e-Noise',1,'Augmented State with Noise'],['../LooselyCoupledKF_n.html#LooselyCoupledKF_n-Noise',1,'Augmented State with Noise']]],
+  ['with_20time_31',['With time',['../ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Attitude-DCM',1,'Propagation of direction cosine matrix with time'],['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-DCM',1,'Propagation of direction cosine matrix with time'],['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Euler',1,'Propagation of Euler angles with time'],['../ImuIntegrator_e.html#ImuIntegrator-Mechanization-e-Attitude-Quaternion',1,'Propagation of quaternion with time'],['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion',1,'Propagation of quaternion with time']]],
+  ['within_20an_20epoch_32',['Case 2: No observation for reference system within an epoch',['../SppKF.html#SppKF-InterChange-Case2',1,'']]],
+  ['worker_20thread_33',['Worker Thread',['../Core_Node.html#Core_Node_Worker',1,'']]],
+  ['working_20with_20instinct_34',['Working with INSTINCT',['../getting_started.html#working_with_instinct',1,'']]],
+  ['workingwithoutguarantee_35',['WorkingWithoutGuarantee',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a74ef5f21ca722caffa2f60fe14659c4daddacc7a97b0e56fff53fb382cac221e8',1,'NAV::GalileoEphemeris::SvHealth']]],
+  ['workspace_36',['Workspace',['../work_space.html',1,'gui_landing_page']]]
 ];

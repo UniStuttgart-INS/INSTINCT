@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -138,7 +159,7 @@ $(function(){initNavTree('AssociatedLegendre_8hpp_source.html',''); initResizabl
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace NAV::internal</span></div>
 <div class="ttc" id="aEigen_8hpp_html"><div class="ttname"><a href="Eigen_8hpp.html">Eigen.hpp</a></div><div class="ttdoc">Vector space operations.</div></div>
-<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:21</div></div>
+<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GMFCoeffs.hpp:21</div></div>
 <div class="ttc" id="anamespaceNAV_1_1internal_html_aefd7d72eb1b237dba33668947657715c"><div class="ttname"><a href="namespaceNAV_1_1internal.html#aefd7d72eb1b237dba33668947657715c">NAV::internal::associatedLegendre</a></div><div class="ttdeci">std::pair&lt; Eigen::MatrixXd, Eigen::MatrixXd &gt; associatedLegendre(double theta, size_t ndegree=10)</div><div class="ttdoc">Calculates the associated Legendre Polynomial coefficients necessary for the EGM96.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

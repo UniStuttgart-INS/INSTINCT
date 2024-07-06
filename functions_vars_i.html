@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -120,35 +141,42 @@ $(function(){initNavTree('functions_vars_i.html',''); initResizable(); });
 <li>idSV&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbSvi.html#a8983d5f847e2c43f738743c24cca56de">NAV::vendor::emlid::ErbSvi</a></li>
 <li>imPlotReferenceStyle&#160;:&#160;<a class="el" href="classNAV_1_1gui_1_1NodeEditorApplication.html#a0b2f1970d4b57aca4888ae89cde5d1d0">NAV::gui::NodeEditorApplication</a></li>
 <li>imuField&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#a314d363ad97e27c97286ac690b5b4fd7">NAV::vendor::vectornav::ImuOutputs</a></li>
-<li>imuObs&#160;:&#160;<a class="el" href="classNAV_1_1InertialNavSol.html#af0467445a56d3a9415ee8109a3b2c546">NAV::InertialNavSol</a></li>
 <li>imuOutputs&#160;:&#160;<a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a32ae2b4ccd82060aef4a8fe32f25ccbc">NAV::VectorNavBinaryOutput</a></li>
 <li>imuPos&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">NAV::ImuObs</a>, <a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#acad3888e50896168632ad628a13eca04">NAV::VectorNavBinaryOutput</a></li>
 <li>imuStatus&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html#a4b0cf01efb147763ba2639b7ba2c4639">NAV::vendor::vectornav::ImuOutputs</a></li>
 <li>incompat_flags&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__flag__bits__s.html#a7ee78870bbf9839f8efe779f2a9885dd">NAV::vendor::pixhawk::ulog_message_flag_bits_s</a></li>
-<li>initAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a3d15058c48299800835f418ad6446acd">NAV::ImuFusion::PinData</a></li>
-<li>initAccelerationBias&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a2dee5837750daedcfd5dcb6cee1b6e89">NAV::ImuFusion::PinData</a></li>
-<li>initAccelerationBiasUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a46dbad87d8d0d96cd5f4145b8152f493">NAV::ImuFusion::PinData</a></li>
-<li>initAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a8dc757dc6747499106c7978d6a5dcf9d">NAV::ImuFusion::PinData</a></li>
-<li>initAngularAcc&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#acae8958a75a06c4353664287c9e1e9b0">NAV::ImuFusion::PinData</a></li>
-<li>initAngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a286f9f9bb4cb85bb5950b8bcb17c6830">NAV::ImuFusion::PinData</a></li>
-<li>initAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a0add9a61365fc6d2d997c854cc07b17d">NAV::ImuFusion::PinData</a></li>
-<li>initAngularRateBias&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a550a3e3e3b5d168e8290330b9ef2d96d">NAV::ImuFusion::PinData</a></li>
-<li>initAngularRateBiasUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a2c0edee08ce93308d4cbdb42b86235cf">NAV::ImuFusion::PinData</a></li>
-<li>initAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a7f64ba8c57d2adb724946f760bcc61cc">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a351de06cdcc86e5446ad21d473d312e7">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a354106229d4b58ded8179acf3dcdb927">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAngularAcc&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#af6a114d120b1db1ce04c7a15f06ffbb2">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a4b6107e5b41fb8cf7ccb5bd86325e1ea">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#ac4affc1c0a9f90b9abe9c398727bf25a">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a74b19822afb9e7b1bd497725b9481ecd">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceBiasAcc&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a30f6a69a152ce4c9fc272453bc265de9">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceBiasAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#ad0a26725e69ddec1d891f23ad1c7626c">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceBiasAngRate&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#abe0e91765ff8b379c7a857da7840e7f5">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceBiasAngRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#af82afc029e9daa5ed68f494481b5226b">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceJerk&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a76242f94e7299e4e5e43f5cc655235e2">NAV::ImuFusion::PinData</a></li>
-<li>initCovarianceJerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#ad99e79d7c592c3ac533de0be0f58f7dd">NAV::ImuFusion::PinData</a></li>
-<li>initJerk&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a1f148c6be29f417d034086ab8aa7420c">NAV::ImuFusion::PinData</a></li>
-<li>initJerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html#a5eb3ee507cb44993bc073531668a8e72">NAV::ImuFusion::PinData</a></li>
+<li>initAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a2b99bba8bcdac3879da731c459a24e6f">NAV::PinDataIRWKF</a></li>
+<li>initAccelerationBias&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a9efc8475f7993b89b3b45d4588cd2ede">NAV::PinData</a></li>
+<li>initAccelerationBiasUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a86e23a3571de3e5c5966d2daa806b959">NAV::PinData</a></li>
+<li>initAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a18e7db57dc1b99fb5bdfea4312e56326">NAV::PinDataIRWKF</a></li>
+<li>initAngularAcc&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#aa793d8baa836e5cea5ec82786fffbdb9">NAV::PinDataIRWKF</a></li>
+<li>initAngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a31e20b00e5e555b642d176f407023590">NAV::PinDataIRWKF</a></li>
+<li>initAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a5581ff6fe338f298f8d01ff9a440da2a">NAV::PinDataIRWKF</a></li>
+<li>initAngularRateBias&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#aa855e755b4c0fe1919a15cd1c2a7ef02">NAV::PinData</a></li>
+<li>initAngularRateBiasUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#aed613543036a0d88113c52aa1472a1b6">NAV::PinData</a></li>
+<li>initAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#aa650fac2ecf3eff3c3b100a620a825af">NAV::PinDataIRWKF</a></li>
+<li>initCoeffsAccel&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a7461d836715241f1e7f2666449af5002">NAV::PinDataBsplineKF</a></li>
+<li>initCoeffsAccelUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a200117c792c6f30b4bc1339901c87627">NAV::PinDataBsplineKF</a></li>
+<li>initCoeffsAngRate&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a62009aaf0444a11e5dc60bfc784681e8">NAV::PinDataBsplineKF</a></li>
+<li>initCoeffsAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#afba6d94e74e02f31d1fd5e5c27cea5d4">NAV::PinDataBsplineKF</a></li>
+<li>initCovarianceAcceleration&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a4d1a80cabad0ecc5c25e94926de00267">NAV::PinData</a></li>
+<li>initCovarianceAccelerationUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#acc7559cf49e914f03379e2ff80827b27">NAV::PinData</a></li>
+<li>initCovarianceAngularAcc&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a37de34f769f4165ddb5024401470bb61">NAV::PinDataIRWKF</a></li>
+<li>initCovarianceAngularAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a8c9ca536721b9c2bb9bac546d5ec4361">NAV::PinDataIRWKF</a></li>
+<li>initCovarianceAngularRate&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a0d71292816d46d1b16941ef62db78059">NAV::PinData</a></li>
+<li>initCovarianceAngularRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#ab077628f5e20b6bb9d9f901cd8c37c41">NAV::PinData</a></li>
+<li>initCovarianceBiasAcc&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a4273a799ef2f5e21cd428e5e3167f826">NAV::PinData</a></li>
+<li>initCovarianceBiasAccUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#a2ee35b968ecaa6027327c544f5b0fe03">NAV::PinData</a></li>
+<li>initCovarianceBiasAngRate&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#ab4471cab90f63d12fd3e3a78eef9fb31">NAV::PinData</a></li>
+<li>initCovarianceBiasAngRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinData.html#ae3bc1dd1b725af0702c356f44c3a28be">NAV::PinData</a></li>
+<li>initCovarianceCoeffsAccel&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a85806149ed16f03b59fbf453bbbfdd29">NAV::PinDataBsplineKF</a></li>
+<li>initCovarianceCoeffsAccelUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a22ef0e3f3e0cf864c7925f0324607be2">NAV::PinDataBsplineKF</a></li>
+<li>initCovarianceCoeffsAngRate&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a0ec02739556e323d4f709dbcd1d0d43a">NAV::PinDataBsplineKF</a></li>
+<li>initCovarianceCoeffsAngRateUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataBsplineKF.html#a6e87f8dc5329c3596db9fb0df333e6a0">NAV::PinDataBsplineKF</a></li>
+<li>initCovarianceJerk&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a5d201542777e8fa98233c24c3ad4b6ce">NAV::PinDataIRWKF</a></li>
+<li>initCovarianceJerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a16fc3c25410af079fe96ebcfdb59502b">NAV::PinDataIRWKF</a></li>
+<li>initJerk&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#a779f61376e6434ba1d40e01cf0351b7c">NAV::PinDataIRWKF</a></li>
+<li>initJerkUnit&#160;:&#160;<a class="el" href="structNAV_1_1PinDataIRWKF.html#adf81d1281cf9efd31e04a82476591d2e">NAV::PinDataIRWKF</a></li>
 <li>inputPins&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a5f207b4b920b9994e08c238a254b8b78">NAV::Node</a></li>
 <li>insField&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html#a96a4b9ee37992f594da9f39097e7e4b3">NAV::vendor::vectornav::InsOutputs</a></li>
 <li>insOutputs&#160;:&#160;<a class="el" href="classNAV_1_1VectorNavBinaryOutput.html#a477525da76b6989d840fe56b943f4276">NAV::VectorNavBinaryOutput</a></li>

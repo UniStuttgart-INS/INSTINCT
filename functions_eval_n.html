@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -119,7 +140,7 @@ $(function(){initNavTree('functions_eval_n.html',''); initResizable(); });
 <li>None&#160;:&#160;<a class="el" href="classNAV_1_1Code.html#af180d7a6aba068a798f8efc3799f8a6ca7d8e43d26b10075b52fcd784859d61fc">NAV::Code</a></li>
 <li>NONE&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eaf95d110903dd742fcbe22539bb897b30">NAV::FileReader</a></li>
 <li>None&#160;:&#160;<a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html#a4818411c6ad1cc9c446b5928433c3744a2486fa83dcd2d0dd7bd3c31cc47d73cc">NAV::GnssMeasurementErrorModel</a>, <a class="el" href="structNAV_1_1Pin_1_1Kind.html#a22002a8788d8157e7aa19414b40b3204adaa8fcd19d34c22448b7f2e03bafc78e">NAV::Pin::Kind</a>, <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a210193c1b330d859a5ca03a37779bba5">NAV::Pin::Type</a></li>
-<li>NotAKnot&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91eaee13a841986f5b081126792709d9dfe7">NAV::CubicSpline::BoundaryCondition</a></li>
+<li>NotAKnot&#160;:&#160;<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#a379172a81854f97e67858418511cb91ea9636a8b2f42bc0ddd37f25e48cc8ca31">NAV::CubicSpline&lt; Scalar &gt;::BoundaryCondition</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

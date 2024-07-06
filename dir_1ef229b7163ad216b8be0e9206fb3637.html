@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,11 +138,11 @@ $(function(){initNavTree('dir_1ef229b7163ad216b8be0e9206fb3637.html',''); initRe
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="InertialNavSol_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="InertialNavSol_8hpp.html">InertialNavSol.hpp</a></td></tr>
-<tr class="memdesc:InertialNavSol_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">PosVelAtt Observation with ImuObs included. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="InsGnssLCKFSolution_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="InsGnssLCKFSolution_8hpp.html">InsGnssLCKFSolution.hpp</a></td></tr>
+<tr class="memdesc:InsGnssLCKFSolution_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loosely-coupled Kalman Filter INS/GNSS errors. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="LcKfInsGnssErrors_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="LcKfInsGnssErrors_8hpp.html">LcKfInsGnssErrors.hpp</a></td></tr>
-<tr class="memdesc:LcKfInsGnssErrors_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loosely-coupled Kalman Filter INS/GNSS errors. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="InsGnssTCKFSolution_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="InsGnssTCKFSolution_8hpp.html">InsGnssTCKFSolution.hpp</a></td></tr>
+<tr class="memdesc:InsGnssTCKFSolution_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tightly-coupled Kalman Filter INS/GNSS errors. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="Pos_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Pos_8hpp.html">Pos.hpp</a></td></tr>
 <tr class="memdesc:Pos_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position Storage Class. <br /></td></tr>
@@ -131,9 +152,6 @@ Files</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="PosVelAtt_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="PosVelAtt_8hpp.html">PosVelAtt.hpp</a></td></tr>
 <tr class="memdesc:PosVelAtt_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position, Velocity and Attitude Storage Class. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top"><a href="TcKfInsGnssErrors_8hpp_source.html"><span class="icondoc"></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="TcKfInsGnssErrors_8hpp.html">TcKfInsGnssErrors.hpp</a></td></tr>
-<tr class="memdesc:TcKfInsGnssErrors_8hpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tightly-coupled Kalman Filter INS/GNSS errors. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

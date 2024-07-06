@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -165,51 +186,62 @@ $(function(){initNavTree('VectorNavBinaryConverter_8hpp_source.html',''); initRe
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="classNAV_1_1VectorNavBinaryConverter.html#a810df57b5362c6ed31bc8c7dbcabe286">   63</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classNAV_1_1VectorNavBinaryConverter.html#a810df57b5362c6ed31bc8c7dbcabe286">restore</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a>&amp; j) <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> OUTPUT_PORT_INDEX_CONVERTED = 0;              </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> INPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT = 0; </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keyword">enum</span> OutputType</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        OutputType_ImuObsWDelta, </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        OutputType_PosVelAtt,    </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        OutputType_GnssObs,      </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    };</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    OutputType _outputType = OutputType_ImuObsWDelta;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keyword">enum</span> PosVelSource</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    {</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        PosVelSource_Best,  </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        PosVelSource_Ins,   </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        PosVelSource_Gnss1, </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        PosVelSource_Gnss2, </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    };</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    PosVelSource _posVelSource = PosVelSource_Best;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">bool</span> _forceStatic = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    std::shared_ptr&lt;const PosVelAtt&gt; _posVelAtt__init = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordtype">bool</span> initialize() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordtype">void</span> receiveObs(<a class="code hl_typedef" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a>&amp; queue, <span class="keywordtype">size_t</span> pinIdx);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    std::shared_ptr&lt;const ImuObsWDelta&gt; convert2ImuObsWDelta(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    std::shared_ptr&lt;const PosVelAtt&gt; convert2PosVelAtt(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keyword">static</span> std::shared_ptr&lt;const GnssObs&gt; convert2GnssObs(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>};</div>
+<div class="foldopen" id="foldopen00066" data-start="{" data-end="};">
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">   66</a></span>    <span class="keyword">enum class</span> <a class="code hl_enumeration" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">OutputType</a></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785ae1ae4321732ea2406f0422bf1b4bb9c1">ImuObs</a>,       </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a032553d6ba6a1921a71763a1ee1b5726">ImuObsWDelta</a>, </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a950841c99d24c4239f5c5634ea17c0df">PosVelAtt</a>,    </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a465c896bb511593ec0a9fed5f8ffcd76">GnssObs</a>,      </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>,        </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    };</div>
 </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>} <span class="comment">// namespace NAV</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> OUTPUT_PORT_INDEX_CONVERTED = 0;              </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> INPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT = 0; </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <a class="code hl_enumeration" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">OutputType</a> _outputType = <a class="code hl_enumvalue" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a032553d6ba6a1921a71763a1ee1b5726">OutputType::ImuObsWDelta</a>;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">enum</span> PosVelSource</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    {</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        PosVelSource_Best,  </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        PosVelSource_Ins,   </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        PosVelSource_Gnss1, </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        PosVelSource_Gnss2, </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    };</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    PosVelSource _posVelSource = PosVelSource_Best;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordtype">bool</span> _forceStatic = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordtype">bool</span> _useCompensatedData = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    std::shared_ptr&lt;const PosVelAtt&gt; _posVelAtt__init = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordtype">bool</span> initialize() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordtype">void</span> receiveObs(<a class="code hl_typedef" href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">InputPin::NodeDataQueue</a>&amp; queue, <span class="keywordtype">size_t</span> pinIdx);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    std::shared_ptr&lt;const ImuObsWDelta&gt; convert2ImuObsWDelta(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    std::shared_ptr&lt;const ImuObs&gt; convert2ImuObs(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    std::shared_ptr&lt;const PosVelAtt&gt; convert2PosVelAtt(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keyword">static</span> std::shared_ptr&lt;const GnssObs&gt; convert2GnssObs(<span class="keyword">const</span> std::shared_ptr&lt;const VectorNavBinaryOutput&gt;&amp; vnObs);</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>};</div>
+</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno"><a class="line" href="VectorNavBinaryConverter_8hpp.html#a3b0b2a7bdea622fa858b7f92c56d8bcc">  135</a></span><span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="PositionInput_8hpp.html#a3d14f9ab23729fbccba05a42f8615989">to_string</a>(<a class="code hl_enumeration" href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">NAV::VectorNavBinaryConverter::OutputType</a> value);</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> FlowManager.hpp:21</div></div>
 <div class="ttc" id="aGnssObs_8hpp_html"><div class="ttname"><a href="GnssObs_8hpp.html">GnssObs.hpp</a></div><div class="ttdoc">GNSS Observation messages.</div></div>
 <div class="ttc" id="aImuObsWDelta_8hpp_html"><div class="ttname"><a href="ImuObsWDelta_8hpp.html">ImuObsWDelta.hpp</a></div><div class="ttdoc">Data storage class for one VectorNavImu observation.</div></div>
 <div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Node Class.</div></div>
 <div class="ttc" id="aPosVelAtt_8hpp_html"><div class="ttname"><a href="PosVelAtt_8hpp.html">PosVelAtt.hpp</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div></div>
+<div class="ttc" id="aPositionInput_8hpp_html_a3d14f9ab23729fbccba05a42f8615989"><div class="ttname"><a href="PositionInput_8hpp.html#a3d14f9ab23729fbccba05a42f8615989">NAV::to_string</a></div><div class="ttdeci">const char * to_string(gui::widgets::PositionWithFrame::ReferenceFrame refFrame)</div><div class="ttdoc">Converts the enum to a string.</div></div>
 <div class="ttc" id="aVectorNavBinaryOutput_8hpp_html"><div class="ttname"><a href="VectorNavBinaryOutput_8hpp.html">VectorNavBinaryOutput.hpp</a></div><div class="ttdoc">Binary Outputs from VectorNav Sensors.</div></div>
 <div class="ttc" id="aclassNAV_1_1InputPin_html_a47683b163e79b13098f38627d8f4d87b"><div class="ttname"><a href="classNAV_1_1InputPin.html#a47683b163e79b13098f38627d8f4d87b">NAV::InputPin::NodeDataQueue</a></div><div class="ttdeci">TsDeque&lt; std::shared_ptr&lt; const NAV::NodeData &gt; &gt; NodeDataQueue</div><div class="ttdoc">Node data queue type.</div><div class="ttdef"><b>Definition</b> Pin.hpp:703</div></div>
 <div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:86</div></div>
@@ -218,6 +250,12 @@ $(function(){initNavTree('VectorNavBinaryConverter_8hpp_source.html',''); initRe
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a034c9e078b010840e86674fb50639e4d"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a034c9e078b010840e86674fb50639e4d">NAV::VectorNavBinaryConverter::operator=</a></div><div class="ttdeci">VectorNavBinaryConverter &amp; operator=(const VectorNavBinaryConverter &amp;)=delete</div><div class="ttdoc">Copy assignment operator.</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a151696c0119de6d76ce65a8e80d8eb50"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a151696c0119de6d76ce65a8e80d8eb50">NAV::VectorNavBinaryConverter::VectorNavBinaryConverter</a></div><div class="ttdeci">VectorNavBinaryConverter(const VectorNavBinaryConverter &amp;)=delete</div><div class="ttdoc">Copy constructor.</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a1cc7cadffb56d33761a7a4f452155440"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a1cc7cadffb56d33761a7a4f452155440">NAV::VectorNavBinaryConverter::operator=</a></div><div class="ttdeci">VectorNavBinaryConverter &amp; operator=(VectorNavBinaryConverter &amp;&amp;)=delete</div><div class="ttdoc">Move assignment operator.</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785">NAV::VectorNavBinaryConverter::OutputType</a></div><div class="ttdeci">OutputType</div><div class="ttdoc">Enum specifying the type of the output message.</div><div class="ttdef"><b>Definition</b> VectorNavBinaryConverter.hpp:67</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785a032553d6ba6a1921a71763a1ee1b5726"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a032553d6ba6a1921a71763a1ee1b5726">NAV::VectorNavBinaryConverter::OutputType::ImuObsWDelta</a></div><div class="ttdeci">@ ImuObsWDelta</div><div class="ttdoc">Extract ImuObsWDelta data.</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785a465c896bb511593ec0a9fed5f8ffcd76"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a465c896bb511593ec0a9fed5f8ffcd76">NAV::VectorNavBinaryConverter::OutputType::GnssObs</a></div><div class="ttdeci">@ GnssObs</div><div class="ttdoc">Extract GnssObs data.</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785a4905ac9d6a22bdfc1ae096094ce6248d"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a4905ac9d6a22bdfc1ae096094ce6248d">NAV::VectorNavBinaryConverter::OutputType::COUNT</a></div><div class="ttdeci">@ COUNT</div><div class="ttdoc">Number of items in the enum.</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785a950841c99d24c4239f5c5634ea17c0df"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a950841c99d24c4239f5c5634ea17c0df">NAV::VectorNavBinaryConverter::OutputType::PosVelAtt</a></div><div class="ttdeci">@ PosVelAtt</div><div class="ttdoc">Extract PosVelAtt data.</div></div>
+<div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a46a6a12748296b2797a3bbbf1e5fb785ae1ae4321732ea2406f0422bf1b4bb9c1"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785ae1ae4321732ea2406f0422bf1b4bb9c1">NAV::VectorNavBinaryConverter::OutputType::ImuObs</a></div><div class="ttdeci">@ ImuObs</div><div class="ttdoc">Extract ImuObs data.</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a611aa44bb7851207408072c5cdb35932"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a611aa44bb7851207408072c5cdb35932">NAV::VectorNavBinaryConverter::category</a></div><div class="ttdeci">static std::string category()</div><div class="ttdoc">String representation of the Class Category.</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a810df57b5362c6ed31bc8c7dbcabe286"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a810df57b5362c6ed31bc8c7dbcabe286">NAV::VectorNavBinaryConverter::restore</a></div><div class="ttdeci">void restore(const json &amp;j) override</div><div class="ttdoc">Restores the node from a json object.</div></div>
 <div class="ttc" id="aclassNAV_1_1VectorNavBinaryConverter_html_a9e803c0f9e15624b07f2b91961f22ada"><div class="ttname"><a href="classNAV_1_1VectorNavBinaryConverter.html#a9e803c0f9e15624b07f2b91961f22ada">NAV::VectorNavBinaryConverter::save</a></div><div class="ttdeci">json save() const override</div><div class="ttdoc">Saves the node into a json object.</div></div>

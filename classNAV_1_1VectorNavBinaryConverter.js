@@ -1,5 +1,12 @@
 var classNAV_1_1VectorNavBinaryConverter =
 [
+    [ "OutputType", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785", [
+      [ "ImuObs", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785ae1ae4321732ea2406f0422bf1b4bb9c1", null ],
+      [ "ImuObsWDelta", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a032553d6ba6a1921a71763a1ee1b5726", null ],
+      [ "PosVelAtt", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a950841c99d24c4239f5c5634ea17c0df", null ],
+      [ "GnssObs", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a465c896bb511593ec0a9fed5f8ffcd76", null ],
+      [ "COUNT", "classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785a4905ac9d6a22bdfc1ae096094ce6248d", null ]
+    ] ],
     [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html#a00217d4178b0501ee94789c477eb3efd", null ],
     [ "~VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html#ac1b13e096313f758f17e9740bca1f227", null ],
     [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html#a151696c0119de6d76ce65a8e80d8eb50", null ],

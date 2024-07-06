@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -117,7 +138,7 @@ $(function(){initNavTree('VanLoan_8hpp.html',''); initResizable(); });
 </div><!--header-->
 <div class="contents">
 
-<p>Van Loan Method <a class="el" href="citelist.html#CITEREF_Loan1978">[45]</a>.  
+<p>Van Loan Method <a class="el" href="citelist.html#CITEREF_Loan1978">[46]</a>.  
 <a href="#details">More...</a></p>
 
 <p><a href="VanLoan_8hpp_source.html">Go to the source code of this file.</a></p>
@@ -130,7 +151,7 @@ Functions</h2></td></tr>
 <tr class="separator:a93f07bcc88dc2f23ed40753bebddec9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Van Loan Method <a class="el" href="citelist.html#CITEREF_Loan1978">[45]</a>. </p>
+<div class="textblock"><p>Van Loan Method <a class="el" href="citelist.html#CITEREF_Loan1978">[46]</a>. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-01-11 </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -185,38 +206,38 @@ template&lt;typename DerivedF , typename DerivedG , typename DerivedW &gt; </div
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A pair with the matrices {𝚽, 𝐐}</dd></dl>
 <ol type="1">
-<li>Form a <img class="formulaInl" alt="$ 2n \times 2n $" src="form_72.svg" width="60" height="14"/> matrix called <img class="formulaInl" alt="$ \mathbf{A} $" src="form_73.svg" width="16" height="14"/> ( <img class="formulaInl" alt="$ n $" src="form_74.svg" width="11" height="11"/> is the dimension of <img class="formulaInl" alt="$ \mathbf{x} $" src="form_75.svg" width="11" height="11"/> and <img class="formulaInl" alt="$ \mathbf{W} $" src="form_76.svg" width="21" height="14"/> is the power spectral density of the noise <img class="formulaInl" alt="$ W(t) $" src="form_77.svg" width="39" height="19"/>) <a class="anchor" id="eq-Loan-A"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Loan-A}
+<li>Form a \( 2n \times 2n \) matrix called \( \mathbf{A} \) ( \( n \) is the dimension of \( \mathbf{x} \) and \( \mathbf{W} \) is the power spectral density of the noise \( W(t) \)) <a class="anchor" id="eq-Loan-A"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} &amp; \mathbf{G} \mathbf{W} \mathbf{G} \\
                                 \mathbf{0} &amp;            \mathbf{F}^T          \end{bmatrix} \Delta t
-\end{equation}" src="form_78.svg" width="1561" height="42"/>
+\end{equation}
 </p>
 </li>
-<li>Calculate the exponential of <img class="formulaInl" alt="$ \mathbf{A} $" src="form_73.svg" width="16" height="14"/> <a class="anchor" id="eq-Loan-B"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Loan-B}
+<li>Calculate the exponential of \( \mathbf{A} \) <a class="anchor" id="eq-Loan-B"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Loan-B}
   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
                                             \dots          &amp; \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
                                             \hdashline[2pt/2pt] &amp;                                  \\[-2mm]
                                             \mathbf{0}          &amp; \mathbf{\Phi}^T                     \end{array} \right]
                                        = \begin{bmatrix} \mathbf{B}_{11} &amp; \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} &amp; \mathbf{B}_{22} \end{bmatrix}
-\end{equation}" src="form_79.svg" width="1661" height="67"/>
+\end{equation}
 </p>
 </li>
-<li>Calculate the state transition matrix <img class="formulaInl" alt="$ \mathbf{\Phi} $" src="form_80.svg" width="14" height="14"/> as <a class="anchor" id="eq-Loan-Phi"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Loan-Phi}
+<li>Calculate the state transition matrix \( \mathbf{\Phi} \) as <a class="anchor" id="eq-Loan-Phi"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
-\end{equation}" src="form_81.svg" width="1505" height="21"/>
+\end{equation}
 </p>
 </li>
-<li>Calculate the process noise covariance matrix <img class="formulaInl" alt="$ \mathbf{Q} $" src="form_82.svg" width="14" height="16"/> as <a class="anchor" id="eq-Loan-Q"></a> <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-Loan-Q}
+<li>Calculate the process noise covariance matrix \( \mathbf{Q} \) as <a class="anchor" id="eq-Loan-Q"></a> <p class="formulaDsp">
+\begin{equation} \label{eq:eq-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
-\end{equation}" src="form_83.svg" width="1512" height="19"/>
+\end{equation}
 </p>
 </li>
 </ol>
-<dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_Loan1978">[45]</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_Loan1978">[46]</a> </dd></dl>
 
 </div>
 </div>

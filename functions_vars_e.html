@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -124,9 +145,11 @@ $(function(){initNavTree('functions_vars_e.html',''); initResizable(); });
 <li>e_accel&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#a6f17d0c00dc8493f851870a37a5f00f1">NAV::Orbit::PosVelAccel</a></li>
 <li>e_accelDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#a1956b42eb99ddde364731656472d8b80">NAV::ImuObsSimulated</a></li>
 <li>e_angularRateDynamics&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#a315ea7549a15747772b2fcfe70862b0c">NAV::ImuObsSimulated</a></li>
+<li>e_approxPos&#160;:&#160;<a class="el" href="structNAV_1_1GnssObs_1_1ReceiverInfo.html#ad77ac10ba50a7f493a40185ed56fb8bb">NAV::GnssObs::ReceiverInfo</a></li>
 <li>e_omega_ie&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#a1d78340bc0fd69db0859626fadb22270">NAV::InsConst&lt; Scalar &gt;</a></li>
-<li>e_pos&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74">NAV::Orbit::Pos</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184">NAV::Orbit::PosVelAccel</a>, <a class="el" href="structNAV_1_1Receiver.html#a5aea70e8e03b0feeb5623abeb1c1dc49">NAV::Receiver&lt; ReceiverType &gt;</a></li>
+<li>e_pos&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1Pos.html#a64ecdf24d37d30c6a88fe78acb13ce74">NAV::Orbit::Pos</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#aa7332cfbe3fa683022de373fd19fb63b">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#ae68d95155e3bba831e5544a36facf184">NAV::Orbit::PosVelAccel</a></li>
 <li>e_position&#160;:&#160;<a class="el" href="structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#ad9cdc0bc477abe30d4bac9461df2e50c">NAV::gui::widgets::PositionWithFrame</a></li>
+<li>e_posMarker&#160;:&#160;<a class="el" href="structNAV_1_1Receiver.html#acba871d5bc7ae43d7537845bc6aa9301">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>e_squared&#160;:&#160;<a class="el" href="classNAV_1_1InsConst_1_1GRS80.html#a4b3261d52839509636b1a08f9cb8eb86">NAV::InsConst&lt; Scalar &gt;::GRS80</a>, <a class="el" href="classNAV_1_1InsConst_1_1PZ90.html#aad1c1b02852e9c8982fa6c04d193189d">NAV::InsConst&lt; Scalar &gt;::PZ90</a>, <a class="el" href="classNAV_1_1InsConst_1_1WGS84.html#a95a6aa5451f19ea1626b94ebf5ee9bf0">NAV::InsConst&lt; Scalar &gt;::WGS84</a></li>
 <li>e_vel&#160;:&#160;<a class="el" href="structNAV_1_1Orbit_1_1PosVel.html#a250906fcd03b6643547604baf198a74a">NAV::Orbit::PosVel</a>, <a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html#acd6bc09c66841dab04b36197abcf99c5">NAV::Orbit::PosVelAccel</a>, <a class="el" href="structNAV_1_1Receiver.html#ad7930a781b010e1221c5a0ce26c7aa3d">NAV::Receiver&lt; ReceiverType &gt;</a></li>
 <li>eastWest&#160;:&#160;<a class="el" href="structNAV_1_1CommonLog_1_1LocalPosition.html#ab9454b60a45ded170e1eac034424381c">NAV::CommonLog::LocalPosition</a></li>

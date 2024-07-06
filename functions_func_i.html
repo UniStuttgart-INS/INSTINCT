@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -116,10 +137,9 @@ $(function(){initNavTree('functions_func_i.html',''); initResizable(); });
 <h3><a id="index_i" name="index_i"></a>- i -</h3><ul>
 <li>ignore()&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#a2b347e1cc8a3b22b45f9753d41937c57">NAV::FileReader</a></li>
 <li>Imu()&#160;:&#160;<a class="el" href="classNAV_1_1Imu.html#ae7876bd5558bb81bad07ae23b99188ef">NAV::Imu</a></li>
-<li>ImuDataLogger()&#160;:&#160;<a class="el" href="classNAV_1_1ImuDataLogger.html#a6d4e6a7654bcc1e31efb239d65ae5764">NAV::ImuDataLogger</a></li>
 <li>ImuFile()&#160;:&#160;<a class="el" href="classNAV_1_1ImuFile.html#adabd7ca74d283f35b6938ac366cb682d">NAV::ImuFile</a></li>
 <li>ImuFusion()&#160;:&#160;<a class="el" href="classNAV_1_1ImuFusion.html#aa10bf10a42dd65931325eb6d90fe0c7a">NAV::ImuFusion</a></li>
-<li>ImuIntegrator()&#160;:&#160;<a class="el" href="classNAV_1_1ImuIntegrator.html#aaf719b6eb5696c8442da77cd3ad40408">NAV::ImuIntegrator</a></li>
+<li>ImuIntegrator()&#160;:&#160;<a class="el" href="classNAV_1_1ImuIntegrator.html#a68e0a690f2291b53275b14aace7566c3">NAV::ImuIntegrator</a></li>
 <li>ImuObs()&#160;:&#160;<a class="el" href="classNAV_1_1ImuObs.html#acb11ce2e49154e4fa9e7ac41ce0873e5">NAV::ImuObs</a></li>
 <li>ImuObsSimulated()&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsSimulated.html#ae4463748541428937f500b96d1151172">NAV::ImuObsSimulated</a></li>
 <li>ImuObsWDelta()&#160;:&#160;<a class="el" href="classNAV_1_1ImuObsWDelta.html#a7dc176054297b0721cf0b4b403b82684">NAV::ImuObsWDelta</a></li>
@@ -127,7 +147,7 @@ $(function(){initNavTree('functions_func_i.html',''); initResizable(); });
 <li>ImuSimulator()&#160;:&#160;<a class="el" href="classNAV_1_1ImuSimulator.html#a0cdda293eaa2a12f8cf26abf5434ca6d">NAV::ImuSimulator</a></li>
 <li>IncomingLink()&#160;:&#160;<a class="el" href="structNAV_1_1InputPin_1_1IncomingLink.html#a8d9007126f04b09001bc577aa5e0d63f">NAV::InputPin::IncomingLink</a></li>
 <li>IncrementalLeastSquares()&#160;:&#160;<a class="el" href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">NAV::IncrementalLeastSquares&lt; Scalar &gt;</a></li>
-<li>initialize()&#160;:&#160;<a class="el" href="classNAV_1_1CommonLog.html#aac5be9f9fcd88cf882f9c0ab2f393def">NAV::CommonLog</a>, <a class="el" href="classNAV_1_1FileReader.html#a06892e4159fb29a8ffa46b172db0fa4a">NAV::FileReader</a>, <a class="el" href="classNAV_1_1FileWriter.html#af9606664257b3bb0d6c78963feadea87">NAV::FileWriter</a>, <a class="el" href="classNAV_1_1Node.html#a44b546c8c838cd149053ccd352a51c19">NAV::Node</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#ae109233ad24014bc319091c8c7725a2e">NAV::SPP::KalmanFilter</a></li>
+<li>initialize()&#160;:&#160;<a class="el" href="classNAV_1_1AntexReader.html#aa3735255ca5a819be7cafb1b5b089502">NAV::AntexReader</a>, <a class="el" href="classNAV_1_1CommonLog.html#aac5be9f9fcd88cf882f9c0ab2f393def">NAV::CommonLog</a>, <a class="el" href="classNAV_1_1FileReader.html#a06892e4159fb29a8ffa46b172db0fa4a">NAV::FileReader</a>, <a class="el" href="classNAV_1_1FileWriter.html#af9606664257b3bb0d6c78963feadea87">NAV::FileWriter</a>, <a class="el" href="classNAV_1_1Node.html#a44b546c8c838cd149053ccd352a51c19">NAV::Node</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#ae109233ad24014bc319091c8c7725a2e">NAV::SPP::KalmanFilter</a></li>
 <li>Input()&#160;:&#160;<a class="el" href="classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a6856b82bc6d800ecf8cfcb3d36cb7aa8">ax::NodeEditor::Utilities::BlueprintNodeBuilder</a></li>
 <li>InputPin()&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#a24529872b6e9fe35100e4f9afb756aec">NAV::InputPin</a></li>
 <li>inputPinFromId()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a5c87747edf53f7082899c45d3c307d98">NAV::Node</a></li>
@@ -135,7 +155,7 @@ $(function(){initNavTree('functions_func_i.html',''); initResizable(); });
 <li>InsConst()&#160;:&#160;<a class="el" href="classNAV_1_1InsConst.html#aa62e1279d221e7bd702e5867951f8713">NAV::InsConst&lt; Scalar &gt;</a></li>
 <li>insert()&#160;:&#160;<a class="el" href="classNAV_1_1IonosphericCorrections.html#ab06e66024ae2ef91327b2a909200f9ff">NAV::IonosphericCorrections</a>, <a class="el" href="classNAV_1_1TsDeque.html#aa84eb1be1822ff509d78e70c35e5376f">NAV::TsDeque&lt; T, Alloc &gt;</a></li>
 <li>InsStatus()&#160;:&#160;<a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#ae29fa69be7602030ddbfe5dab4987bea">NAV::vendor::vectornav::InsStatus</a></li>
-<li>InsTime()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#a130cdb372d39679fac7a4aee87db1385">NAV::InsTime</a></li>
+<li>InsTime()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#af3513b43d02a6ac8ae99231098be9a26">NAV::InsTime</a></li>
 <li>InsTime_GPSweekTow()&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__GPSweekTow.html#aa2445e0178f363e7da40f9692c86d803">NAV::InsTime_GPSweekTow</a></li>
 <li>InsTime_JD()&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__JD.html#a30f4d0d4c31d997c2bdf28c12e1dca9f">NAV::InsTime_JD</a></li>
 <li>InsTime_MJD()&#160;:&#160;<a class="el" href="structNAV_1_1InsTime__MJD.html#adef450c8656b894d42f9fcd4768b697b">NAV::InsTime_MJD</a></li>
@@ -153,9 +173,11 @@ $(function(){initNavTree('functions_func_i.html',''); initResizable(); });
 <li>isInfiniteBuffer()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer.html#a0426c38283c5b64258b53f4694895580">NAV::ScrollingBuffer&lt; T, _Padding &gt;</a></li>
 <li>isInitialized()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a0515c9a8e741151b1e632baa12883011">NAV::Node</a>, <a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html#aebaa1c3199a9f1be470ff43825c38fe4">NAV::SPP::KalmanFilter</a></li>
 <li>isLeapYear()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#ae871d9e640c4d6fec4920c78df34efb9">NAV::InsTime</a></li>
+<li>isNISenabled()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#ac6e45ab05460bbb66f87f4746b7be41a">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>isObsTypeUsed()&#160;:&#160;<a class="el" href="classNAV_1_1ObservationFilter.html#a770fbd631361d2a12c3b646ff1ca302b">NAV::ObservationFilter</a></li>
 <li>isOnlyRealtime()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a02fa8f854e97ba2c25898293166013d0">NAV::Node</a></li>
 <li>isPinLinked()&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#a5101662f712aa87eb209dd9b62a7b57c">NAV::InputPin</a>, <a class="el" href="classNAV_1_1OutputPin.html#aa5370717798d29d381f3a09a43646cd9">NAV::OutputPin</a></li>
+<li>isPreUpdateSaved()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a49e8b832ab029c0b140106e12efefd87">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>isSatelliteAllowed()&#160;:&#160;<a class="el" href="classNAV_1_1ObservationFilter.html#a332a4ea6d725136a29f987e07f9d1ce9">NAV::ObservationFilter</a></li>
 <li>isTransient()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#af426cb2306c13da741f5e77868df6848">NAV::Node</a></li>
 <li>Iterator()&#160;:&#160;<a class="el" href="classNAV_1_1ScrollingBuffer_1_1Iterator.html#a260071f94aca21e400d89ead4b948a18">NAV::ScrollingBuffer&lt; T, _Padding &gt;::Iterator</a></li>

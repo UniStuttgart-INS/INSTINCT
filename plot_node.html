@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -114,7 +135,7 @@ $(function(){initNavTree('plot_node.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Plot Node</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>TODO: <img class="formulaInl" alt="$ \textcolor{red}{\text{TO BE ADDED SOON.}} $" src="form_85.svg" width="187" height="16"/> Node currently undergoing changes.</p>
+<div class="textblock"><p>TODO: \( \textcolor{red}{\text{TO BE ADDED SOON.}} \) Node currently undergoing changes.</p>
 <p>For now, check out some examples that also give a brief introduction on how to use the Node: </p><blockquote class="doxtable">
 <p>Very Basic: <a class="el" href="getting_started.html#getting_started_ex1">EXAMPLE 1: Build a Flow</a> and <a class="el" href="getting_started.html#getting_started_ex2">EXAMPLE 2: Node Settings and run Flow</a></p>
 <p>A few more Details in the IMU Simulator Node: <a class="el" href="imu_simulator_node.html#imu_simulator_node_example_flow">Example Flow</a> </p>

@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -137,29 +158,67 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>staticDescriptorCou
 <tr class="memdesc:ab570d7cb85dd799f0a214346a543fa60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
 <tr class="separator:ab570d7cb85dd799f0a214346a543fa60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1PosVel"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1PosVel')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1PosVel.html">NAV::PosVel</a></td></tr>
+<tr class="memitem:a9e6edbc9967e1a105e49e7edd4f87083 inherit pub_methods_classNAV_1_1PosVel" id="r_a9e6edbc9967e1a105e49e7edd4f87083"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1e">States::StateKeys</a>, <a class="el" href="structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1e">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:a9e6edbc9967e1a105e49e7edd4f87083 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in ECEF frame. <br /></td></tr>
+<tr class="separator:a9e6edbc9967e1a105e49e7edd4f87083 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abceaa6b3307686c3d86b9c84d6b7cf11 inherit pub_methods_classNAV_1_1PosVel" id="r_abceaa6b3307686c3d86b9c84d6b7cf11"><td class="memItemLeft" align="right" valign="top">
 const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>e_velocity</b> () const</td></tr>
 <tr class="memdesc:abceaa6b3307686c3d86b9c84d6b7cf11 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the velocity in [m/s], in earth coordinates. <br /></td></tr>
 <tr class="separator:abceaa6b3307686c3d86b9c84d6b7cf11 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27eb434ba8c6fb077351f4e265b4d598 inherit pub_methods_classNAV_1_1PosVel" id="r_a27eb434ba8c6fb077351f4e265b4d598"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_velocityStdev</b> () const</td></tr>
+<tr class="memdesc:a27eb434ba8c6fb077351f4e265b4d598 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the velocity in [m/s], in earth coordinates. <br /></td></tr>
+<tr class="separator:a27eb434ba8c6fb077351f4e265b4d598 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7a656df2dcb5930acdec6a8745b71c0 inherit pub_methods_classNAV_1_1PosVel" id="r_ac7a656df2dcb5930acdec6a8745b71c0"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1e">States::StateKeys</a>, <a class="el" href="structNAV_1_1PosVel_1_1States.html#a3f00c24ffd4478aadfa68be70dcfbd1e">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:ac7a656df2dcb5930acdec6a8745b71c0 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in local navigation frame. <br /></td></tr>
+<tr class="separator:ac7a656df2dcb5930acdec6a8745b71c0 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f7c98f2a86399d9eed559b63f216773 inherit pub_methods_classNAV_1_1PosVel" id="r_a0f7c98f2a86399d9eed559b63f216773"><td class="memItemLeft" align="right" valign="top">
 const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>n_velocity</b> () const</td></tr>
 <tr class="memdesc:a0f7c98f2a86399d9eed559b63f216773 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the velocity in [m/s], in navigation coordinates. <br /></td></tr>
 <tr class="separator:a0f7c98f2a86399d9eed559b63f216773 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8232cb6b757875309e83dc373e917829 inherit pub_methods_classNAV_1_1PosVel" id="r_a8232cb6b757875309e83dc373e917829"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_velocityStdev</b> () const</td></tr>
+<tr class="memdesc:a8232cb6b757875309e83dc373e917829 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the velocity in [m/s], in navigation coordinates. <br /></td></tr>
+<tr class="separator:a8232cb6b757875309e83dc373e917829 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fa30de173bf628ca07c5036f2f8238 inherit pub_methods_classNAV_1_1PosVel" id="r_a88fa30de173bf628ca07c5036f2f8238"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a88fa30de173bf628ca07c5036f2f8238 inherit pub_methods_classNAV_1_1PosVel"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#a88fa30de173bf628ca07c5036f2f8238">setPosVelCovarianceMatrix_e</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_covarianceMatrix)</td></tr>
+<tr class="memdesc:a88fa30de173bf628ca07c5036f2f8238 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:a88fa30de173bf628ca07c5036f2f8238 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd6caf3706e34826637f9e475eb41cb4 inherit pub_methods_classNAV_1_1PosVel" id="r_afd6caf3706e34826637f9e475eb41cb4"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:afd6caf3706e34826637f9e475eb41cb4 inherit pub_methods_classNAV_1_1PosVel"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#afd6caf3706e34826637f9e475eb41cb4">setPosVelCovarianceMatrix_n</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_covarianceMatrix)</td></tr>
+<tr class="memdesc:afd6caf3706e34826637f9e475eb41cb4 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in NED coordinates.  <br /></td></tr>
+<tr class="separator:afd6caf3706e34826637f9e475eb41cb4 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a533eb88c74c8eb2156ca45190b7d085f inherit pub_methods_classNAV_1_1PosVel" id="r_a533eb88c74c8eb2156ca45190b7d085f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#a533eb88c74c8eb2156ca45190b7d085f">setVelocity_e</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1PosVel.html#abceaa6b3307686c3d86b9c84d6b7cf11">e_velocity</a>)</td></tr>
 <tr class="memdesc:a533eb88c74c8eb2156ca45190b7d085f inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Velocity in the earth frame.  <br /></td></tr>
 <tr class="separator:a533eb88c74c8eb2156ca45190b7d085f inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f5262374888929c5eb50e87e8d1885d inherit pub_methods_classNAV_1_1PosVel" id="r_a9f5262374888929c5eb50e87e8d1885d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#a9f5262374888929c5eb50e87e8d1885d">setVelocity_n</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1PosVel.html#a0f7c98f2a86399d9eed559b63f216773">n_velocity</a>)</td></tr>
 <tr class="memdesc:a9f5262374888929c5eb50e87e8d1885d inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Velocity in the NED frame.  <br /></td></tr>
 <tr class="separator:a9f5262374888929c5eb50e87e8d1885d inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f43e04215a4daa46736b6e9f7cfac99 inherit pub_methods_classNAV_1_1PosVel" id="r_a0f43e04215a4daa46736b6e9f7cfac99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#a0f43e04215a4daa46736b6e9f7cfac99">setVelocityAndStdDev_e</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1PosVel.html#abceaa6b3307686c3d86b9c84d6b7cf11">e_velocity</a>, const Eigen::Matrix3d &amp;e_velocityCovarianceMatrix)</td></tr>
+<tr class="memdesc:a0f43e04215a4daa46736b6e9f7cfac99 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Velocity in ECEF coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:a0f43e04215a4daa46736b6e9f7cfac99 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2d2b36fac722f1308841d429dc37761 inherit pub_methods_classNAV_1_1PosVel" id="r_ad2d2b36fac722f1308841d429dc37761"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1PosVel.html#ad2d2b36fac722f1308841d429dc37761">setVelocityAndStdDev_n</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1PosVel.html#a0f7c98f2a86399d9eed559b63f216773">n_velocity</a>, const Eigen::Matrix3d &amp;n_velocityCovarianceMatrix)</td></tr>
+<tr class="memdesc:ad2d2b36fac722f1308841d429dc37761 inherit pub_methods_classNAV_1_1PosVel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Velocity in NED coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:ad2d2b36fac722f1308841d429dc37761 inherit pub_methods_classNAV_1_1PosVel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1Pos"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1Pos')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1Pos.html">NAV::Pos</a></td></tr>
 <tr class="memitem:af7cffacdd7a708e5b469755a0fd0eca0 inherit pub_methods_classNAV_1_1Pos" id="r_af7cffacdd7a708e5b469755a0fd0eca0"><td class="memItemLeft" align="right" valign="top">
 const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>altitude</b> () const</td></tr>
 <tr class="memdesc:af7cffacdd7a708e5b469755a0fd0eca0 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the altitude (height above ground) in [m]. <br /></td></tr>
 <tr class="separator:af7cffacdd7a708e5b469755a0fd0eca0 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bea954b07183c5223965450185d1bd7 inherit pub_methods_classNAV_1_1Pos" id="r_a9bea954b07183c5223965450185d1bd7"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a>, <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:a9bea954b07183c5223965450185d1bd7 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in ECEF frame. <br /></td></tr>
+<tr class="separator:a9bea954b07183c5223965450185d1bd7 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab40818b92e6497dfc38b024179466918 inherit pub_methods_classNAV_1_1Pos" id="r_ab40818b92e6497dfc38b024179466918"><td class="memItemLeft" align="right" valign="top">
 const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>e_position</b> () const</td></tr>
 <tr class="memdesc:ab40818b92e6497dfc38b024179466918 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the coordinates in [m]. <br /></td></tr>
 <tr class="separator:ab40818b92e6497dfc38b024179466918 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fd6384fd0ea0b9770c802f711f1abe6 inherit pub_methods_classNAV_1_1Pos" id="r_a0fd6384fd0ea0b9770c802f711f1abe6"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_positionStdev</b> () const</td></tr>
+<tr class="memdesc:a0fd6384fd0ea0b9770c802f711f1abe6 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in ECEF frame coordinates in [m]. <br /></td></tr>
+<tr class="separator:a0fd6384fd0ea0b9770c802f711f1abe6 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82b60003dbeabbe4ce59ff9f7f93d577 inherit pub_methods_classNAV_1_1Pos" id="r_a82b60003dbeabbe4ce59ff9f7f93d577"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#a82b60003dbeabbe4ce59ff9f7f93d577">e_Quat_n</a> () const</td></tr>
 <tr class="memdesc:a82b60003dbeabbe4ce59ff9f7f93d577 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from navigation to Earth-fixed frame.  <br /></td></tr>
 <tr class="separator:a82b60003dbeabbe4ce59ff9f7f93d577 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,16 +234,41 @@ const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><
 const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>longitude</b> () const</td></tr>
 <tr class="memdesc:afaf68f4b7c48bdd5eb5b4375c591ec38 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the longitude λ in [rad]. <br /></td></tr>
 <tr class="separator:afaf68f4b7c48bdd5eb5b4375c591ec38 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c727c5c529eb11a86879ba6ade27756 inherit pub_methods_classNAV_1_1Pos" id="r_a6c727c5c529eb11a86879ba6ade27756"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a>, <a class="el" href="structNAV_1_1Pos_1_1States.html#ab507f02cff5c89f8e4cab7154171ede9">States::StateKeys</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_CovarianceMatrix</b> () const</td></tr>
+<tr class="memdesc:a6c727c5c529eb11a86879ba6ade27756 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in local navigation frame. <br /></td></tr>
+<tr class="separator:a6c727c5c529eb11a86879ba6ade27756 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd3f38485096d92ea9101079147950c7 inherit pub_methods_classNAV_1_1Pos" id="r_acd3f38485096d92ea9101079147950c7"><td class="memItemLeft" align="right" valign="top">
+std::optional&lt; std::reference_wrapper&lt; const Eigen::Vector3d &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_positionStdev</b> () const</td></tr>
+<tr class="memdesc:acd3f38485096d92ea9101079147950c7 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in local navigation frame coordinates in [m]. <br /></td></tr>
+<tr class="separator:acd3f38485096d92ea9101079147950c7 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab9530d76d0352ca3f4370e69a67d9d2 inherit pub_methods_classNAV_1_1Pos" id="r_aab9530d76d0352ca3f4370e69a67d9d2"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#aab9530d76d0352ca3f4370e69a67d9d2">n_Quat_e</a> () const</td></tr>
 <tr class="memdesc:aab9530d76d0352ca3f4370e69a67d9d2 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from Earth-fixed frame to navigation.  <br /></td></tr>
 <tr class="separator:aab9530d76d0352ca3f4370e69a67d9d2 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb82482e4766ddb147b253a1bdf3dba1 inherit pub_methods_classNAV_1_1Pos" id="r_afb82482e4766ddb147b253a1bdf3dba1"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:afb82482e4766ddb147b253a1bdf3dba1 inherit pub_methods_classNAV_1_1Pos"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#afb82482e4766ddb147b253a1bdf3dba1">setPosCovarianceMatrix_e</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_covarianceMatrix)</td></tr>
+<tr class="memdesc:afb82482e4766ddb147b253a1bdf3dba1 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:afb82482e4766ddb147b253a1bdf3dba1 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99993ef71f1978ee758da707f61c7051 inherit pub_methods_classNAV_1_1Pos" id="r_a99993ef71f1978ee758da707f61c7051"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a99993ef71f1978ee758da707f61c7051 inherit pub_methods_classNAV_1_1Pos"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#a99993ef71f1978ee758da707f61c7051">setPosCovarianceMatrix_n</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_covarianceMatrix)</td></tr>
+<tr class="memdesc:a99993ef71f1978ee758da707f61c7051 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Covariance matrix in ECEF coordinates.  <br /></td></tr>
+<tr class="separator:a99993ef71f1978ee758da707f61c7051 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb37079c91d9713756f460599d005beb inherit pub_methods_classNAV_1_1Pos" id="r_adb37079c91d9713756f460599d005beb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#adb37079c91d9713756f460599d005beb">setPosition_e</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1Pos.html#ab40818b92e6497dfc38b024179466918">e_position</a>)</td></tr>
 <tr class="memdesc:adb37079c91d9713756f460599d005beb inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in coordinates.  <br /></td></tr>
 <tr class="separator:adb37079c91d9713756f460599d005beb inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3d22d46c55cecd0647109b77835813b inherit pub_methods_classNAV_1_1Pos" id="r_ae3d22d46c55cecd0647109b77835813b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#ae3d22d46c55cecd0647109b77835813b">setPosition_lla</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1Pos.html#abbe7fbe77f4fd525dcd2b7f923fc24c6">lla_position</a>)</td></tr>
 <tr class="memdesc:ae3d22d46c55cecd0647109b77835813b inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position lla object.  <br /></td></tr>
 <tr class="separator:ae3d22d46c55cecd0647109b77835813b inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41f1f12553ffb7c1271f020e9d3d6ab0 inherit pub_methods_classNAV_1_1Pos" id="r_a41f1f12553ffb7c1271f020e9d3d6ab0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#a41f1f12553ffb7c1271f020e9d3d6ab0">setPositionAndStdDev_e</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1Pos.html#ab40818b92e6497dfc38b024179466918">e_position</a>, const Eigen::Matrix3d &amp;e_positionCovarianceMatrix)</td></tr>
+<tr class="memdesc:a41f1f12553ffb7c1271f020e9d3d6ab0 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in ECEF coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:a41f1f12553ffb7c1271f020e9d3d6ab0 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6a28a0d8c6b2126e27cd4cad6303c29 inherit pub_methods_classNAV_1_1Pos" id="r_aa6a28a0d8c6b2126e27cd4cad6303c29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Pos.html#aa6a28a0d8c6b2126e27cd4cad6303c29">setPositionAndStdDev_lla</a> (const Eigen::Vector3d &amp;<a class="el" href="classNAV_1_1Pos.html#abbe7fbe77f4fd525dcd2b7f923fc24c6">lla_position</a>, const Eigen::Matrix3d &amp;n_positionCovarianceMatrix)</td></tr>
+<tr class="memdesc:aa6a28a0d8c6b2126e27cd4cad6303c29 inherit pub_methods_classNAV_1_1Pos"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Position in LLA coordinates and its standard deviation.  <br /></td></tr>
+<tr class="separator:aa6a28a0d8c6b2126e27cd4cad6303c29 inherit pub_methods_classNAV_1_1Pos"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
+<tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
+<tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">
 virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dynamicDataDescriptors</b> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data. <br /></td></tr>
@@ -308,70 +392,6 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>Q</b></td></tr>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>ratio</b></td></tr>
 <tr class="memdesc:a4ced8f97a54152a9d0eef1a5b7298fbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ratio. <br /></td></tr>
 <tr class="separator:a4ced8f97a54152a9d0eef1a5b7298fbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25d70e96774143d9ca07c4e93dffed39" id="r_a25d70e96774143d9ca07c4e93dffed39"><td class="memItemLeft" align="right" valign="top"><a id="a25d70e96774143d9ca07c4e93dffed39" name="a25d70e96774143d9ca07c4e93dffed39"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sddn</b></td></tr>
-<tr class="memdesc:a25d70e96774143d9ca07c4e93dffed39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation dn [m]. <br /></td></tr>
-<tr class="separator:a25d70e96774143d9ca07c4e93dffed39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b6daf96552e1155b0c795d988e4a887" id="r_a5b6daf96552e1155b0c795d988e4a887"><td class="memItemLeft" align="right" valign="top"><a id="a5b6daf96552e1155b0c795d988e4a887" name="a5b6daf96552e1155b0c795d988e4a887"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sded</b></td></tr>
-<tr class="memdesc:a5b6daf96552e1155b0c795d988e4a887"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation ed [m]. <br /></td></tr>
-<tr class="separator:a5b6daf96552e1155b0c795d988e4a887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6a5a8bb01b56e299395d03f12be61a5" id="r_ab6a5a8bb01b56e299395d03f12be61a5"><td class="memItemLeft" align="right" valign="top"><a id="ab6a5a8bb01b56e299395d03f12be61a5" name="ab6a5a8bb01b56e299395d03f12be61a5"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdne</b></td></tr>
-<tr class="memdesc:ab6a5a8bb01b56e299395d03f12be61a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation ne [m]. <br /></td></tr>
-<tr class="separator:ab6a5a8bb01b56e299395d03f12be61a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae1e302601ef272f8fa89cd36fbee809" id="r_aae1e302601ef272f8fa89cd36fbee809"><td class="memItemLeft" align="right" valign="top"><a id="aae1e302601ef272f8fa89cd36fbee809" name="aae1e302601ef272f8fa89cd36fbee809"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>sdNED</b></td></tr>
-<tr class="memdesc:aae1e302601ef272f8fa89cd36fbee809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation North East Down [m]. <br /></td></tr>
-<tr class="separator:aae1e302601ef272f8fa89cd36fbee809"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdf4bd18c9619c448231b09c88468272" id="r_acdf4bd18c9619c448231b09c88468272"><td class="memItemLeft" align="right" valign="top"><a id="acdf4bd18c9619c448231b09c88468272" name="acdf4bd18c9619c448231b09c88468272"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvdn</b></td></tr>
-<tr class="memdesc:acdf4bd18c9619c448231b09c88468272"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity down-north [m/s]. <br /></td></tr>
-<tr class="separator:acdf4bd18c9619c448231b09c88468272"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c2c44c985807117409f11beb0cae219" id="r_a3c2c44c985807117409f11beb0cae219"><td class="memItemLeft" align="right" valign="top"><a id="a3c2c44c985807117409f11beb0cae219" name="a3c2c44c985807117409f11beb0cae219"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdved</b></td></tr>
-<tr class="memdesc:a3c2c44c985807117409f11beb0cae219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity east-down [m/s]. <br /></td></tr>
-<tr class="separator:a3c2c44c985807117409f11beb0cae219"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a5c887ddf02cdd1c28425891ca9860c" id="r_a9a5c887ddf02cdd1c28425891ca9860c"><td class="memItemLeft" align="right" valign="top"><a id="a9a5c887ddf02cdd1c28425891ca9860c" name="a9a5c887ddf02cdd1c28425891ca9860c"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvne</b></td></tr>
-<tr class="memdesc:a9a5c887ddf02cdd1c28425891ca9860c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity north-east [m/s]. <br /></td></tr>
-<tr class="separator:a9a5c887ddf02cdd1c28425891ca9860c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02da5c6efa549be541decd6db30fcc81" id="r_a02da5c6efa549be541decd6db30fcc81"><td class="memItemLeft" align="right" valign="top"><a id="a02da5c6efa549be541decd6db30fcc81" name="a02da5c6efa549be541decd6db30fcc81"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvNED</b></td></tr>
-<tr class="memdesc:a02da5c6efa549be541decd6db30fcc81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity NED [m/s]. <br /></td></tr>
-<tr class="separator:a02da5c6efa549be541decd6db30fcc81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7536a271c8cb0f6f68809e984456d0fd" id="r_a7536a271c8cb0f6f68809e984456d0fd"><td class="memItemLeft" align="right" valign="top"><a id="a7536a271c8cb0f6f68809e984456d0fd" name="a7536a271c8cb0f6f68809e984456d0fd"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvxy</b></td></tr>
-<tr class="memdesc:a7536a271c8cb0f6f68809e984456d0fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity xy [m/s]. <br /></td></tr>
-<tr class="separator:a7536a271c8cb0f6f68809e984456d0fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a817580c1b8b739e72241eb8eef9da246" id="r_a817580c1b8b739e72241eb8eef9da246"><td class="memItemLeft" align="right" valign="top"><a id="a817580c1b8b739e72241eb8eef9da246" name="a817580c1b8b739e72241eb8eef9da246"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvXYZ</b></td></tr>
-<tr class="memdesc:a817580c1b8b739e72241eb8eef9da246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity XYZ [m/s]. <br /></td></tr>
-<tr class="separator:a817580c1b8b739e72241eb8eef9da246"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3207d7cbcf78e53fb75aaddc2eee7866" id="r_a3207d7cbcf78e53fb75aaddc2eee7866"><td class="memItemLeft" align="right" valign="top"><a id="a3207d7cbcf78e53fb75aaddc2eee7866" name="a3207d7cbcf78e53fb75aaddc2eee7866"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvyz</b></td></tr>
-<tr class="memdesc:a3207d7cbcf78e53fb75aaddc2eee7866"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity yz [m/s]. <br /></td></tr>
-<tr class="separator:a3207d7cbcf78e53fb75aaddc2eee7866"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d83124cedcdf0edc6962c295b881c9d" id="r_a5d83124cedcdf0edc6962c295b881c9d"><td class="memItemLeft" align="right" valign="top"><a id="a5d83124cedcdf0edc6962c295b881c9d" name="a5d83124cedcdf0edc6962c295b881c9d"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdvzx</b></td></tr>
-<tr class="memdesc:a5d83124cedcdf0edc6962c295b881c9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation velocity zx [m/s]. <br /></td></tr>
-<tr class="separator:a5d83124cedcdf0edc6962c295b881c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75d535a53d6d3abd28dc50e9a3937775" id="r_a75d535a53d6d3abd28dc50e9a3937775"><td class="memItemLeft" align="right" valign="top"><a id="a75d535a53d6d3abd28dc50e9a3937775" name="a75d535a53d6d3abd28dc50e9a3937775"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdxy</b></td></tr>
-<tr class="memdesc:a75d535a53d6d3abd28dc50e9a3937775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation xy [m]. <br /></td></tr>
-<tr class="separator:a75d535a53d6d3abd28dc50e9a3937775"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14192db7e47c77669bbbd506785a25e5" id="r_a14192db7e47c77669bbbd506785a25e5"><td class="memItemLeft" align="right" valign="top"><a id="a14192db7e47c77669bbbd506785a25e5" name="a14192db7e47c77669bbbd506785a25e5"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>sdXYZ</b></td></tr>
-<tr class="memdesc:a14192db7e47c77669bbbd506785a25e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation XYZ [m]. <br /></td></tr>
-<tr class="separator:a14192db7e47c77669bbbd506785a25e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaab43761fa1885491aebc62d564b78f9" id="r_aaab43761fa1885491aebc62d564b78f9"><td class="memItemLeft" align="right" valign="top"><a id="aaab43761fa1885491aebc62d564b78f9" name="aaab43761fa1885491aebc62d564b78f9"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdyz</b></td></tr>
-<tr class="memdesc:aaab43761fa1885491aebc62d564b78f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation yz [m]. <br /></td></tr>
-<tr class="separator:aaab43761fa1885491aebc62d564b78f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7243563eece79586ff38d05fbffa22e9" id="r_a7243563eece79586ff38d05fbffa22e9"><td class="memItemLeft" align="right" valign="top"><a id="a7243563eece79586ff38d05fbffa22e9" name="a7243563eece79586ff38d05fbffa22e9"></a>
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sdzx</b></td></tr>
-<tr class="memdesc:a7243563eece79586ff38d05fbffa22e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Deviation zx [m]. <br /></td></tr>
-<tr class="separator:a7243563eece79586ff38d05fbffa22e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
 <tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top">
 <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>insTime</b></td></tr>

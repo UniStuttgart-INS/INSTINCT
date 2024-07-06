@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -112,7 +133,8 @@ $(function(){initNavTree('ImuFusion_8hpp.html',''); initResizable(); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">ImuFusion.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -127,15 +149,50 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuFusion.html">NAV::ImuFusion</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines signals of sensors that provide the same signal-type to one signal.  <a href="classNAV_1_1ImuFusion.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1ImuFusion_1_1PinData.html">NAV::ImuFusion::PinData</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information about a sensor which is connected to a certain pin.  <a href="structNAV_1_1ImuFusion_1_1PinData.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a3b94af9f2ebfac60f7162806359c536d" id="r_a3b94af9f2ebfac60f7162806359c536d"><td class="memItemLeft" align="right" valign="top">constexpr const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b94af9f2ebfac60f7162806359c536d">NAV::to_string</a> (NAV::ImuFusion::ImuFusionType value)</td></tr>
+<tr class="separator:a3b94af9f2ebfac60f7162806359c536d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Combines signals of sensors that provide the same signal-type to one signal. </p>
 <dl class="section author"><dt>Author</dt><dd>M. Maier (<a href="#" onclick="location.href='mai'+'lto:'+'mar'+'ce'+'l.m'+'ai'+'er@'+'in'+'s.u'+'ni'+'-st'+'ut'+'tga'+'rt'+'.de'; return false;">marce<span class="obfuscator">.nosp@m.</span>l.ma<span class="obfuscator">.nosp@m.</span>ier@i<span class="obfuscator">.nosp@m.</span>ns.u<span class="obfuscator">.nosp@m.</span>ni-st<span class="obfuscator">.nosp@m.</span>uttg<span class="obfuscator">.nosp@m.</span>art.d<span class="obfuscator">.nosp@m.</span>e</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-03-24 </dd></dl>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a3b94af9f2ebfac60f7162806359c536d" name="a3b94af9f2ebfac60f7162806359c536d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b94af9f2ebfac60f7162806359c536d">&#9670;&#160;</a></span>to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr const char * NAV::to_string </td>
+          <td>(</td>
+          <td class="paramtype">NAV::ImuFusion::ImuFusionType</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Enum value to convert into text </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

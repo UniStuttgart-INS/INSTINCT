@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -137,7 +158,7 @@ $(function(){initNavTree('readAscii2Matrix_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1internal.html#a9511aaae545e0a198b9878e5fbb41bff">   23</a></span>[[nodiscard]] [[deprecated]] Eigen::MatrixXd <a class="code hl_function" href="namespaceNAV_1_1internal.html#a9511aaae545e0a198b9878e5fbb41bff">readAscii2Matrix</a>();</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>} <span class="comment">// namespace NAV::internal</span></div>
 <div class="ttc" id="aEigen_8hpp_html"><div class="ttname"><a href="Eigen_8hpp.html">Eigen.hpp</a></div><div class="ttdoc">Vector space operations.</div></div>
-<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GPT2Coeffs.hpp:21</div></div>
+<div class="ttc" id="anamespaceNAV_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1internal.html">NAV::internal</a></div><div class="ttdoc">EGM96 coefficients.</div><div class="ttdef"><b>Definition</b> GMFCoeffs.hpp:21</div></div>
 <div class="ttc" id="anamespaceNAV_1_1internal_html_a9511aaae545e0a198b9878e5fbb41bff"><div class="ttname"><a href="namespaceNAV_1_1internal.html#a9511aaae545e0a198b9878e5fbb41bff">NAV::internal::readAscii2Matrix</a></div><div class="ttdeci">Eigen::MatrixXd readAscii2Matrix()</div><div class="ttdoc">Read function for EGM96 coefficients.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

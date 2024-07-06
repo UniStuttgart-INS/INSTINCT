@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -123,10 +144,11 @@ $(function(){initNavTree('functions_func_d.html',''); initResizable(); });
 <li>deleteLink()&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#aca5644544ec86eabc3d1e1e570df502f">NAV::InputPin</a>, <a class="el" href="classNAV_1_1OutputPin.html#a219d2bf832baf0ea21c6c38fd338927a">NAV::OutputPin</a>, <a class="el" href="classNAV_1_1Pin.html#ac79bf605a2dba802169862cee11d953e">NAV::Pin</a></li>
 <li>deleteLinks()&#160;:&#160;<a class="el" href="classNAV_1_1OutputPin.html#a2225cc481d471fe8e368c771ba6318fd">NAV::OutputPin</a></li>
 <li>Demo()&#160;:&#160;<a class="el" href="classNAV_1_1Demo.html#a25d6a8df1888cf2428059016b677364e">NAV::Demo</a></li>
-<li>derivative()&#160;:&#160;<a class="el" href="classNAV_1_1CubicSpline.html#ab7fb0074703b08874a5b9bfc5ac64717">NAV::CubicSpline</a></li>
+<li>derivative()&#160;:&#160;<a class="el" href="classNAV_1_1CubicSpline.html#a69fb68746490256d0d88fbc65eb7a690">NAV::CubicSpline&lt; Scalar &gt;</a></li>
 <li>description()&#160;:&#160;<a class="el" href="structNAV_1_1Combiner_1_1Combination_1_1Term.html#acbc444868e4daa339f35a1dd2d7c53ef">NAV::Combiner::Combination::Term</a></li>
 <li>determineFileType()&#160;:&#160;<a class="el" href="classNAV_1_1FileReader.html#a3ecbf5dae335c7f153db4b39f48d57c8">NAV::FileReader</a></li>
 <li>differenceToUTC()&#160;:&#160;<a class="el" href="classNAV_1_1InsTime.html#a5cf07d3bde0cc6dd449c484b88269ffb">NAV::InsTime</a></li>
+<li>discardPreUpdate()&#160;:&#160;<a class="el" href="classNAV_1_1KeyedKalmanFilter.html#a43e1082ef52282e0e340cbda0c881a55">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</a></li>
 <li>dist_filter_sink()&#160;:&#160;<a class="el" href="classspdlog_1_1sinks_1_1dist__filter__sink.html#a306080c4527fd5793a4d282627a62cbd">spdlog::sinks::dist_filter_sink&lt; Mutex &gt;</a></li>
 <li>doDeinitialize()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">NAV::Node</a></li>
 <li>doDisable()&#160;:&#160;<a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">NAV::Node</a></li>

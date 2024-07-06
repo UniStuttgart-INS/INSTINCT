@@ -20,6 +20,27 @@
   <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+  <script type="text/javascript">
+window.MathJax = {
+  options: {
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process'
+  },
+  loader: {
+    load: ['[tex]/ams','[tex]/color','[tex]/colortbl']
+  },
+  tex: {
+    macros: {},
+    packages: ['base','configmacros','ams','color','colortbl']
+  }
+};
+window.MathJax = {
+    tex: {
+        tags: 'ams'
+    }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
@@ -120,6 +141,7 @@ $(function(){initNavTree('functions_vars_n.html',''); initResizable(); });
 <li>name&#160;:&#160;<a class="el" href="classNAV_1_1Colormap.html#aaf0fa887ebf81d6db2fedc4d016500e2">NAV::Colormap</a>, <a class="el" href="classNAV_1_1Node.html#aa175adec8045649de2cba57eefb184b8">NAV::Node</a>, <a class="el" href="classNAV_1_1Pin.html#a3712500dcc13207c821726378398aea2">NAV::Pin</a></li>
 <li>nDop&#160;:&#160;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1DOP.html#a7c2c63cc0caf220a76099c5b2566d4cb">NAV::vendor::vectornav::DOP</a></li>
 <li>neededForTemporalQueueCheck&#160;:&#160;<a class="el" href="classNAV_1_1InputPin.html#af61c91f121ca580c6e998afad57d6d97">NAV::InputPin</a></li>
+<li>NIS&#160;:&#160;<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#a02983ca7a67dedb9877d62310b760f04">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;::NISResult</a></li>
 <li>nMeasDopp&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#af9b49dcca4a86e6d48e58f24147a224a">NAV::SppSolution</a></li>
 <li>nMeasPsr&#160;:&#160;<a class="el" href="classNAV_1_1SppSolution.html#af5c2a36b190a4a121dd1bddd0cc51545">NAV::SppSolution</a></li>
 <li>nObservables&#160;:&#160;<a class="el" href="structNAV_1_1Observations.html#a3b4872ec7c1b1f152a531b182371369e">NAV::Observations</a></li>
