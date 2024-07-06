@@ -13,6 +13,7 @@
 
 #include "Algorithm.hpp"
 
+#include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
 #include <fmt/format.h>
 
 #include "internal/gui/widgets/EnumCombo.hpp"
@@ -234,8 +235,12 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 if (canCalculateVelocity(observations.nObservables[GnssObs::Doppler]))
                 {
                     sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, lsq.variance.block<3>(States::Vel, States::Vel));
+                    sppSol->setPosVelCovarianceMatrix_e(lsq.variance(States::PosVel, States::PosVel));
                 }
-                sppSol->setCovarianceMatrix(lsq.variance);
+                else
+                {
+                    sppSol->setPosCovarianceMatrix_e(lsq.variance(States::Pos, States::Pos));
+                }
 
                 sppSol->satData.reserve(observations.satellites.size());
                 for (const auto& [satSigId, signalObs] : observations.signals)
@@ -269,7 +274,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
             sppSol->setPositionAndStdDev_e(_receiver[Rover].e_posMarker, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Pos, States::Pos));
             sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Vel, States::Vel));
-            sppSol->setCovarianceMatrix(_kalmanFilter.getErrorCovarianceMatrix());
+            sppSol->setPosVelCovarianceMatrix_e(_kalmanFilter.getErrorCovarianceMatrix()(States::PosVel, States::PosVel));
 
             sppSol->satData.reserve(observations.satellites.size());
             for (const auto& [satSigId, signalObs] : observations.signals)

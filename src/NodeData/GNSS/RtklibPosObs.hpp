@@ -78,30 +78,51 @@ class RtklibPosObs : public PosVel
                  std::optional<double> sdvxy,
                  std::optional<double> sdvyz,
                  std::optional<double> sdvzx)
-        : Q(Q), ns(ns), sdxy(sdxy), sdyz(sdyz), sdzx(sdzx), sdne(sdne), sded(sded), sddn(sddn), age(age), ratio(ratio), sdvNED(std::move(sdvNED)), sdvXYZ(std::move(sdvXYZ)), sdvne(sdvne), sdved(sdved), sdvdn(sdvdn), sdvxy(sdvxy), sdvyz(sdvyz), sdvzx(sdvzx)
+        : Q(Q), ns(ns), age(age), ratio(ratio)
     {
         this->insTime = insTime;
 
-        if (e_position.has_value()) { this->setPosition_e(e_position.value()); }
-        else if (lla_position.has_value())
-        {
-            lla_position->head<2>() = deg2rad(lla_position->head<2>());
-            this->setPosition_lla(lla_position.value());
-        }
+        if (lla_position) { lla_position->head<2>() = deg2rad(lla_position->head<2>()); }
 
-        if (e_velocity.has_value()) { this->setVelocity_e(e_velocity.value()); }
-        else if (n_velocity.has_value()) { this->setVelocity_n(n_velocity.value()); }
+        if (e_position && sdXYZ && sdxy && sdzx && sdyz)
+        {
+            Eigen::Matrix3d cov;
+            cov << std::pow(sdXYZ->x(), 2), *sdxy, -(*sdzx),
+                -(*sdxy), std::pow(sdXYZ->y(), 2), *sdyz,
+                *sdzx, -(*sdyz), std::pow(sdXYZ->z(), 2);
+            this->setPositionAndStdDev_e(*e_position, cov);
+            this->setPosCovarianceMatrix_e(cov);
+        }
+        else if (lla_position && sdNED && sdne && sddn && sded)
+        {
+            Eigen::Matrix3d cov;
+            cov << std::pow(sdNED->x(), 2), *sdne, -(*sddn),
+                -(*sdne), std::pow(sdNED->y(), 2), *sded,
+                *sddn, -(*sded), std::pow(sdNED->z(), 2);
+            this->setPositionAndStdDev_lla(*lla_position, cov);
+            this->setPosCovarianceMatrix_n(cov);
+        }
+        else if (e_position) { this->setPosition_e(*e_position); }
+        else if (lla_position) { this->setPosition_lla(*lla_position); }
 
-        if (sdXYZ.has_value())
+        if (e_velocity && sdvXYZ && sdvxy && sdvzx && sdvyz)
         {
-            this->sdXYZ = sdXYZ.value();
-            this->sdNED = trafo::n_Quat_e(latitude(), longitude()) * sdXYZ.value();
+            Eigen::Matrix3d cov;
+            cov << std::pow(sdvXYZ->x(), 2), *sdvxy, -(*sdvzx),
+                -(*sdvxy), std::pow(sdvXYZ->y(), 2), *sdvyz,
+                *sdvzx, -(*sdvyz), std::pow(sdvXYZ->z(), 2);
+            this->setVelocityAndStdDev_e(*e_velocity, cov);
         }
-        else if (sdNED.has_value())
+        else if (n_velocity && sdvNED && sdvne && sdvdn && sdved)
         {
-            this->sdNED = sdNED.value();
-            this->sdXYZ = trafo::e_Quat_n(latitude(), longitude()) * sdNED.value();
+            Eigen::Matrix3d cov;
+            cov << std::pow(sdvNED->x(), 2), *sdvne, -(*sdvdn),
+                -(*sdvne), std::pow(sdvNED->y(), 2), *sdved,
+                *sdvdn, -(*sdved), std::pow(sdvNED->z(), 2);
+            this->setVelocityAndStdDev_n(*n_velocity, cov);
         }
+        else if (e_velocity) { this->setVelocity_e(*e_velocity); }
+        else if (n_velocity) { this->setVelocity_n(*n_velocity); }
     }
 #endif
 
@@ -128,32 +149,8 @@ class RtklibPosObs : public PosVel
         desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Q [-]");
         desc.emplace_back("ns [-]");
-        desc.emplace_back("sdx [m]");
-        desc.emplace_back("sdy [m]");
-        desc.emplace_back("sdz [m]");
-        desc.emplace_back("sdn [m]");
-        desc.emplace_back("sde [m]");
-        desc.emplace_back("sdd [m]");
-        desc.emplace_back("sdxy [m]");
-        desc.emplace_back("sdyz [m]");
-        desc.emplace_back("sdzx [m]");
-        desc.emplace_back("sdne [m]");
-        desc.emplace_back("sded [m]");
-        desc.emplace_back("sddn [m]");
         desc.emplace_back("age [s]");
         desc.emplace_back("ratio [-]");
-        desc.emplace_back("sdvn [m/s]");
-        desc.emplace_back("sdve [m/s]");
-        desc.emplace_back("sdvd [m/s]");
-        desc.emplace_back("sdvne [m/s]");
-        desc.emplace_back("sdved [m/s]");
-        desc.emplace_back("sdvdn [m/s]");
-        desc.emplace_back("sdvx [m/s]");
-        desc.emplace_back("sdvy [m/s]");
-        desc.emplace_back("sdvz [m/s]");
-        desc.emplace_back("sdvxy [m/s]");
-        desc.emplace_back("sdvyz [m/s]");
-        desc.emplace_back("sdvzx [m/s]");
 
         return desc;
     }
@@ -183,88 +180,46 @@ class RtklibPosObs : public PosVel
         case 5:  // X-ECEF [m]
         case 6:  // Y-ECEF [m]
         case 7:  // Z-ECEF [m]
-        case 8:  // Velocity norm [m/s]
-        case 9:  // X velocity ECEF [m/s]
-        case 10: // Y velocity ECEF [m/s]
-        case 11: // Z velocity ECEF [m/s]
-        case 12: // North velocity [m/s]
-        case 13: // East velocity [m/s]
-        case 14: // Down velocity [m/s]
+        case 8:  // X-ECEF StDev [m]
+        case 9:  // Y-ECEF StDev [m]
+        case 10: // Z-ECEF StDev [m]
+        case 11: // XY-ECEF StDev [m]
+        case 12: // XZ-ECEF StDev [m]
+        case 13: // YZ-ECEF StDev [m]
+        case 14: // North StDev [m]
+        case 15: // East StDev [m]
+        case 16: // Down StDev [m]
+        case 17: // NE StDev [m]
+        case 18: // ND StDev [m]
+        case 19: // ED StDev [m]
+        case 20: // Velocity norm [m/s]
+        case 21: // X velocity ECEF [m/s]
+        case 22: // Y velocity ECEF [m/s]
+        case 23: // Z velocity ECEF [m/s]
+        case 24: // North velocity [m/s]
+        case 25: // East velocity [m/s]
+        case 26: // Down velocity [m/s]
+        case 27: // X velocity ECEF StDev [m/s]
+        case 28: // Y velocity ECEF StDev [m/s]
+        case 29: // Z velocity ECEF StDev [m/s]
+        case 30: // XY velocity StDev [m]
+        case 31: // XZ velocity StDev [m]
+        case 32: // YZ velocity StDev [m]
+        case 33: // North velocity StDev [m/s]
+        case 34: // East velocity StDev [m/s]
+        case 35: // Down velocity StDev [m/s]
+        case 36: // NE velocity StDev [m]
+        case 37: // ND velocity StDev [m]
+        case 38: // ED velocity StDev [m]
             return PosVel::getValueAt(idx);
-        case 15: // Q [-]
+        case 39: // Q [-]
             return Q;
-        case 16: // ns [-]
+        case 40: // ns [-]
             return ns;
-        case 17: // sdx [m]
-            return sdXYZ.x();
-        case 18: // sdy [m]
-            return sdXYZ.y();
-        case 19: // sdz [m]
-            return sdXYZ.z();
-        case 20: // sdn [m]
-            return sdNED.x();
-        case 21: // sde [m]
-            return sdNED.y();
-        case 22: // sdd [m]
-            return sdNED.z();
-        case 23: // sdxy [m]
-            if (sdxy.has_value()) { return sdxy.value(); }
-            break;
-        case 24: // sdyz [m]
-            if (sdyz.has_value()) { return sdyz.value(); }
-            break;
-        case 25: // sdzx [m]
-            if (sdzx.has_value()) { return sdzx.value(); }
-            break;
-        case 26: // sdne [m]
-            if (sdne.has_value()) { return sdne.value(); }
-            break;
-        case 27: // sded [m]
-            if (sded.has_value()) { return sded.value(); }
-            break;
-        case 28: // sddn [m]
-            if (sddn.has_value()) { return sddn.value(); }
-            break;
-        case 29: // age [s]
+        case 41: // age [s]
             return age;
-        case 30: // ratio [-]
+        case 42: // ratio [-]
             return ratio;
-        case 31: // sdvn [m/s]
-            if (sdvNED.has_value()) { return sdvNED->x(); }
-            break;
-        case 32: // sdve [m/s]
-            if (sdvNED.has_value()) { return sdvNED->y(); }
-            break;
-        case 33: // sdvd [m/s]
-            if (sdvNED.has_value()) { return sdvNED->z(); }
-            break;
-        case 34: // sdvne [m/s]
-            if (sdvne.has_value()) { return sdvne.value(); }
-            break;
-        case 35: // sdved [m/s]
-            if (sdved.has_value()) { return sdved.value(); }
-            break;
-        case 36: // sdvdn [m/s]
-            if (sdvdn.has_value()) { return sdvdn.value(); }
-            break;
-        case 37: // sdvx [m/s]
-            if (sdvXYZ.has_value()) { return sdvXYZ->x(); }
-            break;
-        case 38: // sdvy [m/s]
-            if (sdvXYZ.has_value()) { return sdvXYZ->y(); }
-            break;
-        case 39: // sdvz [m/s]
-            if (sdvXYZ.has_value()) { return sdvXYZ->z(); }
-            break;
-        case 40: // sdvxy [m/s]
-            if (sdvxy.has_value()) { return sdvxy.value(); }
-            break;
-        case 41: // sdvyz [m/s]
-            if (sdvyz.has_value()) { return sdvyz.value(); }
-            break;
-        case 42: // sdvzx [m/s]
-            if (sdvzx.has_value()) { return sdvzx.value(); }
-            break;
         default:
             return std::nullopt;
         }
@@ -275,45 +230,10 @@ class RtklibPosObs : public PosVel
     uint8_t Q = 0;
     /// Number of satellites
     uint8_t ns = 0;
-
-    /// Standard Deviation XYZ [m]
-    Eigen::Vector3d sdXYZ{ std::nan(""), std::nan(""), std::nan("") };
-    /// Standard Deviation North East Down [m]
-    Eigen::Vector3d sdNED{ std::nan(""), std::nan(""), std::nan("") };
-    /// Standard Deviation xy [m]
-    std::optional<double> sdxy;
-    /// Standard Deviation yz [m]
-    std::optional<double> sdyz;
-    /// Standard Deviation zx [m]
-    std::optional<double> sdzx;
-    /// Standard Deviation ne [m]
-    std::optional<double> sdne;
-    /// Standard Deviation ed [m]
-    std::optional<double> sded;
-    /// Standard Deviation dn [m]
-    std::optional<double> sddn;
-
     /// Age [s]
     double age = std::nan("");
     /// Ratio
     double ratio = std::nan("");
-
-    /// Standard Deviation velocity NED [m/s]
-    std::optional<Eigen::Vector3d> sdvNED;
-    /// Standard Deviation velocity XYZ [m/s]
-    std::optional<Eigen::Vector3d> sdvXYZ;
-    /// Standard Deviation velocity north-east [m/s]
-    std::optional<double> sdvne;
-    /// Standard Deviation velocity east-down [m/s]
-    std::optional<double> sdved;
-    /// Standard Deviation velocity down-north [m/s]
-    std::optional<double> sdvdn;
-    /// Standard Deviation velocity xy [m/s]
-    std::optional<double> sdvxy;
-    /// Standard Deviation velocity yz [m/s]
-    std::optional<double> sdvyz;
-    /// Standard Deviation velocity zx [m/s]
-    std::optional<double> sdvzx;
 };
 
 } // namespace NAV

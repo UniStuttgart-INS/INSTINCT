@@ -2630,6 +2630,42 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -2649,6 +2685,42 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
                             },
                             {
                                 "displayName": "Roll [deg]"
@@ -2672,58 +2744,58 @@
                                 "displayName": "Quaternion::z"
                             },
                             {
-                                "displayName": "Roll error [deg]"
+                                "displayName": "KF State Roll error [deg]"
                             },
                             {
-                                "displayName": "Pitch error [deg]"
+                                "displayName": "KF State Pitch error [deg]"
                             },
                             {
-                                "displayName": "Yaw error [deg]"
+                                "displayName": "KF State Yaw error [deg]"
                             },
                             {
-                                "displayName": "North velocity error [m/s]"
+                                "displayName": "KF State Position North error [deg]"
                             },
                             {
-                                "displayName": "East velocity error [m/s]"
+                                "displayName": "KF State Position East error [deg]"
                             },
                             {
-                                "displayName": "Down velocity error [m/s]"
+                                "displayName": "KF State Position Down error [m]"
                             },
                             {
-                                "displayName": "Latitude error [deg]"
+                                "displayName": "KF State Velocity North error [m/s]"
                             },
                             {
-                                "displayName": "Longitude error [deg]"
+                                "displayName": "KF State Velocity East error [m/s]"
                             },
                             {
-                                "displayName": "Altitude error [m]"
+                                "displayName": "KF State Velocity Down error [m/s]"
                             },
                             {
-                                "displayName": "Alpha_eb [deg]"
+                                "displayName": "KF State Alpha_eb [deg]"
                             },
                             {
-                                "displayName": "Beta_eb [deg]"
+                                "displayName": "KF State Beta_eb [deg]"
                             },
                             {
-                                "displayName": "Gamma_eb [deg]"
+                                "displayName": "KF State Gamma_eb [deg]"
                             },
                             {
-                                "displayName": "ECEF X velocity error [m/s]"
+                                "displayName": "KF State Position ECEF X error [m]"
                             },
                             {
-                                "displayName": "ECEF Y velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Y error [m]"
                             },
                             {
-                                "displayName": "ECEF Z velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Z error [m]"
                             },
                             {
-                                "displayName": "ECEF X error [m]"
+                                "displayName": "KF State Velocity ECEF X error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Y error [m]"
+                                "displayName": "KF State Velocity ECEF Y error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Z error [m]"
+                                "displayName": "KF State Velocity ECEF Z error [m/s]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X [m/s^2]"
@@ -2785,6 +2857,42 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -2804,6 +2912,42 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
                             },
                             {
                                 "displayName": "Roll [deg]"
@@ -2827,58 +2971,58 @@
                                 "displayName": "Quaternion::z"
                             },
                             {
-                                "displayName": "Roll error [deg]"
+                                "displayName": "KF State Roll error [deg]"
                             },
                             {
-                                "displayName": "Pitch error [deg]"
+                                "displayName": "KF State Pitch error [deg]"
                             },
                             {
-                                "displayName": "Yaw error [deg]"
+                                "displayName": "KF State Yaw error [deg]"
                             },
                             {
-                                "displayName": "North velocity error [m/s]"
+                                "displayName": "KF State Position North error [deg]"
                             },
                             {
-                                "displayName": "East velocity error [m/s]"
+                                "displayName": "KF State Position East error [deg]"
                             },
                             {
-                                "displayName": "Down velocity error [m/s]"
+                                "displayName": "KF State Position Down error [m]"
                             },
                             {
-                                "displayName": "Latitude error [deg]"
+                                "displayName": "KF State Velocity North error [m/s]"
                             },
                             {
-                                "displayName": "Longitude error [deg]"
+                                "displayName": "KF State Velocity East error [m/s]"
                             },
                             {
-                                "displayName": "Altitude error [m]"
+                                "displayName": "KF State Velocity Down error [m/s]"
                             },
                             {
-                                "displayName": "Alpha_eb [deg]"
+                                "displayName": "KF State Alpha_eb [deg]"
                             },
                             {
-                                "displayName": "Beta_eb [deg]"
+                                "displayName": "KF State Beta_eb [deg]"
                             },
                             {
-                                "displayName": "Gamma_eb [deg]"
+                                "displayName": "KF State Gamma_eb [deg]"
                             },
                             {
-                                "displayName": "ECEF X velocity error [m/s]"
+                                "displayName": "KF State Position ECEF X error [m]"
                             },
                             {
-                                "displayName": "ECEF Y velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Y error [m]"
                             },
                             {
-                                "displayName": "ECEF Z velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Z error [m]"
                             },
                             {
-                                "displayName": "ECEF X error [m]"
+                                "displayName": "KF State Velocity ECEF X error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Y error [m]"
+                                "displayName": "KF State Velocity ECEF Y error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Z error [m]"
+                                "displayName": "KF State Velocity ECEF Z error [m/s]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X [m/s^2]"
@@ -2940,6 +3084,42 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -2959,6 +3139,42 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
                             },
                             {
                                 "displayName": "Roll [deg]"
@@ -2982,58 +3198,58 @@
                                 "displayName": "Quaternion::z"
                             },
                             {
-                                "displayName": "Roll error [deg]"
+                                "displayName": "KF State Roll error [deg]"
                             },
                             {
-                                "displayName": "Pitch error [deg]"
+                                "displayName": "KF State Pitch error [deg]"
                             },
                             {
-                                "displayName": "Yaw error [deg]"
+                                "displayName": "KF State Yaw error [deg]"
                             },
                             {
-                                "displayName": "North velocity error [m/s]"
+                                "displayName": "KF State Position North error [deg]"
                             },
                             {
-                                "displayName": "East velocity error [m/s]"
+                                "displayName": "KF State Position East error [deg]"
                             },
                             {
-                                "displayName": "Down velocity error [m/s]"
+                                "displayName": "KF State Position Down error [m]"
                             },
                             {
-                                "displayName": "Latitude error [deg]"
+                                "displayName": "KF State Velocity North error [m/s]"
                             },
                             {
-                                "displayName": "Longitude error [deg]"
+                                "displayName": "KF State Velocity East error [m/s]"
                             },
                             {
-                                "displayName": "Altitude error [m]"
+                                "displayName": "KF State Velocity Down error [m/s]"
                             },
                             {
-                                "displayName": "Alpha_eb [deg]"
+                                "displayName": "KF State Alpha_eb [deg]"
                             },
                             {
-                                "displayName": "Beta_eb [deg]"
+                                "displayName": "KF State Beta_eb [deg]"
                             },
                             {
-                                "displayName": "Gamma_eb [deg]"
+                                "displayName": "KF State Gamma_eb [deg]"
                             },
                             {
-                                "displayName": "ECEF X velocity error [m/s]"
+                                "displayName": "KF State Position ECEF X error [m]"
                             },
                             {
-                                "displayName": "ECEF Y velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Y error [m]"
                             },
                             {
-                                "displayName": "ECEF Z velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Z error [m]"
                             },
                             {
-                                "displayName": "ECEF X error [m]"
+                                "displayName": "KF State Velocity ECEF X error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Y error [m]"
+                                "displayName": "KF State Velocity ECEF Y error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Z error [m]"
+                                "displayName": "KF State Velocity ECEF Z error [m/s]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X [m/s^2]"
@@ -3095,6 +3311,42 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -3114,6 +3366,42 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
                             },
                             {
                                 "displayName": "Roll [deg]"
@@ -3137,58 +3425,58 @@
                                 "displayName": "Quaternion::z"
                             },
                             {
-                                "displayName": "Roll error [deg]"
+                                "displayName": "KF State Roll error [deg]"
                             },
                             {
-                                "displayName": "Pitch error [deg]"
+                                "displayName": "KF State Pitch error [deg]"
                             },
                             {
-                                "displayName": "Yaw error [deg]"
+                                "displayName": "KF State Yaw error [deg]"
                             },
                             {
-                                "displayName": "North velocity error [m/s]"
+                                "displayName": "KF State Position North error [deg]"
                             },
                             {
-                                "displayName": "East velocity error [m/s]"
+                                "displayName": "KF State Position East error [deg]"
                             },
                             {
-                                "displayName": "Down velocity error [m/s]"
+                                "displayName": "KF State Position Down error [m]"
                             },
                             {
-                                "displayName": "Latitude error [deg]"
+                                "displayName": "KF State Velocity North error [m/s]"
                             },
                             {
-                                "displayName": "Longitude error [deg]"
+                                "displayName": "KF State Velocity East error [m/s]"
                             },
                             {
-                                "displayName": "Altitude error [m]"
+                                "displayName": "KF State Velocity Down error [m/s]"
                             },
                             {
-                                "displayName": "Alpha_eb [deg]"
+                                "displayName": "KF State Alpha_eb [deg]"
                             },
                             {
-                                "displayName": "Beta_eb [deg]"
+                                "displayName": "KF State Beta_eb [deg]"
                             },
                             {
-                                "displayName": "Gamma_eb [deg]"
+                                "displayName": "KF State Gamma_eb [deg]"
                             },
                             {
-                                "displayName": "ECEF X velocity error [m/s]"
+                                "displayName": "KF State Position ECEF X error [m]"
                             },
                             {
-                                "displayName": "ECEF Y velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Y error [m]"
                             },
                             {
-                                "displayName": "ECEF Z velocity error [m/s]"
+                                "displayName": "KF State Position ECEF Z error [m]"
                             },
                             {
-                                "displayName": "ECEF X error [m]"
+                                "displayName": "KF State Velocity ECEF X error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Y error [m]"
+                                "displayName": "KF State Velocity ECEF Y error [m/s]"
                             },
                             {
-                                "displayName": "ECEF Z error [m]"
+                                "displayName": "KF State Velocity ECEF Z error [m/s]"
                             },
                             {
                                 "displayName": "Accelerometer bias b_X [m/s^2]"
@@ -3223,7 +3511,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 43,
+                                "dataIndex": 67,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -3237,7 +3525,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 43,
+                                    "colormapMaskDataCmpIdx": 67,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3261,7 +3549,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 43,
+                                    "markerColormapMaskDataCmpIdx": 67,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3284,7 +3572,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 43,
+                                "dataIndex": 67,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -3298,7 +3586,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 43,
+                                    "colormapMaskDataCmpIdx": 67,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3322,7 +3610,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 43,
+                                    "markerColormapMaskDataCmpIdx": 67,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3345,7 +3633,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 43,
+                                "dataIndex": 67,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -3359,7 +3647,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 43,
+                                    "colormapMaskDataCmpIdx": 67,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3383,7 +3671,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 43,
+                                    "markerColormapMaskDataCmpIdx": 67,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3406,7 +3694,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 43,
+                                "dataIndex": 67,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -3420,7 +3708,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 43,
+                                    "colormapMaskDataCmpIdx": 67,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3444,7 +3732,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 43,
+                                    "markerColormapMaskDataCmpIdx": 67,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3501,7 +3789,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 44,
+                                "dataIndex": 68,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -3515,7 +3803,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 44,
+                                    "colormapMaskDataCmpIdx": 68,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3539,7 +3827,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 44,
+                                    "markerColormapMaskDataCmpIdx": 68,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3562,7 +3850,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 44,
+                                "dataIndex": 68,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -3576,7 +3864,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 44,
+                                    "colormapMaskDataCmpIdx": 68,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3600,7 +3888,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 44,
+                                    "markerColormapMaskDataCmpIdx": 68,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3623,7 +3911,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 44,
+                                "dataIndex": 68,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -3637,7 +3925,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 44,
+                                    "colormapMaskDataCmpIdx": 68,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3661,7 +3949,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 44,
+                                    "markerColormapMaskDataCmpIdx": 68,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3684,7 +3972,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 44,
+                                "dataIndex": 68,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -3698,7 +3986,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 44,
+                                    "colormapMaskDataCmpIdx": 68,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3722,7 +4010,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 44,
+                                    "markerColormapMaskDataCmpIdx": 68,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3779,7 +4067,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 45,
+                                "dataIndex": 69,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -3793,7 +4081,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 45,
+                                    "colormapMaskDataCmpIdx": 69,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3817,7 +4105,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 45,
+                                    "markerColormapMaskDataCmpIdx": 69,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3840,7 +4128,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 45,
+                                "dataIndex": 69,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -3854,7 +4142,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 45,
+                                    "colormapMaskDataCmpIdx": 69,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3878,7 +4166,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 45,
+                                    "markerColormapMaskDataCmpIdx": 69,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3901,7 +4189,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 45,
+                                "dataIndex": 69,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -3915,7 +4203,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 45,
+                                    "colormapMaskDataCmpIdx": 69,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -3939,7 +4227,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 45,
+                                    "markerColormapMaskDataCmpIdx": 69,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -3962,7 +4250,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 45,
+                                "dataIndex": 69,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -3976,7 +4264,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 45,
+                                    "colormapMaskDataCmpIdx": 69,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4000,7 +4288,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 45,
+                                    "markerColormapMaskDataCmpIdx": 69,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4057,7 +4345,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 46,
+                                "dataIndex": 70,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -4071,7 +4359,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 46,
+                                    "colormapMaskDataCmpIdx": 70,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4095,7 +4383,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 46,
+                                    "markerColormapMaskDataCmpIdx": 70,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4118,7 +4406,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 46,
+                                "dataIndex": 70,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -4132,7 +4420,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 46,
+                                    "colormapMaskDataCmpIdx": 70,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4156,7 +4444,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 46,
+                                    "markerColormapMaskDataCmpIdx": 70,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4179,7 +4467,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 46,
+                                "dataIndex": 70,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -4193,7 +4481,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 46,
+                                    "colormapMaskDataCmpIdx": 70,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4217,7 +4505,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 46,
+                                    "markerColormapMaskDataCmpIdx": 70,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4240,7 +4528,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 46,
+                                "dataIndex": 70,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -4254,7 +4542,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 46,
+                                    "colormapMaskDataCmpIdx": 70,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4278,7 +4566,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 46,
+                                    "markerColormapMaskDataCmpIdx": 70,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4335,7 +4623,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 47,
+                                "dataIndex": 71,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -4349,7 +4637,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 47,
+                                    "colormapMaskDataCmpIdx": 71,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4373,7 +4661,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 47,
+                                    "markerColormapMaskDataCmpIdx": 71,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4396,7 +4684,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 47,
+                                "dataIndex": 71,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -4410,7 +4698,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 47,
+                                    "colormapMaskDataCmpIdx": 71,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4434,7 +4722,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 47,
+                                    "markerColormapMaskDataCmpIdx": 71,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4457,7 +4745,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 47,
+                                "dataIndex": 71,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -4471,7 +4759,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 47,
+                                    "colormapMaskDataCmpIdx": 71,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4495,7 +4783,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 47,
+                                    "markerColormapMaskDataCmpIdx": 71,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4518,7 +4806,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 47,
+                                "dataIndex": 71,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -4532,7 +4820,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 47,
+                                    "colormapMaskDataCmpIdx": 71,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4556,7 +4844,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 47,
+                                    "markerColormapMaskDataCmpIdx": 71,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4613,7 +4901,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 48,
+                                "dataIndex": 72,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -4627,7 +4915,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 48,
+                                    "colormapMaskDataCmpIdx": 72,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4651,7 +4939,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 48,
+                                    "markerColormapMaskDataCmpIdx": 72,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4674,7 +4962,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 48,
+                                "dataIndex": 72,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -4688,7 +4976,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 48,
+                                    "colormapMaskDataCmpIdx": 72,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4712,7 +5000,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 48,
+                                    "markerColormapMaskDataCmpIdx": 72,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4735,7 +5023,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 48,
+                                "dataIndex": 72,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -4749,7 +5037,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 48,
+                                    "colormapMaskDataCmpIdx": 72,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4773,7 +5061,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 48,
+                                    "markerColormapMaskDataCmpIdx": 72,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -4796,7 +5084,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 48,
+                                "dataIndex": 72,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -4810,7 +5098,7 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 48,
+                                    "colormapMaskDataCmpIdx": 72,
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4834,7 +5122,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 48,
+                                    "markerColormapMaskDataCmpIdx": 72,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,

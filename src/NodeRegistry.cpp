@@ -184,15 +184,11 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLink/udpSend.hpp"
 #include "Nodes/DataLink/udpRecv.hpp"
 // Data Logger
+#include "Nodes/DataLogger/General/CsvLogger.hpp"
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/RinexObsLogger.hpp"
-#include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
-#include "Nodes/DataLogger/State/LcKfInsGnssErrorLogger.hpp"
-#include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
@@ -254,15 +250,11 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UdpSend>();
     registerNodeType<UdpRecv>();
     // Data Logger
+    registerNodeType<CsvLogger>();
     registerNodeType<MatrixLogger>();
     registerNodeType<RinexObsLogger>();
-    registerNodeType<SppSolutionLogger>();
     registerNodeType<UartDataLogger>();
-    registerNodeType<ImuDataLogger>();
-    registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
-    registerNodeType<LcKfInsGnssErrorLogger>();
-    registerNodeType<PosVelAttLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
     registerNodeType<GnssAnalyzer>();

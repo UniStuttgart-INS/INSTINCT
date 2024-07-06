@@ -313,6 +313,9 @@ class LooselyCoupledKF : public Node
     /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
     Eigen::Vector3d _gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
 
+    /// Whether to override the position uncertainty or use the one included in the measurement
+    bool _gnssMeasurementUncertaintyPositionOverride = false;
+
     // ###########################################################################################################
 
     /// Possible Units for the GNSS measurement uncertainty for the velocity (standard deviation σ or Variance σ²)
@@ -326,6 +329,9 @@ class LooselyCoupledKF : public Node
 
     /// GUI selection of the GNSS NED velocity measurement uncertainty (standard deviation σ or Variance σ²)
     Eigen::Vector3d _gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
+
+    /// Whether to override the velocity uncertainty or use the one included in the measurement
+    bool _gnssMeasurementUncertaintyVelocityOverride = false;
 
     // ###########################################################################################################
 

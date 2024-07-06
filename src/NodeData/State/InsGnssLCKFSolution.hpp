@@ -45,24 +45,24 @@ class InsGnssLCKFSolution : public PosVelAtt
     {
         auto desc = PosVelAtt::GetStaticDataDescriptors();
         desc.reserve(GetStaticDescriptorCount());
-        desc.emplace_back("Roll error [deg]");
-        desc.emplace_back("Pitch error [deg]");
-        desc.emplace_back("Yaw error [deg]");
-        desc.emplace_back("North velocity error [m/s]");
-        desc.emplace_back("East velocity error [m/s]");
-        desc.emplace_back("Down velocity error [m/s]");
-        desc.emplace_back("Latitude error [deg]");
-        desc.emplace_back("Longitude error [deg]");
-        desc.emplace_back("Altitude error [m]");
-        desc.emplace_back("Alpha_eb [deg]");
-        desc.emplace_back("Beta_eb [deg]");
-        desc.emplace_back("Gamma_eb [deg]");
-        desc.emplace_back("ECEF X velocity error [m/s]");
-        desc.emplace_back("ECEF Y velocity error [m/s]");
-        desc.emplace_back("ECEF Z velocity error [m/s]");
-        desc.emplace_back("ECEF X error [m]");
-        desc.emplace_back("ECEF Y error [m]");
-        desc.emplace_back("ECEF Z error [m]");
+        desc.emplace_back("KF State Roll error [deg]");
+        desc.emplace_back("KF State Pitch error [deg]");
+        desc.emplace_back("KF State Yaw error [deg]");
+        desc.emplace_back("KF State Position North error [deg]");
+        desc.emplace_back("KF State Position East error [deg]");
+        desc.emplace_back("KF State Position Down error [m]");
+        desc.emplace_back("KF State Velocity North error [m/s]");
+        desc.emplace_back("KF State Velocity East error [m/s]");
+        desc.emplace_back("KF State Velocity Down error [m/s]");
+        desc.emplace_back("KF State Alpha_eb [deg]");
+        desc.emplace_back("KF State Beta_eb [deg]");
+        desc.emplace_back("KF State Gamma_eb [deg]");
+        desc.emplace_back("KF State Position ECEF X error [m]");
+        desc.emplace_back("KF State Position ECEF Y error [m]");
+        desc.emplace_back("KF State Position ECEF Z error [m]");
+        desc.emplace_back("KF State Velocity ECEF X error [m/s]");
+        desc.emplace_back("KF State Velocity ECEF Y error [m/s]");
+        desc.emplace_back("KF State Velocity ECEF Z error [m/s]");
         desc.emplace_back("Accelerometer bias b_X [m/s^2]");
         desc.emplace_back("Accelerometer bias b_Y [m/s^2]");
         desc.emplace_back("Accelerometer bias b_Z [m/s^2]");
@@ -73,7 +73,7 @@ class InsGnssLCKFSolution : public PosVelAtt
     }
 
     /// @brief Get the number of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 46; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 70; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -84,8 +84,6 @@ class InsGnssLCKFSolution : public PosVelAtt
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
-        if (frame == Frame::NED && 31 <= idx && idx <= 39) { return std::nullopt; }
-        if (frame == Frame::ECEF && 22 <= idx && idx <= 30) { return std::nullopt; }
 
         switch (idx)
         {
@@ -97,72 +95,115 @@ class InsGnssLCKFSolution : public PosVelAtt
         case 5:  // X-ECEF [m]
         case 6:  // Y-ECEF [m]
         case 7:  // Z-ECEF [m]
-        case 8:  // Velocity norm [m/s]
-        case 9:  // X velocity ECEF [m/s]
-        case 10: // Y velocity ECEF [m/s]
-        case 11: // Z velocity ECEF [m/s]
-        case 12: // North velocity [m/s]
-        case 13: // East velocity [m/s]
-        case 14: // Down velocity [m/s]
-        case 15: // Roll [deg]
-        case 16: // Pitch [deg]
-        case 17: // Yaw [deg]
-        case 18: // Quaternion::w
-        case 19: // Quaternion::x
-        case 20: // Quaternion::y
-        case 21: // Quaternion::z
+        case 8:  // X-ECEF StDev [m]
+        case 9:  // Y-ECEF StDev [m]
+        case 10: // Z-ECEF StDev [m]
+        case 11: // XY-ECEF StDev [m]
+        case 12: // XZ-ECEF StDev [m]
+        case 13: // YZ-ECEF StDev [m]
+        case 14: // North StDev [m]
+        case 15: // East StDev [m]
+        case 16: // Down StDev [m]
+        case 17: // NE StDev [m]
+        case 18: // ND StDev [m]
+        case 19: // ED StDev [m]
+        case 20: // Velocity norm [m/s]
+        case 21: // X velocity ECEF [m/s]
+        case 22: // Y velocity ECEF [m/s]
+        case 23: // Z velocity ECEF [m/s]
+        case 24: // North velocity [m/s]
+        case 25: // East velocity [m/s]
+        case 26: // Down velocity [m/s]
+        case 27: // X velocity ECEF StDev [m/s]
+        case 28: // Y velocity ECEF StDev [m/s]
+        case 29: // Z velocity ECEF StDev [m/s]
+        case 30: // XY velocity StDev [m]
+        case 31: // XZ velocity StDev [m]
+        case 32: // YZ velocity StDev [m]
+        case 33: // North velocity StDev [m/s]
+        case 34: // East velocity StDev [m/s]
+        case 35: // Down velocity StDev [m/s]
+        case 36: // NE velocity StDev [m]
+        case 37: // ND velocity StDev [m]
+        case 38: // ED velocity StDev [m]
+        case 39: // Roll [deg]
+        case 40: // Pitch [deg]
+        case 41: // Yaw [deg]
+        case 42: // Quaternion::w
+        case 43: // Quaternion::x
+        case 44: // Quaternion::y
+        case 45: // Quaternion::z
             return PosVelAtt::getValueAt(idx);
-        case 22: // Roll error [deg]
-            return rad2deg(attitudeError(0));
-        case 23: // Pitch error [deg]
-            return rad2deg(attitudeError(1));
-        case 24: // Yaw error [deg]
-            return rad2deg(attitudeError(2));
-        case 25: // North velocity error [m/s]
-            return velocityError(0);
-        case 26: // East velocity error [m/s]
-            return velocityError(1);
-        case 27: // Down velocity error [m/s]
-            return velocityError(2);
-        case 28: // Latitude error [deg]
-            return rad2deg(positionError(0));
-        case 29: // Longitude error [deg]
-            return rad2deg(positionError(1));
-        case 30: // Altitude error [m]
-            return positionError(2);
-        case 31: // Alpha_eb [deg]
-            return rad2deg(attitudeError(0));
-        case 32: // Beta_eb [deg]
-            return rad2deg(attitudeError(1));
-        case 33: // Gamma_eb [deg]
-            return rad2deg(attitudeError(2));
-        case 34: // ECEF X velocity error [m/s]
-            return velocityError(0);
-        case 35: // ECEF Y velocity error [m/s]
-            return velocityError(1);
-        case 36: // ECEF Z velocity error [m/s]
-            return velocityError(2);
-        case 37: // ECEF X error [m]
-            return positionError(0);
-        case 38: // ECEF Y error [m]
-            return positionError(1);
-        case 39: // ECEF Z error [m]
-            return positionError(2);
-        case 40: // Accelerometer bias b_X [m/s^2]
+        case 46: // KF State Roll error [deg]
+            if (frame == Frame::NED) { return rad2deg(attitudeError(0)); }
+            break;
+        case 47: // KF State Pitch error [deg]
+            if (frame == Frame::NED) { return rad2deg(attitudeError(1)); }
+            break;
+        case 48: // KF State Yaw error [deg]
+            if (frame == Frame::NED) { return rad2deg(attitudeError(2)); }
+            break;
+        case 49: // KF State Position North error [deg]
+            if (frame == Frame::NED) { return rad2deg(positionError(0)); }
+            break;
+        case 50: // KF State Position East error [deg]
+            if (frame == Frame::NED) { return rad2deg(positionError(1)); }
+            break;
+        case 51: // KF State Position Down error [m]
+            if (frame == Frame::NED) { return positionError(2); }
+            break;
+        case 52: // KF State Velocity North error [m/s]
+            if (frame == Frame::NED) { return velocityError(0); }
+            break;
+        case 53: // KF State Velocity East error [m/s]
+            if (frame == Frame::NED) { return velocityError(1); }
+            break;
+        case 54: // KF State Velocity Down error [m/s]
+            if (frame == Frame::NED) { return velocityError(2); }
+            break;
+        case 55: // KF State Alpha_eb [deg]
+            if (frame == Frame::ECEF) { return rad2deg(attitudeError(0)); }
+            break;
+        case 56: // KF State Beta_eb [deg]
+            if (frame == Frame::ECEF) { return rad2deg(attitudeError(1)); }
+            break;
+        case 57: // KF State Gamma_eb [deg]
+            if (frame == Frame::ECEF) { return rad2deg(attitudeError(2)); }
+            break;
+        case 58: // KF State Position ECEF X error [m]
+            if (frame == Frame::ECEF) { return positionError(0); }
+            break;
+        case 59: // KF State Position ECEF Y error [m]
+            if (frame == Frame::ECEF) { return positionError(1); }
+            break;
+        case 60: // KF State Position ECEF Z error [m]
+            if (frame == Frame::ECEF) { return positionError(2); }
+            break;
+        case 61: // KF State Velocity ECEF X error [m/s]
+            if (frame == Frame::ECEF) { return velocityError(0); }
+            break;
+        case 62: // KF State Velocity ECEF Y error [m/s]
+            if (frame == Frame::ECEF) { return velocityError(1); }
+            break;
+        case 63: // KF State Velocity ECEF Z error [m/s]
+            if (frame == Frame::ECEF) { return velocityError(2); }
+            break;
+        case 64: // Accelerometer bias b_X [m/s^2]
             return b_biasAccel(0);
-        case 41: // Accelerometer bias b_Y [m/s^2]
+        case 65: // Accelerometer bias b_Y [m/s^2]
             return b_biasAccel(1);
-        case 42: // Accelerometer bias b_Z [m/s^2]
+        case 66: // Accelerometer bias b_Z [m/s^2]
             return b_biasAccel(2);
-        case 43: // Gyroscope bias b_X [rad/s]
+        case 67: // Gyroscope bias b_X [rad/s]
             return b_biasGyro(0);
-        case 44: // Gyroscope bias b_Y [rad/s]
+        case 68: // Gyroscope bias b_Y [rad/s]
             return b_biasGyro(1);
-        case 45: // Gyroscope bias b_Z [rad/s]
+        case 69: // Gyroscope bias b_Z [rad/s]
             return b_biasGyro(2);
         default:
             return std::nullopt;
         }
+        return std::nullopt;
     }
 
     /// @brief Available Frames

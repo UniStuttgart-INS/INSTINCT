@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
+
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
 #if defined(__clang__)
@@ -45,30 +48,23 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
 
     REQUIRE(lhs.Q == rhs.Q);
     REQUIRE(lhs.ns == rhs.ns);
-
-    REQUIRE(lhs.sdXYZ == rhs.sdXYZ);
-    REQUIRE(lhs.sdNED == rhs.sdNED);
-
-    REQUIRE(lhs.sdxy == rhs.sdxy);
-    REQUIRE(lhs.sdyz == rhs.sdyz);
-    REQUIRE(lhs.sdzx == rhs.sdzx);
-    REQUIRE(lhs.sdne == rhs.sdne);
-    REQUIRE(lhs.sded == rhs.sded);
-    REQUIRE(lhs.sddn == rhs.sddn);
-
     REQUIRE(lhs.age == rhs.age);
     REQUIRE(lhs.ratio == rhs.ratio);
 
-    REQUIRE(lhs.sdvNED == rhs.sdvNED);
-    REQUIRE(lhs.sdvXYZ == rhs.sdvXYZ);
+    REQUIRE_THAT(lhs.e_position(), Catch::Matchers::WithinAbs(rhs.e_position(), 1e-10));
+    REQUIRE_THAT(lhs.lla_position(), Catch::Matchers::WithinAbs(rhs.lla_position(), 1e-10));
+    REQUIRE_THAT(lhs.e_velocity(), Catch::Matchers::WithinAbs(rhs.e_velocity(), 1e-10));
+    REQUIRE_THAT(lhs.n_velocity(), Catch::Matchers::WithinAbs(rhs.n_velocity(), 1e-10));
 
-    REQUIRE(lhs.sdvne == rhs.sdvne);
-    REQUIRE(lhs.sdved == rhs.sdved);
-    REQUIRE(lhs.sdvdn == rhs.sdvdn);
+    REQUIRE(lhs.e_positionStdev().has_value() == rhs.e_positionStdev().has_value());
+    REQUIRE(lhs.n_positionStdev().has_value() == rhs.n_positionStdev().has_value());
+    REQUIRE(lhs.e_velocityStdev().has_value() == rhs.e_velocityStdev().has_value());
+    REQUIRE(lhs.n_velocityStdev().has_value() == rhs.n_velocityStdev().has_value());
 
-    REQUIRE(lhs.sdvxy == rhs.sdvxy);
-    REQUIRE(lhs.sdvyz == rhs.sdvyz);
-    REQUIRE(lhs.sdvzx == rhs.sdvzx);
+    if (lhs.e_positionStdev()) { REQUIRE_THAT(lhs.e_positionStdev()->get(), Catch::Matchers::WithinAbs(rhs.e_positionStdev()->get(), 1e-10)); }
+    if (lhs.n_positionStdev()) { REQUIRE_THAT(lhs.n_positionStdev()->get(), Catch::Matchers::WithinAbs(rhs.n_positionStdev()->get(), 1e-10)); }
+    if (lhs.e_velocityStdev()) { REQUIRE_THAT(lhs.e_velocityStdev()->get(), Catch::Matchers::WithinAbs(rhs.e_velocityStdev()->get(), 1e-10)); }
+    if (lhs.n_velocityStdev()) { REQUIRE_THAT(lhs.n_velocityStdev()->get(), Catch::Matchers::WithinAbs(rhs.n_velocityStdev()->get(), 1e-10)); }
 
     return true;
 }

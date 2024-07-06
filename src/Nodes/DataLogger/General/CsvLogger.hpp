@@ -6,10 +6,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file LcKfInsGnssErrorLogger.hpp
-/// @brief Data Logger for INS/GNSS LCKF Errors
+/// @file CsvLogger.hpp
+/// @brief Data Logger for CSV files
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-06-22
+/// @date 2024-06-03
 
 #pragma once
 
@@ -21,22 +21,22 @@ namespace NAV
 {
 class NodeData;
 
-/// Data Logger for INS/GNSS LCKF Errors
-class LcKfInsGnssErrorLogger : public Node, public FileWriter, public CommonLog
+/// Data Logger for PosVelAtt observations
+class CsvLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    LcKfInsGnssErrorLogger();
+    CsvLogger();
     /// @brief Destructor
-    ~LcKfInsGnssErrorLogger() override;
+    ~CsvLogger() override;
     /// @brief Copy constructor
-    LcKfInsGnssErrorLogger(const LcKfInsGnssErrorLogger&) = delete;
+    CsvLogger(const CsvLogger&) = delete;
     /// @brief Move constructor
-    LcKfInsGnssErrorLogger(LcKfInsGnssErrorLogger&&) = delete;
+    CsvLogger(CsvLogger&&) = delete;
     /// @brief Copy assignment operator
-    LcKfInsGnssErrorLogger& operator=(const LcKfInsGnssErrorLogger&) = delete;
+    CsvLogger& operator=(const CsvLogger&) = delete;
     /// @brief Move assignment operator
-    LcKfInsGnssErrorLogger& operator=(LcKfInsGnssErrorLogger&&) = delete;
+    CsvLogger& operator=(CsvLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -72,6 +72,9 @@ class LcKfInsGnssErrorLogger : public Node, public FileWriter, public CommonLog
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// Flag whether the header was written already
+    bool _headerWritten = false;
 };
 
 } // namespace NAV

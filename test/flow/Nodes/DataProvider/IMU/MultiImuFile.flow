@@ -1,4 +1,5 @@
 {
+    "colormaps": [],
     "implot": {
         "prefereFlowOverGlobal": true,
         "style": {
@@ -7,7 +8,129 @@
                 "y": 2.0
             },
             "Colormap": {
-                "active": 0
+                "active": 0,
+                "maps": [
+                    {
+                        "keys": [
+                            {
+                                "w": 1.0,
+                                "x": 0.2980392277240753,
+                                "y": 0.44705885648727417,
+                                "z": 0.6901960968971252
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8666667342185974,
+                                "y": 0.5176470875740051,
+                                "z": 0.32156863808631897
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3333333432674408,
+                                "y": 0.658823549747467,
+                                "z": 0.4078431725502014
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.7686275243759155,
+                                "y": 0.30588236451148987,
+                                "z": 0.32156863808631897
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5058823823928833,
+                                "y": 0.44705885648727417,
+                                "z": 0.7019608020782471
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5764706134796143,
+                                "y": 0.4705882668495178,
+                                "z": 0.3764706254005432
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8549020290374756,
+                                "y": 0.545098066329956,
+                                "z": 0.7647059559822083
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5490196347236633,
+                                "y": 0.5490196347236633,
+                                "z": 0.5490196347236633
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8000000715255737,
+                                "y": 0.7254902124404907,
+                                "z": 0.4549019932746887
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3921568989753723,
+                                "y": 0.7098039388656616,
+                                "z": 0.803921639919281
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.14509804546833038,
+                                "y": 0.4274510145187378,
+                                "z": 0.8901961445808411
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9372549653053284,
+                                "y": 0.3921568989753723,
+                                "z": 0.08235294371843338
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.08235294371843338,
+                                "y": 0.8941177129745483,
+                                "z": 0.2705882489681244
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9372549653053284,
+                                "y": 0.0784313753247261,
+                                "z": 0.1098039299249649
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3921568989753723,
+                                "y": 0.250980406999588,
+                                "z": 0.8509804606437683
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.6431372761726379,
+                                "y": 0.30588236451148987,
+                                "z": 0.007843137718737125
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9098039865493774,
+                                "y": 0.15294118225574493,
+                                "z": 0.6901960968971252
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 1.0,
+                                "y": 0.8117647767066956,
+                                "z": 0.12156863510608673
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.21176472306251526,
+                                "y": 0.8941177129745483,
+                                "z": 0.6823529601097107
+                            }
+                        ],
+                        "name": "DeepEx",
+                        "qualitative": true
+                    }
+                ]
             },
             "Colors": {
                 "AxisBg": {
@@ -206,7 +329,9 @@
     "nodes": {
         "node-12": {
             "data": {
-                "nInputPins": 5,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 5
+                },
                 "nPlots": 0,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -218,70 +343,46 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
                                 "displayName": "Time since startup [ns]"
                             },
                             {
+                                "displayName": "Accel X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Z [Gauss]"
+                            },
+                            {
                                 "displayName": "Mag uncomp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel uncomp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Temperature [°C]"
                             }
                         ],
-                        "size": 2000,
+                        "size": 0,
                         "stride": 1
                     },
                     {
@@ -292,70 +393,46 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
                                 "displayName": "Time since startup [ns]"
                             },
                             {
+                                "displayName": "Accel X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Z [Gauss]"
+                            },
+                            {
                                 "displayName": "Mag uncomp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel uncomp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Temperature [°C]"
                             }
                         ],
-                        "size": 2000,
+                        "size": 0,
                         "stride": 1
                     },
                     {
@@ -366,70 +443,46 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
                                 "displayName": "Time since startup [ns]"
                             },
                             {
+                                "displayName": "Accel X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Z [Gauss]"
+                            },
+                            {
                                 "displayName": "Mag uncomp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel uncomp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Temperature [°C]"
                             }
                         ],
-                        "size": 2000,
+                        "size": 0,
                         "stride": 1
                     },
                     {
@@ -440,70 +493,46 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
                                 "displayName": "Time since startup [ns]"
                             },
                             {
+                                "displayName": "Accel X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Z [Gauss]"
+                            },
+                            {
                                 "displayName": "Mag uncomp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel uncomp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Temperature [°C]"
                             }
                         ],
-                        "size": 2000,
+                        "size": 0,
                         "stride": 1
                     },
                     {
@@ -514,70 +543,74 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
                                 "displayName": "Time since startup [ns]"
                             },
                             {
+                                "displayName": "Accel X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accel Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyro X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyro Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Mag X [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Y [Gauss]"
+                            },
+                            {
+                                "displayName": "Mag Z [Gauss]"
+                            },
+                            {
                                 "displayName": "Mag uncomp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag uncomp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel uncomp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel uncomp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Temperature [°C]"
                             }
                         ],
-                        "size": 2000,
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "",
+                        "pinType": 0,
+                        "plotData": null,
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "",
+                        "pinType": 0,
+                        "plotData": null,
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "",
+                        "pinType": 0,
+                        "plotData": null,
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "",
+                        "pinType": 0,
+                        "plotData": null,
+                        "size": 0,
                         "stride": 1
                     }
                 ],
@@ -1016,7 +1049,7 @@
                 "nmeaType": 1,
                 "startTime": {
                     "mjd_day": 60165,
-                    "mjd_frac": 0.3990162037037037
+                    "mjd_frac": 0.39902777777777776
                 }
             },
             "enabled": true,
@@ -1047,7 +1080,7 @@
                 }
             ],
             "pos": {
-                "x": 360.0,
+                "x": 368.0,
                 "y": 114.0
             },
             "size": {

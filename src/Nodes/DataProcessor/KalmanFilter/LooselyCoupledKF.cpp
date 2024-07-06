@@ -11,6 +11,7 @@
 #include "util/Eigen.hpp"
 #include <cmath>
 
+#include <imgui.h>
 #include <imgui_internal.h>
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -110,7 +111,7 @@ void NAV::LooselyCoupledKF::updateExternalPvaInitPin()
 
 void NAV::LooselyCoupledKF::guiConfig()
 {
-    float configWidth = 380.0F * gui::NodeEditorApplication::windowFontRatio();
+    float configWidth = 400.0F * gui::NodeEditorApplication::windowFontRatio();
     float unitWidth = 150.0F * gui::NodeEditorApplication::windowFontRatio();
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
@@ -320,6 +321,14 @@ void NAV::LooselyCoupledKF::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
         {
+            float curPosX = ImGui::GetCursorPosX();
+            if (ImGui::Checkbox(fmt::format("##Override R Position {}", size_t(id)).c_str(), &_gnssMeasurementUncertaintyPositionOverride))
+            {
+                flow::ApplyChanges();
+            }
+            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the position variance in the measurements with this values."); }
+            ImGui::SameLine();
+            float checkWidth = ImGui::GetCursorPosX() - curPosX;
             if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS position measurements##{}",
                                                                _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
                                                                        || _gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2
@@ -327,10 +336,10 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                                                         "rad, rad, m\0"
-                                                                                                                                                                                         "m^2, m^2, m^2\0"
-                                                                                                                                                                                         "m, m, m\0\0",
+                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                                                      "rad, rad, m\0"
+                                                                                                                                                                                                      "m^2, m^2, m^2\0"
+                                                                                                                                                                                                      "m, m, m\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
@@ -338,11 +347,17 @@ void NAV::LooselyCoupledKF::guiConfig()
                 flow::ApplyChanges();
             }
 
+            if (ImGui::Checkbox(fmt::format("##Override R Velocity {}", size_t(id)).c_str(), &_gnssMeasurementUncertaintyVelocityOverride))
+            {
+                flow::ApplyChanges();
+            }
+            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the velocity variance in the measurements with this values."); }
+            ImGui::SameLine();
             if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", _gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                                         "m/s\0\0",
+                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                                                      "m/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
@@ -527,8 +542,10 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     j["gnssMeasurementUncertaintyPositionUnit"] = _gnssMeasurementUncertaintyPositionUnit;
     j["gnssMeasurementUncertaintyPosition"] = _gnssMeasurementUncertaintyPosition;
+    j["gnssMeasurementUncertaintyPositionOverride"] = _gnssMeasurementUncertaintyPositionOverride;
     j["gnssMeasurementUncertaintyVelocityUnit"] = _gnssMeasurementUncertaintyVelocityUnit;
     j["gnssMeasurementUncertaintyVelocity"] = _gnssMeasurementUncertaintyVelocity;
+    j["gnssMeasurementUncertaintyVelocityOverride"] = _gnssMeasurementUncertaintyVelocityOverride;
 
     j["initCovariancePositionUnit"] = _initCovariancePositionUnit;
     j["initCovariancePosition"] = _initCovariancePosition;
@@ -646,6 +663,10 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         _gnssMeasurementUncertaintyPosition = j.at("gnssMeasurementUncertaintyPosition");
     }
+    if (j.contains("gnssMeasurementUncertaintyPositionOverride"))
+    {
+        j.at("gnssMeasurementUncertaintyPositionOverride").get_to(_gnssMeasurementUncertaintyPositionOverride);
+    }
     if (j.contains("gnssMeasurementUncertaintyVelocityUnit"))
     {
         j.at("gnssMeasurementUncertaintyVelocityUnit").get_to(_gnssMeasurementUncertaintyVelocityUnit);
@@ -653,6 +674,10 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("gnssMeasurementUncertaintyVelocity"))
     {
         _gnssMeasurementUncertaintyVelocity = j.at("gnssMeasurementUncertaintyVelocity");
+    }
+    if (j.contains("gnssMeasurementUncertaintyVelocityOverride"))
+    {
+        j.at("gnssMeasurementUncertaintyVelocityOverride").get_to(_gnssMeasurementUncertaintyVelocityOverride);
     }
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovariancePositionUnit"))
@@ -1201,7 +1226,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         auto rank = lu.rank();
         if (rank != _kalmanFilter.P(all, all).rows())
         {
-            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+            LOG_WARN("{}: [{}] P.rank = {}", nameId(), inertialNavSol->insTime.toYMDHMS(GPST), rank);
         }
     }
 }
@@ -1223,38 +1248,53 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     Eigen::Vector3d gnssSigmaSquaredPosition = Eigen::Vector3d::Zero();
     // GNSS measurement uncertainty for the position (Variance σ²) in [rad^2, rad^2, m^2]
     Eigen::Vector3d gnssSigmaSquaredLatLonAlt = Eigen::Vector3d::Zero();
-    switch (_gnssMeasurementUncertaintyPositionUnit)
+    if (_gnssMeasurementUncertaintyPositionOverride || !posVelObs->e_positionStdev())
     {
-    case GnssMeasurementUncertaintyPositionUnit::meter:
-        gnssSigmaSquaredPosition = _gnssMeasurementUncertaintyPosition.array().pow(2);
-        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition, lla_position)) - lla_position).array().pow(2);
-        break;
-    case GnssMeasurementUncertaintyPositionUnit::meter2:
-        gnssSigmaSquaredPosition = _gnssMeasurementUncertaintyPosition;
-        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position)) - lla_position).array().pow(2);
-        break;
-    case GnssMeasurementUncertaintyPositionUnit::rad_rad_m:
-        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - latestInertialNavSol.e_position()).array().pow(2);
-        gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition.array().pow(2);
-        break;
-    case GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2:
-        gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - latestInertialNavSol.e_position()).array().pow(2);
-        gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition;
-        break;
+        switch (_gnssMeasurementUncertaintyPositionUnit)
+        {
+        case GnssMeasurementUncertaintyPositionUnit::meter:
+            gnssSigmaSquaredPosition = _gnssMeasurementUncertaintyPosition.array().pow(2);
+            gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition, lla_position)) - lla_position).array().pow(2);
+            break;
+        case GnssMeasurementUncertaintyPositionUnit::meter2:
+            gnssSigmaSquaredPosition = _gnssMeasurementUncertaintyPosition;
+            gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position)) - lla_position).array().pow(2);
+            break;
+        case GnssMeasurementUncertaintyPositionUnit::rad_rad_m:
+            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - latestInertialNavSol.e_position()).array().pow(2);
+            gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition.array().pow(2);
+            break;
+        case GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2:
+            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - latestInertialNavSol.e_position()).array().pow(2);
+            gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition;
+            break;
+        }
+    }
+    else
+    {
+        gnssSigmaSquaredPosition = posVelObs->e_positionStdev()->get().array().pow(2);
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssSigmaSquaredPosition, lla_position)) - lla_position).array().pow(2);
     }
     LOG_DATA("{}:     gnssSigmaSquaredPosition = {} [m^2]", nameId(), gnssSigmaSquaredPosition.transpose());
     LOG_DATA("{}:     gnssSigmaSquaredLatLonAlt = {} [rad^2, rad^2, m^2]", nameId(), gnssSigmaSquaredLatLonAlt.transpose());
 
     // GNSS measurement uncertainty for the velocity (Variance σ²) in [m^2/s^2]
     Eigen::Vector3d gnssSigmaSquaredVelocity = Eigen::Vector3d::Zero();
-    switch (_gnssMeasurementUncertaintyVelocityUnit)
+    if (_gnssMeasurementUncertaintyVelocityOverride || !posVelObs->e_velocityStdev())
     {
-    case GnssMeasurementUncertaintyVelocityUnit::m_s:
-        gnssSigmaSquaredVelocity = _gnssMeasurementUncertaintyVelocity.array().pow(2);
-        break;
-    case GnssMeasurementUncertaintyVelocityUnit::m2_s2:
-        gnssSigmaSquaredVelocity = _gnssMeasurementUncertaintyVelocity;
-        break;
+        switch (_gnssMeasurementUncertaintyVelocityUnit)
+        {
+        case GnssMeasurementUncertaintyVelocityUnit::m_s:
+            gnssSigmaSquaredVelocity = _gnssMeasurementUncertaintyVelocity.array().pow(2);
+            break;
+        case GnssMeasurementUncertaintyVelocityUnit::m2_s2:
+            gnssSigmaSquaredVelocity = _gnssMeasurementUncertaintyVelocity;
+            break;
+        }
+    }
+    else
+    {
+        gnssSigmaSquaredVelocity = posVelObs->e_velocityStdev()->get().array().pow(2);
     }
     LOG_DATA("{}:     gnssSigmaSquaredVelocity = {} [m^2/S^2]", nameId(), gnssSigmaSquaredVelocity.transpose());
 
@@ -1331,7 +1371,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         auto rank = lu.rank();
         if (rank != _kalmanFilter.H(all, all).rows())
         {
-            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+            LOG_WARN("{}: [{}] (HPH^T + R).rank = {}", nameId(), posVelObs->insTime.toYMDHMS(GPST), rank);
         }
     }
 
@@ -1353,14 +1393,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         auto rank = lu.rank();
         if (rank != _kalmanFilter.H(all, all).rows())
         {
-            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+            LOG_WARN("{}: [{}] (HPH^T + R).rank = {}", nameId(), posVelObs->insTime.toYMDHMS(GPST), rank);
         }
 
         Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P(all, all));
         rank = luP.rank();
         if (rank != _kalmanFilter.P(all, all).rows())
         {
-            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+            LOG_WARN("{}: [{}] P.rank = {}", nameId(), posVelObs->insTime.toYMDHMS(GPST), rank);
         }
     }
 
@@ -1394,14 +1434,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
         _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
         decltype(auto) state = _inertialIntegrator.getLatestState().value().get();
-        lckfSolution->setState_n(state.lla_position(), state.n_velocity(), state.n_Quat_b());
+        lckfSolution->setState_n(state.lla_position(), state.n_velocity(), state.n_Quat_b()); // TODO: setStateAndCovariance_e
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
         _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
         decltype(auto) state = _inertialIntegrator.getLatestState().value().get();
-        lckfSolution->setState_e(state.e_position(), state.e_velocity(), state.e_Quat_b());
+        lckfSolution->setState_e(state.e_position(), state.e_velocity(), state.e_Quat_b()); // TODO: setStateAndCovariance_n
     }
 
     // Closed loop
