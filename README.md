@@ -17,7 +17,7 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 ### Read the documentation
 
 Read the docs on
-[![](https://img.shields.io/badge/view-documentation-blue)](https://instinct.pages.ins.uni-stuttgart.de/instinct/)
+[![](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
 
 ### Working with the Repository
 
