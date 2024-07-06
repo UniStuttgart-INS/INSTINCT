@@ -185,6 +185,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLink/udpRecv.hpp"
 // Data Logger
 #include "Nodes/DataLogger/General/CsvLogger.hpp"
+#include "Nodes/DataLogger/General/KmlLogger.hpp"
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
 #include "Nodes/DataLogger/GNSS/RinexObsLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
@@ -251,6 +252,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UdpRecv>();
     // Data Logger
     registerNodeType<CsvLogger>();
+    registerNodeType<KmlLogger>();
     registerNodeType<MatrixLogger>();
     registerNodeType<RinexObsLogger>();
     registerNodeType<UartDataLogger>();
