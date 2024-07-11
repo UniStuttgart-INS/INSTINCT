@@ -13,7 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(ENABLE_IPO "Enable Interprocedural Optimization, aka Link Time Optimization (LTO)" ON)
 
-if(ENABLE_IPO)
+if(ENABLE_IPO AND NOT MSVC)
   include(CheckIPOSupported)
   check_ipo_supported(RESULT supported OUTPUT output)
   if(supported)

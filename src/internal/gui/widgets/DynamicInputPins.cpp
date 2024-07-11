@@ -27,7 +27,7 @@ DynamicInputPins::DynamicInputPins(size_t firstDynamicPin,
                                    std::function<void(Node*)> pinAddCallback,
                                    std::function<void(Node*, size_t)> pinDeleteCallback,
                                    size_t defaultInputPins)
-    : FIRST_DYNAMIC_PIN(firstDynamicPin), _pinAddCallback(std::move(pinAddCallback)), _pinDeleteCallback(std::move(pinDeleteCallback))
+    : _firstDynamicPinIdx(firstDynamicPin), _pinAddCallback(std::move(pinAddCallback)), _pinDeleteCallback(std::move(pinDeleteCallback))
 {
     while (_nDynamicInputPins < defaultInputPins)
     {
@@ -42,7 +42,7 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
 
     int nExtraColumns = static_cast<int>(extraColumns.size());
     if (ImGui::BeginTable(fmt::format("Pin Settings##{}", id).c_str(),
-                          inputPins.size() > FIRST_DYNAMIC_PIN + 1 ? 2 + nExtraColumns : 1 + nExtraColumns,
+                          inputPins.size() > _firstDynamicPinIdx + 1 ? 2 + nExtraColumns : 1 + nExtraColumns,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
         ImGui::TableSetupColumn("Pin");
@@ -50,7 +50,7 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
         {
             ImGui::TableSetupColumn(column.header.c_str());
         }
-        if (inputPins.size() > FIRST_DYNAMIC_PIN + 1)
+        if (inputPins.size() > _firstDynamicPinIdx + 1)
         {
             ImGui::TableSetupColumn(""); // Delete Button column
         }
@@ -95,14 +95,14 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); // Pin
 
-            if (pinIndex == FIRST_DYNAMIC_PIN && _dragAndDropPinIndex > static_cast<int>(FIRST_DYNAMIC_PIN))
+            if (pinIndex == _firstDynamicPinIdx && _dragAndDropPinIndex > static_cast<int>(_firstDynamicPinIdx))
             {
-                showDragDropTargetPin(FIRST_DYNAMIC_PIN);
+                showDragDropTargetPin(_firstDynamicPinIdx);
             }
 
             bool selectablePinDummy = false;
             ImGui::Selectable(fmt::format("{}##{}", inputPins.at(pinIndex).name, id).c_str(), &selectablePinDummy);
-            if (pinIndex >= FIRST_DYNAMIC_PIN && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+            if (pinIndex >= _firstDynamicPinIdx && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
             {
                 dragAndDropPinStillInProgress = true;
                 _dragAndDropPinIndex = static_cast<int>(pinIndex);
@@ -111,13 +111,13 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
                 ImGui::TextUnformatted(inputPins.at(pinIndex).name.c_str());
                 ImGui::EndDragDropSource();
             }
-            if (_dragAndDropPinIndex >= 0 && pinIndex >= FIRST_DYNAMIC_PIN
+            if (_dragAndDropPinIndex >= 0 && pinIndex >= _firstDynamicPinIdx
                 && pinIndex != static_cast<size_t>(_dragAndDropPinIndex - 1)
                 && pinIndex != static_cast<size_t>(_dragAndDropPinIndex))
             {
                 showDragDropTargetPin(pinIndex + 1);
             }
-            if (pinIndex >= FIRST_DYNAMIC_PIN && ImGui::IsItemHovered())
+            if (pinIndex >= _firstDynamicPinIdx && ImGui::IsItemHovered())
             {
                 ImGui::SetTooltip("This item can be dragged to reorder the pins");
             }
@@ -128,7 +128,7 @@ bool DynamicInputPins::ShowGuiWidgets(size_t id, std::vector<InputPin>& inputPin
                 changed |= column.content(pinIndex);
             }
 
-            if (pinIndex >= FIRST_DYNAMIC_PIN && inputPins.size() > FIRST_DYNAMIC_PIN + 1)
+            if (pinIndex >= _firstDynamicPinIdx && inputPins.size() > _firstDynamicPinIdx + 1)
             {
                 ImGui::TableNextColumn(); // Delete
                 if (ImGui::Button(fmt::format("x##{} - {}", id, pinIndex).c_str()))

@@ -213,30 +213,30 @@ class PosVelAtt : public PosVel
         setAttitude_n_Quat_b(n_Quat_b);
     }
 
-    /// @brief Set the State and the covariances
+    /// @brief Set the State and the standard deviations
     /// @param[in] e_position New Position in ECEF coordinates
     /// @param[in] e_positionCovarianceMatrix Standard deviation of Position in ECEF coordinates [m]
     /// @param[in] e_velocity The new velocity in the earth frame
     /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setStateAndCovariance_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionCovarianceMatrix,
-                                 const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix,
-                                 const Eigen::Quaterniond& e_Quat_b)
+    void setStateAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionCovarianceMatrix,
+                             const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix,
+                             const Eigen::Quaterniond& e_Quat_b)
     {
         setPositionAndStdDev_e(e_position, e_positionCovarianceMatrix);
         setVelocityAndStdDev_e(e_velocity, e_velocityCovarianceMatrix);
         setAttitude_e_Quat_b(e_Quat_b);
     }
 
-    /// @brief Set the State and the covariances
+    /// @brief Set the State and the standard deviations
     /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
     /// @param[in] n_positionCovarianceMatrix Standard deviation of Position in NED coordinates [m]
     /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
     /// @param[in] n_velocityCovarianceMatrix Covariance matrix of Velocity in NED coordinates [m/s]
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setStateAndCovariance_n(const Eigen::Vector3d& lla_position, const Eigen::Matrix3d& n_positionCovarianceMatrix,
-                                 const Eigen::Vector3d& n_velocity, const Eigen::Matrix3d& n_velocityCovarianceMatrix,
-                                 const Eigen::Quaterniond& n_Quat_b)
+    void setStateAndStdDev_n(const Eigen::Vector3d& lla_position, const Eigen::Matrix3d& n_positionCovarianceMatrix,
+                             const Eigen::Vector3d& n_velocity, const Eigen::Matrix3d& n_velocityCovarianceMatrix,
+                             const Eigen::Quaterniond& n_Quat_b)
     {
         setPositionAndStdDev_lla(lla_position, n_positionCovarianceMatrix);
         setVelocityAndStdDev_n(n_velocity, n_velocityCovarianceMatrix);

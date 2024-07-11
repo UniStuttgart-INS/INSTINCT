@@ -63,11 +63,18 @@ struct DynamicInputPins
     /// @param[in, out] node Pointer to the calling node
     void addPin(Node* node);
 
+    /// @brief Set the First Dynamic Pin Idx
+    /// @param[in] firstDynamicPinIndex First pin index which is dynamic
+    void setFirstDynamicPinIdx(size_t firstDynamicPinIndex) { _firstDynamicPinIdx = firstDynamicPinIndex; }
+
+    /// @brief Get the First Dynamic Pin Idx
+    [[nodiscard]] size_t getFirstDynamicPinIdx() const { return _firstDynamicPinIdx; }
+
   private:
     /// @brief Index of the Pin currently being dragged
     int _dragAndDropPinIndex = -1;
     /// @brief First pin index which is dynamic
-    const size_t FIRST_DYNAMIC_PIN = 0;
+    size_t _firstDynamicPinIdx = 0;
     /// @brief Number of dynamic input pins
     size_t _nDynamicInputPins = 0;
     /// @brief Function to call to add a new pin

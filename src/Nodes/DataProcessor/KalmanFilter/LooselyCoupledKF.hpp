@@ -176,15 +176,19 @@ class LooselyCoupledKF : public Node
                                                          KFStates::AccBiasX, KFStates::AccBiasY, KFStates::AccBiasZ,
                                                          KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ };
     /// @brief All position keys
-    inline static const std::vector<KFStates> Pos = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt };
-    /// @brief All position velocity
-    inline static const std::vector<KFStates> Vel = { KFStates::VelN, KFStates::VelE, KFStates::VelD };
+    inline static const std::vector<KFStates> KFPos = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt };
+    /// @brief All velocity keys
+    inline static const std::vector<KFStates> KFVel = { KFStates::VelN, KFStates::VelE, KFStates::VelD };
     /// @brief All attitude keys
-    inline static const std::vector<KFStates> Att = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw };
+    inline static const std::vector<KFStates> KFAtt = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw };
     /// @brief All acceleration bias keys
-    inline static const std::vector<KFStates> AccBias = { KFStates::AccBiasX, KFStates::AccBiasY, KFStates::AccBiasZ };
+    inline static const std::vector<KFStates> KFAccBias = { KFStates::AccBiasX, KFStates::AccBiasY, KFStates::AccBiasZ };
     /// @brief All gyroscope bias keys
-    inline static const std::vector<KFStates> GyrBias = { KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ };
+    inline static const std::vector<KFStates> KFGyrBias = { KFStates::GyrBiasX, KFStates::GyrBiasY, KFStates::GyrBiasZ };
+
+    /// @brief All position and velocity keys
+    inline static const std::vector<KFStates> KFPosVel = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
+                                                           KFStates::VelN, KFStates::VelE, KFStates::VelD };
 
     /// @brief Vector with all measurement keys
     inline static const std::vector<KFMeas> Meas = { KFMeas::dPosLat, KFMeas::dPosLon, KFMeas::dPosAlt, KFMeas::dVelN, KFMeas::dVelE, KFMeas::dVelD };

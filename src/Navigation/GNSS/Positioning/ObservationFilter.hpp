@@ -36,6 +36,7 @@
 
 #include "util/Container/STL.hpp"
 #include "util/Json.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -253,7 +254,7 @@ class ObservationFilter
                                 .at(_sameSnrMaskForAllReceivers ? static_cast<ReceiverType>(0) : recv.type)
                                 .checkSNRMask(obsData.satSigId.freq(), satElevation, recvObsData->CN0.value()))
                     {
-                        LOG_DEBUG("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
+                        LOG_TRACE("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
                                   nameId, receivers.front().gnssObs->insTime.toYMDHMS(GPST), obsData.satSigId, recv.type, recvObsData->CN0.value());
                         skipObservation = true;
                         break;

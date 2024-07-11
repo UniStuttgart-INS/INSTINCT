@@ -61,6 +61,12 @@ class Algorithm
     /// Reset the algorithm
     void reset();
 
+    /// @brief Get the Estimator Type
+    [[nodiscard]] EstimatorType getEstimatorType() const { return _estimatorType; }
+
+    /// @brief Get the last update time
+    const InsTime& getLastUpdateTime() const { return _lastUpdate; }
+
     /// @brief Calculate the SPP solution
     /// @param[in] gnssObs GNSS observation
     /// @param[in] gnssNavInfos Collection of GNSS Nav information
