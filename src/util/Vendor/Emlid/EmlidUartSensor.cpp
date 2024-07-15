@@ -112,7 +112,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::emlid::EmlidUartSensor::fin
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("{}: Invalid binary packet: Id={:0x}, payload length={}", _name, _binaryMsgId, _binaryPayloadLength);
+                LOG_DEBUG("{}: Invalid binary packet: Id={:0x}, payload length={}", _name, _binaryMsgId, _binaryPayloadLength);
                 resetTracking();
             }
         }
@@ -140,6 +140,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::emlid::EmlidUartSensor::fin
                 {
                     // We have a valid ascii packet!!!.
                     LOG_DATA("{}: Valid ascii packet: {}", _name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    resetTracking();
                     return p;
                 }
                 // Invalid packet!

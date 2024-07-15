@@ -186,12 +186,9 @@ void SkydelNetworkStream::do_receive()
                 obsG->setAttitude_e_Quat_b(e_Quat_b); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on lla_position
 
                 // Set IMU values
-                obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
-                obs->accelUncompXYZ = obs->accelCompXYZ;
-                obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
-                obs->gyroUncompXYZ = obs->gyroCompXYZ;
-                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
-                obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
+                obs->p_acceleration = { accelX, accelY, accelZ };
+                obs->p_angularRate = { gyroX, gyroY, gyroZ };
+                // TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
 
                 InsTime currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
@@ -279,13 +276,13 @@ bool SkydelNetworkStream::initialize()
 
     if (_isStartup)
     {
-        _testThread = std::thread([=, this]() {
+        _testThread = std::thread([this]() {
             _ioservice.run();
         });
     }
     else
     {
-        _testThread = std::thread([=, this]() {
+        _testThread = std::thread([this]() {
             _ioservice.restart();
             _ioservice.run();
         });

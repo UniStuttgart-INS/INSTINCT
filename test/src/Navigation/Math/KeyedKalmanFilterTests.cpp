@@ -145,4 +145,50 @@ TEST_CASE("[KeyedKalmanFilter] Basic usage", "[KeyedKalmanFilter]")
     kf.correctWithMeasurementInnovation();
 }
 
+TEST_CASE("[KeyedKalmanFilter] Replace state", "[KeyedKalmanFilter]")
+{
+    auto logger = initializeTestLogger();
+
+    using StateKeys = std::variant<StateKey::States, StateKey::Ambiguity>;
+    using MeasKeys = std::variant<MeasurementKey::Pseudorange, MeasurementKey::Carrierphase>;
+
+    KeyedKalmanFilter<double, StateKeys, MeasKeys> kf({ StateKey::PosX, StateKey::VelX },
+                                                      {});
+
+    kf.addStates({ StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 1 } });
+    kf.setMeasurements({ MeasurementKey::Pseudorange{ 0 } });
+    REQUIRE(kf.x(all) == Eigen::VectorXd::Zero(4));
+    REQUIRE(kf.x.rowKeys() == std::vector<StateKeys>{ StateKey::PosX, StateKey::VelX, StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 1 } });
+
+    Eigen::Matrix4d eigMat;
+    eigMat << 1, 2, 3, 4,
+        5, 6, 7, 8,
+        9, 10, 11, 12,
+        13, 14, 15, 16;
+
+    kf.x(all) = (Eigen::VectorXd(4) << 0, 1, 2, 3).finished();
+    kf.P(all, all) = eigMat;
+    kf.Phi(all, all) = eigMat;
+    kf.Q(all, all) = eigMat;
+
+    kf.replaceState(StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 2 });
+    auto newKeys = std::vector<StateKeys>{ StateKey::PosX, StateKey::VelX, StateKey::Ambiguity{ 2 }, StateKey::Ambiguity{ 1 } };
+    REQUIRE(kf.x.rowKeys() == newKeys);
+    REQUIRE(kf.P.rowKeys() == newKeys);
+    REQUIRE(kf.P.colKeys() == newKeys);
+    REQUIRE(kf.P(newKeys, newKeys) == eigMat);
+    REQUIRE(kf.F.rowKeys() == newKeys);
+    REQUIRE(kf.F.colKeys() == newKeys);
+    REQUIRE(kf.Phi.rowKeys() == newKeys);
+    REQUIRE(kf.Phi.colKeys() == newKeys);
+    REQUIRE(kf.G.rowKeys() == newKeys);
+    REQUIRE(kf.G.colKeys() == newKeys);
+    REQUIRE(kf.W.rowKeys() == newKeys);
+    REQUIRE(kf.W.colKeys() == newKeys);
+    REQUIRE(kf.Q.rowKeys() == newKeys);
+    REQUIRE(kf.Q.colKeys() == newKeys);
+    REQUIRE(kf.H.colKeys() == newKeys);
+    REQUIRE(kf.K.rowKeys() == newKeys);
+}
+
 } // namespace NAV::TESTS

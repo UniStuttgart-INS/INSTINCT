@@ -168,7 +168,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
     {
         uint8_t i = 0;
         std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-        while (readsome(reinterpret_cast<char*>(&i), 1))
+        while (!eof() && read(reinterpret_cast<char*>(&i), 1))
         {
             packet = _sensor.findPacket(i);
 
@@ -215,15 +215,15 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
         std::optional<uint16_t> gpsCycle = 0;
         std::optional<uint16_t> gpsWeek;
         std::optional<long double> gpsToW;
-        std::optional<double> magUncompX;
-        std::optional<double> magUncompY;
-        std::optional<double> magUncompZ;
-        std::optional<double> accelUncompX;
-        std::optional<double> accelUncompY;
-        std::optional<double> accelUncompZ;
-        std::optional<double> gyroUncompX;
-        std::optional<double> gyroUncompY;
-        std::optional<double> gyroUncompZ;
+        std::optional<double> magX;
+        std::optional<double> magY;
+        std::optional<double> magZ;
+        std::optional<double> accelX;
+        std::optional<double> accelY;
+        std::optional<double> accelZ;
+        std::optional<double> gyroX;
+        std::optional<double> gyroY;
+        std::optional<double> gyroZ;
 
         // Split line at comma
         for (const auto& column : _headerColumns)
@@ -253,41 +253,41 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
                 {
                     obs->timeSinceStartup.emplace(std::stoull(cell));
                 }
-                else if (column == "UnCompMagX [Gauss]")
+                else if (column == "MagX [Gauss]")
                 {
-                    magUncompX = std::stod(cell);
+                    magX = std::stod(cell);
                 }
-                else if (column == "UnCompMagY [Gauss]")
+                else if (column == "MagY [Gauss]")
                 {
-                    magUncompY = std::stod(cell);
+                    magY = std::stod(cell);
                 }
-                else if (column == "UnCompMagZ [Gauss]")
+                else if (column == "MagZ [Gauss]")
                 {
-                    magUncompZ = std::stod(cell);
+                    magZ = std::stod(cell);
                 }
-                else if (column == "UnCompAccX [m/s^2]")
+                else if (column == "AccX [m/s^2]")
                 {
-                    accelUncompX = std::stod(cell);
+                    accelX = std::stod(cell);
                 }
-                else if (column == "UnCompAccY [m/s^2]")
+                else if (column == "AccY [m/s^2]")
                 {
-                    accelUncompY = std::stod(cell);
+                    accelY = std::stod(cell);
                 }
-                else if (column == "UnCompAccZ [m/s^2]")
+                else if (column == "AccZ [m/s^2]")
                 {
-                    accelUncompZ = std::stod(cell);
+                    accelZ = std::stod(cell);
                 }
-                else if (column == "UnCompGyroX [rad/s]")
+                else if (column == "GyroX [rad/s]")
                 {
-                    gyroUncompX = std::stod(cell);
+                    gyroX = std::stod(cell);
                 }
-                else if (column == "UnCompGyroY [rad/s]")
+                else if (column == "GyroY [rad/s]")
                 {
-                    gyroUncompY = std::stod(cell);
+                    gyroY = std::stod(cell);
                 }
-                else if (column == "UnCompGyroZ [rad/s]")
+                else if (column == "GyroZ [rad/s]")
                 {
-                    gyroUncompZ = std::stod(cell);
+                    gyroZ = std::stod(cell);
                 }
                 else if (column == "Temperature [Celsius]")
                 {
@@ -304,27 +304,33 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
             }
         }
 
-        if (gpsWeek.has_value() && gpsToW.has_value())
+        if (!gpsCycle || !gpsWeek || !gpsToW)
         {
-            obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+            LOG_ERROR("{}: Fields 'GpsCycle', 'GpsWeek', 'GpsToW [s]' are needed.", nameId());
+            return nullptr;
         }
-        if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
+        if (!accelX || !accelY || !accelZ)
         {
-            obs->magUncompXYZ.emplace(magUncompX.value(), magUncompY.value(), magUncompZ.value());
+            LOG_ERROR("{}: Fields 'AccX [m/s^2]', 'AccY [m/s^2]', 'AccZ [m/s^2]' are needed.", nameId());
+            return nullptr;
         }
-        if (accelUncompX.has_value() && accelUncompY.has_value() && accelUncompZ.has_value())
+        if (!gyroX || !gyroY || !gyroZ)
         {
-            obs->accelUncompXYZ.emplace(accelUncompX.value(), accelUncompY.value(), accelUncompZ.value());
+            LOG_ERROR("{}: Fields 'GyroX [rad/s]', 'GyroY [rad/s]', 'GyroZ [rad/s]' are needed.", nameId());
+            return nullptr;
         }
-        if (gyroUncompX.has_value() && gyroUncompY.has_value() && gyroUncompZ.has_value())
+        obs->insTime = InsTime(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+        obs->p_acceleration = { accelX.value(), accelY.value(), accelZ.value() };
+        obs->p_angularRate = { gyroX.value(), gyroY.value(), gyroZ.value() };
+
+        if (magX && magY && magZ)
         {
-            obs->gyroUncompXYZ.emplace(gyroUncompX.value(), gyroUncompY.value(), gyroUncompZ.value());
+            obs->p_magneticField.emplace(magX.value(), magY.value(), magZ.value());
         }
     }
 
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->sequenceNumber, obs->temperature.value(),
-             obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
+    LOG_DATA("DATA({}): {}, {}, {}, {}, {}", name, obs->sequenceNumber, obs->temperature.value(),
+             obs->p_acceleration.x(), obs->p_acceleration.y(), obs->p_acceleration.z());
 
     // Check if a packet was skipped
     if (callbacksEnabled)

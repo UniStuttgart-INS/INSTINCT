@@ -1,45 +1,22 @@
 {
+    "colormaps": [],
     "links": {
         "link-11": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 3,
             "id": 11,
             "startPinId": 1
         },
         "link-12": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 10,
             "id": 12,
             "startPinId": 1
         },
         "link-19": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 15,
             "id": 19,
             "startPinId": 7
         },
         "link-20": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
             "endPinId": 18,
             "id": 20,
             "startPinId": 7

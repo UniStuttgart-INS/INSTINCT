@@ -17,6 +17,7 @@
 #include <optional>
 #include <vector>
 #include <algorithm>
+#include <Eigen/Core>
 
 #include "NodeData/NodeData.hpp"
 
@@ -33,9 +34,10 @@ class GnssObs : public NodeData
     /// @brief Observation types
     enum ObservationType
     {
-        Pseudorange, ///< Pseudorange
-        Carrier,     ///< Carrier-Phase
-        Doppler,     ///< Doppler (Pseudorange rate)
+        Pseudorange,           ///< Pseudorange
+        Carrier,               ///< Carrier-Phase
+        Doppler,               ///< Doppler (Pseudorange rate)
+        ObservationType_COUNT, ///< Count
     };
 
     /// @brief Stores the satellites observations
@@ -135,8 +137,9 @@ class GnssObs : public NodeData
     /// @brief Constructor
     /// @param[in] insTime Epoch time
     /// @param[in] data Observation data
-    GnssObs(const InsTime& insTime, std::vector<ObservationData> data)
-        : data(std::move(data))
+    /// @param[in] satData Satellite data
+    GnssObs(const InsTime& insTime, std::vector<ObservationData> data, std::vector<SatelliteData> satData)
+        : data(std::move(data)), _satData(std::move(satData))
     {
         this->insTime = insTime;
     }
@@ -222,7 +225,7 @@ class GnssObs : public NodeData
     /// @brief Return the element with the identifier
     /// @param[in] satSigId Signal id
     /// @return The element found in the observations
-    std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
+    [[nodiscard]] std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
     {
         auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
             return idData.satSigId == satSigId;
@@ -234,6 +237,109 @@ class GnssObs : public NodeData
         }
         return std::nullopt;
     }
+
+    /// @brief Useful information of the satellites
+    [[nodiscard]] const std::vector<SatelliteData>& getSatData() const { return _satData; }
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(data.size() * 7);
+
+        for (const auto& obsData : data)
+        {
+            descriptors.push_back(fmt::format("{} Pseudorange [m]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Pseudorange SSI", obsData.satSigId));
+
+            descriptors.push_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId));
+
+            descriptors.push_back(fmt::format("{} Doppler [Hz]", obsData.satSigId));
+            descriptors.push_back(fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId));
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& obsData : data)
+        {
+            if (descriptor == fmt::format("{} Pseudorange [m]", obsData.satSigId) && obsData.pseudorange)
+            {
+                return obsData.pseudorange->value;
+            }
+            if (descriptor == fmt::format("{} Pseudorange SSI", obsData.satSigId) && obsData.pseudorange)
+            {
+                return obsData.pseudorange->SSI;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase [cycles]", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->value;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase SSI", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->SSI;
+            }
+            if (descriptor == fmt::format("{} Carrier-phase LLI", obsData.satSigId) && obsData.carrierPhase)
+            {
+                return obsData.carrierPhase->LLI;
+            }
+            if (descriptor == fmt::format("{} Doppler [Hz]", obsData.satSigId) && obsData.doppler)
+            {
+                return obsData.doppler.value();
+            }
+            if (descriptor == fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId) && obsData.CN0)
+            {
+                return obsData.CN0.value();
+            }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(data.size() * 7);
+        for (const auto& obsData : data)
+        {
+            if (obsData.pseudorange) { dynData.emplace_back(fmt::format("{} Pseudorange [m]", obsData.satSigId), obsData.pseudorange->value); }
+            if (obsData.pseudorange) { dynData.emplace_back(fmt::format("{} Pseudorange SSI", obsData.satSigId), obsData.pseudorange->SSI); }
+
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase [cycles]", obsData.satSigId), obsData.carrierPhase->value); }
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase SSI", obsData.satSigId), obsData.carrierPhase->SSI); }
+            if (obsData.carrierPhase) { dynData.emplace_back(fmt::format("{} Carrier-phase LLI", obsData.satSigId), obsData.carrierPhase->LLI); }
+
+            if (obsData.doppler) { dynData.emplace_back(fmt::format("{} Doppler [Hz]", obsData.satSigId), obsData.doppler.value()); }
+
+            if (obsData.CN0) { dynData.emplace_back(fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId), obsData.CN0.value()); }
+        }
+        return dynData;
+    }
+
+    /// Receiver Information, e.g. from RINEX header
+    struct ReceiverInfo
+    {
+        ///< Approximate receiver position in [m], e.g. from RINEX header
+        std::optional<Eigen::Vector3d> e_approxPos;
+
+        /// Antenna Type. Empty if unknown
+        std::string antennaType;
+
+        /// @brief Antenna Delta (North, East, Up) in [m]
+        ///
+        /// - Horizontal eccentricity of ARP relative to the marker (north/east)
+        /// - Height of the antenna reference point (ARP) above the marker
+        Eigen::Vector3d antennaDeltaNEU = Eigen::Vector3d::Zero();
+    };
+
+    /// Optional Receiver Information, e.g. from RINEX header
+    std::optional<std::reference_wrapper<ReceiverInfo>> receiverInfo;
 
   private:
     /// @brief Useful information of the satellites
@@ -253,6 +359,8 @@ constexpr const char* to_string(GnssObs::ObservationType obsType)
         return "Carrier";
     case GnssObs::Doppler:
         return "Doppler";
+    case GnssObs::ObservationType_COUNT:
+        return "COUNT";
     }
     return "";
 }
@@ -262,17 +370,8 @@ constexpr const char* to_string(GnssObs::ObservationType obsType)
 #ifndef DOXYGEN_IGNORE
 
 template<>
-struct fmt::formatter<NAV::GnssObs::ObservationType>
+struct fmt::formatter<NAV::GnssObs::ObservationType> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Frequency structs
     /// @param[in] obsType Struct to format
     /// @param[in, out] ctx Format context
@@ -280,8 +379,14 @@ struct fmt::formatter<NAV::GnssObs::ObservationType>
     template<typename FormatContext>
     auto format(const NAV::GnssObs::ObservationType& obsType, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", NAV::to_string(obsType));
+        return fmt::formatter<const char*>::format(to_string(obsType), ctx);
     }
 };
 
 #endif
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::GnssObs::ObservationType& obj);

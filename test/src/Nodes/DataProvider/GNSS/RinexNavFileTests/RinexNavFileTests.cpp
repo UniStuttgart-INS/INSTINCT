@@ -20,7 +20,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "GnssNavInfoComparisons.hpp"
+#include "NodeData/GNSS/GnssNavInfoComparisons.hpp"
 #include "v2_01/brdc0990_22g.hpp"
 #include "v2_10/bako3540_22n.hpp"
 #include "v2_11/Allo060xA_22n.hpp"
@@ -40,6 +40,11 @@ namespace nm = NAV::NodeManager;
 #include "v3_05/INS_1580_19G.hpp"
 #include "v3_05/INS_1580_19I.hpp"
 #include "v3_05/INS_1580_19P.hpp"
+#include "v4_00/INS_1581_19G.hpp"
+#include "v4_00/INS_1581_19I.hpp"
+#include "v4_00/INS_1581_19L.hpp"
+#include "v4_00/INS_1581_19N.hpp"
+#include "v4_00/INS_1581_19P.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
 #pragma GCC diagnostic push
@@ -212,7 +217,26 @@ TEST_CASE("[RinexNavFile] Read v3_05/INS_1580.19P (Mixed)", "[RinexNavFile][flow
 //                                                   v4.00
 // ###########################################################################################################
 
-// TODO: After supporting RINEX 4.0, Add RinexNavFile tests
+TEST_CASE("[RinexNavFile] Read v4_00/INS_1581.19G (GLONASS)", "[RinexNavFile][flow]")
+{
+    testRinexNavFileFlow("DataProvider/GNSS/RinexNavFile/v4_00/INS_1581.19G", v4_00::gnssNavInfo_INS_1581_19G);
+}
+TEST_CASE("[RinexNavFile] Read v4_00/INS_1581.19I (BeiDou)", "[RinexNavFile][flow]")
+{
+    testRinexNavFileFlow("DataProvider/GNSS/RinexNavFile/v4_00/INS_1581.19I", v4_00::gnssNavInfo_INS_1581_19I);
+}
+TEST_CASE("[RinexNavFile] Read v4_00/INS_1581.19L (Galileo)", "[RinexNavFile][flow]")
+{
+    testRinexNavFileFlow("DataProvider/GNSS/RinexNavFile/v4_00/INS_1581.19L", v4_00::gnssNavInfo_INS_1581_19L);
+}
+TEST_CASE("[RinexNavFile] Read v4_00/INS_1581.19N (GPS)", "[RinexNavFile][flow]")
+{
+    testRinexNavFileFlow("DataProvider/GNSS/RinexNavFile/v4_00/INS_1581.19N", v4_00::gnssNavInfo_INS_1581_19N);
+}
+TEST_CASE("[RinexNavFile] Read v4_00/INS_1581.19P (Mixed)", "[RinexNavFile][flow]")
+{
+    testRinexNavFileFlow("DataProvider/GNSS/RinexNavFile/v4_00/INS_1581.19P", v4_00::gnssNavInfo_INS_1581_19P); // TODO: Enable SBAS + QZSS satellites
+}
 
 // ###########################################################################################################
 //                                               Corrupt files

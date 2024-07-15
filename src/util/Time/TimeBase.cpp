@@ -90,7 +90,7 @@ void NAV::util::time::SetCurrentTimeToComputerTime()
     std::tm* now = std::localtime(&t); // NOLINT(concurrency-mt-unsafe)
 
     currentTimeComputer = std::chrono::steady_clock::now();
-    currentTime = InsTime{ static_cast<uint16_t>(now->tm_year + 1900), static_cast<uint16_t>(now->tm_mon), static_cast<uint16_t>(now->tm_mday),
+    currentTime = InsTime{ static_cast<uint16_t>(now->tm_year + 1900), static_cast<uint16_t>(now->tm_mon) + 1, static_cast<uint16_t>(now->tm_mday),
                            static_cast<uint16_t>(now->tm_hour), static_cast<uint16_t>(now->tm_min), static_cast<long double>(now->tm_sec) };
 }
 

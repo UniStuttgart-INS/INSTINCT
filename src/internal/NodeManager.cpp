@@ -290,6 +290,7 @@ NAV::OutputPin* NAV::NodeManager::FindOutputPin(ax::NodeEditor::PinId id)
 
     for (auto& node : m_nodes)
     {
+        if (!node || node->kind == Node::Kind::GroupBox) { continue; }
         for (auto& pin : node->outputPins)
         {
             if (pin.id == id) { return &pin; }
@@ -305,6 +306,7 @@ NAV::InputPin* NAV::NodeManager::FindInputPin(ax::NodeEditor::PinId id)
 
     for (auto& node : m_nodes)
     {
+        if (!node || node->kind == Node::Kind::GroupBox) { continue; }
         for (auto& pin : node->inputPins)
         {
             if (pin.id == id) { return &pin; }
@@ -319,7 +321,7 @@ void NAV::NodeManager::EnableAllCallbacks()
     LOG_TRACE("called");
     for (auto* node : m_nodes)
     {
-        if (!node->isDisabled())
+        if (node && !node->isDisabled() && node->kind != Node::Kind::GroupBox)
         {
             node->callbacksEnabled = true;
         }
@@ -335,6 +337,18 @@ void NAV::NodeManager::DisableAllCallbacks()
     }
 }
 
+void NAV::NodeManager::ClearAllNodeQueues()
+{
+    LOG_TRACE("called");
+    for (auto* node : m_nodes)
+    {
+        for (auto& inputPin : node->inputPins)
+        {
+            inputPin.queue.clear();
+        }
+    }
+}
+
 bool NAV::NodeManager::InitializeAllNodes()
 {
     LOG_TRACE("called");
@@ -344,7 +358,7 @@ bool NAV::NodeManager::InitializeAllNodes()
 
     for (auto* node : m_nodes)
     {
-        if (node && !node->isDisabled() && !node->isInitialized())
+        if (node && node->kind != Node::Kind::GroupBox && !node->isDisabled() && !node->isInitialized())
         {
             if (!node->doInitialize(true))
             {
@@ -363,7 +377,7 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 
     for (auto* node : m_nodes)
     {
-        if (node && !node->isDisabled() && !node->isInitialized())
+        if (node && node->kind != Node::Kind::GroupBox && !node->isDisabled() && !node->isInitialized())
         {
             node->doInitialize();
         }

@@ -31,6 +31,10 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
         LOG_DEBUG("{}: Filepath changed to {}", nameId, path);
         changed = true;
     }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("%s", path.c_str());
+    }
     ImGui::SameLine();
     std::string saveFileDialogKey = fmt::format("Save File ({})", id);
     if (ImGui::Button(buttonText))
@@ -73,6 +77,10 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     {
         LOG_DEBUG("{}: Filepath changed to {}", nameId, path);
         changed = true;
+    }
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::SetTooltip("%s", path.c_str());
     }
     ImGui::SameLine();
     std::string openFileDialogKey = fmt::format("Select File ({})", id);

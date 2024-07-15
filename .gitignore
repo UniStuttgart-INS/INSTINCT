@@ -16,6 +16,9 @@ coverage/*
 # Ignore Mac specific files
 .DS_Store
 
+# Ignore Direnv
+.direnv
+
 # Ignore clangd cache
 /.cache
 
@@ -43,3 +46,6 @@ INSTINCT.ini
 # Data
 *.pos.trace
 *.pos.stat
+
+# Image backup files
+*~

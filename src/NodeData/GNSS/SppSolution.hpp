@@ -14,18 +14,18 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <algorithm>
-#include "util/Assert.h"
-#include "NodeData/State/PosVel.hpp"
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
-#include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/ReceiverClock.hpp"
+#include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
 
+#include "NodeData/State/PosVel.hpp"
+
+#include "util/Assert.h"
 #include "util/Container/KeyedMatrix.hpp"
-#include "Navigation/GNSS/Positioning/SPP/SppKeys.hpp"
-
-namespace States = NAV::GNSS::Positioning::SPP::States;
 
 namespace NAV
 {
@@ -49,258 +49,329 @@ class SppSolution : public PosVel
         return parent;
     }
 
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
+    {
+        auto desc = PosVel::GetStaticDataDescriptors();
+        desc.reserve(GetStaticDescriptorCount());
+        desc.emplace_back("Number satellites");
+        desc.emplace_back("Receiver clock bias [s]");
+        desc.emplace_back("Receiver clock drift [s/s]");
+        desc.emplace_back("Receiver clock bias StDev [s]");
+        desc.emplace_back("Receiver clock drift StDev [s/s]");
+        desc.emplace_back("System time reference system");
+        desc.emplace_back("GPS system time difference [s]");
+        desc.emplace_back("GAL system time difference [s]");
+        desc.emplace_back("GLO system time difference [s]");
+        desc.emplace_back("BDS system time difference [s]");
+        desc.emplace_back("QZSS system time difference [s]");
+        desc.emplace_back("IRNSS system time difference [s]");
+        desc.emplace_back("SBAS system time difference [s]");
+        desc.emplace_back("GPS system time drift difference [s/s]");
+        desc.emplace_back("GAL system time drift difference [s/s]");
+        desc.emplace_back("GLO system time drift difference [s/s]");
+        desc.emplace_back("BDS system time drift difference [s/s]");
+        desc.emplace_back("QZSS system time drift difference [s/s]");
+        desc.emplace_back("IRNSS system time drift difference [s/s]");
+        desc.emplace_back("SBAS system time drift difference [s/s]");
+        desc.emplace_back("GPS system time difference StDev [s]");
+        desc.emplace_back("GAL system time difference StDev [s]");
+        desc.emplace_back("GLO system time difference StDev [s]");
+        desc.emplace_back("BDS system time difference StDev [s]");
+        desc.emplace_back("QZSS system time difference StDev [s]");
+        desc.emplace_back("IRNSS system time difference StDev [s]");
+        desc.emplace_back("SBAS system time difference StDev [s]");
+        desc.emplace_back("GPS system time drift difference StDev [s/s]");
+        desc.emplace_back("GAL system time drift difference StDev [s/s]");
+        desc.emplace_back("GLO system time drift difference StDev [s/s]");
+        desc.emplace_back("BDS system time drift difference StDev [s/s]");
+        desc.emplace_back("QZSS system time drift difference StDev [s/s]");
+        desc.emplace_back("IRNSS system time drift difference StDev [s/s]");
+        desc.emplace_back("SBAS system time drift difference StDev [s/s]");
+
+        return desc;
+    }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 73; }
+
+    /// @brief Returns a vector of data descriptors
+    [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
+
+    /// @brief Get the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        switch (idx)
+        {
+        case 0:  // Latitude [deg]
+        case 1:  // Longitude [deg]
+        case 2:  // Altitude [m]
+        case 3:  // North/South [m]
+        case 4:  // East/West [m]
+        case 5:  // X-ECEF [m]
+        case 6:  // Y-ECEF [m]
+        case 7:  // Z-ECEF [m]
+        case 8:  // X-ECEF StDev [m]
+        case 9:  // Y-ECEF StDev [m]
+        case 10: // Z-ECEF StDev [m]
+        case 11: // XY-ECEF StDev [m]
+        case 12: // XZ-ECEF StDev [m]
+        case 13: // YZ-ECEF StDev [m]
+        case 14: // North StDev [m]
+        case 15: // East StDev [m]
+        case 16: // Down StDev [m]
+        case 17: // NE StDev [m]
+        case 18: // ND StDev [m]
+        case 19: // ED StDev [m]
+        case 20: // Velocity norm [m/s]
+        case 21: // X velocity ECEF [m/s]
+        case 22: // Y velocity ECEF [m/s]
+        case 23: // Z velocity ECEF [m/s]
+        case 24: // North velocity [m/s]
+        case 25: // East velocity [m/s]
+        case 26: // Down velocity [m/s]
+        case 27: // X velocity ECEF StDev [m/s]
+        case 28: // Y velocity ECEF StDev [m/s]
+        case 29: // Z velocity ECEF StDev [m/s]
+        case 30: // XY velocity StDev [m]
+        case 31: // XZ velocity StDev [m]
+        case 32: // YZ velocity StDev [m]
+        case 33: // North velocity StDev [m/s]
+        case 34: // East velocity StDev [m/s]
+        case 35: // Down velocity StDev [m/s]
+        case 36: // NE velocity StDev [m]
+        case 37: // ND velocity StDev [m]
+        case 38: // ED velocity StDev [m]
+            return PosVel::getValueAt(idx);
+        case 39: // Number satellites
+            return static_cast<double>(nSatellites);
+        case 40: // Receiver clock bias [s]
+            return recvClk.bias.value;
+        case 41: // Receiver clock drift [s/s]
+            if (recvClk.drift.value != 0.0) { return recvClk.drift.value; }
+            break;
+        case 42: // Receiver clock bias StDev [s]
+            return recvClk.bias.stdDev;
+        case 43: // Receiver clock drift StDev [s/s]
+            if (recvClk.drift.value != 0.0) { return recvClk.drift.stdDev; }
+            break;
+        case 44: // System time reference system
+            return static_cast<double>(recvClk.referenceTimeSatelliteSystem.toEnumeration());
+        case 45: // GPS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 46: // GAL system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 47: // GLO system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 48: // BDS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 49: // QZSS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 50: // IRNSS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 51: // SBAS system time difference [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+            break;
+        case 52: // GPS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 53: // GAL system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 54: // GLO system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 55: // BDS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 56: // QZSS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 57: // IRNSS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 58: // SBAS system time drift difference [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+            break;
+        case 59: // GPS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 60: // GAL system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 61: // GLO system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 62: // BDS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 63: // QZSS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 64: // IRNSS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 65: // SBAS system time difference StDev [s]
+            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+            break;
+        case 66: // GPS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 67: // GAL system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 68: // GLO system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 69: // BDS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 70: // QZSS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 71: // IRNSS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        case 72: // SBAS system time drift difference StDev [s/s]
+            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+            break;
+        default:
+            return std::nullopt;
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors for the dynamic data
+    [[nodiscard]] std::vector<std::string> dynamicDataDescriptors() const override
+    {
+        std::vector<std::string> descriptors;
+        descriptors.reserve(interFrequencyBias.size() * 2 + satData.size() * 2);
+
+        for (const auto& bias : interFrequencyBias)
+        {
+            descriptors.push_back(fmt::format("{} Inter-freq bias [s]", bias.first));
+            descriptors.push_back(fmt::format("{} Inter-freq bias StDev [s]", bias.first));
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            descriptors.push_back(fmt::format("{} Elevation [deg]", satId));
+            descriptors.push_back(fmt::format("{} Azimuth [deg]", satId));
+            // descriptors.push_back(fmt::format("{} Satellite clock bias [s]", satData.first));
+            // descriptors.push_back(fmt::format("{} Satellite clock drift [s/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF X [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF Y [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos ECEF Z [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Latitude [deg]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Longitude [deg]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatPos Altitude [m]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF X [m/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first));
+            // descriptors.push_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first));
+        }
+
+        return descriptors;
+    }
+
+    /// @brief Get the value for the descriptor
+    /// @return Value if in the observation
+    [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
+    {
+        for (const auto& bias : interFrequencyBias)
+        {
+            if (descriptor == fmt::format("{} Inter-freq bias [s]", bias.first)) { return bias.second.value; }
+            if (descriptor == fmt::format("{} Inter-freq bias StDev [s]", bias.first)) { return bias.second.stdDev; }
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            if (descriptor == fmt::format("{} Elevation [deg]", satId)) { return rad2deg(satData.satElevation); }
+            if (descriptor == fmt::format("{} Azimuth [deg]", satId)) { return rad2deg(satData.satAzimuth); }
+            // if (descriptor == fmt::format("{} Satellite clock bias [s]", satData.first)) { return satData.second.satClock.bias; }
+            // if (descriptor == fmt::format("{} Satellite clock drift [s/s]", satData.first)) { return satData.second.satClock.drift; }
+            // if (descriptor == fmt::format("{} SatPos ECEF X [m]", satData.first)) { return satData.second.e_satPos.x(); }
+            // if (descriptor == fmt::format("{} SatPos ECEF Y [m]", satData.first)) { return satData.second.e_satPos.y(); }
+            // if (descriptor == fmt::format("{} SatPos ECEF Z [m]", satData.first)) { return satData.second.e_satPos.z(); }
+            // if (descriptor == fmt::format("{} SatPos Latitude [deg]", satData.first)) { return rad2deg(satData.second.lla_satPos.x()); }
+            // if (descriptor == fmt::format("{} SatPos Longitude [deg]", satData.first)) { return rad2deg(satData.second.lla_satPos.y()); }
+            // if (descriptor == fmt::format("{} SatPos Altitude [m]", satData.first)) { return satData.second.lla_satPos.z(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF X [m/s]", satData.first)) { return satData.second.e_satVel.x(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF Y [m/s]", satData.first)) { return satData.second.e_satVel.y(); }
+            // if (descriptor == fmt::format("{} SatVel ECEF Z [m/s]", satData.first)) { return satData.second.e_satVel.z(); }
+        }
+        return std::nullopt;
+    }
+
+    /// @brief Returns a vector of data descriptors and values for the dynamic data
+    [[nodiscard]] std::vector<std::pair<std::string, double>> getDynamicData() const override
+    {
+        std::vector<std::pair<std::string, double>> dynData;
+        dynData.reserve(interFrequencyBias.size() * 2 + satData.size() * 2);
+
+        for (const auto& bias : interFrequencyBias)
+        {
+            dynData.emplace_back(fmt::format("{} Inter-freq bias [s]", bias.first), bias.second.value);
+            dynData.emplace_back(fmt::format("{} Inter-freq bias StDev [s]", bias.first), bias.second.stdDev);
+        }
+        for (const auto& [satId, satData] : satData)
+        {
+            dynData.emplace_back(fmt::format("{} Elevation [deg]", satId), rad2deg(satData.satElevation));
+            dynData.emplace_back(fmt::format("{} Azimuth [deg]", satId), rad2deg(satData.satAzimuth));
+            // dynData.emplace_back(fmt::format("{} Satellite clock bias [s]", satData.first), satData.second.satClock.bias);
+            // dynData.emplace_back(fmt::format("{} Satellite clock drift [s/s]", satData.first), satData.second.satClock.drift);
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF X [m]", satData.first), satData.second.e_satPos.x());
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF Y [m]", satData.first), satData.second.e_satPos.y());
+            // dynData.emplace_back(fmt::format("{} SatPos ECEF Z [m]", satData.first), satData.second.e_satPos.z());
+            // dynData.emplace_back(fmt::format("{} SatPos Latitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.x()));
+            // dynData.emplace_back(fmt::format("{} SatPos Longitude [deg]", satData.first), rad2deg(satData.second.lla_satPos.y()));
+            // dynData.emplace_back(fmt::format("{} SatPos Altitude [m]", satData.first), satData.second.lla_satPos.z());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF X [m/s]", satData.first), satData.second.e_satVel.x());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first), satData.second.e_satVel.y());
+            // dynData.emplace_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first), satData.second.e_satVel.z());
+        }
+        return dynData;
+    }
+
     // --------------------------------------------------------- Public Members ------------------------------------------------------------
 
-    /// Amount of satellites used for the position calculation
-    size_t nSatellitesPosition = 0;
-    /// Amount of satellites used for the velocity calculation
-    size_t nSatellitesVelocity = 0;
+    /// Amount of satellites used for the calculation
+    size_t nSatellites = 0;
+    /// Amount of pseudorange measurements used to calculate the position solution
+    size_t nMeasPsr = 0;
+    /// Amount of doppler measurements used to calculate the velocity solution
+    size_t nMeasDopp = 0;
     /// Amount of Parameters estimated in this epoch
     size_t nParam = 0;
-    /// Satellite system used for the estimation besides Reference time satellite system
-    std::vector<SatelliteSystem> usedSatSysExceptRef;
 
     /// Estimated receiver clock parameter
-    ReceiverClock recvClk = { .bias = { std::nan(""), std::nan("") },
-                              .drift = { std::nan(""), std::nan("") },
-                              .sysTimeDiff = {},
-                              .sysDriftDiff = {} };
+    ReceiverClock recvClk;
 
-    // ------------------------------------------------------------- Getter ----------------------------------------------------------------
+    /// Inter-frequency biases
+    std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias;
 
-    /// Returns the standard deviation of the position in ECEF frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& e_positionStdev() const { return _e_positionStdev; }
-
-    /// Returns the standard deviation of the position in local navigation frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& n_positionStdev() const { return _n_positionStdev; }
-
-    /// Returns the standard deviation of the velocity in [m/s], in earth coordinates
-    [[nodiscard]] const Eigen::Vector3d& e_velocityStdev() const { return _e_velocityStdev; }
-
-    /// Returns the standard deviation of the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] const Eigen::Vector3d& n_velocityStdev() const { return _n_velocityStdev; }
-
-    /// Returns the  Covariance matrix in ECEF frame
-    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& e_CovarianceMatrix() const { return _e_covarianceMatrix; }
-
-    /// Returns the  Covariance matrix in local navigation frame
-    [[nodiscard]] const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& n_CovarianceMatrix() const { return _n_covarianceMatrix; }
-
-    // ------------------------------------------------------------- Setter ----------------------------------------------------------------
-
-    /// @brief Set the Position in ECEF coordinates and its standard deviation
-    /// @param[in] e_position New Position in ECEF coordinates [m]
-    /// @param[in] e_PositionCovarianceMatrix Standard deviation of Position in ECEF coordinates [m]
-    void setPositionAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_PositionCovarianceMatrix)
+    /// Satellite specific data
+    struct SatData
     {
-        setPosition_e(e_position);
-        _e_positionStdev = e_PositionCovarianceMatrix.diagonal().cwiseSqrt();
-        _n_positionStdev = (n_Quat_e().toRotationMatrix() * e_PositionCovarianceMatrix * n_Quat_e().conjugate().toRotationMatrix()).diagonal().cwiseSqrt();
-    }
-
-    /// @brief Set the Velocity in ECEF coordinates and its standard deviation
-    /// @param[in] e_velocity New Velocity in ECEF coordinates [m/s]
-    /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
-    void setVelocityAndStdDev_e(const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix)
-    {
-        setVelocity_e(e_velocity);
-        _e_velocityStdev = e_velocityCovarianceMatrix.diagonal().cwiseSqrt();
-        _n_velocityStdev = (n_Quat_e().toRotationMatrix() * e_velocityCovarianceMatrix * n_Quat_e().conjugate().toRotationMatrix()).diagonal().cwiseSqrt();
-    }
-
-    /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange measurements
-    /// @param[in] Q lsq variance
-    void setPositionClockErrorCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
-    {
-        _e_positionClockErrorCovarianceMatrix = Q;
-    }
-
-    /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange-rate measurements
-    /// @param[in] Q lsq variance
-    void setVelocityClockDriftCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
-    {
-        _e_velocityClockDriftCovarianceMatrix = Q;
-    }
-
-    /// @brief Set the Covariance matrix of Kalman Filter estimation
-    /// @param[in] Q Kalman Filter error variance
-    void setCovarianceMatrix(const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& Q)
-    {
-        _e_covarianceMatrix = Q;
-        std::vector<States::StateKeyTypes> interSysErrs;
-        std::vector<States::StateKeyTypes> interSysDrifts;
-        for (const auto& key : Q.colKeys())
-        {
-            if (std::get_if<States::InterSysErr>(&key))
-            {
-                interSysErrs.emplace_back(key);
-            }
-            if (std::get_if<States::InterSysDrift>(&key))
-            {
-                interSysDrifts.emplace_back(key);
-            }
-        }
-
-        n_CovarianceMatrix_e(interSysErrs, interSysDrifts);
-    }
-
-    /// @brief Set the Covariance matrix of Least-squares estimation from pseudorange and pseudorange-rate measurements
-    /// @param[in] interSysErrs Inter-system clock error keys
-    /// @param[in] interSysDrifts Inter-system clock drift keys
-    void setCovarianceMatrix(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
-    {
-        if (!_e_covarianceMatrix.hasAnyCols(States::PosVelRecvClk)) // creates states for first use
-        {
-            _e_covarianceMatrix.addRowsCols(States::PosVelRecvClk, States::PosVelRecvClk);
-            _e_covarianceMatrix.addRowsCols(interSysErrs, interSysErrs);
-            _e_covarianceMatrix.addRowsCols(interSysDrifts, interSysDrifts);
-        }
-        else // check whether interSys keys and states in _e_covariance are the same and remove or add accordingly (e. g. due to elevation mask)
-        {
-            for (const auto& key : _e_covarianceMatrix.colKeys())
-            {
-                if (std::get_if<States::InterSysErr>(&key))
-                {
-                    if (std::find(interSysErrs.begin(), interSysErrs.end(), key) != interSysErrs.end())
-                    {
-                        continue;
-                    }
-                    _e_covarianceMatrix.removeCol(key);
-                    _e_covarianceMatrix.removeRow(key);
-                }
-            }
-            for (const auto& key : _e_covarianceMatrix.colKeys())
-            {
-                if (std::get_if<States::InterSysDrift>(&key))
-                {
-                    if (std::find(interSysDrifts.begin(), interSysDrifts.end(), key) != interSysDrifts.end())
-                    {
-                        continue;
-                    }
-                    _e_covarianceMatrix.removeCol(key);
-                    _e_covarianceMatrix.removeRow(key);
-                }
-            }
-            for (size_t i = 0; i < interSysErrs.size(); i++)
-            {
-                if (std::find(_e_covarianceMatrix.colKeys().begin(), _e_covarianceMatrix.colKeys().end(), interSysErrs.at(i)) == _e_covarianceMatrix.colKeys().end())
-                {
-                    _e_covarianceMatrix.addCol(interSysErrs.at(i));
-                    _e_covarianceMatrix.addRow(interSysErrs.at(i));
-                    _e_covarianceMatrix.addCol(interSysDrifts.at(i));
-                    _e_covarianceMatrix.addRow(interSysDrifts.at(i));
-                }
-            }
-        }
-
-        _e_covarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, States::PosRecvClkErr);
-        _e_covarianceMatrix(interSysErrs, interSysErrs) = _e_positionClockErrorCovarianceMatrix(interSysErrs, interSysErrs);
-        _e_covarianceMatrix(States::PosRecvClkErr, interSysErrs) = _e_positionClockErrorCovarianceMatrix(States::PosRecvClkErr, interSysErrs);
-        _e_covarianceMatrix(interSysErrs, States::PosRecvClkErr) = _e_positionClockErrorCovarianceMatrix(interSysErrs, States::PosRecvClkErr);
-
-        if (_e_velocityClockDriftCovarianceMatrix.cols() > 0)
-        {
-            _e_covarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, States::VelRecvClkDrift);
-            _e_covarianceMatrix(interSysDrifts, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, interSysDrifts);
-            _e_covarianceMatrix(States::VelRecvClkDrift, interSysDrifts) = _e_velocityClockDriftCovarianceMatrix(States::VelRecvClkDrift, interSysDrifts);
-            _e_covarianceMatrix(interSysDrifts, States::VelRecvClkDrift) = _e_velocityClockDriftCovarianceMatrix(interSysDrifts, States::VelRecvClkDrift);
-        }
-
-        n_CovarianceMatrix_e(interSysErrs, interSysDrifts);
-    }
-
-    /// @brief Transforms the covariance matrix from ECEF frame to local navigation frame
-    /// @param[in] interSysErrs Inter-system clock error keys
-    /// @param[in] interSysDrifts Inter-system clock drift keys
-    void n_CovarianceMatrix_e(const std::vector<States::StateKeyTypes>& interSysErrs, const std::vector<States::StateKeyTypes>& interSysDrifts)
-    {
-        _n_covarianceMatrix = _e_covarianceMatrix;
-
-        _n_covarianceMatrix(States::PosVel, States::PosVel).setZero();
-        Eigen::Vector3d lla_pos = lla_position();
-        Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(lla_pos(0), lla_pos(1));
-        _n_covarianceMatrix(States::Pos, States::Pos) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Pos, States::Pos) * n_Quat_e.conjugate().toRotationMatrix(); // variance of position
-        _n_covarianceMatrix(States::Vel, States::Vel) = n_Quat_e.toRotationMatrix() * _e_covarianceMatrix(States::Vel, States::Vel) * n_Quat_e.toRotationMatrix();             // variance of velocity
-
-        _n_covarianceMatrix(States::PosVel, States::RecvClk).setZero();
-        _n_covarianceMatrix(States::RecvClk, States::PosVel).setZero();
-        _n_covarianceMatrix(States::PosVel, interSysErrs).setZero();
-        _n_covarianceMatrix(interSysErrs, States::PosVel).setZero();
-        _n_covarianceMatrix(States::PosVel, interSysDrifts).setZero();
-        _n_covarianceMatrix(interSysDrifts, States::PosVel).setZero();
-    }
-
-    /// Extended data structure
-    struct SatelliteData
-    {
-        /// @brief Constructor
-        /// @param[in] satSigId Satellite signal identifier (code and satellite number)
-        explicit SatelliteData(const SatSigId& satSigId) : satSigId(satSigId) {}
-
-        SatSigId satSigId = { Code::None, 0 }; ///< Code and satellite number
-
-        InsTime transmitTime{};              ///< Time when the signal was transmitted
-        Eigen::Vector3d e_satPos;            ///< Satellite position in ECEF frame coordinates [m]
-        Eigen::Vector3d e_satVel;            ///< Satellite velocity in ECEF frame coordinates [m/s]
-        double satClkBias{ 0.0 };            ///< Satellite clock bias [s]
-        double satClkDrift{ 0.0 };           ///< Satellite clock drift [s/s]
-        double satElevation{ std::nan("") }; ///< Elevation [rad]
-        double satAzimuth{ std::nan("") };   ///< Azimuth [rad]
-        bool skipped = false;                ///< Bool to check whether the observation was skipped (signal unhealthy)
-        bool elevationMaskTriggered = false; ///< Bool to check whether the elevation mask was triggered
-
-        double psrEst{ std::nan("") };        ///< Estimated Pseudorange [m]
-        std::optional<double> psrRateEst;     ///< Estimated Pseudorange rate [m/s]
-        double geometricDist{ std::nan("") }; ///< Geometric distance [m]
-        double dpsr_clkISB{ std::nan("") };   ///< Estimated Inter-system clock bias [m]
-        double dpsr_I{ std::nan("") };        ///< Estimated ionosphere propagation error [m]
-        double dpsr_T{ std::nan("") };        ///< Estimated troposphere propagation error [m]
-        double dpsr_ie{ std::nan("") };       ///< Sagnac correction [m]
+        double satElevation = 0.0; ///< Satellite Elevation [rad]
+        double satAzimuth = 0.0;   ///< Satellite Azimuth [rad]
     };
 
-    /// @brief Return the element with the identifier or a newly constructed one if it did not exist
-    /// @param[in] satSigId Code and satellite number
-    /// @return The element found in the observations or a newly constructed one
-    SatelliteData& operator()(const SatSigId& satSigId)
-    {
-        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& idData) {
-            return idData.satSigId == satSigId;
-        });
-        if (iter != satData.end())
-        {
-            return *iter;
-        }
+    /// Extended data for each satellite
+    std::vector<std::pair<SatId, SatData>> satData;
 
-        satData.emplace_back(satSigId);
-        return satData.back();
-    }
-
-    /// @brief Return the element with the identifier
-    /// @param[in] satSigId Code and satellite number
-    /// @return The element found in the observations
-    const SatelliteData& operator()(const SatSigId& satSigId) const
-    {
-        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& idData) {
-            return idData.satSigId == satSigId;
-        });
-
-        INS_ASSERT_USER_ERROR(iter != satData.end(), "You can not insert new elements in a const context.");
-        return *iter;
-    }
-
-    /// @brief Checks if satellite data exists
-    /// @param[in] satSigId Code and satellite number
-    /// @return True if the data entry exists
-    bool hasSatelliteData(const SatSigId& satSigId) const
-    {
-        auto iter = std::find_if(satData.begin(), satData.end(), [&satSigId](const SatelliteData& satData) {
-            return satData.satSigId == satSigId;
-        });
-        return iter != satData.end();
-    }
-
-    /// Extended data for each satellite frequency and code
-    std::vector<SatelliteData> satData;
+    /// @brief Adds an event to the event list
+    /// @param event Event string
+    void addEvent(const std::string& event) { _events.push_back(event); }
 
   private:
     /// Standard deviation of Position in ECEF coordinates [m]
@@ -313,15 +384,11 @@ class SppSolution : public PosVel
     /// Standard deviation of Velocity in navigation coordinates [m/s]
     Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
 
-    /// Covariance matrix in ECEF coordinates (Position and clock errors from LSE)
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_positionClockErrorCovarianceMatrix;
-    /// Covariance matrix in ECEF coordinates (Velocity and clock drifts from LSE)
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_velocityClockDriftCovarianceMatrix;
+    /// Covariance matrix in ECEF coordinates
+    std::optional<KeyedMatrixXd<SPP::States::StateKeyTypes, SPP::States::StateKeyTypes>> _e_covarianceMatrix;
 
-    /// Covariance matrix in ECEF coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _e_covarianceMatrix;
-    /// Covariance matrix in local navigation coordinates (Position, Velocity, clock parameter (order as in Kalman Filter estimation: position, velocity, receiver clock error, receiver clock drift, inter-system clock error, inter-system clock drift))
-    KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes> _n_covarianceMatrix;
+    /// Covariance matrix in local navigation coordinates
+    std::optional<KeyedMatrixXd<SPP::States::StateKeyTypes, SPP::States::StateKeyTypes>> _n_covarianceMatrix;
 };
 
 } // namespace NAV

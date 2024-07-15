@@ -58,6 +58,40 @@ enum Frequency_ : uint64_t
 class Frequency
 {
   public:
+    /// @brief Satellite System enumeration with continuous range. Not usable as a mask
+    enum Enum : size_t
+    {
+        Enum_G01,   ///< GPS L1 (1575.42 MHz).
+        Enum_G02,   ///< GPS L2 (1227.6 MHz).
+        Enum_G05,   ///< GPS L5 (1176.45 MHz).
+        Enum_E01,   ///< Galileo, "E1" (1575.42 MHz).
+        Enum_E05,   ///< Galileo E5a (1176.45 MHz).
+        Enum_E06,   ///< Galileo E6 (1278.75 MHz).
+        Enum_E07,   ///< Galileo E5b (1207.14 MHz).
+        Enum_E08,   ///< Galileo E5 (E5a + E5b) (1191.795MHz).
+        Enum_R01,   ///< GLONASS, "G1" (1602 MHZ).
+        Enum_R02,   ///< GLONASS, "G2" (1246 MHz).
+        Enum_R03,   ///< GLONASS, "G3" (1202.025 MHz).
+        Enum_R04,   ///< GLONASS, "G1a" (1600.995 MHZ).
+        Enum_R06,   ///< GLONASS, "G2a" (1248.06 MHz).
+        Enum_B01,   ///< Beidou B1 (1575.42 MHz).
+        Enum_B02,   ///< Beidou B1-2 (1561.098 MHz).
+        Enum_B05,   ///< Beidou B2a (1176.45 MHz).
+        Enum_B06,   ///< Beidou B3 (1268.52 MHz).
+        Enum_B07,   ///< Beidou B2b (1207.14 MHz).
+        Enum_B08,   ///< Beidou B2 (B2a + B2b) (1191.795MHz).
+        Enum_J01,   ///< QZSS L1 (1575.42 MHz).
+        Enum_J02,   ///< QZSS L2 (1227.6 MHz).
+        Enum_J05,   ///< QZSS L5 (1176.45 MHz).
+        Enum_J06,   ///< QZSS L6 / LEX (1278.75 MHz).
+        Enum_I05,   ///< IRNSS L5 (1176.45 MHz).
+        Enum_I09,   ///< IRNSS S (2492.028 MHz).
+        Enum_S01,   ///< SBAS L1 (1575.42 MHz).
+        Enum_S05,   ///< SBAS L5 (1176.45 MHz).
+        Enum_COUNT, ///< Count variable
+        Enum_None,  ///< No Frequency
+    };
+
     /// @brief Default Constructor
     constexpr Frequency() = default;
 
@@ -67,9 +101,19 @@ class Frequency
         : value(type)
     {}
 
+    /// @brief Implicit Constructor from Enum type
+    /// @param[in] enumeration Enum type to construct from
+    Frequency(Enum enumeration) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+        : value(Frequency::fromEnum(enumeration))
+    {}
+
     /// @brief Construct new object from std::string
     /// @param[in] typeString String representation of the frequency
     static Frequency fromString(const std::string& typeString);
+
+    /// @brief Constructs a new object from continuous enumeration
+    /// @param[in] enumeration Continuous enumeration of the frequency
+    static Frequency fromEnum(Enum enumeration);
 
     /// @brief Assignment operator from Value type
     /// @param[in] v Value type to construct from
@@ -113,11 +157,11 @@ class Frequency
     /// @brief Get the frequency in [Hz]
     /// @param[in] freq Frequency to get the value for
     /// @param[in] num Frequency number. Only used for GLONASS G1 and G2
-    static double GetFrequency(Frequency freq, int8_t num = -128);
+    static double GetFrequency(Frequency freq, int8_t num);
 
     /// @brief Get the frequency in [Hz]
     /// @param[in] num Frequency number. Only used for GLONASS G1 and G2
-    [[nodiscard]] double getFrequency(int8_t num = -128) const
+    [[nodiscard]] double getFrequency(int8_t num) const
     {
         return GetFrequency(value, num);
     }
@@ -136,7 +180,23 @@ class Frequency
     [[nodiscard]] size_t count() const;
 
     /// @brief Returns a list with all possible frequencies
-    static std::vector<Frequency> GetAll();
+    constexpr static std::array<Frequency, 27> GetAll()
+    {
+        return { G01, G02, G05,
+                 E01, E05, E06, E07, E08,
+                 R01, R02, R03, R04, R06,
+                 B01, B02, B05, B06, B07, B08,
+                 J01, J02, J05, J06,
+                 I05, I09,
+                 S01, S05 };
+    }
+
+    /// @brief Get the continuous enumeration of the specified frequency
+    /// @param[in] freq Frequency to get the continuous enumeration for
+    static Enum ToEnumeration(Frequency freq);
+
+    /// @brief Returns a continuous enumeration of the object
+    [[nodiscard]] Enum toEnumeration() const;
 
   private:
     /// @brief Internal value
@@ -449,12 +509,28 @@ constexpr Frequency& operator&=(Frequency& lhs, const SatelliteSystem& rhs)
     return lhs;
 }
 
+/// All Frequencies
+constexpr Frequency_ Freq_All = G01 | G02 | G05
+                                | E01 | E05 | E06 | E07 | E08
+                                | R01 | R02 | R03 | R04 | R06
+                                | B01 | B02 | B05 | B06 | B07 | B08
+                                | J01 | J02 | J05 | J06
+                                | I05 | I09
+                                | S01 | S05;
+
 /// @brief Shows a ComboBox to select GNSS frequencies
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] frequency Reference to the frequency object to select
-bool ShowFrequencySelector(const char* label, Frequency& frequency);
+/// @param[in] singleSelect If true, only one code can be selected at a time
+bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleSelect = false);
 
 } // namespace NAV
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::Frequency& obj);
 
 namespace std
 {
@@ -549,17 +625,8 @@ struct hash<NAV::Frequency>
 
 /// @brief Formatter for Frequency
 template<>
-struct fmt::formatter<NAV::Frequency>
+struct fmt::formatter<NAV::Frequency> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Frequency structs
     /// @param[in] freq Struct to format
     /// @param[in, out] ctx Format context
@@ -567,7 +634,7 @@ struct fmt::formatter<NAV::Frequency>
     template<typename FormatContext>
     auto format(const NAV::Frequency& freq, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", std::string(freq));
+        return fmt::formatter<std::string>::format(std::string(freq), ctx);
     }
 };
 

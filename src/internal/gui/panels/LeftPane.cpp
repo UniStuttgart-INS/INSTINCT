@@ -113,38 +113,41 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                     IM_COL32(255, 0, 0, 255 - static_cast<int>(255 * progress)), 4.0F);
             }
 
-            // Circle to show init status
-            ImU32 circleCol = 0;
-            if (node->isDisabled())
+            if (node->kind != Node::Kind::GroupBox)
             {
-                circleCol = IM_COL32(192, 192, 192, 255);
+                // Circle to show init status
+                ImU32 circleCol = 0;
+                if (node->isDisabled())
+                {
+                    circleCol = IM_COL32(192, 192, 192, 255);
+                }
+                else if (node->getState() == Node::State::DoInitialize)
+                {
+                    circleCol = IM_COL32(144, 202, 238, 255);
+                }
+                else if (node->getState() == Node::State::Initializing)
+                {
+                    circleCol = IM_COL32(143, 188, 143, 255);
+                }
+                else if (node->getState() == Node::State::DoDeinitialize)
+                {
+                    circleCol = IM_COL32(255, 222, 122, 255);
+                }
+                else if (node->getState() == Node::State::Deinitializing)
+                {
+                    circleCol = IM_COL32(240, 128, 128, 255);
+                }
+                else if (node->getState() == Node::State::Initialized)
+                {
+                    circleCol = IM_COL32(0, 255, 0, 255);
+                }
+                else // if (!node->getState() == Node::State::Deinitialized)
+                {
+                    circleCol = IM_COL32(255, 0, 0, 255);
+                }
+                ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                            5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
             }
-            else if (node->getState() == Node::State::DoInitialize)
-            {
-                circleCol = IM_COL32(144, 202, 238, 255);
-            }
-            else if (node->getState() == Node::State::Initializing)
-            {
-                circleCol = IM_COL32(143, 188, 143, 255);
-            }
-            else if (node->getState() == Node::State::DoDeinitialize)
-            {
-                circleCol = IM_COL32(255, 222, 122, 255);
-            }
-            else if (node->getState() == Node::State::Deinitializing)
-            {
-                circleCol = IM_COL32(240, 128, 128, 255);
-            }
-            else if (node->getState() == Node::State::Initialized)
-            {
-                circleCol = IM_COL32(0, 255, 0, 255);
-            }
-            else // if (!node->getState() == Node::State::Deinitialized)
-            {
-                circleCol = IM_COL32(255, 0, 0, 255);
-            }
-            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
-                                                        5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
             if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }

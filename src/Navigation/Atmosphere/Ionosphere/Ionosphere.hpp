@@ -60,6 +60,6 @@ double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
 /// @param[in] freq Frequency
 /// @param[in] num Frequency number. Only used for GLONASS G1 and G2
 /// @return Variance of the error [m^2]
-double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num = -128);
+double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num);
 
 } // namespace NAV

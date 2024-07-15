@@ -14,6 +14,11 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ## Getting Started
 
+### Read the documentation
+
+Read the docs on
+[![](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
+
 ### Working with the Repository
 
 ##### Git (either clone or update)
@@ -34,7 +39,8 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 ```shell
 sudo apt-get install libssh-dev
 conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
-cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
+# Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 cmake --build build/Release --parallel8
 ./build/bin/Release/instinct
 ```
@@ -42,7 +48,8 @@ cmake --build build/Release --parallel8
 ##### Build & run the tests
 ```shell
 conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
-cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
+# Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
 cmake --build build/Release --parallel8
 cd build/Release
 ctest --output-on-failure
@@ -51,7 +58,8 @@ ctest --output-on-failure
 ##### Build the documentation
 ```shell
 conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
-cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
+# Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
 ```
 The doxygen main page can then be opened under `build/doc/html/index.html` (an online documentation is available on [GitHub pages](https://unistuttgart-ins.github.io/INSTINCT/))
@@ -119,8 +127,8 @@ conan profile detect --force
 # Documentation (Ubuntu 22.04 has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.9.8.src.tar.gz -O - | tar -xz
-mkdir doxygen-1.9.8/build && cd doxygen-1.9.8/build
+wget -c https://www.doxygen.nl/files/doxygen-1.10.0.src.tar.gz -O - | tar -xz
+cd doxygen-1.10.0 && mkdir build && cd build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional
@@ -256,10 +264,6 @@ Recommended changes to the User's ```keybindings.json```
 * [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-
-## Version History
-
-- **v1.0.0:** Public Release
 
 ## License
 

@@ -1,0 +1,206 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file ImuIntegrator_e.dox
+// @brief ImuIntegrator e-frame documentation
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2022-01-05
+
+namespace Instinct {
+
+/** \page ImuIntegrator_e IMU Integrator (Earth-fixed frame)
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section ImuIntegrator-Mechanization-e Earth-fixed frame mechanization
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection ImuIntegrator-Mechanization-e-Attitude Attitude
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsubsection ImuIntegrator-Mechanization-e-Attitude-DCM Propagation of direction cosine matrix with time
+
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-DCM \f{equation}{
+  \mathbf{\dot{C}}_b^e = \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b
+\f}
+where
+- \f$ \boldsymbol{\Omega}_{eb}^b \f$ is the skew symmetric form of \f$ \boldsymbol{\omega}_{eb}^b \f$, the body rate with respect to the Earth-fixed frame
+
+see
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.22, p. 29
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.83, p. 126
+- \cite Groves2013 Groves, ch. 5.3.3, eq. 5.35, p. 175
+
+The body rate with respect to the Earth-fixed frame \f$ \boldsymbol{\omega}_{eb}^b \f$ can be expressed as
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-omega-eb \f{equation}{
+  \boldsymbol{\omega}_{eb}^b = \boldsymbol{\omega}_{ib}^b - \mathbf{C}_e^b \boldsymbol{\omega}_{ie}^e
+\f}
+this together with the skew-symmetric matrix transformation (see \cite Groves2013 Groves, ch. 2.3.1, eq. 2.51, p. 45)
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-skew-symmetric-matrix-transform \f{equation}{
+  \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma
+\f}
+leads to the skew symmetric form of \ref eq-ImuIntegrator-Mechanization-e-Attitude-DCM
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-DCM-full \f{equation}{
+  \mathbf{\dot{C}}_b^e = \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
+\f}
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsubsection ImuIntegrator-Mechanization-e-Attitude-Quaternion Propagation of quaternion with time
+
+The quaternion \f$ \mathbf{q} = a + \mathbf{i} b + \mathbf{j} c + \mathbf{k} d \f$ propagates as (see \cite Titterton2004 Titterton, ch. 3.6.4.3, eq. 3.60-3.62, p. 44)
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base \f{equation}{
+  \mathbf{\dot{q}}_b^e = 0.5 \mathbf{q}_b^e \cdot \mathbf{p}_{eb}^b
+\f}
+where \f$ \mathbf{p}_{eb}^b = \begin{pmatrix} 0 & \boldsymbol{\omega}_{eb}^b \end{pmatrix}^T = \begin{pmatrix} 0 & \omega_{eb,x}^b & \omega_{eb,y}^b & \omega_{eb,z}^b \end{pmatrix}^T \f$
+
+This can be written in matrix form as
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base-matrix \f{equation}{
+  \mathbf{\dot{q}}_b^e
+      = \begin{bmatrix} \dot{a} \\ \dot{b} \\ \dot{c} \\ \dot{d} \end{bmatrix}
+      = 0.5 \begin{bmatrix} a & -b & -c & -d \\
+                            b &  a & -d &  c \\
+                            c &  d &  a & -b \\
+                            d & -c &  b &  a \end{bmatrix}
+            \begin{bmatrix} 0 \\ \omega_{eb,x}^b \\ \omega_{eb,y}^b \\ \omega_{eb,z}^b \end{bmatrix}
+\f}
+that is
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-components \f{equation}{
+\begin{aligned}
+  \dot{a} &= -0.5 (b \omega_{eb,x}^b + c \omega_{eb,y}^b + d \omega_{eb,z}^b) &=  0.5 ( 0 \cdot a - \omega_{eb,x}^b b - \omega_{eb,y}^b c - \omega_{eb,z}^b d) \\
+  \dot{b} &=  0.5 (a \omega_{eb,x}^b - d \omega_{eb,y}^b + c \omega_{eb,z}^b) &=  0.5 (\omega_{eb,x}^b a +  0 \cdot b + \omega_{eb,z}^b c - \omega_{eb,y}^b d) \\
+  \dot{c} &=  0.5 (d \omega_{eb,x}^b + a \omega_{eb,y}^b - b \omega_{eb,z}^b) &=  0.5 (\omega_{eb,y}^b a - \omega_{eb,z}^b b +  0 \cdot c + \omega_{eb,x}^b d) \\
+  \dot{d} &= -0.5 (c \omega_{eb,x}^b - b \omega_{eb,y}^b - a \omega_{eb,z}^b) &=  0.5 (\omega_{eb,z}^b a + \omega_{eb,y}^b b - \omega_{eb,x}^b c +  0 \cdot d) \\
+\end{aligned}
+\f}
+
+and this can be written in matrix form again as
+\anchor eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix \f{equation}{
+  \mathbf{\dot{q}}_b^e
+      = \begin{bmatrix} \dot{a} \\ \dot{b} \\ \dot{c} \\ \dot{d} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
+                                    \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
+                                    \omega_{eb,y}^b & -\omega_{eb,z}^b &        0         &  \omega_{eb,x}^b \\
+                                    \omega_{eb,z}^b &  \omega_{eb,y}^b & -\omega_{eb,x}^b &        0         \end{bmatrix}
+                    \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+\f}
+see
+- \cite Titterton2004 Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319 (e instead of n system)
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection ImuIntegrator-Mechanization-e-Velocity Velocity
+
+The derivative of the velocity in Earth frame coordinates can be expressed as
+
+\anchor eq-ImuIntegrator-Mechanization-e-Velocity \f{equation}{
+  \boldsymbol{\dot{v}}^e
+      = \mathbf{C}_b^e \cdot \overbrace{\boldsymbol{f}_{ib}^b}^{\text{measured}}
+        -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\text{coriolis acceleration}}
+        +\ \overbrace{\boldsymbol{\gamma}^e}^{\text{gravitation}}
+        -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
+\f}
+where
+- \f$ \boldsymbol{v}^e \f$ is the velocity with respect to the Earth in Earth-fixed frame coordinates,
+- \f$ \boldsymbol{f}_{ib}^b \f$ is the specific force vector as measured by a triad of accelerometers and resolved into body frame coordinates
+- \f$ \boldsymbol{\omega}_{ie}^e = \begin{bmatrix} 0 & 0 & \omega_{ie} \end{bmatrix}^T \f$ is the turn rate of the Earth expressed in Earth-fixed frame coordinates
+- \f$ \boldsymbol{\gamma}^e \f$ the local gravitation vector in Earth-fixed frame coordinates (caused by effects of mass attraction)
+
+see
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.21, p. 29
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.82, p. 126
+- \cite Groves2013 Groves, ch. 5.3.3, eq. 5.35, p. 175
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection ImuIntegrator-Mechanization-e-Position Position
+
+\anchor eq-ImuIntegrator-Mechanization-e-Position \f{equation}{
+  \boldsymbol{\dot{x}}^e = \boldsymbol{v}^e
+\f}
+
+see
+- \cite Titterton2004 Titterton, ch. 3.5.2, p. 28ff
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.82, p. 126
+- \cite Groves2013 Groves, ch. 5.3.4, eq. 5.37, p. 175
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section ImuIntegrator-e-Numerical-Integration Numerical Integration
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection ImuIntegrator-e-Numerical-Integration-RK4 Runge Kutta 4th order
+
+The universal Runge Kutta 4th order equations are
+
+\anchor eq-ImuIntegrator-e-RK4 \f{equation}{
+\begin{aligned}
+  y_{i} &= y_{i-1} + \frac{h}{6} \left( k_1 + 2 k_2 + 2 k_3 + k_4 \right) \\
+  k_1 &= f(y_{i-1}, t_{i-1}) \\
+  k_2 &= f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) \\
+  k_3 &= f(y_{i-1} + \frac{h}{2} k_2, t_{i-1} + \frac{h}{2}) \\
+  k_4 &= f(y_{i-1} + h \cdot k_2, t_{i-1} + h) \\
+\end{aligned}
+\f}
+
+As the position, velocity and attitude depend on each other, the equations have to be solved simultaneously and we should not first advance \f$ \boldsymbol{v} \f$ and then advance \f$ \boldsymbol{x} \f$.
+
+\anchor eq-ImuIntegrator-e-ODE \f{equation}{
+  f =\\
+  \begin{pmatrix} \dot{a} \\ \dot{b} \\ \dot{c} \\ \dot{d} \\ \dot{v}_x \\ \dot{v}_y \\ \dot{v}_z \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{pmatrix}
+  =
+  \begin{pmatrix}
+    \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
+                                \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
+                                \omega_{eb,y}^b & -\omega_{eb,z}^b &        0         &  \omega_{eb,x}^b \\
+                                \omega_{eb,z}^b &  \omega_{eb,y}^b & -\omega_{eb,x}^b &        0         \end{bmatrix} \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix} \\
+    \\
+    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
+    \\
+    v_x \\ v_y \\ v_z
+  \end{pmatrix}
+\f}
+
+Taking only the position and velocity terms and simplifying we get
+
+\anchor eq-ImuIntegrator-e-ODE-posvel \f{equation}{
+  f = \begin{pmatrix} \boldsymbol{\dot{v}} \\ \boldsymbol{\dot{x}} \end{pmatrix} =
+  \begin{pmatrix}
+    \mathbf{C}_b^e \cdot \boldsymbol{f}_{ib}^b -\ 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e +\ \boldsymbol{\gamma}^e (\mathbf{x}^e) -\ \left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right) \\
+    \boldsymbol{v}
+  \end{pmatrix} =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{C}_b^e,  \boldsymbol{v}^e, \mathbf{x}^e) \\
+    \boldsymbol{v}
+  \end{pmatrix} \approx
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e) \\
+    \boldsymbol{v}
+  \end{pmatrix}
+\f}
+
+Which leads to the terms
+
+\anchor eq-ImuIntegrator-e-RK4-ODE \f{equation}{
+\begin{aligned}
+  k_1 &= \begin{pmatrix} k_{1_{v}} \\ k_{1_{x}} \end{pmatrix} = f(y_{i-1}, t_{i-1}) =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e_{i-1}) \\
+    \boldsymbol{v}_{i-1}
+  \end{pmatrix} \\
+  k_2 &= \begin{pmatrix} k_{2_{v}} \\ k_{2_{x}} \end{pmatrix} = f(y_{i-1} + \frac{h}{2} k_1, t_{i-1} + \frac{h}{2}) =
+  \begin{pmatrix}
+    \boldsymbol{a} (\mathbf{x}^e_{i-1} + \frac{h}{2} k_{1_{x}}) \\
+    \boldsymbol{v}_{i-1} + \frac{h}{2} k_{1_{v}}
+  \end{pmatrix} \\
+  k_3 &= \dots
+\end{aligned}
+\f}
+
+These terms coincide with \cite Voesenek2008 Voesenek, eq. 9,10
+
+*/
+
+}

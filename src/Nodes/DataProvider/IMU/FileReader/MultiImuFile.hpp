@@ -107,7 +107,7 @@ class MultiImuFile : public Node, public FileReader
     std::vector<std::map<InsTime, std::shared_ptr<ImuObs>>> _messages;
 
     /// @brief Counter for lines
-    size_t _lineCnt{};
+    size_t _lineCounter{};
 
     /// @brief Counter for messages
     std::vector<size_t> _messageCnt;

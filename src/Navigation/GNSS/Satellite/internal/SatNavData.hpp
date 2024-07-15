@@ -60,7 +60,7 @@ class SatNavData : public Clock, public Orbit
     const Type type;
 
     /// Reference time of the information
-    const InsTime refTime;
+    InsTime refTime;
 };
 
 } // namespace NAV

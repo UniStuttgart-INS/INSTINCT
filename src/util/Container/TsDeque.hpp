@@ -67,7 +67,7 @@ class TsDeque
     /// @param other Another container to be used as source to initialize the elements of the container with
     TsDeque(const TsDeque& other)
     {
-        std::lock_guard lk(other._mutex);
+        std::scoped_lock lk(other._mutex);
         _queue = std::deque<T, Alloc>(other._queue); // NOLINT(cppcoreguidelines-prefer-member-initializer)
     }
     /// @brief Constructs the container with the copy of the contents of other, using alloc as the allocator.
@@ -75,7 +75,7 @@ class TsDeque
     /// @param alloc Allocator to use for all memory allocations of this container
     TsDeque(const TsDeque& other, const Alloc& alloc)
     {
-        std::lock_guard lk(other._mutex);
+        std::scoped_lock lk(other._mutex);
         _queue = std::deque<T, Alloc>(other._queue, alloc); // NOLINT(cppcoreguidelines-prefer-member-initializer)
     }
     /// @brief Move constructor. Constructs the container with the contents of other using move semantics.
@@ -83,7 +83,7 @@ class TsDeque
     /// @param other Another container to be used as source to initialize the elements of the container with
     TsDeque(TsDeque&& other) noexcept
     {
-        std::lock_guard lk(other._mutex);
+        std::scoped_lock lk(other._mutex);
         _queue = std::deque<T, Alloc>(std::move(other._queue)); // NOLINT(cppcoreguidelines-prefer-member-initializer)
     }
     /// @brief Allocator-extended move constructor. Using alloc as the allocator for the new container, moving the contents from other;
@@ -92,7 +92,7 @@ class TsDeque
     /// @param alloc Allocator to use for all memory allocations of this container
     TsDeque(TsDeque&& other, const Alloc& alloc) noexcept
     {
-        std::lock_guard lk(other._mutex);
+        std::scoped_lock lk(other._mutex);
         _queue = std::deque<T, Alloc>(std::move(other._queue), alloc); // NOLINT(cppcoreguidelines-prefer-member-initializer)
     }
     /// @brief Constructs the container with the contents of the initializer list init.
@@ -106,8 +106,8 @@ class TsDeque
     {
         if (this != &other)
         {
-            std::lock_guard lk(_mutex);
-            std::lock_guard lko(other._mutex);
+            std::scoped_lock lk(_mutex);
+            std::scoped_lock lko(other._mutex);
             _queue = other._queue;
         }
         return *this;
@@ -117,8 +117,8 @@ class TsDeque
     {
         if (this != &other)
         {
-            std::lock_guard lk(_mutex);
-            std::lock_guard lko(other._mutex);
+            std::scoped_lock lk(_mutex);
+            std::scoped_lock lko(other._mutex);
             _queue = std::move(other._queue);
         }
         return *this;
@@ -137,7 +137,7 @@ class TsDeque
     /// @param value The value to initialize elements of the container with
     void assign(typename std::deque<T, Alloc>::size_type count, const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.assign(count, value);
     }
 
@@ -149,7 +149,7 @@ class TsDeque
     template<class InputIt>
     void assign(InputIt first, InputIt last)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.assign(first, last);
     }
     /// @brief Replaces the contents with the elements from the initializer list ilist.
@@ -158,7 +158,7 @@ class TsDeque
     /// @param ilist Initializer list to copy the values from
     void assign(std::initializer_list<T> ilist)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.assign(ilist);
     }
 
@@ -274,7 +274,7 @@ class TsDeque
     /// @return true if the container is empty, false otherwise
     [[nodiscard]] bool empty() const noexcept
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.empty();
     }
 
@@ -282,7 +282,7 @@ class TsDeque
     /// @return The number of elements in the container.
     typename std::deque<T, Alloc>::size_type size() const noexcept
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.size();
     }
 
@@ -290,14 +290,14 @@ class TsDeque
     /// @return Maximum number of elements.
     typename std::deque<T, Alloc>::size_type max_size() const noexcept
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.max_size();
     }
 
     /// @brief Requests the removal of unused capacity.
     void shrink_to_fit()
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.shrink_to_fit();
     }
 
@@ -309,7 +309,7 @@ class TsDeque
     /// Invalidates any references, pointers, or iterators referring to contained elements. Any past-the-end iterators are also invalidated.
     void clear() noexcept
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.clear();
     }
 
@@ -319,7 +319,7 @@ class TsDeque
     /// @return Iterator pointing to the inserted value
     typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.insert(pos, value);
     }
 
@@ -329,7 +329,7 @@ class TsDeque
     /// @return Iterator pointing to the inserted value
     typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, T&& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.insert(pos, value);
     }
 
@@ -340,7 +340,7 @@ class TsDeque
     /// @return Linear in count plus linear in the lesser of the distances between pos and either of the ends of the container.
     typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, typename std::deque<T, Alloc>::size_type count, const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.insert(pos, count, value);
     }
 
@@ -353,7 +353,7 @@ class TsDeque
     template<class InputIt>
     typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, InputIt first, InputIt last)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.insert(pos, first, last);
     }
 
@@ -363,7 +363,7 @@ class TsDeque
     /// @return Iterator pointing to the first element inserted, or pos if ilist is empty.
     typename std::deque<T>::iterator insert(typename std::deque<T>::const_iterator pos, std::initializer_list<T> ilist)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.insert(pos, ilist);
     }
 
@@ -374,7 +374,7 @@ class TsDeque
     template<class... Args>
     typename std::deque<T>::iterator emplace(typename std::deque<T>::const_iterator pos, Args&&... args)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.emplace(pos, std::forward<Args>(args)...);
     }
 
@@ -383,7 +383,7 @@ class TsDeque
     /// @return Iterator following the last removed element.
     typename std::deque<T>::iterator erase(typename std::deque<T>::const_iterator pos)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.erase(pos);
     }
     /// @brief Removes the elements in the range [first, last).
@@ -394,7 +394,7 @@ class TsDeque
     /// @return Iterator following the last removed element.
     typename std::deque<T>::iterator erase(typename std::deque<T>::const_iterator first, typename std::deque<T>::const_iterator last)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.erase(first, last);
     }
 
@@ -402,14 +402,14 @@ class TsDeque
     /// @param[in] value The value of the element to append
     void push_back(const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.push_back(value);
     }
     /// @brief Appends the given element value to the end of the container. Value is moved into the new element.
     /// @param[in] value The value of the element to append
     void push_back(T&& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.push_back(value);
     }
 
@@ -419,14 +419,14 @@ class TsDeque
     template<class... Args>
     auto& emplace_back(Args&&... args)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.emplace_back(std::forward<Args>(args)...);
     }
 
     /// @brief Removes the last element of the container.
     void pop_back()
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.pop_back();
     }
 
@@ -435,7 +435,7 @@ class TsDeque
     /// @param[in] value The value of the element to prepend
     void push_front(const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.push_front(value);
     }
     /// @brief Prepends the given element value to the beginning of the container. Value is moved into the new element.
@@ -443,7 +443,7 @@ class TsDeque
     /// @param[in] value The value of the element to prepend
     void push_front(T&& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.push_front(value);
     }
 
@@ -453,14 +453,14 @@ class TsDeque
     template<class... Args>
     auto& emplace_front(Args&&... args)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         return _queue.emplace_front(std::forward<Args>(args)...);
     }
 
     /// @brief Removes the first element of the container. If there are no elements in the container, the behavior is undefined.
     void pop_front()
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.pop_front();
     }
 
@@ -468,7 +468,7 @@ class TsDeque
     /// @param[in] count New size of the container
     void resize(typename std::deque<T, Alloc>::size_type count)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.resize(count);
     }
     /// @brief Resizes the container to contain count elements.
@@ -476,7 +476,7 @@ class TsDeque
     /// @param[in] value The value to initialize the new elements with
     void resize(typename std::deque<T, Alloc>::size_type count, const T& value)
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.resize(count, value);
     }
 
@@ -485,7 +485,7 @@ class TsDeque
     /// @param[in, out] other Container to exchange the contents with
     void swap(std::deque<T>& other) noexcept
     {
-        std::lock_guard lk(_mutex);
+        std::scoped_lock lk(_mutex);
         _queue.swap(other);
     }
 
@@ -495,7 +495,7 @@ class TsDeque
     {
         T front;
         {
-            std::lock_guard lk(_mutex);
+            std::scoped_lock lk(_mutex);
             front = _queue.front();
         }
         pop_front();

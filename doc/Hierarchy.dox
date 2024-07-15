@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-// This file strutures pages and modules into a convenient hierarchical structure.
+// This file structures pages and modules into a convenient hierarchical structure.
 
 namespace Instinct {
 

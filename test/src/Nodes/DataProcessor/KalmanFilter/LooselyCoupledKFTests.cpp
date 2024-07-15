@@ -26,6 +26,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "Logger.hpp"
 #include "util/Container/CartesianProduct.hpp"
@@ -40,14 +41,13 @@ namespace nm = NAV::NodeManager;
 #define private public
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
-#include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #undef protected
 #undef private
 #pragma GCC diagnostic pop
 
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "Nodes/DataLogger/Protocol/CommonLog.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 namespace NAV::TESTS::LooselyCoupledKFTests
 {
@@ -60,44 +60,41 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
 
     std::array<std::vector<std::function<void()>>, 6> settings = { {
         { [&]() { LOG_WARN("Setting ImuIntegrator - _path to: {}", imuFilePath);
-                  dynamic_cast<VectorNavFile*>(nm::FindNode(324))->_path = imuFilePath; } },
-        { []() { LOG_WARN("Setting LooselyCoupledKF - _frame to: NED");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_frame = LooselyCoupledKF::Frame::NED; },
-          []() { LOG_WARN("Setting LooselyCoupledKF - _frame to: ECEF");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_frame = LooselyCoupledKF::Frame::ECEF; } },
+                  dynamic_cast<VectorNavFile*>(nm::FindNode(2))->_path = imuFilePath; } },
+        { []() { LOG_WARN("Setting LooselyCoupledKF - _integrationFrame to: NED");
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::NED; },
+          []() { LOG_WARN("Setting LooselyCoupledKF - _integrationFrame to: ECEF");
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_inertialIntegrator._integrationFrame = InertialIntegrator::IntegrationFrame::ECEF; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _phiCalculationAlgorithm to: Taylor");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor; },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Taylor; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _phiCalculationAlgorithm to: Exponential");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_phiCalculationAlgorithm = LooselyCoupledKF::PhiCalculationAlgorithm::Exponential; } },
         { []() { LOG_WARN("Setting LooselyCoupledKF - _qCalculationAlgorithm to: Taylor1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::Taylor1; },
           []() { LOG_WARN("Setting LooselyCoupledKF - _qCalculationAlgorithm to: VanLoan");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_qCalculationAlgorithm = LooselyCoupledKF::QCalculationAlgorithm::VanLoan; } },
         {
             []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: GaussMarkov1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
             //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessAccel to: RandomWalk");
-            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; }
+            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessAccel = LooselyCoupledKF::RandomProcess::RandomWalk; }
         },
         {
             []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: GaussMarkov1");
-                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
+                 dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::GaussMarkov1; },
             //   []() { LOG_WARN("Setting LooselyCoupledKF - _randomProcessGyro to: RandomWalk");
-            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(239))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; }
+            //          dynamic_cast<LooselyCoupledKF*>(nm::FindNode(10))->_randomProcessGyro = LooselyCoupledKF::RandomProcess::RandomWalk; }
         },
     } };
 
     cartesian_product_idx([&](size_t i0, size_t i1, size_t i2, size_t i3, size_t i4, size_t i5) {
         size_t messageCounter_VectorNavBinaryConverterImu_BinaryOutput = 0;
         size_t messageCounter_VectorNavBinaryConverterGnss_BinaryOutput = 0;
-        size_t messageCounter_ImuIntegrator_ImuObs = 0;
-        size_t messageCounter_ImuIntegrator_PosVelAttInit = 0;
-        size_t messageCounter_ImuIntegrator_PVAError = 0;
-        size_t messageCounter_ImuIntegrator_Sync = 0;
-        size_t messageCounter_LooselyCoupledKF_InertialNavSol = 0;
-        size_t messageCounter_LooselyCoupledKF_GNSSNavigationSolution = 0;
+        size_t messageCounter_LCKF_ImuObs = 0;
+        size_t messageCounter_LCKF_PosVel = 0;
+        size_t messageCounter_LCKF_InitPVA = 0;
 
-        auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 185, 281201.999719);
+        auto timeOfFirstGnssObs = imuAfter ? InsTime() : InsTime(2, 255, 403575.870125);
 
         nm::RegisterPreInitCallback([&]() {
             settings[0][i0]();
@@ -108,67 +105,47 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             settings[5][i5]();
         });
 
-        // VectorNavBinaryConverter (333) |> Binary Output (332)
-        nm::RegisterWatcherCallbackToInputPin(332, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        // VectorNavBinaryConverter (5) |> Binary Output (4)
+        nm::RegisterWatcherCallbackToInputPin(4, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             messageCounter_VectorNavBinaryConverterImu_BinaryOutput++;
         });
 
-        // VectorNavBinaryConverter (337) |> Binary Output (338)
-        nm::RegisterWatcherCallbackToInputPin(338, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        // VectorNavBinaryConverter (16) |> Binary Output (15)
+        nm::RegisterWatcherCallbackToInputPin(15, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             messageCounter_VectorNavBinaryConverterGnss_BinaryOutput++;
         });
 
-        // ImuIntegrator (163) |> ImuObs (164)
-        nm::RegisterWatcherCallbackToInputPin(164, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_ImuIntegrator_ImuObs++;
+        // INS/GNSS LCKF (10) |> ImuObsIn (7)
+        nm::RegisterWatcherCallbackToInputPin(7, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            LOG_DEBUG("ImuObsIn [{}]: ImuObsIn: {}", messageCounter_LCKF_ImuObs, node->inputPins[0].queue.size());
+            LOG_DEBUG("ImuObsIn [{}]: PosVel:   {}", messageCounter_LCKF_ImuObs, node->inputPins[1].queue.size());
+            messageCounter_LCKF_ImuObs++;
         });
 
-        // ImuIntegrator (163) |> PosVelAttInit (165)
-        nm::RegisterWatcherCallbackToInputPin(165, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_ImuIntegrator_PosVelAttInit++;
+        // INS/GNSS LCKF (10) |> Init PVA (19)
+        nm::RegisterWatcherCallbackToInputPin(19, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+            LOG_DEBUG("Init PVA [{}]: ImuObsIn: {}", messageCounter_LCKF_InitPVA, node->inputPins[0].queue.size());
+            LOG_DEBUG("Init PVA [{}]: PosVel:   {}", messageCounter_LCKF_InitPVA, node->inputPins[1].queue.size());
+            messageCounter_LCKF_InitPVA++;
         });
 
-        // ImuIntegrator (163) |> PVAError (224)
-        nm::RegisterWatcherCallbackToInputPin(224, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_ImuIntegrator_PVAError++;
+        // INS/GNSS LCKF (10) |> PosVel (8)
+        nm::RegisterWatcherCallbackToInputPin(8, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+            LOG_DEBUG("PosVel   [{}]: ImuObsIn: {}", messageCounter_LCKF_PosVel, node->inputPins[0].queue.size());
+            LOG_DEBUG("PosVel   [{}]: PosVel:   {}", messageCounter_LCKF_PosVel, node->inputPins[1].queue.size());
+            messageCounter_LCKF_PosVel++;
 
-            // TODO: Test PVA Error
-            // auto obs = std::static_pointer_cast<LcKfInsGnssErrors>(queue.front());
-        });
+            auto obs = std::static_pointer_cast<const PosVelAtt>(queue.front());
+            // LOG_TRACE("PosVelAtt time = [{} - {}]", obs->insTime.toYMDHMS(), obs->insTime.toGPSweekTow());
 
-        // ImuIntegrator (163) |> Sync (6)
-        nm::RegisterWatcherCallbackToInputPin(6, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_ImuIntegrator_Sync++;
-        });
-
-        // LooselyCoupledKF (239) |> InertialNavSol (226)
-        nm::RegisterWatcherCallbackToInputPin(226, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
-            messageCounter_LooselyCoupledKF_InertialNavSol++;
-
-            auto obs = std::static_pointer_cast<const InertialNavSol>(queue.front());
-            // LOG_TRACE("InertialNavSol time = [{} - {}]", obs->insTime.toYMDHMS(), obs->insTime.toGPSweekTow());
-
-            Eigen::Vector3d refPos_lla(deg2rad(48.780704498291016), deg2rad(9.171577453613281), 325.1);
-            Eigen::Vector3d refRollPitchYaw(0.428, -5.278, -61.865);
-            Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.0, 5.2, 1.0);
-            Eigen::Vector3d allowedPositionOffsetCombined_n(0.15, 0.1, 0.1);
-            Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.14, 13.7, 0.1);
-            Eigen::Vector3d allowedVelocityErrorCombined_e(0.09, 0.05, 0.08);
-            Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.3, 1.3, 90.0);
-            Eigen::Vector3d allowedRollPitchYawOffsetCombined(2.7, 2.0, 94.0);
-
-            if (i1 == 1) // LooselyCoupledKF::Frame::ECEF
-            {
-                allowedRollPitchYawOffsetImuOnly = { 1.3, 2.8, 90.0 };
-                allowedRollPitchYawOffsetCombined = { 2.7, 3.2, 94.0 };
-            }
-
-            if (imuAfter)
-            {
-                allowedPositionOffsetCombined_n = { 0.13, 0.05, 0.07 };
-                allowedVelocityErrorCombined_e = { 0.088, 0.05, 0.08 };
-                allowedRollPitchYawOffsetCombined = { 5, 5, 242.0 };
-            }
+            Eigen::Vector3d refPos_lla(deg2rad(48.780704498291016), deg2rad(9.171577453613281), 327.3);
+            Eigen::Vector3d refRollPitchYaw(-1.745, -0.567, -92.049);
+            Eigen::Vector3d allowedPositionOffsetImuOnly_n(2.5, 1.2, 2.0);
+            Eigen::Vector3d allowedPositionOffsetCombined_n(2.5, 1.2, 2.0);
+            Eigen::Vector3d allowedVelocityErrorImuOnly_e(0.25, 0.17, 0.25);
+            Eigen::Vector3d allowedVelocityErrorCombined_e(0.25, 0.17, 0.25);
+            Eigen::Vector3d allowedRollPitchYawOffsetImuOnly(1.9, 3.0, 31.0);
+            Eigen::Vector3d allowedRollPitchYawOffsetCombined(1.9, 3.0, 31.0);
 
             // North/South deviation [m]
             double northSouth = calcGeographicalDistance(obs->latitude(), obs->longitude(),
@@ -191,84 +168,47 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             REQUIRE(std::abs(rad2deg(obs->rollPitchYaw()(2)) - refRollPitchYaw(2)) <= (obs->insTime < timeOfFirstGnssObs ? allowedRollPitchYawOffsetImuOnly(2) : allowedRollPitchYawOffsetCombined(2)));
         });
 
-        // LooselyCoupledKF (239) |> GNSSNavigationSolution (227)
-        nm::RegisterWatcherCallbackToInputPin(227, [&](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
-            messageCounter_LooselyCoupledKF_GNSSNavigationSolution++;
-        });
-
         // ###########################################################################################################
-        //                                           LooselyCoupledKF.flow
+        //                                         LooselyCoupledKF.flow
         // ###########################################################################################################
         //
-        //                                                                                                                                                                                                    Plot (9)
-        //                                                                    ImuSimulator (577) (disabled)                            (585)--------------------------------------------------------------->  |> ImuObs (4)
-        //                                                                       (575) ImuObs |>                       (555)----------/-------------------------------------------------------------------->  |> Nominal (5)
-        //                                                                    (576) PosVelAtt |>                      /              /                                                                   -->  |> Filter (121)
-        //                                                                                       \                   /              /                                                                   /
-        //                                                                                        \          Combiner (344)        /            PosVelAttInitializer (21)                               |
-        // VectorNavFile - IMU (324)              VectorNavBinaryConverter (333)                   (581)-->  |> (345)    (347) |> -                      (20) PosVelAtt |>                              |
-        //    (323) Binary Output |>  --(334)-->  |> Binary Output (332)   (331) ImuObsWDelta |> --(561)-->  |> (346)              \                                       \                          (383)
-        //                                                                                                      /                   \                                      /                            |
-        // VectorNavFile - GNSS (326)              VectorNavBinaryConverter (337)               /---------------                     \           --------(322)-------------                             |
-        //     (325) Binary Output |>  --(334)-->  |> Binary Output (338)   (339) PosVelAtt |> -                                      \         /                                                       |
-        //                                                                                      \                                      \       |     ImuIntegrator (163)                               /
-        //                                                                                       \                                      (583)----->  |> ImuObs (164)          (166) InertialNavSol |> -
-        //                                                                                        \                                            \-->  |> PosVelAttInit (165)                            \
-        //                                                                                         \                                        ------>  |> PVAError (224)                                 |
-        //                                                                                          \                                      /    -->  |> Sync (6)                                       |
-        //                                                                                           \                                    |    /                                                       |
-        //                                                                                            \                                   |    \-------------------------------------------------------|---------------------------------------------------------------(504)
-        //                                                                                             \                                   \                                                           |                                                                    \
-        //                                                                                              \                                   (240)------------------------------------------------------|----------------------------------------------------------------    |
-        //                                                                                               \                                                                                             |                                                                \   |
-        //                                                                                                \                                                                                            \          LooselyCoupledKF (239)                                /   |
-        //                                                                                                 \                                                                                            (242)-->  |> InertialNavSol (226)            (228) PVAError |> ----/---              Plot (250)
-        //                                                                                                  (557)---------------------------------------------------------------------------------------------->  |> GNSSNavigationSolution (227)        (441) Sync |> ----    \-(266)---->  |> PVAError (245)
-        //                                                                                                                                                                                                                                                  (496) x |> ----------(505)---->  |> KF.x (252)
-        //                                                                                                                                                                                                                                                  (497) P |> ----------(506)---->  |> KF.P (253)
-        //                                                                                                                                                                                                                                                (498) Phi |> ----------(507)---->  |> KF.Phi (254)
-        //                                                                                                                                                                                                                                                  (499) Q |> ----------(508)---->  |> KF.Q (255)
-        //                                                                                                                                                                                                                                                  (500) z |> ----------(509)---->  |> KF.z (256)
-        //                                                                                                                                                                                                                                                  (501) H |> ----------(510)---->  |> KF.H (263)
-        //                                                                                                                                                                                                                                                  (502) R |> ----------(511)---->  |> KF.R (264)
-        //                                                                                                                                                                                                                                                  (503) K |> ----------(512)---->  |> KF.K (456)
+        // VectorNavFile - IMU (2)           VectorNavBinaryConverter (5)
+        //    (1) Binary Output |> --(6)-->  |> Binary Input (4)    (3) ImuObsWDelta |> \         INS/GNSS LCKF (10)                           Plot (26)
+        //                                                                               \(36)--> |> ImuObsIn (7)   (9) PosVelAtt |> --(27)--> |> LCKF (21)
+        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(18)--> |> PosVel (8)                               -|> VectorNav (37)
+        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(20)--> |> Init PVA (19)                           /
+        //                                                                              \---------------------------(38)--------------------/
         //
         // ###########################################################################################################
         REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));
 
         REQUIRE(messageCounter_VectorNavBinaryConverterImu_BinaryOutput == MESSAGE_COUNT_IMU);
         REQUIRE(messageCounter_VectorNavBinaryConverterGnss_BinaryOutput == MESSAGE_COUNT_GNSS);
-        REQUIRE(messageCounter_ImuIntegrator_ImuObs == MESSAGE_COUNT_IMU_FIX);
-        REQUIRE(messageCounter_ImuIntegrator_PosVelAttInit == 1);
-        REQUIRE(messageCounter_ImuIntegrator_PVAError == MESSAGE_COUNT_GNSS_FIX);
-        REQUIRE(messageCounter_ImuIntegrator_Sync == MESSAGE_COUNT_GNSS_FIX);
-        REQUIRE(messageCounter_LooselyCoupledKF_InertialNavSol == MESSAGE_COUNT_IMU_FIX + MESSAGE_COUNT_GNSS_FIX - 1); // First GNSS message is used to initialize filter, does not update
-        REQUIRE(messageCounter_LooselyCoupledKF_GNSSNavigationSolution == MESSAGE_COUNT_GNSS_FIX);
+        REQUIRE(messageCounter_LCKF_ImuObs == MESSAGE_COUNT_IMU_FIX);
+        REQUIRE(messageCounter_LCKF_InitPVA == 1);
+        REQUIRE(messageCounter_LCKF_PosVel == MESSAGE_COUNT_GNSS_FIX); // First GNSS message is used to initialize filter, does not update
     },
                           settings);
 }
 
 TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow]")
 {
-    // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799s)
-    size_t MESSAGE_COUNT_GNSS = 162;
-    size_t MESSAGE_COUNT_GNSS_FIX = 48;
-    // IMU:  690 messages, 466 messages with InsTime, 170 messages with fix (first IMU message at 9.037s)
-    size_t MESSAGE_COUNT_IMU = 466;
-    size_t MESSAGE_COUNT_IMU_FIX = 170;
+    size_t MESSAGE_COUNT_GNSS = 163;
+    size_t MESSAGE_COUNT_GNSS_FIX = 163;
+    size_t MESSAGE_COUNT_IMU = 1612;
+    size_t MESSAGE_COUNT_IMU_FIX = 1612;
 
-    testLCKFwithImuFile("VectorNav/Static/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
+    testLCKFwithImuFile("DataProcessor/lckf/vn310-imu.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
 TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving after GNSS data", "[LooselyCoupledKF][flow]")
 {
-    // GNSS: 176 messages, 162 messages with InsTime, 48 messages with fix (first GNSS message at 22.799717387000001s)
-    size_t MESSAGE_COUNT_GNSS = 162;
-    size_t MESSAGE_COUNT_GNSS_FIX = 48;
-    // IMU:  167 messages (first IMU message at 24.017697899000002s)
-    size_t MESSAGE_COUNT_IMU = 167;
+    size_t MESSAGE_COUNT_GNSS = 163;
+    size_t MESSAGE_COUNT_GNSS_FIX = 163;
+    size_t MESSAGE_COUNT_IMU = 1610;
+    size_t MESSAGE_COUNT_IMU_FIX = 1610;
 
-    testLCKFwithImuFile("VectorNav/Static/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU);
+    testLCKFwithImuFile("DataProcessor/lckf/vn310-imu-after.csv", MESSAGE_COUNT_GNSS, MESSAGE_COUNT_GNSS_FIX, MESSAGE_COUNT_IMU, MESSAGE_COUNT_IMU_FIX);
 }
 
 } // namespace NAV::TESTS::LooselyCoupledKFTests

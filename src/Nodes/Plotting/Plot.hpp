@@ -13,36 +13,40 @@
 
 #pragma once
 
+#include <array>
 #include <implot.h>
 
 #include <map>
 #include <mutex>
+#include <unordered_set>
 
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/DynamicInputPins.hpp"
 #include "internal/gui/widgets/PositionInput.hpp"
 
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Container/Vector.hpp"
 #include "util/Plot/Colormap.hpp"
+#include "util/Logger/CommonLog.hpp"
 
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/GNSS/SppSolution.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
+#include "NodeData/General/DynamicData.hpp"
+#include "NodeData/GNSS/GnssCombination.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/GNSS/SppSolution.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsSimulated.hpp"
-#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
 
 namespace NAV
 {
 /// @brief Plot node which plots all kind of observations
-class Plot : public Node
+class Plot : public Node, public CommonLog
 {
   public:
     /// @brief Default constructor
@@ -95,8 +99,7 @@ class Plot : public Node
             /// @brief Constructor
             /// @param[in] displayName Display name of the contained data
             /// @param[in] size Size of the buffer
-            explicit PlotData(std::string displayName, size_t size)
-                : displayName(std::move(displayName)), buffer(size) {}
+            PlotData(std::string displayName, size_t size);
 
             /// Display name of the contained data
             std::string displayName;
@@ -127,103 +130,26 @@ class Plot : public Node
         ~PinData() = default;
         /// @brief Copy constructor
         /// @param[in] other The other element to copy
-        PinData(const PinData& other)
-            : size(other.size),
-              dataIdentifier(other.dataIdentifier),
-              plotData(other.plotData),
-              pinType(other.pinType),
-              stride(other.stride) {}
+        PinData(const PinData& other);
 
         /// @brief Move constructor
         /// @param[in] other The other element to move
-        PinData(PinData&& other) noexcept
-            : size(other.size),
-              dataIdentifier(std::move(other.dataIdentifier)),
-              plotData(std::move(other.plotData)),
-              pinType(other.pinType),
-              stride(other.stride) {}
+        PinData(PinData&& other) noexcept;
 
         /// @brief Copy assignment operator
         /// @param[in] rhs The other element to copy
-        PinData& operator=(const PinData& rhs)
-        {
-            if (&rhs != this)
-            {
-                size = rhs.size;
-                dataIdentifier = rhs.dataIdentifier;
-                plotData = rhs.plotData;
-                pinType = rhs.pinType;
-                stride = rhs.stride;
-            }
-
-            return *this;
-        }
+        PinData& operator=(const PinData& rhs);
         /// @brief Move assignment operator
         /// @param[in] rhs The other element to move
-        PinData& operator=(PinData&& rhs) noexcept
-        {
-            if (&rhs != this)
-            {
-                size = rhs.size;
-                dataIdentifier = std::move(rhs.dataIdentifier);
-                plotData = std::move(rhs.plotData);
-                pinType = rhs.pinType;
-                stride = rhs.stride;
-            }
-
-            return *this;
-        }
+        PinData& operator=(PinData&& rhs) noexcept;
 
         /// @brief Adds a plotData Element to the list
         /// @param[in] dataIndex Index where to add the data to
         /// @param[in] displayName Display name of the contained data
-        void addPlotDataItem(size_t dataIndex, const std::string& displayName)
-        {
-            if (plotData.size() > dataIndex)
-            {
-                if (plotData.at(dataIndex).displayName == displayName) // Item was restored already at this position
-                {
-                    plotData.at(dataIndex).markedForDelete = false;
-                    return;
-                }
-
-                // Some other item was restored at this position
-                if (!plotData.at(dataIndex).markedForDelete)
-                {
-                    LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
-                             displayName, dataIndex, plotData.at(dataIndex).displayName);
-                }
-                auto searchIter = std::find_if(plotData.begin(),
-                                               plotData.end(),
-                                               [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
-                auto iter = plotData.begin();
-                std::advance(iter, dataIndex);
-                iter->markedForDelete = false;
-                if (searchIter == plotData.end()) // Item does not exist yet. Developer added a new item to the list
-                {
-                    plotData.insert(iter, PlotData{ displayName, static_cast<size_t>(size) });
-                }
-                else // Item exists already. Developer reordered the items in the list
-                {
-                    move(plotData, static_cast<size_t>(searchIter - plotData.begin()), dataIndex);
-                }
-            }
-            else if (std::find_if(plotData.begin(),
-                                  plotData.end(),
-                                  [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
-                     != plotData.end())
-            {
-                LOG_ERROR("Adding the PlotData item {} at position {}, but this plot item was found at another position already",
-                          displayName, dataIndex);
-            }
-            else // Item not there yet. Add to the end of the list
-            {
-                plotData.emplace_back(displayName, static_cast<size_t>(size));
-            }
-        }
+        void addPlotDataItem(size_t dataIndex, const std::string& displayName);
 
         /// Size of all buffers of the plotData elements
-        int size = 2000;
+        int size = 0;
         /// Data Identifier of the connected pin
         std::string dataIdentifier;
         /// List with all the data
@@ -236,6 +162,8 @@ class Plot : public Node
         std::mutex mutex;
         /// Dynamic data start index
         int dynamicDataStartIndex = -1;
+        /// Events with relative time, absolute time, tooltip text and data Index (-1 means all)
+        std::vector<std::tuple<double, InsTime, std::string, int32_t>> events;
     };
 
     /// @brief Information specifying the look of each plot
@@ -268,10 +196,16 @@ class Plot : public Node
                 size_t colormapMaskDataCmpIdx = 0;
                 /// Line thickness
                 float thickness = 1.0F;
+                /// Line Flags (overrides the plot selection)
+                std::optional<ImPlotLineFlags> lineFlags;
 
                 /// Amount of points to skip for plotting
                 int stride = 0;
 
+                /// Colormap mask (pair: type and id)
+                std::pair<ColormapMaskType, int64_t> markerColormapMask = { ColormapMaskType::None, -1 };
+                /// Index of the plot data to compare for the color
+                size_t markerColormapMaskDataCmpIdx = 0;
                 /// Display markers for the line plot (no effect for scatter type)
                 bool markers = false;
                 /// Style of the marker to display
@@ -284,6 +218,21 @@ class Plot : public Node
                 ImVec4 markerFillColor = IMPLOT_AUTO_COL;
                 /// Outline/Border color for markers
                 ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
+
+                /// Show events on this data
+                bool eventsEnabled = false;
+                /// Style of the marker to display
+                ImPlotMarker eventMarkerStyle = ImPlotMarker_Cross;
+                /// Size of the markers (makes the marker smaller/bigger)
+                float eventMarkerSize = 6.0F;
+                /// Weight of the markers (increases thickness of marker lines)
+                float eventMarkerWeight = 2.0F;
+                /// Fill color for markers
+                ImVec4 eventMarkerFillColor = ImVec4(1.0, 0.0, 0.0, 1.0);
+                /// Outline/Border color for markers
+                ImVec4 eventMarkerOutlineColor = ImVec4(1.0, 0.0, 0.0, 1.0);
+                /// Tooltip search regex
+                std::string eventTooltipFilterRegex;
             };
 
             /// @brief Default constructor (needed to make serialization with json working)
@@ -297,6 +246,7 @@ class Plot : public Node
                 : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName))
             {
                 style.colormapMaskDataCmpIdx = dataIndex;
+                style.markerColormapMaskDataCmpIdx = dataIndex;
             }
 
             /// @brief Constructor
@@ -305,9 +255,9 @@ class Plot : public Node
             /// @param[in] displayName Display name of the data
             /// @param[in] axis Axis to plot the data on (Y1, Y2, Y3)
             PlotItem(size_t pinIndex, size_t dataIndex, std::string displayName, ImAxis axis)
-                : pinIndex(pinIndex), dataIndex(dataIndex), displayName(std::move(displayName)), axis(axis)
+                : PlotItem(pinIndex, dataIndex, std::move(displayName))
             {
-                style.colormapMaskDataCmpIdx = dataIndex;
+                this->axis = axis; // NOLINT(cppcoreguidelines-prefer-member-initializer)
             }
 
             /// @brief Equal comparison operator (needed to search the vector with std::find)
@@ -327,6 +277,22 @@ class Plot : public Node
             ScrollingBuffer<ImU32> colormapMaskColors = ScrollingBuffer<ImU32>(0);
             /// Colormap version (to track updates of the colormap)
             size_t colormapMaskVersion = 0;
+            /// Buffer for the colormap mask
+            ScrollingBuffer<ImU32> markerColormapMaskColors = ScrollingBuffer<ImU32>(0);
+            /// Colormap version (to track updates of the colormap)
+            size_t markerColormapMaskVersion = 0;
+
+            /// Buffer for event markers
+            ScrollingBuffer<double> eventMarker = ScrollingBuffer<double>(0);
+
+            /// Tooltip info
+            struct Tooltip
+            {
+                InsTime time;                   ///< Time of the event
+                std::vector<std::string> texts; ///< List of event texts
+            };
+            /// List of tooltips (x,y, tooltip)
+            std::vector<std::tuple<double, double, Tooltip>> eventTooltips;
         };
 
         /// @brief Default constructor
@@ -336,7 +302,7 @@ class Plot : public Node
         /// @param[in] title Title of the ImPlot
         /// @param[in] nInputPins Amount of inputPins
         PlotInfo(const std::string& title, size_t nInputPins)
-            : title(title), headerText(title), selectedXdata(nInputPins, 0) {}
+            : title(title), headerText(title), selectedXdata(nInputPins, 1) {}
 
         /// Size of the plot
         ImVec2 size{ -1, 300 };
@@ -367,6 +333,8 @@ class Plot : public Node
         ImPlotScale xAxisScale = ImPlotScale_Linear;
         /// Scale for the y-Axes
         std::array<ImPlotScale, 3> yAxesScale = { ImPlotScale_Linear, ImPlotScale_Linear, ImPlotScale_Linear };
+        /// Line Flags for all items (each item can override the selection)
+        ImPlotLineFlags lineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN;
 
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
@@ -390,11 +358,73 @@ class Plot : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
-    void updateNumberOfInputPins();
-
     /// @brief Adds/Deletes Plots depending on the variable nPlots
     void updateNumberOfPlots();
+
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
+
+    /// Index of the GPST data (unix timestamp)
+    size_t GPST_PLOT_IDX = 1;
+
+    /// Data storage for each pin
+    std::vector<PinData> _pinData;
+
+    /// Info for each plot window
+    std::vector<PlotInfo> _plots;
+
+    /// Amount of plot windows (should equal _plots.size())
+    size_t _nPlots = 0;
+    /// Possible data identifiers to connect
+    std::vector<std::string> _dataIdentifier = {
+        // General
+        DynamicData::type(),
+        // GNSS
+        GnssCombination::type(),
+        GnssObs::type(),
+        RtklibPosObs::type(),
+        SppSolution::type(),
+        // IMU
+        ImuObs::type(),
+        ImuObsSimulated::type(),
+        ImuObsWDelta::type(),
+        KvhObs::type(),
+        VectorNavBinaryOutput::type(),
+        // State
+        InsGnssLCKFSolution::type(),
+        Pos::type(),
+        PosVel::type(),
+        PosVelAtt::type(),
+        InsGnssTCKFSolution::type(),
+    };
+
+    /// Index of the Collapsible Header currently being dragged
+    int _dragAndDropHeaderIndex = -1;
+
+    /// Values to force the x axis range to and a set of plotIdx to force
+    std::pair<std::unordered_set<size_t>, ImPlotRange> _forceXaxisRange{};
+
+    /// Start position for the calculation of relative North-South and East-West
+    std::optional<gui::widgets::PositionWithFrame> _originPosition;
+
+    /// Flag, whether to override the North/East startValues in the GUI
+    bool _overridePositionStartValues = false;
+
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback, 1 };
+
+    /// @brief Adds a event to a certain point in time
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    /// @param insTime Absolute time
+    /// @param text Text to display
+    /// @param dataIndex Data Index to add the event for (-1 means all)
+    void addEvent(size_t pinIndex, InsTime insTime, const std::string& text, int32_t dataIndex);
 
     /// @brief Add Data to the buffer of the pin
     /// @param[in] pinIndex Index of the input pin where the data was received
@@ -406,7 +436,13 @@ class Plot : public Node
     /// @param[in] pinIndex Index of the input pin where the data was received
     /// @param[in] displayName Display name of the data
     /// @param[in] value The value to insert
-    void addData(size_t pinIndex, std::string displayName, double value);
+    /// @return Data Index where data were inserted
+    size_t addData(size_t pinIndex, std::string displayName, double value);
+
+    /// @brief Calculate the local position offset from the plot origin
+    /// @param[in] lla_position [𝜙, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
+    /// @return Local positions in north/south and east/west directions in [m]
+    CommonLog::LocalPosition calcLocalPosition(const Eigen::Vector3d& lla_position);
 
     /// @brief Plots the data on this port
     /// @param[in] insTime Time the data was received
@@ -431,103 +467,44 @@ class Plot : public Node
     /// @brief Plot the data on this port
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void plotData(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void plotFlowData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPos(const std::shared_ptr<const Pos>& obs, size_t pinIndex);
+    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
+    /// @param[in] startIndex Data descriptor start index
+    template<typename T>
+    void plotData(const std::shared_ptr<const T>& obs, size_t pinIndex, size_t& plotIndex, size_t startIndex = 0)
+    {
+        for (size_t i = startIndex; i < T::GetStaticDescriptorCount(); ++i)
+        {
+            addData(pinIndex, plotIndex++, obs->getValueAtOrNaN(i));
+        }
+    }
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPosVel(const std::shared_ptr<const PosVel>& obs, size_t pinIndex);
+    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
+    void plotDynamicData(const std::shared_ptr<const DynamicData>& obs, size_t pinIndex, size_t& plotIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex);
+    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
+    void plotGnssCombination(const std::shared_ptr<const GnssCombination>& obs, size_t pinIndex, size_t& plotIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotLcKfInsGnssErrors(const std::shared_ptr<const LcKfInsGnssErrors>& obs, size_t pinIndex);
+    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
+    void plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pinIndex, size_t& plotIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotTcKfInsGnssErrors(const std::shared_ptr<const TcKfInsGnssErrors>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSppSolution(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObsSimulated(const std::shared_ptr<const ImuObsSimulated>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotWiFiPositioningSolution(const std::shared_ptr<const WiFiPositioningSolution>& obs, size_t pinIndex);
-
-    /// Data storage for each pin
-    std::vector<PinData> _pinData;
-
-    /// Info for each plot window
-    std::vector<PlotInfo> _plots;
-
-    /// Amount of input pins (should equal data.size())
-    size_t _nInputPins = 5;
-    /// Amount of plot windows (should equal _plots.size())
-    size_t _nPlots = 0;
-    /// Possible data identifiers to connect
-    std::vector<std::string> _dataIdentifier;
-
-    /// Index of the Collapsible Header currently being dragged
-    int _dragAndDropHeaderIndex = -1;
-    /// Index of the Pin currently being dragged
-    int _dragAndDropPinIndex = -1;
-
-    /// Start Time for calculation of relative time with the GPS ToW
-    InsTime _startTime;
-    /// Start position for the calculation of relative North-South and East-West
-    std::optional<gui::widgets::PositionWithFrame> _originPosition;
-
-    /// Flag, whether to override the North/East startValues in the GUI
-    bool _overridePositionStartValues = false;
+    void plotSppSolutionDynamicData(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex);
 };
 
 } // namespace NAV

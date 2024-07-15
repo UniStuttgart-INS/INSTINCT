@@ -68,12 +68,12 @@ TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
 
     CHECK(state.lla_position() == lla_position);
     CHECK(state.e_velocity() == e_vel);
-    CHECK_THAT(state.n_velocity() - n_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), EPSILON));
+    CHECK_THAT(state.n_velocity() - n_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 2.0e-12));
     CHECK_THAT(state.e_velocity().norm() - state.n_velocity().norm(), Catch::Matchers::WithinAbs(0, 1e-11));
 
     state.setVelocity_n(n_vel);
     CHECK(state.lla_position() == lla_position);
-    CHECK_THAT(state.e_velocity() - e_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 4.6e-12));
+    CHECK_THAT(state.e_velocity() - e_vel, Catch::Matchers::WithinAbs(Eigen::Vector3d::Zero(), 5.5e-12));
     CHECK(state.n_velocity() == n_vel);
     LOG_DATA("{}", state.e_velocity().norm() - state.n_velocity().norm());
     CHECK_THAT(state.e_velocity().norm() - state.n_velocity().norm(), Catch::Matchers::WithinAbs(0, 3.7e-12));

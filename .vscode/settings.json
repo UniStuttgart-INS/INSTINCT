@@ -17,6 +17,12 @@
     "cSpell.words": [
         "cmake",
         "coeffs",
+        "Decorrelate",
+        "decorrelate",
+        "Decorrelates",
+        "decorrelates",
+        "decorrelation",
+        "Decorrelation",
         "docopt",
         "doppler",
         "Doxygen",
@@ -168,6 +174,7 @@
         "**/.DS_Store": true,
         "**/tools": true,
         ".cache": true,
+        ".direnv": true,
         // ".gitattributes": true,
         ".github": true,
         ".gitlab": true,
@@ -175,11 +182,15 @@
         ".clang-tidy": true,
         ".cmake-format.yaml": true,
         ".cppcheck-suppressions-list": true,
+        ".envrc": true,
         ".gitlab-ci.yml": true,
         ".gitmodules": true,
         "CMakeUserPresets.json": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
+        "default.nix": true,
+        "flake.nix": true,
+        "flake.lock": true,
     },
     "todo-tree.filtering.excludeGlobs": [
         "**/lib"
@@ -189,4 +200,5 @@
         "LOG_(DATA)",
     ],
     "matched-line-dimmer.opacity": 40,
+    "statusBarParam.showNames": true,
 }

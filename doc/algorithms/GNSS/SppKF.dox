@@ -1,0 +1,481 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file SppKF.dox
+// @brief SPP KF documentation
+// @author P. Peitschat (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2023-09-27
+
+namespace Instinct {
+
+  /** \page SppKF Single Point Positioning using Kalman Filtering
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppKF-KfAlgorithm Algorithm - Extended Kalman Filter
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+- Prediction
+\anchor eq-SppKF-KfAlgorithm-prediction \f{equation}{
+\begin{aligned}
+  \hat{\boldsymbol{x}}_{n \mid n-1} &=\boldsymbol{\Phi}_{n-1 \mid n-1} \cdot \hat{\boldsymbol{x}}_{n-1 \mid n-1} \\
+  \boldsymbol{P}_{n \mid n-1} &=\boldsymbol{\Phi}_{n-1 \mid n-1} \boldsymbol{P}_{n-1 \mid n-1} \boldsymbol{\Phi}_{n-1 \mid n-1}^{T}+\boldsymbol{Q}
+\end{aligned}
+\f}
+- Kalman Gain
+\anchor eq-SppKF-KfAlgorithm-gain \f{equation}{
+\boldsymbol{K}_{n}=\boldsymbol{P}_{n \mid n-1} \boldsymbol{H}_{n}^{T}\left(\boldsymbol{H}_{n} \boldsymbol{P}_{n \mid n-1} \boldsymbol{H}_{n}^{T}+\boldsymbol{R}_{n}\right)^{-1}
+\f}
+- Update
+\anchor eq-SppKF-KfAlgorithm-update \f{equation}{
+\begin{aligned}
+  \hat{\boldsymbol{x}}_{n \mid n}&=\hat{\boldsymbol{x}}_{n \mid n-1}+\boldsymbol{K}_{n}\left(\Delta \boldsymbol{y}_{n}-\boldsymbol{H}_{n} \left(\hat{\boldsymbol{x}}_{n \mid n-1} - \hat{\boldsymbol{x}}_{n-1 \mid n-1}\right)\right) \\
+  \boldsymbol{P}_{n \mid n}&=\left(\boldsymbol{I}-\boldsymbol{K}_{n} \boldsymbol{H}_{n}\right) \boldsymbol{P}_{n \mid n-1}
+\end{aligned}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppKF-unknowns Unknowns
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+Pseudorange and Doppler observations are processed together.
+
+\anchor eq-SppKF-unknowns \f{equation}{
+\mathbf{x}^e =
+\begin{bmatrix}
+    \text{Receiver Position [m]} \\
+    \text{Receiver Velocity [m]} \\ \hdashline
+    \text{Clock error [m]} \\
+    \text{Clock drift [m]} \\\hdashline
+    \text{Inter-system clock bias (System 2 to 1) [m]} \\
+    \text{Inter-system clock drift (System 2 to 1)  [m]} \\
+    \vdots \\
+    \text{Inter-system clock bias (System o to 1) [m]} \\
+    \text{Inter-system clock drift (System o to 1)  [m]} \\\hdashline
+    \text{Inter-frequency bias (Frequency 2 to 1)  [m]} \\
+    \vdots \\
+    \text{Inter-frequency bias (Frequency j to 1) [m]} \\
+\end{bmatrix}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+  \section SppKF-processModel Process Model
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection SppKF-processModel-systemModel System Model
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\anchor eq-SppKF-processModel-systemModel \f{equation}{
+\overbrace{
+  \begin{bmatrix}
+    { \mathbf{v}_r } \\
+    { \mathbf{a}_r } \\\hdashline
+    { d\dot{t}_r } \\
+    { d\ddot{t}_r } \\\hdashline
+    { d\dot{t}_{ISB}^{S_2 \rightarrow S_1} } \\
+    { d\ddot{t}_{ISB}^{S_2 \rightarrow S_1} } \\
+    { \vdots } \\
+    { d\dot{t}_{ISB}^{S_o \rightarrow S_1} } \\
+    { d\ddot{t}_{ISB}^{S_o \rightarrow S_1} } \\\hdashline
+    { d\dot{t}_{IFB}^{F_2 \rightarrow F_1} } \\
+    { \vdots } \\
+    { d\dot{t}_{IFB}^{F_j \rightarrow F_1} } \\
+  \end{bmatrix}
+}^{\mathbf{\dot{x}}^e}
+=
+\overbrace{\left[\begin{array}{cc:cc:ccccc:ccc}
+  \mathbf{0}_3     & \mathbf{I}_3     & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1} \\
+  \mathbf{0}_3     & \mathbf{0}_3     & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \dots  & \mathbf{0}_{3,1} \\\hdashline
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         1        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0         \\
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0         \\\hdashline
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         1        & \dots  &         0        &         0        &        0         & \dots  &        0         \\
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0         \\
+       \vdots      &      \vdots      &      \vdots      &      \vdots      &      \vdots      &      \vdots      & \ddots &      \vdots      &      \vdots      &      \vdots      & \ddots &      \vdots      \\
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         1        &        0         & \dots  &        0         \\
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0         \\\hdashline
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0          \\
+       \vdots      &      \vdots      &      \vdots      &      \vdots      &      \vdots      &      \vdots      & \ddots &      \vdots      &      \vdots      &      \vdots      & \ddots &      \vdots       \\
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &         0        &         0        &         0        &         0        & \dots  &         0        &         0        &        0         & \dots  &        0          \\
+\end{array}\right]}^{\mathbf{F}}
+\cdot
+\overbrace{
+\begin{bmatrix}
+  { \mathbf{r}_r } \\
+  { \mathbf{v}_r } \\\hdashline
+  { dt_r} \\
+  { d\dot{t}_r} \\\hdashline
+  { dt_{ISB}^{S_2 \rightarrow S_1} } \\
+  { d\dot{t}_{ISB}^{S_2 \rightarrow S_1} } \\
+  { \vdots } \\
+  { dt_{ISB}^{S_o \rightarrow S_1} } \\
+  { d\dot{t}_{ISB}^{S_o \rightarrow S_1} } \\\hdashline
+  { dt_{IFB}^{F_2 \rightarrow F_1} } \\
+  { \vdots } \\
+  { dt_{IFB}^{F_j \rightarrow F_1} } \\
+\end{bmatrix}
+}^{\mathbf{x}^e}
++
+\mathbf{G} \cdot \boldsymbol{w}
+\f}
+
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.148, p. 415)
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection SppKF-processModel-stateTransitionMatrix State transition matrix
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+Higher order terms are zero, so the exact solution is
+
+\anchor eq-SppKF-processModel-stateTransitionMatrix \f{equation}{
+\mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s
+\f}
+
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.150, p. 416)
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection SppKF-processModel-processNoise Process noise covariance matrix
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<b> Clock modeling </b>
+- Phase drift \f$ \sigma_{c\phi} \f$ (random walk) and Frequency drift \f$ \sigma_{cf} \f$ (integrated random walk)
+\anchor eq-SppKF-processModel-processNoise-clock \f{equation}{
+S_{c f}^a = \frac{\sigma^2\left(\delta \dot{\rho}_c^a\left(t+\tau_s\right)-\delta \dot{\rho}_c^a(t)\right)}{\tau_s} \quad S_{c \phi}^a = \frac{\sigma^2\left(\delta \rho_c^a\left(t+tau_s\right)-\delta \rho_c^a(t)-\delta \dot{\rho}_c^a(t) \tau_s\right)}{\tau_s}
+\f}
+- Typical values for a TCXO are \f$ S_{cf} \approx 0.04 \text{ m}^2 \text{s}^{-3} \f$ and \f$ S_{c\phi} \approx 0.01 \text{ m}^2 \text{s}^{-1} \f$
+
+<b> Velocity change due to user motion (Variances) </b> <br>
+  \f$
+  \mathbf{S}_a^n
+  =
+  \begin{bmatrix}
+    S_{aH} & 0 & 0 \\
+    0 & S_{aH} & 0 \\
+    0 & 0 & S_{aV} \\
+  \end{bmatrix}
+  \f$
+
+\anchor eq-SppKF-processModel-processNoise-userMotion \f{equation}{
+\begin{aligned}
+& S_{a H}=\frac{\sigma^2\left(v_{e b, N}^n\left(t+\tau_s\right)-v_{e b, N}^n(t)\right)}{\tau_s}=\frac{\sigma^2\left(v_{e b, E}^n\left(t+\tau_s\right)-v_{e b, E}^n(t)\right)}{\tau_s} \\
+& S_{a V}=\frac{\sigma^2\left(v_{e b, D}^n\left(t+\tau_s\right)-v_{e b, D}^n(t)\right)}{\tau_s}
+\end{aligned}
+\f}
+
+- Suitable values for \f$ S_{aH} \f$ are around
+  - \f$ 1 \text{ m}^2 \text{s}^{–3} \f$ for a pedestrian or ship,
+  - \f$ 10 \text{ m}^2 \text{s}^{–3} \f$ for a car,
+  - \f$ 100 \text{ m}^2 \text{s}^{–3} \f$ for a military aircraft.
+- The vertical acceleration PSD \f$ S_{aV} \f$  is usually smaller
+
+(\cite Groves2013 Groves, ch. 9.4.2.2, p. 416-418)
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection SppKF-processModel-processNoise-vanLoan Van Loan method
+
+<b> Noise input matrix </b>
+
+\anchor eq-SppKF-processModel-processNoise-vanLoan-noiseInput \f{equation}{
+\mathbf{G} = \text{diag}
+\left\{\begin{array}{cc:cc:ccccc:ccc}
+    \,{ \mathbf{0}_3 } &
+    { \mathbf{C}_n^e } &
+    { 1 } &
+    { 1 } &
+    { 1 } &
+    { 1 } &
+    { \dots } &
+    { 1 } &
+    { 1 } &
+    { 1 } &
+    { \dots } &
+    { 1 }\,
+\end{array}\right\}^T
+\f}
+
+<b> Noise scale matrix </b>
+
+\anchor eq-SppKF-processModel-processNoise-vanLoan-noiseScale \f{equation}{
+\mathbf{W} = \text{diag}
+\left\{\begin{array}{cc:cc:ccccc:ccc}
+    \,{ \mathbf{0}_3 } &
+    {\mathbf{S}_a^n} &
+    {\sigma_{c\phi}^2} &
+    {\sigma_{cf}^2} &
+    {{\sigma_{ISB,\phi}^{S_2 \rightarrow S_1}}^2} &
+    {{\sigma_{ISB,f}^{S_2 \rightarrow S_1}}^2} &
+    { \dots } &
+    {{\sigma_{ISB,\phi}^{S_o \rightarrow S_1}}^2} &
+    {{\sigma_{ISB,f}^{S_o \rightarrow S_1}}^2} &
+    {{\sigma_{IFB}^{F_2 \rightarrow F_1}}^2} &
+    { \dots } &
+    {{\sigma_{IFB}^{F_j \rightarrow F_1}}^2}\,
+\end{array}\right\}^T
+\f}
+
+<b> Van Loan algorithm </b>
+
+1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
+\anchor ep-SppKF-processNoise-vanLoan-A \f{equation}{
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
+                                \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
+\f}
+
+2. Calculate the exponential of \f$ \mathbf{A} \f$
+\anchor eq-SppKF-processNoise-vanLoan-expA \f{equation}{
+\mathbf{B} = \text{expm}(\mathbf{A})
+= \left[ \begin{array}{c:c}
+    \dots      & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
+    \hdashline
+    \mathbf{0} & \mathbf{\Phi}^T
+  \end{array} \right]
+= \left[ \begin{array}{c:c}
+	\mathbf{B}_{11} & \mathbf{B}_{12} \\[2mm]
+    \hdashline
+    \mathbf{B}_{21} & \mathbf{B}_{22}
+  \end{array} \right]
+\f}
+
+3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as
+\anchor eq-SppKF-processNoise-vanLoan-Phi \f{equation}{
+  \mathbf{\Phi} = \mathbf{B}_{22}^T
+\f}
+
+4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as
+\anchor eq-SppKF-processNoise-vanLoan-Q \f{equation}{
+  \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
+\f}
+
+Uses GUI input values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection SppKF-processModel-processNoise-groves Groves
+
+\anchor eq-SppKF-processModel-processNoise-groves \f{equation}{
+\mathbf{Q} =
+\left[\begin{array}{cc:cc}
+  \frac{1}{3} S_a^\gamma \tau_s^3 & \frac{1}{2} S_a^\gamma \tau_s^2 & 0_{3,1} & 0_{3,1} \\
+  \frac{1}{2} S_a^\gamma \tau_s^2 & S_a^\gamma \tau_s & 0_{3,1} & 0_{3,1} \\
+  \hdashline
+  0_{1,3} & 0_{1,3} & S_{c \phi}^a \tau_s+\frac{1}{3} S_{c f}^a \tau_s^3 & \frac{1}{2} S_{c f}^a \tau_s^2 \\
+  0_{1,3} & 0_{1,3} & \frac{1}{2} S_{c f}^a \tau_s^2 & S_{c f}^a \tau_s
+  \end{array}\right]
+\f}
+
+Uses calculated values for \f$ S_{aH} \f$, \f$ S_{cf} \f$ and \f$ S_{c\phi} \f$.
+
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.152, p. 417-418)
+
+The inter-system errors and drifts are assumed constant. Note: Groves does not estimate an inter-system drift (\cite Groves2013 Groves, Appendix G.8, p. G-23 - G-24), but we do for all models.
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppKF-measurmentModel Measurement Model
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection SppKF-measurmentModel-innovation Measurement innovation
+See \ref SppBasics-measurementModel-innovation
+
+
+\subsection SppKF-measurmentModel-sensitivityMatrix Measurement sensitivity matrix
+See \ref SppBasics-measurementModel-sensitivityMatrix
+
+In detail for Kalman Filtering
+\anchor eq-SppKF-measurementModel-sensitivityMatrix-2 \f{equation}{
+  \overbrace
+  {\begin{bmatrix}
+  { {p}_{r}^{1,S1,F1}} \\[0.5em]
+  { {p}_{r}^{1,S1,F2}} \\[0.5em]
+  { {p}_{r}^{2,S2}} \\[0.5em]
+  \dots \\[0.4em] \hdashline
+  { {\dot{p}}_{r}^{1,S1}} \\[0.5em]
+  { {\dot{p}}_{r}^{2,S2}} \\[0.5em]
+  \dots \\[0.4em]
+  \end{bmatrix}}^{\mathbf{z}}
+  =\overbrace{\left[\begin{array}{ccc:ccc:cc:cc:c}
+  \frac{- {x^s} + {x_r}}{{\rho_r^s}} & \frac{- {y^s} + {y_r}}{{\rho_r^s}} & \frac{- {z^s} + {z_r}}{{\rho_r^s}} & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0\\[0.3em]
+  \frac{- {x^s} + {x_r}}{{\rho_r^s}} & \frac{- {y^s} + {y_r}}{{\rho_r^s}} & \frac{- {z^s} + {z_r}}{{\rho_r^s}} & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1\\[0.3em]
+  \frac{- {x^s} + {x_r}}{{\rho_r^s}} & \frac{- {y^s} + {y_r}}{{\rho_r^s}} & \frac{- {z^s} + {z_r}}{{\rho_r^s}} & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0\\[0.3em]
+  \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\[0.3em] \hdashline
+  - \frac{{v^{s,x}} - {v_{r,x}}}{{\rho_r^s}} & - \frac{{v^{s,y}} - {v_{r,y}}}{{\rho_r^s}} & - \frac{{v^{s,z}} - {v_{r,z}}}{{\rho_r^s}} & - \frac{{x^s} - {x_r}}{{\rho_r^s}} & - \frac{{y^s} - {y_r}}{{\rho_r^s}} & - \frac{{z^s} - {z_r}}{{\rho_r^s}} & 0 & 1 & 0 & 0 & 0\\[0.3em]
+  - \frac{{v^{s,x}} - {v_{r,x}}}{{\rho_r^s}} & - \frac{{v^{s,y}} - {v_{r,y}}}{{\rho_r^s}} & - \frac{{v^{s,z}} - {v_{r,z}}}{{\rho_r^s}} & - \frac{{x^s} - {x_r}}{{\rho_r^s}} & - \frac{{y^s} - {y_r}}{{\rho_r^s}} & - \frac{{z^s} - {z_r}}{{\rho_r^s}} & 0 & 1 & 0 & 1 & 0\\[0.3em]
+  \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots
+  \end{array}\right]}^{\mathbf{H}} \cdot
+  \overbrace{\begin{bmatrix}
+      {x_r} \\
+      {y_r} \\
+      {z_r} \\ \hdashline
+      {v_{r,x}} \\
+      {v_{r,y}} \\
+      {v_{r,z}} \\ \hdashline
+      { dt_r} \\
+      { d\dot{t}_r} \\ \hdashline
+      { dt_{ISB}^{S_2 \rightarrow S_1} } \\
+      { d\dot{t}_{ISB}^{S_2 \rightarrow S_1} } \\\hdashline
+      { dt_{IFB}^{F_2 \rightarrow F_1} } \\
+  \end{bmatrix}}^{\mathbf{x}}
+\f}
+Which can be written with
+\f( {\mathbf{u}_{r,v}^s} = \frac{{\mathbf{v}^s} - {\mathbf{v}_r}}{ \rho_r^s} \f)
+as
+
+\anchor eq-SppKF-measurementModel-sensitivityMatrix \f{equation}{
+  \mathbf{H} = \left[\begin{array}{ccc:ccc:cc:cc:c}
+  - {\text{u}_{r,x}^s} & - {\text{u}_{r,y}^s} & - {\text{u}_{r,z}^s} & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0\\[0.3em]
+  - {\text{u}_{r,x}^s} & - {\text{u}_{r,y}^s} & - {\text{u}_{r,z}^s} & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1\\[0.3em]
+  - {\text{u}_{r,x}^s} & - {\text{u}_{r,y}^s} & - {\text{u}_{r,z}^s} & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 0\\[0.3em]
+  \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots\\ \hdashline
+  - {\text{u}_{r,v_x}^s} & - {\text{u}_{r,v_y}^s} & - {\text{u}_{r,v_z}^s} & - {\text{u}_{r,x}^s} & - {\text{u}_{r,y}^s} & - {\text{u}_{r,z}^s} & 0 & 1 & 0 & 0 & 0\\[0.3em]
+  - {\text{u}_{r,v_x}^s} & - {\text{u}_{r,v_y}^s} & - {\text{u}_{r,v_z}^s} & - {\text{u}_{r,x}^s} & - {\text{u}_{r,y}^s} & - {\text{u}_{r,z}^s} & 0 & 1 & 0 & 1 & 0\\[0.3em]
+  \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots & \dots
+  \end{array}\right]
+\f}
+
+(\cite Groves2013 Groves, ch. 9.4.2.2, eq. 9.163, p. 420)
+
+\subsection SppKF-measurmentModel-measurementNoise Measurement noise covariance matrix
+See \ref NAV::GnssMeasurementErrorModel
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppKF-init Initialization
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+- State \f$ x \f$: from Single Point Positioning solution using weighted Least-squares estimation
+- Covariance matrix of state \f$ P \f$:
+  - if more observations than unknowns: SPP solution using LSE
+  - otherwise: GUI input
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section SppKF-InterChange Inter system time difference reference system change
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\subsection SppKF-InterChange-Case1 Case 1: New Sat System with higher priority found (GPS > GAL > GLO > ...)
+Old state:
+- Observed GAL \f$ S_2 \f$, GLO \f$ S_3 \f$ and BDS \f$ S_4 \f$
+- Reference system: GAL \f$ S_2 \f$
+New state:
+- Additionally observed GPS \f$ S_1 \f$
+- Reference system: GAL \f$ S_2 \f$ -> GPS \f$ S_1 \f$
+
+First we need to wait one epoch, in order to estimate the new inter system differences \f$ { dt_{ISB}^{S_1 \rightarrow S_2}} \f$ and \f$ { d\dot{t}_{ISB}^{S_1 \rightarrow S_2}} \f$
+Then we can transform
+the state with a matrix \f$ \mathbf{D} \f$ with \f$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} \f$
+
+\anchor eq-SppKF-inter-change-case1 \f{equation}{
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\
+    { dt_r} \\
+    { d\dot{t}_r} \\ \hdashline
+    { dt_{ISB}^{S_3 \rightarrow S_1}} = { dt^{S_3}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_3 \rightarrow S_1}} = { d\dot{t}^{S_3}} - { d\dot{t}^{S_1}} \\
+    { dt_{ISB}^{S_4 \rightarrow S_1}} = { dt^{S_4}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_4 \rightarrow S_1}} = { d\dot{t}^{S_4}} - { d\dot{t}^{S_1}} \\
+    { dt_{ISB}^{S_2 \rightarrow S_1}} = { dt^{S_2}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_2 \rightarrow S_1}} = { d\dot{t}^{S_2}} - { d\dot{t}^{S_1}} \\ \hdashline
+    { dt_{IFB}^{F_2 \rightarrow F_1}}
+\end{bmatrix}_{\text{new}}
+=
+\overbrace{
+  \left[\begin{array}{cccc:cccccc:c}
+    \mathbf{I}_3     & \mathbf{0}_3     &   0   &   0   & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &  0 \\
+    \mathbf{0}_3     & \mathbf{I}_3     &   0   &   0   & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} &  0 \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   1   &   0   & 0 & 0 & 0 &  0 & -1 &  0 &  0 \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   1   & 0 & 0 & 0 &  0 &  0 & -1 &  0 \\[0.1em] \hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 1 & 0 & 0 &  0 & -1 &  0 &  0 \\[0.3em]
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 1 & 0 &  0 &  0 & -1 &  0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 0 & 1 &  0 & -1 &  0 &  0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 0 & 0 &  1 &  0 & -1 &  0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 0 & 0 &  0 & -1 &  0 &  0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 0 & 0 &  0 &  0 & -1 &  0 \\[0.3em] \hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & 0 & 0 & 0 &  0 &  0 &  0 &  1 \\[0.3em]
+  \end{array}\right]
+}^{\mathbf{D}}
+\cdot
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\
+    { dt_r} \\
+    { d\dot{t}_r} \\ \hdashline
+    { dt_{ISB}^{S_3 \rightarrow S_2}} = { dt^{S_3}} - { dt^{S_2}} \\
+    { d\dot{t}_{ISB}^{S_3 \rightarrow S_2}} = { d\dot{t}^{S_3}} - { d\dot{t}^{S_2}} \\
+    { dt_{ISB}^{S_4 \rightarrow S_2}} = { dt^{S_4}} - { dt^{S_2}} \\
+    { d\dot{t}_{ISB}^{S_4 \rightarrow S_2}} = { d\dot{t}^{S_4}} - { d\dot{t}^{S_2}} \\
+    { dt_{ISB}^{S_1 \rightarrow S_2}} = { dt^{S_1}} - { dt^{S_2}} \\
+    { d\dot{t}_{ISB}^{S_1 \rightarrow S_2}} = { d\dot{t}^{S_1}} - { d\dot{t}^{S_2}} \\ \hdashline
+    { dt_{IFB}^{F_2 \rightarrow F_1}}
+\end{bmatrix}_{\text{old}}
+\f}
+
+\subsection SppKF-InterChange-Case2 Case 2: No observation for reference system within an epoch
+Old state:
+- Observed GPS \f$ S_1 \f$, GAL \f$ S_2 \f$, GLO \f$ S_3 \f$ and BDS \f$ S_4 \f$
+- Reference system: GPS \f$ S_1 \f$
+New state:
+- No observations for GPS \f$ S_1 \f$
+- Reference system: GPS \f$ S_1 \f$ -> GAL \f$ S_2 \f$
+
+We can transform the state with a matrix \f$ \mathbf{D} \f$ with \f$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} \f$
+
+\anchor eq-SppKF-inter-change-case2 \f{equation}{
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\
+    { dt_r} \\
+    { d\dot{t}_r} \\ \hdashline
+    \enclose{updiagonalstrike}{{ dt_{ISB}^{S_2 \rightarrow S_2}} = 0} \\
+    \enclose{updiagonalstrike}{{ d\dot{t}_{ISB}^{S_2 \rightarrow S_2}} = 0} \\
+    { dt_{ISB}^{S_3 \rightarrow S_2}} = { dt^{S_3}} - { dt^{S_2}} \\
+    { d\dot{t}_{ISB}^{S_3 \rightarrow S_2}} = { d\dot{t}^{S_3}} - { d\dot{t}^{S_2}} \\
+    { dt_{ISB}^{S_4 \rightarrow S_2}} = { dt^{S_4}} - { dt^{S_2}} \\
+    { d\dot{t}_{ISB}^{S_4 \rightarrow S_2}} = { d\dot{t}^{S_4}} - { d\dot{t}^{S_2}} \\\hdashline
+    { dt_{IFB}^{F_2 \rightarrow F_1}}
+\end{bmatrix}_{\text{new}}
+=
+\overbrace{
+  \left[\begin{array}{cccc:cccccc:c}
+    \mathbf{I}_3     & \mathbf{0}_3     &   0   &   0   & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & 0 \\
+    \mathbf{0}_3     & \mathbf{I}_3     &   0   &   0   & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & \mathbf{0}_{3,1} & 0 \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   1   &   0   &  0 &  0 & 0 &  0 & 0 & 0 & 0 \\
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   1   &  0 &  0 & 0 &  0 & 0 & 0 & 0 \\[0.1em] \hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   &  0 &  0 & 0 &  0 & 0 & 0 & 0 \\[0.3em]
+  \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   &  0 &  0 & 0 &  0 & 0 & 0 & 0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & -1 &  0 & 1 &  0 & 0 & 0 & 0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   &  0 & -1 & 0 &  1 & 0 & 0 & 0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   & -1 &  0 & 0 &  0 & 1 & 0 & 0 \\[0.3em]
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   &  0 & -1 & 0 &  0 & 0 & 1 & 0 \\[0.3em] \hdashline
+    \mathbf{0}_{1,3} & \mathbf{0}_{1,3} &   0   &   0   &  0 &  0 & 0 &  0 & 0 & 0 & 1 \\[0.3em]
+  \end{array}\right]
+}^{\mathbf{D}}
+\cdot
+\begin{bmatrix}
+    { \mathbf{r}_{r} } \\
+    { \mathbf{v}_{r} } \\
+    { dt_r} \\
+    { d\dot{t}_r} \\ \hdashline
+    { dt_{ISB}^{S_2 \rightarrow S_1}} = { dt^{S_2}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_2 \rightarrow S_1}} = { d\dot{t}^{S_2}} - { d\dot{t}^{S_1}} \\
+    { dt_{ISB}^{S_3 \rightarrow S_1}} = { dt^{S_3}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_3 \rightarrow S_1}} = { d\dot{t}^{S_3}} - { d\dot{t}^{S_1}} \\
+    { dt_{ISB}^{S_4 \rightarrow S_1}} = { dt^{S_4}} - { dt^{S_1}} \\
+    { d\dot{t}_{ISB}^{S_4 \rightarrow S_1}} = { d\dot{t}^{S_4}} - { d\dot{t}^{S_1}} \\\hdashline
+    { dt_{IFB}^{F_2 \rightarrow F_1}}
+\end{bmatrix}_{\text{old}}
+\f}
+
+\subsection SppKF-InterChange-ErrorProp Error propagation
+After a transformation, the covariance matrix has also to be adapted by error propagation
+\anchor eq-SppKF-inter-change-error-prop \f{equation}{
+\mathbf{P}_{\text{new}} = \mathbf{D} \cdot \mathbf{P}_{\text{old}} \cdot \mathbf{D}^T
+\f}
+
+*/
+
+}

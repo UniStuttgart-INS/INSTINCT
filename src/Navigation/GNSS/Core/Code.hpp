@@ -447,6 +447,24 @@ class Code
     /// @return Whether the comparison was successful
     friend bool operator!=(const Enum& lhs, const Code& rhs);
 
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Code& lhs, const Code& rhs);
+
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Code& lhs, const Enum& rhs);
+
+    /// @brief Less than comparison
+    /// @param[in] lhs Left-hand side of the operator
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    friend bool operator<(const Enum& lhs, const Code& rhs);
+
     // #####################################################################################################################################
 
     /// @brief Allows filtering Code with SatelliteSystem.
@@ -634,25 +652,25 @@ const Code Code_S5I_S5Q_S5X = Code::S5I | Code::S5Q | Code::S5X; ///< L5 (data, 
 const Code Code_ALL = Code(Code::Set().set()); ///< All codes set
 /// Default selection for codes
 const Code Code_Default = Code(Code::Set().set())
-                          & ~Code(Code::G1P)  // GPS L1 - P-code (unencrypted)
-                          & ~Code(Code::G1W)  // GPS L1 - Semicodeless P(Y) tracking (Z-tracking)
                           & ~Code(Code::G1Y)  // GPS L1 - Y-code (with decryption)
                           & ~Code(Code::G1M)  // GPS L1 - M-code
-                          & ~Code(Code::G1N)  // GPS L1 - codeless
-                          & ~Code(Code::G2D)  // GPS L2 - Semi-codeless P(Y) tracking (L1 C/A + (P2-P1))
-                          & ~Code(Code::G2P)  // GPS L2 - P-code (unencrypted)
-                          & ~Code(Code::G2W)  // GPS L2 - Semicodeless P(Y) tracking (Z-tracking)
                           & ~Code(Code::G2Y)  // GPS L2 - Y-code (with decryption)
-                          & ~Code(Code::G2M)  // GPS L2 - M-code
-                          & ~Code(Code::G2N); // GPS L2 - codeless
+                          & ~Code(Code::G2M); // GPS L2 - M-code
 
 /// @brief Shows a ComboBox to select signal codes
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in, out] code Reference to the code object to select
-/// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be diabled.
-bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq);
+/// @param[in] filterFreq Frequencies to select codes for. Other Frequencies will be disabled.
+/// @param[in] singleSelect If true, only one code can be selected at a time
+bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq, bool singleSelect = false);
 
 } // namespace NAV
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::Code& obj);
 
 namespace std
 {
@@ -675,17 +693,8 @@ struct hash<NAV::Code>
 
 /// @brief Formatter for Code
 template<>
-struct fmt::formatter<NAV::Code>
+struct fmt::formatter<NAV::Code> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format Code structs
     /// @param[in] code Struct to format
     /// @param[in, out] ctx Format context
@@ -693,7 +702,7 @@ struct fmt::formatter<NAV::Code>
     template<typename FormatContext>
     auto format(const NAV::Code& code, FormatContext& ctx)
     {
-        return fmt::format_to(ctx.out(), "{0}", std::string(code));
+        return fmt::formatter<std::string>::format(std::string(code), ctx);
     }
 };
 

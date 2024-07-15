@@ -114,7 +114,7 @@ void NAV::FileWriter::deinitialize()
             _filestream.close();
         }
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {
     }
 

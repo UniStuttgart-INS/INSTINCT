@@ -17,140 +17,165 @@
 #include "util/Eigen.hpp"
 #include <gcem.hpp>
 
-namespace NAV::InsConst
+namespace NAV
 {
-/// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre]
-constexpr double pseudometre = 6370000;
 
-/// Speed of light [m/s]
-constexpr double C = 299792458.0;
-
-/// Standard gravity in [m / s^2]
-constexpr double G_NORM = 9.80665;
-
-/// @brief World Geodetic System 1984
-namespace WGS84
+/// @brief Constants
+template<typename Scalar = double>
+class InsConst
 {
-/// Semi-major axis = equatorial radius
-constexpr double a = 6378137.0;
-/// Flattening f = (a-b)/a
-constexpr double f = 1.0 / 298.257223563;
-/// Semi-minor axis = polar radius
-constexpr double b = a - f * a;
-/// Square of the first eccentricity of the ellipsoid
-constexpr double e_squared = 2 * f - f * f;
-/// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²]
-constexpr double MU = 3.986004418e14;
-/// Dynamic form factor, derived [-]
-constexpr double J2 = 1.081874e-3;
-/// Earth rotation rate in [rads/s]
-constexpr double omega_ie = 7.2921151467e-05;
+  public:
+    /// @brief Default Constructor
+    InsConst() = delete;
 
-} // namespace WGS84
+    /// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre]
+    static constexpr Scalar pseudometre = 6370000;
 
-/// @brief Geodetic Reference System 1980
-namespace GRS80
-{
-/// Semi-major axis = equatorial radius
-constexpr double a = 6378137;
-/// Flattening f = (a-b)/a
-constexpr double f = 1.0 / 298.257222101;
-/// Semi-minor axis = polar radius
-constexpr double b = a - f * a;
-/// Square of the first eccentricity of the ellipsoid
-constexpr double e_squared = 2 * f - f * f;
+    /// Speed of light [m/s]
+    static constexpr Scalar C = 299792458.0;
 
-} // namespace GRS80
+    /// Standard gravity in [m / s^2]
+    static constexpr Scalar G_NORM = 9.80665;
 
-/// @brief Parametry Zemli 1990 goda (see \cite PZ-90.11)
-namespace PZ90
-{
-inline namespace PZ90_11
-{
-/// Semi-major axis = equatorial radius
-constexpr double a = 6378136;
-/// Flattening f = (a-b)/a
-constexpr double f = 1.0 / 298.25784;
-/// Semi-minor axis = polar radius
-constexpr double b = a - f * a;
-/// Square of the first eccentricity of the ellipsoid
-constexpr double e_squared = 2 * f - f * f;
-/// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²]
-constexpr double MU = 3.986004418e14;
-/// Earth rotation rate in [rads/s]
-constexpr double omega_ie = 7.292115e-05;
+    /// @brief World Geodetic System 1984
+    class WGS84
+    {
+      public:
+        /// @brief Default Constructor
+        WGS84() = delete;
 
-/// Second degree zonal coefficient of normal potential [-]
-constexpr double J2 = 1.08262575e-3;
+        /// Semi-major axis = equatorial radius
+        static constexpr Scalar a = 6378137.0;
+        /// Flattening f = (a-b)/a
+        static constexpr Scalar f = 1.0 / 298.257223563;
+        /// Semi-minor axis = polar radius
+        static constexpr Scalar b = a - f * a;
+        /// Square of the first eccentricity of the ellipsoid
+        static constexpr Scalar e_squared = 2 * f - f * f;
+        /// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²]
+        static constexpr Scalar MU = 3.986004418e14;
+        /// Dynamic form factor, derived [-]
+        static constexpr Scalar J2 = 1.081874e-3;
+        /// Earth rotation rate in [rads/s]
+        static constexpr Scalar omega_ie = 7.2921151467e-05;
+    };
 
-} // namespace PZ90_11
-} // namespace PZ90
+    /// @brief Geodetic Reference System 1980
+    class GRS80
+    {
+      public:
+        /// @brief Default Constructor
+        GRS80() = delete;
 
-/// @brief GPS related constants
-namespace GPS
-{
-/// Gravitational constant GPS [m³/s²]. See \cite IS-GPS-200M IS-GPS-200M p. 106
-constexpr double MU = 3.986005e+14;
-/// Earth angular velocity GPS [rad/s]. See \cite IS-GPS-200M IS-GPS-200M p. 106
-constexpr double omega_ie = WGS84::omega_ie;
-/// Relativistic constant F for GPS clock corrections [s/√m] (-2*√µ/c²)
-constexpr double F = -2.0 * gcem::sqrt(MU) / (C * C);
-/// Earth Equatorial Radius [m]
-constexpr double R_E = WGS84::a;
-/// Oblate Earth Gravity Coefficient [-]
-constexpr double J2 = 1.0826262e-3;
+        /// Semi-major axis = equatorial radius
+        static constexpr Scalar a = 6378137;
+        /// Flattening f = (a-b)/a
+        static constexpr Scalar f = 1.0 / 298.257222101;
+        /// Semi-minor axis = polar radius
+        static constexpr Scalar b = a - f * a;
+        /// Square of the first eccentricity of the ellipsoid
+        static constexpr Scalar e_squared = 2 * f - f * f;
+    };
 
-} // namespace GPS
+    /// @brief Parametry Zemli 1990 goda (see \cite PZ-90.11)
+    class PZ90
+    {
+      public:
+        /// @brief Default Constructor
+        PZ90() = delete;
 
-/// @brief GLONASS related constants (see \cite GLO-ICD-5.1 GLONASS ICD 5.1 Table 3.2)
-namespace GLO
-{
-/// Semi-major axis = equatorial radius
-constexpr double a = PZ90::a;
-/// Gravitational constant GLONASS [m³/s²]
-constexpr double MU = PZ90::MU;
-/// Earth angular velocity GLONASS [rad/s]
-constexpr double omega_ie = 7.2921151467e-05;
-/// Second degree zonal coefficient of normal potential [-]
-constexpr double J2 = PZ90::J2;
-/// Normalized harmonic of the normal geopotential [-]
-constexpr double C20_bar = 1.0 / gcem::sqrt(5.0) * J2;
-/// Second zonal coefficient of spherical harmonic expansion [-]
-constexpr double C20 = -J2;
+        /// Semi-major axis = equatorial radius
+        static constexpr Scalar a = 6378136;
+        /// Flattening f = (a-b)/a
+        static constexpr Scalar f = 1.0 / 298.25784;
+        /// Semi-minor axis = polar radius
+        static constexpr Scalar b = a - f * a;
+        /// Square of the first eccentricity of the ellipsoid
+        static constexpr Scalar e_squared = 2 * f - f * f;
+        /// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²]
+        static constexpr Scalar MU = 3.986004418e14;
+        /// Earth rotation rate in [rads/s]
+        static constexpr Scalar omega_ie = 7.292115e-05;
 
-} // namespace GLO
+        /// Second degree zonal coefficient of normal potential [-]
+        static constexpr Scalar J2 = 1.08262575e-3;
+    };
 
-/// @brief GALILEO related constants
-namespace GAL
-{
-/// Earth angular velocity GALILEO [rad/s]
-constexpr double omega_ie = WGS84::omega_ie;
-/// Earth gravitational constant GALILEO [m³/s²]
-constexpr double MU = 3.986004418e+14;
-/// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
-constexpr double F = -2.0 * gcem::sqrt(MU) / (C * C);
+    /// @brief GPS related constants
+    class GPS
+    {
+      public:
+        /// @brief Default Constructor
+        GPS() = delete;
 
-} // namespace GAL
+        /// Gravitational constant GPS [m³/s²]. See \cite IS-GPS-200M IS-GPS-200M p. 106
+        static constexpr Scalar MU = 3.986005e+14;
+        /// Earth angular velocity GPS [rad/s]. See \cite IS-GPS-200M IS-GPS-200M p. 106
+        static constexpr Scalar omega_ie = WGS84::omega_ie;
+        /// Relativistic constant F for GPS clock corrections [s/√m] (-2*√µ/c²)
+        static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
+        /// Earth Equatorial Radius [m]
+        static constexpr Scalar R_E = WGS84::a;
+        /// Oblate Earth Gravity Coefficient [-]
+        static constexpr Scalar J2 = 1.0826262e-3;
+    };
 
-/// @brief Nominal mean angular velocity of the Earth in [rad/s]
-/// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
-///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
-constexpr double omega_ie = WGS84::omega_ie;
-/// @brief Nominal mean angular velocity of the Earth in [rad/s]. Value implemented by the Skydel GNSS simulator (for compatibility with Skydel's IMU plugin)
-constexpr double omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
+    /// @brief GLONASS related constants (see \cite GLO-ICD-5.1 GLONASS ICD 5.1 Table 3.2)
+    class GLO
+    {
+      public:
+        /// @brief Default Constructor
+        GLO() = delete;
 
-/// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
-const static Eigen::Vector3d e_omega_ie{ 0.0, 0.0, omega_ie };
+        /// Semi-major axis = equatorial radius
+        static constexpr Scalar a = PZ90::a;
+        /// Gravitational constant GLONASS [m³/s²]
+        static constexpr Scalar MU = PZ90::MU;
+        /// Earth angular velocity GLONASS [rad/s]
+        static constexpr Scalar omega_ie = 7.2921151467e-05;
+        /// Second degree zonal coefficient of normal potential [-]
+        static constexpr Scalar J2 = PZ90::J2;
+        /// Normalized harmonic of the normal geopotential [-]
+        static constexpr Scalar C20_bar = 1.0 / gcem::sqrt(5.0) * J2;
+        /// Second zonal coefficient of spherical harmonic expansion [-]
+        static constexpr Scalar C20 = -J2;
+    };
 
-/// Avogadro’s number. Number of units in one mole of any substance [1/mol].
-/// Units may be electrons, atoms, ions, or molecules, depending on substance or reaction
-constexpr double N_A = 6.02214076e23;
-/// Boltzmann constant [J/K]
-constexpr double k_B = 1.380649e-23;
-/// Universal gas constant in [J/K/mol]
-constexpr double Rg = N_A * k_B;
+    /// @brief GALILEO related constants
+    class GAL
+    {
+      public:
+        /// @brief Default Constructor
+        GAL() = delete;
 
-/// Molar mass of dry air in [kg/mol]
-constexpr double dMtr = 28.965e-3;
+        /// Earth angular velocity GALILEO [rad/s]
+        static constexpr Scalar omega_ie = WGS84::omega_ie;
+        /// Earth gravitational constant GALILEO [m³/s²]
+        static constexpr Scalar MU = 3.986004418e+14;
+        /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
+        static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
+    };
 
-} // namespace NAV::InsConst
+    /// @brief Nominal mean angular velocity of the Earth in [rad/s]
+    /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
+    ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
+    static constexpr Scalar omega_ie = WGS84::omega_ie;
+    /// @brief Nominal mean angular velocity of the Earth in [rad/s]. Value implemented by the Skydel GNSS simulator (for compatibility with Skydel's IMU plugin)
+    static constexpr Scalar omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
+
+    /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
+    const static inline Eigen::Vector3<Scalar> e_omega_ie{ 0.0, 0.0, omega_ie };
+
+    /// Avogadro’s number. Number of units in one mole of any substance [1/mol].
+    /// Units may be electrons, atoms, ions, or molecules, depending on substance or reaction
+    static constexpr Scalar N_A = 6.02214076e23;
+    /// Boltzmann constant [J/K]
+    static constexpr Scalar k_B = 1.380649e-23;
+    /// Universal gas constant in [J/K/mol]
+    static constexpr Scalar Rg = N_A * k_B;
+
+    /// Molar mass of dry air in [kg/mol]
+    static constexpr Scalar dMtr = 28.965e-3;
+};
+
+} // namespace NAV

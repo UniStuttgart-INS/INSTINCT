@@ -14,11 +14,11 @@
                 "${workspaceFolder}/lib/implot",
                 "${workspaceFolder}/lib/navio2/C++/Navio/**",
                 "${workspaceFolder}/lib/uartsensor/include/**",
-                "${workspaceFolder}/lib/vnproglib/cpp/include/**",
+                "${workspaceFolder}/lib/vnproglib/cpp/include/**"
             ],
             "defines": [
                 "LOG_LEVEL=LOG_LEVEL_DATA",
-                "TESTING",
+                "TESTING"
             ],
             "cppStandard": "c++20",
             "compileCommands": "${workspaceFolder}/compile_commands.json"

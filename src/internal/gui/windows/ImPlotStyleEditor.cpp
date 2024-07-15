@@ -107,7 +107,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
             json j;
             j["implot"]["style"] = ImPlot::GetStyle();
 
-            filestream << std::setw(4) << j << std::endl;
+            filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
         }
     }
 

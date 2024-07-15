@@ -1,0 +1,68 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file rtklib_pos_converter_node.dox
+// @brief Guide for the RtklibPosConverter Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-26
+
+\namespace Instinct {
+/** \page rtklib_pos_converter_node RtklibPosConverter Node
+
+\tableofcontents
+
+<img src="rtklibPosConverter.png" align="right">
+\section rtklib_pos_converter_node_introduction Introduction
+The *RtklibPosConverter* Node converts Rtklib *pos*-files into a flow containing position and velocity information.
+
+\section rtklib_pos_converter_node_connections Connections
+- **Input** : The Node has an *RtklibPosObs*-flow (*FileReader Data*, see \ref demo_node) input. The input must be coming from an Rtklib position file.
+- **Output** : The Node has an *PosVel*-Flow output. The flow contains position and velocity data and can be logged or further processed.
+
+\section rtklib_pos_converter_node_settings Settings
+The Node can't be configured.
+
+\section rtklib_pos_converter_node_example_flow Example Flow
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+
+Let us convert a Rtklib position file in a *csv* file.
+
+<b>Required Nodes:</b>
+*- *RtklibPosConverter* Node
+*- *RtklibPosFile* Node (\ref rtklib_pos_file_node)
+*- *PosVelAttLogger* Node (\ref pos_vel_att_logger_node)
+
+<b>Required Data</b>
+
+RTKLIB position file:
+
+    ../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/RTKLIB/Septentrio-PolaRx5T_G.pos
+
+<i>Relative path, file included in INSTINCT</i>
+
+<b>Steps</b>
+*1. Add the Nodes to your workspace
+*2. Connect the *RtklibPosFile* Node with the input of the *RtklibPosConverter*
+  - Open the *RtklibPosFile* Settings
+  - Choose the file "Septentrio-PolaRx5T_G.pos" in INSTINCT/copy the relative path from above
+*3. Connect the *RtklibPosConverter* output to the *PosVelAttLogger*
+  - Open the *PosVelAttLogger* Settings
+  - Select where the *csv*-file should be stored
+*4. Run the Flow
+*5. Check out the *csv*-file
+
+<i>Example of how the result should look like:</i>
+
+\image html rtklibPosConverterExample.png width=1000
+</blockquote>
+________
+<i>Last updated: 2024-02-26</i>
+*/
+}

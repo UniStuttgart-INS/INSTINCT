@@ -1,0 +1,53 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file left_panel.dox
+// @brief manual for the Left Panel
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+\namespace Instinct {
+/** \page left_panel Left Panel
+
+\tableofcontents
+
+The left Panel provides a table of contents and selection tools for the \ref work_space.
+The Panel consists of
+<img src="leftPanelStructure.png" align="right">
+1. \ref left_panel_zoom_to_content button
+2. \ref left_panel_flow_visualization selections
+3. \ref left_panel_nodes_section
+4. \ref left_panel_selection
+
+\section left_panel_zoom_to_content Zoom to Content
+Button that allows for zooming and centering the Workspace to all content equally.
+
+\section left_panel_flow_visualization Flow visualization
+Three checkboxes that allow for
+- Show Callback Flow: Displays dots along flow connections the the Flow is running
+- Show Notify Flow: Displays dots for other Pin types (see \ref demo_node)
+- Show Queue size on pins: Displays the size queued on a Pin (F,P,0-...)
+
+\image html leftPanelFlow.png width="1000"
+
+\section left_panel_nodes_section Nodes
+The *Nodes* section lists all Nodes currently placed in the Workspace. It shows their ID (number) and status (color). Clicking on the Node will zoom and highlight it in the Workspace and vice versa.
+
+\image html leftPanelNodes.png width="1000"
+
+\section left_panel_selection Selection
+The *Selection* section shows all selected Nodes *or* connections with their ID. The *Deselect*-Button allows to deselect all.
+
+\image html leftPanelSelection.png width="1000"
+
+________
+<i>Last updated: 2024-01-31</i>
+
+*/
+}

@@ -1,0 +1,41 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file rtklib_pos_file_node.dox
+// @brief Guide for the RtklibPosFile Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-26
+
+\namespace Instinct {
+/** \page rtklib_pos_file_node RtklibPosFile Node
+
+\tableofcontents
+
+<img src="rtklibPosFileNode.png" align="right">
+\section rtklib_pos_file_node_introduction Introduction
+The *RtklibPosFile* Node reads RTKLIB <i>.pos</i>-files into INSTINCT.
+
+\section rtklib_pos_node_connections Connections
+- **Input** : The Node has no input connection: In the \ref rtklib_pos_file_node_settings the input file can be selected.
+- **Output** : The Node has an *RtklibPosObs*-Flow output.
+
+\section rtklib_pos_file_node_settings Settings
+The Settings offer to enter a file path or **choose** a <i>.pos</i>-file with the file browser.
+
+The Node should initialize as soon as a file in selected, if not, it can be done manually. This way, the Node displays the found entries from the read file.
+
+\section rtklib_pos_file_node_example_flow Example Flow
+<blockquote>
+See the \ref rtklib_pos_converter_node_example_flow in the \ref rtklib_pos_converter_node .
+</blockquote>
+
+________
+<i>Last updated: 2024-02-26</i>
+*/
+}

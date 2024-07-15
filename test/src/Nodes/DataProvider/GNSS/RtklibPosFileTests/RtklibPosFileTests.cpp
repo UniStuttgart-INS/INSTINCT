@@ -61,15 +61,15 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
     //                                            RtklibPosFile.flow
     // ###########################################################################################################
     //
-    // RtklibPosFile (31)                Combiner (28)
-    //    (30) RtklibPosObs |> --(32)--> |> GnssObs (25)
-    //                                   |> <not linked> (26)
+    // RtklibPosFile (31)
+    //    (30) RtklibPosObs |> --(35)--> |>(33) Terminator (34)
+    constexpr size_t PIN_ID_GNSS_OBS = 33;
     //
     // ###########################################################################################################
 
     size_t msgCounter = 0;
 
-    nm::RegisterWatcherCallbackToInputPin(25, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(PIN_ID_GNSS_OBS, [&](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         auto rtklibPosObs = std::dynamic_pointer_cast<const NAV::RtklibPosObs>(queue.front());
         REQUIRE(rtklibPosObs != nullptr);
 

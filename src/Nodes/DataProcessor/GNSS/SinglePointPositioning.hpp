@@ -13,29 +13,17 @@
 
 #pragma once
 
-#include "util/Eigen.hpp"
-#include <vector>
-#include <set>
-
 #include "internal/Node/Node.hpp"
-#include "Navigation/GNSS/Core/Frequency.hpp"
-#include "Navigation/GNSS/Core/Code.hpp"
-#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
-#include "Navigation/GNSS/Positioning/SppAlgorithm.hpp"
-#include "Navigation/GNSS/Positioning/SppAlgorithmTypes.hpp"
-#include "Navigation/GNSS/Positioning/SPP/SppKalmanFilter.hpp"
-#include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
-#include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
+#include "internal/gui/widgets/DynamicInputPins.hpp"
 
 #include "Navigation/Transformations/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
 #include "Navigation/Math/LeastSquares.hpp"
 #include "Navigation/GNSS/Functions.hpp"
+#include "Navigation/GNSS/Positioning/SPP/Algorithm.hpp"
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 
-#include "NodeData/GNSS/GnssObs.hpp"
-#include "NodeData/GNSS/GnssNavInfo.hpp"
-#include "NodeData/GNSS/SppSolution.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -88,48 +76,35 @@ class SinglePointPositioning : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// Index of the Pin currently being dragged
-    int _dragAndDropPinIndex = -1;
-    /// Amount of NavInfo input pins
-    size_t _nNavInfoPins = 1;
-    /// @brief Adds/Deletes Input Pins depending on the variable _nNavInfoPins
-    void updateNumberOfInputPins();
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
 
-    /// Frequencies used for calculation (GUI filter)
-    Frequency _filterFreq = G01;
-    /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code_Default;
-    /// List of satellites to exclude
-    std::vector<SatId> _excludedSatellites;
-    /// Elevation cut-off angle for satellites in [rad]
-    double _elevationMask = static_cast<double>(15.0_deg);
+    /// @brief SPP algorithm
+    SPP::Algorithm _algorithm;
 
-    /// Boolean which enables the use of doppler observations
-    bool _useDoppler = true;
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ INPUT_PORT_INDEX_GNSS_NAV_INFO, this, pinAddCallback, pinDeleteCallback };
 
-    /// Ionosphere Model used for the calculation
-    IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar;
+    // /// Estimator type
+    // GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
 
-    /// Troposphere Models used for the calculation
-    TroposphereModelSelection _troposphereModels;
+    // /// @brief SPP Kalman filter
+    // GNSS::Positioning::SPP::SppKalmanFilter _kalmanFilter;
 
-    /// GNSS measurement error model to use
-    GnssMeasurementErrorModel _gnssMeasurementErrorModel;
+    // /// State estimated by the algorithm
+    // GNSS::Positioning::SPP::State _state;
 
-    /// Estimator type
-    GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
-
-    /// @brief SPP Kalman filter
-    GNSS::Positioning::SPP::SppKalmanFilter _kalmanFilter;
-
-    /// State estimated by the algorithm
-    GNSS::Positioning::SPP::State _state;
-
-    /// @brief All Inter-system clock error keys
-    std::vector<States::StateKeyTypes> _interSysErrs{};
-    /// @brief All Inter-system clock drift keys
-    /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-    std::vector<States::StateKeyTypes> _interSysDrifts{};
+    // /// @brief All Inter-system clock error keys
+    // std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysErrs{};
+    // /// @brief All Inter-system clock drift keys
+    // /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
+    // std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysDrifts{};
 
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages

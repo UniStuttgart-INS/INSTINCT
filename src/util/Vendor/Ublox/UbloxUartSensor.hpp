@@ -14,8 +14,10 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "uart/sensors/sensors.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV::vendor::ublox
 {
@@ -124,6 +126,11 @@ class UbloxUartSensor
     size_t _runningDataIndex{ 0 };
     /// Amount of bytes remaining for a complete packet
     size_t _numOfBytesRemainingForCompletePacket{ 0 };
+
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+    /// Bytes which were not recognized as messages
+    std::vector<uint8_t> _unrecognizedBytes;
+#endif
 
     /// @brief Resets the current message tracking
     void resetTracking();

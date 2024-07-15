@@ -174,7 +174,20 @@ const std::vector<GnssObs> gnssObs_INSA11DEU_R_MO_rnx = {
                                     /* .carrierPhase = */ CarrierPhase{ .value = 203567072.311, .SSI = 7, .LLI = 0 },
                                     /* .doppler =      */ std::nullopt, // observations contain no doppler
                                     /* .CN0 =          */ 44.800 },
-
+      },
+      /* ._satData = */ std::vector<GnssObs::SatelliteData>{
+          { SatId(BDS, 43), B02 | B06 },
+          { SatId(BDS, 9), B02 | B07 | B06 },
+          { SatId(GPS, 1), G01 | G02 | G05 },
+          { SatId(GPS, 31), G01 | G02 },
+          { SatId(GPS, 14), G01 | G02 | G05 },
+          { SatId(GPS, 19), G01 | G02 },
+          { SatId(GPS, 17), G01 | G02 },
+          { SatId(GLO, 5), R01 | R02 },
+          { SatId(GLO, 6), R01 },
+          { SatId(GLO, 21), R01 | R02 | R03 },
+          { SatId(GAL, 33), E01 | E05 | E07 | E08 | E06 },
+          { SatId(SBAS, 23), S01 },
       } },
 };
 

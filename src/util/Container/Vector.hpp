@@ -37,4 +37,23 @@ void move(std::vector<T>& v, size_t sourceIdx, size_t targetIdx)
     }
 }
 
+/// @brief Returns a container filled with the given range
+/// @param start Inclusive start value of the range
+/// @param stepSize Step size of the range
+/// @param end Exclusive end value of the range
+template<typename Scalar>
+std::vector<Scalar> genRangeVector(Scalar start, Scalar stepSize, Scalar end)
+{
+    std::vector<Scalar> container;
+    container.reserve(static_cast<size_t>(std::ceil((end - start) / stepSize)));
+
+    while (start < end)
+    {
+        container.push_back(start);
+        start += stepSize;
+    }
+
+    return container;
+};
+
 } // namespace NAV

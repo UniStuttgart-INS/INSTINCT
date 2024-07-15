@@ -94,6 +94,19 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
         return std::any_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
     }
 
+    /// @brief Replace the old with the new key
+    /// @param[in] oldKey Old key to replace
+    /// @param[in] newKey New key to use instead
+    void replaceRowKey(const RowKeyType& oldKey, const RowKeyType& newKey)
+    {
+        auto iter = std::find(rowKeysVector.begin(), rowKeysVector.end(), oldKey);
+        INS_ASSERT_USER_ERROR(iter != rowKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
+
+        *iter = newKey;
+        rowIndices[newKey] = rowIndices.at(oldKey);
+        rowIndices.erase(oldKey);
+    }
+
   protected:
     /// RowKey to Row Index mapping
     unordered_map<RowKeyType, Eigen::Index> rowIndices;
@@ -223,6 +236,19 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     bool hasAnyCols(const std::vector<ColKeyType>& keys) const
     {
         return std::any_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+    }
+
+    /// @brief Replace the old with the new key
+    /// @param[in] oldKey Old key to replace
+    /// @param[in] newKey New key to use instead
+    void replaceColKey(const ColKeyType& oldKey, const ColKeyType& newKey)
+    {
+        auto iter = std::find(colKeysVector.begin(), colKeysVector.end(), oldKey);
+        INS_ASSERT_USER_ERROR(iter != colKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
+
+        *iter = newKey;
+        colIndices[newKey] = colIndices.at(oldKey);
+        colIndices.erase(oldKey);
     }
 
   protected:
@@ -527,7 +553,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
     template<size_t P>
-    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousSegment(rowKeys, P);
 
@@ -546,7 +572,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @brief Gets the values for the row keys
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
-    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) segment(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousSegment(rowKeys, rowKeys.size());
 
@@ -1057,9 +1083,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return Scalar value
     Scalar& operator()(const RowKeyType& rowKey, const ColKeyType& colKey)
     {
-        auto rowIdx = this->rowIndices.at(rowKey);
-        auto colIdx = this->colIndices.at(colKey);
-        return this->matrix(rowIdx, colIdx);
+        return this->matrix(this->rowIndices.at(rowKey), this->colIndices.at(colKey));
     }
 
     /// @brief Gets the values for the row and col keys
@@ -1160,7 +1184,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the row and col keys
     template<size_t P, size_t Q = P>
-    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(rowKeys, colKeys, P, Q);
 
@@ -1182,7 +1206,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKey Col Key
     /// @return View into the matrix for the row and col keys
     template<size_t P>
-    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const
+    decltype(auto) block(const std::vector<RowKeyType>& rowKeys, const ColKeyType& colKey) const // NOLINT(readability-const-return-type)
     {
         return this->block<P, 1>(rowKeys, std::vector{ colKey });
     }
@@ -1200,7 +1224,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the row and col keys
     template<size_t Q>
-    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) block(const RowKeyType& rowKey, const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         return this->block<1, Q>(std::vector{ rowKey }, colKeys);
     }
@@ -1218,7 +1242,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param rowKeys Row Keys
     /// @return View into the matrix for the row keys
     template<size_t P>
-    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const
+    decltype(auto) middleRows(const std::vector<RowKeyType>& rowKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(rowKeys, this->colKeys(), P, this->colKeys().size());
 
@@ -1238,7 +1262,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @param colKeys Col Keys
     /// @return View into the matrix for the col keys
     template<size_t Q>
-    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const
+    decltype(auto) middleCols(const std::vector<ColKeyType>& colKeys) const // NOLINT(readability-const-return-type)
     {
         checkContinuousBlock(this->rowKeys(), colKeys, this->rowKeys().size(), Q);
 
@@ -2342,17 +2366,8 @@ using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
-struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>>
+struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedMatrix structs
     /// @param[in] mat Struct to format
     /// @param[in, out] ctx Format context
@@ -2429,23 +2444,14 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename RowKeyType, int Rows>
-struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
+struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedVector structs
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
@@ -2493,23 +2499,14 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>>
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 
 /// @brief Formatter for Frequency
 template<typename Scalar, typename ColKeyType, int Cols>
-struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
+struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::formatter<std::string>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format KeyedRowVector structs
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
@@ -2563,8 +2560,36 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>>
             }
         }
 
-        return fmt::format_to(ctx.out(), "{}", result);
+        return fmt::formatter<std::string>::format(result, ctx);
     }
 };
 
 #endif
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
+std::ostream& operator<<(std::ostream& os, const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& obj)
+{
+    return os << fmt::format("{}", obj);
+}
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+template<typename Scalar, typename RowKeyType, int Rows>
+std::ostream& operator<<(std::ostream& os, const NAV::KeyedVector<Scalar, RowKeyType, Rows>& obj)
+{
+    return os << fmt::format("{}", obj);
+}
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+template<typename Scalar, typename ColKeyType, int Cols>
+std::ostream& operator<<(std::ostream& os, const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& obj)
+{
+    return os << fmt::format("{}", obj);
+}

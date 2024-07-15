@@ -1,0 +1,55 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file node_connections.dox
+// @brief Manual for data types and connections
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-26
+
+\namespace Instinct {
+/** \page node_connections Pins and Connections
+
+\tableofcontents
+
+\section node_connections_introduction Introduction
+INSTINCT allows to work with a variety of data types that can be read, processed, exported or displayed. A Flow must therefore not only include Nodes, they also need to be connected via their Pins (see \ref getting_started).
+<img src="inputoutput.png" align="right">
+\section node_connections_pins Pins
+Each Node comes with at least one Pin. Pins can be either an input or an output Pin, depending on the side they are on a Node.
+All current available Pins to connect Nodes are described in the \ref demo_node.
+
+Even if two Pins are of the same data type, e.g. both beeing a Flow (see \ref demo_node), they can still be different in the data they include. In oder too see which data a Pin accepts, **hovering over** it displays the data.
+
+\subsection node_connections_connections_example1 Example 1
+<blockquote>
+The \ref pos_vel_att_logger_node accepts Flows containing only position (*Pos*), position and velocity (*PosVel*) or position, velocity and attitude (*PosVelAtt*) data as an input.
+The \ref rtklib_pos_converter_node outputs *PosVel*, the \ref imu_simulator_node *PosVelAtt*. This means both can be connected with the *PosVelAttLogger*.
+\image html connectionsExample1.gif
+</blockquote>
+
+\section node_connections_connections Connections
+Connections are only legal if they are of the same *data type* and matching *type* (intput/output-Pin).
+
+\subsection node_connections_connections_example2 Example 2
+<blockquote>
+\image html connections.png
+1. \ref demo_node showing type of Pins.
+2. Legal connection: Pins have correct type (*SppSolution* and Flow), one is an out- while the other an input.
+3. Illegal connection: Both Pins are input-Pins.
+4. Illegal connection: Pins are of different data type.
+</blockquote>
+\note Illegal connections will be marked red and removed immediately.
+\note Hovering over a Pin shows the data that is taken in or given out.
+\note **Left-click and drag** a Pin offers to *+ Create Node* that has suitable connections.
+\note **left-click and drag** a *in-/output*-Pin also hides all illegal connections on other *out-/input*-Pins.
+
+________
+<i>Last updated: 2024-02-26</i>
+*/
+}

@@ -1,4 +1,4 @@
-# Doxyfile 1.9.8
+# Doxyfile 1.10.0
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project.
@@ -61,7 +61,13 @@ PROJECT_BRIEF          =
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ${INSTINCT_SOURCE_DIR}/doc/INSTINCT_Logo_Text.png
+PROJECT_LOGO           = ${INSTINCT_SOURCE_DIR}/doc/images/INSTINCT_Logo_Text.png
+
+# With the PROJECT_ICON tag one can specify an icon that is included in the tabs
+# when the HTML document is shown. Doxygen will copy the logo to the output
+# directory.
+
+PROJECT_ICON           =
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -283,9 +289,7 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES                = "eqref{1}=\link \1 \f(\eqref{eq:\1}\f) \endlink" \
-                         "fl{2}=\anchor \2 \f{\1}{ \label{eq:\2}" \
-                         "deprecated=@attention <b>Deprecated:</b>"
+ALIASES                = "deprecated=@attention <b>Deprecated:</b>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -980,10 +984,10 @@ INPUT_FILE_ENCODING    =
 # default file extension mappings.
 #
 # If left blank the following patterns are tested:*.c, *.cc, *.cxx, *.cxxm,
-# *.cpp, *.cppm, *.c++, *.c++m, *.java, *.ii, *.ixx, *.ipp, *.i++, *.inl, *.idl,
-# *.ddl, *.odl, *.h, *.hh, *.hxx, *.hpp, *.h++, *.ixx, *.l, *.cs, *.d, *.php,
-# *.php4, *.php5, *.phtml, *.inc, *.m, *.markdown, *.md, *.mm, *.dox (to be
-# provided as doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
+# *.cpp, *.cppm, *.ccm, *.c++, *.c++m, *.java, *.ii, *.ixx, *.ipp, *.i++, *.inl,
+# *.idl, *.ddl, *.odl, *.h, *.hh, *.hxx, *.hpp, *.h++, *.ixx, *.l, *.cs, *.d,
+# *.php, *.php4, *.php5, *.phtml, *.inc, *.m, *.markdown, *.md, *.mm, *.dox (to
+# be provided as doxygen C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08,
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
 FILE_PATTERNS          = *.inl \
@@ -1010,8 +1014,7 @@ RECURSIVE              = YES
 # run.
 
 EXCLUDE                = ${INSTINCT_DOXY_EXCLUDE} \
-                         ${INSTINCT_SOURCE_DIR}/src/util/uartsensor \
-                         ${INSTINCT_SOURCE_DIR}/src/util/vnproglib
+                         ${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1147,7 +1150,8 @@ FORTRAN_COMMENT_AFTER  = 72
 SOURCE_BROWSER         = NO
 
 # Setting the INLINE_SOURCES tag to YES will include the body of functions,
-# classes and enums directly into the documentation.
+# multi-line macros, enums or list initialized variables directly into the
+# documentation.
 # The default value is: NO.
 
 INLINE_SOURCES         = NO
@@ -1281,7 +1285,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = header.html
+HTML_HEADER            = ${INSTINCT_SOURCE_DIR}/doc/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1291,7 +1295,7 @@ HTML_HEADER            = header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = footer.html
+HTML_FOOTER            =
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1321,7 +1325,9 @@ HTML_STYLESHEET        =
 # documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = "customdoxygen.css"
+HTML_EXTRA_STYLESHEET  = "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome.css" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-sidebar-only.css" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-sidebar-only-darkmode-toggle.css"
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1331,7 +1337,11 @@ HTML_EXTRA_STYLESHEET  = "customdoxygen.css"
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       =
+HTML_EXTRA_FILES       = "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-darkmode-toggle.js" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-fragment-copy-button.js" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-paragraph-link.js" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-interactive-toc.js" \
+                         "${INSTINCT_SOURCE_DIR}/doc/doxygen-awesome-css/doxygen-awesome-tabs.js"
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.
@@ -1393,7 +1403,7 @@ HTML_DYNAMIC_MENUS     = YES
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_DYNAMIC_SECTIONS  = YES
+HTML_DYNAMIC_SECTIONS  = NO
 
 # If the HTML_CODE_FOLDING tag is set to YES then classes and functions can be
 # dynamically folded and expanded in the generated HTML source code.
@@ -1401,6 +1411,26 @@ HTML_DYNAMIC_SECTIONS  = YES
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
 HTML_CODE_FOLDING      = YES
+
+# If the HTML_COPY_CLIPBOARD tag is set to YES then doxygen will show an icon in
+# the top right corner of code and text fragments that allows the user to copy
+# its content to the clipboard. Note this only works if supported by the browser
+# and the web page is served via a secure context (see:
+# https://www.w3.org/TR/secure-contexts/), i.e. using the https: or file:
+# protocol.
+# The default value is: YES.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_COPY_CLIPBOARD    = YES
+
+# Doxygen stores a couple of settings persistently in the browser (via e.g.
+# cookies). By default these settings apply to all HTML pages generated by
+# doxygen across all projects. The HTML_PROJECT_COOKIE tag can be used to store
+# the settings under a project specific key, such that the user preferences will
+# be stored separately.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_PROJECT_COOKIE    =
 
 # With HTML_INDEX_NUM_ENTRIES one can control the preferred number of entries
 # shown in the various tree structured indices initially; the user can expand
@@ -1635,7 +1665,7 @@ ECLIPSE_DOC_ID         = org.doxygen.Project
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 
 # The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
 # structure should be generated to display hierarchical information. If the tag
@@ -1721,7 +1751,7 @@ FORMULA_FONTSIZE       = 14
 # to create new LaTeX commands to be used in formulas as building blocks. See
 # the section "Including formulas" for details.
 
-FORMULA_MACROFILE      = ${INSTINCT_SOURCE_DIR}/doc/LatexHeader.tex
+FORMULA_MACROFILE      =
 
 # Enable the USE_MATHJAX option to render LaTeX formulas using MathJax (see
 # https://www.mathjax.org) which uses client side JavaScript for the rendering
@@ -1732,7 +1762,7 @@ FORMULA_MACROFILE      = ${INSTINCT_SOURCE_DIR}/doc/LatexHeader.tex
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-USE_MATHJAX            = NO
+USE_MATHJAX            = YES
 
 # With MATHJAX_VERSION it is possible to specify the MathJax version to be used.
 # Note that the different versions of MathJax have different requirements with
@@ -1787,7 +1817,8 @@ MATHJAX_RELPATH        =
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
 MATHJAX_EXTENSIONS     = ams \
-                         color
+                         color \
+                         colortbl
 
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
 # of code that will be used on startup of the MathJax code. See the MathJax site
@@ -1913,7 +1944,7 @@ LATEX_OUTPUT           = latex
 # the output language.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_CMD_NAME         = ${INSTINCT_SOURCE_DIR}/doc/latex2
+LATEX_CMD_NAME         =
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to generate
 # index for LaTeX.
@@ -2251,9 +2282,9 @@ GENERATE_SQLITE3       = NO
 
 SQLITE3_OUTPUT         = sqlite3
 
-# The SQLITE3_OVERWRITE_DB tag is set to YES, the existing doxygen_sqlite3.db
+# The SQLITE3_RECREATE_DB tag is set to YES, the existing doxygen_sqlite3.db
 # database file will be recreated with each doxygen run. If set to NO, doxygen
-# will warn if an a database file is already found and not modify it.
+# will warn if a database file is already found and not modify it.
 # The default value is: YES.
 # This tag requires that the tag GENERATE_SQLITE3 is set to YES.
 
@@ -2494,7 +2525,11 @@ DOT_FONTPATH           =
 # the CLASS_GRAPH tag is set to YES and HAVE_DOT is disabled or if the
 # CLASS_GRAPH tag is set to BUILTIN, then the built-in generator will be used.
 # If the CLASS_GRAPH tag is set to TEXT the direct and indirect inheritance
-# relations will be shown as texts / links.
+# relations will be shown as texts / links. Explicit enabling an inheritance
+# graph or choosing a different representation for an inheritance graph of a
+# specific class, can be accomplished by means of the command \inheritancegraph.
+# Disabling an inheritance graph can be accomplished by means of the command
+# \hideinheritancegraph.
 # Possible values are: NO, YES, TEXT, GRAPH and BUILTIN.
 # The default value is: YES.
 
@@ -2559,8 +2594,8 @@ DOT_UML_DETAILS        = NO
 
 # The DOT_WRAP_THRESHOLD tag can be used to set the maximum number of characters
 # to display on a single line. If the actual line length exceeds this threshold
-# significantly it will wrapped across multiple lines. Some heuristics are apply
-# to avoid ugly line breaks.
+# significantly it will be wrapped across multiple lines. Some heuristics are
+# applied to avoid ugly line breaks.
 # Minimum value: 0, maximum value: 1000, default value: 17.
 # This tag requires that the tag HAVE_DOT is set to YES.
 

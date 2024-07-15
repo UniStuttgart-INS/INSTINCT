@@ -143,7 +143,7 @@ void NAV::KvhSensor::deinitialize()
         {
             _sensor->unregisterAsyncPacketReceivedHandler();
         }
-        catch (...)
+        catch (...) // NOLINT(bugprone-empty-catch)
         {}
         _sensor->disconnect();
     }

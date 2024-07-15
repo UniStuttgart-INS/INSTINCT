@@ -13,6 +13,7 @@
                 // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
                 // "--nogui",
                 // "--noinit",
+                "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",
@@ -64,13 +65,14 @@
             "program": "${workspaceFolder}/build/bin/Debug/instinct",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "--config=config.ini",
-                "--load=\"flow/Default.flow\"",
-                // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
+                "--load=flow/Default.flow",
+                // "--load=test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow",
                 // "--nogui",
                 // "--noinit",
+                "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
-                // "--log-filter=SinglePointPositioning.cpp",
+                // "--log-filter=SinglePointPositioning",
                 // ================ To debug flow tests ================
                 // "--flow-path=test/flow",
                 // "--input-path=test/data",
@@ -139,6 +141,7 @@
                 "--load=\"flow/Default.flow\"",
                 // "--nogui",
                 // "--noinit",
+                "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",

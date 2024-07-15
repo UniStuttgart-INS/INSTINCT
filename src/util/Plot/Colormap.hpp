@@ -124,8 +124,9 @@ enum class ColormapMaskType : int
 /// @brief Shows a combobox to select a colormap
 /// @param[in, out] type Type of the selected colormap
 /// @param[in, out] id Id of the selected colormap
+/// @param[in] label Unique ImGui Id
 /// @return True if a change was made
-bool ShowColormapSelector(ColormapMaskType& type, int64_t& id);
+bool ShowColormapSelector(ColormapMaskType& type, int64_t& id, const char* label = "");
 
 /// @brief Searches for the colormap in the Global and Flow colormaps
 /// @param type Type of the colormap (global or flow)

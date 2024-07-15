@@ -67,7 +67,7 @@ namespace NAV
 /// @return The corresponding range-rate [m/s]
 ///
 /// @note See \cite Groves2013 Groves, ch. 9.2.7, eq. 9.70, p. 388
-[[nodiscard]] double doppler2rangeRate(double doppler, Frequency freq, int8_t num = -128);
+[[nodiscard]] double doppler2rangeRate(double doppler, Frequency freq, int8_t num);
 
 /// @brief Transforms a range-rate into a doppler-shift
 /// @param[in] rangeRate The range-rate to transform [m/s]
@@ -76,7 +76,7 @@ namespace NAV
 /// @return The corresponding doppler-shift [Hz]
 ///
 /// @note See \cite Groves2013 Groves, ch. 9.2.7, eq. 9.70, p. 388
-[[nodiscard]] double rangeRate2doppler(double rangeRate, Frequency freq, int8_t num = -128);
+[[nodiscard]] double rangeRate2doppler(double rangeRate, Frequency freq, int8_t num);
 
 /// @brief Calculates the ration of the frequencies squared γ
 ///
@@ -90,7 +90,7 @@ namespace NAV
 /// @param[in] num2 Second frequency number. Only used for GLONASS G1 and G2
 /// @return The ratio (f1/f2)^2 [-]
 /// @note See \cite IS-GPS-200M IS-GPS-200 ch. 20.3.3.3.3.2 p.99
-[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1 = -128, int8_t num2 = -128);
+[[nodiscard]] double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1, int8_t num2);
 
 /// @brief Converts a GALILEO SISA (Signal in space accuracy) value to it's index
 /// @param[in] val SISA value in [m]

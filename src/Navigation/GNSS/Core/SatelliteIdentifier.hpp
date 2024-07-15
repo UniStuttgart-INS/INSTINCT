@@ -22,6 +22,8 @@ using json = nlohmann::json; ///< json namespace
 #include "Frequency.hpp"
 #include "Code.hpp"
 
+#include "util/Container/STL.hpp"
+
 namespace NAV
 {
 
@@ -84,7 +86,7 @@ struct SatSigId
         {
             if (satNum == rhs.satNum)
             {
-                return Code::Set(code).to_ullong() < Code::Set(rhs.code).to_ullong();
+                return Code::Set(code) < Code::Set(rhs.code);
             }
             return satNum < rhs.satNum;
         }
@@ -124,16 +126,31 @@ void from_json(const json& j, SatSigId& data);
 
 /// @brief Shows a ComboBox to select satellites
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
-/// @param[in, out] satellites Reference to the satId vector to select
-bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites);
+/// @param[in, out] satellites Reference to the SatId vector to select
+/// @param[in] filterSys Enable/Disable GUI elements according to this filter
+/// @param[in] displayOnlyNumber Display only the number, not the system
+bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, SatelliteSystem filterSys = SatSys_All, bool displayOnlyNumber = false);
+
+/// @brief Shows a ComboBox to select a single satellite
+/// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
+/// @param[in, out] satellite Reference to the SatId to select
+/// @param[in] filterSys Enable/Disable GUI elements according to this filter
+/// @param[in] displayOnlyNumber Display only the number, not the system
+bool ShowSatelliteSelector(const char* label, SatId& satellite, SatelliteSystem filterSys = SatSys_All, bool displayOnlyNumber = false);
 
 } // namespace NAV
 
 /// @brief Stream insertion operator overload
 /// @param[in, out] os Output stream object to stream the time into
-/// @param[in] satId Object to print
+/// @param[in] obj Object to print
 /// @return Returns the output stream object in order to chain stream insertions
-std::ostream& operator<<(std::ostream& os, const NAV::SatId& satId);
+std::ostream& operator<<(std::ostream& os, const NAV::SatId& obj);
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::SatSigId& obj);
 
 #ifndef DOXYGEN_IGNORE
 

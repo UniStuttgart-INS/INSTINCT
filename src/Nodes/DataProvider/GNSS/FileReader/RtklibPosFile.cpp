@@ -79,7 +79,7 @@ void NAV::RtklibPosFile::guiConfig()
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
-            if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
+            if (alwaysNormal || std::find_if(_headerColumns.begin(), _headerColumns.end(), [&searchText](const std::string& header) { return header.starts_with(searchText); }) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
             }
@@ -90,7 +90,7 @@ void NAV::RtklibPosFile::guiConfig()
         };
 
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "Date", "Date"); // FIXME: Currently not working
+        TextColoredIfExists(0, "Date", "Date");
         TextColoredIfExists(1, "latitude(deg)", "latitude(deg)");
         TextColoredIfExists(2, "x-ecef(m)", "x-ecef(m)");
         TextColoredIfExists(3, "vn(m/s)", "vn(m/s)");
@@ -205,17 +205,15 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
     std::optional<long double> second = 0L;
     std::optional<uint16_t> gpsWeek;
     std::optional<long double> gpsToW;
-    Eigen::Vector3d lla_pos{ std::nan(""), std::nan(""), std::nan("") };
-    Eigen::Vector3d e_pos{ std::nan(""), std::nan(""), std::nan("") };
-    Eigen::Vector3d n_vel{ std::nan(""), std::nan(""), std::nan("") };
-    Eigen::Vector3d e_vel{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d lla_position{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d e_position{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d n_velocity{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d e_velocity{ std::nan(""), std::nan(""), std::nan("") };
 
-    std::optional<double> sdvN;
-    std::optional<double> sdvE;
-    std::optional<double> sdvD;
-    std::optional<double> sdvX;
-    std::optional<double> sdvY;
-    std::optional<double> sdvZ;
+    Eigen::Matrix3d e_posVar = Eigen::Matrix3d::Zero() * std::nan("");
+    Eigen::Matrix3d e_velVar = Eigen::Matrix3d::Zero() * std::nan("");
+    Eigen::Matrix3d n_posVar = Eigen::Matrix3d::Zero() * std::nan("");
+    Eigen::Matrix3d n_velVar = Eigen::Matrix3d::Zero() * std::nan("");
 
     try
     {
@@ -267,29 +265,29 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                         second = std::stold(hms.at(2));
                     }
                 }
-                else if (column == "x-ecef(m)")
+                else if (column == "x-ecef(m)" || column == "x-ecef")
                 {
-                    e_pos.x() = std::stod(cell);
+                    e_position.x() = std::stod(cell);
                 }
-                else if (column == "y-ecef(m)")
+                else if (column == "y-ecef(m)" || column == "y-ecef")
                 {
-                    e_pos.y() = std::stod(cell);
+                    e_position.y() = std::stod(cell);
                 }
-                else if (column == "z-ecef(m)")
+                else if (column == "z-ecef(m)" || column == "z-ecef")
                 {
-                    e_pos.z() = std::stod(cell);
+                    e_position.z() = std::stod(cell);
                 }
-                else if (column == "latitude(deg)")
+                else if (column == "latitude(deg)" || column == "latitude")
                 {
-                    lla_pos(0) = deg2rad(std::stod(cell));
+                    lla_position(0) = deg2rad(std::stod(cell));
                 }
-                else if (column == "longitude(deg)")
+                else if (column == "longitude(deg)" || column == "longitude")
                 {
-                    lla_pos(1) = deg2rad(std::stod(cell));
+                    lla_position(1) = deg2rad(std::stod(cell));
                 }
-                else if (column == "height(m)")
+                else if (column == "height(m)" || column == "height")
                 {
-                    lla_pos(2) = std::stod(cell);
+                    lla_position(2) = std::stod(cell);
                 }
                 else if (column == "Q")
                 {
@@ -299,55 +297,67 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                 {
                     obs->ns = static_cast<uint8_t>(std::stoul(cell));
                 }
-                else if (column == "sdx(m)")
+                else if (column == "sdx(m)" || column == "sdx")
                 {
-                    obs->sdXYZ.x() = std::stod(cell);
+                    e_posVar(0, 0) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdy(m)")
+                else if (column == "sdy(m)" || column == "sdy")
                 {
-                    obs->sdXYZ.y() = std::stod(cell);
+                    e_posVar(1, 1) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdz(m)")
+                else if (column == "sdz(m)" || column == "sdz")
                 {
-                    obs->sdXYZ.z() = std::stod(cell);
+                    e_posVar(2, 2) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdn(m)")
+                else if (column == "sdn(m)" || column == "sdn")
                 {
-                    obs->sdNED(0) = std::stod(cell);
+                    n_posVar(0, 0) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sde(m)")
+                else if (column == "sde(m)" || column == "sde")
                 {
-                    obs->sdNED(1) = std::stod(cell);
+                    n_posVar(1, 1) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdu(m)")
+                else if (column == "sdu(m)" || column == "sdu")
                 {
-                    obs->sdNED(2) = std::stod(cell);
+                    n_posVar(2, 2) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdxy(m)")
+                else if (column == "sdxy(m)" || column == "sdxy")
                 {
-                    obs->sdxy = std::stod(cell);
+                    e_posVar(0, 1) = std::stod(cell);
+                    e_posVar(0, 1) = gcem::sgn(e_posVar(0, 1)) * std::pow(e_posVar(0, 1), 2);
+                    e_posVar(1, 0) = -e_posVar(0, 1);
                 }
-                else if (column == "sdyz(m)")
+                else if (column == "sdyz(m)" || column == "sdyz")
                 {
-                    obs->sdyz = std::stod(cell);
+                    e_posVar(1, 2) = std::stod(cell);
+                    e_posVar(1, 2) = gcem::sgn(e_posVar(1, 2)) * std::pow(e_posVar(1, 2), 2);
+                    e_posVar(2, 1) = -e_posVar(1, 2);
                 }
-                else if (column == "sdzx(m)")
+                else if (column == "sdzx(m)" || column == "sdzx")
                 {
-                    obs->sdzx = std::stod(cell);
+                    e_posVar(2, 0) = std::stod(cell);
+                    e_posVar(2, 0) = gcem::sgn(e_posVar(2, 0)) * std::pow(e_posVar(2, 0), 2);
+                    e_posVar(0, 2) = -e_posVar(2, 0);
                 }
-                else if (column == "sdne(m)")
+                else if (column == "sdne(m)" || column == "sdne")
                 {
-                    obs->sdne = std::stod(cell);
+                    n_posVar(0, 1) = std::stod(cell);
+                    n_posVar(0, 1) = gcem::sgn(n_posVar(0, 1)) * std::pow(n_posVar(0, 1), 2);
+                    n_posVar(1, 0) = -n_posVar(0, 1);
                 }
-                else if (column == "sdeu(m)")
+                else if (column == "sdeu(m)" || column == "sdeu")
                 {
-                    obs->sded = std::stod(cell);
+                    n_posVar(1, 2) = std::stod(cell);
+                    n_posVar(1, 2) = gcem::sgn(n_posVar(1, 2)) * std::pow(n_posVar(1, 2), 2);
+                    n_posVar(2, 1) = -n_posVar(1, 2);
                 }
-                else if (column == "sdun(m)")
+                else if (column == "sdun(m)" || column == "sdun")
                 {
-                    obs->sddn = std::stod(cell);
+                    n_posVar(2, 0) = std::stod(cell);
+                    n_posVar(2, 0) = gcem::sgn(n_posVar(2, 0)) * std::pow(n_posVar(2, 0), 2);
+                    n_posVar(0, 2) = -n_posVar(2, 0);
                 }
-                else if (column == "age(s)")
+                else if (column == "age(s)" || column == "age")
                 {
                     obs->age = std::stod(cell);
                 }
@@ -355,77 +365,89 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                 {
                     obs->ratio = std::stod(cell);
                 }
-                else if (column == "vn(m/s)")
+                else if (column == "vn(m/s)" || column == "vn")
                 {
-                    n_vel(0) = std::stod(cell);
+                    n_velocity(0) = std::stod(cell);
                 }
-                else if (column == "ve(m/s)")
+                else if (column == "ve(m/s)" || column == "ve")
                 {
-                    n_vel(1) = std::stod(cell);
+                    n_velocity(1) = std::stod(cell);
                 }
-                else if (column == "vu(m/s)")
+                else if (column == "vu(m/s)" || column == "vu")
                 {
-                    n_vel(2) = -std::stod(cell);
+                    n_velocity(2) = -std::stod(cell);
                 }
-                else if (column == "vx(m/s)")
+                else if (column == "vx(m/s)" || column == "vx")
                 {
-                    e_vel(0) = std::stod(cell);
+                    e_velocity(0) = std::stod(cell);
                 }
-                else if (column == "vy(m/s)")
+                else if (column == "vy(m/s)" || column == "vy")
                 {
-                    e_vel(1) = std::stod(cell);
+                    e_velocity(1) = std::stod(cell);
                 }
-                else if (column == "vz(m/s)")
+                else if (column == "vz(m/s)" || column == "vz")
                 {
-                    e_vel(2) = std::stod(cell);
+                    e_velocity(2) = std::stod(cell);
                 }
-                else if (column == "sdvn")
+                else if (column == "sdvn(m/s)" || column == "sdvn")
                 {
-                    sdvN = std::stod(cell);
+                    n_velVar(0, 0) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdve")
+                else if (column == "sdve(m/s)" || column == "sdve")
                 {
-                    sdvE = std::stod(cell);
+                    n_velVar(1, 1) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdvu")
+                else if (column == "sdvu(m/s)" || column == "sdvu")
                 {
-                    sdvD = std::stod(cell);
+                    n_velVar(2, 2) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdvne")
+                else if (column == "sdvne(m/s)" || column == "sdvne")
                 {
-                    obs->sdvne = std::stod(cell);
+                    n_velVar(0, 1) = std::stod(cell);
+                    n_velVar(0, 1) = gcem::sgn(n_velVar(0, 1)) * std::pow(n_velVar(0, 1), 2);
+                    n_velVar(1, 0) = -n_velVar(0, 1);
                 }
-                else if (column == "sdveu")
+                else if (column == "sdveu(m/s)" || column == "sdveu")
                 {
-                    obs->sdved = std::stod(cell);
+                    n_velVar(1, 2) = std::stod(cell);
+                    n_velVar(1, 2) = gcem::sgn(n_velVar(1, 2)) * std::pow(n_velVar(1, 2), 2);
+                    n_velVar(2, 1) = -n_velVar(1, 2);
                 }
-                else if (column == "sdvun")
+                else if (column == "sdvun(m/s)" || column == "sdvun")
                 {
-                    obs->sdvdn = std::stod(cell);
+                    n_velVar(2, 0) = std::stod(cell);
+                    n_velVar(2, 0) = gcem::sgn(n_velVar(2, 0)) * std::pow(n_velVar(2, 0), 2);
+                    n_velVar(0, 2) = -n_velVar(2, 0);
                 }
-                else if (column == "sdvx")
+                else if (column == "sdvx(m/s)" || column == "sdvx")
                 {
-                    sdvX = std::stod(cell);
+                    e_velVar(0, 0) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdvy")
+                else if (column == "sdvy(m/s)" || column == "sdvy")
                 {
-                    sdvY = std::stod(cell);
+                    e_velVar(1, 1) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdvz")
+                else if (column == "sdvz(m/s)" || column == "sdvz")
                 {
-                    sdvZ = std::stod(cell);
+                    e_velVar(2, 2) = std::pow(std::stod(cell), 2);
                 }
-                else if (column == "sdvxy")
+                else if (column == "sdvxy(m/s)" || column == "sdvxy")
                 {
-                    obs->sdvxy = std::stod(cell);
+                    e_velVar(0, 1) = std::stod(cell);
+                    e_velVar(0, 1) = gcem::sgn(e_velVar(0, 1)) * std::pow(e_velVar(0, 1), 2);
+                    e_velVar(1, 0) = -e_velVar(0, 1);
                 }
-                else if (column == "sdvyz")
+                else if (column == "sdvyz(m/s)" || column == "sdvyz")
                 {
-                    obs->sdvyz = std::stod(cell);
+                    e_velVar(1, 2) = std::stod(cell);
+                    e_velVar(1, 2) = gcem::sgn(e_velVar(1, 2)) * std::pow(e_velVar(1, 2), 2);
+                    e_velVar(2, 1) = -e_velVar(1, 2);
                 }
-                else if (column == "sdvzx")
+                else if (column == "sdvzx(m/s)" || column == "sdvzx")
                 {
-                    obs->sdvzx = std::stod(cell);
+                    e_velVar(2, 0) = std::stod(cell);
+                    e_velVar(2, 0) = gcem::sgn(e_velVar(2, 0)) * std::pow(e_velVar(2, 0), 2);
+                    e_velVar(0, 2) = -e_velVar(2, 0);
                 }
             }
         }
@@ -447,22 +469,37 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                                timeSystem);
     }
 
-    if (!e_pos.hasNaN()) { obs->setPosition_e(e_pos); }
-    else if (!lla_pos.hasNaN()) { obs->setPosition_lla(lla_pos); }
+    if (!e_position.hasNaN() && !e_posVar.hasNaN()) { obs->setPositionAndStdDev_e(e_position, e_posVar); }
+    else if (!lla_position.hasNaN() && !n_posVar.hasNaN()) { obs->setPositionAndStdDev_lla(lla_position, n_posVar); }
+    else if (!e_position.hasNaN()) { obs->setPosition_e(e_position); }
+    else if (!lla_position.hasNaN()) { obs->setPosition_lla(lla_position); }
 
-    if (!obs->sdXYZ.hasNaN()) { obs->sdNED = trafo::n_Quat_e(obs->latitude(), obs->longitude()) * obs->sdXYZ; }
-    else if (!obs->sdNED.hasNaN()) { obs->sdXYZ = trafo::e_Quat_n(obs->latitude(), obs->longitude()) * obs->sdNED; }
+    if (!e_velocity.hasNaN() && !e_velVar.hasNaN()) { obs->setVelocityAndStdDev_e(e_velocity, e_velVar); }
+    if (!n_velocity.hasNaN() && !n_velVar.hasNaN()) { obs->setVelocityAndStdDev_n(n_velocity, n_velVar); }
+    else if (!e_velocity.hasNaN()) { obs->setVelocity_e(e_velocity); }
+    else if (!n_velocity.hasNaN()) { obs->setVelocity_n(n_velocity); }
 
-    if (!n_vel.hasNaN()) { obs->setVelocity_n(n_vel); }
-    else if (!e_vel.hasNaN()) { obs->setVelocity_e(e_vel); }
-
-    if (sdvN && sdvE && sdvD) { obs->sdvNED = Eigen::Vector3d(sdvN.value(), sdvE.value(), sdvD.value()); }
-    else if (sdvX && sdvY && sdvZ) { obs->sdvXYZ = Eigen::Vector3d(sdvX.value(), sdvY.value(), sdvZ.value()); }
-
-    if (auto currentTime = util::time::GetCurrentInsTime();
-        obs->insTime.empty() && !currentTime.empty())
+    if (!e_velVar.hasNaN() && !e_posVar.hasNaN())
     {
-        obs->insTime = currentTime;
+        Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(6, 6);
+        cov.block<3, 3>(0, 0) = e_posVar;
+        cov.block<3, 3>(3, 3) = e_velVar;
+        obs->setPosVelCovarianceMatrix_e(cov);
+    }
+    else if (!n_velVar.hasNaN() && !n_posVar.hasNaN())
+    {
+        Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(6, 6);
+        cov.block<3, 3>(0, 0) = n_posVar;
+        cov.block<3, 3>(3, 3) = n_velVar;
+        obs->setPosVelCovarianceMatrix_n(cov);
+    }
+    else if (!e_posVar.hasNaN())
+    {
+        obs->setPosCovarianceMatrix_e(e_posVar);
+    }
+    else if (!n_posVar.hasNaN())
+    {
+        obs->setPosCovarianceMatrix_n(n_posVar);
     }
 
     invokeCallbacks(OUTPUT_PORT_INDEX_RTKLIB_POS_OBS, obs);

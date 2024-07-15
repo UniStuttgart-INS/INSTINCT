@@ -1,0 +1,330 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file ImuSimulator.dox
+// @brief IMU Simulator
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2021-11-29
+
+namespace Instinct {
+
+/** \page ImuSimulator IMU Simulator
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\section ImuSimulator-Acceleration-Measurements Acceleration Measurements
+
+The navigation equation for a local-navigation frame is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47f)
+\anchor eq-ImuSimulator-VelocityNav-equation-pre \f{equation}{
+  \boldsymbol{\dot{v}}^n = \boldsymbol{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}} +\ \mathbf{g}_l^n
+\f}
+where
+- \f$ \boldsymbol{v}^n = \begin{pmatrix} v_N & v_E & v_D \end{pmatrix}^T \f$ is the velocity with respect to the Earth in local-navigation frame coordinates,
+- \f$ \boldsymbol{f}^n = \begin{pmatrix} f_N & f_E & f_D \end{pmatrix}^T \f$ is the specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+- \f$ \boldsymbol{\omega}_{ie}^n \f$ is the turn rate of the Earth expressed in local-navigation frame coordinates
+- \f$ \boldsymbol{\omega}_{en}^n \f$ is the turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
+- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.71, eq. 3.75, p. 48)
+    - \f$ \mathbf{g}^n \f$ the local gravitation vector (caused by effects of mass attraction)
+    - \f$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \f$ the centrifugal acceleration caused by the Earth's rotation
+
+Therefore equation \ref eq-ImuSimulator-VelocityNav-equation-pre becomes
+\anchor eq-ImuSimulator-VelocityNav-equation \f{equation}{
+  \underbrace{\boldsymbol{\dot{v}}^n}_{\text{trajectory}}
+      = \overbrace{\boldsymbol{f}^n}^{\text{measured}}
+        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
+        +\ \overbrace{\mathbf{g}^n}^{\text{gravitation}}
+        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
+\f}
+
+which can be reordered to calculate the measured accelerations with
+\anchor eq-ImuSimulator-acceleration-measured \f{equation}{
+  \underbrace{\boldsymbol{f}^n}_{\text{measured}}
+      = \overbrace{\boldsymbol{\dot{v}}^n}^{\text{trajectory}}
+        + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
+        -\ \overbrace{\mathbf{g}^n}^{\text{gravitation}}
+        +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
+\f}
+
+The acceleration from the trajectory is derived as
+
+\anchor eq-ImuSimulator-acceleration-navigation \f{equation}{
+  \boldsymbol{\dot{v}}^n = \frac{\partial}{\partial t} \left( \boldsymbol{\dot{x}}^n \right) = \frac{\partial}{\partial t} \left( \boldsymbol{C}_e^n \cdot \boldsymbol{\dot{x}}^e \right) = \boldsymbol{\dot{C}}_e^n \cdot \boldsymbol{\dot{x}}^e + \boldsymbol{C}_e^n \cdot \boldsymbol{\ddot{x}}^e
+\f}
+with
+\anchor eq-ImuSimulator-acceleration-C_ne_dot \f{equation}{
+  \boldsymbol{\dot{C}}_e^n = (\boldsymbol{\dot{C}}_n^e)^T = (\boldsymbol{C}_n^e \cdot \boldsymbol{\Omega}_{en}^n)^T
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\section ImuSimulator-AngularRate-Measurements Angular Rate Measurements
+
+Gyroscopes measure the turn rate of the platform frame with respect to an inertial frame expressed in platform coordinates
+\anchor eq-ImuSimulator-GyroMeas \f{equation}{
+\begin{aligned}
+  \boldsymbol{\omega}_{ip}^p &= \boldsymbol{\omega}_{in}^p + \boldsymbol{\omega}_{np}^p \\
+                             &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{in}^n + \boldsymbol{\omega}_{np}^n ] \\
+                             &= \mathbf{C}_n^p \cdot [ ( \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n ) + ( \boldsymbol{\omega}_{nb}^n + \overbrace{\boldsymbol{\omega}_{bp}^n}^{= 0} ) ] \\
+                             &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \boldsymbol{\omega}_{nb}^n ] \\
+                             &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \mathbf{C}_b^n \boldsymbol{\omega}_{nb}^b ]
+\end{aligned}
+\f}
+
+The turn rate of the body frame with respect to the local-navigation frame expressed in body coordinates depends on the time derivation of the gimbal angles \f$ \phi \f$ (roll), \f$ \theta \f$ (pitch), \f$ \psi \f$ (yaw):
+\anchor eq-ImuSimulator-omega_nb_b \f{equation}{
+  \boldsymbol{\omega}_{nb}^b
+      = \begin{bmatrix} \dot{R} \\ 0 \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \begin{bmatrix} 0 \\ \dot{P} \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dot{Y} \end{bmatrix}
+\f}
+where
+- \f$ \mathbf{C_3} = \begin{bmatrix} 1 &     0    &    0    \\
+                                     0 &  \cos{R} & \sin{R} \\
+                                     0 & -\sin{R} & \cos{R} \end{bmatrix} \f$
+  is the rotation \f$ R \f$ about the x-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)
+- \f$ \mathbf{C_2} = \begin{bmatrix} \cos{P} & 0 & -\sin{P} \\
+                                        0    & 1 &     0    \\
+                                     \sin{P} & 0 &  \cos{P} \end{bmatrix} \f$
+  is the rotation \f$ P \f$ about the y-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)
+
+see
+- \cite Titterton2004 Titterton, ch. 3.6.3.3, eq. 3.52, p. 42
+- \cite Gleason2009 Gleason, ch. 6.2.3.1, eq. 6.7, p. 153 (top left term in eq. 6.8 should be \f$ \cos{\theta} \f$ instead of \f$ 1 \f$)
+
+The time derivative of the gimbal angles are calculated via spline derivatives.
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\section ImuSimulator-Trajectory Trajectory calculation
+
+All trajectories are calculated with a cubic spline. The spline points are calculated by the position formulas below with a certain spacing and then the velocity and acceleration is derived from it.
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\subsection ImuSimulator-Trajectory-Fixed Fixed
+
+The fixed trajectory describes a geostationary position on Earth.
+
+\b Position<br>
+\anchor eq-ImuSimulator-Trajectory-Fixed-position \f{equation}{
+  \mathbf{x}^n = \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T = \text{const}
+\f}
+
+\b Velocity<br>
+\anchor eq-ImuSimulator-Trajectory-Fixed-velocity \f{equation}{
+  \boldsymbol{v}^n = \mathbf{\dot{x}}^n = 0
+\f}
+
+\b Acceleration<br>
+\anchor eq-ImuSimulator-Trajectory-Fixed-acceleration \f{equation}{
+  \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\subsection ImuSimulator-Trajectory-Linear Linear
+
+The linear trajectory describes a vehicle moving with constant velocity in local-navigation coordinates.
+
+\b Position<br>
+
+The time derivative of the curvilinear position (lat, lon, alt) is given by (\cite Groves2013 Groves, ch. 2.4.2, eq. 2.111, p. 61 or \cite Titterton2004 Titterton, ch. 3.7, eq. 3.81,3.85,3.86, p. 48ff)
+
+\anchor eq-ImuSimulator-Trajectory-Linear-curvilinearPositionDerivative \f{equation}{
+\begin{aligned}
+  \dot{\phi}    &= \frac{v_N}{R_N + h} \\
+  \dot{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
+  \dot{h}       &= -v_D
+\end{aligned}
+\f}
+
+As the velocity in local-navigation coordinates is constant and neglecting the change in non velocity terms, the position can be expressed as
+
+\anchor eq-ImuSimulator-Trajectory-Linear-position \f{equation}{
+  \renewcommand*{\arraystretch}{2.0}
+  \mathbf{x}^n =
+  \begin{pmatrix} \phi \\ \lambda \\ h \end{pmatrix}
+  \approx \begin{pmatrix} \phi_0 \\ \lambda_0 \\ h_0 \end{pmatrix}
+  + \begin{pmatrix} \dfrac{v_N}{R_N + h} \\ \dfrac{v_E}{(R_E + h) \cos{\phi}} \\  -v_D \end{pmatrix}
+  \cdot t
+\f}
+
+\b Velocity<br>
+\anchor eq-ImuSimulator-Trajectory-Linear-velocity \f{equation}{
+\boldsymbol{v}^n = \mathbf{\dot{x}}^n = const
+\f}
+
+\b Acceleration<br>
+\anchor eq-ImuSimulator-Trajectory-Linear-acceleration \f{equation}{
+  \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\subsection ImuSimulator-Trajectory-Circular Circular
+
+The circular or helical trajectory describes a vehicle moving with constant horizontal speed on a circular shaped path.
+\anchor eq-ImuSimulator-Trajectory-Circular-horizontal-speed \f{equation}{
+\begin{aligned}
+  \left|\boldsymbol{v}_{\text{h}}^n\right| &= \text{const}
+\end{aligned}
+\f}
+The vertical velocity is
+- for the circular trajectory: \f$ v_D = 0 \f$
+- for the helical trajectory: \f$ v_D = \text{const} \f$
+
+\b Position<br>
+In the local-navigation frame in a tangential plane to the Earth surface a circular path can be expressed as
+
+\anchor eq-ImuSimulator-Trajectory-Circular-local-position-phi \f{equation}{
+  \mathbf{x}^n = \begin{pmatrix} x_N \\ x_E \end{pmatrix}
+               = \mathbf{x}_M^n
+                 + \begin{pmatrix} r \cdot \sin{\left( \varphi \right)} \\
+                                   r \cdot \cos{\left( \varphi \right)}
+                   \end{pmatrix}
+\f}
+where \f$ x_M \f$ is the center of the circle.
+
+The vertical position is \f$ x_D = x_{M,D} - v_{UP} \cdot t \f$.
+
+The variable \f$ \varphi \f$ can be expressed due to the constant speed
+\anchor eq-ImuSimulator-Trajectory-Circular-phi-tilde \f{equation}{
+  \left|\boldsymbol{v}_{\text{h}}^n\right| = \frac{s}{t}
+                                = \left( \frac{\tilde{\varphi}}{2\pi} \cdot U \right) \frac{1}{t}
+                                = \left( \frac{\tilde{\varphi}}{2\pi} \cdot 2\pi r \right) \frac{1}{t}
+                                = \frac{\tilde{\varphi} \cdot r}{t}
+\f}
+
+Also a starting angle \f$ \varphi_0 \f$ and direction term \f$ \text{dir} \f$ (-1 for CW and +1 for CCW) are added.
+\anchor eq-ImuSimulator-Trajectory-Circular-phi \f{equation}{
+  \varphi = \frac{\left|\boldsymbol{v}_{\text{h}}^n\right| \cdot t}{r} \cdot \text{dir} + \varphi_0
+\f}
+
+As perfekt circular trajectories are hard for Navigation algorithms to estimate, due to the lack of dynamic elements, a harmonic modulation is added to the position, which leads to
+
+\anchor eq-ImuSimulator-Trajectory-Circular-local-position \f{equation}{
+\begin{aligned}
+  \mathbf{x}^n = \begin{pmatrix} x_N \\ x_E \\ x_D\end{pmatrix}
+  = \mathbf{x}_M^n
+    + \begin{pmatrix} r \cdot \sin{\left( \varphi \right)} \cdot \left( 1 + a_h \cdot \sin{\left( \varphi \cdot \omega_h \right)} \right) \\
+                      r \cdot \cos{\left( \varphi \right)} \cdot \left( 1 + a_h \cdot \sin{\left( \varphi \cdot \omega_h \right)} \right) \\
+                      - v_{UP} \cdot t
+      \end{pmatrix}
+\end{aligned}
+\f}
+where \f$ a_h \f$ is an amplitude factor which scales the harmonic oscillation in relation to the radius and \f$ \omega_h \f$ is the harmonic oscillation frequency in units [cycles/revolution]. Note that only unsigned integer values are allowed for \f$ \omega_h \f$.
+
+The local position can then be added to the start position after rotating it into the Earth frame
+
+\anchor eq-ImuSimulator-Trajectory-Circular-position \f{equation}{
+  \renewcommand*{\arraystretch}{2.0}
+  \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \mathbf{x}^n
+\f}
+
+\b Velocity<br>
+
+The velocity is the first derivative of the position spline.
+
+\b Acceleration<br>
+
+The acceleration is the second derivative of the position spline.
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+\section ImuSimulator-Flight-Angles Flight angles
+
+\subsection ImuSimulator-Flight-Angles-Roll Roll angle
+
+When not flying on constant height, which is the case for our circular trajectory, there is a certain roll angle. The following image should explain this.
+\anchor ImuSimulator-roll-image
+\f{tikzpicture}{
+  \def\ellipseB{10.0};
+  \def\ellipseA{14.0};
+  \coordinate (origin) at (0.0, 0.0);
+  \draw[thick, black] (0,0) [partial ellipse=45:120:\ellipseA cm and \ellipseB cm];
+  \node[left] at (-5.0, \ellipseB-0.5) {Earth surface};
+
+  \draw[black,thick] (8.0,\ellipseB) -- (5.0,\ellipseB);
+  \draw[black,thick] (-5.0,\ellipseB) -- (-8.0,\ellipseB);
+  \draw[blue,ultra thick] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10pt] {Flight plane};
+
+  \coordinate (xE) at (5.0,\ellipseB);
+  \coordinate (xM) at (0,\ellipseB);
+
+  \def\tangentLength{100};
+  \path let \p1=(xE) in coordinate (t1) at (\x1 + \tangentLength pt, \y1 - \tangentLength * \ellipseB/\ellipseA * \ellipseB/\ellipseA * \x1/\y1);
+  \path let \p1=(xE) in coordinate (t2) at (\x1 - \tangentLength pt, \y1 + \tangentLength * \ellipseB/\ellipseA * \ellipseB/\ellipseA * \x1/\y1);
+  \draw[brown,thick] (t1) -- (t2);
+
+  \def\tangentLength{10};
+  \path let \p1=(xE) in coordinate (nE) at (\x1 + \tangentLength pt, \y1 + \tangentLength * \ellipseA/\ellipseB * \ellipseA/\ellipseB * \y1/\x1);
+  \draw[->,brown,thick] (xE) -- (nE) node[above] {$\vec{\mathbf{n}}^e$};
+
+  \pgfmathanglebetweenpoints{\pgfpointanchor{xE}{center}}{\pgfpointanchor{t1}{center}}
+  \edef\angleRoll{\pgfmathresult}
+  \def\angleRadius{2.5};
+  \centerarc[black,thick,->](xE)(-(360-\angleRoll):0:\angleRadius);
+  \node[left,xshift=-5pt,yshift=-7pt] at ($(xE)+(\angleRadius,0)$) {$R$};
+
+  \def\rightAngleRadius{0.5};
+  \centerarc[black,thick](xE)(90-(360-\angleRoll):180-(360-\angleRoll):\rightAngleRadius);
+  \node[left,xshift=1pt,yshift=7pt] at (xE) {$\boldsymbol{\cdot}$};
+
+  \coordinate (nM) at ($(xM)+(0,1.5)$);
+  \draw[->,brown,thick] (xM) -- (nM) node[left] {$\vec{\mathbf{n}}^e_M$};
+  \centerarc[black,thick](xM)(90:180:\rightAngleRadius);
+  \node[left,xshift=-1pt,yshift=7pt] at (xM) {$\boldsymbol{\cdot}$};
+
+  \node[draw,cross=5pt,red,thick] (xMC) at (xM) {};
+  \node[draw,cross=5pt,red,thick] (xEC) at (xE) {};
+
+  \path [draw,->,thick] ($($(origin)!.8!(xEC)$)$) -- (xEC) node [pos=0.38,left] {$\vec{\mathbf{x}}^e$};
+  \path [draw, thick] ($($(origin)!.8!(xEC)$)$) --pic[rotate=-45]{ext} ($($(origin)!.8!(xEC)$)$);
+
+  \path [draw,->,thick] ($($(origin)!.8!(xMC)$)$) -- (xMC) node [pos=0.5,right] {$\vec{\mathbf{x}}_M^e$};
+  \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
+\f}
+
+The simulated position is at the position \f$\vec{x}^e\f$ and its velocity vector is facing out of the plane. When facing into the plane, the roll angle runs into the other direction resulting in a minus in the formula.
+
+The roll angle is the angle between the tangential planes to the Earth surface in the current position and the center of the flight path.
+\anchor eq-ImuSimulator-roll-with-norm \f{equation}{
+  R = \text{dir} \cdot \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
+\f}
+where \f$ \text{dir} \f$ is a sign (+1 for CW and -1 for CCW) determining the direction of the circle.
+
+The normal of the tangential planes is however not the position vectors \f$\vec{\mathbf{x}}^e\f$ and \f$\vec{\mathbf{x}}^e_M\f$, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> )
+\anchor eq-ImuSimulator-n-vector \f{equation}{
+  \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
+\f}
+
+Especially it can be seen, that this vector has length one
+\anchor eq-ImuSimulator-n-vector-norm \f{equation}{
+\begin{aligned}
+  \left|\vec{\mathbf{n}}^e\right| &= \sqrt{ \cos^2{\phi} \cdot \cos^2{\lambda} + \cos^2{\phi} \cdot \sin^2{\lambda} + \sin^2{\phi} } \\
+                                  &= \sqrt{ \cos^2{\phi} \cdot \underbrace{( \cos^2{\lambda} + \sin^2{\lambda})}_{=1} + \sin^2{\phi} } \\
+                                  &= \sqrt{ \cos^2{\phi} + \sin^2{\phi} } \\
+                                  &= 1
+\end{aligned}
+\f}
+
+The roll angle therefore becomes
+\anchor eq-ImuSimulator-roll \f{equation}{
+  R = \text{dir} \cdot \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
+\f}
+
+\subsection ImuSimulator-Flight-Angles-Pitch Pitch angle
+
+The pitch angle is calculated with the local navigation frame velocity after formula \ref eq-INS-Mechanization-Pitch
+\anchor eq-ImuSimulator-pitch \f{equation}{
+  P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
+\f}
+
+\subsection ImuSimulator-Flight-Angles-Yaw Yaw angle
+
+The yaw angle is calculated with the local navigation frame velocity after formula \ref eq-INS-Mechanization-Yaw
+\anchor eq-ImuSimulator-yaw \f{equation}{
+  Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
+\f}
+
+*/
+
+}

@@ -34,17 +34,17 @@ class GPSEphemeris final : public SatNavData
     // ------------------------------------------ Time Parameters --------------------------------------------
 
     /// @brief Time of Clock
-    const InsTime toc;
+    InsTime toc;
 
     /// @brief Time of Ephemeris
-    const InsTime toe;
+    InsTime toe;
 
     /// @brief Issue of Data, Ephemeris
     ///
     /// Provides the user with a convenient means for detecting any change in the ephemeris representation parameters
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.4.1, p.102
-    const size_t IODE;
+    size_t IODE{};
 
     /// @brief Issue of Data, Clock
     ///
@@ -53,7 +53,7 @@ class GPSEphemeris final : public SatNavData
     /// are defined in \cite IS-GPS-200M GPS ICD, ch. 20.3.4.4.
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.5, p.95
-    const size_t IODC;
+    size_t IODC{};
 
     /// Polynomial coefficients for clock correction
     /// - a(0) bias [s]
@@ -61,28 +61,28 @@ class GPSEphemeris final : public SatNavData
     /// - a(2) drift rate (aging) [s/s^2]
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.8, p.95
-    const std::array<double, 3> a;
+    std::array<double, 3> a{};
 
     // --------------------------------------- Keplerian Parameters ------------------------------------------
 
-    const double sqrt_A;  ///< Square root of the semi-major axis [m^1/2]
-    const double e;       ///< Eccentricity [-]
-    const double i_0;     ///< Inclination angle at reference time [rad]
-    const double Omega_0; ///< Longitude of the ascending node at reference time [rad]
-    const double omega;   ///< Argument of perigee [rad]
-    const double M_0;     ///< Mean anomaly at reference time [rad]
+    double sqrt_A{};  ///< Square root of the semi-major axis [m^1/2]
+    double e{};       ///< Eccentricity [-]
+    double i_0{};     ///< Inclination angle at reference time [rad]
+    double Omega_0{}; ///< Longitude of the ascending node at reference time [rad]
+    double omega{};   ///< Argument of perigee [rad]
+    double M_0{};     ///< Mean anomaly at reference time [rad]
 
     // -------------------------------------- Pertubation Parameters -----------------------------------------
 
-    const double delta_n;   ///< Mean motion difference from computed value [rad/s]
-    const double Omega_dot; ///< Rate of change of right ascension [rad/s]
-    const double i_dot;     ///< Rate of change of inclination [rad/s]
-    const double Cus;       ///< Amplitude of the sine harmonic correction term to the argument of latitude [rad]
-    const double Cuc;       ///< Amplitude of the cosine harmonic correction term to the argument of latitude [rad]
-    const double Cis;       ///< Amplitude of the sine harmonic correction term to the angle of inclination [rad]
-    const double Cic;       ///< Amplitude of the cosine harmonic correction term to the angle of inclination [rad]
-    const double Crs;       ///< Amplitude of the sine harmonic correction term to the orbit radius [m]
-    const double Crc;       ///< Amplitude of the cosine harmonic correction term to the orbit radius [m]
+    double delta_n{};   ///< Mean motion difference from computed value [rad/s]
+    double Omega_dot{}; ///< Rate of change of right ascension [rad/s]
+    double i_dot{};     ///< Rate of change of inclination [rad/s]
+    double Cus{};       ///< Amplitude of the sine harmonic correction term to the argument of latitude [rad]
+    double Cuc{};       ///< Amplitude of the cosine harmonic correction term to the argument of latitude [rad]
+    double Cis{};       ///< Amplitude of the sine harmonic correction term to the angle of inclination [rad]
+    double Cic{};       ///< Amplitude of the cosine harmonic correction term to the angle of inclination [rad]
+    double Crs{};       ///< Amplitude of the sine harmonic correction term to the orbit radius [m]
+    double Crc{};       ///< Amplitude of the cosine harmonic correction term to the orbit radius [m]
 
     // ----------------------------------------------- Other -------------------------------------------------
 
@@ -91,7 +91,7 @@ class GPSEphemeris final : public SatNavData
     /// Derived from an URA index of the SV for the standard positioning service user.
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.3, p.92ff
-    const double svAccuracy;
+    double svAccuracy{};
 
     /// @brief SV health
     ///
@@ -100,7 +100,7 @@ class GPSEphemeris final : public SatNavData
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.4, p. 94
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.5.1.3, p. 117ff
-    const uint8_t svHealth;
+    uint8_t svHealth{};
 
     /// @brief Indicate which code(s) is (are) commanded ON for the in-phase component of the L2 channel.
     ///
@@ -112,7 +112,7 @@ class GPSEphemeris final : public SatNavData
     /// These bits provide no indication of which code(s), if any, may be commanded ON for the quadrature component of the L2 channel.
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.2, p. 92
-    const uint8_t L2ChannelCodes;
+    uint8_t L2ChannelCodes{};
 
     /// @brief Data Flag for L2 P-Code
     ///
@@ -120,19 +120,23 @@ class GPSEphemeris final : public SatNavData
     /// This bit provides no indication of whether LNAV data is or is not present on any code modulated on the quadrature component of the L2 channel.
     ///
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.6, p. 95
-    const bool L2DataFlagPCode;
+    bool L2DataFlagPCode{};
 
     /// @brief Estimated Group Delay Differential. L1 and L2 correction term [s]
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.3.1.7, p. 95
-    const double T_GD;
+    double T_GD{};
 
     /// @brief Fit Interval of ephemerides [h]
     /// @note See \cite IS-GPS-200M GPS ICD, ch. 20.3.3.4.1, p.102
-    const double fitInterval;
+    double fitInterval{};
 
     // #######################################################################################################
     //                                               Functions
     // #######################################################################################################
+
+    /// @brief Default Constructor
+    /// @param[in] toc Time the Clock information is calculated (Time of Clock)
+    explicit GPSEphemeris(const InsTime& toc);
 
     /// @brief Constructor
     /// @param[in] toc Time the Clock information is calculated (Time of Clock)

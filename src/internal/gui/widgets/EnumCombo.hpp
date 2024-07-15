@@ -58,15 +58,16 @@ bool EnumCombo(const char* label, T& enumeration, size_t startIdx = 0)
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in] enumeration1 Reference to the first enumeration variable to select
 /// @param[in] enumeration2 Reference to the second enumeration variable to set to the same value as the first one
+/// @param[in] previewAppendix Additional text to show in the combo preview
 /// @return True if the value changed
 /// @attention The Enum type needs a last element called 'COUNT'
 template<typename T>
-bool EnumCombo(const char* label, T& enumeration1, T& enumeration2)
+bool EnumCombo(const char* label, T& enumeration1, T& enumeration2, const char* previewAppendix = "")
 {
     bool clicked = false;
-    std::string previewText = (enumeration1 == enumeration2
-                                   ? NAV::to_string(enumeration1)
-                                   : fmt::format("{} | {}", NAV::to_string(enumeration1), NAV::to_string(enumeration2)));
+    std::string previewText = enumeration1 == enumeration2
+                                  ? fmt::format("{}{}", NAV::to_string(enumeration1), previewAppendix)
+                                  : fmt::format("{} | {}{}", NAV::to_string(enumeration1), NAV::to_string(enumeration2), previewAppendix);
     if (ImGui::BeginCombo(label, previewText.c_str()))
     {
         for (size_t i = 0; i < static_cast<size_t>(T::COUNT); i++)

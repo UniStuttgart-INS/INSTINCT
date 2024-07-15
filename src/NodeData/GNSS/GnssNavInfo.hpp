@@ -106,12 +106,12 @@ class GnssNavInfo
                 std::string ret;
                 for (const auto& navData : m_satellites.at(satId).getNavigationData())
                 {
-                    ret += fmt::format("[{} - diff {:.0f}s], ", navData->refTime, std::abs((navData->refTime - recvTime).count()));
+                    ret += fmt::format("[{} - diff {:.0f}s], ", navData->refTime.toYMDHMS(GPST), std::abs((navData->refTime - recvTime).count()));
                 }
                 return ret.substr(0, ret.length() - 2);
             };
 
-            LOG_TRACE("[{}][{}]: No navigation data found. Available data are at time: {}", satId, recvTime, printNavData());
+            LOG_TRACE("[{}][{}]: No navigation data found. Available data are at time: {}", satId, recvTime.toYMDHMS(GPST), printNavData());
         }
 
         return satNavData;
@@ -150,6 +150,7 @@ class GnssNavInfo
     {
         double a0 = std::nan(""); ///< a0 / tau_c Coefficient of linear polynomial [s] Δt = a0 + a1 * (t - t_ref)
         double a1 = std::nan(""); ///< a1 Coefficient of linear polynomial [s/s]
+        // TODO: Add a2 value
     };
 
     /// Time system correction parameters. Difference between GNSS system time and UTC or other time systems

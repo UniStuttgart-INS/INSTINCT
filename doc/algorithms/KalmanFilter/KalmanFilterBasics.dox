@@ -1,0 +1,384 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file KalmanFilterBasics.dox
+// @brief KF Basics documentation
+// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
+// @date 2023-09-09
+
+namespace Instinct {
+
+/** \page KalmanFilterBasics Basics about Kalman Filtering and how it is used in INSTINCT
+
+\section KalmanFilterBasics-Basic Basic relations
+We are going to postulate the following things about the **Kalman filter**
+- The  **Kalman filter** algorithm directly emerges from Bayes' Thereom (we are going to show this below)
+- The  **Linear Kalman filter** is the best estimator in case we are dealing only with Gaussian probability density functions
+- The  **Linear Kalman filter** algorithm consists of two parts - prediction and update/correction - which can be executed continuously one after each other, while carrying the probability density function at any given epoch.
+
+For any multivariate Gaussian state of dimension \f$n\f$, we can express its Gaussian probability density function as
+
+\anchor eq-Gaussian \f{equation}{
+p(\boldsymbol{x})=\det((2\pi)^n\boldsymbol{\Sigma})^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right)
+\f}
+
+
+![1D Gaussian distribution](KalmanFilterBasics-1DGaussian.png){width=400} ![Surface of equal probability of a 3D Gaussian](KalmanFilterBasics-3DGaussian.png){width=200}
+
+The basic idea of the Kalman filter is that both, prediction and update are represented by linear function/transformations between the state-space respectively the observation space.
+\anchor eq-predictation_and_observation_model \f{equation}{
+\begin{aligned}
+\boldsymbol{x}_t&=\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\varepsilon}_t\\
+\boldsymbol{z}_t&=\boldsymbol{H}_t\boldsymbol{x}_t+\boldsymbol{\upsilon}_t
+\end{aligned}
+\f}
+The following table summarizes the meaning of these variables.
+
+| Variable  | Meaning
+|---|---|
+|\f$\boldsymbol{\Phi}_t\f$ | \f$(n\times n)\f$ state transition matrix, which describes the linear relation between the state at time \f$(t-1)\f$ and \f$t\f$.  |
+|\f$\boldsymbol{B}_t\f$   | (linear) control-input model which is applied to the control vector \f$ \boldsymbol{u}_t\f$ (note: in many cases )\f$ \boldsymbol{u}_t\f$ is zero, in particular when we deal with an error-state Kalman filter |
+|\f$\boldsymbol{H}_t\f$   | observation model, which linearly maps the state space into the observation space  |
+|\f$\boldsymbol{\varepsilon}_t\f$  | process noise, which is assumed to be drawn from a zero mean multivariate normal distribution,  with covariance \f$ \boldsymbol{Q}_t \f$ so that \f$ \boldsymbol{\varepsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{Q}_t )\f$ |
+|\f$\boldsymbol{\upsilon}_t\f$  | observation noise, which is assumed to be zero mean Gaussian white noise with covariance \f$ \boldsymbol{R}_t \f$ so that \f$ \boldsymbol{\upsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{R}_t )\f$   |
+
+Considering now that we have a linear prediction model described above, one can compute the Gaussian probability density function after predication as
+\anchor eq-prediction \f{equation}{
+	p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})=\det((2\pi)^n\boldsymbol{Q}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right).
+\f}
+
+In a similar way, one can derive the Gaussian probability density function after after making noisy observations as
+\anchor eq-measurement \f{equation}{
+	p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)=\det((2\pi)^m\boldsymbol{R}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)\right)
+\f}.
+
+\subsection KalmanFilterBasics-Bayes Bayes' Theorem
+
+Assumption (not proven here): Prediction and update of states with underlying Gaussian distributions lead to Gaussian distributions again. Thus, one can make use of Bayes' Theorem which states that prediction can be understood as convolution of the prior probability density function (PDF), here called "belief" \f$ bel(\boldsymbol{x}_t)\f$ with the PDF of the prediction. This means, prediction can be understood as
+\anchor eq-Bayes-prediction \f{equation}{
+bel^-(\boldsymbol{x}_t)=\int {p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})}\cdot {bel(\boldsymbol{x}_{t-1})}\cdot d\boldsymbol{x}_{t-1}
+\f}
+where superscript \f${\,}^{-}\f$ indicates that we obtain a predicted belief from this equation. Moreover, we know from Bayes' Theorem that observation of a state is equal to multiplication of the PDF of the (predicted belief) with PDF of the observation. This means
+\anchor eq-Bayes-update \f{equation}{
+bel(\boldsymbol{x}_t)^+=\eta\cdot p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)\cdot bel^-(\boldsymbol{x}_t)
+\f}
+where superscript \f${\,}^{+}\f$ indicates that we obtain a new belief after making an observation which depends on the state. The factor \f$\eta\f$ makes sure that the obtained Gaussian fulfills the normalization criteria, i.e. its hyper-volume is equal to \f$1.0\f$.
+
+
+\subsection KalmanFilterBasics-Prediction Using Bayes' Theorem for Prediction
+Putting the PDF for prediction into Bayes' Theorem we obtain
+\anchor eq-Bayes-prediction01 \f{equation}{
+bel^-(\boldsymbol{x}_t) =\eta\int \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right) \exp\left(-\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\right)\cdot d\boldsymbol{x}_{t-1}
+\f}
+where \f$ \boldsymbol{\mu}_{t-1}\f$ represents the expectation value of the belief before prediction. This can be formally written as
+\anchor eq-Bayes-prediction02 \f{equation}{
+bel^-(\boldsymbol{x}_t)=\eta\int \exp(-L_t)\cdot d\boldsymbol{x}_{t-1}
+\f}
+where
+\anchor eq-Bayes-prediction03 \f{equation}{
+L_t=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
++\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1}).
+\f}
+The basic idea is now to split  \f$ L_t\f$ so that it contains two terms, from which only one depends on \f$\boldsymbol{x}_t\f$, i.e.
+\anchor eq-Bayes-prediction04 \f{equation}{
+L_t=L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)+L_t(\boldsymbol{x}_t).
+\f}
+Thus we obtain
+\anchor eq-Bayes-prediction05 \f{equation}{
+bel^-(\boldsymbol{x}_t)=\eta\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)-L_t(\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
+\f}
+which can be simplified to
+\anchor eq-Bayes-prediction06 \f{equation}{
+bel^-(\boldsymbol{x}_t)=\eta\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
+\f}
+since the term \f$ L_t(\boldsymbol{x}_t)\f$ can be extracted from the integral as it does not depend on \f$ \boldsymbol{x}_{t-1}\f$.
+Moreover, as we know that the outcome from this function must be a Gaussian again, we can write this as
+\anchor eq-Bayes-prediction07 \f{equation}{
+bel^-(\boldsymbol{x}_t)=\eta'\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}
+\f}
+The Gaussian probability density function reaches its highest value for its the expectation value. Thus, if we differentiate the exponent in the Gaussian PDF and set the result equal to zero we find its expectation value. Thus, we find
+\anchor eq-Bayes-prediction08 \f{equation}{
+\frac{\partial L_t}{\partial \boldsymbol{x}_{t-1}} = \boldsymbol{0} =-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
+\f}
+which yields
+\anchor eq-Bayes-prediction09 \f{equation}{
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\\[2mm]
+\f}
+This can be further re-arranged to
+\anchor eq-Bayes-prediction10 \f{eqnarray}{
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}-\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\f}
+Moreover, we know that double differentiation of the exponent provides us with the information matrix / weight matrix, i.e. the inverse of the covariance matrix. Thus, we obtain
+\anchor eq-Bayes-prediction11 \f{equation}{
+\frac{\partial^2 L_t}{\partial \boldsymbol{x}^2_{t-1}}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}^T_t+\boldsymbol{\Sigma}^{-1}_{t-1}=:\boldsymbol{\Psi}^{-1}_t
+\f}
+which we can use to find an alternative notation for the findings before
+\anchor eq-Bayes-prediction12 \f{eqnarray}{
+\Leftrightarrow\qquad&\boldsymbol{\Psi}^{-1}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+\Leftrightarrow\qquad&\boldsymbol{x}_{t-1}=\boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\f}
+Therefore we can re-write the exponent as
+\anchor eq-Bayes-prediction13 \f{equation}{
+L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t) =\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
+\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
+\f}
+Now we are able to compute the term \f$ L_t\f$which only one depends on \f$\boldsymbol{x}_t\f$
+\anchor eq-Bayes-prediction14 \f{equation}{
+L_t(\boldsymbol{x}_t)=L_t-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)
+=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
++\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
+-\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
+\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
+\f}
+This leads to
+\anchor eq-Bayes-prediction15 \f{equation}{
+L_t(\boldsymbol{x}_t)=\underline{\underline{\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)}
++\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+\underline{\underline{+\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}}+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\underline{\underline{-\frac{1}{2}\boldsymbol{x}^T_{t-1}(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}}}
+\underline{+\boldsymbol{x}^T_{t-1}\left(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\right)}
+-\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
+\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\f}
+which simplifies to
+\anchor eq-Bayes-prediction16 \f{equation}{
+L_t(\boldsymbol{x}_t)=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}-\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\f}
+Based on this, we can differentiate w.r.t. to  \f$\boldsymbol{x}_t\f$ in order to obtain the expectation value, i.e.
+\anchor eq-Bayes-prediction17 \f{equation}{
+\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}= \boldsymbol{0} = \boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
+\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\f}
+respectively,
+\anchor eq-Bayes-prediction18 \f{equation}{
+\boldsymbol{0}=\left(\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\right)(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+\f}
+If we use the matrix lemma
+\anchor eq-Bayes-prediction19 \f{equation}{
+\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\\[6mm]
+\f}
+We can further simplify and obtain
+\anchor eq-Bayes-prediction20 \f{equation}{
+\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}=\boldsymbol{0}=
+(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\f}
+which turns out to read as
+\anchor eq-Bayes-prediction21 \f{equation}{
+(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\f}
+This can be written also as
+\anchor eq-Bayes-prediction22 \f{eqnarray}{
+\boldsymbol{x}_t&=\boldsymbol{B}_t\boldsymbol{u}_t+\underset{\boldsymbol{\Phi}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}{\underbrace{(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}}\cdot              \underset{(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}{\underbrace{(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}}}\boldsymbol{\mu}_{t-1}\notag\\
+&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\cdot\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{I}+\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t)(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}}\cdot\boldsymbol{\mu}_{t-1}\notag\\
+&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}
+\f}
+We also find the covariance after prediction, from the second derivative, i.e.
+\anchor eq-Bayes-prediction23 \f{equation}{
+\frac{\partial^2 L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}^2_t}=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1} \quad \Rightarrow \quad \bar{\boldsymbol{\Sigma}}_t^{-1} = (\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}
+\f}
+Thus, in summary we could prove that the prediction step in the linear Kalman filter turns out to be rather simple, ie.
+\anchor eq-Bayes-prediction_final \f{eqnarray}{
+\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t\\
+\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\f}
+where the superscript  \f$-\f$ indicates, that we deal with the predicted state and the covariance, respectively.
+
+\subsection KalmanFilterBasics-Update Using Bayes' Theorem for Update/Correction
+As for the update step (we will call it ''update'' hereafter although one might also see it as ''correction'' step), we start with Bayes' Theorem that tell us the conditional likelihood in case we observe an uncertain state. This can be written as
+\anchor eq-Bayes-update01 \f{equation}{
+bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot\underset{\sim\mathcal{N}(\boldsymbol{z}_t;\boldsymbol{H}_t\boldsymbol{x}_t,\boldsymbol{R}_t)}{\underbrace{p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)}}\cdot \underset{\sim\mathcal{N}(\boldsymbol{x}_t;\boldsymbol{\mu}_t^{-},\boldsymbol{\Sigma}_t^{-})}{\underbrace{\overline{bel}(\boldsymbol{x}_t)}}
+\f}
+where \f$\boldsymbol{\eta}\f$ is a factor that normalizes the product on the right side, so that a proper PDF is obtained. Knowing know that everything is Gaussian, including the term on the left side, we can write above's equation as
+\anchor eq-Bayes-update02 \f{equation}{
+bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
+\f}
+where
+\anchor eq-Bayes-update03 \f{equation}{
+\boldsymbol{J}_t=\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})^T(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
+\f}
+Like before, we can find the expectation value of this function, by differentiating the term \f$\boldsymbol{J}_t\f$ and setting the result equal to zero.This means
+\anchor eq-Bayes-update04 \f{equation}{
+\frac{\partial\boldsymbol{J}_t}{\partial \boldsymbol{x}_t}=\boldsymbol{0} = -\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
+\f}
+which can be rearranged to
+\anchor eq-Bayes-update05 \f{equation}{
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})=(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\f}
+The second derivative of \f$\boldsymbol{J}_t\f$ provides us the inverse of the covariance matrix, i.e.
+\anchor eq-Bayes-update06 \f{equation}{
+\frac{\partial^2 \boldsymbol{J}_t}{\partial \boldsymbol{x}^2_t}=\boldsymbol{\Sigma}_t^{-1}
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1}
+\f}
+which can be rewritten as
+\anchor eq-Bayes-update07 \f{equation}{
+\boldsymbol{\Sigma}_t=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\[2mm] % 3.37
+\f}
+The equation that hold the expectation value can be re-written to
+\anchor eq-Bayes-update08 \f{eqnarray}{
+&\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})\\
+&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+}+\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})\\
+&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\f}
+which in turn allows us to identify
+\anchor eq-Bayes-update09 \f{equation}{
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\f}
+Thus, we can write
+\anchor eq-Bayes-update10 \f{equation}{
+\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\boldsymbol{\mu}_t-\boldsymbol{\mu}_t^{-}
+\f}, or by using the so-called Kalman gain
+\anchor eq-Bayes-update11 \f{equation}{
+\boldsymbol{K}_t=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t
+\f}
+we obtain a very simple rule how the update has to be computed
+\anchor eq-Bayes-update12 \f{equation}{
+\boldsymbol{\mu}_t^{+}=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) %3.
+\f}
+However, we might want a more straightforward expression for the Kalman gain, that contains only the predicted covariance and not the one after making observations. Thus, we do a series of mathematical tricks and obtain
+\anchor eq-Bayes-update13 \f{eqnarray}{
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\\
+&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}}}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{R}^{-1}_t\boldsymbol{R}_t}})(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{\Sigma}_t^{-})^{-1}\boldsymbol{\Sigma}_t^{-}}}\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{\Sigma}_t\boldsymbol{\Sigma}^{-1}_t}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}
+\f}
+We can also find an easier expression for the updated covariance matrix, if we use a matrix lemma and reformulate
+\anchor eq-Bayes-update14 \f{equation}{
+((\boldsymbol{\Sigma}_t^{-})^{-1}+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t)^{-1}=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}^T_t\boldsymbol{\Sigma}_t^{-}
+\f}
+With that we obtain
+\anchor eq-Bayes-update15 \f{eqnarray}{
+\boldsymbol{\Sigma}_t&=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\
+&=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\\
+&=[\boldsymbol{I}-\underset{=\boldsymbol{K}_t}{\underbrace{\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}}}\boldsymbol{H}_t]\boldsymbol{\Sigma}_t^{-}\\
+&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\f}
+
+Putting everything together we find for the update step the following very simple rules
+\anchor eq-Bayes-update-final \f{eqnarray}{
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
+\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\f}
+
+\subsection KalmanFilterBasics-Summary Kalman filtering at a glance
+Assuming that we sequentially make predictions o
+\anchor eq-Bayes-summary01 \f{eqnarray}{
+\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}^{+}+\boldsymbol{B}_t\boldsymbol{u}_t\\
+\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^{+}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\f}
+and update the state and its covariance
+\anchor eq-Bayes-summary02 \f{eqnarray}{
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
+\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\f}
+we can use the Kalman filter as the optimal Bayesian estimator assuming that all uncertainties are modeled by multivariate Gaussians. This is visualized in the following figure as well.
+
+![Kalman filter as Bayesing estimator based on Gaussians](KalmanFilterBasics_BayesianwithGaussians.png){width=760}
+
+
+\subsection KalmanFilterBasics-SQR Square root implementation of the Kalman filter
+There are many reasons, why the covariance matrix of Kalman Filter can become singular. Mostly very small variances of the process noise or measurement noise, large differences in the magnitude of the state parameters or generally weakly conditions observation conditions, lead to singular or close-to singular matrices. In order to overcome or slightly improve such conditions, it is possible to describe the Kalman filter in its so-called square root form. Therefore it is important to understand how the square root of a matrix can be computed. Basically there are the following two possibilites for defining the square root of a matrix \f$\boldsymbol{A}\f$
+\anchor eq-SQR01 \f{equation}{
+\boldsymbol{A} = \sqrt{\boldsymbol{A}}^T \sqrt{\boldsymbol{A}} \quad \text{resp.} \quad \boldsymbol{A^2} = \boldsymbol{A}^T \boldsymbol{A}
+\f}
+Either of the two definitions can be achieved by the following three matrix decomposition methods
+- Cholesky-Decomposition
+\anchor eq-SQR02 \f{equation}{
+\boldsymbol{A} = \boldsymbol{\Gamma}_{\boldsymbol{A}}^T \boldsymbol{\Gamma}_{\boldsymbol{A}}
+\f}
+- QR-Decomposition
+\anchor eq-SQR03 \f{eqnarray}{
+\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{R} \\
+\boldsymbol{A}^2 =  \boldsymbol{R}^T \boldsymbol{Q}^T  \boldsymbol{Q}\boldsymbol{R}  = \boldsymbol{R}^T \boldsymbol{R} \\
+\boldsymbol{R} = \boldsymbol{\Gamma}_{\boldsymbol{A}^2}
+\f}
+- SVD-Decomposition
+\anchor eq-SQR04 \f{eqnarray}{
+\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{\Lambda}\boldsymbol{Q}^T   \\
+\boldsymbol{A}^2 =  \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2} \boldsymbol{\Lambda}^{1/2} \boldsymbol{Q}^T  \\
+ \sqrt{\boldsymbol{A}}  = \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2}
+\f}
+We (and INSTINCT) will make use of the QR decomposition in order to handle the Kalman filter in square root form. However, for the initialization of the filter, one needs to compute the square root of the initial covariance matrix. This is happening via a simple Cholesky decompositon. After that, only QR decompositions of the type
+\anchor eq-SQR05 \f{equation}{
+\boldsymbol{Q}, \boldsymbol{R} = qr\left(
+\begin{bmatrix}
+ \sqrt{\boldsymbol{A}} \\
+  \sqrt{\boldsymbol{B}}
+\end{bmatrix}
+ \right)
+\f}
+are needed. If we define the operator  \f$qr_R (\cdot,\cdot)\f$ which returns us the  \f$\boldsymbol{R}\f$ matrix of the QR decomposition, we can write
+\anchor eq-SQR06 \f{equation}{
+\boldsymbol{R} = qr_R ( \sqrt{\boldsymbol{A}},\sqrt{\boldsymbol{B}})
+\f}
+If can be easily proven that \f$\boldsymbol{R}\f$ represents
+\anchor eq-SQR07 \f{equation}{
+\boldsymbol{R} = \sqrt{\boldsymbol{A} +\boldsymbol{B}}
+\f}
+
+If we start with the prediction step
+\anchor eq-SQR08 \f{equation}{
+\boldsymbol{\Sigma}_t^- =\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^+\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\f}
+We can write this (assuming we have Cholesky decomposed the covariance matrix and the process noise matrix) as
+\anchor eq-SQR09 \f{equation}{
+\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
+=\boldsymbol{\Phi}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}  \boldsymbol{\Phi}^T_t+
+\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
+\f}
+This relation can also be written in the form
+\anchor eq-SQR10 \f{equation}{
+\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-} =
+\begin{bmatrix}
+  \boldsymbol{\Phi}_t\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} & \boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t}
+\end{bmatrix}
+\begin{bmatrix}
+  \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Phi}_t^T  \\
+   \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
+\end{bmatrix}
+\f}
+Thus, as shown before, we can use the QR decomposition to obtain
+\anchor eq-SQR11 \f{equation}{
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} ,  \boldsymbol{\Gamma}_{\boldsymbol{Q}_t})
+\f}
+
+The update step is a little bit more complicated, as we need to compute the Kalman gain by the help of the innovation matrix. Thus, the latter is QR decomposed first
+\anchor eq-SQR12 \f{equation}{
+\boldsymbol{\Gamma}_{\boldsymbol{S}_t}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t}^-}\boldsymbol{H}_t^T ,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t})
+\f}
+where \f$\boldsymbol{\Gamma}_{\boldsymbol{R}_t}\f$ is the square root of the measurement noise matrix (note: since this matrix is usually a diagonal matrix this square root of it can be compute straightforward without Cholesky decomposition)
+One can now compute the Kalman gain as
+\anchor eq-SQR13 \f{equation}{
+\boldsymbol{K}_t   =
+\left(
+\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1} (\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1})^T
+\boldsymbol{H}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
+\right)^T
+\f}
+With that one can compute the updated (square root) covariance matrix as
+\anchor eq-SQR14 \f{equation}{
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^+}  =
+qr_R (
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}(\boldsymbol{I} -\boldsymbol{K}_t \boldsymbol{H}_t)^T,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t} \boldsymbol{K}_t^T
+)
+\f}
+Prediction and update of the state works like in the standard Kalman filter, since all necessary matrices are available anyway.
+
+Note: While the square root form of the Kalman filter provides more numerical stability, and better balancing of the matrices, this advantage is lost at the point where the user need to back-compute the covariances matrices from their square root equivalent.
+
+*/
+
+}

@@ -499,7 +499,7 @@ void NAV::VectorNavDataLogger::writeObservation(NAV::InputPin::NodeDataQueue& qu
                 }
             }
 
-            _filestream << std::endl;
+            _filestream << std::endl; // NOLINT(performance-avoid-endl)
             _headerWritten = true;
         }
 

@@ -100,10 +100,6 @@ class PosVelAttInitializer : public Node
     /// @param[in] obs Ublox Data
     void receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs);
 
-    /// @brief Receive Ublox Observations
-    /// @param[in] obs RtklibPos Data
-    void receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs);
-
     /// @brief Receive Pos Observations
     /// @param[in] obs Pos Data
     void receivePosObs(const std::shared_ptr<const Pos>& obs);

@@ -764,6 +764,21 @@ bool operator!=(const Code::Enum& lhs, const Code& rhs)
     return !(lhs == rhs);
 }
 
+bool operator<(const Code& lhs, const Code& rhs)
+{
+    return lhs.getEnumValue() < rhs.getEnumValue();
+}
+
+bool operator<(const Code& lhs, const Code::Enum& rhs)
+{
+    return lhs.getEnumValue() < rhs;
+}
+
+bool operator<(const Code::Enum& lhs, const Code& rhs)
+{
+    return lhs < rhs.getEnumValue();
+}
+
 // #########################################################################################################################################
 
 Code operator&(Code lhs, SatelliteSystem_ rhs)
@@ -1181,7 +1196,7 @@ void from_json(const json& j, Code& data)
     data = Code(Code::Set(j.get<std::string>()));
 }
 
-bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq)
+bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq, bool singleSelect)
 {
     bool valueChanged = false;
     if (ImGui::BeginCombo(label, std::string(code).c_str(), ImGuiComboFlags_HeightLargest))
@@ -1239,13 +1254,15 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
                                 {
                                     if (checked)
                                     {
-                                        code |= co;
+                                        if (singleSelect) { code = co; }
+                                        else { code |= co; }
+                                        valueChanged = true;
                                     }
-                                    else
+                                    else if (!singleSelect)
                                     {
                                         code &= ~co;
+                                        valueChanged = true;
                                     }
-                                    valueChanged = true;
                                 }
                                 if (ImGui::IsItemHovered())
                                 {
@@ -1270,3 +1287,8 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
 }
 
 } // namespace NAV
+
+std::ostream& operator<<(std::ostream& os, const NAV::Code& obj)
+{
+    return os << fmt::format("{}", obj);
+}

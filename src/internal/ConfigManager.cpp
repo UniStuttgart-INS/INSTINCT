@@ -13,6 +13,8 @@
 #include <fstream>
 #include <iostream>
 #include <boost/program_options/parsers.hpp>
+#include <implot.h>
+#include <implot_internal.h>
 
 #include "internal/FlowManager.hpp"
 #include "util/Logger.hpp"
@@ -39,22 +41,23 @@ void NAV::ConfigManager::initialize()
         // clang-format off
         // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
         program_options.add_options()
-            ("config",            bpo::value<std::vector<std::string>>()->multitoken(),             "List of configuration files to read parameters from"                                     )
-            ("version,v",                                                                           "Display the version number"                                                              )
-            ("help,h",                                                                              "Display this help message"                                                               )
-            ("sigterm",           bpo::bool_switch()->default_value(false),                         "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"                                        )
-            ("duration",          bpo::value<size_t>()->default_value(0),                           "Program execution duration [sec]"                                                        )
-            ("nogui",             bpo::bool_switch()->default_value(false),                         "Launch without the gui"                                                                  )
-            ("noinit",            bpo::bool_switch()->default_value(false),                         "Do not initialize flows after loading them"                                              )
-            ("load,l",            bpo::value<std::string>(),                                        "Flow file to load"                                                                       )
-            ("rotate-output",     bpo::bool_switch()->default_value(false),                         "Create new folders for output files"                                                     )
-            ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                                )
-            ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                                )
-            ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                                 )
-            ("implot-config",     bpo::value<std::string>()->default_value("implot.json"),          "Config file to read implot settings from"                                                )
-            ("console-log-level", bpo::value<std::string>()->default_value("off"),                  "Log level on the console  (possible values: trace/debug/info/warning/error/critical/off" )
-            ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file (possible values: trace/debug/info/warning/error/critical/off" )
-            ("log-filter",        bpo::value<std::string>(),                                        "Filter for log messages"                                                                 )
+            ("config",            bpo::value<std::vector<std::string>>()->multitoken(),             "List of configuration files to read parameters from"                                         )
+            ("version,v",                                                                           "Display the version number"                                                                  )
+            ("help,h",                                                                              "Display this help message"                                                                   )
+            ("sigterm",           bpo::bool_switch()->default_value(false),                         "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"                                            )
+            ("duration",          bpo::value<size_t>()->default_value(0),                           "Program execution duration [sec]"                                                            )
+            ("nogui",             bpo::bool_switch()->default_value(false),                         "Launch without the gui"                                                                      )
+            ("noinit",            bpo::bool_switch()->default_value(false),                         "Do not initialize flows after loading them"                                                  )
+            ("load,l",            bpo::value<std::string>(),                                        "Flow file to load"                                                                           )
+            ("rotate-output",     bpo::bool_switch()->default_value(false),                         "Create new folders for output files"                                                         )
+            ("output-path,o",     bpo::value<std::string>()->default_value("logs"),                 "Directory path for logs and output files"                                                    )
+            ("input-path,i",      bpo::value<std::string>()->default_value("data"),                 "Directory path for searching input files"                                                    )
+            ("flow-path,f",       bpo::value<std::string>()->default_value("flow"),                 "Directory path for searching flow files"                                                     )
+            ("implot-config",     bpo::value<std::string>()->default_value("implot.json"),          "Config file to read implot settings from"                                                    )
+            ("global-log-level",  bpo::value<std::string>()->default_value("trace"),                "Global log level of all sinks (possible values: trace/debug/info/warning/error/critical/off" )
+            ("console-log-level", bpo::value<std::string>()->default_value("info"),                 "Log level on the console      (possible values: trace/debug/info/warning/error/critical/off" )
+            ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file     (possible values: trace/debug/info/warning/error/critical/off" )
+            ("log-filter",        bpo::value<std::string>(),                                        "Filter/Regex for log messages"                                                               )
         ;
         // clang-format on
     }
@@ -109,25 +112,18 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
 {
     LOG_DEBUG("{} arguments were provided over the command line", argc);
 
-    if (vm["console-log-level"].as<std::string>() != "trace"
-        && vm["console-log-level"].as<std::string>() != "debug"
-        && vm["console-log-level"].as<std::string>() != "info"
-        && vm["console-log-level"].as<std::string>() != "warning"
-        && vm["console-log-level"].as<std::string>() != "error"
-        && vm["console-log-level"].as<std::string>() != "critical"
-        && vm["console-log-level"].as<std::string>() != "off")
+    for (const char* logger : { "global-log-level", "console-log-level", "file-log-level" })
     {
-        LOG_CRITICAL("The command line argument 'console-log-level' has to be one of 'trace/debug/info/warning/error/critical/off' but the value '{}' was provided", vm["console-log-level"].as<std::string>());
-    }
-    if (vm["file-log-level"].as<std::string>() != "trace"
-        && vm["file-log-level"].as<std::string>() != "debug"
-        && vm["file-log-level"].as<std::string>() != "info"
-        && vm["file-log-level"].as<std::string>() != "warning"
-        && vm["file-log-level"].as<std::string>() != "error"
-        && vm["file-log-level"].as<std::string>() != "critical"
-        && vm["file-log-level"].as<std::string>() != "off")
-    {
-        LOG_CRITICAL("The command line argument 'file-log-level' has to be one of 'trace/debug/info/warning/error/critical/off' but the value '{}' was provided", vm["file-log-level"].as<std::string>());
+        if (vm[logger].as<std::string>() != "trace"
+            && vm[logger].as<std::string>() != "debug"
+            && vm[logger].as<std::string>() != "info"
+            && vm[logger].as<std::string>() != "warning"
+            && vm[logger].as<std::string>() != "error"
+            && vm[logger].as<std::string>() != "critical"
+            && vm[logger].as<std::string>() != "off")
+        {
+            LOG_CRITICAL("The command line argument '{}' has to be one of 'trace/debug/info/warning/error/critical/off' but the value '{}' was provided", logger, vm[logger].as<std::string>());
+        }
     }
 
     for (int i = 0; i < argc; i++)
@@ -185,7 +181,23 @@ void NAV::ConfigManager::SaveGlobalSettings()
     std::ofstream filestream(flow::GetConfigPath() / "globals.json");
     json j;
     j["colormaps"] = ColormapsGlobal;
-    filestream << std::setw(4) << j << std::endl;
+
+    ImPlotContext& gp = *ImPlot::GetCurrentContext();
+    j["selectedImPlotColormap"] = gp.Style.Colormap;
+
+    constexpr int CMAP_USER_START = ImPlotColormap_Greys + 2;
+    for (int i = CMAP_USER_START; i < gp.ColormapData.Count; ++i)
+    {
+        j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["name"] = gp.ColormapData.GetName(i);
+        j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["qual"] = gp.ColormapData.IsQual(i);
+        for (int c = 0; c < gp.ColormapData.GetKeyCount(i); ++c)
+        {
+            j["ImPlotColormaps"][static_cast<size_t>(i - CMAP_USER_START)]["colors"][static_cast<size_t>(c)] =
+                ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(i, c));
+        }
+    }
+
+    filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
 }
 
 void NAV::ConfigManager::LoadGlobalSettings()
@@ -204,5 +216,26 @@ void NAV::ConfigManager::LoadGlobalSettings()
     if (j.contains("colormaps"))
     {
         j.at("colormaps").get_to(ColormapsGlobal);
+    }
+    if (j.contains("ImPlotColormaps"))
+    {
+        for (size_t i = 0; i < j["ImPlotColormaps"].size(); ++i)
+        {
+            ImVector<ImVec4> custom;
+            for (const auto& c : j.at("ImPlotColormaps").at(i).at("colors"))
+            {
+                custom.push_back(c.get<ImVec4>());
+            }
+
+            ImPlot::AddColormap(j.at("ImPlotColormaps").at(i).at("name").get<std::string>().c_str(),
+                                custom.Data, custom.Size, j.at("ImPlotColormaps").at(i).at("qual").get<bool>());
+            ImPlot::BustItemCache();
+        }
+    }
+    if (j.contains("selectedImPlotColormap"))
+    {
+        ImPlotContext& gp = *ImPlot::GetCurrentContext();
+        gp.Style.Colormap = j.at("selectedImPlotColormap").get<int>();
+        ImPlot::BustItemCache();
     }
 }

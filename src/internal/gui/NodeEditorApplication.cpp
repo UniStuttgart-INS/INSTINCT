@@ -19,6 +19,7 @@ namespace ed = ax::NodeEditor;
 #include "ImGuiFileDialog.h"
 
 #include "implot.h"
+#include <implot_internal.h>
 
 #include "internal/gui/Shortcuts.hpp"
 #include "internal/gui/TouchTracker.hpp"
@@ -104,6 +105,8 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     ImPlot::CreateContext();
+    ImPlot::GetStyle().Use24HourClock = true;
+
     imPlotReferenceStyle = ImPlot::GetStyle();
 
     std::filesystem::path imPlotConfigFilepath = flow::GetConfigPath();
@@ -132,6 +135,27 @@ void NAV::gui::NodeEditorApplication::OnStart()
             j.at("implot").at("style").get_to(ImPlot::GetStyle());
         }
     }
+
+    // Add custom colormap and set as default. ConfigManager::LoadGlobalSettings then overrides this default selection if it is saved
+    ImPlotContext& gp = *ImPlot::GetCurrentContext();
+    ImVector<ImVec4> custom;
+    for (int c = 0; c < gp.ColormapData.GetKeyCount(ImPlotColormap_Deep); ++c)
+    {
+        custom.push_back(ImGui::ColorConvertU32ToFloat4(gp.ColormapData.GetKeyColor(ImPlotColormap_Deep, c)));
+    }
+    custom.push_back(ImColor(37, 109, 227));
+    custom.push_back(ImColor(239, 100, 21));
+    custom.push_back(ImColor(21, 228, 69));
+    custom.push_back(ImColor(239, 20, 28));
+    custom.push_back(ImColor(100, 64, 217));
+    custom.push_back(ImColor(164, 78, 2));
+    custom.push_back(ImColor(232, 39, 176));
+    custom.push_back(ImColor(255, 207, 31));
+    custom.push_back(ImColor(54, 228, 174));
+    ImPlot::AddColormap("DeepEx", custom.Data, custom.Size, true);
+    ImPlot::BustItemCache();
+    gp.Style.Colormap = gp.ColormapData.Count - 1;
+    ImPlot::BustItemCache();
 
     ConfigManager::LoadGlobalSettings();
 
@@ -1339,37 +1363,40 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("State: %s", Node::toString(node->getState()).c_str());
             ImGui::Text("Mode: %s", node->getMode() == Node::Mode::POST_PROCESSING ? "Post-processing" : "Real-time");
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
-                                false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
+            if (node->kind != Node::Kind::GroupBox)
             {
-                if (node->isInitialized()) { node->doReinitialize(); }
-                else { node->doInitialize(); }
-            }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
-            {
-                node->doDeinitialize();
-            }
-            if (ImGui::MenuItem("Wake Worker"))
-            {
-                node->wakeWorker();
-            }
-            ImGui::Separator();
-            if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
-            {
-                node->_showConfig = true;
-                node->_configWindowFocus = true;
-            }
-            if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, !node->isTransient()))
-            {
-                if (node->isDisabled())
+                if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "",
+                                    false, node->isInitialized() || node->getState() == Node::State::Deinitialized))
                 {
-                    node->doEnable();
+                    if (node->isInitialized()) { node->doReinitialize(); }
+                    else { node->doInitialize(); }
                 }
-                else
+                if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized()))
                 {
-                    node->doDisable();
+                    node->doDeinitialize();
                 }
-                flow::ApplyChanges();
+                if (ImGui::MenuItem("Wake Worker"))
+                {
+                    node->wakeWorker();
+                }
+                ImGui::Separator();
+                if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
+                {
+                    node->_showConfig = true;
+                    node->_configWindowFocus = true;
+                }
+                if (ImGui::MenuItem(node->isDisabled() ? "Enable" : "Disable", "", false, !node->isTransient()))
+                {
+                    if (node->isDisabled())
+                    {
+                        node->doEnable();
+                    }
+                    else
+                    {
+                        node->doDisable();
+                    }
+                    flow::ApplyChanges();
+                }
             }
             if (ImGui::MenuItem("Rename"))
             {
@@ -1655,18 +1682,38 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             }
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5F, 0.5F));
             ImGui::SetNextWindowSize(node->_guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
+            if (!node->_configWindowMutex.try_lock())
+            {
+                ImGui::SetNextWindowCollapsed(true, ImGuiCond_Always);
+                node->_configWindowForceCollapse = true;
+            }
+            else
+            {
+                node->_configWindowMutex.unlock();
+                if (node->_configWindowForceCollapse)
+                {
+                    LOG_TRACE("Setting next window collapsed: {}", node->_configWindowIsCollapsed);
+                    ImGui::SetNextWindowCollapsed(node->_configWindowIsCollapsed);
+                    node->_configWindowForceCollapse = false;
+                }
+            }
             if (ImGui::Begin(fmt::format("{} ({})", node->nameId(), node->type()).c_str(), &(node->_showConfig),
                              ImGuiWindowFlags_None))
             {
                 ImGui::PushFont(WindowFont());
                 bool locked = node->_lockConfigDuringRun && (node->callbacksEnabled || FlowExecutor::isRunning());
                 if (locked) { ImGui::BeginDisabled(); }
-                node->guiConfig();
+                if (!node->_configWindowForceCollapse)
+                {
+                    node->_configWindowIsCollapsed = false;
+                    node->guiConfig();
+                }
                 if (locked) { ImGui::EndDisabled(); }
                 ImGui::PopFont();
             }
             else // Window is collapsed
             {
+                if (!node->_configWindowForceCollapse) { node->_configWindowIsCollapsed = true; }
                 if (ImGui::IsWindowFocused())
                 {
                     ed::EnableShortcuts(true);

@@ -14,10 +14,13 @@
 #pragma once
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
-
 #include "NodeData/IMU/ImuObs.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
+
+#include "Navigation/INS/SensorCombiner/PinData.hpp"
+
+#include "internal/gui/widgets/TimeEdit.hpp"
 
 #include <deque>
 #include <utility>
@@ -61,147 +64,6 @@ class ImuFusion : public Imu
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Information about a sensor which is connected to a certain pin
-    struct PinData
-    {
-        // ------------------------------------------ State Units --------------------------------------------
-        /// Possible Units for the angular rate
-        enum class AngRateUnit
-        {
-            deg_s, ///< in [deg/s, deg/s, deg/s]
-            rad_s, ///< in [rad/s, rad/s, rad/s]
-        };
-
-        /// Possible Units for the acceleration
-        enum class AccelerationUnit
-        {
-            m_s2, ///< in [m/s², m/s², m/s²]
-        };
-
-        /// Possible Units for the angular acceleration
-        enum class AngularAccUnit
-        {
-            deg_s2, ///< in [deg/s², deg/s², deg/s²]
-            rad_s2, ///< in [rad/s², rad/s², rad/s²]
-        };
-
-        /// Possible Units for the jerk
-        enum class JerkUnit
-        {
-            m_s3, ///< in [m/s³, m/s³, m/s³]
-        };
-
-        // ---------------------------------------- Variance Units -------------------------------------------
-        /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
-        enum class AngRateVarianceUnit
-        {
-            rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
-            rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
-            deg2_s2, ///< Variance [deg²/s², deg²/s², deg²/s²]
-            deg_s,   ///< Standard deviation [deg/s, deg/s, deg/s]
-        };
-
-        /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
-        enum class AccelerationVarianceUnit
-        {
-            m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
-            m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
-        };
-
-        /// Possible Units for the variance for the process noise of the angular acceleration (standard deviation σ or Variance σ²)
-        enum class AngularAccVarianceUnit
-        {
-            rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
-            rad_s2,  ///< Standard deviation [rad/s², rad/s², rad/s²]
-            deg2_s4, ///< Variance [(deg^2)/(s^4), (deg^2)/(s^4), (deg^2)/(s^4)]
-            deg_s2,  ///< Standard deviation [deg/s², deg/s², deg/s²]
-        };
-
-        /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
-        enum class JerkVarianceUnit
-        {
-            m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
-            m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]
-        };
-
-        // --------------------------------- State unit and initialization -----------------------------------
-        /// GUI selection of the initial angular rate
-        Eigen::Vector3d initAngularRate{ 0, 0, 0 };
-        /// GUI selection of the initial angular acceleration
-        Eigen::Vector3d initAngularAcc{ 0, 0, 0 };
-        /// GUI selection of the initial acceleration
-        Eigen::Vector3d initAcceleration{ 0, 0, 0 };
-        /// GUI selection of the initial jerk
-        Eigen::Vector3d initJerk{ 0, 0, 0 };
-        /// GUI selection of the initial angular rate bias
-        Eigen::Vector3d initAngularRateBias{ 0, 0, 0 };
-        /// GUI selection of the initial angular acceleration bias
-        Eigen::Vector3d initAccelerationBias{ 0, 0, 0 };
-
-        /// GUI selection of the initial covariance diagonal values for angular rate (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceAngularRate{ 1, 1, 1 };
-        /// GUI selection of the initial covariance diagonal values for angular acceleration (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceAngularAcc{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the initial covariance diagonal values for acceleration (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceAcceleration{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the initial covariance diagonal values for jerk (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceJerk{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the initial covariance diagonal values for angular rate biases (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceBiasAngRate{ 1, 1, 1 };
-        /// GUI selection of the initial covariance diagonal values for acceleration biases (standard deviation σ or Variance σ²)
-        Eigen::Vector3d initCovarianceBiasAcc{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the angular acceleration process noise diagonal values
-        Eigen::Vector3d varAngularAccNoise{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the jerk process noise diagonal values
-        Eigen::Vector3d varJerkNoise{ 0.1, 0.1, 0.1 };
-        /// GUI selection of the process noise of the angular rate diagonal values (standard deviation σ or Variance σ²)
-        Eigen::Vector3d varBiasAngRateNoise = { 1, 1, 1 };
-        /// GUI selection of the process noise of the acceleration diagonal values (standard deviation σ or Variance σ²)
-        Eigen::Vector3d varBiasAccelerationNoise{ 0.1, 0.1, 0.1 };
-        /// Gui selection of the angular rate measurement uncertainty diagonal values
-        Eigen::Vector3d measurementUncertaintyAngularRate{ 1, 1, 1 };
-        /// Gui selection of the angular acceleration measurement uncertainty diagonal values
-        Eigen::Vector3d measurementUncertaintyAcceleration{ 0.1, 0.1, 0.1 };
-
-        /// Gui selection for the Unit of the initial angular rate
-        AngRateUnit initAngularRateUnit = AngRateUnit::deg_s;
-        /// Gui selection for the Unit of the initial acceleration
-        AccelerationUnit initAccelerationUnit = AccelerationUnit::m_s2;
-        /// Gui selection for the Unit of the initial angular acceleration
-        AngularAccUnit initAngularAccUnit = AngularAccUnit::deg_s2;
-        /// Gui selection for the Unit of the initial jerk
-        JerkUnit initJerkUnit = JerkUnit::m_s3;
-        /// GUI selection of the initial angular rate bias
-        AngRateUnit initAngularRateBiasUnit = AngRateUnit::deg_s;
-        /// GUI selection of the initial angular acceleration bias
-        AccelerationUnit initAccelerationBiasUnit = AccelerationUnit::m_s2;
-
-        /// Gui selection for the Unit of the initial covariance for the angular rate
-        AngRateVarianceUnit initCovarianceAngularRateUnit = AngRateVarianceUnit::deg_s;
-        /// Gui selection for the Unit of the initial covariance for the angular acceleration
-        AngularAccVarianceUnit initCovarianceAngularAccUnit = AngularAccVarianceUnit::deg_s2;
-        /// Gui selection for the Unit of the initial covariance for the acceleration
-        AccelerationVarianceUnit initCovarianceAccelerationUnit = AccelerationVarianceUnit::m_s2;
-        /// Gui selection for the Unit of the initial covariance for the jerk
-        JerkVarianceUnit initCovarianceJerkUnit = JerkVarianceUnit::m_s3;
-        /// Gui selection for the Unit of the initial covariance for the angular rate biases
-        AngRateVarianceUnit initCovarianceBiasAngRateUnit = AngRateVarianceUnit::deg_s;
-        /// Gui selection for the Unit of the initial covariance for the acceleration biases
-        AccelerationVarianceUnit initCovarianceBiasAccUnit = AccelerationVarianceUnit::m_s2;
-        /// Gui selection for the Unit of the angular acceleration process noise
-        AngularAccVarianceUnit varAngularAccNoiseUnit = AngularAccVarianceUnit::deg_s2;
-        /// Gui selection for the Unit of the jerk process noise
-        JerkVarianceUnit varJerkNoiseUnit = JerkVarianceUnit::m_s3;
-        /// Gui selection for the Unit of the process noise of the angular rate
-        AngRateVarianceUnit varBiasAngRateNoiseUnit = AngRateVarianceUnit::deg_s;
-        /// Gui selection for the Unit of the process noise of the acceleration
-        AccelerationVarianceUnit varBiasAccelerationNoiseUnit = AccelerationVarianceUnit::m_s2;
-        /// Gui selection for the unit of the angular rate's measurement uncertainty
-        AngRateVarianceUnit measurementUncertaintyAngularRateUnit = AngRateVarianceUnit::deg_s;
-        /// Gui selection for the unit of the acceleration's measurement uncertainty
-        AccelerationVarianceUnit measurementUncertaintyAccelerationUnit = AccelerationVarianceUnit::m_s2;
-    };
-
   protected:
     /// Position and rotation information for conversion from platform to body frame
     ImuPos _imuPos;
@@ -219,27 +81,6 @@ class ImuFusion : public Imu
     /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
     void updateNumberOfInputPins();
 
-    /// @brief Initializes the Kalman Filter
-    void initializeKalmanFilter();
-
-    /// @brief Initialization routines for 'manual' initialization, i.e. GUI inputs
-    std::pair<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>> initializeKalmanFilterManually();
-
-    /// @brief Initialization routines for 'automatic' initialization, i.e. init values are calculated by averaging the data in the first T seconds
-    void initializeKalmanFilterAuto();
-
-    /// @brief Calculates the mean values of each axis in a vector that contains 3d measurements of a certain sensor type
-    /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
-    /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
-    /// @return Vector of mean values in 3d of a certain sensor type
-    Eigen::Vector3d static mean(const std::vector<std::vector<double>>& sensorType, size_t containerPos);
-
-    /// @brief Calculates the variance of each axis in a vector that contains 3d measurements of a certain sensor type
-    /// @param[in] sensorType type of measurement, i.e. Acceleration or gyro measurements in 3d (axisIndex / msgIndex)
-    /// @param[in] containerPos position-Index in 'sensorType' where data starts (e.g. Accel at 0, Gyro at 3)
-    /// @return Vector of variance values in 3d of a certain sensor type
-    Eigen::Vector3d static variance(const std::vector<std::vector<double>>& sensorType, size_t containerPos);
-
     /// @brief Initializes the rotation matrices used for the mounting angles of the sensors
     void initializeMountingAngles();
 
@@ -247,28 +88,6 @@ class ImuFusion : public Imu
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvSignal(InputPin::NodeDataQueue& queue, size_t pinIdx);
-
-    /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] dt Time difference between two successive measurements
-    /// @return State-transition-matrix 𝚽
-    [[nodiscard]] Eigen::MatrixXd initialStateTransitionMatrix_Phi(double dt) const;
-
-    /// @brief Calculates the state-transition-matrix 𝚽
-    /// @param[in] Phi State transition matrix from previous iteration. Returns the matrix for the current iteration.
-    /// @param[in] dt Time difference between two successive measurements
-    void static stateTransitionMatrix_Phi(Eigen::MatrixXd& Phi, double dt);
-
-    /// @brief Calculates the process noise matrix Q
-    /// @param[in] Q Process noise matrix of the previous time step
-    /// @param[in] dt Time difference between two successive measurements
-    void processNoiseMatrix_Q(Eigen::MatrixXd& Q, double dt) const;
-
-    /// @brief Calculates the design matrix H
-    /// @param[in] DCM_accel Rotation matrix of mounting angles of an accelerometer w.r.t. a common reference
-    /// @param[in] DCM_gyro Rotation matrix of mounting angles of a gyroscope w.r.t. a common reference
-    /// @param[in] pinIndex Index of pin to identify sensor
-    /// @return Design matrix H
-    [[nodiscard]] Eigen::MatrixXd designMatrix_H(const Eigen::Matrix3d& DCM_accel, const Eigen::Matrix3d& DCM_gyro, size_t pinIndex) const;
 
     /// @brief Calculates the adaptive measurement noise matrix R
     /// @param[in] alpha Forgetting factor (i.e. weight on previous estimates), 0 < alpha < 1
@@ -290,48 +109,42 @@ class ImuFusion : public Imu
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
     /// @param[in] pinIndex Index of pin to identify sensor
-    void measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinIndex) const;
-
-    /// @brief Initial error covariance matrix P_0
-    /// @param[in] initCovariances Initial covariances of the states
-    /// @return The (_numStates) x (_numStates) matrix of initial state variances
-    [[nodiscard]] Eigen::MatrixXd initialErrorCovarianceMatrix_P0(std::vector<Eigen::Vector3d>& initCovariances) const;
+    void measurementNoiseMatrix_R(Eigen::MatrixXd& R, size_t pinIndex = 0) const;
 
     /// @brief Combines the signals
     /// @param[in] imuObs Imu observation
     void combineSignals(const std::shared_ptr<const ImuObs>& imuObs);
 
+    // --------------------------------------- Kalman filter config ------------------------------------------
     /// Number of input pins
     size_t _nInputPins = 2;
 
-    /// @brief Flag to check whether the design matrix H has been initialized
-    bool _designMatrixInitialized = false;
+    /// @brief Number of states estimated by the IRW-KF (angular rate, angular acceleration, specific force, jerk, all in 3D: 4*3 = 12)
+    const uint8_t _numStatesEstIRWKF = 12;
 
-    /// @brief Number of estimated states (accel and gyro)
-    uint8_t _numStatesEst = 12;
+    /// @brief Number of states estimated by the B-spline KF (3 stacked B-splines in 3D for angular rate and specific force: 3*3*2 = 18)
+    const uint8_t _numStatesEstBsplineKF = 18;
+
+    /// @brief Number of quadratic B-splines that make up the entire 3D stacked B-spline
+    const uint8_t _numBsplines = 9;
 
     /// @brief Number of states per pin (biases of accel and gyro)
-    uint8_t _numStatesPerPin = 6;
+    const uint8_t _numStatesPerPin = 6;
+
+    /// @brief Number of measurements overall
+    const uint8_t _numMeasurements = 6;
+
+    /// @brief Number of estimated states (depends on imuFusionType)
+    uint8_t _numStatesEst{};
 
     /// @brief Number of states overall
     uint8_t _numStates = 12;
 
-    /// @brief Number of measurements overall
-    uint8_t _numMeasurements = 6;
-
-    /// Data storage for each pin
-    std::vector<PinData> _pinData;
-
-    /// @brief Rotations of all connected accelerometers - key: pinIndex, value: Rotation matrix of the accelerometer platform to body frame
-    std::vector<Eigen::Matrix3d> _imuRotations_accel;
-
-    /// @brief Rotations of all connected gyros - key: pinIndex, value: Rotation matrix of the gyro platform to body frame
-    std::vector<Eigen::Matrix3d> _imuRotations_gyro;
-
     /// Kalman Filter representation
     KalmanFilter _kalmanFilter{ _numStates, _numMeasurements };
 
-    /// @brief Highest IMU sample rate (for time step in KF prediction)
+    // ---------------------------------------- Kalman filter init -------------------------------------------
+    /// @brief Highest IMU sample rate in [Hz] (for time step in KF prediction)
     double _imuFrequency{ 100 };
 
     /// @brief Time until averaging ends and filtering starts in [s]
@@ -340,26 +153,20 @@ class ImuFusion : public Imu
     /// @brief Time until averaging ends and filtering starts as 'InsTime'
     InsTime _avgEndTime;
 
-    /// @brief Saves the timestamp of the measurement before in [s]
-    InsTime _latestTimestamp{};
-
-    /// @brief Container for process noise of each state
-    std::vector<Eigen::Vector3d> _biasCovariances;
-
-    /// @brief Container for process noise of each state
-    std::vector<Eigen::Vector3d> _processNoiseVariances;
-
-    /// @brief Container for measurement noises of each sensor
-    std::vector<Eigen::Vector3d> _measurementNoiseVariances;
-
-    /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
-    bool _checkKalmanMatricesRanks = false;
-
-    /// @brief Check whether the combined solution has an '_imuPos' set
-    bool _imuPosSet = false;
-
     /// @brief Auto-initialize the Kalman Filter - GUI setting
     bool _autoInitKF = true;
+
+    /// @brief If the multiple IMUs have the same characteristics, GUI input cells can be reduced considerably
+    bool _imuCharacteristicsIdentical = true;
+
+    /// @brief If the multiple IMUs have the same bias, GUI input cells can be reduced considerably
+    bool _imuBiasesIdentical = true;
+
+    /// @brief Container that collects all imuObs for averaging for auto-init of the KF
+    std::vector<std::shared_ptr<const NAV::ImuObs>> _cumulatedImuObs;
+
+    /// @brief Container that collects all pinIds for averaging for auto-init of the KF
+    std::vector<size_t> _cumulatedPinIds;
 
     /// @brief flag to determine how jerk and angular acceleration states are initialized if '_autoInitKF = true'
     bool _initJerkAngAcc = true;
@@ -367,11 +174,91 @@ class ImuFusion : public Imu
     /// @brief flag to check whether KF has been auto-initialized
     bool _kfInitialized = false;
 
-    /// @brief Container that collects all imuObs for averaging for auto-init of the KF
-    std::vector<std::shared_ptr<const NAV::ImuObs>> _cumulatedImuObs;
+    // -------------------------------------------- Sensor info ----------------------------------------------
+    /// @brief Stores parameter data for each connected sensor
+    std::vector<PinData> _pinData;
+    /// @brief Stores IRW-KF specific parameter data
+    PinDataIRWKF _pinDataIRWKF;
+    /// @brief Stores Bspline-KF specific parameter data
+    PinDataBsplineKF _pinDataBsplineKF;
 
-    /// @brief Container that collects all pinIds for averaging for auto-init of the KF
-    std::vector<size_t> _cumulatedPinIds;
+    /// @brief Temporary vector for the initial coefficients for angular rate
+    Eigen::Vector3d _initCoeffsAngRateTemp{};
+    /// @brief Temporary vector for the initial coefficients for acceleration
+    Eigen::Vector3d _initCoeffsAccelTemp{};
+    /// @brief Temporary vector for the initial coefficients' initial covariance for the angular rate
+    Eigen::Vector3d _initCovarianceCoeffsAngRateTemp{};
+    /// @brief Temporary vector for the initial coefficients' initial covariance for the acceleration
+    Eigen::Vector3d _initCovarianceCoeffsAccelTemp{};
+    /// @brief Temporary vector for the initial coefficients' process noise for the angular rate
+    Eigen::Vector3d _procNoiseCoeffsAngRateTemp{};
+    /// @brief Temporary vector for the initial coefficients' process noise for the acceleration
+    Eigen::Vector3d _procNoiseCoeffsAccelTemp{};
+
+    /// @brief Container for the bias covariances
+    std::vector<Eigen::Vector3d> _biasCovariances;
+    /// @brief Container for process noise of each state
+    std::vector<Eigen::VectorXd> _processNoiseVariances;
+    /// @brief Container for measurement noises of each sensor
+    std::vector<Eigen::Vector3d> _measurementNoiseVariances;
+
+    /// @brief Rotations of all connected accelerometers - key: pinIndex, value: Rotation matrix of the accelerometer platform to body frame
+    std::vector<Eigen::Matrix3d> _imuRotations_accel;
+
+    /// @brief Rotations of all connected gyros - key: pinIndex, value: Rotation matrix of the gyro platform to body frame
+    std::vector<Eigen::Matrix3d> _imuRotations_gyro;
+
+    // ----------------------------------------------- Time --------------------------------------------------
+    /// @brief Saves the timestamp of the measurement before in [s]
+    InsTime _latestTimestamp{};
+
+    /// @brief Saves the first timestamp in [s]
+    InsTime _firstTimestamp{};
+
+    /// @brief Time since startup in [s]
+    double _timeSinceStartup{};
+
+    /// @brief Latest knot in [s]
+    double _latestKnot{};
+
+    /// @brief Time difference between two quadratic B-splines in the stacked B-spline
+    double _splineSpacing = 1.0;
+
+    // ------------------------------------------- Miscellaneous ---------------------------------------------
+    /// @brief Check the rank of the Kalman matrices every iteration (computationally expensive)
+    bool _checkKalmanMatricesRanks = false;
+
+    /// @brief Check whether the combined solution has an '_imuPos' set
+    bool _imuPosSet = false;
+
+    /// Possible KF-types for the IMU fusion
+    enum class ImuFusionType
+    {
+        IRWKF,   ///< IRW Kalman filter
+        Bspline, ///< B-spline Kalman filter
+        COUNT,   ///< Number of items in the enum
+    };
+    /// @brief Converts the enum to a string
+    /// @param[in] value Enum value to convert into text
+    /// @return String representation of the enum
+    friend constexpr const char* to_string(ImuFusionType value);
+
+    /// KF-type for the IMU fusion, selected in the GUI
+    ImuFusionType _imuFusionType = ImuFusionType::Bspline;
 };
+
+constexpr const char* to_string(NAV::ImuFusion::ImuFusionType value)
+{
+    switch (value)
+    {
+    case NAV::ImuFusion::ImuFusionType::IRWKF:
+        return "IRW KF";
+    case NAV::ImuFusion::ImuFusionType::Bspline:
+        return "B-spline KF";
+    case NAV::ImuFusion::ImuFusionType::COUNT:
+        return "";
+    }
+    return "";
+}
 
 } // namespace NAV

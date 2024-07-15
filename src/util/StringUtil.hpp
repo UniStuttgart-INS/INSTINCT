@@ -275,7 +275,7 @@ int stoi(const String& str, int default_value, std::size_t* pos = nullptr, int b
     {
         return std::stoi(str, pos, base);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;
@@ -295,7 +295,7 @@ int64_t stol(const String& str, int64_t default_value, std::size_t* pos = nullpt
     {
         return std::stol(str, pos, base);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;
@@ -315,7 +315,7 @@ int64_t stoll(const String& str, int64_t default_value, std::size_t* pos = nullp
     {
         return std::stoll(str, pos, base);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;
@@ -334,7 +334,7 @@ float stof(const String& str, float default_value, std::size_t* pos = nullptr) n
     {
         return std::stof(str, pos);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;
@@ -353,7 +353,7 @@ double stod(const String& str, double default_value, std::size_t* pos = nullptr)
     {
         return std::stod(str, pos);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;
@@ -372,7 +372,7 @@ long double stold(const String& str, long double default_value, std::size_t* pos
     {
         return std::stold(str, pos);
     }
-    catch (...)
+    catch (...) // NOLINT(bugprone-empty-catch)
     {}
 
     return default_value;

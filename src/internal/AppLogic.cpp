@@ -12,6 +12,7 @@
 #include <chrono>
 
 #include "NodeRegistry.hpp"
+#include "Navigation/GNSS/Positioning/AntexReader.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
@@ -59,6 +60,8 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
 
     // Register all Node Data Types which are available to the program
     NAV::NodeRegistry::RegisterNodeDataTypes();
+
+    NAV::AntexReader::Get().initialize();
 
     util::time::SetCurrentTimeToComputerTime();
 

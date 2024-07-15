@@ -280,7 +280,9 @@
         },
         "node-1154": {
             "data": {
-                "nInputPins": 3,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 3
+                },
                 "nPlots": 4,
                 "originPosition": {
                     "frame": "LLA",
@@ -514,10 +516,7 @@
                                 "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "Number satellites (pos)"
-                            },
-                            {
-                                "displayName": "Number satellites (vel)"
+                                "displayName": "Number satellites"
                             },
                             {
                                 "displayName": "Receiver clock bias [s]"
@@ -1403,7 +1402,9 @@
         },
         "node-1160": {
             "data": {
-                "nInputPins": 2,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 2
+                },
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -1561,10 +1562,7 @@
                                 "displayName": "Down velocity [m/s]"
                             },
                             {
-                                "displayName": "Number satellites (pos)"
-                            },
-                            {
-                                "displayName": "Number satellites (vel)"
+                                "displayName": "Number satellites"
                             },
                             {
                                 "displayName": "Receiver clock bias [s]"
@@ -2308,10 +2306,6 @@
                             0.003,
                             0.003
                         ],
-                        "codeCarrierPhaseErrorRatio": [
-                            100.0,
-                            100.0
-                        ],
                         "dopplerFrequency": 1.0
                     }
                 },
@@ -2532,7 +2526,7 @@
                     "useSeed": true
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "filterFreq": "L1",
+                "filterFreq": 1,
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {
@@ -2737,7 +2731,7 @@
                     "useSeed": true
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
-                "filterFreq": "L1",
+                "filterFreq": 1,
                 "imuAccelerometerBiasUnit": 0,
                 "imuAccelerometerBias_p": {
                     "0": {

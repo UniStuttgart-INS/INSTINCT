@@ -1,0 +1,48 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file Nodes.dox
+// @brief Nodes description
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2022-07-20
+
+namespace Instinct {
+
+/** \page Core_Node Node
+
+\tableofcontents
+
+Nodes, also known as "modules" in flow-based programming, are the primary encapsulation mechanism inside INSTINCT. A Node can provide one or more input and/or output \link NAV::Pin Pins \endlink. Matching pins can be \link NAV::Pin::Link linked \endlink in the GUI to provide nodes a mean to exchange data with each other.
+
+\section Core_Node_Worker Worker Thread
+
+Each node starts a thread during its Constructor which handles state transitions. Later on the thread will also handle data processing.
+
+\section Core_Node_State Node States
+
+The \link NAV::Node::State State \endlink enum defines all possible state a node can be in within its lifetime.
+To change from one state to the next, the user can call certain functions:
+- \link NAV::Node::doInitialize(bool) doInitialize(bool wait) \endlink: Initializes the node by calling \link NAV::Node::initialize() initialize() \endlink. Also tries to initialize all nodes which are connected over none \link NAV::Pin::Type::Flow Flow \endlink input pins as the node depends on the pin data.
+- \link NAV::Node::doDeinitialize(bool) doDeinitialize(bool wait) \endlink: Deinitializes the node by calling \link NAV::Node::deinitialize() deinitialize() \endlink. Also deinitializes all nodes which are connected over none \link NAV::Pin::Type::Flow Flow \endlink output pins as they depend on the pin data.
+- \link NAV::Node::doReinitialize(bool) doReinitialize(bool wait) \endlink: Calls \link NAV::Node::doDeinitialize(bool) doDeinitialize(bool wait) \endlink and afterwards \link NAV::Node::doInitialize(bool) doInitialize(bool wait) \endlink.
+- \link NAV::Node::doDisable(bool) doDisable(bool wait) \endlink: Disables the node. Also performs deinitialization first and therefore can wait for it to finish.
+- \link NAV::Node::doEnable() doEnable() \endlink: Enables the node. Enabling is not handled by the worker thread, so this function does not need to wait.
+- Transition into the \link NAV::Node::State::Shutdown Shutdown \endlink state is done by the program automatically in its Destructor. It can be performed from any previous state.
+
+Usually the user only calls the \link NAV::Node::doInitialize(bool) doInitialize(bool wait) \endlink or \link NAV::Node::doDeinitialize(bool) doDeinitialize(bool wait) \endlink as the other functions can be triggered over the GUI.
+
+An overview when which function can be called and which state transition is performed can be seen in the following graph.
+\image html Node-States-overview.png
+The \link NAV::Node::doReinitialize(bool) doReinitialize(bool wait) \endlink function takes a slightly different state transition route.
+\image html Node-States-doReinitialize.png
+The \link NAV::Node::doDisable(bool) doDisable(bool wait) \endlink function can transition from \link NAV::Node::State::Deinitialized Deinitialized \endlink state but also from \link NAV::Node::State::Initialized Initialized \endlink as follows
+\image html Node-States-doDisable.png
+
+*/
+
+}

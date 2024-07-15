@@ -76,7 +76,7 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
                                       0x94, 0xF5 };
         uart::protocol::Packet packet(data, &sensor);
         auto obs = std::make_shared<NAV::UbloxObs>();
-        ub::decryptUbloxObs(obs, packet);
+        REQUIRE(ub::decryptUbloxObs(obs, packet, "UbloxUtilities - decryptUbloxObs: CFG") == false); // UBX CFG not implemented yet
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_CFG);
         REQUIRE(obs->msgId == ub::UbxCfgMessages::UBX_CFG_RST);
         REQUIRE(obs->payloadLength == 4);
@@ -124,7 +124,7 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
                                       0x2F, 0x61 };
         uart::protocol::Packet packet(data, &sensor);
         auto obs = std::make_shared<NAV::UbloxObs>();
-        ub::decryptUbloxObs(obs, packet);
+        REQUIRE(ub::decryptUbloxObs(obs, packet, "UbloxUtilities - decryptUbloxObs: RXM - RAWX"));
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_RXM);
         REQUIRE(obs->msgId == ub::UbxRxmMessages::UBX_RXM_RAWX);
         REQUIRE(obs->payloadLength == 0x0390);
@@ -206,7 +206,7 @@ TEST_CASE("[UbloxUtilities] decryptUbloxObs - UBX", "[UbloxUtilities]")
                                       0xA0, 0xD0 };
         uart::protocol::Packet packet(data, &sensor);
         auto obs = std::make_shared<NAV::UbloxObs>();
-        ub::decryptUbloxObs(obs, packet);
+        REQUIRE(ub::decryptUbloxObs(obs, packet, "UbloxUtilities - decryptUbloxObs: RXM - SFRBX"));
         REQUIRE(obs->msgClass == ub::UbxClass::UBX_CLASS_RXM);
         REQUIRE(obs->msgId == ub::UbxRxmMessages::UBX_RXM_SFRBX);
         REQUIRE(obs->payloadLength == 0x0028);

@@ -66,6 +66,8 @@ if(ENABLE_GPERFTOOLS)
   endif()
 endif()
 
+target_compile_definitions(tests PUBLIC JSON_DIAGNOSTICS=1)
+
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 if(APPLE)

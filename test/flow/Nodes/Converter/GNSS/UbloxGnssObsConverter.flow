@@ -1,0 +1,151 @@
+{
+    "colormaps": [],
+    "links": {
+        "link-22": {
+            "endPinId": 20,
+            "id": 22,
+            "startPinId": 18
+        },
+        "link-6": {
+            "endPinId": 3,
+            "id": 6,
+            "startPinId": 1
+        },
+        "link-9": {
+            "endPinId": 7,
+            "id": 9,
+            "startPinId": 4
+        }
+    },
+    "nodes": {
+        "node-19": {
+            "data": {
+                "FileReader": {
+                    "path": "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.obs"
+                },
+                "eraseLessPreciseCodes": true
+            },
+            "enabled": true,
+            "id": 19,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexObsFile",
+            "outputPins": [
+                {
+                    "id": 18,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": -275.0,
+                "y": 526.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexObsFile"
+        },
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx"
+                }
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "UbloxFile",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "UbloxObs"
+                }
+            ],
+            "pos": {
+                "x": -550.0,
+                "y": 430.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "UbloxFile"
+        },
+        "node-21": {
+            "data": null,
+            "enabled": true,
+            "id": 21,
+            "inputPins": [
+                {
+                    "id": 20,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "Terminator",
+            "outputPins": [],
+            "pos": {
+                "x": -72.0,
+                "y": 556.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Terminator"
+        },
+        "node-5": {
+            "data": null,
+            "enabled": true,
+            "id": 5,
+            "inputPins": [
+                {
+                    "id": 3,
+                    "name": "UbloxObs"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "UbloxGnssObsConverter",
+            "outputPins": [
+                {
+                    "id": 4,
+                    "name": "GnssObs"
+                }
+            ],
+            "pos": {
+                "x": -360.0,
+                "y": 430.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "UbloxGnssObsConverter"
+        },
+        "node-8": {
+            "data": null,
+            "enabled": true,
+            "id": 8,
+            "inputPins": [
+                {
+                    "id": 7,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "Terminator",
+            "outputPins": [],
+            "pos": {
+                "x": -72.0,
+                "y": 460.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Terminator"
+        }
+    }
+}

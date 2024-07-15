@@ -21,8 +21,8 @@ namespace NAV
 template<typename T>
 struct UncertainValue
 {
-    T value;  ///< Value
-    T stdDev; ///< Standard deviation
+    T value{};  ///< Value
+    T stdDev{}; ///< Standard deviation
 };
 
 } // namespace NAV

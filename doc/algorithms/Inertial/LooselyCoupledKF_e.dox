@@ -1,0 +1,711 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file LooselyCoupledKF_e.dox
+// @brief INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
+// @date 2022-02-01
+
+namespace Instinct {
+
+/** \page LooselyCoupledKF_e INS/GNSS Loosely-coupled Kalman Filter (Earth-fixed frame)
+
+\section LooselyCoupledKF_e-ErrorStateEquations Earth Frame Error State Equations
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-ShortForm Short form
+
+\anchor eq-LCKF_e-stateMatrix-short \f{equation}{
+  \begin{bmatrix}
+      \boldsymbol{\delta \dot{\psi}}_{eb}^e \\
+      \boldsymbol{\delta \dot{v}}_{eb}^e \\
+      \boldsymbol{\delta \dot{r}}_{eb}^e \\
+      \boldsymbol{\delta \dot{f}}_{ib}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b \\
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+      \mathbf{F}_{\dot{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{C}_b^e \\
+      \mathbf{F}_{\delta \dot{v},\psi}^e & \mathbf{F}_{\delta \dot{v},\delta v}^e & \mathbf{F}_{\delta \dot{v},\delta r}^e & \mathbf{C}_b^e & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   & \mathbf{0}_3   \\
+  \end{bmatrix}
+  \cdot
+  \begin{bmatrix}
+      \boldsymbol{\delta\psi}_{eb}^e \\
+      \boldsymbol{\delta v}_{eb}^e \\
+      \boldsymbol{\delta r}_{eb}^e \\
+      \boldsymbol{\delta f}_{ib}^b \\
+      \boldsymbol{\delta \omega}_{ib}^b \\
+  \end{bmatrix}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-DetailedForm Detailed form
+
+\anchor eq-LCKF_e-stateMatrix \f{equation}{
+  \begin{bmatrix}
+      \delta \dot{\psi}_{eb,1}^e  \\ \delta \dot{\psi}_{eb,2}^e  \\ \delta \dot{\psi}_{eb,3}^e  \\ \hdashline
+      \delta \dot{v}_{eb,x}^e     \\ \delta \dot{v}_{eb,y}^e     \\ \delta \dot{v}_{eb,z}^e     \\ \hdashline
+      \delta \dot{r}_{eb,x}^e     \\ \delta \dot{r}_{eb,y}^e     \\ \delta \dot{r}_{eb,z}^e     \\ \hdashline
+      \delta \dot{f}_{x}^{b}      \\ \delta \dot{f}_{y}^{b}      \\ \delta \dot{f}_{z}^{b}      \\ \hdashline
+      \delta \dot{\omega}_{x}^{b} \\ \delta \dot{\omega}_{y}^{b} \\ \delta \dot{\omega}_{z}^{b} \\
+  \end{bmatrix}
+  =
+  \left[ \begin{array}{ccc:ccc:ccc:ccc:ccc}
+           0       &  \omega_{ie} &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+      -\omega_{ie} &       0      &       0     &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  & \mathbf{C}_b^e & \\
+           0       &       0      &       0     &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\ \hdashline
+           0       &  f_{ib,z}^e  & -f_{ib,y}^e &       0        & 2 \omega_{ie} &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+     -f_{ib,z}^e   &       0      &  f_{ib,x}^e & -2 \omega_{ie} &       0       &  0  &  & - \left( \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right) &  &  & \mathbf{C}_b^e &  &  &  \mathbf{0}_3  & \\
+      f_{ib,y}^e   & -f_{ib,x}^e  &       0     &       0        &       0       &  0  &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\ \hdashline
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{I}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\ \hdashline
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\ \hdashline
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+                   & \mathbf{0}_3 &             &                & \mathbf{0}_3  &     &  &                                                                                       \mathbf{0}_3                                                                                      &  &  &  \mathbf{0}_3  &  &  &  \mathbf{0}_3  & \\
+                   &              &             &                &               &     &  &                                                                                                                                                                                         &  &  &                &  &  &                & \\
+  \end{array} \right]
+  \cdot
+  \begin{bmatrix}
+      \delta \psi_{eb,1}^e  \\ \delta \psi_{eb,2}^e  \\ \delta \psi_{eb,3}^e  \\ \hdashline
+      \delta v_{eb,x}^e     \\ \delta v_{eb,y}^e     \\ \delta v_{eb,z}^e     \\ \hdashline
+      \delta r_{eb,x}^e     \\ \delta r_{eb,y}^e     \\ \delta r_{eb,z}^e     \\ \hdashline
+      \delta f_{x}^{b}      \\ \delta f_{y}^{b}      \\ \delta f_{z}^{b}      \\ \hdashline
+      \delta \omega_{x}^{b} \\ \delta \omega_{y}^{b} \\ \delta \omega_{z}^{b} \\
+  \end{bmatrix}
+\f}
+
+This form corresponds to
+- \cite Groves2013 Groves, ch. 14.2.3, eq. 14.48, p. 583
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Noise Augmented State with Noise
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+The continuous linear dynamic system can be expressed as
+\anchor eq-LCKF_e-dynamicModel \f{equation}{
+  \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
+\f}
+
+Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ matrices in the accelerometer and gyroscope bias terms. Therefore the error equations can be extended as follows
+
+\anchor eq-LCKF_e-dynamicModel-short \f{equation}{
+  \begin{bmatrix}
+      \boldsymbol{\delta \dot{\psi}}_{eb}^e \\
+      \boldsymbol{\delta \dot{v}}_{eb}^e \\
+      \boldsymbol{\delta \dot{r}}_{eb}^e \\
+      \boldsymbol{\delta \dot{f}}_{ib}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b \\
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+      \mathbf{F}_{\dot{\psi},\psi}^e     & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{C}_b^e       \\
+      \mathbf{F}_{\delta \dot{v},\psi}^e & \mathbf{F}_{\delta \dot{v},\delta v}^e & \mathbf{F}_{\delta \dot{v},\delta r}^e &    \mathbf{C}_b^e    &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{I}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & -\boldsymbol{\beta}_f &       \mathbf{0}_3         \\
+      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      &  -\boldsymbol{\beta}_\omega \\
+  \end{bmatrix}
+  \cdot
+  \begin{bmatrix}
+      \boldsymbol{\delta \psi}_{eb}^e \\
+      \boldsymbol{\delta v}_{eb}^e \\
+      \boldsymbol{\delta r}_{eb}^e \\
+      \boldsymbol{\delta f}_{ib}^b \\
+      \boldsymbol{\delta \omega}_{ib}^b \\
+  \end{bmatrix}
+  +
+  \begin{bmatrix}
+       \mathbf{C}_b^e & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^e & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
+  \end{bmatrix}
+  \cdot
+  \mathbf{w}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-RW Random Walk
+
+The random noise on the accelerometer and gyro measurements can be estimated as a Random Walk in the angle and velocity errors.
+
+\anchor eq-LCKF_e-random-walk \f{equation}{
+  \dot{x} = 0 + W(t)
+\f}
+
+In general, the noise can have an arbitrary characteristic. In a Kalman filter, however, it must be normally distributed and is therefore limited to a Wiener Process.
+The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the noise process.
+The amplitude is defined by the standard deviation \f$\sigma\f$. This parameter can be chosen by the user for the accel and gyro measurements:
+
+\anchor eq-LCKF_e-random-walk-S-noise \f{equation}{
+  {S_{ra,j}} = \sigma_{ra,j}, \qquad
+  {S_{rg,j}} = \sigma_{rg,j}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+
+The bias states are also modeled as a random process. In case of random walk, their amplitudes are defined analogously to the above and \f$\beta = 0\f$.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-GM1 Gauss-Markov 1. Order
+
+Another option to model the bias states is given by the Gauss-Markov 1. Order process:
+
+\anchor eq-LCKF_e-gauss-markov-1 \f{equation}{
+  \dot{x} = -\beta x + W(t)
+\f}
+
+This introduces a deterministic part into the equation, namely the correlation coefficient \f$\beta\f$. This parameter defines, how much a current state is correlated with past states.
+The elements of the  \f$ \mathbf{F} \f$ matrix are then
+\anchor eq-LCKF_e-random-walk-beta \f{equation}{
+  {\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
+                                                                    0       & \beta_{f} &      0     \\
+                                                                    0       &      0     & \beta_{f} \end{pmatrix}, \qquad
+  {\boldsymbol{\beta}_\omega} = \begin{pmatrix} \beta_{\omega} &        0        &        0        \\
+                                                                           0        & \beta_{\omega} &        0        \\
+                                                                           0        &        0        & \beta_{\omega} \end{pmatrix}
+\f}
+where
+- \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+- \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+
+Like before, the scaling is done inside the noise scale matrix. Now, the bias noise's amplitude is given by
+\anchor eq-LCKF_e-random-walk-S-bias_Brown \f{equation}{
+  {S_{bad,j}} = \sqrt{\frac{2\sigma_{bad,j}^2}{\tau_{bad}}} , \qquad
+  {S_{bgd,j}} = \sqrt{\frac{2\sigma_{bgd,j}^2}{\tau_{bgd}}}, \qquad\qquad j \in x,y,z
+\f}
+with a given standard deviation of \f$\sigma_{bad}\f$ for the accelerometer's bias noise and \f$\sigma_{bgd}\f$ for the gyro's bias noise. The correlation lengths \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ define how much
+a current state is correlated to values in the past. This process is generally limited to normal distributions. A detailed example of this type of system can be found in Brown \& Hwang \cite Brown2011 (example 9.6).
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Noise-Scale-matrix Noise scale matrix W
+
+\anchor eq-LCKF_e-random-walk-noise-scale-matrix-W \f{equation}{
+  \mathbf{W} =
+  \begin{bmatrix}
+      \mathbf{S}_{rg} & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{S}_{ra} & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+  \end{bmatrix}
+\f}
+
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices where entries are filled with the PSDs from \ref eq-LCKF_e-random-walk-S-noise and \ref eq-LCKF_e-random-walk-S-bias or \ref eq-LCKF_e-random-walk-S-bias_Brown.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Groves-process-noise-definition Groves' process noise definition
+
+In Groves \cite Groves2013, process noise is defined without the need of integration. Instead, noise amplitudes are given directly integrated over one time step \f$\tau_i\f$.
+Therefore, the <b>PSDs of the accelerometer and gyro noise</b> are:
+\anchor eq-LCKF_e-random-walk-S-noise-Groves \f{equation}{
+  {S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  {S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+The bias states are modeled by Groves with the noise PSD's:
+\anchor eq-LCKF_e-random-walk-S-bias \f{equation}{
+  {S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  {S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ and \f$ \sigma_{bgd} \f$ are the standard deviations of the accelerometer and gyro dynamic biases
+- \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are the correlation times of the dynamic accelerometer and gyro biases
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
+
+Although correlation lengths \f$\tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are considered, this process is rather a random walk than a Gauss-Markov 1. order process, because of the missing deterministic part in \f$\mathbf{F}\f$.
+
+In INSTINCT, Groves' method \ref eq-LCKF_e-random-walk-S-bias is not altered from its reference \cite Groves2013 to avoid confusion.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-KF-Matrices Kalman-Filter Matrices
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-Phi-Q State transition matrix 𝚽 & Process noise covariance matrix Q
+
+\subsubsection LooselyCoupledKF_e-KF-Phi State transition matrix 𝚽
+
+#### Exponential Matrix
+
+The state transition matrix is defined as
+
+\anchor eq-LCKF_e-Phi-exp \f{equation}{
+  \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+
+#### Taylor series
+
+The exponential matrix cannot be calculated directly and numerical methods are computationally intensive. Therefore the transition matrix can be computed as a power-series expansion
+
+\anchor eq-LCKF_e-Phi-Taylor \f{equation}{
+  \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+
+\subsubsection LooselyCoupledKF_e-KF-Q Process noise covariance matrix Q
+
+The process noise covariance matrix is defined as
+
+\anchor eq-LCKF_e-Q-exact \f{equation}{
+  \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
+\f}
+
+In Groves \cite Groves2013, this matrix is approximated as (see ch. 3.2.3, eq. 3.43/3.45, p. 99):
+
+\anchor eq-LCKF_e-Q-approx \f{equation}{
+  \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
+\f}
+
+This method resembles a Taylor expansion up to 1. order. Since Groves \cite Groves2013 models the IMU measurements and their biases as random walk processes (see section \ref LooselyCoupledKF_e-Groves-process-noise-definition), only the van-Loan-method can be configured
+to model biases as Gauss-Markov 1. order processes.
+
+\subsubsection LooselyCoupledKF_e-KF-Phi-Q-Van-Loan Van Loan method
+
+The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 . In short
+
+1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
+\anchor eq-LCKF_e-Loan-A \f{equation}{
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
+                                \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
+\f}
+
+2. Calculate the exponential of \f$ \mathbf{A} \f$
+\anchor eq-LCKF_e-Loan-B \f{equation}{
+  \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
+                                            \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
+                                            \hdashline[2pt/2pt] &                                  \\[-2mm]
+                                            \mathbf{0}          & \mathbf{\Phi}^T                     \end{array} \right]
+                                       = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
+                                                         \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
+\f}
+
+3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as
+\anchor eq-LCKF_e-Loan-Phi \f{equation}{
+  \mathbf{\Phi} = \mathbf{B}_{22}^T
+\f}
+
+4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as
+\anchor eq-LCKF_e-Loan-Q \f{equation}{
+  \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
+\f}
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-P Error covariance matrix P
+
+The error covariance matrix is initialized as a diagonal matrix with the variance of the initial state as diagonal elements.
+
+\anchor eq-LCKF_e-P \f{equation}{
+  \mathbf{P}_0 =
+  \begin{bmatrix}
+      \boldsymbol{\sigma}_{\boldsymbol{\delta \psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
+                                                       & \boldsymbol{\sigma}_{\boldsymbol{\delta v^e}}^2 &                                                 &                                                 &                                                           \\
+                           \vdots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta r^e}}^2 &                                                 &                          \vdots                           \\
+                                                       &                                                 &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
+                        \mathbf{0}_3                   &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \\
+  \end{bmatrix}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-deltaz Measurement innovation 𝛿z
+
+\anchor eq-LCKF_e-deltaz \f{equation}{
+  \boldsymbol{\delta} \mathbf{z}^e = \begin{pmatrix} \tilde{\mathbf{r}}_{b,G}^e - \hat{\mathbf{r}}_{b}^e - \mathbf{C}_b^e \mathbf{l}_{ba}^b \\
+                                      \tilde{\mathbf{v}}^e_{G} - \hat{\mathbf{v}}^e - \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{pmatrix}
+\f}
+
+where
+- \f$ G \f$ denotes GNSS indicated measurements
+- \f$ \mathbf{l}_{ba}^b \f$ is the lever arm from the INS to the GNSS antenna in [m]
+
+This form corresponds to
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.102, p. 598
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-H Measurement sensitivity Matrix H
+
+\anchor eq-LCKF_e-H-general \f{equation}{
+  \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+               = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 3.4.1, eq. 3.90, p. 119
+
+\anchor eq-LCKF_e-H \f{equation}{
+  \mathbf{H}^e =
+  \begin{bmatrix}
+      \mathbf{H}_{r,\delta \psi}^e &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                          \\
+      \mathbf{H}_{v,\delta \psi}^e & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v,\omega_{ib}^b}^e \\
+  \end{bmatrix}
+\f}
+
+where
+\anchor eq-LCKF_e-H-sub \f{equation}{
+\begin{aligned}
+  {\mathbf{H}_{r,\delta \psi}^e}    &\approx \left[ (\mathbf{C}_b^e \mathbf{l}_{ba}^b) \times \right] \\
+  {\mathbf{H}_{v,\delta \psi}^e}    &\approx \left[ \left\{ \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \right\} \times \right] \\
+  {\mathbf{H}_{v,\omega_{ib}^b}^e} &\approx \mathbf{C}_b^e \left[ \mathbf{l}_{ba}^b \times \right] \\
+\end{aligned}
+\f}
+
+See
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.111/14.112, p. 600
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-KF-R Measurement noise covariance matrix R
+
+The measurement noise covariance matrix is a diagonal matrix with the variances of the measurements as diagonal elements.
+
+\anchor eq-LCKF_e-R \f{equation}{
+  \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
+  \begin{bmatrix}
+      \boldsymbol{\sigma}^2_{\mathbf{z}_{\boldsymbol{\delta r}^e}} &                         \mathbf{0}_3                         \\
+                              \mathbf{0}_3                         & \boldsymbol{\sigma}^2_{\mathbf{z}_{\boldsymbol{\delta v}^e}} \\
+  \end{bmatrix}
+\f}
+
+This variances can be set static or ideally come from the GNSS receiver.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Corrections Corrections
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+This section describes how the errors are applied to the total state.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-State Position, Velocity, Attitude
+
+The position and velocity errors get applied by simply subtracting them from the previous total state (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.8, 14.9, p. 564)
+
+\anchor eq-LCKF_e-correction-position-velocity \f{equation}{
+\begin{aligned}
+  \boldsymbol{r}^{e,+} &= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
+  \boldsymbol{v}^{e,+} &= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
+\end{aligned}
+\f}
+
+The attitude correction can be derived from equation \ref eq-LCKF_e-Derivation-Attitude-estimate-errors  (see \cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
+\anchor eq-LCKF_e-correction-attitude \f{equation}{
+  \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
+\f}
+
+After applying the errors to the total state, the errors have to be reset to zero (closed-loop).
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-Bias Biases
+
+To correct the accelerometer and gyroscope measurements, we need to accumulate the error states. This has to be done, because contrary to the normal state, the expected value of the biases is not zero.
+
+\anchor eq-LCKF_e-correction-accel-gyro-accumulate \f{equation}{
+\begin{aligned}
+  \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
+  \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
+\end{aligned}
+\f}
+
+Afterwards this accumulated value can be applied to the measurements by subtracting it
+
+\anchor eq-LCKF_e-correction-accel-gyro \f{equation}{
+\begin{aligned}
+  \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
+  \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
+\end{aligned}
+\f}
+
+Afterwards the bias in the error state gets reset to zero, as it is accounted for in the accumulated value.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Appendix Appendix
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-ErrorStateEquations-Derivation Derivation
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Position Position Equations
+
+The time derivative of the position is simply a function of the Earth-referenced velocity in Earth frame axes
+
+\anchor eq-LCKF_e-Derivation-Position-timeDerivative \f{equation}{
+  \mathbf{\dot{r}}_{eb}^e = \mathbf{v}_{eb}^e
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 5.3.4, eq. 5.37, p. 175
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.84, p. 126
+
+The time derivative of the position error thus is
+
+\anchor eq-LCKF_e-Derivation-Position-differential \f{equation}{
+  \boldsymbol{\delta}\mathbf{\dot{r}}_{eb}^e = {\mathbf{I}_3} \cdot \mathbf{v}_{eb}^e
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 14.2.3, eq. 14.47, p. 583
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Attitude Attitude Equations
+
+The estimated attitude \f$ \mathbf{\hat{C}}_b^e \f$ can be written in terms of true direction cosine matrix \f$ \mathbf{C}_b^e \f$
+\anchor eq-LCKF_e-Derivation-Attitude-estimate-true \f{equation}{
+  \mathbf{\hat{C}}_b^e = \mathbf{B} \mathbf{C}_b^e
+\f}
+where \f$ \mathbf{B} \f$ is the transformation from true reference axes to estimated reference axes and it can be approximated for small angle misalignments as
+\anchor eq-LCKF_e-Derivation-Attitude-transformation \f{equation}{
+  \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
+\f}
+with \f$ \mathbf{\Psi} \f$ being a skew symmetric matrix and \f$ \delta\alpha, \delta\beta, \delta\gamma \f$ being the attitude errors.
+
+Substituting \ref eq-LCKF_e-Derivation-Attitude-transformation into \ref eq-LCKF_e-Derivation-Attitude-estimate-true gives
+\anchor eq-LCKF_e-Derivation-Attitude-estimate-errors \f{equation}{
+  \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e
+\f}
+
+and solving for \f$ \mathbf{\Psi} \f$
+\anchor eq-LCKF_e-Derivation-Attitude-skew-mat \f{equation}{
+  \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+\f}
+
+Differentiating this equation yields:
+\anchor eq-LCKF_e-Derivation-Attitude-skew-mat-dot \f{equation}{
+  \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} {\mathbf{C}_b^e}^T - \mathbf{\hat{C}}_b^e {\mathbf{\dot{C}}_b^e}\raise1.25ex\hbox{$\scriptstyle T$}
+\f}
+
+Using the following equations for the transformation
+- Angular rate splitting \f$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.48, p. 45
+- Skew-symmetric matrix transformation \f$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.51, p. 45
+
+the time derivative of the DCM matrix is
+
+\anchor eq-LCKF_e-Derivation-Attitude-DCM-dot \f{equation}{
+\begin{aligned}
+  \mathbf{\dot{C}}_b^e &= \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b \\
+                       &= \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
+\end{aligned}
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 5.3.1, eq. 5.24, p. 173
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.83, p. 126
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.22, p. 29
+
+where
+- \f$ \mathbf{\Omega}_{ib}^b \f$ is the skew-symmetric matrix of the absolute body rate,
+- \f$ \mathbf{\Omega}_{ie}^e \f$ is the skew-symmetric matrix of the Earth rotation in Earth frame coordinates
+
+Similarly, the time time differential of the estimated matrix \f$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} \f$ can be calculated:
+\anchor eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated \f{equation}{
+  \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} = \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e
+\f}
+
+Substituting \ref eq-LCKF_e-Derivation-Attitude-DCM-dot and \ref eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated into \ref eq-LCKF_e-Derivation-Attitude-skew-mat-dot
+\anchor eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1 \f{equation}{
+\begin{aligned}
+  \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e) {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e (\mathbf{C}_b^e \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{ie}^e \mathbf{C}_b^e)^T \\
+                      &= - \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{C}}_b^e \mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e \\
+                      &= - \mathbf{\hat{C}}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
+                         - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e
+\end{aligned}
+\f}
+
+Substituting \ref eq-LCKF_e-Derivation-Attitude-estimate-errors into \ref eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1 gives:
+\anchor eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2 \f{equation}{
+\begin{aligned}
+  \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T
+                         - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e \\
+                      &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                         + \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
+                         - \mathbf{\Omega}_{ie}^e + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e \\
+                         &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
+                            + \left[ \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e \right]
+                            - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e
+\end{aligned}
+\f}
+
+Now we make the following substitutions
+- \f$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e \f$
+- \f$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \f$
+
+and neglect error product terms. This leads to
+\anchor eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final \f{equation}{
+  \mathbf{\dot{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
+                              + \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e
+                              - \mathbf{C}_b^e \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
+\f}
+
+Finally by performing an element by element comparison with
+\anchor eq-LCKF_e-Derivation-Attitude-element-comp \f{equation}{
+  \boldsymbol{\psi} \times = \mathbf{\Psi} \qquad\quad
+  \boldsymbol{\omega}_{ie}^e \times = \mathbf{\Omega}_{ie}^e \qquad\quad
+  \boldsymbol{\delta \omega}_{ie}^e \times = \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e \qquad\quad
+  \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
+\f}
+
+the equation can be expressed in vector form as:
+\anchor eq-LCKF_e-Derivation-Attitude-differential \f{equation}{
+\begin{aligned}
+  \boldsymbol{\dot{\psi}} &\approx {-\boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\psi}
+                                   + \overbrace{\boldsymbol{\delta \omega}_{ie}^e}^{= 0}
+                                   {- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
+                          &= {\begin{pmatrix} 0 & \omega_{ie} & 0 \\ -\omega_{ie} & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}} \cdot \boldsymbol{\psi}
+                             {- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
+\end{aligned}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF_e-ErrorStateEquations-Derivation-Velocity Velocity Equations
+
+The time derivative of the velocity in Earth frame coordinates is
+
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative \f{equation}{
+  \boldsymbol{\dot{v}}^e
+      = \overbrace{\boldsymbol{f}^e}^{\text{measured}}
+        -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\text{coriolis acceleration}}
+        +\ \overbrace{\mathbf{g}^e}^{\text{gravity}}
+\f}
+see
+- \cite Groves2013 Groves, ch. 5.3.3, eq. 5.35, p. 175
+- \cite Jekeli2001 Jekeli, ch. 4.3.3, eq. 4.82, p. 126
+- \cite Titterton2004 Titterton, ch. 3.5.2, eq. 3.21, p. 29
+
+where
+- \f$ \boldsymbol{v}^e \f$ is the velocity with respect to the Earth in Earth frame coordinates,
+- \f$ \boldsymbol{f}^e \f$ is the specific force vector as measured by a triad of accelerometers and resolved into Earth frame coordinates
+- \f$ \boldsymbol{\omega}_{ie}^e \f$ is the turn rate of the Earth expressed in Earth frame coordinates
+- \f$ \mathbf{g}^e \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.5.1, eq. 3.14, p. 27)
+    - \f$ \boldsymbol{\gamma}_{ib}^e \f$ the gravitation vector (caused by effects of mass attraction)
+    - \f$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] \f$ the centrifugal acceleration caused by the Earth's rotation
+
+The estimated velocity follows the same propagation
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate \f{equation}{
+  \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}}
+      = \boldsymbol{\hat{f}}^e
+      - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}_e^e
+      + \mathbf{\hat{g}}^e
+\f}
+
+Differencing equation \ref eq-LCKF_e-Derivation-Velocity-timeDerivative and \ref eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate we get
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative-differential \f{equation}{
+\begin{aligned}
+  \boldsymbol{\delta} \boldsymbol{\dot{v}}^e &= \boldsymbol{\dot{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}} - \boldsymbol{\dot{v}}^e \\
+                                &= \mathbf{\hat{C}}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                       + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \mathbf{\hat{g}}^e
+                                       - \mathbf{g}^e
+\end{aligned}
+\f}
+
+- Substituting equation \ref eq-LCKF_e-Derivation-Attitude-estimate-errors : \f$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \f$
+- and writing
+    - \f$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b \f$
+    - \f$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e \f$
+    - \f$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 \f$
+    - \f$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e \f$
+
+we get
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation \f{equation}{
+\begin{aligned}
+  \boldsymbol{\delta \dot{v}}^e &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                       + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= \mathbf{C}_b^e \boldsymbol{\hat{f}}^b - \mathbf{\Psi} \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                       - \mathbf{C}_b^e \boldsymbol{f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\hat{v}}^e
+                                   + 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= - \boldsymbol{\psi} \times \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
+                                   + {\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+                                &= (\mathbf{C}_b^e \boldsymbol{\delta f}^b + \mathbf{C}_b^e \boldsymbol{f}^b) \times \boldsymbol{\psi}
+                                   + {\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e \\
+\end{aligned}
+\f}
+Now neglecting error product terms (\f$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 \f$)
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect \f{equation}{
+\renewcommand*{\arraystretch}{1.9}
+  \boldsymbol{\delta \dot{v}}^e \approx {\boldsymbol{f}^e \times} \boldsymbol{\psi}
+                                   + {\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   {- 2 \boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\delta v}^e
+                                   + \boldsymbol{\delta} \mathbf{g}^e
+\f}
+
+The gravity error can be expressed as (see \cite Groves2013 Groves, ch. 14.2.3, eq. 14.45, p. 583)
+\anchor eq-LCKF_e-Derivation-Velocity-gravityError \f{equation}{
+\begin{aligned}
+  \boldsymbol{\delta} \mathbf{g}^e = \overbrace{\boldsymbol{\hat{\gamma}}_{ib}^e - \boldsymbol{\gamma}_{ib}^e}^{\text{gravitation error}}
+                                      - \underbrace{\boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e}_{\text{centrifugal acceleration error}}
+                                   \approx - \frac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \frac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} \boldsymbol{\delta} \mathbf{r}_{eb}^e
+                                           - \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e
+\end{aligned}
+\f}
+where
+- the assumption \f$ h << r_{eS}^e \f$ is made
+
+This leads to the final form
+\anchor eq-LCKF_e-Derivation-Velocity-timeDerivative-final \f{equation}{
+\renewcommand*{\arraystretch}{1.9}
+  \boldsymbol{\delta \dot{v}}^e \approx {\boldsymbol{f}^e \times} \boldsymbol{\psi}
+                                   + {\mathbf{C}_b^e} \boldsymbol{\delta f}^b
+                                   + {\begin{pmatrix} 0 & 2 \omega_{ie} & \\ -2 \omega_{ie} & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}} \boldsymbol{\delta v}^e
+                                   {- \left(  \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|}
+                                                                 + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)} \boldsymbol{\delta} \mathbf{r}_{eb}^e
+\f}
+
+
+*/
+
+}

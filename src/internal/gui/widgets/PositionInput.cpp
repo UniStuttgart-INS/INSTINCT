@@ -77,15 +77,15 @@ bool NAV::gui::widgets::PositionInput(const char* str, PositionWithFrame& positi
     if (position.frame == PositionWithFrame::ReferenceFrame::ECEF)
     {
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "X" : "", str).c_str(), &position.e_position(0), 0.0, 0.0, "%.4fm")) { changes = true; }
+        if (ImGui::InputDouble(fmt::format("{}##X {}", layout != PositionInputLayout::TWO_ROWS ? "X" : "", str).c_str(), &position.e_position(0), 0.0, 0.0, "%.4fm")) { changes = true; }
 
         if (layout == PositionInputLayout::SINGLE_ROW || layout == PositionInputLayout::TWO_ROWS) { ImGui::SameLine(); }
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "Y" : "", str).c_str(), &position.e_position(1), 0.0, 0.0, "%.4fm")) { changes = true; }
+        if (ImGui::InputDouble(fmt::format("{}##Y {}", layout != PositionInputLayout::TWO_ROWS ? "Y" : "", str).c_str(), &position.e_position(1), 0.0, 0.0, "%.4fm")) { changes = true; }
 
         if (layout == PositionInputLayout::SINGLE_ROW || layout == PositionInputLayout::TWO_ROWS) { ImGui::SameLine(); }
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "Z" : "", str).c_str(), &position.e_position(2), 0.0, 0.0, "%.4fm")) { changes = true; }
+        if (ImGui::InputDouble(fmt::format("{}##Z {}", layout != PositionInputLayout::TWO_ROWS ? "Z" : "", str).c_str(), &position.e_position(2), 0.0, 0.0, "%.4fm")) { changes = true; }
 
         if (layout == PositionInputLayout::TWO_ROWS)
         {
@@ -106,17 +106,17 @@ bool NAV::gui::widgets::PositionInput(const char* str, PositionWithFrame& positi
         }
 
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDoubleL(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "Latitude" : "", str).c_str(), &lla_position(0), -90.0, 90.0, 0.0, 0.0, "%.9f°")) { edited = true; }
+        if (ImGui::InputDoubleL(fmt::format("{}##Lat {}", layout != PositionInputLayout::TWO_ROWS ? "Latitude" : "", str).c_str(), &lla_position(0), -90.0, 90.0, 0.0, 0.0, "%.9f°")) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
 
         if (layout == PositionInputLayout::SINGLE_ROW || layout == PositionInputLayout::TWO_ROWS) { ImGui::SameLine(); }
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDoubleL(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "Longitude" : "", str).c_str(), &lla_position(1), -180.0, 180.0, 0.0, 0.0, "%.9f°")) { edited = true; }
+        if (ImGui::InputDoubleL(fmt::format("{}##Lon {}", layout != PositionInputLayout::TWO_ROWS ? "Longitude" : "", str).c_str(), &lla_position(1), -180.0, 180.0, 0.0, 0.0, "%.9f°")) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
 
         if (layout == PositionInputLayout::SINGLE_ROW || layout == PositionInputLayout::TWO_ROWS) { ImGui::SameLine(); }
         ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble(fmt::format("{}##{}", layout != PositionInputLayout::TWO_ROWS ? "Altitude" : "", str).c_str(), &lla_position(2), 0.0, 0.0, "%.4fm")) { edited = true; }
+        if (ImGui::InputDouble(fmt::format("{}##Alt {}", layout != PositionInputLayout::TWO_ROWS ? "Altitude" : "", str).c_str(), &lla_position(2), 0.0, 0.0, "%.4fm")) { edited = true; }
         if (ImGui::IsItemDeactivatedAfterEdit()) { changes = true; }
 
         if (layout == PositionInputLayout::TWO_ROWS)
@@ -182,7 +182,7 @@ void NAV::gui::widgets::from_json(const json& j, PositionWithFrame& position)
         else if (position.frame == PositionWithFrame::ReferenceFrame::LLA)
         {
             auto lla = j.at("position").get<Eigen::Vector3d>();
-            position.e_position = trafo::lla2ecef_WGS84({ deg2rad(lla(0)), deg2rad(lla(1)), lla(2) });
+            position.e_position = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(lla(0)), deg2rad(lla(1)), lla(2)));
         }
     }
 }

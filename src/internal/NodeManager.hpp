@@ -198,6 +198,9 @@ void EnableAllCallbacks();
 /// @brief Disables all Node callbacks
 void DisableAllCallbacks();
 
+/// @brief Clears all nodes queues
+void ClearAllNodeQueues();
+
 /// @brief Initializes all nodes.
 /// @return Returns false if one of the nodes could not initialize
 bool InitializeAllNodes();

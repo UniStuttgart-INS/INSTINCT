@@ -15,9 +15,12 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
+
 #include "Navigation/Time/InsTime.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
+#include "Navigation/INS/InertialIntegrator.hpp"
+
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 #include "Navigation/Math/KeyedKalmanFilter.hpp"
 
@@ -108,17 +111,10 @@ class LooselyCoupledKF : public Node
     };
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;   ///< @brief Flow (PosVel)
-    constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0; ///< @brief Flow (LcKfInsGnssErrors)
-    constexpr static size_t OUTPUT_PORT_INDEX_SYNC = 1;  ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;     ///< @brief x̂ State vector
-    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;     ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;   ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;     ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;     ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;     ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;     ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;     ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t INPUT_PORT_INDEX_IMU = 0;              ///< @brief Flow (ImuObs)
+    constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;             ///< @brief Flow (PosVel)
+    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 2; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_SOLUTION = 0;        ///< @brief Flow (InsGnssLCKFSolution)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -126,44 +122,52 @@ class LooselyCoupledKF : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Receive Function for the inertial navigation solution
-    /// @param[in] queue Queue with all the received data messages
-    /// @param[in] pinIdx Index of the pin the data is received on
-    void recvInertialNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    /// @brief Invoke the callback with a PosVelAtt solution (without LCKF specific output)
+    /// @param[in] posVelAtt PosVelAtt solution
+    void invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt);
 
-    /// @brief Receive Function for the GNSS navigation solution
+    /// @brief Receive Function for the IMU observation
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void recvGNSSNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void recvImuObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the PosVel observation
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvPosVelObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// @brief Receive Function for the PosVelAtt observation
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Predicts the state from the InertialNavSol
     /// @param[in] inertialNavSol Inertial navigation solution triggering the prediction
     /// @param[in] tau_i Time since the last prediction in [s]
-    void looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i);
+    /// @param[in] imuPos IMU platform frame position with respect to body frame
+    void looselyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos);
 
-    /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
-    /// @param[in] gnssMeasurement Gnss measurement triggering the update
-    void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& gnssMeasurement);
+    /// @brief Updates the predicted state from the InertialNavSol with the PosVel observation
+    /// @param[in] posVelObs PosVel measurement triggering the update
+    void looselyCoupledUpdate(const std::shared_ptr<const PosVel>& posVelObs);
 
-    /// @brief Add the output pins for the Kalman matrices
-    void addKalmanMatricesPins();
+    /// Add or remove the external PVA Init pin
+    void updateExternalPvaInitPin();
 
-    /// @brief Removes the output pins for the Kalman matrices
-    void removeKalmanMatricesPins();
+    /// @brief Inertial Integrator
+    InertialIntegrator _inertialIntegrator;
+    /// Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
+    bool _preferAccelerationOverDeltaMeasurements = false;
 
-    /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
-    std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
+    /// Last received IMU observation (to get ImuPos)
+    std::shared_ptr<const ImuObs> _lastImuObs = nullptr;
 
-    /// Time when the last prediction was triggered
-    InsTime _lastPredictTime;
-
-    /// Time when the last GNSS message came and a prediction was requested
-    InsTime _lastPredictRequestedTime;
-
-    /// Accumulated Accelerometer biases
-    Eigen::Vector3d _accumulatedAccelBiases;
-    /// Accumulated Gyroscope biases
-    Eigen::Vector3d _accumulatedGyroBiases;
+    /// Roll, Pitch and Yaw angles in [deg] used for initialization if not taken from separate pin
+    std::array<double, 3> _initalRollPitchYaw{};
+    /// Whether to initialize the state over an external pin
+    bool _initializeStateOverExternalPin{};
+    /// Time from the external init
+    InsTime _externalInitTime;
 
     /// @brief Vector with all state keys
     inline static const std::vector<KFStates> States = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw,
@@ -195,18 +199,6 @@ class LooselyCoupledKF : public Node
     // #########################################################################################################################################
     //                                                              GUI settings
     // #########################################################################################################################################
-
-    /// @brief Available Frames
-    enum class Frame : int
-    {
-        ECEF, ///< Earth-Centered Earth-Fixed frame
-        NED,  ///< Local North-East-Down frame
-    };
-    /// Frame to calculate the Kalman filter in
-    Frame _frame = Frame::NED;
-
-    /// @brief Show output pins for the Kalman matrices
-    bool _showKalmanFilterOutputPins = false;
 
     /// @brief Check the rank of the Kalman matrices every iteration (computational expensive)
     bool _checkKalmanMatricesRanks = true;
@@ -321,6 +313,9 @@ class LooselyCoupledKF : public Node
     /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
     Eigen::Vector3d _gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
 
+    /// Whether to override the position uncertainty or use the one included in the measurement
+    bool _gnssMeasurementUncertaintyPositionOverride = false;
+
     // ###########################################################################################################
 
     /// Possible Units for the GNSS measurement uncertainty for the velocity (standard deviation σ or Variance σ²)
@@ -334,6 +329,9 @@ class LooselyCoupledKF : public Node
 
     /// GUI selection of the GNSS NED velocity measurement uncertainty (standard deviation σ or Variance σ²)
     Eigen::Vector3d _gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
+
+    /// Whether to override the velocity uncertainty or use the one included in the measurement
+    bool _gnssMeasurementUncertaintyVelocityOverride = false;
 
     // ###########################################################################################################
 
@@ -349,7 +347,7 @@ class LooselyCoupledKF : public Node
     InitCovariancePositionUnit _initCovariancePositionUnit = InitCovariancePositionUnit::meter;
 
     /// GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovariancePosition{ 100, 100, 100 };
+    Eigen::Vector3d _initCovariancePosition{ 100.0, 100.0, 100.0 };
 
     // ###########################################################################################################
 
@@ -363,7 +361,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceVelocityUnit _initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
 
     /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceVelocity{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceVelocity{ 10.0, 10.0, 10.0 };
 
     // ###########################################################################################################
 
@@ -379,7 +377,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceAttitudeAnglesUnit _initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
 
     /// GUI selection of the initial covariance diagonal values for attitude angles (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10.0, 10.0, 10.0 };
 
     // ###########################################################################################################
 
@@ -393,7 +391,7 @@ class LooselyCoupledKF : public Node
     InitCovarianceBiasAccelUnit _initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
 
     /// GUI selection of the initial covariance diagonal values for accelerometer biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d _initCovarianceBiasAccel{ 1, 1, 1 };
+    Eigen::Vector3d _initCovarianceBiasAccel{ 1.0, 1.0, 1.0 };
 
     // ###########################################################################################################
 
@@ -410,6 +408,33 @@ class LooselyCoupledKF : public Node
 
     /// GUI selection of the initial covariance diagonal values for gyroscope biases (standard deviation σ or Variance σ²)
     Eigen::Vector3d _initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial accelerometer biases
+    enum class InitBiasAccelUnit
+    {
+        m_s2, ///< acceleration [m/s^2]
+    };
+    /// Gui selection for the unit of the initial accelerometer biases
+    InitBiasAccelUnit _initBiasAccelUnit = InitBiasAccelUnit::m_s2;
+
+    /// GUI selection of the initial accelerometer biases
+    Eigen::Vector3d _initBiasAccel{ 0.0, 0.0, 0.0 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial gyroscope biases
+    enum class InitBiasGyroUnit
+    {
+        rad_s, ///< angular rate [rad/s]
+        deg_s, ///< angular rate [deg/s]
+    };
+    /// Gui selection for the unit of the initial gyroscope biases
+    InitBiasGyroUnit _initBiasGyroUnit = InitBiasGyroUnit::deg_s;
+
+    /// GUI selection of the initial gyroscope biases
+    Eigen::Vector3d _initBiasGyro{ 0.0, 0.0, 0.0 };
 
     // ###########################################################################################################
 
@@ -531,8 +556,8 @@ class LooselyCoupledKF : public Node
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
-    /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @param[in] tau_bad Correlation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correlation length for the gyroscope in [s]
     /// @param[in] e_F_21 Submatrix 𝐅_21 of the system matrix 𝐅
     /// @param[in] e_Dcm_b Direction Cosine Matrix from body to Earth coordinates
     /// @param[in] tau_s Time interval in [s]
@@ -639,17 +664,8 @@ class LooselyCoupledKF : public Node
 #ifndef DOXYGEN_IGNORE
 
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
@@ -660,52 +676,43 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFStates>
         switch (st)
         {
         case NAV::LooselyCoupledKF::KFStates::Roll:
-            return fmt::format_to(ctx.out(), "Roll/Psi_eb_1");
+            return fmt::formatter<const char*>::format("Roll/Psi_eb_1", ctx);
         case NAV::LooselyCoupledKF::KFStates::Pitch:
-            return fmt::format_to(ctx.out(), "Pitch/Psi_eb_2");
+            return fmt::formatter<const char*>::format("Pitch/Psi_eb_2", ctx);
         case NAV::LooselyCoupledKF::KFStates::Yaw:
-            return fmt::format_to(ctx.out(), "Yaw/Psi_eb_3");
+            return fmt::formatter<const char*>::format("Yaw/Psi_eb_3", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelN:
-            return fmt::format_to(ctx.out(), "VelN/VelX");
+            return fmt::formatter<const char*>::format("VelN/VelX", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelE:
-            return fmt::format_to(ctx.out(), "VelE/VelY");
+            return fmt::formatter<const char*>::format("VelE/VelY", ctx);
         case NAV::LooselyCoupledKF::KFStates::VelD:
-            return fmt::format_to(ctx.out(), "VelD/VelZ");
+            return fmt::formatter<const char*>::format("VelD/VelZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosLat:
-            return fmt::format_to(ctx.out(), "PosLat/PosX");
+            return fmt::formatter<const char*>::format("PosLat/PosX", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosLon:
-            return fmt::format_to(ctx.out(), "PosLon/PosY");
+            return fmt::formatter<const char*>::format("PosLon/PosY", ctx);
         case NAV::LooselyCoupledKF::KFStates::PosAlt:
-            return fmt::format_to(ctx.out(), "PosAlt/PosZ");
+            return fmt::formatter<const char*>::format("PosAlt/PosZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasX:
-            return fmt::format_to(ctx.out(), "AccBiasX");
+            return fmt::formatter<const char*>::format("AccBiasX", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasY:
-            return fmt::format_to(ctx.out(), "AccBiasY");
+            return fmt::formatter<const char*>::format("AccBiasY", ctx);
         case NAV::LooselyCoupledKF::KFStates::AccBiasZ:
-            return fmt::format_to(ctx.out(), "AccBiasZ");
+            return fmt::formatter<const char*>::format("AccBiasZ", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasX:
-            return fmt::format_to(ctx.out(), "GyrBiasX");
+            return fmt::formatter<const char*>::format("GyrBiasX", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasY:
-            return fmt::format_to(ctx.out(), "GyrBiasY");
+            return fmt::formatter<const char*>::format("GyrBiasY", ctx);
         case NAV::LooselyCoupledKF::KFStates::GyrBiasZ:
-            return fmt::format_to(ctx.out(), "GyrBiasZ");
+            return fmt::formatter<const char*>::format("GyrBiasZ", ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<const char*>::format("ERROR", ctx);
     }
 };
 template<>
-struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
+struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : fmt::formatter<const char*>
 {
-    /// @brief Parse function to make the struct formattable
-    /// @param[in] ctx Parser context
-    /// @return Beginning of the context
-    template<typename ParseContext>
-    constexpr auto parse(ParseContext& ctx)
-    {
-        return ctx.begin();
-    }
-
     /// @brief Defines how to format structs
     /// @param[in] st Struct to format
     /// @param[in, out] ctx Format context
@@ -716,21 +723,33 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas>
         switch (st)
         {
         case NAV::LooselyCoupledKF::KFMeas::dPosLat:
-            return fmt::format_to(ctx.out(), "dPosLat/dPosX");
+            return fmt::formatter<const char*>::format("dPosLat/dPosX", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dPosLon:
-            return fmt::format_to(ctx.out(), "dPosLon/dPosY");
+            return fmt::formatter<const char*>::format("dPosLon/dPosY", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dPosAlt:
-            return fmt::format_to(ctx.out(), "dPosAlt/dPosZ");
+            return fmt::formatter<const char*>::format("dPosAlt/dPosZ", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelN:
-            return fmt::format_to(ctx.out(), "dVelN/dVelX");
+            return fmt::formatter<const char*>::format("dVelN/dVelX", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelE:
-            return fmt::format_to(ctx.out(), "dVelE/dVelY");
+            return fmt::formatter<const char*>::format("dVelE/dVelY", ctx);
         case NAV::LooselyCoupledKF::KFMeas::dVelD:
-            return fmt::format_to(ctx.out(), "dVelD/dVelZ");
+            return fmt::formatter<const char*>::format("dVelD/dVelZ", ctx);
         }
 
-        return fmt::format_to(ctx.out(), "ERROR");
+        return fmt::formatter<const char*>::format("ERROR", ctx);
     }
 };
 
 #endif
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFStates& obj);
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::LooselyCoupledKF::KFMeas& obj);

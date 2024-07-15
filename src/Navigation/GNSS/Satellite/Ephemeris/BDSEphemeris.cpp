@@ -108,8 +108,7 @@ bool BDSEphemeris::isHealthy() const
 
 double BDSEphemeris::calcSatellitePositionVariance() const
 {
-    // Getting the index and value again will discretize the URA values
-    return std::pow(gpsUraIdx2Val(gpsUraVal2Idx(svAccuracy)), 2);
+    return std::pow(svAccuracy, 2);
 }
 
 } // namespace NAV

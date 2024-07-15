@@ -168,32 +168,33 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 }
 
 // Utility
-#include "Nodes/util/Demo.hpp"
-#include "Nodes/util/GroupBox.hpp"
-#include "Nodes/util/TimeWindow.hpp"
-// Simple
-#include "Nodes/Simple/Combiner.hpp"
+#include "Nodes/Utility/Combiner.hpp"
+#include "Nodes/Utility/Demo.hpp"
+#include "Nodes/Utility/GroupBox.hpp"
+#include "Nodes/Utility/Merger.hpp"
+#include "Nodes/Utility/Terminator.hpp"
+#include "Nodes/Utility/TimeWindow.hpp"
 // Converter
 #include "Nodes/Converter/GNSS/RtklibPosConverter.hpp"
 #include "Nodes/Converter/GNSS/UartPacketConverter.hpp"
+#include "Nodes/Converter/GNSS/UbloxGnssObsConverter.hpp"
+#include "Nodes/Converter/GNSS/UbloxGnssOrbitCollector.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
-
 // Data Link
 #include "Nodes/DataLink/udpSend.hpp"
 #include "Nodes/DataLink/udpRecv.hpp"
 // Data Logger
+#include "Nodes/DataLogger/General/CsvLogger.hpp"
+#include "Nodes/DataLogger/General/KmlLogger.hpp"
 #include "Nodes/DataLogger/General/MatrixLogger.hpp"
-#include "Nodes/DataLogger/GNSS/SppSolutionLogger.hpp"
+#include "Nodes/DataLogger/GNSS/RinexObsLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
-#include "Nodes/DataLogger/State/LcKfInsGnssErrorLogger.hpp"
-#include "Nodes/DataLogger/State/PosVelAttLogger.hpp"
 #include "Nodes/DataLogger/WiFi/WiFiObsLogger.hpp"
 #include "Nodes/DataLogger/WiFi/WiFiPositioningSolutionLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
+#include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
@@ -240,35 +241,37 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     Node::_autostartWorker = false;
 
     // Utility
+    registerNodeType<Combiner>();
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
+    registerNodeType<Merger>();
+    registerNodeType<Terminator>();
     registerNodeType<TimeWindow>();
-    // Simple
-    registerNodeType<Combiner>();
     // Converter
     registerNodeType<RtklibPosConverter>();
     registerNodeType<UartPacketConverter>();
+    registerNodeType<UbloxGnssObsConverter>();
+    registerNodeType<UbloxGnssOrbitCollector>();
     registerNodeType<VectorNavBinaryConverter>();
     // Data Link
     registerNodeType<UdpSend>();
     registerNodeType<UdpRecv>();
     // Data Logger
+    registerNodeType<CsvLogger>();
+    registerNodeType<KmlLogger>();
     registerNodeType<MatrixLogger>();
-    registerNodeType<SppSolutionLogger>();
+    registerNodeType<RinexObsLogger>();
     registerNodeType<UartDataLogger>();
-    registerNodeType<ImuDataLogger>();
-    registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
-    registerNodeType<LcKfInsGnssErrorLogger>();
-    registerNodeType<PosVelAttLogger>();
     registerNodeType<WiFiObsLogger>();
     registerNodeType<WiFiPositioningSolutionLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
+    registerNodeType<GnssAnalyzer>();
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
-    registerNodeType<TightlyCoupledKF>();
+    // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     registerNodeType<WiFiPositioning>();
     // Data Provider
@@ -307,8 +310,10 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     Node::_autostartWorker = true;
 }
 
+#include "NodeData/General/DynamicData.hpp"
 #include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/GNSS/GnssCombination.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/SppSolution.hpp"
@@ -318,9 +323,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
-#include "NodeData/State/LcKfInsGnssErrors.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
@@ -331,9 +335,11 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     // General
+    registerNodeDataType<DynamicData>();
     registerNodeDataType<StringObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
+    registerNodeDataType<GnssCombination>();
     registerNodeDataType<GnssObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<SppSolution>();
@@ -345,9 +351,8 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<KvhObs>();
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
-    registerNodeDataType<InertialNavSol>();
-    registerNodeDataType<LcKfInsGnssErrors>();
-    registerNodeDataType<TcKfInsGnssErrors>();
+    registerNodeDataType<InsGnssLCKFSolution>();
+    registerNodeDataType<InsGnssTCKFSolution>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();

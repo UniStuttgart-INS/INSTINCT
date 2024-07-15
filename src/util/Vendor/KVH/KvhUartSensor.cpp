@@ -179,7 +179,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::kvh::KvhUartSensor::findPac
                 return p;
             }
             // Invalid packet!
-            LOG_ERROR("{}: Invalid binary packet: Type={}, Length={}", _name, fmt::underlying(_packetType), _buffer.size());
+            LOG_DEBUG("{}: Invalid binary packet: Type={}, Length={}", _name, fmt::underlying(_packetType), _buffer.size());
             resetTracking();
         }
         if (_buffer.size() >= 40)
@@ -210,6 +210,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::vendor::kvh::KvhUartSensor::findPac
                 {
                     // We have a valid ascii packet!!!.
                     LOG_DATA("{}: Valid ascii packet: {}", _name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    resetTracking();
                     return p;
                 }
                 // Invalid packet!

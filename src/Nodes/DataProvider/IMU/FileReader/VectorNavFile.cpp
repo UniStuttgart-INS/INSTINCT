@@ -419,6 +419,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
 
         // Convert line into stream
         std::stringstream lineStream(line);
+        LOG_DATA("{}: Reading line {}: {}", nameId(), _messageCount + 2, line);
 
         auto extractCell = [&lineStream]() {
             if (std::string cell; std::getline(lineStream, cell, ','))

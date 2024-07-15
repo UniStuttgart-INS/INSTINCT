@@ -8,6 +8,7 @@
 
 #include "FlowExecutor.hpp"
 
+#include "Navigation/GNSS/Positioning/AntexReader.hpp"
 #include "util/Logger.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
@@ -70,7 +71,7 @@ void execute();
 
 bool NAV::FlowExecutor::isRunning() noexcept
 {
-    std::lock_guard<std::mutex> lk(_mutex);
+    std::scoped_lock<std::mutex> lk(_mutex);
     return _state != State::Idle;
 }
 
@@ -81,7 +82,7 @@ void NAV::FlowExecutor::start()
     stop();
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Starting;
     }
 
@@ -95,7 +96,7 @@ void NAV::FlowExecutor::stop()
     if (isRunning())
     {
         {
-            std::lock_guard<std::mutex> lk(_mutex);
+            std::scoped_lock<std::mutex> lk(_mutex);
             if (_state == State::Running || _state == State::Starting)
             {
                 _state = State::Stopping;
@@ -118,7 +119,7 @@ void NAV::FlowExecutor::waitForFinish()
     }
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         if (_thd.joinable()) { _thd.join(); }
     }
     LOG_TRACE("FlowExecutor finished.");
@@ -131,7 +132,7 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 
     if (_activeNodes == 0)
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Stopping;
         _cv.notify_all();
     }
@@ -140,6 +141,8 @@ void NAV::FlowExecutor::deregisterNode([[maybe_unused]] const Node* node)
 void NAV::FlowExecutor::execute()
 {
     LOG_TRACE("called");
+
+    AntexReader::Get().reset();
 
     for (Node* node : nm::m_Nodes())
     {
@@ -153,24 +156,27 @@ void NAV::FlowExecutor::execute()
 
     if (!nm::InitializeAllNodes()) // This wakes the threads
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Idle;
         _cv.notify_all();
         return;
     }
 
     LOG_INFO("=====================================================");
-    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) { return node->_onlyRealTime; });
+    bool realTimeMode = std::any_of(nm::m_Nodes().begin(), nm::m_Nodes().end(), [](const Node* node) {
+        return node && !node->isDisabled() && node->_onlyRealTime;
+    });
     LOG_INFO("Executing in {} mode", realTimeMode ? "real-time" : "post-processing");
 
     util::time::SetMode(realTimeMode ? util::time::Mode::REAL_TIME : util::time::Mode::POST_PROCESSING);
+    _activeNodes = 0;
 
     for (Node* node : nm::m_Nodes())
     {
-        if (node == nullptr || !node->isInitialized()) { continue; }
+        if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
         {
-            std::lock_guard<std::mutex> lk(_mutex);
+            std::scoped_lock<std::mutex> lk(_mutex);
             if (_state != State::Starting) { break; }
         }
 
@@ -180,7 +186,10 @@ void NAV::FlowExecutor::execute()
             _activeNodes += 1;
             LOG_TRACE("Putting node '{}' into post-processing mode and adding to active nodes.", node->nameId());
         }
-        node->resetNode();
+        {
+            std::scoped_lock<std::mutex> guard(node->_configWindowMutex);
+            node->resetNode();
+        }
         for (size_t i = 0; i < node->outputPins.size(); i++) // for (auto& outputPin : node->outputPins)
         {
             auto& outputPin = node->outputPins[i];
@@ -214,7 +223,7 @@ void NAV::FlowExecutor::execute()
     }
 
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         if (_state == State::Starting)
         {
             nm::EnableAllCallbacks();
@@ -225,15 +234,18 @@ void NAV::FlowExecutor::execute()
     _startTime = std::chrono::steady_clock::now();
     LOG_INFO("Execution started");
 
+    bool anyNodeRunning = false;
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node != nullptr && node->isInitialized())
+        if (node != nullptr && node->kind != Node::Kind::GroupBox && node->isInitialized())
         {
+            anyNodeRunning = true;
             LOG_DEBUG("Waking up node {}", node->nameId());
             node->wakeWorker();
         }
     }
 
+    if (anyNodeRunning)
     {
         // Wait for the nodes to finish
         bool timeout = true;
@@ -263,10 +275,11 @@ void NAV::FlowExecutor::execute()
     // Deinitialize
     LOG_DEBUG("Stopping FlowExecutor...");
     nm::DisableAllCallbacks();
+    nm::ClearAllNodeQueues();
 
     for (Node* node : nm::m_Nodes())
     {
-        if (node == nullptr || !node->isInitialized()) { continue; }
+        if (node == nullptr || node->kind == Node::Kind::GroupBox || !node->isInitialized()) { continue; }
 
         node->_mode = Node::Mode::REAL_TIME;
         for (auto& outputPin : node->outputPins)
@@ -287,7 +300,7 @@ void NAV::FlowExecutor::execute()
     _activeNodes = 0;
     LOG_TRACE("FlowExecutor deinitialized.");
     {
-        std::lock_guard<std::mutex> lk(_mutex);
+        std::scoped_lock<std::mutex> lk(_mutex);
         _state = State::Idle;
         _cv.notify_all();
     }

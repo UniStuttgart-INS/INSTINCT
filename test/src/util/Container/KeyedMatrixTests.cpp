@@ -623,6 +623,43 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
     REQUIRE(mat.hasAnyCols({ 1, 9 }));
 }
 
+TEST_CASE("[KeyedMatrix] replaceRow & replaceCol", "[KeyedMatrix]")
+{
+    auto logger = initializeTestLogger();
+
+    enum Keys
+    {
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+    };
+
+    Eigen::Matrix3d eigMat;
+    eigMat << 1, 2, 3,
+        4, 5, 6,
+        7, 8, 9;
+
+    KeyedMatrixX<double, Keys, int> mat(eigMat, { ONE, TWO, THREE }, { 1, 2, 3 });
+    REQUIRE(mat.rowKeys() == std::vector<Keys>{ ONE, TWO, THREE });
+    REQUIRE(mat.colKeys() == std::vector<int>{ 1, 2, 3 });
+    REQUIRE(mat(all, all) == eigMat);
+    REQUIRE(mat({ ONE, TWO, THREE }, { 1, 2, 3 }) == eigMat);
+
+    mat.replaceRowKey(TWO, FOUR);
+    REQUIRE(mat.rowKeys() == std::vector<Keys>{ ONE, FOUR, THREE });
+    REQUIRE(mat.colKeys() == std::vector<int>{ 1, 2, 3 });
+    REQUIRE(mat(all, all) == eigMat);
+    REQUIRE(mat({ ONE, FOUR, THREE }, { 1, 2, 3 }) == eigMat);
+
+    mat.replaceColKey(3, 7);
+    REQUIRE(mat.rowKeys() == std::vector<Keys>{ ONE, FOUR, THREE });
+    REQUIRE(mat.colKeys() == std::vector<int>{ 1, 2, 7 });
+    REQUIRE(mat(all, all) == eigMat);
+    REQUIRE(mat({ ONE, FOUR, THREE }, { 1, 2, 7 }) == eigMat);
+}
+
 TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();

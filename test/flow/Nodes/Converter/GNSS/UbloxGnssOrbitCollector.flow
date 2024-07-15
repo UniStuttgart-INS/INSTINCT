@@ -1,0 +1,94 @@
+{
+    "colormaps": [],
+    "links": {
+        "link-6": {
+            "endPinId": 3,
+            "id": 6,
+            "startPinId": 1
+        }
+    },
+    "nodes": {
+        "node-2": {
+            "data": {
+                "FileReader": {
+                    "path": "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx"
+                }
+            },
+            "enabled": true,
+            "id": 2,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "UbloxFile",
+            "outputPins": [
+                {
+                    "id": 1,
+                    "name": "UbloxObs"
+                }
+            ],
+            "pos": {
+                "x": -1049.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "UbloxFile"
+        },
+        "node-5": {
+            "data": null,
+            "enabled": true,
+            "id": 5,
+            "inputPins": [
+                {
+                    "id": 3,
+                    "name": "UbloxObs"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "UbloxGnssOrbitCollector",
+            "outputPins": [
+                {
+                    "id": 4,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": -840.0,
+                "y": 206.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "UbloxGnssOrbitCollector"
+        },
+        "node-8": {
+            "data": {
+                "FileReader": {
+                    "path": "Converter/GNSS/Ublox/Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.nav"
+                }
+            },
+            "enabled": true,
+            "id": 8,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "RinexNavFile",
+            "outputPins": [
+                {
+                    "id": 7,
+                    "name": "GnssNavInfo"
+                }
+            ],
+            "pos": {
+                "x": -738.0,
+                "y": 302.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "RinexNavFile"
+        }
+    }
+}

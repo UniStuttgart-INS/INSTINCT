@@ -270,9 +270,6 @@ bool NAV::MultiImuFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _lastFiltObs.reset();
-    _lineCnt = 0;
-
     return FileReader::initialize();
 }
 
@@ -285,6 +282,9 @@ void NAV::MultiImuFile::deinitialize()
 
 bool NAV::MultiImuFile::resetNode()
 {
+    _lastFiltObs.reset();
+    _lineCounter = 0;
+
     FileReader::resetReader();
 
     for (auto& sensor : _messages)
@@ -341,7 +341,7 @@ void NAV::MultiImuFile::readHeader()
     // Find first line of data
     while (getline(line))
     {
-        _lineCnt++;
+        _lineCounter++;
 
         // Remove any trailing non text characters
         line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
@@ -450,7 +450,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
         std::string line;
         while (getline(line))
         {
-            _lineCnt++;
+            _lineCounter++;
 
             // Remove any starting non text characters
             line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
@@ -545,14 +545,19 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
 
             obs->insTime = _startTime + std::chrono::duration<double>(timeStamp);
 
-            if (accelX.has_value() && accelY.has_value() && accelZ.has_value())
+            if (!accelX || !accelY || !accelZ)
             {
-                obs->accelUncompXYZ.emplace(accelX.value(), accelY.value(), accelZ.value());
+                LOG_ERROR("{}: Fields 'accelX', 'accelY', 'accelZ' are needed.", nameId());
+                return nullptr;
             }
-            if (gyroX.has_value() && gyroY.has_value() && gyroZ.has_value())
+            if (!gyroX || !gyroY || !gyroZ)
             {
-                obs->gyroUncompXYZ.emplace(gyroX.value(), gyroY.value(), gyroZ.value());
+                LOG_ERROR("{}: Fields 'gyroX', 'gyroY', 'gyroZ' are needed.", nameId());
+                return nullptr;
             }
+
+            obs->p_acceleration = { accelX.value(), accelY.value(), accelZ.value() };
+            obs->p_angularRate = { gyroX.value(), gyroY.value(), gyroZ.value() };
 
             if (sensorId - 1 != pinIdx)
             {
@@ -578,7 +583,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
         // Detect jumps back in time
         if (obs->insTime < _lastFiltObs)
         {
-            LOG_ERROR("{}: Jumped back in time on line {}, by {} s", nameId(), _lineCnt, (obs->insTime - _lastFiltObs).count());
+            LOG_ERROR("{}: Jumped back in time on line {} (at {}), by {} s", nameId(), _lineCounter, obs->insTime.toYMDHMS(), (obs->insTime - _lastFiltObs).count());
             return obs;
         }
         _lastFiltObs = obs->insTime;

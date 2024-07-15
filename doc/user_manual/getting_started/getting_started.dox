@@ -1,0 +1,137 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file getting_started.dox
+// @brief Main page for the user manual
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-22
+
+\namespace Instinct {
+/** \page getting_started Getting Started
+
+\tableofcontents
+
+\section getting_started_introduction Introduction
+<i>We recommend to read through the \ref main_introduction first!</i>
+
+This manual is intended for (basic) users of INSTINCT. It will explain how to work with the software and its nodes. Therefore, INSTINCT needs to be installed and started successfully. If this ins't the case, please refer to (\ref introduction_installation).
+Following this page, you will be guided through the window of INSTINCT (\ref main_window) and the options within it, as well as using the workspace (\ref working_with_instinct) to work with a flow (\ref flow_file).
+A guide for every node include a short tutorial on how to set them up can be found  in the \ref node_guide_landing_page.
+
+
+\section main_window Main window
+When INSTINCT is started, the following window should appear on your desktop:
+\image html mainWindow.png width=1000
+
+The window can be divided into four different sections:
+1. \ref main_menu_bar : File handling, style and format editing, initialization and running of files, additional features
+2. \ref left_panel : Table of contents and maneuvering in the workspace
+3. \ref work_space : Creating, editing, working with flows
+4. \ref log_output : Generated output from INSTINCTs log
+
+
+\section flow_file flow-File format
+To see the definition of flow-based programming, refer to (\ref introduction_programming).
+When you work with INSTINCT, you can use different Nodes (\ref node_guide_landing_page) that can handle different file formats, yet everything in the workspace will be saved as a <i>.flow</i>-File, since INSTINCT uses flow-based programming (\ref introduction_fbp_instinct).
+The <i>flow</i>-File saves the current Nodes, connections and settings in the workspace at the time of saving. the files can be saved and opened via the \ref bar_file. <i>.flow</i>-Files are based on JSON.
+
+
+\section working_with_instinct Working with INSTINCT
+In order to work with INSTINCT, a Flow must be created (or loaded, see \ref bar_file). Ths happens within the \ref work_space. A *Flow consists of Nodes and Links*, the connection between the Nodes.
+A Node is an object (with settings) that performs a specific task (see \ref introduction_fbp_instinct). To **add Nodes, right-click** to open the menu of available nodes, and choose the one of interest.
+
+For better overview, the Nodes are sectioned and a search box is at the top. After selecting the Node, it will be added to the Workspace, where it can be **selected moved around by left-clicking** it.
+To **connect Nodes, left-click and drag** from one Pin to the other.
+
+\note There are different depending on the data type are available: If a connection is possible or not can be deduced by the overall look of the Pins in question and their orientation. Please refer to \ref node_connections to see which connections are possible and which data types are available.
+
+\subsection getting_started_ex1 EXAMPLE 1: Build a Flow
+<blockquote>
+Let us build a simple Flow to calculate a SPP solution.
+
+<b>Required Nodes:</b>
+- *RinexObsFile* Node (\ref rinex_obs_file_node)
+- *RinexNavFile* Node (\ref rinex_nav_file_node)
+- *SinglePointPositioning - SPP* Node (\ref single_point_positioning_node)
+- *Plot* Node (\ref plot_node)
+
+<b>Steps</b>
+1. **Right-click** in your \ref work_space to open the Menu of Nodes and search for the *RinexObsFile* Node under the *Data Provider* subsection.
+2. Repeat for the *RinexNavFile*.
+3. Open the Menu of Nodes again and use the search box to find the *SinglePointPositioning - SPP* Node.
+4. **Left-click** on the output-Pin of the *RinexObsFile* Node and **drag** it to the suitable input Pin on the *SinglePointPositioning - SPP* Node.
+5. Repeat for the *RinexNavFile*.
+6. **Left-click and drag** over the *SinglePointPositioning - SPP* Node output-Pin until *+ Create Node* appears. Let go and select the *Plot* Node.
+7. Rearrange the Nodes by **left-click and drag** them for better overview. Use the *Zoom to Content* button in the \ref left_panel to center the Flow.
+8. Save the Flow (\ref main_menu_bar - \ref bar_file - *Save* or *Save As*)
+
+<i>Example of how the result should look like:</i>
+\image html exampleFlow1.png width=750
+</blockquote>
+
+To edit a Node, **double-(left)click to open the Settings Window**. Here, necessary settings can be made. These include select the file that should be read-in, or select the name and directory of an output file.
+For data processing Nodes, the settings allow different options such as start values, different algorithm etc. Going through these settings for every Node is **necessary** for a Flow to work as intended.
+
+After setting up every Node and connection, the Flow can be run (see \ref bar_run).
+
+\subsection getting_started_ex2 EXAMPLE 2: Node Settings and run Flow
+<blockquote>
+Choose the right settings for the Nodes of our created Flow to run it.
+
+\note Only the necessary settings are described here. To learn more about each node, refer to the \ref node_guide_landing_page or see the references in \ref getting_started_ex1 .
+
+<b>Required Flow:</b>
+- Flow from \ref getting_started_ex1
+
+<b>Required Data:</b>
+
+RINEX observation file:
+
+    ../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR.obs
+
+RINEX navigation file:
+
+    ../test/data/GNSS/Orolia-Skydel_static_duration-4h_rate-5min_sys-GERCQIS_iono-none_tropo-none/Septentrio-PolaRx5TR_G.nav
+
+<i>Relative path(s), file(s) included in INSTINCT</i>
+
+<b>Steps</b>
+1. **Double-left-click** on the *RinexObsFile* to open the Settings Window of the Node.
+  - Click on *choose* and select the "Septentrio-PolaRx5TR.obs" File under the above given path (or copy it).
+2. Repeat for the *RinexNavFile* Node with the "Septentrio-PolaRx5TR_G.nav" for GPS.
+3. Open the Settings of the *SinglePointPositioning - SPP* and make some changes if you wish (not necessary).
+4. Open the Settings of the *Plot* Node:
+  - Click *Add Plot*
+  - Open the Options-Dropdown menu
+      - Type "North/South [m]" in the *Y1 Axis Label* field
+      - Select "East/West [m]" for X Data of the Pin *1- SppSolution* in the table below
+  - On the left side of the plot, a list with different items is displayed:
+      - **Drag and Drop** the *North/South [m]* in the plot - or on the y-Axis.
+5. Save the Flow
+
+<i>Example of how the result should look like:</i>
+\image html exampleFlow2.png width=750
+
+<b>Run Flow:</b>
+1. Close all windows except the Plot
+2. Run the Flow (\ref bar_run *- Run Flow*) to see the SPP-Position over time.
+
+<i>Example of how the result should look like:</i>
+\image html exampleFlow3.png width=750
+
+\note To see a more advanced version of this Flow with multiple plots and satellite systems, you can find this and other example flows via \ref bar_file *- Open Flow: _SPP.flow*.
+</blockquote>
+
+To continue learning, read our \ref node_guide_introduction where the different Nodes with examples are explained.
+
+________
+<i>Last updated: 2024-02-22</i>
+
+*/
+}

@@ -13,17 +13,18 @@
 
 #pragma once
 
-#include <catch2/catch_test_macros.hpp>
-#include "CatchMatchers.hpp"
 #include "Logger.hpp"
-
-#include "data/OroliaRawLogging.hpp"
-#include "data/SpirentAsciiSatelliteData.hpp"
 
 #include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "util/StringUtil.hpp"
+
+#include "data/SkydelSatData.hpp"
+#include "data/SpirentAsciiSatelliteData.hpp"
+
+#include <catch2/catch_test_macros.hpp>
+#include "CatchMatchers.hpp"
 
 namespace NAV::TESTS::EphemerisTests
 {
@@ -36,10 +37,10 @@ enum DataSource
 
 struct Margin
 {
+    double clock = 0.0;
     double pos = 0.0;
     double vel = 0.0;
     double accel = 0.0;
-    double clock = 0.0;
 };
 
 template<class Ephemeris>
@@ -169,7 +170,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
     while (!fs.eof() && std::getline(fs, line) && !line.empty())
     {
         std::vector<std::string> v = str::split(line, ",");
-        REQUIRE(v.size() == (dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_COUNT) : size_t(OroliaRawLogging_COUNT)));
+        REQUIRE(v.size() == (dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_COUNT) : size_t(SkydelSatData_COUNT)));
 
         InsTime recvTime;
         if (dataSource == Spirent)
@@ -207,7 +208,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
         }
         else // Skydel
         {
-            recvTime = InsTime{ 0, std::stoi(v[OroliaRawLogging_GPS_Week_Number]), std::stold(v[OroliaRawLogging_GPS_TOW]) };
+            recvTime = InsTime{ 0, std::stoi(v[SkydelSatData_GPS_Week_Number]), std::stold(v[SkydelSatData_GPS_TOW]) };
         }
         LOG_TRACE("  recvTime = {} ({})", recvTime.toYMDHMS(), recvTime.toGPSweekTow());
 
@@ -219,9 +220,58 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
 
         nCalc++;
 
+        size_t grp = 0;
+        if (dataSource == Spirent)
+        {
+            switch (Frequency_(freq)) // TODO: Check sorting of GLONASS
+            {
+            case Freq_None:
+            case G01:
+            case E01:
+            case R04:
+            case J01:
+            case I09:
+            case S01:
+                grp = 0; // Group A (L1/E1/S/B1I)
+                break;
+            case G02:
+            case E06:
+            case R06:
+            case J02:
+                grp = 1; // Group B (L2/E6/B2I)
+                break;
+            case G05:
+            case E08:
+            case R01:
+            case B05:
+            case J05:
+            case I05:
+            case S05:
+                grp = 2; // Group C (L5/E5/B2A/C1)
+                break;
+            case R02:
+            case J06:
+                grp = 3; // Group D (L6/B1C/C2)
+                break;
+            case R03:
+            case B06:
+                grp = 4; // Group E (B3I/C3)
+                break;
+            case B07:
+                grp = 5; // Group F (B2b)
+                break;
+            case E07: // TODO: sort these
+            case E05:
+            case B01:
+            case B02:
+            case B08:
+                REQUIRE(false);
+            }
+        }
+
         LOG_TRACE("    reference: {} ", line);
 
-        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) : size_t(OroliaRawLogging_PSR)]);
+        double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) + grp : size_t(SkydelSatData_PSR)]);
         LOG_TRACE("    psr {} [m]", psr);
 
         auto satClk = eph.calcClockCorrections(recvTime, psr, freq);
@@ -229,7 +279,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
         LOG_TRACE("    clkBias           {}", satClk.bias);
         if (dataSource == Skydel)
         {
-            double clkCorrection_ref = std::stod(v[OroliaRawLogging_Clock_Correction]);
+            double clkCorrection_ref = std::stod(v[SkydelSatData_Clock_Correction]);
             LOG_TRACE("    clkCorrection_ref {}", clkCorrection_ref);
             LOG_TRACE("    clkBias - ref {}", satClk.bias - clkCorrection_ref);
             REQUIRE_THAT(satClk.bias - clkCorrection_ref, Catch::Matchers::WithinAbs(0.0, margin.clock));
@@ -244,12 +294,12 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
             auto dt = static_cast<double>((recvTime - satClk.transmitTime).count());
 
             // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
-            data = Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
+            data = Eigen::AngleAxisd(InsConst<>::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
         };
 
-        Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(OroliaRawLogging_ECEF_X)]),
-                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Y) : size_t(OroliaRawLogging_ECEF_Y)]),
-                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Z) : size_t(OroliaRawLogging_ECEF_Z)]));
+        Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(SkydelSatData_ECEF_X)]),
+                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Y) : size_t(SkydelSatData_ECEF_Y)]),
+                                 std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Z) : size_t(SkydelSatData_ECEF_Z)]));
         if (dataSource == Spirent) { rotateDataFrame(e_refPos); }
         LOG_TRACE("    e_refPos {}", e_refPos.transpose());
         LOG_TRACE("    pos      {}", pos.e_pos.transpose());
@@ -293,5 +343,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
     // ± 15 minutes =  7
     REQUIRE(nCalc == (satId.satSys == GLO ? 7 : 25));
 }
+
+void testNavFile(DataSource dataSource, const std::string& navDataPath, const std::vector<std::tuple<SatSigId, std::string, Margin>>& files);
 
 } // namespace NAV::TESTS::EphemerisTests

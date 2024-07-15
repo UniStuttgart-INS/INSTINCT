@@ -17,6 +17,7 @@
 
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
 #include "util/Random/RandomNumberGenerator.hpp"
@@ -71,10 +72,11 @@ class ErrorModel : public Node
     /// Input type
     enum class InputType
     {
-        None,      ///< None
-        ImuObs,    ///< ImuObs
-        PosVelAtt, ///< PosVelAtt
-        GnssObs,   ///< GnssObs
+        None,         ///< None
+        ImuObs,       ///< ImuObs
+        ImuObsWDelta, ///< ImuObsWDelta
+        PosVelAtt,    ///< PosVelAtt
+        GnssObs,      ///< GnssObs
     };
 
     /// Input type
@@ -100,15 +102,19 @@ class ErrorModel : public Node
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again
-    void receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    [[nodiscard]] std::shared_ptr<ImuObs> receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+
+    /// @brief Callback when receiving an ImuObsWDelta
+    /// @param[in] imuObs Copied data to modify and send out again
+    [[nodiscard]] std::shared_ptr<ImuObsWDelta> receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
-    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
+    [[nodiscard]] std::shared_ptr<PosVelAtt> receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
 
     /// @brief Callback when receiving an GnssObs
     /// @param[in] gnssObs Copied data to modify and send out again
-    void receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
+    [[nodiscard]] std::shared_ptr<GnssObs> receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
 
     /// Last observation time
     InsTime _lastObservationTime;
@@ -118,6 +124,27 @@ class ErrorModel : public Node
     // #########################################################################################################################################
     //                                                                 ImuObs
     // #########################################################################################################################################
+    //
+    /// 3D array which allow to accumulate RW noise for accelerometer
+    Eigen::Vector3d RandomWalkAccelerometer = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate RW noise for gyro
+    Eigen::Vector3d RandomWalkGyroscope = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate RW noise for gyro
+    Eigen::Vector3d IntegratedRandomWalkGyro = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate IRW veloctiy noise for accelerometer
+    Eigen::Vector3d IntegratedRandomWalkAccelerometer_velocity = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate IRW for accelerometer
+    Eigen::Vector3d IntegratedRandomWalkAccelerometer = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate IRW veloctiy noise for gyro
+    Eigen::Vector3d IntegratedRandomWalkGyroscope_velocity = Eigen::Vector3d::Zero();
+
+    /// 3D array which allow to accumulate IRW for gyro
+    Eigen::Vector3d IntegratedRandomWalkGyroscope = Eigen::Vector3d::Zero();
 
     // --------------------------------------------------------------- Offset ------------------------------------------------------------------
 
@@ -171,6 +198,67 @@ class ErrorModel : public Node
     Eigen::Vector3d _imuGyroscopeNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the gyroscope noise
     RandomNumberGenerator _imuGyroscopeRng;
+
+    /// Possible units to specify an accelerometer RW
+    enum class ImuAccelerometerRWUnits
+    {
+        m_s2_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
+        m_s2_sqrth, ///< [m^2/s^2/sqrt(h)] (Standard deviation)
+    };
+    /// Possible units to specify an gyro RW
+    enum class ImuGyroscopeRWUnits
+    {
+        rad_s_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
+        rad_s_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
+        deg_s_sqrts, ///< [deg/s/sqrt(s)] (Standard deviation)
+        deg_s_sqrth, ///< [deg/s/sqrt(h)] (Standard deviation)
+    };
+
+    /// Possible units to specify an accelerometer IRW
+    enum class ImuAccelerometerIRWUnits
+    {
+        m_s3_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
+        m_s3_sqrth, ///< [m^2/s^2/sqrt(h)] (Standard deviation)
+    };
+    /// Possible units to specify an gyro RW
+    enum class ImuGyroscopeIRWUnits
+    {
+        rad_s2_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
+        rad_s2_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
+        deg_s2_sqrts, ///< [deg/s/sqrt(s)] (Standard deviation)
+        deg_s2_sqrth, ///< [deg/s/sqrt(h)] (Standard deviation)
+    };
+
+    /// Selected unit for the accelerometer RW noise in the GUI
+    ImuAccelerometerRWUnits _imuAccelerometerRWUnit = ImuAccelerometerRWUnits::m_s2_sqrts;
+    /// RW noise of the accelerometer (Unit as selected)
+    Eigen::Vector3d _imuAccelerometerRW = Eigen::Vector3d::Zero();
+    /// Random number generator for the accelerometer RW noise
+    RandomNumberGenerator _imuAccelerometerRWRng;
+
+    /// Selected unit for the accelerometer RW noise in the GUI
+    ImuGyroscopeRWUnits _imuGyroscopeRWUnit = ImuGyroscopeRWUnits::rad_s_sqrts;
+    /// RW noise of the accelerometer (Unit as selected)
+    Eigen::Vector3d _imuGyroscopeRW = Eigen::Vector3d::Zero();
+    /// Random number generator for the accelerometer RW noise
+    RandomNumberGenerator _imuGyroscopeRWRng;
+
+    /// Selected unit for the accelerometer IRW noise in the GUI
+    ImuAccelerometerIRWUnits _imuAccelerometerIRWUnit = ImuAccelerometerIRWUnits::m_s3_sqrts;
+    /// IRW noise of the accelerometer (Unit as selected)
+    Eigen::Vector3d _imuAccelerometerIRW = Eigen::Vector3d::Zero();
+    /// Random number generator for the accelerometer IRW noise
+    RandomNumberGenerator _imuAccelerometerIRWRng;
+
+    /// Selected unit for the accelerometer IRW noise in the GUI
+    ImuGyroscopeIRWUnits _imuGyroscopeIRWUnit = ImuGyroscopeIRWUnits::rad_s2_sqrts;
+    /// RW noise of the accelerometer (Unit as selected)
+    Eigen::Vector3d _imuGyroscopeIRW = Eigen::Vector3d::Zero();
+    /// Random number generator for the accelerometer RW noise
+    RandomNumberGenerator _imuGyroscopeIRWRng;
+
+    /// How many measurements are averaged for the deltaVel and deltaTheta values
+    double _imuObsWDeltaAverageWindow = 10;
 
     // #########################################################################################################################################
     //                                                                PosVelAtt
@@ -322,6 +410,8 @@ class ErrorModel : public Node
     CycleSlipFrequencyUnits _gui_cycleSlipFrequencyUnit = CycleSlipFrequencyUnits::per_hour;
     /// The cycle-slip frequency (Unit as selected)
     double _gui_cycleSlipFrequency{ 0.0 };
+    /// Ambiguity limits cycle-slip
+    int _gui_cycleSlipRange = 20;
     /// The time frame which is considered for a cycle slip
     InsTime _cycleSlipWindowStartTime;
 

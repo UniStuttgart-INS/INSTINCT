@@ -32,24 +32,24 @@ double calcSatAzimuth(const Eigen::Vector3d& n_lineOfSightUnitVector)
 
 double calcSagnacCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos)
 {
-    return 1.0 / InsConst::C * (e_posAnt - e_satPos).dot(InsConst::e_omega_ie.cross(e_posAnt));
+    return 1.0 / InsConst<>::C * (e_posAnt - e_satPos).dot(InsConst<>::e_omega_ie.cross(e_posAnt));
 }
 
 double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& e_velAnt, const Eigen::Vector3d& e_satVel)
 {
-    return InsConst::omega_ie / InsConst::C
+    return InsConst<>::omega_ie / InsConst<>::C
            * (e_satVel.y() * e_posAnt.x() + e_satPos.y() * e_velAnt.x()
               - e_satVel.x() * e_posAnt.y() - e_satPos.x() * e_velAnt.y());
 }
 
 double doppler2rangeRate(double doppler, Frequency freq, int8_t num)
 {
-    return -InsConst::C / freq.getFrequency(num) * doppler;
+    return -InsConst<>::C / freq.getFrequency(num) * doppler;
 }
 
 double rangeRate2doppler(double rangeRate, Frequency freq, int8_t num)
 {
-    return -freq.getFrequency(num) / InsConst::C * rangeRate;
+    return -freq.getFrequency(num) / InsConst<>::C * rangeRate;
 }
 
 double ratioFreqSquared(Frequency f1, Frequency f2, int8_t num1, int8_t num2)
@@ -84,8 +84,12 @@ uint8_t gpsUraVal2Idx(double val)
 
 double gpsUraIdx2Val(uint8_t idx)
 {
-    constexpr std::array<double, 15> URA = { 2.4, 3.4, 4.85, 6.85, 9.65, 13.65, 24.0, 48.0, 96.0, 192.0, 384.0, 768.0, 1536.0, 3072.0, 6144.0 };
-    return URA.at(std::min(static_cast<size_t>(idx), URA.size()));
+    if (idx == 1) { return 2.8; }
+    if (idx == 3) { return 5.7; }
+    if (idx == 5) { return 11.3; }
+    if (idx <= 6) { return std::pow(2, 1.0 + idx / 2.0); }
+    if (idx < 15) { return std::pow(2, idx - 2); }
+    return 6144.0;
 }
 
 } // namespace NAV

@@ -19,11 +19,11 @@
 namespace NAV
 {
 /// @brief Least Squares Uncertainties return value
-template<typename SolutionVector, typename VarianceMatrix>
+template<typename Scalar, typename StateKeyType>
 struct KeyedLeastSquaresResult
 {
-    SolutionVector solution; ///< Least squares solution
-    VarianceMatrix variance; ///< Least squares variance
+    KeyedVectorX<Scalar, StateKeyType> solution;               ///< Least squares solution
+    KeyedMatrixX<Scalar, StateKeyType, StateKeyType> variance; ///< Least squares variance
 };
 
 /// @brief Finds the "least squares" solution for the equation \f$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} \f$
@@ -58,7 +58,7 @@ KeyedVectorX<Scalar, StateKeyType> solveWeightedLinearLeastSquares(const KeyedMa
 /// @param[in] dz Residual vector
 /// @return Least squares solution and variance
 template<typename Scalar, typename StateKeyType, typename MeasKeyType>
-KeyedLeastSquaresResult<KeyedVectorX<Scalar, StateKeyType>, KeyedMatrixX<Scalar, StateKeyType, StateKeyType>>
+KeyedLeastSquaresResult<Scalar, StateKeyType>
     solveLinearLeastSquaresUncertainties(const KeyedMatrixX<Scalar, MeasKeyType, StateKeyType>& H, const KeyedVectorX<Scalar, MeasKeyType>& dz)
 {
     // Amount of equations
@@ -100,7 +100,7 @@ KeyedLeastSquaresResult<KeyedVectorX<Scalar, StateKeyType>, KeyedMatrixX<Scalar,
 /// @param[in] dz Residual vector
 /// @return Weighted least squares solution and variance
 template<typename Scalar, typename StateKeyType, typename MeasKeyType>
-KeyedLeastSquaresResult<KeyedVectorX<Scalar, StateKeyType>, KeyedMatrixX<Scalar, StateKeyType, StateKeyType>>
+KeyedLeastSquaresResult<Scalar, StateKeyType>
     solveWeightedLinearLeastSquaresUncertainties(const KeyedMatrixX<Scalar, MeasKeyType, StateKeyType>& H, const KeyedMatrixX<Scalar, MeasKeyType, MeasKeyType>& W, const KeyedVectorX<Scalar, MeasKeyType>& dz)
 {
     // Amount of equations

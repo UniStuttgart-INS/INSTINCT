@@ -61,7 +61,7 @@ Clock::Corrections GLONASSEphemeris::calcClockCorrections(const InsTime& recvTim
     LOG_DATA("    toc {} (Time of clock)", toc.toGPSweekTow());
 
     // Time at transmission
-    InsTime transTime = recvTime - std::chrono::duration<double>(dist / InsConst::C);
+    InsTime transTime = recvTime - std::chrono::duration<double>(dist / InsConst<>::C);
 
     // SV clock time offset [s]
     double dt_sv = -tau_n + gamma_n * static_cast<double>((transTime - toc).count());
@@ -82,25 +82,32 @@ Orbit::PosVelAccel GLONASSEphemeris::calcSatelliteData(const InsTime& transTime,
     //      y State [x, y, z, v_x, v_y, v_z]^T
     //      c Constant values needed to calculate the derivatives
     //      Returns the derivative ∂/∂t [x, y, z, v_x, v_y, v_z]^T
-    auto calcPosVelDerivative = [](const Eigen::Matrix<double, 6, 1>& y, const Eigen::Vector3d& accelLuniSolar) {
+    auto calcPosVelDerivative = [](const Eigen::Matrix<double, 6, 1>& y, int /* z */, const Eigen::Vector3d& accelLuniSolar, double /* t */ = 0.0) {
         //       0  1  2   3    4    5
         // ∂/∂t [x, y, z, v_x, v_y, v_z]^T
         Eigen::Matrix<double, 6, 1> y_dot = Eigen::Matrix<double, 6, 1>::Zero();
 
-        auto pos = y.topRows<3>();
-        auto vel = y.bottomRows<3>();
+        enum State
+        {
+            X,
+            Y,
+            Z,
+            VX,
+            VY,
+            VZ
+        };
 
-        double r = std::sqrt(std::pow(pos.x(), 2) + std::pow(pos.y(), 2) + std::pow(pos.z(), 2));
+        double r = y.topRows<3>().norm();
 
-        double omega_ie2 = std::pow(InsConst::GLO::omega_ie, 2);
+        double omega_ie2 = std::pow(InsConst<>::GLO::omega_ie, 2);
 
-        double a = 1.5 * InsConst::GLO::J2 * InsConst::GLO::MU * std::pow(InsConst::GLO::a, 2) / std::pow(r, 5);
-        double c = -InsConst::GLO::MU / std::pow(r, 3) - a * (1. - 5. * std::pow(pos.z(), 2) / std::pow(r, 2));
+        double a = 1.5 * InsConst<>::GLO::J2 * InsConst<>::GLO::MU * std::pow(InsConst<>::GLO::a, 2) / std::pow(r, 5);
+        double c = -InsConst<>::GLO::MU / std::pow(r, 3) - a * (1. - 5. * std::pow(y(Z), 2) / std::pow(r, 2));
 
-        y_dot.topRows<3>() = vel;
-        y_dot(3) = (c + omega_ie2) * pos.x() + 2 * InsConst::GLO::omega_ie * vel.y() + accelLuniSolar.x();
-        y_dot(4) = (c + omega_ie2) * pos.y() - 2 * InsConst::GLO::omega_ie * vel.x() + accelLuniSolar.y();
-        y_dot(5) = (c - 2. * a) * pos.z() + accelLuniSolar.z();
+        y_dot.topRows<3>() = y.bottomRows<3>();
+        y_dot(3) = (c + omega_ie2) * y(X) + 2 * InsConst<>::GLO::omega_ie * y(VY) + accelLuniSolar.x();
+        y_dot(4) = (c + omega_ie2) * y(Y) - 2 * InsConst<>::GLO::omega_ie * y(VX) + accelLuniSolar.y();
+        y_dot(5) = (c - 2. * a) * y(Z) + accelLuniSolar.z();
 
         return y_dot;
     };
@@ -121,7 +128,8 @@ Orbit::PosVelAccel GLONASSEphemeris::calcSatelliteData(const InsTime& transTime,
             step = dt;
         }
         LOG_DATA("    step {:0.2f}, pos {}, vel {}", step, y.topRows<3>().transpose(), y.bottomRows<3>().transpose());
-        y = RungeKutta4(calcPosVelDerivative, step, y, PZ90_accelLuniSolar);
+        ;
+        y = RungeKutta4(y, std::array<int, 4>{}, step, calcPosVelDerivative, PZ90_accelLuniSolar);
         dt -= step;
     }
     LOG_DATA("    pos {}, vel {} (end state)", y.topRows<3>().transpose(), y.bottomRows<3>().transpose());
@@ -142,7 +150,7 @@ Orbit::PosVelAccel GLONASSEphemeris::calcSatelliteData(const InsTime& transTime,
     }
     if (calc & Calc_Acceleration)
     {
-        Eigen::Matrix<double, 6, 1> y_dot = calcPosVelDerivative(y, PZ90_accelLuniSolar);
+        Eigen::Matrix<double, 6, 1> y_dot = calcPosVelDerivative(y, 0, PZ90_accelLuniSolar, 0.0);
         e_accel = y_dot.bottomRows<3>(); // trafo::pz90toWGS84(y_dot.bottomRows<3>(), y.topRows<3>());
         // LOG_DATA("    accel (WGS84) {}", e_accel.transpose());
     }

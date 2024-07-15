@@ -169,14 +169,14 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     obs->temperature = navio->_sensor->read_temperature();
 #endif
 
-    obs->accelUncompXYZ.emplace(navio->_ax, navio->_ay, navio->_az);
-    obs->gyroUncompXYZ.emplace(navio->_gx, navio->_gy, navio->_gz);
+    obs->p_acceleration = { navio->_ax, navio->_ay, navio->_az };
+    obs->p_angularRate = { navio->_gx, navio->_gy, navio->_gz };
 
     if (navio->_imuType == ImuType::LSM)
     {
-        obs->magUncompXYZ.emplace(navio->_mx, navio->_my, navio->_mz);
+        obs->p_magneticField.emplace(navio->_mx, navio->_my, navio->_mz);
         // constexpr double uT2Gauss = 1.0 / 100.0;
-        // obs->magUncompXYZ.value() *= uT2Gauss;
+        // obs->p_magneticField.value() *= uT2Gauss;
     }
 
     std::chrono::nanoseconds diff = currentTime - navio->_startTime;

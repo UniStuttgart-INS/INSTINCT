@@ -1,0 +1,32 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file work_space.dox
+// @brief Manual for the Work Space
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+\namespace Instinct {
+/** \page work_space Workspace
+
+\tableofcontents
+
+The Workspace is the area where the Flows can be build (see \ref working_with_instinct).
+Its appearance can be changed via the \ref bar_edit in the \ref main_menu_bar. Nodes (\ref node_guide_introduction) will automatically snap to the grid.
+
+the Workspace can be manuevered via the mouse:
+- **Zoom in/out** with mousewheel up/down.
+- **Move up/down/left/right** by holding right-click button on mouse.
+- **Select Area** by holding left-click button on mouse.
+
+________
+<i>Last updated: 2024-01-31</i>
+
+*/
+}

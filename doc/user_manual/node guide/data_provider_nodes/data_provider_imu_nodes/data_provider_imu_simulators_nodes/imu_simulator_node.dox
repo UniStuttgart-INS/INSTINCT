@@ -1,0 +1,136 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file imu_simulator_node.dox
+// @brief Guide for the Imu Simulator Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-03-28
+
+\namespace Instinct {
+/** \page imu_simulator_node Imu Simulator Node
+
+\tableofcontents
+
+<img src="imuSimulatorNode.png" align="right">
+\section imu_simulator_node_introduction Introduction
+The *IMU Simulator* simulates an inertial measurement unit where the user can select between different starting conditions, trajectories and other physical effects to be simulated.
+
+\section imu_simulator_node_connections Connections
+- **Input** : The Node only has an input connection when the **CSV** trajectory is selected in the \ref imu_simulator_node_settings.
+- **Output** : The Node has two outputs:
+  - *ImuObs* : Outputs an *ImuObsSimulated*-flow that simulates IMU observation data.
+  - *PosVelAtt* : Outputs an *PosVelAtt*-flow that includes the simulated position, velocity, attitude and other parameters (time, quaternion...). Can be used for plotting (\ref plot_node).
+
+\section imu_simulator_node_settings Settings
+The IMU Simulator offers a variety of settings that control the start condition, trajectory, output and offer additional parameters.
+\subsection imu_simulator_node_settings_start_time Start Time
+Set the time when the simulation will be started.
+- *Current Computer Time* : Uses the local time from the device
+- *Custom Time* : Allows to select a custom time similar to \ref bar_time .
+\subsection imu_simulator_node_settings_output_datarate Output datarate
+Set the rate the Simulator outputs different information.
+- *IMU output rate* : The rate the Simulator gives an output
+- *Trajectory output rate* : The rate the trajectory is generated with
+\subsection imu_simulator_node_settings_scenario Scenario
+Set the type and parameters for the trajectory.
+- **Trajectory** : Select the general type of the trajectory.
+  - - -
+  1. **Fixed**: A fixed position.
+  \image html imuSimulatorExampleFixed.png width=1000
+  - - -
+  2. **Linear** : Linear trajectory generated from input parameters.
+  \image html imuSimulatorExampleLinear.png width=1000
+  - - -
+  3. **Circular** : Circular trajectory generated from input parameters.
+  \image html imuSimulatorExampleCirc.png width=1000
+  - - -
+  4. **CSV** : trajectory generated from a *csv*-file. Instead of the input parameters, a preview of how the input file is interpreted will be generated as soon as a file is selected.
+  //TODO: \f$ \textcolor{red}{\text{IMAGE TO BE ADDED SOON.}} \f$
+  - - -
+  5. **Rose Figure** : Rose figure generated from input parameters. *See https://en.wikipedia.org/wiki/Rose_(mathematics) for definition*.
+  \image html imuSimulatorExampleRose.png width=1000
+  - - -
+- **Center/Tangential Point** : Select the format and parameters for the center or tangential point. Only available for trajectory 1, 2, 4.
+  1. *LLA*: Allows to set Latitude, Longitude, Attitude [m] and the orientation in roll, pitch, yaw [deg].
+  2. *ECEF*: Earth-centered, Earth-fixed: Set the X, Y, Z [m] the orientation as above.
+\subsection imu_simulator_node_settings_simulation_stop_condition Simulation Stop Condition
+Select and set when the simulation should stop. Some are only available for a specific trajectory.
+- **Duration** : For all except CSV. How long the simulation will run and the trajectory will be generated.
+- **Distance to start** : Only for **Linear** trajectory! Sets a distance from the starting point when the simulation will be stopped.
+- **Amount of Circles** : Only for **Circular** trajectory! Sets how many circles should be simulated.
+- **Amount of rose figures** : Only for **Rose Figure** trajectory! Sets the amount of roses that should be simulated, similar to the *amount of circles* .
+\subsection imu_simulator_node_settings_simulation_models Simulation models
+ Select and set different models regarding gravitation, acceleration etc.
+- **Measured acceleration**
+<img src="imuSimulatorGravModel.png" align="right">
+  1. *Gravity Model* : Select the model to be used to simulate gravitation. Available are:
+    - None
+    - WGS84
+    - WGS84 (Skydel constants)
+    - Somigliana
+    - EGM96
+  2. *Coriolis acceleration* : Enable/Disable if acceleration caused by the Coriolis effect should be taken into account
+  3. *Centrifugal acceleration* : Enable/Disable if acceleration caused by centri*fugal* force should be taken into account
+  - **Measured angular rates**
+    1. *Earth rotation rate*: Enable/Disable if the rate the earth spins should be taken into account
+    2. *Transport rate*: //TODO: \f$ \textcolor{red}{\text{TO BE ADDED SOON.}} \f$
+    \subsection imu_simulator_node_settings_imu_position_rotation IMU Position & Rotation
+    Select the position (XYZ) and rotation (\f$\underline{X}_b = \underline{\underline{R}} \cdot \underline{X}_p\f$) of different sensors relative to the vehicles center of mass in the boy coordinate system.
+  1. *Lever Acc [m]* : Set the position of the accelerometer.
+  2. *Lever Gyro [m]* : Set the position of the gyroscope.
+  3. *Lever Mag [m]* : Set the position of the magnetometer.
+  4. *Rotation Acc [deg]* : Set the rotation of the accelerometer.
+  5. *Rotation Gyro [deg]* : Set the rotation of the gyroscope  .
+  6. *Rotation Mag [deg]* : Set the rotation of the magnetometer.
+
+\section imu_simulator_node_example_flow Example Flow
+
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+Let us build a flow that we can use to plot the simulated position with different trajectories and settings.
+
+<b>Required Nodes:</b>
+*- *CsvFile* Node (\ref csv_file_node)
+*- *Plot* Node (\ref plot_node)
+*- *ImuSimulator* Node
+
+<b>Prepare Workspace and Plots:</b>
+*1. Add the *ImuSimulator* and *Plot* Node to your Workspace and connect them with the *PosVelAtt* - *Pin 1* pins.
+*2. Open the Plot Node *Settings*:
+  - Add a new Plot
+    - *Drag and Drop* the *North/South [m]* and *East/West [m]* into the Plot (successful if (Y1) appears behind them).
+  - Add a second new Plot
+    - Open the *Options* of the Plot
+    - Select *East/West [m]* in the *X Data* dropdown menu for Pin 1 (PosVelAtt).
+    - *Drag and Drop* the *North/South [m]* into the Plot.
+    - *Right Click* in the Plot, *hover* over *Settings* and select *Equal* (for equal axis scaling).
+
+Now we can plot the north/south and east/west position over time (Plot 1) and the actual position around the center point (Plot 2).
+
+<b>Simulation:</b>
+*1. Open the *Settings* of the *ImuSimulator*.
+*2. Select the **Circular** trajectory in *Scenarios*.
+*3. Run the Flow. The result should look like the example for the circular trajectory above \ref imu_simulator_node_settings_scenario in Plot 2, additionally the components are shown in Plot 1.
+*4. Repeat this for the **Rose Figure**, but with some changes:
+  - Change the *Simulation Stop Condition* to *Amount of rose figures* and select 1
+  -  Add an arbitrary *Center/Tangential* Point.
+  -  Add an arbitrary rotation.
+<i>Example of how the result should look like:</i>
+\image html imuSimulatorExampleRose2.png width=1000
+Now, change the values and/or change other settings and options and compare the results.
+
+\note If you change *LLA* to *ECEF* , you also have to change the axis in the plots to the ECEF.
+
+//TODO: \f$ \textcolor{red}{\text{MORE EXAMPLES TO BE ADDED SOON.}} \f$
+</blockquote>
+
+________
+<i>Last updated: 2024-03-28</i>
+*/
+}

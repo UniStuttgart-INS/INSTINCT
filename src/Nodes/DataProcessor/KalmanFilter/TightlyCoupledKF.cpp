@@ -20,12 +20,14 @@
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "NodeRegistry.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/ProcessNoise.hpp"
 #include "Navigation/INS/EcefFrame/ErrorEquations.hpp"
 #include "Navigation/INS/LocalNavFrame/ErrorEquations.hpp"
+#include "Navigation/GNSS/Positioning/SPP/Algorithm.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
@@ -34,6 +36,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 #include "Navigation/GNSS/Functions.hpp"
 #include "NodeData/GNSS/GnssNavInfo.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 
 #include "util/Logger.hpp"
@@ -42,9 +45,9 @@ namespace nm = NAV::NodeManager;
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
-constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
+constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst<>::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst<>::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -56,18 +59,23 @@ NAV::TightlyCoupledKF::TightlyCoupledKF()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 866, 938 };
 
-    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &TightlyCoupledKF::recvInertialNavigationSolution, nullptr, 1);
-    inputPins.back().neededForTemporalQueueCheck = false;
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
-                       [](const Node* node, const InputPin& inputPin) {
-                           const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-                           return !inputPin.queue.empty() && tckf->_lastPredictRequestedTime < inputPin.queue.front()->insTime;
-                       });
-    inputPins.back().dropQueueIfNotFirable = false;
+    nm::CreateInputPin(
+        this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() }, &TightlyCoupledKF::recvImuObservation,
+        [](const Node* node, const InputPin& inputPin) {
+            const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+            return !inputPin.queue.empty() && tckf->_inertialIntegrator.hasInitialPosition();
+        },
+        1); // Priority 1 ensures, that the IMU obs (prediction) is evaluated before the PosVel obs (update)
+    nm::CreateInputPin(
+        this, "GnssObs", Pin::Type::Flow, { NAV::GnssObs::type() }, &TightlyCoupledKF::recvGnssObs,
+        [](const Node* node, const InputPin& inputPin) {
+            const auto* tckf = static_cast<const TightlyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+            return !inputPin.queue.empty() && (!tckf->_initializeStateOverExternalPin || tckf->_inertialIntegrator.hasInitialPosition());
+        },
+        2); // Initially this has higher priority than the IMU obs, to initialize the position from it
+
     updateNumberOfInputPins();
-    nm::CreateOutputPin(this, "Errors", Pin::Type::Flow, { NAV::TcKfInsGnssErrors::type() });
-    outputPins.back().blocksConnectedNodeFromFinishing = false; // To prevent a deadlock between ImuIntegrator and this node
-    nm::CreateOutputPin(this, "Sync", Pin::Type::Flow, { NAV::NodeData::type() });
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::InsGnssTCKFSolution::type() });
 }
 
 NAV::TightlyCoupledKF::~TightlyCoupledKF()
@@ -77,7 +85,7 @@ NAV::TightlyCoupledKF::~TightlyCoupledKF()
 
 std::string NAV::TightlyCoupledKF::typeStatic()
 {
-    return "TightlyCoupledKF";
+    return "INS/GNSS TCKF"; // Tightly-coupled Kalman Filter
 }
 
 std::string NAV::TightlyCoupledKF::type() const
@@ -94,7 +102,7 @@ void NAV::TightlyCoupledKF::addKalmanMatricesPins()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (outputPins.size() == 2)
+    if (outputPins.size() == OUTPUT_PORT_INDEX_x)
     {
         nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
         nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
@@ -110,9 +118,38 @@ void NAV::TightlyCoupledKF::addKalmanMatricesPins()
 void NAV::TightlyCoupledKF::removeKalmanMatricesPins()
 {
     LOG_TRACE("{}: called", nameId());
-    while (outputPins.size() > 2)
+    while (outputPins.size() > OUTPUT_PORT_INDEX_x)
     {
         nm::DeleteOutputPin(outputPins.back());
+    }
+}
+
+void NAV::TightlyCoupledKF::updateExternalPvaInitPin()
+{
+    if (_initializeStateOverExternalPin
+        && inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO - _nNavInfoPins == 0)
+    {
+        nm::CreateInputPin(
+            this, "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &TightlyCoupledKF::recvPosVelAttInit,
+            nullptr,
+            3,
+            INPUT_PORT_INDEX_POS_VEL_ATT_INIT);
+    }
+    else if (!_initializeStateOverExternalPin && inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO - _nNavInfoPins > 0)
+    {
+        nm::DeleteInputPin(inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT]);
+    }
+}
+
+void NAV::TightlyCoupledKF::updateNumberOfInputPins()
+{
+    while (inputPins.size() - static_cast<size_t>(_initializeStateOverExternalPin) - INPUT_PORT_INDEX_GNSS_NAV_INFO < _nNavInfoPins)
+    {
+        nm::CreateInputPin(this, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+    }
+    while (inputPins.size() - static_cast<size_t>(_initializeStateOverExternalPin) - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
+    {
+        nm::DeleteInputPin(inputPins.back());
     }
 }
 
@@ -122,6 +159,57 @@ void NAV::TightlyCoupledKF::guiConfig()
     float unitWidth = 150.0F * gui::NodeEditorApplication::windowFontRatio();
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    if (ImGui::CollapsingHeader(fmt::format("Initialization##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (ImGui::Checkbox(fmt::format("Initialize over pin##{}", size_t(id)).c_str(), &_initializeStateOverExternalPin))
+        {
+            updateExternalPvaInitPin();
+            flow::ApplyChanges();
+        }
+        if (!_initializeStateOverExternalPin)
+        {
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(0) {}", size_t(id)).c_str(),
+                                  _initalRollPitchYaw.data(), 1.0F, -180.0, 180.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(1) {}", size_t(id)).c_str(),
+                                  &_initalRollPitchYaw[1], 1.0F, -90.0, 90.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(80 * gui::NodeEditorApplication::windowFontRatio());
+            if (ImGui::DragDouble(fmt::format("##initalRollPitchYaw(2) {}", size_t(id)).c_str(),
+                                  &_initalRollPitchYaw[2], 1.0, -180.0, 180.0, "%.3f °"))
+            {
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::TextUnformatted("Roll, Pitch, Yaw");
+        }
+    }
+
+    if (ImGui::CollapsingHeader(fmt::format("IMU Integrator settings##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator))
+        {
+            flow::ApplyChanges();
+        }
+        if (inputPins.at(INPUT_PORT_INDEX_IMU).isPinLinked()
+            && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
+        {
+            ImGui::Separator();
+            if (ImGui::Checkbox(fmt::format("Prefer raw measurements over delta##{}", size_t(id)).c_str(), &_preferAccelerationOverDeltaMeasurements))
+            {
+                flow::ApplyChanges();
+            }
+        }
+    }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Input settings##{}", size_t(id)).c_str()))
@@ -206,14 +294,14 @@ void NAV::TightlyCoupledKF::guiConfig()
                     }
 
                     ImGui::TableNextColumn(); // # Sat
-                    if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(pinIndex))
+                    if (auto gnssNavInfo = getInputValue<GnssNavInfo>(pinIndex))
                     {
                         size_t usedSatNum = 0;
                         std::string usedSats;
                         std::string allSats;
 
                         std::string filler = ", ";
-                        for (const auto& satellite : gnssNavInfo->satellites())
+                        for (const auto& satellite : gnssNavInfo->v->satellites())
                         {
                             if ((satellite.first.satSys & _filterFreq)
                                 && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
@@ -223,7 +311,7 @@ void NAV::TightlyCoupledKF::guiConfig()
                             }
                             allSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
                         }
-                        ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->nSatellites()).c_str());
+                        ImGui::TextUnformatted(fmt::format("{} / {}", usedSatNum, gnssNavInfo->v->nSatellites()).c_str());
                         if (ImGui::IsItemHovered())
                         {
                             ImGui::SetTooltip("Used satellites: %s\n"
@@ -305,7 +393,7 @@ void NAV::TightlyCoupledKF::guiConfig()
         }
 
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-        if (ImGui::TreeNode(fmt::format("Compensation models##{}", size_t(id)).c_str()))
+        if (ImGui::TreeNode(fmt::format("Compensation models##GNSS {}", size_t(id)).c_str()))
         {
             ImGui::SetNextItemWidth(configWidth - ImGui::GetStyle().IndentSpacing);
             if (ComboIonosphereModel(fmt::format("Ionosphere Model##{}", size_t(id)).c_str(), _ionosphereModel))
@@ -322,15 +410,8 @@ void NAV::TightlyCoupledKF::guiConfig()
     }
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::CollapsingHeader(fmt::format("Kalman filter settings##{}", size_t(id)).c_str()))
+    if (ImGui::CollapsingHeader(fmt::format("Kalman Filter settings##{}", size_t(id)).c_str()))
     {
-        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0NED\0\0"))
-        {
-            LOG_DEBUG("{}: Frame changed to {}", nameId(), _frame == Frame::NED ? "NED" : "ECEF");
-            flow::ApplyChanges();
-        }
-
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
         {
             ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
@@ -356,6 +437,7 @@ void NAV::TightlyCoupledKF::guiConfig()
             }
         }
         ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
         ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
 
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
@@ -364,11 +446,7 @@ void NAV::TightlyCoupledKF::guiConfig()
             LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
             flow::ApplyChanges();
         }
-    }
 
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::CollapsingHeader(fmt::format("Kalman filter parameters##{}", size_t(id)).c_str()))
-    {
         // ###########################################################################################################
         //                                Q - System/Process noise covariance matrix
         // ###########################################################################################################
@@ -498,9 +576,8 @@ void NAV::TightlyCoupledKF::guiConfig()
 
             // --------------------------------------------- Clock -----------------------------------------------
 
-            auto* _stdev_cpPointer = &_stdev_cp;
             if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock phase drift (RW)##{}", size_t(id)).c_str(),
-                                                  configWidth, unitWidth, _stdev_cpPointer, reinterpret_cast<int*>(&_stdevClockPhaseUnits), "m/√(Hz)\0\0",
+                                                  configWidth, unitWidth, &_stdev_cp, reinterpret_cast<int*>(&_stdevClockPhaseUnits), "m/√(Hz)\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cp);
@@ -508,9 +585,8 @@ void NAV::TightlyCoupledKF::guiConfig()
                 flow::ApplyChanges();
             }
 
-            auto* _stdev_cfPointer = &_stdev_cf;
             if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the receiver\nclock frequency drift (IRW)##{}", size_t(id)).c_str(),
-                                                  configWidth, unitWidth, _stdev_cfPointer, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s/√(Hz)\0\0",
+                                                  configWidth, unitWidth, &_stdev_cf, reinterpret_cast<int*>(&_stdevClockFreqUnits), "m/s/√(Hz)\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_cf changed to {}", nameId(), _stdev_cf);
@@ -525,43 +601,42 @@ void NAV::TightlyCoupledKF::guiConfig()
         //                                        Measurement Uncertainties 𝐑
         // ###########################################################################################################
 
-        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-        if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
-        {
-            auto* _gnssMeasurementUncertaintyPseudorangePointer = &_gnssMeasurementUncertaintyPseudorange;
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange covariance ({})##{}",
-                                                              _gnssMeasurementUncertaintyPseudorangeUnit == GnssMeasurementUncertaintyPseudorangeUnit::meter2
-                                                                  ? "Variance σ²"
-                                                                  : "Standard deviation σ",
-                                                              size_t(id))
-                                                      .c_str(),
-                                                  configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeUnit), "m^2\0"
-                                                                                                                                                                                              "m\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorange changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorange);
-                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeUnit));
-                flow::ApplyChanges();
-            }
+        // TODO: Replace with GNSS Measurement Error Model (see SPP node)
+        // ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        // if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
+        // {
+        //     if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange covariance ({})##{}",
+        //                                                       _gnssMeasurementUncertaintyPseudorangeUnit == GnssMeasurementUncertaintyPseudorangeUnit::meter2
+        //                                                           ? "Variance σ²"
+        //                                                           : "Standard deviation σ",
+        //                                                       size_t(id))
+        //                                               .c_str(),
+        //                                           configWidth, unitWidth, &_gnssMeasurementUncertaintyPseudorange, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeUnit), "m^2\0"
+        //                                                                                                                                                                                 "m\0",
+        //                                           0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        //     {
+        //         LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorange changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorange);
+        //         LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeUnit));
+        //         flow::ApplyChanges();
+        //     }
 
-            auto* _gnssMeasurementUncertaintyPseudorangeRatePointer = &_gnssMeasurementUncertaintyPseudorangeRate;
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange-rate covariance ({})##{}",
-                                                              _gnssMeasurementUncertaintyPseudorangeRateUnit == GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2
-                                                                  ? "Variance σ²"
-                                                                  : "Standard deviation σ",
-                                                              size_t(id))
-                                                      .c_str(),
-                                                  configWidth, unitWidth, _gnssMeasurementUncertaintyPseudorangeRatePointer, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeRateUnit), "m^2/s^2\0"
-                                                                                                                                                                                                      "m/s\0",
-                                                  0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRate changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorangeRate);
-                LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRateUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeRateUnit));
-                flow::ApplyChanges();
-            }
+        //     if (gui::widgets::InputDoubleWithUnit(fmt::format("Pseudorange-rate covariance ({})##{}",
+        //                                                       _gnssMeasurementUncertaintyPseudorangeRateUnit == GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2
+        //                                                           ? "Variance σ²"
+        //                                                           : "Standard deviation σ",
+        //                                                       size_t(id))
+        //                                               .c_str(),
+        //                                           configWidth, unitWidth, &_gnssMeasurementUncertaintyPseudorangeRate, reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPseudorangeRateUnit), "m^2/s^2\0"
+        //                                                                                                                                                                                         "m/s\0",
+        //                                           0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+        //     {
+        //         LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRate changed to {}", nameId(), _gnssMeasurementUncertaintyPseudorangeRate);
+        //         LOG_DEBUG("{}: gnssMeasurementUncertaintyPseudorangeRateUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyPseudorangeRateUnit));
+        //         flow::ApplyChanges();
+        //     }
 
-            ImGui::TreePop();
-        }
+        //     ImGui::TreePop();
+        // }
 
         // ###########################################################################################################
         //                                        𝐏 Error covariance matrix
@@ -621,7 +696,7 @@ void NAV::TightlyCoupledKF::guiConfig()
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
-            gui::widgets::HelpMarker(_frame == Frame::ECEF
+            gui::widgets::HelpMarker(_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF
                                          ? "Angles rotating the ECEF frame into the body frame."
                                          : "Angles rotating the local navigation frame into the body frame (Roll, Pitch, Yaw)");
 
@@ -658,7 +733,6 @@ void NAV::TightlyCoupledKF::guiConfig()
                 flow::ApplyChanges();
             }
 
-            auto* initCovariancePhasePointer = &_initCovariancePhase;
             if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock phase drift covariance ({})##{}",
                                                               _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m2
                                                                       || _initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2
@@ -666,10 +740,10 @@ void NAV::TightlyCoupledKF::guiConfig()
                                                                   : "Standard deviation σ",
                                                               size_t(id))
                                                       .c_str(),
-                                                  configWidth, unitWidth, initCovariancePhasePointer, reinterpret_cast<int*>(&_initCovariancePhaseUnit), "m^2\0"
-                                                                                                                                                         "s^2\0"
-                                                                                                                                                         "m\0"
-                                                                                                                                                         "s\0\0",
+                                                  configWidth, unitWidth, &_initCovariancePhase, reinterpret_cast<int*>(&_initCovariancePhaseUnit), "m^2\0"
+                                                                                                                                                    "s^2\0"
+                                                                                                                                                    "m\0"
+                                                                                                                                                    "s\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovariancePhase changed to {}", nameId(), _initCovariancePhase);
@@ -677,15 +751,14 @@ void NAV::TightlyCoupledKF::guiConfig()
                 flow::ApplyChanges();
             }
 
-            auto* initCovarianceFreqPointer = &_initCovarianceFreq;
             if (gui::widgets::InputDoubleWithUnit(fmt::format("Receiver clock frequency drift covariance ({})##{}",
                                                               _initCovarianceFreqUnit == InitCovarianceClockFreqUnit::m2_s2
                                                                   ? "Variance σ²"
                                                                   : "Standard deviation σ",
                                                               size_t(id))
                                                       .c_str(),
-                                                  configWidth, unitWidth, initCovarianceFreqPointer, reinterpret_cast<int*>(&_initCovarianceFreqUnit), "m^2/s^2\0"
-                                                                                                                                                       "m/s\0\0",
+                                                  configWidth, unitWidth, &_initCovarianceFreq, reinterpret_cast<int*>(&_initCovarianceFreqUnit), "m^2/s^2\0"
+                                                                                                                                                  "m/s\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceFreq changed to {}", nameId(), _initCovarianceFreq);
@@ -753,6 +826,7 @@ void NAV::TightlyCoupledKF::guiConfig()
 
     json j;
 
+    j["inertialIntegrator"] = _inertialIntegrator;
     j["showKalmanFilterOutputPins"] = _showKalmanFilterOutputPins;
     j["nNavInfoPins"] = _nNavInfoPins;
     j["frequencies"] = Frequency_(_filterFreq);
@@ -763,7 +837,6 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["troposphereModels"] = _troposphereModels;
 
     j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
-    j["frame"] = _frame;
     j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
     j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
     j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
@@ -802,10 +875,10 @@ void NAV::TightlyCoupledKF::guiConfig()
     j["initCovariancePhase"] = _initCovariancePhase;
     j["initCovarianceFreqUnit"] = _initCovarianceFreqUnit;
     j["initCovarianceFreq"] = _initCovarianceFreq;
-    j["gnssMeasurementUncertaintyPseudorangeUnit"] = _gnssMeasurementUncertaintyPseudorangeUnit;
-    j["gnssMeasurementUncertaintyPseudorange"] = _gnssMeasurementUncertaintyPseudorange;
-    j["gnssMeasurementUncertaintyPseudorangeRateUnit"] = _gnssMeasurementUncertaintyPseudorangeRateUnit;
-    j["gnssMeasurementUncertaintyPseudorangeRate"] = _gnssMeasurementUncertaintyPseudorangeRate;
+    // j["gnssMeasurementUncertaintyPseudorangeUnit"] = _gnssMeasurementUncertaintyPseudorangeUnit; // TODO: Replace with GNSS Measurement Error Model (see SPP node)
+    // j["gnssMeasurementUncertaintyPseudorange"] = _gnssMeasurementUncertaintyPseudorange;
+    // j["gnssMeasurementUncertaintyPseudorangeRateUnit"] = _gnssMeasurementUncertaintyPseudorangeRateUnit;
+    // j["gnssMeasurementUncertaintyPseudorangeRate"] = _gnssMeasurementUncertaintyPseudorangeRate;
 
     return j;
 }
@@ -814,6 +887,10 @@ void NAV::TightlyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("inertialIntegrator"))
+    {
+        j.at("inertialIntegrator").get_to(_inertialIntegrator);
+    }
     if (j.contains("showKalmanFilterOutputPins"))
     {
         j.at("showKalmanFilterOutputPins").get_to(_showKalmanFilterOutputPins);
@@ -858,10 +935,6 @@ void NAV::TightlyCoupledKF::restore(json const& j)
     if (j.contains("checkKalmanMatricesRanks"))
     {
         j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
-    }
-    if (j.contains("frame"))
-    {
-        j.at("frame").get_to(_frame);
     }
     if (j.contains("phiCalculationAlgorithm"))
     {
@@ -953,23 +1026,24 @@ void NAV::TightlyCoupledKF::restore(json const& j)
         _initBiasGyroUnit = j.at("initBiasGyroUnit");
     }
 
-    // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
-    if (j.contains("gnssMeasurementUncertaintyPseudorangeUnit"))
-    {
-        _gnssMeasurementUncertaintyPseudorangeUnit = j.at("gnssMeasurementUncertaintyPseudorangeUnit");
-    }
-    if (j.contains("gnssMeasurementUncertaintyPseudorange"))
-    {
-        _gnssMeasurementUncertaintyPseudorange = j.at("gnssMeasurementUncertaintyPseudorange");
-    }
-    if (j.contains("gnssMeasurementUncertaintyPseudorangeRateUnit"))
-    {
-        _gnssMeasurementUncertaintyPseudorangeRateUnit = j.at("gnssMeasurementUncertaintyPseudorangeRateUnit");
-    }
-    if (j.contains("gnssMeasurementUncertaintyPseudorangeRate"))
-    {
-        _gnssMeasurementUncertaintyPseudorangeRate = j.at("gnssMeasurementUncertaintyPseudorangeRate");
-    }
+    // TODO: Replace with GNSS Measurement Error Model (see SPP node)
+    // // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
+    // if (j.contains("gnssMeasurementUncertaintyPseudorangeUnit"))
+    // {
+    //     _gnssMeasurementUncertaintyPseudorangeUnit = j.at("gnssMeasurementUncertaintyPseudorangeUnit");
+    // }
+    // if (j.contains("gnssMeasurementUncertaintyPseudorange"))
+    // {
+    //     _gnssMeasurementUncertaintyPseudorange = j.at("gnssMeasurementUncertaintyPseudorange");
+    // }
+    // if (j.contains("gnssMeasurementUncertaintyPseudorangeRateUnit"))
+    // {
+    //     _gnssMeasurementUncertaintyPseudorangeRateUnit = j.at("gnssMeasurementUncertaintyPseudorangeRateUnit");
+    // }
+    // if (j.contains("gnssMeasurementUncertaintyPseudorangeRate"))
+    // {
+    //     _gnssMeasurementUncertaintyPseudorangeRate = j.at("gnssMeasurementUncertaintyPseudorangeRate");
+    // }
 
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovariancePositionUnit"))
@@ -1040,17 +1114,13 @@ bool NAV::TightlyCoupledKF::initialize()
         return false;
     }
 
+    _inertialIntegrator.reset();
+    _lastImuObs = nullptr;
+    _externalInitTime.reset();
+
     _recvClk = {};
 
     _kalmanFilter.setZero();
-
-    _latestInertialNavSol = nullptr;
-    _lastPredictTime.reset();
-    _lastPredictRequestedTime.reset();
-
-    // Bias inits
-    _accumulatedAccelBiases = _initBiasAccel;
-    _accumulatedGyroBiases = _initBiasGyro;
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -1099,12 +1169,12 @@ bool NAV::TightlyCoupledKF::initialize()
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter)
     {
         e_variance = _initCovariancePosition.array().pow(2);
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
     else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
     {
         e_variance = _initCovariancePosition;
-        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), { 0, 0, 0 }))).array().pow(2);
+        lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
     }
 
     // Initial Covariance of the accelerometer biases in [m^2/s^4]
@@ -1145,7 +1215,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2)
     {
-        variance_clkPhase = std::pow(InsConst::C, 2) * _initCovariancePhase;
+        variance_clkPhase = std::pow(InsConst<>::C, 2) * _initCovariancePhase;
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m)
     {
@@ -1153,7 +1223,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s)
     {
-        variance_clkPhase = std::pow(InsConst::C * _initCovariancePhase, 2);
+        variance_clkPhase = std::pow(InsConst<>::C * _initCovariancePhase, 2);
     }
 
     // Initial Covariance of the receiver clock frequency drift
@@ -1168,13 +1238,15 @@ bool NAV::TightlyCoupledKF::initialize()
     }
 
     // 𝐏 Error covariance matrix
-    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angles,                                  // Flight Angles covariance
-                                                      variance_vel,                                     // Velocity covariance
-                                                      _frame == Frame::NED ? lla_variance : e_variance, // Position (Lat, Lon, Alt) / ECEF covariance
-                                                      variance_accelBias,                               // Accelerometer Bias covariance
-                                                      variance_gyroBias,                                // Gyroscope Bias covariance
-                                                      variance_clkPhase,                                // Receiver clock phase drift covariance
-                                                      variance_clkFreq);                                // Receiver clock frequency drift covariance
+    _kalmanFilter.P = initialErrorCovarianceMatrix_P0(variance_angles, // Flight Angles covariance
+                                                      variance_vel,    // Velocity covariance
+                                                      _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                                                          ? lla_variance
+                                                          : e_variance,   // Position (Lat, Lon, Alt) / ECEF covariance
+                                                      variance_accelBias, // Accelerometer Bias covariance
+                                                      variance_gyroBias,  // Gyroscope Bias covariance
+                                                      variance_clkPhase,  // Receiver clock phase drift covariance
+                                                      variance_clkFreq);  // Receiver clock frequency drift covariance
 
     LOG_DEBUG("{}: initialized", nameId());
     LOG_DATA("{}: P_0 =\n{}", nameId(), _kalmanFilter.P);
@@ -1187,69 +1259,98 @@ void NAV::TightlyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::TightlyCoupledKF::updateNumberOfInputPins()
+void NAV::TightlyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt)
 {
-    while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO < _nNavInfoPins)
+    auto tckfSolution = std::make_shared<InsGnssTCKFSolution>();
+    tckfSolution->insTime = posVelAtt.insTime;
+    tckfSolution->setState_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
+
+    tckfSolution->frame = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                              ? InsGnssTCKFSolution::Frame::NED
+                              : InsGnssTCKFSolution::Frame::ECEF;
+    if (_lastImuObs)
     {
-        nm::CreateInputPin(this, NAV::GnssNavInfo::type().c_str(), Pin::Type::Object, { NAV::GnssNavInfo::type() });
+        tckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * _inertialIntegrator.p_getLastAccelerationBias();
+        tckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * _inertialIntegrator.p_getLastAngularRateBias();
     }
-    while (inputPins.size() - INPUT_PORT_INDEX_GNSS_NAV_INFO > _nNavInfoPins)
-    {
-        nm::DeleteInputPin(inputPins.back());
-    }
+    tckfSolution->recvClkOffset = 0; // TODO
+    tckfSolution->recvClkDrift = 0;
+    invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, tckfSolution);
 }
 
-void NAV::TightlyCoupledKF::recvInertialNavigationSolution(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */) // NOLINT(readability-convert-member-functions-to-static)
+void NAV::TightlyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(queue.extract_front());
-    LOG_DATA("{}: recvInertialNavigationSolution at time [{} - {}]", nameId(), inertialNavSol->insTime.toYMDHMS(), inertialNavSol->insTime.toGPSweekTow());
-
-    double tau_i = !_lastPredictTime.empty()
-                       ? static_cast<double>((inertialNavSol->insTime - _lastPredictTime).count())
-                       : 0.0;
-
-    if (tau_i > 0)
+    auto nodeData = queue.extract_front();
+    if (nodeData->insTime.empty())
     {
-        _lastPredictTime = _latestInertialNavSol->insTime + std::chrono::duration<double>(tau_i);
-        tightlyCoupledPrediction(_latestInertialNavSol, tau_i);
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime)", nameId());
+        return;
+    }
+    std::shared_ptr<NAV::PosVelAtt> inertialNavSol = nullptr;
+
+    _lastImuObs = std::static_pointer_cast<const ImuObs>(nodeData);
+
+    if (!_preferAccelerationOverDeltaMeasurements
+        && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
+    {
+        auto obs = std::static_pointer_cast<const ImuObsWDelta>(nodeData);
+        LOG_DATA("{}: recvImuObsWDelta at time [{}]", nameId(), obs->insTime.toYMDHMS());
+
+        Eigen::Vector3d p_acceleration = obs->dtime > 1e-12 ? Eigen::Vector3d(obs->dvel / obs->dtime) : Eigen::Vector3d::Zero();
+        Eigen::Vector3d p_angularRate = obs->dtime > 1e-12 ? Eigen::Vector3d(obs->dtheta / obs->dtime) : Eigen::Vector3d::Zero();
+
+        inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, p_acceleration, p_angularRate, obs->imuPos);
     }
     else
     {
-        _lastPredictTime = inertialNavSol->insTime;
-    }
-    _latestInertialNavSol = inertialNavSol;
+        auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
+        LOG_DATA("{}: recvImuObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-    if (!inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.front()->insTime == _lastPredictTime)
+        inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+    }
+    if (inertialNavSol && _inertialIntegrator.getMeasurements().back().dt > 1e-8)
     {
-        tightlyCoupledUpdate(std::static_pointer_cast<const GnssObs>(inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.extract_front()));
-        if (inputPins[INPUT_PORT_INDEX_GNSS_OBS].queue.empty() && inputPins[INPUT_PORT_INDEX_GNSS_OBS].link.getConnectedPin()->noMoreDataAvailable)
-        {
-            outputPins[OUTPUT_PORT_INDEX_SYNC].noMoreDataAvailable = true;
-            for (auto& link : outputPins[OUTPUT_PORT_INDEX_SYNC].links)
-            {
-                link.connectedNode->wakeWorker();
-            }
-        }
+        tightlyCoupledPrediction(inertialNavSol, _inertialIntegrator.getMeasurements().back().dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
+
+        LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
+        LOG_DATA("{}:   e_velocity   = {}", nameId(), inertialNavSol->e_velocity().transpose());
+        LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(inertialNavSol->rollPitchYaw()).transpose());
+        invokeCallbackWithPosVelAtt(*inertialNavSol);
     }
 }
 
 void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto gnssObs = queue.front();
-    LOG_DATA("{}: recvGnssObs at time [{}]", nameId(), gnssObs->insTime.toYMDHMS());
+    auto obs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
+    LOG_DATA("{}: recvGnssObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-    auto nodeData = std::make_shared<NodeData>();
-    nodeData->insTime = gnssObs->insTime;
-    _lastPredictRequestedTime = gnssObs->insTime;
+    tightlyCoupledUpdate(obs);
+}
 
-    invokeCallbacks(OUTPUT_PORT_INDEX_SYNC, nodeData); // Prediction consists out of ImuIntegration and prediction (gets triggered from it)
+void NAV::TightlyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
+    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queue.clear();
+
+    LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
+
+    inputPins[INPUT_PORT_INDEX_GNSS_OBS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+    _externalInitTime = posVelAtt->insTime;
+
+    _inertialIntegrator.setInitialState(*posVelAtt);
+    LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt->e_position().transpose());
+    LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt->e_velocity().transpose());
+    LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt->rollPitchYaw()).transpose());
+
+    invokeCallbackWithPosVelAtt(*posVelAtt);
 }
 
 // ###########################################################################################################
 //                                               Kalman Filter
 // ###########################################################################################################
 
-void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i)
+void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos)
 {
     auto dt = fmt::format("{:0.5f}", tau_i);
     dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
@@ -1265,7 +1366,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelNoiseUnits)
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
-        sigma2_ra = (_stdev_ra * 1e-3 * InsConst::G_NORM).array().square();
+        sigma2_ra = (_stdev_ra * 1e-3 * InsConst<>::G_NORM).array().square();
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
         sigma2_ra = _stdev_ra.array().square();
@@ -1291,7 +1392,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelBiasUnits)
     {
     case StdevAccelBiasUnits::microg: // [µg]
-        sigma2_bad = (_stdev_bad * 1e-6 * InsConst::G_NORM).array().square();
+        sigma2_bad = (_stdev_bad * 1e-6 * InsConst<>::G_NORM).array().square();
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
         sigma2_bad = _stdev_bad.array().square();
@@ -1344,17 +1445,17 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     double r_eS_e = calcGeocentricRadius(lla_position(0), R_E);
     LOG_DATA("{}:     r_eS_e = {} [m]", nameId(), r_eS_e);
 
-    // a_p Acceleration in [m/s^2], in body coordinates
-    auto b_acceleration = _latestInertialNavSol->imuObs == nullptr
-                              ? Eigen::Vector3d::Zero()
-                              : Eigen::Vector3d(inertialNavSol->imuObs->imuPos.b_quatAccel_p() * inertialNavSol->imuObs->accelUncompXYZ.value()
-                                                - _accumulatedAccelBiases);
+    auto p_acceleration = _inertialIntegrator.p_calcCurrentAcceleration();
+    // Acceleration in [m/s^2], in body coordinates
+    Eigen::Vector3d b_acceleration = p_acceleration
+                                         ? imuPos.b_quatAccel_p() * p_acceleration.value()
+                                         : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
     // System Matrix
     Eigen::Matrix<double, 17, 17> F;
 
-    if (_frame == Frame::NED)
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
         const Eigen::Vector3d& n_velocity = inertialNavSol->n_velocity();
@@ -1375,7 +1476,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
         // omega_in^n = omega_ie^n + omega_en^n
-        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
+        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie
                                      + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
@@ -1386,17 +1487,29 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
-            if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
-
-            _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
-                                                              sigma2_bad, sigma2_bgd,
-                                                              _tau_bad, _tau_bgd,
-                                                              sigma2_cPhi, sigma2_cf,
-                                                              F.block<3, 3>(3, 0), T_rn_p,
-                                                              n_Quat_b.toRotationMatrix(), tau_i);
+            if (_showKalmanFilterOutputPins)
+            {
+                auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
+                _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                                  sigma2_bad, sigma2_bgd,
+                                                                  _tau_bad, _tau_bgd,
+                                                                  sigma2_cPhi, sigma2_cf,
+                                                                  F.block<3, 3>(3, 0), T_rn_p,
+                                                                  n_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
+            }
+            else
+            {
+                _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                                  sigma2_bad, sigma2_bgd,
+                                                                  _tau_bad, _tau_bgd,
+                                                                  sigma2_cPhi, sigma2_cf,
+                                                                  F.block<3, 3>(3, 0), T_rn_p,
+                                                                  n_Quat_b.toRotationMatrix(), tau_i);
+            }
         }
     }
-    else // if (_frame == Frame::ECEF)
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         // e_position (tₖ₋₁) Position in [m/s], in ECEF coordinates, at the time tₖ₋₁
         const Eigen::Vector3d& e_position = inertialNavSol->e_position();
@@ -1409,27 +1522,41 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
+        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst<>::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
-            if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
-
-            _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
-                                                              sigma2_bad, sigma2_bgd,
-                                                              _tau_bad, _tau_bgd,
-                                                              sigma2_cPhi, sigma2_cf,
-                                                              F.block<3, 3>(3, 0),
-                                                              e_Quat_b.toRotationMatrix(), tau_i);
+            if (_showKalmanFilterOutputPins)
+            {
+                auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
+                _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                                  sigma2_bad, sigma2_bgd,
+                                                                  _tau_bad, _tau_bgd,
+                                                                  sigma2_cPhi, sigma2_cf,
+                                                                  F.block<3, 3>(3, 0),
+                                                                  e_Quat_b.toRotationMatrix(), tau_i);
+                notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
+            }
+            else
+            {
+                _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma2_ra, sigma2_rg,
+                                                                  sigma2_bad, sigma2_bgd,
+                                                                  _tau_bad, _tau_bgd,
+                                                                  sigma2_cPhi, sigma2_cf,
+                                                                  F.block<3, 3>(3, 0),
+                                                                  e_Quat_b.toRotationMatrix(), tau_i);
+            }
         }
     }
 
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 17, 14> G = noiseInputMatrix_G(_frame == Frame::NED ? inertialNavSol->n_Quat_b() : inertialNavSol->e_Quat_b());
+        Eigen::Matrix<double, 17, 14> G = noiseInputMatrix_G(_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                                                                 ? inertialNavSol->n_Quat_b()
+                                                                 : inertialNavSol->e_Quat_b());
         LOG_DATA("{}:     G =\n{}", nameId(), G);
 
         Eigen::Matrix<double, 14, 14> W = noiseScaleMatrix_W(sigma2_ra, sigma2_rg,
@@ -1443,44 +1570,64 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F, G, W, tau_i);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
-
-        _kalmanFilter.Phi = Phi;
+        if (_showKalmanFilterOutputPins)
+        {
+            auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
+            _kalmanFilter.Phi = Phi;
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
+        }
+        else
+        {
+            _kalmanFilter.Phi = Phi;
+        }
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Q); }
-
-        _kalmanFilter.Q = Q;
+        if (_showKalmanFilterOutputPins)
+        {
+            auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Q);
+            _kalmanFilter.Q = Q;
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime, guard);
+        }
+        else
+        {
+            _kalmanFilter.Q = Q;
+        }
     }
 
     // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
     if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::Exponential || _qCalculationAlgorithm != QCalculationAlgorithm::VanLoan)
     {
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_Phi); }
-
-        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
+        auto calcPhi = [&]() {
+            if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
+            {
+                // 1. Calculate the transition matrix 𝚽_{k-1}
+                _kalmanFilter.Phi = transitionMatrix_Phi_exp(F, tau_i);
+            }
+            else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+            {
+                // 1. Calculate the transition matrix 𝚽_{k-1}
+                _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
+            }
+            else
+            {
+                LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), fmt::underlying(_phiCalculationAlgorithm));
+            }
+        };
+        if (_showKalmanFilterOutputPins)
         {
-            // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_exp(F, tau_i);
-        }
-        else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
-        {
-            // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor(F, tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
+            auto guard = requestOutputValueLock(OUTPUT_PORT_INDEX_Phi);
+            calcPhi();
+            notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime, guard);
         }
         else
         {
-            LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), fmt::underlying(_phiCalculationAlgorithm));
+            calcPhi();
         }
     }
 
     LOG_DATA("{}:     KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     LOG_DATA("{}:     KF.Q =\n{}", nameId(), _kalmanFilter.Q);
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q, predictTime);
-    }
+
     LOG_DATA("{}:     Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
     LOG_DATA("{}:     KF.P (before prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1488,16 +1635,17 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     // 4. Propagate the error covariance matrix from P(+) and P(-)
     if (_showKalmanFilterOutputPins)
     {
-        requestOutputValueLock(OUTPUT_PORT_INDEX_x);
-        requestOutputValueLock(OUTPUT_PORT_INDEX_P);
+        auto guard1 = requestOutputValueLock(OUTPUT_PORT_INDEX_x);
+        auto guard2 = requestOutputValueLock(OUTPUT_PORT_INDEX_P);
+        _kalmanFilter.predict();
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime, guard1);
+        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime, guard2);
     }
-    _kalmanFilter.predict();
-
-    if (_showKalmanFilterOutputPins)
+    else
     {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, predictTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, predictTime);
+        _kalmanFilter.predict();
     }
+
     LOG_DATA("{}:     KF.x = {}", nameId(), _kalmanFilter.x.transpose());
     LOG_DATA("{}:     KF.P (after prediction) =\n{}", nameId(), _kalmanFilter.P);
 
@@ -1526,546 +1674,378 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     }
 }
 
-void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObs)
+void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& /* gnssObs */)
 {
-    LOG_DATA("{}: Updating to time {} - {} (lastInertial at {} - {})", nameId(), gnssObs->insTime.toYMDHMS(), gnssObs->insTime.toGPSweekTow(),
-             _latestInertialNavSol->insTime.toYMDHMS(), _latestInertialNavSol->insTime.toGPSweekTow());
-
-    // -------------------------------------------- GUI Parameters -----------------------------------------------
-
-    // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position = _latestInertialNavSol->lla_position();
-    LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
-
-    // GNSS measurement uncertainty for the pseudorange (Variance σ²) in [m^2]
-    double gnssSigmaSquaredPseudorange{};
-    switch (_gnssMeasurementUncertaintyPseudorangeUnit)
-    {
-    case GnssMeasurementUncertaintyPseudorangeUnit::meter:
-        gnssSigmaSquaredPseudorange = std::pow(_gnssMeasurementUncertaintyPseudorange, 2);
-        break;
-    case GnssMeasurementUncertaintyPseudorangeUnit::meter2:
-        gnssSigmaSquaredPseudorange = _gnssMeasurementUncertaintyPseudorange;
-        break;
-    }
-    LOG_DATA("{}:     gnssSigmaSquaredPseudorange = {} [m^2]", nameId(), gnssSigmaSquaredPseudorange);
-
-    // GNSS measurement uncertainty for the pseudorange-rate (Variance σ²) in [m^2/s^2]
-    double gnssSigmaSquaredPseudorangeRate{};
-    switch (_gnssMeasurementUncertaintyPseudorangeRateUnit)
-    {
-    case GnssMeasurementUncertaintyPseudorangeRateUnit::m_s:
-        gnssSigmaSquaredPseudorangeRate = std::pow(_gnssMeasurementUncertaintyPseudorangeRate, 2);
-        break;
-    case GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2:
-        gnssSigmaSquaredPseudorangeRate = _gnssMeasurementUncertaintyPseudorangeRate;
-        break;
-    }
-    LOG_DATA("{}:     gnssSigmaSquaredPseudorangeRate = {} [m^2/s^2]", nameId(), gnssSigmaSquaredPseudorangeRate);
-
-    // TODO: Check whether it is necessary to distinguish the following three types (see Groves eq. 9.168)
-    double sigma_rhoZ = std::sqrt(gnssSigmaSquaredPseudorange);
-    // double sigma_rhoC{};
-    // double sigma_rhoA{};
-    double sigma_rZ = std::sqrt(gnssSigmaSquaredPseudorangeRate);
-    // double sigma_rC{};
-    // double sigma_rA{};
-
-    // ----------------------------------------- Read observation data -------------------------------------------
-
-    // Collection of all connected navigation data providers
-    std::vector<const GnssNavInfo*> gnssNavInfos;
-    for (size_t i = 0; i < _nNavInfoPins; i++)
-    {
-        if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
-        {
-            gnssNavInfos.push_back(gnssNavInfo);
-        }
-    }
-    if (gnssNavInfos.empty()) { return; }
-
-    // Collection of all connected Ionospheric Corrections
-    IonosphericCorrections ionosphericCorrections;
-    for (const auto* gnssNavInfo : gnssNavInfos)
-    {
-        for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
-        {
-            if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
-            {
-                ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
-            }
-        }
-    }
-
-    // Data calculated for each observation
-    struct CalcData
-    {
-        // Constructor
-        explicit CalcData(size_t obsIdx, std::shared_ptr<NAV::SatNavData> satNavData)
-            : obsIdx(obsIdx), satNavData(std::move(satNavData)) {}
-
-        size_t obsIdx = 0;                                     // Index in the provided GNSS Observation data
-        std::shared_ptr<NAV::SatNavData> satNavData = nullptr; // Satellite Navigation data
-
-        double satClkBias{};                    // Satellite clock bias [s]
-        double satClkDrift{};                   // Satellite clock drift [s/s]
-        Eigen::Vector3d e_satPos;               // Satellite position in ECEF frame coordinates [m]
-        Eigen::Vector3d e_satVel;               // Satellite velocity in ECEF frame coordinates [m/s]
-        double pseudorangeRate{ std::nan("") }; // Pseudorange rate [m/s]
-
-        // Data recalculated each iteration
-
-        bool skipped = false;                                            // Whether to skip the measurement
-        Eigen::Vector3d e_lineOfSightUnitVector;                         // Line-of-sight unit vector in ECEF frame coordinates
-        Eigen::Vector3d n_lineOfSightUnitVector;                         // Line-of-sight unit vector in NED frame coordinates
-        double satElevation = calcSatElevation(n_lineOfSightUnitVector); // Elevation [rad]
-        double satAzimuth = calcSatAzimuth(n_lineOfSightUnitVector);     // Azimuth [rad]
-    };
-
-    // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
-    std::vector<CalcData> calcData;
-    std::vector<SatelliteSystem> availSatelliteSystems; // List of satellite systems
-    for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
-    {
-        const auto& obsData = gnssObs->data[obsIdx];
-        auto satId = obsData.satSigId.toSatId();
-
-        if ((obsData.satSigId.freq() & _filterFreq)                                                                   // frequency is selected in GUI
-            && (obsData.satSigId.code & _filterCode)                                                                  // code is selected in GUI
-            && obsData.pseudorange                                                                                    // has a valid pseudorange
-            && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end()) // is not excluded
-        {
-            for (const auto& gnssNavInfo : gnssNavInfos)
-            {
-                if (auto satNavData = gnssNavInfo->searchNavigationData(satId, gnssObs->insTime)) // can calculate satellite position
-                {
-                    if (!satNavData->isHealthy())
-                    {
-                        LOG_DATA("{}: Satellite {} is skipped because the signal is not healthy.", nameId(), satId);
-                        continue;
-                    }
-                    LOG_DATA("{}: Using observation from {} {}", nameId(), obsData.satSigId, obsData.satSigId.code);
-                    calcData.emplace_back(obsIdx, satNavData);
-                    if (std::find(availSatelliteSystems.begin(), availSatelliteSystems.end(), satId.satSys) == availSatelliteSystems.end())
-                    {
-                        availSatelliteSystems.push_back(satId.satSys);
-                    }
-                    break;
-                }
-            }
-        }
-        else if (!obsData.pseudorange && obsData.doppler)
-        {
-            LOG_WARN("{}: Epoch contains Doppler ({}), but no Pseudorange and is thus skipped.", nameId(), obsData.doppler.value());
-        }
-    }
-
-    size_t nMeas = calcData.size();
-    LOG_DATA("{}: nMeas {}", nameId(), nMeas);
-    size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
-
-    // Find all observations providing a doppler measurement (for velocity calculation)
-    size_t nDopplerMeas = 0;
-    for (size_t i = 0; i < nMeas; i++)
-    {
-        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
-        if (obsData.doppler)
-        {
-            // Frequency number (GLONASS only)
-            int8_t freqNum = -128;
-
-            nDopplerMeas++;
-            // TODO: Find out what this is used for and find a way to use it, after the GLONASS orbit calculation is working
-            if (obsData.satSigId.freq() & (R01 | R02))
-            {
-                if (auto satNavData = std::dynamic_pointer_cast<GLONASSEphemeris>(calcData[i].satNavData))
-                {
-                    freqNum = satNavData->frequencyNumber;
-                }
-            }
-
-            calcData[i].pseudorangeRate = doppler2rangeRate(obsData.doppler.value(), obsData.satSigId.freq(), freqNum);
-        }
-    }
-
-    // ----------------------------------------------- Satellite -------------------------------------------------
-
-    for (size_t i = 0; i < nMeas; i++) // Calculate satellite clock, position and velocity
-    {
-        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
-
-        LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
-        LOG_DATA("{}:     pseudorange  {}", nameId(), obsData.pseudorange.value().value);
-
-        auto satClk = calcData[i].satNavData->calcClockCorrections(gnssObs->insTime, obsData.pseudorange.value().value, obsData.satSigId.freq());
-        calcData[i].satClkBias = satClk.bias;
-        calcData[i].satClkDrift = satClk.drift;
-        LOG_DATA("{}:     satClkBias {}, satClkDrift {}", nameId(), calcData[i].satClkBias, calcData[i].satClkDrift);
-
-        auto satPosVel = calcData[i].satNavData->calcSatellitePosVel(satClk.transmitTime);
-        calcData[i].e_satPos = satPosVel.e_pos;
-        calcData[i].e_satVel = satPosVel.e_vel;
-        LOG_DATA("{}:     e_satPos {}", nameId(), calcData[i].e_satPos.transpose());
-        LOG_DATA("{}:     e_satVel {}", nameId(), calcData[i].e_satVel.transpose());
-    }
-
-    // Pseudorange estimates [m]
-    Eigen::VectorXd psrEst = Eigen::VectorXd::Zero(static_cast<int>(nMeas));
-    // Pseudorange measurements [m]
-    Eigen::VectorXd psrMeas = Eigen::VectorXd::Zero(static_cast<int>(nMeas));
-
-    // Corrected pseudorange-rate estimates [m/s]
-    Eigen::VectorXd psrRateEst = Eigen::VectorXd::Zero(static_cast<int>(nDopplerMeas));
-    // Corrected pseudorange-rate measurements [m/s]
-    Eigen::VectorXd psrRateMeas = Eigen::VectorXd::Zero(static_cast<int>(nDopplerMeas));
-
-    // Keeps track of skipped meausrements (because of elevation mask, ...)
-    size_t cntSkippedMeas = 0;
-
-    const Eigen::Vector3d& e_position = _latestInertialNavSol->e_position();
-    const Eigen::Vector3d& e_velocity = _latestInertialNavSol->e_velocity();
-
-    LOG_DATA("{}: _recvClk.bias {}", nameId(), _recvClk.bias.value);
-    LOG_DATA("{}: _recvClk.drift {}", nameId(), _recvClk.drift.value);
-
-    std::vector<SatelliteSystem> satelliteSystems = availSatelliteSystems; // List of satellite systems
-
-    SatelliteSystem_ usedSatelliteSystems = SatSys_None;
-    for (size_t i = 0; i < nMeas; i++)
-    {
-        const auto& obsData = gnssObs->data[calcData[i].obsIdx];
-        LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
-        auto satId = obsData.satSigId.toSatId();
-
-        // Line-of-sight unit vector in ECEF frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
-        calcData[i].e_lineOfSightUnitVector = e_calcLineOfSightUnitVector(e_position, calcData[i].e_satPos);
-        LOG_DATA("{}:     e_lineOfSightUnitVector {}", nameId(), calcData[i].e_lineOfSightUnitVector.transpose());
-        // Line-of-sight unit vector in NED frame coordinates - Groves ch. 8.5.3, eq. 8.41, p. 341
-        calcData[i].n_lineOfSightUnitVector = trafo::n_Quat_e(lla_position(0), lla_position(1)) * calcData[i].e_lineOfSightUnitVector;
-        LOG_DATA("{}:     n_lineOfSightUnitVector {}", nameId(), calcData[i].n_lineOfSightUnitVector.transpose());
-        // Elevation [rad] - Groves ch. 8.5.4, eq. 8.57, p. 344
-        calcData[i].satElevation = calcSatElevation(calcData[i].n_lineOfSightUnitVector);
-        LOG_DATA("{}:     satElevation {}°", nameId(), rad2deg(calcData[i].satElevation));
-        // Azimuth [rad] - Groves ch. 8.5.4, eq. 8.57, p. 344
-        calcData[i].satAzimuth = calcSatAzimuth(calcData[i].n_lineOfSightUnitVector);
-        LOG_DATA("{}:     satAzimuth {}°", nameId(), rad2deg(calcData[i].satAzimuth));
-
-        if (!e_position.isZero() && calcData[i].satElevation < _elevationMask) // Do not check elevation mask when not having a valid position
-        {
-            cntSkippedMeas++;
-            calcData[i].skipped = true;
-            LOG_DATA("{}: [{}] Measurement is skipped because of elevation {:.1f}° and mask of {}° ({} valid measurements remaining)",
-                     nameId(), obsData.satSigId, rad2deg(calcData[i].satElevation), rad2deg(_elevationMask), nMeas - cntSkippedMeas);
-
-            if (!(usedSatelliteSystems & satId.satSys)
-                && calcData.begin() + static_cast<int64_t>(i + 1) != calcData.end()                                         // This is the last satellite and the system did not appear before
-                && std::none_of(calcData.begin() + static_cast<int64_t>(i + 1), calcData.end(), [&](const CalcData& data) { // The satellite system has no satellites available anymore
-                       return gnssObs->data[data.obsIdx].satSigId.toSatId().satSys == satId.satSys;
-                   }))
-            {
-                LOG_DEBUG("{}: The satellite system {} won't be used this iteration because no satellite complies with the elevation mask.",
-                          nameId(), satId.satSys);
-                nParam--;
-                satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), satId.satSys));
-            }
-
-            if (nMeas - cntSkippedMeas < nParam)
-            {
-                LOG_WARN("{}: [{}] Cannot calculate position because only {} valid measurements ({} needed). Try changing filter settings or reposition your antenna.",
-                         nameId(), gnssObs->insTime, nMeas - cntSkippedMeas, nParam);
-            }
-            continue;
-        }
-
-        usedSatelliteSystems |= satId.satSys;
-    }
-
-    size_t ix = 0;
-    size_t iv = 0;
-    if (!satelliteSystems.empty()) // skip this, if there is e.g. no pseudorange available. Better than crashing
-    {
-        _recvClk.referenceTimeSatelliteSystem = satelliteSystems.front();
-        for (const auto& availSatSys : satelliteSystems)
-        {
-            if (SatelliteSystem_(availSatSys) < SatelliteSystem_(_recvClk.referenceTimeSatelliteSystem))
-            {
-                _recvClk.referenceTimeSatelliteSystem = availSatSys;
-            }
-        }
-        satelliteSystems.erase(std::find(satelliteSystems.begin(), satelliteSystems.end(), _recvClk.referenceTimeSatelliteSystem));
-        LOG_DATA("{}: _recvClk.referenceTimeSatelliteSystem {} ({} other time systems)", nameId(), _recvClk.referenceTimeSatelliteSystem, satelliteSystems.size());
-    }
-
-    double tau_epoch = !_lastEpochTime.empty()
-                           ? static_cast<double>((gnssObs->insTime - _lastEpochTime).count())
-                           : 0.0;
-
-    LOG_DATA("{}: tau_epoch = {}", nameId(), tau_epoch);
-
-    _lastEpochTime = gnssObs->insTime;
-
-    for (auto& calc : calcData)
-    {
-        if (calc.skipped) { continue; }
-
-        const auto& obsData = gnssObs->data[calc.obsIdx];
-        LOG_DATA("{}: satellite {}", nameId(), obsData.satSigId);
-        // auto satId = obsData.satSigId.toSatId();
-
-        // #############################################################################################################################
-        //                                                    Position calculation
-        // #############################################################################################################################
-
-        // Pseudorange measurement [m] - Groves ch. 8.5.3, eq. 8.48, p. 342
-        psrMeas(static_cast<int>(ix)) = obsData.pseudorange.value().value /* + (multipath and/or NLOS errors) + (tracking errors) */;
-        LOG_DATA("{}:     psrMeas({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)));
-        // Estimated modulation ionosphere propagation error [m]
-        double dpsr_I = calcIonosphericDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow), obsData.satSigId.freq(), -128, lla_position,
-                                             calc.satElevation, calc.satAzimuth, _ionosphereModel, &ionosphericCorrections);
-        LOG_DATA("{}:     dpsr_I {} [m] (Estimated modulation ionosphere propagation error)", nameId(), dpsr_I);
-
-        auto tropo = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_position, calc.satElevation, calc.satAzimuth, _troposphereModels);
-        LOG_DATA("{}:     ZHD {}", nameId(), tropo.ZHD);
-        LOG_DATA("{}:     ZWD {}", nameId(), tropo.ZWD);
-        LOG_DATA("{}:     zhdMappingFactor {}", nameId(), tropo.zhdMappingFactor);
-        LOG_DATA("{}:     zwdMappingFactor {}", nameId(), tropo.zwdMappingFactor);
-
-        // Estimated modulation troposphere propagation error [m]
-        double dpsr_T = tropo.ZHD * tropo.zhdMappingFactor + tropo.ZWD * tropo.zwdMappingFactor;
-        LOG_DATA("{}:     dpsr_T {} [m] (Estimated modulation troposphere propagation error)", nameId(), dpsr_T);
-
-        // Sagnac correction - Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-        double dpsr_ie = 1.0 / InsConst::C * (e_position - calc.e_satPos).dot(InsConst::e_omega_ie.cross(e_position));
-        LOG_DATA("{}:     dpsr_ie {}", nameId(), dpsr_ie);
-        // Geometric distance [m]
-        double geometricDist = (calc.e_satPos - e_position).norm();
-        LOG_DATA("{}:     geometricDist {}", nameId(), geometricDist);
-
-        _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
-
-        LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
-
-        // Pseudorange estimate [m]
-        psrEst(static_cast<int>(ix)) = geometricDist
-                                       + _recvClk.bias.value * InsConst::C
-                                       + _recvClk.drift.value * InsConst::C * tau_epoch
-                                       - calc.satClkBias * InsConst::C
-                                       + dpsr_I
-                                       + dpsr_T
-                                       + dpsr_ie;
-        LOG_DATA("{}:     psrEst({}) {}", nameId(), ix, psrEst(static_cast<int>(ix)));
-
-        LOG_DATA("{}:     dpsr({}) {}", nameId(), ix, psrMeas(static_cast<int>(ix)) - psrEst(static_cast<int>(ix)));
-
-        // #############################################################################################################################
-        //                                                    Velocity calculation
-        // #############################################################################################################################
-
-        if (nDopplerMeas - cntSkippedMeas >= nParam && !std::isnan(calc.pseudorangeRate))
-        {
-            // Pseudorange-rate measurement [m/s] - Groves ch. 8.5.3, eq. 8.48, p. 342
-            psrRateMeas(static_cast<int>(iv)) = calc.pseudorangeRate /* + (multipath and/or NLOS errors) + (tracking errors) */;
-            LOG_DATA("{}:     psrRateMeas({}) {}", nameId(), iv, psrRateMeas(static_cast<int>(iv)));
-
-            // Range-rate Sagnac correction - Groves ch. 8.5.3, eq. 8.46, p. 342
-            double dpsr_dot_ie = InsConst::omega_ie / InsConst::C
-                                 * (calc.e_satVel.y() * e_position.x() + calc.e_satPos.y() * e_velocity.x()
-                                    - calc.e_satVel.x() * e_position.y() - calc.e_satPos.x() * e_velocity.y());
-            LOG_DATA("{}:     dpsr_dot_ie {}", nameId(), dpsr_dot_ie);
-
-            LOG_DATA("{}: _kalmanFilter.x(16, 0) = {} m/s", nameId(), _kalmanFilter.x(16, 0));
-            LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
-
-            _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
-
-            LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
-
-            // Pseudorange-rate estimate [m/s] - Groves ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign)
-            psrRateEst(static_cast<int>(iv)) = calc.e_lineOfSightUnitVector.transpose() * (calc.e_satVel - e_velocity)
-                                               + _recvClk.drift.value * InsConst::C
-                                               - calc.satClkDrift * InsConst::C
-                                               - dpsr_dot_ie;
-            LOG_DATA("{}:     psrRateEst({}) {}", nameId(), iv, psrRateEst(static_cast<int>(iv)));
-
-            iv++;
-        }
-
-        ix++;
-    }
-    LOG_DATA("{}: _recvClk.bias {} s", nameId(), _recvClk.bias.value);
-    LOG_DATA("{}: _recvClk.drift {} s/s", nameId(), _recvClk.drift.value);
-
-    // ---------------------------------------------- Update -----------------------------------------------------
-
-    if (_frame == Frame::NED)
-    {
-        // Prime vertical radius of curvature (East/West) [m]
-        double R_E = calcEarthRadius_E(lla_position(0));
-        LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
-        // Meridian radius of curvature in [m]
-        double R_N = calcEarthRadius_N(lla_position(0));
-        LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
-
-        std::vector<Eigen::Vector3d> n_lineOfSightUnitVectors;
-        n_lineOfSightUnitVectors.resize(ix);
-        std::vector<double> satElevation;
-        satElevation.resize(ix);
-        // std::vector<double> CN0; // TODO: get this from GnssObs
-        // std::vector<double> rangeAccel; // TODO: get this from GnssObs
-
-        std::vector<double> pseudoRangeObservations;
-        pseudoRangeObservations.resize(ix);
-        std::vector<double> pseudoRangeRateObservations;
-        pseudoRangeRateObservations.resize(ix);
-
-        size_t ix = 0;
-
-        for (auto& calc : calcData)
-        {
-            LOG_DATA("calc.n_lineOfSightUnitVector.transpose() = {}, calc.skipped = {}", calc.n_lineOfSightUnitVector.transpose(), calc.skipped);
-            if (calc.skipped) { continue; }
-            n_lineOfSightUnitVectors[ix] = calc.n_lineOfSightUnitVector;
-            LOG_DATA("n_lineOfSightUnitVectors[{}] = {}", ix, n_lineOfSightUnitVectors[ix].transpose());
-            satElevation[ix] = calc.satElevation;
-            LOG_DATA("satElevation[{}] = {}", ix, satElevation[ix]);
-            // CN0[i] = calc // TODO: get CN0 from data
-            // rangeAccel[i] = calc // TODO: get rangeAccel from data
-            pseudoRangeObservations[ix] = psrMeas(static_cast<Eigen::Index>(ix));
-            pseudoRangeRateObservations[ix] = calc.pseudorangeRate;
-
-            ix++;
-        }
-
-        // 5. Calculate the measurement matrix H_k
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_H); }
-
-        _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors, pseudoRangeRateObservations);
-        LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
-
-        // 6. Calculate the measurement noise covariance matrix R_k
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_R); }
-
-        _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
-        LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
-
-        std::vector<double> pseudoRangeEstimates;
-        pseudoRangeEstimates.resize(ix);
-        std::vector<double> pseudoRangeRateEstimates;
-        pseudoRangeRateEstimates.resize(ix);
-        for (size_t obsIdx = 0; obsIdx < n_lineOfSightUnitVectors.size(); obsIdx++)
-        {
-            pseudoRangeEstimates[obsIdx] = psrEst(static_cast<Eigen::Index>(obsIdx));
-            if (psrRateEst.size() != 0)
-            {
-                pseudoRangeRateEstimates[obsIdx] = psrRateEst(static_cast<Eigen::Index>(obsIdx));
-            }
-        }
-
-        // 8. Formulate the measurement z_k
-        if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_z); }
-
-        _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
-        LOG_DATA("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
-    }
-    else // if (_frame == Frame::ECEF)
-    {
-        LOG_ERROR("{}: Update in ECEF-frame not implemented, yet.", nameId()); // TODO: implement update in e-Sys.
-    }
-
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssObs->insTime);
-    }
-    LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
-    LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
-    LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
-
-    if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
-    {
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
-        auto rank = lu.rank();
-        if (rank != _kalmanFilter.H.rows())
-        {
-            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
-        }
-    }
-
-    // 7. Calculate the Kalman gain matrix K_k
-    // 9. Update the state vector estimate from x(-) to x(+)
-    // 10. Update the error covariance matrix from P(-) to P(+)
-    if (_showKalmanFilterOutputPins)
-    {
-        requestOutputValueLock(OUTPUT_PORT_INDEX_K);
-        requestOutputValueLock(OUTPUT_PORT_INDEX_x);
-        requestOutputValueLock(OUTPUT_PORT_INDEX_P);
-    }
-
-    _kalmanFilter.correctWithMeasurementInnovation();
-
-    if (_showKalmanFilterOutputPins)
-    {
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime);
-        notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssObs->insTime);
-    }
-    LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
-    LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
-    LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
-
-    if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
-    {
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
-        auto rank = lu.rank();
-        if (rank != _kalmanFilter.H.rows())
-        {
-            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
-        }
-
-        Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P);
-        rank = luP.rank();
-        if (rank != _kalmanFilter.P.rows())
-        {
-            LOG_WARN("{}: P.rank = {}", nameId(), rank);
-        }
-    }
-
-    _accumulatedAccelBiases += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
-    _accumulatedGyroBiases += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
-    _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
-    _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
-
-    // Push out the new data
-    auto tcKfInsGnssErrors = std::make_shared<TcKfInsGnssErrors>();
-    tcKfInsGnssErrors->insTime = gnssObs->insTime;
-    tcKfInsGnssErrors->positionError = _kalmanFilter.x.block<3, 1>(6, 0);
-    tcKfInsGnssErrors->velocityError = _kalmanFilter.x.block<3, 1>(3, 0);
-    tcKfInsGnssErrors->attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
-    tcKfInsGnssErrors->b_biasAccel = _accumulatedAccelBiases;
-    tcKfInsGnssErrors->b_biasGyro = _accumulatedGyroBiases;
-    tcKfInsGnssErrors->recvClkOffset = _recvClk.bias.value * InsConst::C;
-    tcKfInsGnssErrors->recvClkDrift = _recvClk.drift.value * InsConst::C;
-
-    if (_frame == Frame::NED)
-    {
-        tcKfInsGnssErrors->positionError = tcKfInsGnssErrors->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
-        tcKfInsGnssErrors->frame = TcKfInsGnssErrors::Frame::NED;
-    }
-    LOG_DATA("tcKfInsGnssErrors->positionError = {}", tcKfInsGnssErrors->positionError.transpose());
-    LOG_DATA("tcKfInsGnssErrors->velocityError = {}", tcKfInsGnssErrors->velocityError.transpose());
-    LOG_DATA("tcKfInsGnssErrors->attitudeError = {}", tcKfInsGnssErrors->attitudeError.transpose());
-    LOG_DATA("tcKfInsGnssErrors->b_biasAccel = {}", tcKfInsGnssErrors->b_biasAccel.transpose());
-    LOG_DATA("tcKfInsGnssErrors->b_biasGyro = {}", tcKfInsGnssErrors->b_biasGyro.transpose());
-    LOG_DATA("tcKfInsGnssErrors->recvClkOffset = {}", tcKfInsGnssErrors->recvClkOffset);
-    LOG_DATA("tcKfInsGnssErrors->recvClkDrift = {}", tcKfInsGnssErrors->recvClkDrift);
-
-    // Closed loop
-    if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_x); }
-
-    _kalmanFilter.x.setZero();
-
-    invokeCallbacks(OUTPUT_PORT_INDEX_ERROR, tcKfInsGnssErrors);
+    // TODO: Rework node
+    // LOG_DATA("{}: Updating to [{}]", nameId(), gnssObs->insTime);
+
+    // // Collection of all connected navigation data providers
+    // std::vector<const GnssNavInfo*> gnssNavInfos;
+    // for (size_t i = 0; i < _nNavInfoPins; i++)
+    // {
+    //     if (const auto* gnssNavInfo = getInputValue<const GnssNavInfo>(INPUT_PORT_INDEX_GNSS_NAV_INFO + i))
+    //     {
+    //         gnssNavInfos.push_back(gnssNavInfo);
+    //     }
+    // }
+    // if (gnssNavInfos.empty()) { return; }
+
+    // // TODO: Replace with GNSS Measurement Error Model (see SPP node)
+    // // GnssMeasurementErrorModel gnssMeasurementErrorModel;
+    // // switch (_gnssMeasurementUncertaintyPseudorangeUnit)
+    // // {
+    // // case GnssMeasurementUncertaintyPseudorangeUnit::meter2:
+    // //     gnssMeasurementErrorModel.rtklibParams.carrierPhaseErrorAB[0] = std::sqrt(_gnssMeasurementUncertaintyPseudorange);
+    // //     gnssMeasurementErrorModel.rtklibParams.carrierPhaseErrorAB[1] = std::sqrt(_gnssMeasurementUncertaintyPseudorange);
+    // //     break;
+    // // case GnssMeasurementUncertaintyPseudorangeUnit::meter:
+    // //     gnssMeasurementErrorModel.rtklibParams.carrierPhaseErrorAB[0] = _gnssMeasurementUncertaintyPseudorange;
+    // //     gnssMeasurementErrorModel.rtklibParams.carrierPhaseErrorAB[1] = _gnssMeasurementUncertaintyPseudorange;
+    // //     break;
+    // // }
+    // // switch (_gnssMeasurementUncertaintyPseudorangeRateUnit)
+    // // {
+    // // case GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2:
+    // //     gnssMeasurementErrorModel.rtklibParams.dopplerFrequency = rangeRate2doppler(std::sqrt(_gnssMeasurementUncertaintyPseudorangeRate), G01);
+    // //     break;
+    // // case GnssMeasurementUncertaintyPseudorangeRateUnit::m_s:
+    // //     gnssMeasurementErrorModel.rtklibParams.dopplerFrequency = rangeRate2doppler(_gnssMeasurementUncertaintyPseudorangeRate, G01);
+    // //     break;
+    // // }
+
+    // if (!_inertialIntegrator.hasInitialPosition()) // Calculate a SPP solution and use it to initialize
+    // {
+    //     if (auto sppSol = SPP::calcSppSolutionLSE(SPP::State{}, gnssObs, gnssNavInfos,
+    //                                               _ionosphereModel, _troposphereModels, gnssMeasurementErrorModel,
+    //                                               SPP::EstimatorType::WEIGHTED_LEAST_SQUARES,
+    //                                               _filterFreq, _filterCode, _excludedSatellites, _elevationMask,
+    //                                               true, _interSysErrs, _interSysDrifts))
+    //     {
+    //         PosVelAtt posVelAtt;
+    //         posVelAtt.insTime = sppSol->insTime;
+    //         posVelAtt.setState_n(sppSol->lla_position(), sppSol->n_velocity(),
+    //                              trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
+
+    //         _inertialIntegrator.setInitialState(posVelAtt);
+
+    //         LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt.e_position().transpose());
+    //         LOG_DATA("{}: lla_position   = {}, {}, {}", nameId(), rad2deg(posVelAtt.lla_position().x()), rad2deg(posVelAtt.lla_position().y()), posVelAtt.lla_position().z());
+    //         LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt.e_velocity().transpose());
+    //         LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt.rollPitchYaw()).transpose());
+    //     }
+    //     else
+    //     {
+    //         return;
+    //     }
+    // }
+
+    // const auto& latestInertialNavSol = _inertialIntegrator.getLatestState().value().get();
+
+    // // -------------------------------------------- GUI Parameters -----------------------------------------------
+
+    // // GNSS measurement uncertainty for the pseudorange (Variance σ²) in [m^2]
+    // double gnssSigmaSquaredPseudorange{};
+    // switch (_gnssMeasurementUncertaintyPseudorangeUnit)
+    // {
+    // case GnssMeasurementUncertaintyPseudorangeUnit::meter:
+    //     gnssSigmaSquaredPseudorange = std::pow(_gnssMeasurementUncertaintyPseudorange, 2);
+    //     break;
+    // case GnssMeasurementUncertaintyPseudorangeUnit::meter2:
+    //     gnssSigmaSquaredPseudorange = _gnssMeasurementUncertaintyPseudorange;
+    //     break;
+    // }
+    // LOG_DATA("{}:     gnssSigmaSquaredPseudorange = {} [m^2]", nameId(), gnssSigmaSquaredPseudorange);
+
+    // // GNSS measurement uncertainty for the pseudorange-rate (Variance σ²) in [m^2/s^2]
+    // double gnssSigmaSquaredPseudorangeRate{};
+    // switch (_gnssMeasurementUncertaintyPseudorangeRateUnit)
+    // {
+    // case GnssMeasurementUncertaintyPseudorangeRateUnit::m_s:
+    //     gnssSigmaSquaredPseudorangeRate = std::pow(_gnssMeasurementUncertaintyPseudorangeRate, 2);
+    //     break;
+    // case GnssMeasurementUncertaintyPseudorangeRateUnit::m2_s2:
+    //     gnssSigmaSquaredPseudorangeRate = _gnssMeasurementUncertaintyPseudorangeRate;
+    //     break;
+    // }
+    // LOG_DATA("{}:     gnssSigmaSquaredPseudorangeRate = {} [m^2/s^2]", nameId(), gnssSigmaSquaredPseudorangeRate);
+
+    // // TODO: Check whether it is necessary to distinguish the following three types (see Groves eq. 9.168)
+    // double sigma_rhoZ = std::sqrt(gnssSigmaSquaredPseudorange);
+    // // double sigma_rhoC{};
+    // // double sigma_rhoA{};
+    // double sigma_rZ = std::sqrt(gnssSigmaSquaredPseudorangeRate);
+    // // double sigma_rC{};
+    // // double sigma_rA{};
+
+    // // ----------------------------------------- Read observation data -------------------------------------------
+
+    // // Collection of all connected Ionospheric Corrections
+    // IonosphericCorrections ionosphericCorrections;
+    // for (const auto* gnssNavInfo : gnssNavInfos)
+    // {
+    //     for (const auto& correction : gnssNavInfo->ionosphericCorrections.data())
+    //     {
+    //         if (!ionosphericCorrections.contains(correction.satSys, correction.alphaBeta))
+    //         {
+    //             ionosphericCorrections.insert(correction.satSys, correction.alphaBeta, correction.data);
+    //         }
+    //     }
+    // }
+
+    // // Data calculated for each satellite (only satellites filtered by GUI filter & NAV data available)
+    // std::vector<SPP::CalcData> calcData = SPP::selectObservations(gnssObs, gnssNavInfos, _filterFreq, _filterCode, _excludedSatellites);
+    // // Sorted list of satellite systems
+    // std::set<SatelliteSystem> availSatelliteSystems;
+    // for (const auto& calc : calcData) { availSatelliteSystems.insert(calc.obsData.satSigId.toSatId().satSys); }
+
+    // size_t nParam = 4 + availSatelliteSystems.size() - 1; // 3x pos, 1x clk, (N-1)x clkDiff
+    // LOG_DATA("{}: nParam {}", nameId(), nParam);
+
+    // size_t nMeasPsr = calcData.size();
+    // LOG_DATA("{}: nMeasPsr {}", nameId(), nMeasPsr);
+
+    // // Find all observations providing a doppler measurement (for velocity calculation)
+    // size_t nDopplerMeas = SPP::findDopplerMeasurements(calcData);
+    // LOG_DATA("{}: nDopplerMeas {}", nameId(), nDopplerMeas);
+
+    // std::vector<SatelliteSystem> satelliteSystems;
+    // satelliteSystems.reserve(availSatelliteSystems.size());
+    // std::copy(availSatelliteSystems.begin(), availSatelliteSystems.end(), std::back_inserter(satelliteSystems));
+
+    // const Eigen::Vector3d& lla_position = latestInertialNavSol.lla_position();
+    // const Eigen::Vector3d& e_position = latestInertialNavSol.e_position();
+    // const Eigen::Vector3d& e_velocity = latestInertialNavSol.e_velocity();
+
+    // auto state = SPP::State{ .e_position = e_position,
+    //                          .e_velocity = e_velocity,
+    //                          .recvClk = _recvClk };
+    // // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
+    // auto sppSol = std::make_shared<SppSolution>(); // TODO: Make the next function not require a sppSol by splitting it into a second function
+    // SPP::calcDataBasedOnEstimates(sppSol, satelliteSystems, calcData, state,
+    //                               nParam, nMeasPsr, nDopplerMeas, gnssObs->insTime, lla_position,
+    //                               _elevationMask, SPP::EstimatorType::KF);
+
+    // if (sppSol->nMeasPsr + sppSol->nMeasDopp == 0)
+    // {
+    //     return; // Do not update, as we do not have any observations
+    // }
+
+    // SPP::getInterSysKeys(satelliteSystems, _interSysErrs, _interSysDrifts);
+
+    // auto [e_H_psr,     // Measurement/Geometry matrix for the pseudorange
+    //       psrEst,      // Pseudorange estimates [m]
+    //       psrMeas,     // Pseudorange measurements [m]
+    //       W_psr,       // Pseudorange measurement error weight matrix
+    //       dpsr,        // Difference between Pseudorange measurements and estimates
+    //       e_H_r,       // Measurement/Geometry matrix for the pseudorange-rate
+    //       psrRateEst,  // Corrected pseudorange-rate estimates [m/s]
+    //       psrRateMeas, // Corrected pseudorange-rate measurements [m/s]
+    //       W_psrRate,   // Pseudorange rate (doppler) measurement error weight matrix
+    //       dpsr_dot     // Difference between Pseudorange rate measurements and estimates
+    // ] = calcMeasurementEstimatesAndDesignMatrix(sppSol, calcData,
+    //                                             gnssObs->insTime,
+    //                                             state, lla_position,
+    //                                             ionosphericCorrections, _ionosphereModel,
+    //                                             _troposphereModels, gnssMeasurementErrorModel,
+    //                                             SPP::EstimatorType::KF, true, _interSysErrs, _interSysDrifts);
+
+    // // double tau_epoch = !_lastEpochTime.empty()
+    // //                        ? static_cast<double>((gnssObs->insTime - _lastEpochTime).count())
+    // //                        : 0.0;
+    // // LOG_DATA("{}: tau_epoch = {}", nameId(), tau_epoch);
+    // // _lastEpochTime = gnssObs->insTime;
+    // // for (auto& calc : calcData)
+    // // {
+    // //     if (calc.skipped) { continue; }
+    // //     // Pseudorange estimate [m]
+    // //     psrEst(static_cast<int>(ix)) = geometricDist
+    // //                                    + _recvClk.bias.value * InsConst<>::C
+    // //                                    + _recvClk.drift.value * InsConst<>::C * tau_epoch // TODO: Should we also do this in SPP KF and here?
+    // //                                    - calc.satClkBias * InsConst<>::C
+    // //                                    + dpsr_I
+    // //                                    + dpsr_T
+    // //                                    + dpsr_ie;
+    // // }
+
+    // // ---------------------------------------------- Update -----------------------------------------------------
+
+    // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    // {
+    //     // Prime vertical radius of curvature (East/West) [m]
+    //     double R_E = calcEarthRadius_E(lla_position(0));
+    //     LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
+    //     // Meridian radius of curvature in [m]
+    //     double R_N = calcEarthRadius_N(lla_position(0));
+    //     LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
+
+    //     std::vector<Eigen::Vector3d> n_lineOfSightUnitVectors;
+    //     n_lineOfSightUnitVectors.resize(sppSol->nMeasPsr);
+    //     std::vector<double> satElevation;
+    //     satElevation.resize(sppSol->nMeasPsr);
+    //     // std::vector<double> CN0; // TODO: get this from GnssObs
+    //     // std::vector<double> rangeAccel; // TODO: get this from GnssObs
+
+    //     std::vector<double> pseudoRangeObservations;
+    //     pseudoRangeObservations.resize(sppSol->nMeasPsr);
+    //     std::vector<double> pseudoRangeRateObservations;
+    //     pseudoRangeRateObservations.resize(sppSol->nMeasPsr);
+
+    //     size_t ix = 0;
+
+    //     for (auto& calc : calcData)
+    //     {
+    //         LOG_DATA("calc.n_lineOfSightUnitVector.transpose() = {}, calc.skipped = {}", calc.n_lineOfSightUnitVector.transpose(), calc.skipped);
+    //         if (calc.skipped) { continue; }
+
+    //         n_lineOfSightUnitVectors[ix] = calc.n_lineOfSightUnitVector;
+    //         LOG_DATA("n_lineOfSightUnitVectors[{}] = {}", ix, n_lineOfSightUnitVectors[ix].transpose());
+    //         satElevation[ix] = calc.satElevation;
+    //         LOG_DATA("satElevation[{}] = {}", ix, satElevation[ix]);
+    //         // CN0[i] = calc // TODO: get CN0 from data
+    //         // rangeAccel[i] = calc // TODO: get rangeAccel from data
+    //         pseudoRangeObservations[ix] = psrMeas(SPP::Meas::Psr{ calc.obsData.satSigId });
+    //         pseudoRangeRateObservations[ix] = calc.pseudorangeRateMeas.value();
+
+    //         ix++;
+    //     }
+
+    //     // 5. Calculate the measurement matrix H_k
+    //     if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_H); }
+
+    //     _kalmanFilter.H = n_measurementMatrix_H(R_N, R_E, lla_position, n_lineOfSightUnitVectors, pseudoRangeRateObservations);
+    //     LOG_DATA("{}: kalmanFilter.H =\n{}", nameId(), _kalmanFilter.H);
+
+    //     // 6. Calculate the measurement noise covariance matrix R_k
+    //     if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_R); }
+
+    //     _kalmanFilter.R = measurementNoiseCovariance_R(sigma_rhoZ, sigma_rZ, satElevation);
+    //     LOG_DATA("{}: kalmanFilter.R =\n{}", nameId(), _kalmanFilter.R);
+
+    //     std::vector<double> pseudoRangeEstimates;
+    //     pseudoRangeEstimates.resize(ix);
+    //     std::vector<double> pseudoRangeRateEstimates;
+    //     pseudoRangeRateEstimates.resize(ix);
+    //     for (size_t obsIdx = 0; obsIdx < n_lineOfSightUnitVectors.size(); obsIdx++)
+    //     {
+    //         pseudoRangeEstimates[obsIdx] = psrEst(all)(static_cast<Eigen::Index>(obsIdx));
+    //         if (psrRateEst.rows() != 0)
+    //         {
+    //             pseudoRangeRateEstimates[obsIdx] = psrRateEst(all)(static_cast<Eigen::Index>(obsIdx));
+    //         }
+    //     }
+
+    //     // 8. Formulate the measurement z_k
+    //     if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_z); }
+
+    //     _kalmanFilter.z = measurementInnovation_dz(pseudoRangeObservations, pseudoRangeEstimates, pseudoRangeRateObservations, pseudoRangeRateEstimates);
+    //     LOG_DATA("{}: _kalmanFilter.z =\n{}", nameId(), _kalmanFilter.z);
+    // }
+    // else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    // {
+    //     LOG_ERROR("{}: Update in ECEF-frame not implemented, yet.", nameId()); // TODO: implement update in e-Sys.
+    // }
+
+    // if (_showKalmanFilterOutputPins)
+    // {
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_H, gnssObs->insTime);
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_R, gnssObs->insTime);
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_z, gnssObs->insTime);
+    // }
+    // LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
+    // LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
+    // LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
+
+    // if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
+    // {
+    //     Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+    //     auto rank = lu.rank();
+    //     if (rank != _kalmanFilter.H.rows())
+    //     {
+    //         LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+    //     }
+    // }
+
+    // // 7. Calculate the Kalman gain matrix K_k
+    // // 9. Update the state vector estimate from x(-) to x(+)
+    // // 10. Update the error covariance matrix from P(-) to P(+)
+    // if (_showKalmanFilterOutputPins)
+    // {
+    //     requestOutputValueLock(OUTPUT_PORT_INDEX_K);
+    //     requestOutputValueLock(OUTPUT_PORT_INDEX_x);
+    //     requestOutputValueLock(OUTPUT_PORT_INDEX_P);
+    // }
+
+    // _kalmanFilter.correctWithMeasurementInnovation();
+
+    // if (_showKalmanFilterOutputPins)
+    // {
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_K, gnssObs->insTime);
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_x, gnssObs->insTime);
+    //     notifyOutputValueChanged(OUTPUT_PORT_INDEX_P, gnssObs->insTime);
+    // }
+    // LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
+    // LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
+    // LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
+
+    // if (_checkKalmanMatricesRanks && _kalmanFilter.H.rows() > 0) // Number of rows of H is 0, if there is no pseudorange in one epoch. Better skip this than crashing.
+    // {
+    //     Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R);
+    //     auto rank = lu.rank();
+    //     if (rank != _kalmanFilter.H.rows())
+    //     {
+    //         LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+    //     }
+
+    //     Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P);
+    //     rank = luP.rank();
+    //     if (rank != _kalmanFilter.P.rows())
+    //     {
+    //         LOG_WARN("{}: P.rank = {}", nameId(), rank);
+    //     }
+    // }
+
+    // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
+    // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst<>::C;
+
+    // // Push out the new data
+    // auto tckfSolution = std::make_shared<InsGnssTCKFSolution>();
+    // tckfSolution->insTime = gnssObs->insTime;
+    // tckfSolution->positionError = _kalmanFilter.x.block<3, 1>(6, 0);
+    // tckfSolution->velocityError = _kalmanFilter.x.block<3, 1>(3, 0);
+    // tckfSolution->attitudeError = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
+
+    // if (_lastImuObs)
+    // {
+    //     _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION),
+    //                                                     _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    // }
+    // tckfSolution->b_biasAccel = _inertialIntegrator.p_getLastAccelerationBias();
+    // tckfSolution->b_biasGyro = _inertialIntegrator.p_getLastAngularRateBias();
+    // tckfSolution->recvClkOffset = _recvClk.bias.value * InsConst<>::C;
+    // tckfSolution->recvClkDrift = _recvClk.drift.value * InsConst<>::C;
+
+    // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    // {
+    //     tckfSolution->positionError = tckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
+    //     tckfSolution->frame = InsGnssTCKFSolution::Frame::NED;
+    //     _inertialIntegrator.applyStateErrors_n(tckfSolution->positionError, tckfSolution->velocityError, tckfSolution->attitudeError);
+    //     const auto& state = _inertialIntegrator.getLatestState().value().get();
+    //     tckfSolution->setState_n(state.lla_position(), state.n_velocity(), state.n_Quat_b());
+    // }
+    // LOG_DATA("tckfSolution->positionError = {}", tckfSolution->positionError.transpose());
+    // LOG_DATA("tckfSolution->velocityError = {}", tckfSolution->velocityError.transpose());
+    // LOG_DATA("tckfSolution->attitudeError = {}", tckfSolution->attitudeError.transpose());
+    // LOG_DATA("tckfSolution->b_biasAccel = {}", tckfSolution->b_biasAccel.transpose());
+    // LOG_DATA("tckfSolution->b_biasGyro = {}", tckfSolution->b_biasGyro.transpose());
+    // LOG_DATA("tckfSolution->recvClkOffset = {}", tckfSolution->recvClkOffset);
+    // LOG_DATA("tckfSolution->recvClkDrift = {}", tckfSolution->recvClkDrift);
+
+    // // Closed loop
+    // if (_showKalmanFilterOutputPins) { requestOutputValueLock(OUTPUT_PORT_INDEX_x); }
+
+    // _kalmanFilter.x.setZero();
+
+    // invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, tckfSolution);
 }
 
 // ###########################################################################################################
@@ -2354,7 +2334,9 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::initialErrorCovarianceMatri
                                                                                      const double& variance_clkPhase,
                                                                                      const double& variance_clkFreq) const
 {
-    double scaleFactorPosition = _frame == Frame::NED ? SCALE_FACTOR_LAT_LON : 1.0;
+    double scaleFactorPosition = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
+                                     ? SCALE_FACTOR_LAT_LON
+                                     : 1.0;
 
     // 𝐏 Error covariance matrix
     Eigen::Matrix<double, 17, 17> P = Eigen::Matrix<double, 17, 17>::Zero();

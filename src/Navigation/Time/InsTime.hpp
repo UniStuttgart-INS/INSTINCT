@@ -30,6 +30,7 @@
 using json = nlohmann::json; ///< json namespace
 
 #include "TimeSystem.hpp"
+#include "Navigation/Math/Math.hpp"
 
 namespace NAV
 {
@@ -39,6 +40,7 @@ namespace InsTimeUtil
 constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;   ///< Modified Julian Date of the end of the century (15.01.2954)
 constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;        ///< Weeks per GPS cycle
 constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;      ///< 06.01.1980 in Modified Julian Date
+constexpr int32_t DIFF_TO_1_1_1970_MJD = 40587;      ///< 01.01.1970 00:00:00 UTC in Modified Julian Date (UNIX epoch)
 constexpr int32_t DIFF_BDT_WEEK_TO_GPST_WEEK = 1356; ///< BeiDou starts zero at 1-Jan-2006 and GPS starts 6-Jan-1980
 
 constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;  ///< Difference of the days between MJD and JD
@@ -336,7 +338,7 @@ struct InsTime_GPSweekTow
         if (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
         {
             this->gpsWeek += static_cast<int32_t>(this->tow / InsTimeUtil::SECONDS_PER_WEEK);
-            this->tow = static_cast<int64_t>(this->tow) % InsTimeUtil::SECONDS_PER_WEEK + (this->tow - gcem::floor(this->tow));
+            this->tow = gcem::fmod(this->tow, InsTimeUtil::SECONDS_PER_WEEK);
         }
         while (this->tow < 0.0L)
         {
@@ -432,19 +434,22 @@ struct InsTime_YMDHMS
     /// @param[in] hour Hour in Universal Time Coordinated [UTC]
     /// @param[in] min Minute in Universal Time Coordinated [UTC]
     /// @param[in] sec Second in Universal Time Coordinated [UTC]
-    constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec)
+    /// @param[in] digits Amount of digits for the seconds to round to
+    constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec, int digits = -1)
         : year(year), month(month), day(day), hour(hour), min(min), sec(sec)
     {
+        if (digits >= 0) { this->sec = math::round(this->sec, static_cast<size_t>(digits)); }
         if (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
         {
             this->min += static_cast<int32_t>(this->sec / InsTimeUtil::SECONDS_PER_MINUTE);
-            this->sec = static_cast<int64_t>(this->sec) % InsTimeUtil::SECONDS_PER_MINUTE + (this->sec - gcem::floor(this->sec));
+            this->sec = gcem::fmod(this->sec, InsTimeUtil::SECONDS_PER_MINUTE);
         }
         while (this->sec < 0.0L)
         {
             this->sec += InsTimeUtil::SECONDS_PER_MINUTE;
             this->min--;
         }
+        if (digits >= 0) { this->sec = math::round(this->sec, static_cast<size_t>(digits)); }
 
         if (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
         {
@@ -577,7 +582,7 @@ struct InsTime_YDoySod
         if (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
         {
             this->doy += static_cast<int32_t>(this->sod / InsTimeUtil::SECONDS_PER_DAY);
-            this->sod = static_cast<int64_t>(this->sod) % InsTimeUtil::SECONDS_PER_DAY + (this->sod - gcem::floor(this->sod));
+            this->sod = gcem::fmod(this->sod, InsTimeUtil::SECONDS_PER_DAY);
         }
         while (this->sod < 0)
         {
@@ -818,8 +823,9 @@ class InsTime
 
     /// @brief Converts this time object into a different format
     /// @param timesys Time System in which the time should be given
+    /// @param digits Amount of digits for the seconds to round to
     /// @return InsTime_YMDHMS structure of the this object
-    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys = UTC) const
+    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS(TimeSystem timesys = UTC, int digits = -1) const
     {
         // transform MJD to JD
         InsTime_JD jd = toJD();
@@ -845,7 +851,7 @@ class InsTime
 
         long double sec = jd.jd_frac * InsTimeUtil::SECONDS_PER_DAY;
 
-        return { year, month, day, 0, 0, sec };
+        return { year, month, day, 0, 0, sec, digits };
     }
 
     /// @brief Converts this time object into a different format
@@ -876,6 +882,13 @@ class InsTime
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
         return InsTime(InsTime_MJD(_mjd.mjd_day, 0.0L));
+    }
+
+    /// @brief Converts this time object into a UNIX timestamp in [s]
+    [[nodiscard]] constexpr long double toUnixTime() const
+    {
+        return static_cast<long double>((_mjd.mjd_day - InsTimeUtil::DIFF_TO_1_1_1970_MJD) * InsTimeUtil::SECONDS_PER_DAY)
+               + _mjd.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
     }
 
     /* ----------------------------- Leap functions ----------------------------- */
@@ -1127,6 +1140,24 @@ void to_json(json& j, const InsTime& insTime);
 void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
+
+namespace std
+{
+/// @brief Hash function for InsTime (needed for unordered_map)
+template<>
+struct hash<NAV::InsTime>
+{
+    /// @brief Hash function for InsTime
+    /// @param[in] t Time
+    std::size_t operator()(const NAV::InsTime& t) const
+    {
+        auto hash1 = std::hash<int32_t>{}(t.toMJD().mjd_day);
+        auto hash2 = std::hash<long double>{}(t.toMJD().mjd_frac);
+
+        return hash1 | (hash2 << 32);
+    }
+};
+} // namespace std
 
 #ifndef DOXYGEN_IGNORE
 

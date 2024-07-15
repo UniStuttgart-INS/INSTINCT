@@ -1,0 +1,51 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file Overview.dox
+// @brief Mainpage of documentation
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-01-31
+
+namespace Instinct {
+
+/** \mainpage notitle
+
+\tableofcontents
+
+\image html INSTINCT_Logo_Text.png
+
+\image html flowDots.png
+<div align="center"> <b> INS Toolkit for Integrated Navigation Concepts and Training </b>
+
+Institute of Navigation (INS)
+
+University of Stuttgart, Germany
+
+\---
+
+INS University [Homepage](https://www.ins.uni-stuttgart.de/en/)
+
+INS on [GitHub](https://github.com/UniStuttgart-INS)
+
+\---
+
+Learn more in our \ref main_introduction about INSTINCT
+
+\image html flowDots.png
+
+\image html smallFlow.png width="750"
+//TODO: Update image with RTK
+
+</div>
+
+_____
+
+*/
+
+}

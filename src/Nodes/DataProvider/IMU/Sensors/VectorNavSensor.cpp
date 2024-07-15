@@ -1995,9 +1995,9 @@ void NAV::VectorNavSensor::guiConfig()
             }
 
             std::string messages;
-            for (size_t i = 0; i < _asciiOutputBuffer.size(); i++)
+            for (const auto& msg : _asciiOutputBuffer)
             {
-                messages.append(_asciiOutputBuffer.at(i));
+                messages.append(msg);
             }
             ImGui::TextUnformatted("Async Ascii Messages:");
             ImGui::BeginChild(fmt::format("##Ascii Mesages {}", size_t(id)).c_str(), ImVec2(0, 300), true);
@@ -7370,23 +7370,20 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
                     && vnSensor->_syncInPin && vnSensor->inputPins.front().isPinLinked())       // Try to get a sync from the master
                 {
-                    auto* mutex = vnSensor->getInputValueMutex(0);
-                    if (mutex) { mutex->lock(); }
-                    if (const auto* timeSyncMaster = vnSensor->getInputValue<const TimeSync>(0);
-                        timeSyncMaster && !timeSyncMaster->ppsTime.empty())
+                    if (auto timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
+                        timeSyncMaster && !timeSyncMaster->v->ppsTime.empty())
                     {
                         // This can have the following values
                         // - -1: PPS -> VN310 message -> VN100 message (which happened before the VN310 message)
                         // -  0: PPS -> VN310 message -> VN100 message
                         // -  1: PPS -> VN100 message -> VN310 message
-                        int64_t syncCntDiff = obs->timeOutputs->syncInCnt - timeSyncMaster->syncOutCnt;
-                        obs->insTime = timeSyncMaster->ppsTime + std::chrono::nanoseconds(obs->timeOutputs->timeSyncIn)
+                        int64_t syncCntDiff = obs->timeOutputs->syncInCnt - timeSyncMaster->v->syncOutCnt;
+                        obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::nanoseconds(obs->timeOutputs->timeSyncIn)
                                        + std::chrono::seconds(syncCntDiff);
                         LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
-                                 vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
-                                 timeSyncMaster->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
+                                 vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->v->ppsTime.toGPSweekTow(),
+                                 timeSyncMaster->v->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
                     }
-                    if (mutex) { mutex->unlock(); }
                 }
 
                 if (obs->insTime.empty()

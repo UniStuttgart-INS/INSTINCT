@@ -21,6 +21,8 @@
 #include <cstdint>
 #include <fmt/ostream.h>
 
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+
 namespace NAV::vendor::ublox
 {
 /// @brief Error detection modes available
@@ -664,6 +666,18 @@ struct UbxRxmRawx
         std::bitset<1UL * 8UL> doStdev; ///< Estimated Doppler measurement standard deviation. [Hz * 0.002*2^n] (see graphic below)
         std::bitset<1UL * 8UL> trkStat; ///< Tracking status bitfield (see graphic below)
         uint8_t reserved2 = 0;          ///< Reserved
+
+        /// @brief Pseudorange valid
+        [[nodiscard]] bool prValid() const { return trkStat[0]; }
+
+        /// @brief Carrier phase valid
+        [[nodiscard]] bool cpValid() const { return trkStat[1]; }
+
+        /// @brief Half cycle valid
+        [[nodiscard]] bool halfCycValid() const { return trkStat[2]; }
+
+        /// @brief Half cycle subtracted from phase
+        [[nodiscard]] bool subHalfSubtractedFromPhase() const { return trkStat[3]; }
     };
 
     /// Measurement time of week in receiverblocal time approximately aligned to the GPS time system.
@@ -693,12 +707,12 @@ struct UbxRxmSfrbx
 {
     uint8_t gnssId = 0;         ///< GNSS identifier (see Satellite Numbering)
     uint8_t svId = 0;           ///< Satellite identifier (see Satellite Numbering)
-    uint8_t reserved1 = 0;      ///< Reserved
+    uint8_t sigId = 0;          ///< Signal identifier
     uint8_t freqId = 0;         ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
     uint8_t numWords = 0;       ///< The number of data words contained in this message (0..16)
     uint8_t chn = 0;            ///< The tracking channel number the message was received on
     uint8_t version = 0;        ///< Message version (0x01 for this version)
-    uint8_t reserved2 = 0;      ///< Reserved
+    uint8_t reserved0 = 0;      ///< Reserved
     std::vector<uint32_t> dwrd; ///< The data words
 
     // TODO: Make this into functions
@@ -756,20 +770,45 @@ enum UbxUpdMessages
 [[nodiscard]] UbxClass getMsgClassFromString(const std::string& className);
 
 /// @brief Get the UBX Msg Id From String object
-///
 /// @param[in] msgClass The Ubx Msg Class to search in
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string& idName);
 
 /// @brief Get the UBX Msg Id From String objects
-///
 /// @param[in] className String of the UBX class
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
 
+/// @brief Get the a string from a UBX Msg Class
+/// @param[in] msgClass The Ubx Msg Class
+/// @return The Msg Class string
+[[nodiscard]] std::string getStringFromMsgClass(UbxClass msgClass);
+
+/// @brief Get the a string from a UBX Msg Id
+/// @param[in] msgClass The Ubx Msg Class to search in
+/// @param[in] msgId Msg Id
+/// @return The Msg Id string
+[[nodiscard]] std::string getStringFromMsgId(UbxClass msgClass, uint8_t msgId);
+
+/// @brief Get the GNSS Satellite System from gnssId
+/// @param gnssId Ublox gnssId
+[[nodiscard]] SatelliteSystem getSatSys(uint8_t gnssId);
+
+/// @brief Get the GNSS code from gnssId and sigId
+/// @param gnssId Ublox gnssId
+/// @param sigId Ublox sigId
+/// @return The Code object
+[[nodiscard]] Code getCode(uint8_t gnssId, uint8_t sigId);
+
 } // namespace NAV::vendor::ublox
+
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] obj Object to print
+/// @return Returns the output stream object in order to chain stream insertions
+std::ostream& operator<<(std::ostream& os, const NAV::vendor::ublox::UbxClass& obj);
 
 #ifndef DOXYGEN_IGNORE
 
@@ -788,9 +827,22 @@ struct fmt::formatter<NAV::vendor::ublox::NmeaStandardMessages> : ostream_format
 template<>
 struct fmt::formatter<NAV::vendor::ublox::NmeaPubxMessages> : ostream_formatter
 {};
+
+/// @brief Formatter for UbxClass
 template<>
-struct fmt::formatter<NAV::vendor::ublox::UbxClass> : ostream_formatter
-{};
+struct fmt::formatter<NAV::vendor::ublox::UbxClass> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format SatelliteSystem structs
+    /// @param[in] ubxClass Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::vendor::ublox::UbxClass& ubxClass, FormatContext& ctx)
+    {
+        return fmt::formatter<std::string>::format(NAV::vendor::ublox::getStringFromMsgClass(ubxClass), ctx);
+    }
+};
+
 template<>
 struct fmt::formatter<NAV::vendor::ublox::UbxAckMessages> : ostream_formatter
 {};

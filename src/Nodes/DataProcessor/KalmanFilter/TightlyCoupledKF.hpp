@@ -17,12 +17,15 @@
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
 #include "Navigation/Time/InsTime.hpp"
-#include "NodeData/State/InertialNavSol.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
-#include "Navigation/GNSS/Core/ReceiverClock.hpp"
+#include "Navigation/INS/InertialIntegrator.hpp"
+#include "Navigation/GNSS/Positioning/ReceiverClock.hpp"
 #include "Navigation/Atmosphere/Ionosphere/Ionosphere.hpp"
 #include "Navigation/Atmosphere/Troposphere/Troposphere.hpp"
-#include "NodeData/State/TcKfInsGnssErrors.hpp"
+#include "Navigation/GNSS/Positioning/SPP/Algorithm.hpp"
+#include "NodeData/State/InsGnssTCKFSolution.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
 
 #include "Navigation/Math/KalmanFilter.hpp"
 #include "Navigation/Transformations/Units.hpp"
@@ -64,18 +67,19 @@ class TightlyCoupledKF : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;      ///< @brief GnssObs
-    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 2; ///< @brief GnssNavInfo
-    constexpr static size_t OUTPUT_PORT_INDEX_ERROR = 0;        ///< @brief Flow (TcKfInsGnssErrors)
-    constexpr static size_t OUTPUT_PORT_INDEX_SYNC = 1;         ///< @brief Flow (ImuObs)
-    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;            ///< @brief x̂ State vector
-    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;            ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;          ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;            ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;            ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;            ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;            ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;            ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t INPUT_PORT_INDEX_IMU = 0;              ///< @brief Flow (ImuObs)
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_OBS = 1;         ///< @brief Flow (GnssObs)
+    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 2; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t INPUT_PORT_INDEX_GNSS_NAV_INFO = 2;    ///< @brief GnssNavInfo
+    constexpr static size_t OUTPUT_PORT_INDEX_SOLUTION = 0;        ///< @brief Flow (InsGnssTCKFSolution)
+    constexpr static size_t OUTPUT_PORT_INDEX_x = 1;               ///< @brief x̂ State vector
+    constexpr static size_t OUTPUT_PORT_INDEX_P = 2;               ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 3;             ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Q = 4;               ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_z = 5;               ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_H = 6;               ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_R = 7;               ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_K = 8;               ///< @brief 𝐊 Kalman gain matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -83,20 +87,30 @@ class TightlyCoupledKF : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Receive Function for the inertial navigation solution
+    /// @brief Invoke the callback with a PosVelAtt solution (without TCKF specific output)
+    /// @param[in] posVelAtt PosVelAtt solution
+    void invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt);
+
+    /// @brief Receive Function for the IMU observation
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void recvInertialNavigationSolution(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void recvImuObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Receive Function for the Gnss observations
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
+    /// @brief Receive Function for the PosVelAtt observation
+    /// @param[in] queue Queue with all the received data messages
+    /// @param[in] pinIdx Index of the pin the data is received on
+    void recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
     /// @brief Predicts the state from the InertialNavSol
     /// @param[in] inertialNavSol Inertial navigation solution triggering the prediction
     /// @param[in] tau_i Time since the last prediction in [s]
-    void tightlyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol, double tau_i);
+    /// @param[in] imuPos IMU platform frame position with respect to body frame
+    void tightlyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos);
 
     /// @brief Updates the predicted state from the InertialNavSol with the GNSS observation
     /// @param[in] gnssObservation Gnss observation triggering the update
@@ -108,6 +122,9 @@ class TightlyCoupledKF : public Node
     /// @brief Removes the output pins for the Kalman matrices
     void removeKalmanMatricesPins();
 
+    /// Add or remove the external PVA Init pin
+    void updateExternalPvaInitPin();
+
     /// Index of the Pin currently being dragged
     int _dragAndDropPinIndex = -1;
     /// Number of NavInfo input pins
@@ -115,19 +132,28 @@ class TightlyCoupledKF : public Node
     /// @brief Adds/Deletes Input Pins depending on the variable _nNavInfoPins
     void updateNumberOfInputPins();
 
+    /// @brief Inertial Integrator
+    InertialIntegrator _inertialIntegrator;
+    /// Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
+    bool _preferAccelerationOverDeltaMeasurements = false;
+
+    /// Last received IMU observation (to get ImuPos)
+    std::shared_ptr<const ImuObs> _lastImuObs = nullptr;
+
+    /// Roll, Pitch and Yaw angles in [deg] used for initialization if not taken from separate pin
+    std::array<double, 3> _initalRollPitchYaw{};
+    /// Whether to initialize the state over an external pin
+    bool _initializeStateOverExternalPin{};
+    /// Time from the external init
+    InsTime _externalInitTime;
+
     /// Estimated receiver clock parameters
     ReceiverClock _recvClk;
 
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
     /// Codes used for calculation (GUI filter)
-    Code _filterCode = Code::G1C | Code::G2C | Code_G5I_G5Q_G5X
-                       | Code_E1B_E1C_E1X | Code_E5I_E5Q_E5X | Code_E6B_E6C_E6X | Code_E7I_E7Q_E7X | Code_E8I_E8Q_E8X
-                       | Code::R1C | Code::R2C | Code_R3I_R3Q_R3X | Code_R4A_R4B_R4X | Code_R6A_R6B_R6X
-                       | Code_B1D_B1P_B1X | Code_B2I_B2Q_B2X | Code_B5D_B5P_B5X | Code_B6I_B6Q_B6X | Code_B7I_B7Q_B7X | Code_B8D_B8P_B8X
-                       | Code::J1C | Code_J2S_J2L_J2X | Code_J5I_J5Q_J5X | Code_J6S_J6L_J6X
-                       | Code::I5A | Code::I9A
-                       | Code::S1C | Code_S5I_S5Q_S5X;
+    Code _filterCode = Code_Default;
     /// List of satellites to exclude
     std::vector<SatId> _excludedSatellites;
     /// Elevation cut-off angle for satellites in [rad]
@@ -139,22 +165,14 @@ class TightlyCoupledKF : public Node
     /// Troposphere Models used for the calculation
     TroposphereModelSelection _troposphereModels;
 
-    /// Latest observation from the Inertial Integrator (Position, Velocity, Attitude and IMU measurements)
-    std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
-
-    /// Time when the last prediction was triggered
-    InsTime _lastPredictTime;
-
-    /// Time when the last GNSS message came and a prediction was requested
-    InsTime _lastPredictRequestedTime;
+    /// @brief All Inter-system clock error keys
+    std::vector<SPP::States::StateKeyTypes> _interSysErrs{};
+    /// @brief All Inter-system clock drift keys
+    /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
+    std::vector<SPP::States::StateKeyTypes> _interSysDrifts{};
 
     /// Time of last epoch
-    InsTime _lastEpochTime;
-
-    /// Accumulated Accelerometer biases
-    Eigen::Vector3d _accumulatedAccelBiases;
-    /// Accumulated Gyroscope biases
-    Eigen::Vector3d _accumulatedGyroBiases;
+    InsTime _lastEpochTime; // TODO: Remove?
 
     /// Kalman Filter representation - States: 3xAtt, 3xVel, 3xPos, 3xAccelBias, 3xGyroBias, receiver clock offset, receiver clock drift - Measurements: (4+n) x psr, (4+n) x psrRate (from Doppler)
     KalmanFilter _kalmanFilter{ 17, 8 };
@@ -162,15 +180,6 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
     //                                               GUI Settings
     // ###########################################################################################################
-
-    /// @brief Available Frames
-    enum class Frame : int
-    {
-        ECEF, ///< Earth-Centered Earth-Fixed frame
-        NED,  ///< Local North-East-Down frame
-    };
-    /// Frame to calculate the Kalman filter in
-    Frame _frame = Frame::NED;
 
     /// @brief Show output pins for the Kalman matrices
     bool _showKalmanFilterOutputPins = false;
@@ -281,31 +290,32 @@ class TightlyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// Possible Units for the Standard deviation of the pseudorange measurement
-    enum class GnssMeasurementUncertaintyPseudorangeUnit
-    {
-        meter2, ///< Variance [m²]
-        meter,  ///< Standard deviation [m]
-    };
-    /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeUnit parameter
-    GnssMeasurementUncertaintyPseudorangeUnit _gnssMeasurementUncertaintyPseudorangeUnit = GnssMeasurementUncertaintyPseudorangeUnit::meter;
+    // TODO: Replace with GNSS Measurement Error Model (see SPP node)
+    // /// Possible Units for the Standard deviation of the pseudorange measurement
+    // enum class GnssMeasurementUncertaintyPseudorangeUnit
+    // {
+    //     meter2, ///< Variance [m²]
+    //     meter,  ///< Standard deviation [m]
+    // };
+    // /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeUnit parameter
+    // GnssMeasurementUncertaintyPseudorangeUnit _gnssMeasurementUncertaintyPseudorangeUnit = GnssMeasurementUncertaintyPseudorangeUnit::meter;
 
-    /// @brief GUI selection of the GNSS pseudorange measurement uncertainty (standard deviation σ or Variance σ²).
-    double _gnssMeasurementUncertaintyPseudorange = 5 /* [m] */;
+    // /// @brief GUI selection of the GNSS pseudorange measurement uncertainty (standard deviation σ or Variance σ²).
+    // double _gnssMeasurementUncertaintyPseudorange = 5 /* [m] */;
 
-    // ###########################################################################################################
+    // // ###########################################################################################################
 
-    /// Possible Units for the Standard deviation of the pseudorange-rate measurement
-    enum class GnssMeasurementUncertaintyPseudorangeRateUnit
-    {
-        m2_s2, ///< Variance [m²/s²]
-        m_s,   ///< Standard deviation [m/s]
-    };
-    /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeRateUnit parameter
-    GnssMeasurementUncertaintyPseudorangeRateUnit _gnssMeasurementUncertaintyPseudorangeRateUnit = GnssMeasurementUncertaintyPseudorangeRateUnit::m_s;
+    // /// Possible Units for the Standard deviation of the pseudorange-rate measurement
+    // enum class GnssMeasurementUncertaintyPseudorangeRateUnit
+    // {
+    //     m2_s2, ///< Variance [m²/s²]
+    //     m_s,   ///< Standard deviation [m/s]
+    // };
+    // /// Gui selection for the Unit of the input gnssMeasurementUncertaintyPseudorangeRateUnit parameter
+    // GnssMeasurementUncertaintyPseudorangeRateUnit _gnssMeasurementUncertaintyPseudorangeRateUnit = GnssMeasurementUncertaintyPseudorangeRateUnit::m_s;
 
-    /// @brief GUI selection of the GNSS pseudorange-rate measurement uncertainty (standard deviation σ or Variance σ²).
-    double _gnssMeasurementUncertaintyPseudorangeRate = 5 /* [m/s] */;
+    // /// @brief GUI selection of the GNSS pseudorange-rate measurement uncertainty (standard deviation σ or Variance σ²).
+    // double _gnssMeasurementUncertaintyPseudorangeRate = 5 /* [m/s] */;
 
     // ###########################################################################################################
 
@@ -467,7 +477,7 @@ class TightlyCoupledKF : public Node
     InitBiasAccelUnit _initBiasAccelUnit = InitBiasAccelUnit::m_s2;
 
     /// GUI selection of the initial accelerometer biases
-    Eigen::Vector3d _initBiasAccel{ 0.34, -0.11, 2.43 };
+    Eigen::Vector3d _initBiasAccel{ 0.0, 0.0, 0.0 };
 
     // ###########################################################################################################
 
@@ -481,7 +491,7 @@ class TightlyCoupledKF : public Node
     InitBiasGyroUnit _initBiasGyroUnit = InitBiasGyroUnit::deg_s;
 
     /// GUI selection of the initial gyroscope biases
-    Eigen::Vector3d _initBiasGyro{ -0.062, 0.021, -0.03 };
+    Eigen::Vector3d _initBiasGyro{ 0.0, 0.0, 0.0 };
 
     // ###########################################################################################################
     //                                                Prediction

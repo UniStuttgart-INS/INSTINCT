@@ -252,7 +252,13 @@ struct fmt::formatter<T> : ostream_formatter
 // struct fmt::formatter<T> : ostream_formatter
 // {};
 template<>
+struct fmt::formatter<Eigen::Quaternionf> : ostream_formatter
+{};
+template<>
 struct fmt::formatter<Eigen::Quaterniond> : ostream_formatter
+{};
+template<>
+struct fmt::formatter<Eigen::Quaternionld> : ostream_formatter
 {};
 
 // clang-format on

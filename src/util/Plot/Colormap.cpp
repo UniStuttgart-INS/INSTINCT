@@ -242,14 +242,14 @@ void from_json(const json& j, Colormap& cmap)
     }
 }
 
-bool ShowColormapSelector(ColormapMaskType& type, int64_t& id)
+bool ShowColormapSelector(ColormapMaskType& type, int64_t& id, const char* label)
 {
     bool changes = false;
 
     auto activeColormap = ColormapSearch(type, id);
 
     std::string colormapName = activeColormap ? activeColormap->get().name : "";
-    if (ImGui::BeginCombo("Colormap Mask", colormapName.c_str()))
+    if (ImGui::BeginCombo(fmt::format("{}Colormap Mask", label).c_str(), colormapName.c_str()))
     {
         if (ImGui::Selectable("##Empty colormap mask", colormapName.empty(), 0))
         {

@@ -71,25 +71,25 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     }
 }
 
-SatelliteSystem SatelliteSystem::fromEnum(size_t enumeration)
+SatelliteSystem SatelliteSystem::fromEnum(SatelliteSystem::Enum enumeration)
 {
     switch (enumeration)
     {
-    case 0:
+    case SatelliteSystem::Enum_None:
         return SatSys_None;
-    case 1:
+    case SatelliteSystem::Enum_GPS:
         return GPS;
-    case 2:
+    case SatelliteSystem::Enum_GAL:
         return GAL;
-    case 3:
+    case SatelliteSystem::Enum_GLO:
         return GLO;
-    case 4:
+    case SatelliteSystem::Enum_BDS:
         return BDS;
-    case 5:
+    case SatelliteSystem::Enum_QZSS:
         return QZSS;
-    case 6:
+    case SatelliteSystem::Enum_IRNSS:
         return IRNSS;
-    case 7:
+    case SatelliteSystem::Enum_SBAS:
         return SBAS;
     default:
         return SatSys_None;
@@ -128,8 +128,10 @@ SatelliteSystem::operator char() const
         return 'I';
     case SBAS:
         return 'S';
+    case SatSys_None:
+        return '-';
     default:
-        return '\0';
+        return 'M';
     }
 }
 
@@ -198,33 +200,43 @@ std::vector<uint16_t> SatelliteSystem::getSatellites() const
     return GetSatellitesForSatelliteSystem(value);
 }
 
-size_t SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
+SatelliteSystem::Enum SatelliteSystem::ToEnumeration(SatelliteSystem satSys)
 {
     switch (SatelliteSystem_(satSys))
     {
     case SatSys_None:
-        return 0;
+        return Enum_None;
     case GPS:
-        return 1;
+        return Enum_GPS;
     case GAL:
-        return 2;
+        return Enum_GAL;
     case GLO:
-        return 3;
+        return Enum_GLO;
     case BDS:
-        return 4;
+        return Enum_BDS;
     case QZSS:
-        return 5;
+        return Enum_QZSS;
     case IRNSS:
-        return 6;
+        return Enum_IRNSS;
     case SBAS:
-        return 7;
+        return Enum_SBAS;
     }
-    return 0;
+    return Enum_None;
 }
 
-size_t SatelliteSystem::toEnumeration() const
+SatelliteSystem::Enum SatelliteSystem::toEnumeration() const
 {
-    return ToEnumeration(value);
+    return ToEnumeration(*this);
+}
+
+char SatelliteSystem::ToChar(SatelliteSystem satSys)
+{
+    return char(satSys);
+}
+
+char SatelliteSystem::toChar() const
+{
+    return char(*this);
 }
 
 std::vector<SatelliteSystem> SatelliteSystem::ToVector(SatelliteSystem satSys)

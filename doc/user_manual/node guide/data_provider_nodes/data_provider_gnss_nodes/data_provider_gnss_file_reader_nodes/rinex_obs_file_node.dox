@@ -1,0 +1,45 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file rinex_obs_file_node.dox
+// @brief Guide for the RinexObsFile Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-22
+
+\namespace Instinct {
+/** \page rinex_obs_file_node RinexObsFile Node
+
+\tableofcontents
+
+<img src="rinexObsFileNode.png" align="right">
+\section rinex_obs_file_node_introduction Introduction
+The *RinexObsFile* Node reads RINEX <i>.nav</i>-files into INSTINCT.
+
+\section rinex_obs_file_node_connections Connections
+- **Input** : The Node has no input connection: In the \ref rinex_obs_file_node_settings the input file can be selected.
+- **Output** : The Node has an *GnssObs*-flow (*FileReader Data*, see \ref demo_node) output.
+
+\section rinex_obs_file_node_settings Settings
+The Settings offer to enter a file path or **choose** a <i>.obs</i>-file with the file browser. The Node detects the file version automatically.
+
+Additionally it can be selected if less precisions code should be erased. E.g. if G1X (L1C combined) is present, don't use G1L (L1C pilot) and G1S (L1C data).
+
+Currently supported file versions: 3.02, 3.03, 3.04
+
+\section rinex_obs_file_node_example_flow Example Flow
+<blockquote>
+See the \ref rinex_obs_logger_node_example_flow in the \ref rinex_obs_logger_node.
+
+See \ref getting_started_ex1 and \ref getting_started_ex2 in the \ref getting_started.
+</blockquote>
+
+________
+<i>Last updated: 2024-02-22</i>
+*/
+}

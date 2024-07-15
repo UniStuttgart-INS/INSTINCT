@@ -82,13 +82,13 @@ TEST_CASE("[NMEAFile][flow] Read 'test.nmea'", "[NMEAFile][flow]")
     //                                                  NMEAFile.flow"
     // ###########################################################################################################
     //
-    //  NmeaFile (95)                 Plot (101)
-    //     (94) PosVel |>  --(102)->  |> Pin 1 (96)
+    //  NmeaFile (95)                 Terminator (104)
+    //     (94) PosVel |>  --(105)->  |> Input (103)
     //
     // ###########################################################################################################
 
     size_t messageCounter = 0;
-    nm::RegisterWatcherCallbackToInputPin(96, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(103, [&messageCounter](const Node* /* node */, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
         LOG_TRACE("messageCounter = {}", messageCounter);
 
         compareNMEAData(std::dynamic_pointer_cast<const NAV::PosVel>(queue.front()), messageCounter);

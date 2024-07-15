@@ -1,8 +1,9 @@
 {
+    "colormaps": [],
     "links": {
-        "link-29": {
-            "endPinId": 25,
-            "id": 29,
+        "link-32": {
+            "endPinId": 30,
+            "id": 32,
             "startPinId": 1
         }
     },
@@ -11,7 +12,8 @@
             "data": {
                 "FileReader": {
                     "path": "RINEX/v3_03/reach-m2-01_raw_202211021639_test.22O"
-                }
+                },
+                "eraseLessPreciseCodes": true
             },
             "enabled": true,
             "id": 2,
@@ -34,37 +36,28 @@
             },
             "type": "RinexObsFile"
         },
-        "node-28": {
+        "node-31": {
             "data": null,
             "enabled": true,
-            "id": 28,
+            "id": 31,
             "inputPins": [
                 {
-                    "id": 25,
-                    "name": ""
-                },
-                {
-                    "id": 26,
+                    "id": 30,
                     "name": ""
                 }
             ],
             "kind": "Simple",
-            "name": "Combiner",
-            "outputPins": [
-                {
-                    "id": 27,
-                    "name": ""
-                }
-            ],
+            "name": "Terminator",
+            "outputPins": [],
             "pos": {
-                "x": 520.0,
+                "x": 488.0,
                 "y": 188.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "Combiner"
+            "type": "Terminator"
         }
     }
 }

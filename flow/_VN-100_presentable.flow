@@ -30,16 +30,21 @@
     "nodes": {
         "node-11": {
             "data": {
-                "nInputPins": 1,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "nPlots": 2,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "ImuObsWDelta",
+                        "dataIdentifier": "ImuObs",
                         "pinType": 0,
                         "plotData": [
                             {
                                 "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
                             },
                             {
                                 "displayName": "GPS time of week [s]"
@@ -48,82 +53,34 @@
                                 "displayName": "Time since startup [ns]"
                             },
                             {
-                                "displayName": "Mag uncomp X [Gauss]"
+                                "displayName": "Accel X [m/s^2]"
                             },
                             {
-                                "displayName": "Mag uncomp Y [Gauss]"
+                                "displayName": "Accel Y [m/s^2]"
                             },
                             {
-                                "displayName": "Mag uncomp Z [Gauss]"
+                                "displayName": "Accel Z [m/s^2]"
                             },
                             {
-                                "displayName": "Accel uncomp X [m/s^2]"
+                                "displayName": "Gyro X [rad/s]"
                             },
                             {
-                                "displayName": "Accel uncomp Y [m/s^2]"
+                                "displayName": "Gyro Y [rad/s]"
                             },
                             {
-                                "displayName": "Accel uncomp Z [m/s^2]"
+                                "displayName": "Gyro Z [rad/s]"
                             },
                             {
-                                "displayName": "Gyro uncomp X [rad/s]"
+                                "displayName": "Mag X [Gauss]"
                             },
                             {
-                                "displayName": "Gyro uncomp Y [rad/s]"
+                                "displayName": "Mag Y [Gauss]"
                             },
                             {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
+                                "displayName": "Mag Z [Gauss]"
                             },
                             {
                                 "displayName": "Temperature [°C]"
-                            },
-                            {
-                                "displayName": "dTime [s]"
-                            },
-                            {
-                                "displayName": "dTheta X [deg]"
-                            },
-                            {
-                                "displayName": "dTheta Y [deg]"
-                            },
-                            {
-                                "displayName": "dTheta Z [deg]"
-                            },
-                            {
-                                "displayName": "dVelocity X [m/s]"
-                            },
-                            {
-                                "displayName": "dVelocity Y [m/s]"
-                            },
-                            {
-                                "displayName": "dVelocity Z [m/s]"
                             }
                         ],
                         "size": 1000,
@@ -134,13 +91,136 @@
                     {
                         "headerText": "Acceleration",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
+                                "dataIndex": 4,
+                                "displayName": "Accel X [m/s^2]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 5,
+                                "displayName": "Accel Y [m/s^2]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
                                 "dataIndex": 6,
-                                "displayName": "Accel uncomp X [m/s^2]",
+                                "displayName": "Accel Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -154,86 +234,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 6,
-                                    "legendName": "X",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 7,
-                                "displayName": "Accel uncomp Y [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
+                                    "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 7,
-                                    "legendName": "Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 8,
-                                "displayName": "Accel uncomp Z [m/s^2]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 8,
-                                    "legendName": "Z",
-                                    "lineType": 1,
+                                    "markerColormapMaskDataCmpIdx": 6,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -285,13 +309,136 @@
                     {
                         "headerText": "Angular Rate",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
+                                "dataIndex": 7,
+                                "displayName": "Gyro X [rad/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 7,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
+                                "dataIndex": 8,
+                                "displayName": "Gyro Y [rad/s]",
+                                "pinIndex": 0,
+                                "style": {
+                                    "color": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "colormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
+                                    "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 8,
+                                    "markerFillColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerOutlineColor": {
+                                        "w": -1.0,
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "markerSize": 1.0,
+                                    "markerStyle": 7,
+                                    "markerWeight": 1.0,
+                                    "markers": false,
+                                    "stride": 0,
+                                    "thickness": 1.0
+                                }
+                            },
+                            {
+                                "axis": 3,
                                 "dataIndex": 9,
-                                "displayName": "Gyro uncomp X [rad/s]",
+                                "displayName": "Gyro Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
                                     "color": {
@@ -305,86 +452,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 9,
-                                    "legendName": "X",
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 10,
-                                "displayName": "Gyro uncomp Y [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
+                                    "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 10,
-                                    "legendName": "Y",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 11,
-                                "displayName": "Gyro uncomp Z [rad/s]",
-                                "pinIndex": 0,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 11,
-                                    "legendName": "Z",
-                                    "lineType": 1,
+                                    "markerColormapMaskDataCmpIdx": 9,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -467,7 +558,7 @@
                     "commonField": 0,
                     "gps2Field": 0,
                     "gpsField": 0,
-                    "imuField": 1548,
+                    "imuField": 1740,
                     "insField": 0,
                     "rateDivisor": 16,
                     "timeField": 513
@@ -720,16 +811,21 @@
         },
         "node-31": {
             "data": {
-                "nInputPins": 1,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "nPlots": 4,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "InertialNavSol",
+                        "dataIdentifier": "PosVelAtt",
                         "pinType": 0,
                         "plotData": [
                             {
                                 "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
                             },
                             {
                                 "displayName": "GPS time of week [s]"
@@ -759,6 +855,42 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "X-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XY-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ-ECEF StDev [m]"
+                            },
+                            {
+                                "displayName": "North StDev [m]"
+                            },
+                            {
+                                "displayName": "East StDev [m]"
+                            },
+                            {
+                                "displayName": "Down StDev [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -778,6 +910,42 @@
                             },
                             {
                                 "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
                             },
                             {
                                 "displayName": "Roll [deg]"
@@ -808,13 +976,14 @@
                 "plots": [
                     {
                         "headerText": "Position",
-                        "leftPaneWidth": 180.0,
+                        "leftPaneWidth": 233.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 5,
+                                "dataIndex": 6,
                                 "displayName": "North/South [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -828,9 +997,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 5,
-                                    "legendName": "North/South [m]",
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 6,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -852,10 +1043,10 @@
                                 }
                             }
                         ],
-                        "rightPaneWidth": 400.0,
+                        "rightPaneWidth": 347.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            6
+                            7
                         ],
                         "size": {
                             "x": -1.0,
@@ -878,12 +1069,13 @@
                     {
                         "headerText": "Altitude",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 4,
+                                "dataIndex": 5,
                                 "displayName": "Altitude [m]",
                                 "pinIndex": 0,
                                 "style": {
@@ -897,9 +1089,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 4,
-                                    "legendName": "Altitude [m]",
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 5,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -947,12 +1161,13 @@
                     {
                         "headerText": "Orientation",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 17,
+                                "dataIndex": 42,
                                 "displayName": "Roll [deg]",
                                 "pinIndex": 0,
                                 "style": {
@@ -966,9 +1181,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 17,
-                                    "legendName": "Roll",
+                                    "colormapMaskDataCmpIdx": 42,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 42,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -991,7 +1228,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 18,
+                                "dataIndex": 43,
                                 "displayName": "Pitch [deg]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1005,9 +1242,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 18,
-                                    "legendName": "Pitch",
+                                    "colormapMaskDataCmpIdx": 43,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 43,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1030,7 +1289,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 19,
+                                "dataIndex": 44,
                                 "displayName": "Yaw [deg]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1044,9 +1303,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 19,
-                                    "legendName": "Yaw",
+                                    "colormapMaskDataCmpIdx": 44,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 44,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1094,12 +1375,13 @@
                     {
                         "headerText": "Velocity Norm",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 10,
+                                "dataIndex": 23,
                                 "displayName": "Velocity norm [m/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1113,9 +1395,31 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 10,
-                                    "legendName": "Velocity norm [m/s]",
+                                    "colormapMaskDataCmpIdx": 23,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
+                                    "legendName": "",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 23,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1174,7 +1478,7 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 1304.0,
+                "x": 1320.0,
                 "y": 254.0
             },
             "size": {
@@ -1187,7 +1491,8 @@
             "data": {
                 "forceStatic": false,
                 "outputType": 0,
-                "posVelSource": 0
+                "posVelSource": 0,
+                "useCompensatedData": false
             },
             "enabled": true,
             "id": 35,
@@ -1217,16 +1522,18 @@
         },
         "node-40": {
             "data": {
-                "angularRateEarthRotationCompensationEnabled": true,
-                "angularRateTransportRateCompensationEnabled": true,
-                "centrifgalAccelerationCompensationEnabled": true,
-                "coriolisAccelerationCompensationEnabled": true,
-                "gravitationModel": 4,
-                "integrationAlgorithm": 0,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": false,
-                "prefereUncompensatedData": false,
-                "showCorrectionsInputPin": false
+                "inertialIntegrator": {
+                    "integrationAlgorithm": 2,
+                    "integrationFrame": 1,
+                    "posVelAttDerivativeConstants": {
+                        "angularRateEarthRotationCompensationEnabled": true,
+                        "angularRateTransportRateCompensationEnabled": true,
+                        "centrifgalAccelerationCompensationEnabled": true,
+                        "coriolisAccelerationCompensationEnabled": true,
+                        "gravitationModel": 4
+                    }
+                },
+                "preferAccelerationOverDeltaMeasurements": true
             },
             "enabled": true,
             "id": 40,
@@ -1263,8 +1570,8 @@
                 "attitudeMode": 0,
                 "initDuration": 5.0,
                 "initTime": {
-                    "mjd_day": 60244,
-                    "mjd_frac": 0.6734027777777778
+                    "mjd_day": 60290,
+                    "mjd_frac": 0.6181944444444445
                 },
                 "initTimeEditFormat": {
                     "format": 0,

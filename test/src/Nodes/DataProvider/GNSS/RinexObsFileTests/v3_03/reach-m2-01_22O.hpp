@@ -104,6 +104,19 @@ const std::vector<GnssObs> gnssObs_reach_m2_01_22O = {
                                     /* .carrierPhase = */ CarrierPhase{ .value = 190889609.539, .SSI = 1, .LLI = 0 },
                                     /* .doppler =      */ -535.350,
                                     /* .CN0 =          */ 44.000 },
+      },
+      /* ._satData = */ std::vector<GnssObs::SatelliteData>{
+          { SatId(GPS, 1), G01 | G02 },
+          { SatId(GPS, 13), G01 },
+          { SatId(GLO, 1), R01 | R02 },
+          { SatId(GLO, 10), R01 },
+          { SatId(GLO, 13), R01 | R02 },
+          { SatId(GAL, 3), E01 | E07 },
+          { SatId(GAL, 5), E01 },
+          { SatId(BDS, 7), B07 },
+          { SatId(BDS, 10), B02 | B07 },
+          { SatId(BDS, 23), B02 },
+          { SatId(SBAS, 23), S01 },
       } },
 };
 

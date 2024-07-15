@@ -62,14 +62,14 @@ void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t
                  Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ------------------------------------------- Accelerations ---------------------------------------------
-    REQUIRE_THAT(obs->accelUncompXYZ.value()(0) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccX) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
-    REQUIRE_THAT(obs->accelUncompXYZ.value()(1) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccY) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
-    REQUIRE_THAT(obs->accelUncompXYZ.value()(2) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccZ) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_acceleration(0) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccX) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_acceleration(1) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccY) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_acceleration(2) - IMU_REFERENCE_DATA.at(messageCounterData).at(AccZ) * SCALEFACTOR_ACCEL, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ------------------------------------------- Angular rates ---------------------------------------------
-    REQUIRE_THAT(obs->gyroUncompXYZ.value()(0) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroX)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
-    REQUIRE_THAT(obs->gyroUncompXYZ.value()(1) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroY)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
-    REQUIRE_THAT(obs->gyroUncompXYZ.value()(2) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroZ)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_angularRate(0) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroX)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_angularRate(1) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroY)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
+    REQUIRE_THAT(obs->p_angularRate(2) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroZ)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 }
 
 long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)

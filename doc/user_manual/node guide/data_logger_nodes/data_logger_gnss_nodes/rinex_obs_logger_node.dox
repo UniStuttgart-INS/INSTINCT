@@ -1,0 +1,89 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file rinex_obs_logger_node.dox
+// @brief Guide for the RinexObsLogger Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-03-18
+
+\namespace Instinct {
+/** \page rinex_obs_logger_node RinexObsLogger Node
+
+\tableofcontents
+
+<img src="rinexObsLogger.png" align="right">
+\section rinex_obs_logger_node_introduction Introduction
+The *RinexObsLogger* Node saves incoming observation data to a *obs*-file according to RINEX standards.
+
+\section rinex_obs_logger_node_connections Connections
+- **Input** : The Node has a Flow input accepting *GnssObs*.
+- **Output** : The Node has no output connection: In the \ref rinex_obs_logger_node_settings the output file can be selected.
+
+<img src="rinexObsLoggerSettings.png" align="right">
+\section rinex_obs_logger_node_settings Settings
+The Settings offer to enter a file path or **choose** one to save the *csv*-file generated.
+
+Further, adjustment and changes to the generated *obs*-file can be made, but are not necessary. The changes only account for entries in the generated file that are neither automatically filled by the input (e.g. the observations) or INSTINCT (e.g. the program and its version).
+
+\note For more details relate to the official documentation of RINEX files (e.g. http://acc.igs.org/, there for RINEX 3.04 http://acc.igs.org/misc/rinex304.pdf), the following section is only a summary.
+
+- **General**
+  - Version: Select output version of the RINEX formatted file *(currently only 3.04, note that depending on the version the settings may vary)*.
+  - Run by / Creator /Agency: The Creator (agency) of the file, observer and agency.
+
+- **Comments**
+  - Add: Adds a new comment line.
+    - Enter a new comment.
+    - Delete the comment line.
+
+- **Marker**
+  - Type: Select the type of the marker, or set and individual.
+  - User Type: Available if USER_DEFINED type is selected above. Allows to set an individual marker type.
+  - Name /Number: Details of the marker.
+
+- **Receiver**
+  - Name / Number / Version: Details of the receiver.
+
+- **Antenna**
+  - Number / Type: Details of the Antenna.
+  - Approx position XYZ: Show/Hide approximate position of antenna in XYZ.
+  - Delta HEN: Antenna height and eccentricity in east and north.
+
+
+\section rinex_obs_logger_node_example_flow Example Flow
+<blockquote>
+<i>If you don't know how to reproduce any of the explained steps, read the \ref getting_started first.</i>
+
+<b>Required Nodes:</b>
+*- *RinexObsFile* Node (\ref rinex_obs_file_node)
+*- *RinexObsLogger* Node
+
+<b>Required Data</b>
+
+    ../test/data/DataProvider/GNSS/RinexObsFile/v3_04/INS_1581.19O
+
+<i>Relative path, file included in INSTINCT</i>
+
+<b>Steps</b>
+*1. Add both Nodes to your workspace and connect them.
+*2. Open the *RinexObsFile* Node Settings:
+    - *Choose* or copy the relative path of the *INS_1581.19O* file
+*3. Open the *RinexObsLogger* Node Settings:
+    - *Choose* a path and a file name to save your resulting *obs*-file.
+*4. Try around with any input, e.g. your name, agency, add comments etc.
+*5. Run the code, open your generated file and/or compare it with the input file.
+
+<i>Example of how the result should look like:</i>
+
+\image html rinexObsLoggerExample1.png width=1000
+</blockquote>
+________
+<i>Last updated: 2024-03-18</i>
+*/
+}

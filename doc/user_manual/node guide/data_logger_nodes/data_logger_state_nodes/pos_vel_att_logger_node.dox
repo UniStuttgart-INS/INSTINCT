@@ -1,0 +1,38 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file pos_vel_att_logger_node.dox
+// @brief Guide for the PosVelAttLogger Node
+// @author N. Stahl (HiWi)
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2024-02-26
+
+\namespace Instinct {
+/** \page pos_vel_att_logger_node PosVelAttLogger Node
+
+\tableofcontents
+
+<img src="posVelAttLogger.png" align="right">
+\section pos_vel_att_logger_node_introduction Introduction
+The *PosVelAttLogger* Node logs (saves) flow data into a *csv*-file. Depending on the input this can include  position, velocity and attitude data.
+
+\section pos_vel_att_logger_node_connections Connections
+- **Input** : The Node has a Flow input accepting *Pos*, *PosVel* and *PosVelAtt*.
+- **Output** : The Node has no output connection: In the \ref pos_vel_att_logger_node_settings the output file can be selected.
+
+\section pos_vel_att_logger_node_settings Settings
+The Settings offer to enter a file path or **choose** one to save the <i>csv</i>-file generated.
+
+\section pos_vel_att_logger_node_example_flow Example Flow
+<blockquote>
+See the \ref rtklib_pos_converter_node_example_flow in the \ref rtklib_pos_converter_node .
+</blockquote>
+________
+<i>Last updated: 2024-02-26</i>
+*/
+}
