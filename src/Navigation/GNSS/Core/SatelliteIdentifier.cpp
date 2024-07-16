@@ -79,7 +79,14 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
                     bool isExcluded = iter != satellites.end();
                     if (!SatelliteSystem_(satSystem & filterSys)) { ImGui::BeginDisabled(); }
 
-                    if (ImGui::Checkbox(fmt::format("{}##{} {}", num, satSys, label).c_str(), &isExcluded))
+                    auto satInfo = satSystem.getSatelliteInfo(num);
+                    if (ImGui::Checkbox(fmt::format("{}{}##{} {}",
+                                                    num,
+                                                    satInfo ? fmt::format(" ({})", *satInfo) : "",
+                                                    satSys,
+                                                    label)
+                                            .c_str(),
+                                        &isExcluded))
                     {
                         if (isExcluded)
                         {

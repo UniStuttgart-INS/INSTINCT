@@ -7,6 +7,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "SatelliteSystem.hpp"
+#include <cstdint>
+#include <optional>
+#include <unordered_set>
 
 #include "util/Logger.hpp"
 
@@ -198,6 +201,50 @@ std::vector<uint16_t> SatelliteSystem::GetSatellitesForSatelliteSystem(Satellite
 std::vector<uint16_t> SatelliteSystem::getSatellites() const
 {
     return GetSatellitesForSatelliteSystem(value);
+}
+
+std::optional<std::string> SatelliteSystem::GetSatelliteInfo(SatelliteSystem satSys, uint16_t satNum)
+{
+    switch (SatelliteSystem_(satSys))
+    {
+    case GPS:
+        break;
+    case GLO:
+        break;
+    case GAL:
+        break;
+    case QZSS:
+        if (satNum == 3) { return "GEO"; }
+        else { return "QZO"; }
+        break;
+    case BDS:
+        if (satNum <= 5 || (satNum >= 59 && satNum <= 62)) { return "GEO"; }
+        else if (std::unordered_set<uint16_t> sats = {
+                     6, 7, 8, 9, 10,
+                     13, 16, 31, 38,
+                     39, 40, 56 };
+                 sats.contains(satNum)) { return "IGSO"; }
+        else { return "MEO"; }
+    case IRNSS:
+        if (std::unordered_set<uint16_t> sats = { 3, 6, 7 };
+            sats.contains(satNum)) { return "GEO"; }
+        else { return "IGSO"; }
+        break;
+    case SBAS:
+        if (satNum == 120 || satNum == 234 || satNum == 236) { return "EGNOS"; }
+        if (satNum == 131 || satNum == 133 || satNum == 135 || satNum == 138) { return "WAAS"; }
+        if (satNum == 129 || satNum == 137) { return "MSAS"; }
+        if (satNum == 127 || satNum == 128 || satNum == 132) { return "GAGAN"; }
+        break;
+    case SatSys_None:
+        break;
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> SatelliteSystem::getSatelliteInfo(uint16_t satNum) const
+{
+    return GetSatelliteInfo(value, satNum);
 }
 
 SatelliteSystem::Enum SatelliteSystem::ToEnumeration(SatelliteSystem satSys)

@@ -22,6 +22,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/GNSS/Satellite/Ephemeris/GalileoEphemeris.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/BDSEphemeris.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/QZSSEphemeris.hpp"
 
 namespace NAV
 {
@@ -878,7 +879,14 @@ void RinexNavFile::parseOrbit2()
                 }
                 else if (satSys == QZSS)
                 {
-                    LOG_WARN("QZSS is not yet supported. Therefore the Navigation file data will be skipped.");
+                    _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<QZSSEphemeris>(epoch, toe,
+                                                                                                         IODE_IODnav_AODE_IODEC, IODC_bgd5b_TGD2, a,
+                                                                                                         sqrt_A, e, i_0, Omega_0, omega, M_0,
+                                                                                                         delta_n, Omega_dot, i_dot, Cus, Cuc,
+                                                                                                         Cis, Cic, Crs, Crc,
+                                                                                                         signalAccuracy, svHealth,
+                                                                                                         codesOnL2Channel_dataSources, L2PdataFlag,
+                                                                                                         tgd_bgd5a_TGD1, fitInterval_AODC));
                 }
             }
             else if (satSys == GLO || satSys == SBAS) // NOLINT(misc-redundant-expression) // bugged warning
@@ -1526,7 +1534,14 @@ bool RinexNavFile::parseEphemeris(std::string& line, SatelliteSystem satSys, uin
         }
         else if (satSys == QZSS)
         {
-            LOG_WARN("QZSS is not yet supported. Therefore the Navigation file data will be skipped.");
+            _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<QZSSEphemeris>(epoch, toe,
+                                                                                                 IODE_IODnav_AODE_IODEC, IODC_bgd5b_TGD2, a,
+                                                                                                 sqrt_A, e, i_0, Omega_0, omega, M_0,
+                                                                                                 delta_n, Omega_dot, i_dot, Cus, Cuc,
+                                                                                                 Cis, Cic, Crs, Crc,
+                                                                                                 signalAccuracy, svHealth,
+                                                                                                 codesOnL2Channel_dataSources, L2PdataFlag,
+                                                                                                 tgd_bgd5a_TGD1, fitInterval_AODC));
         }
     }
     else if (satSys == GLO || satSys == SBAS) // NOLINT(misc-redundant-expression) // bugged warning

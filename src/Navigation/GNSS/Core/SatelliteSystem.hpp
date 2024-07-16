@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <fmt/format.h>
@@ -128,6 +129,17 @@ struct SatelliteSystem
 
     /// @brief Get a list of satellites in the constellation
     [[nodiscard]] std::vector<uint16_t> getSatellites() const;
+
+    /// @brief Get additional information about the satellite if available
+    /// @param[in] satSys Satellite System
+    /// @param[in] satNum Satellite Number
+    /// @return Optional String of additional information
+    static std::optional<std::string> GetSatelliteInfo(SatelliteSystem satSys, uint16_t satNum);
+
+    /// @brief Get additional information about the satellite if available
+    /// @param[in] satNum Satellite Number
+    /// @return Optional String of additional information
+    [[nodiscard]] std::optional<std::string> getSatelliteInfo(uint16_t satNum) const;
 
     /// @brief Get the continuous enumeration of the specified Satellite System
     /// @param[in] satSys Satellite System to get the continuous enumeration for

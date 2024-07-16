@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "BDSEphemeris.hpp"
+#include "QZSSEphemeris.hpp"
 
 #include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Functions.hpp"
@@ -16,19 +16,20 @@
 namespace NAV
 {
 
-BDSEphemeris::BDSEphemeris(/*const uint16_t& satNum, */ const InsTime& toc, const InsTime& toe,
-                           const size_t& AODE, const size_t& AODC,
-                           const std::array<double, 3>& a,
-                           const double& sqrt_A, const double& e, const double& i_0, const double& Omega_0, const double& omega, const double& M_0,
-                           const double& delta_n, const double& Omega_dot, const double& i_dot, const double& Cus, const double& Cuc,
-                           const double& Cis, const double& Cic, const double& Crs, const double& Crc,
-                           const double& svAccuracy, uint8_t satH1, double T_GD1, double T_GD2)
-    : SatNavData(SatNavData::BeiDouEphemeris, toc),
-      //   satNum(satNum),
+QZSSEphemeris::QZSSEphemeris(const InsTime& toc, const InsTime& toe,
+                             const size_t& IODE, const size_t& IODC,
+                             const std::array<double, 3>& a,
+                             const double& sqrt_A, const double& e, const double& i_0, const double& Omega_0, const double& omega, const double& M_0,
+                             const double& delta_n, const double& Omega_dot, const double& i_dot, const double& Cus, const double& Cuc,
+                             const double& Cis, const double& Cic, const double& Crs, const double& Crc,
+                             const double& svAccuracy, uint8_t svHealth,
+                             uint8_t L2ChannelCodes, bool L2DataFlagPCode,
+                             const double& T_GD, bool fitIntervalFlag)
+    : SatNavData(SatNavData::QZSSEphemeris, toc),
       toc(toc),
       toe(toe),
-      AODE(AODE),
-      AODC(AODC),
+      IODE(IODE),
+      IODC(IODC),
       a(a),
       sqrt_A(sqrt_A),
       e(e),
@@ -46,27 +47,27 @@ BDSEphemeris::BDSEphemeris(/*const uint16_t& satNum, */ const InsTime& toc, cons
       Crs(Crs),
       Crc(Crc),
       svAccuracy(svAccuracy),
-      satH1(satH1),
-      T_GD1(T_GD1),
-      T_GD2(T_GD2)
-{}
+      svHealth(svHealth),
+      L2ChannelCodes(L2ChannelCodes),
+      L2DataFlagPCode(L2DataFlagPCode),
+      T_GD(T_GD),
+      fitIntervalFlag(fitIntervalFlag) {}
 
 #ifdef TESTING
 
-BDSEphemeris::BDSEphemeris(/*int32_t satNum, */ int32_t year, int32_t month, int32_t day, int32_t hour, int32_t minute, double second, double svClockBias, double svClockDrift, double svClockDriftRate,
-                           double AODE, double Crs, double delta_n, double M_0,
-                           double Cuc, double e, double Cus, double sqrt_A,
-                           double Toe, double Cic, double Omega_0, double Cis,
-                           double i_0, double Crc, double omega, double Omega_dot,
-                           double i_dot, double /* spare1 */, double BDTWeek, double /* spare2 */,
-                           double svAccuracy, double satH1, double T_GD1, double T_GD2,
-                           double /* TransmissionTimeOfMessage */, double AODC, double /* spare3 */, double /* spare4 */)
-    : SatNavData(SatNavData::BeiDouEphemeris, InsTime(year, month, day, hour, minute, second, SatelliteSystem(BDS).getTimeSystem())),
-      //   satNum(static_cast<uint16_t>(satNum)),
+QZSSEphemeris::QZSSEphemeris(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t minute, double second, double svClockBias, double svClockDrift, double svClockDriftRate,
+                             double IODE, double Crs, double delta_n, double M_0,
+                             double Cuc, double e, double Cus, double sqrt_A,
+                             double Toe, double Cic, double Omega_0, double Cis,
+                             double i_0, double Crc, double omega, double Omega_dot,
+                             double i_dot, double L2ChannelCodes, double GPSWeek, double L2DataFlagPCode,
+                             double svAccuracy, double svHealth, double T_GD, double IODC,
+                             double /* TransmissionTimeOfMessage */, double fitIntervalFlag, double /* spare1 */, double /* spare2 */)
+    : SatNavData(SatNavData::QZSSEphemeris, InsTime(year, month, day, hour, minute, second, SatelliteSystem(QZSS).getTimeSystem())),
       toc(refTime),
-      toe(InsTime(0, static_cast<int32_t>(BDTWeek) + InsTimeUtil::DIFF_BDT_WEEK_TO_GPST_WEEK, Toe, SatelliteSystem(BDS).getTimeSystem())),
-      AODE(static_cast<size_t>(AODE)),
-      AODC(static_cast<size_t>(AODC)),
+      toe(InsTime(0, static_cast<int32_t>(GPSWeek), Toe, SatelliteSystem(QZSS).getTimeSystem())),
+      IODE(static_cast<size_t>(IODE)),
+      IODC(static_cast<size_t>(IODC)),
       a({ svClockBias, svClockDrift, svClockDriftRate }),
       sqrt_A(sqrt_A),
       e(e),
@@ -84,22 +85,24 @@ BDSEphemeris::BDSEphemeris(/*int32_t satNum, */ int32_t year, int32_t month, int
       Crs(Crs),
       Crc(Crc),
       svAccuracy(svAccuracy),
-      satH1(static_cast<uint8_t>(satH1)),
-      T_GD1(T_GD1),
-      T_GD2(T_GD2)
+      svHealth(static_cast<uint8_t>(svHealth)),
+      L2ChannelCodes(static_cast<uint8_t>(L2ChannelCodes)),
+      L2DataFlagPCode(static_cast<bool>(L2DataFlagPCode)),
+      T_GD(T_GD),
+      fitIntervalFlag(static_cast<bool>(fitIntervalFlag))
 {}
 
 #endif
 
-Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& recvTime, double dist, const Frequency& freq) const
+Clock::Corrections QZSSEphemeris::calcClockCorrections(const InsTime& recvTime, double dist, const Frequency& freq) const
 {
-    LOG_DATA("Calc Sat Clock corrections at receiver time {}", recvTime.toGPSweekTow(BDT));
+    LOG_DATA("Calc Sat Clock corrections at receiver time {}", recvTime.toGPSweekTow());
     // Earth gravitational constant [m³/s²] (WGS 84 value of the earth's gravitational constant for GPS user)
-    const auto mu = InsConst<>::BDS::MU;
+    const auto mu = InsConst<>::QZSS::MU;
     // Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
-    const auto F = InsConst<>::BDS::F;
+    const auto F = InsConst<>::QZSS::F;
 
-    LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow(BDT));
+    LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow());
 
     const auto A = sqrt_A * sqrt_A; // Semi-major axis [m]
     LOG_DATA("    A {} [m] (Semi-major axis)", A);
@@ -118,7 +121,7 @@ Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& recvTime, d
 
     for (size_t i = 0; i < 2; i++)
     {
-        LOG_DATA("      transTime {} (Time at transmission)", transTime.toGPSweekTow(BDT));
+        LOG_DATA("      transTime {} (Time at transmission)", transTime.toGPSweekTow());
 
         // [s]
         auto t_minus_toc = static_cast<double>((transTime - toc).count());
@@ -149,9 +152,8 @@ Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& recvTime, d
         // SV PRN code phase time offset [s]
         dt_sv = a[0] + a[1] * t_minus_toc + a[2] * std::pow(t_minus_toc, 2) + dt_r;
 
-        // See BDS-SIS-ICD-2.1 BDS ICD, ch. 5.2.4.10, p.31
-        dt_sv -= (freq == B02 ? T_GD1 : freq == B07 ? T_GD2 // TODO: check again
-                                                    : 0);
+        // See IS-GPS-200M GPS ICD, ch. 20.3.3.3.3.2, p.102
+        dt_sv -= ratioFreqSquared(J01, freq, -128, -128) * T_GD; // TODO: Check again
 
         LOG_DATA("      dt_sv {} [s] (SV PRN code phase time offset)", dt_sv);
 
@@ -161,23 +163,24 @@ Clock::Corrections BDSEphemeris::calcClockCorrections(const InsTime& recvTime, d
         // Correct transmit time for the satellite clock bias
         transTime = transTime0 - std::chrono::duration<double>(dt_sv);
     }
+    LOG_DATA("      transTime {} (Time at transmission)", transTime.toGPSweekTow());
 
     return { .transmitTime = transTime, .bias = dt_sv, .drift = clkDrift };
 }
 
-Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orbit::Calc calc) const
+Orbit::PosVelAccel QZSSEphemeris::calcSatelliteData(const InsTime& transTime, Orbit::Calc calc) const
 {
     Eigen::Vector3d e_pos = Eigen::Vector3d::Zero();
     Eigen::Vector3d e_vel = Eigen::Vector3d::Zero();
     Eigen::Vector3d e_accel = Eigen::Vector3d::Zero();
 
-    LOG_DATA("Calc Sat Position at transmit time {}", transTime.toGPSweekTow(BDT));
+    LOG_DATA("Calc Sat Position at transmit time {}", transTime.toGPSweekTow());
     // Earth gravitational constant [m³/s²] (WGS 84 value of the earth's gravitational constant for GPS user)
-    const auto mu = InsConst<>::BDS::MU;
+    const auto mu = InsConst<>::QZSS::MU;
     // Earth angular velocity [rad/s] (WGS 84 value of the earth's rotation rate)
-    const auto Omega_e_dot = InsConst<>::BDS::omega_ie;
+    const auto Omega_e_dot = InsConst<>::QZSS::omega_ie;
 
-    LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow(BDT));
+    LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow());
 
     const auto A = sqrt_A * sqrt_A; // Semi-major axis [m]
     LOG_DATA("    A {} [m] (Semi-major axis)", A);
@@ -189,11 +192,11 @@ Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
     // Eccentric anomaly [rad]
     double E_k = 0.0;
 
-    // Computed time from ephemeris reference epoch [s]
+    // Time difference from ephemeris reference epoch [s]
     double t_k = static_cast<double>((transTime - toe).count());
     LOG_DATA("    t_k {} [s] (Time difference from ephemeris reference epoch)", t_k);
 
-    // Computed Mean anomaly [rad]
+    // Mean anomaly [rad]
     auto M_k = M_0 + n * t_k;
     LOG_DATA("    M_k {} [s] (Mean anomaly)", M_k);
 
@@ -208,11 +211,11 @@ Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
         LOG_DATA("      E_k {} [rad] (Eccentric anomaly)", E_k);               // – Final Value (radians)
     }
 
-    // auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k) / (1 - e * std::cos(E_k)), (std::cos(E_k) - e) / (1 - e * std::cos(E_k))); // True Anomaly [rad]
+    // auto v_k = 2.0 * std::atan(std::sqrt((1.0 + e) / (1.0 - e)) * std::tan(E_k / 2.0)); // True Anomaly (unambiguous quadrant) [rad] (GPS ICD algorithm)
+    // auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k) / (1 - e * std::cos(E_k)), (std::cos(E_k) - e) / (1 - e * std::cos(E_k))); // True Anomaly [rad] (GALILEO ICD algorithm)
     auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k), (std::cos(E_k) - e)); // True Anomaly [rad] // simplified, since the denominators cancel out
     LOG_DATA("    v_k {} [rad] (True Anomaly (unambiguous quadrant))", v_k);
-
-    auto Phi_k = v_k + omega; // Computed Argument of Latitude [rad]
+    auto Phi_k = v_k + omega; // Argument of Latitude [rad]
     LOG_DATA("    Phi_k {} [rad] (Argument of Latitude)", Phi_k);
 
     // Second Harmonic Perturbations
@@ -230,56 +233,26 @@ Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
     auto i_k = i_0 + delta_i_k + i_dot * t_k; // Corrected Inclination [rad]
     LOG_DATA("    i_k {} [rad] (Corrected Inclination)", i_k);
 
-    auto x_k_op = r_k * std::cos(u_k); // Computed position in orbital plane [m]
+    auto x_k_op = r_k * std::cos(u_k); // Position in orbital plane [m]
     LOG_DATA("    x_k_op {} [m] (Position in orbital plane)", x_k_op);
-    auto y_k_op = r_k * std::sin(u_k); // Computed position in orbital plane [m]
+    auto y_k_op = r_k * std::sin(u_k); // Position in orbital plane [m]
     LOG_DATA("    y_k_op {} [m] (Position in orbital plane)", y_k_op);
 
-    double Omega_k = 0.0;
-    double x_k = 0.0;
-    double y_k = 0.0;
-    double z_k = 0.0;
+    // Corrected longitude of ascending node [rad]
+    auto Omega_k = Omega_0 + (Omega_dot - Omega_e_dot) * t_k - Omega_e_dot * static_cast<double>(toe.toGPSweekTow().tow);
+    LOG_DATA("    Omega_k {} [rad] (Corrected longitude of ascending node)", Omega_k);
 
-    // Satellite has a GEO orbit
-    if (i_k < 30.0 * M_PI / 180) // TODO: Should be based on satNum: if (GeoSats.contains(satNum)){...}
-    {
-        // Corrected longitude of ascending node [rad]
-        Omega_k = Omega_0 + Omega_dot * t_k - Omega_e_dot * static_cast<double>(toe.toGPSweekTow(BDT).tow);
-        LOG_DATA("    Omega_k {} [rad] (Corrected longitude of ascending node)", Omega_k);
+    // Earth-fixed x coordinates [m]
+    auto x_k = x_k_op * std::cos(Omega_k) - y_k_op * std::cos(i_k) * std::sin(Omega_k);
+    LOG_DATA("    x_k {} [m] (Earth-fixed x coordinates)", x_k);
+    // Earth-fixed y coordinates [m]
+    auto y_k = x_k_op * std::sin(Omega_k) + y_k_op * std::cos(i_k) * std::cos(Omega_k);
+    LOG_DATA("    y_k {} [m] (Earth-fixed y coordinates)", y_k);
+    // Earth-fixed z coordinates [m]
+    auto z_k = y_k_op * std::sin(i_k);
+    LOG_DATA("    z_k {} [m] (Earth-fixed z coordinates)", z_k);
 
-        Eigen::Vector3d X_GK{ 0, 0, 0 };
-
-        X_GK(0) = x_k_op * std::cos(Omega_k) - y_k_op * std::cos(i_k) * std::sin(Omega_k);
-        X_GK(1) = x_k_op * std::sin(Omega_k) + y_k_op * std::cos(i_k) * std::cos(Omega_k);
-        X_GK(2) = y_k_op * std::sin(i_k);
-
-        auto Rx = Eigen::AngleAxis((5.0) * M_PI / 180, Eigen::Vector3d::UnitX());
-        auto Rz = Eigen::AngleAxis(-Omega_e_dot * t_k, Eigen::Vector3d::UnitZ());
-
-        e_pos = Rz * Rx * X_GK;
-
-        x_k = e_pos(0);
-        y_k = e_pos(1);
-        z_k = e_pos(2);
-    }
-    else // Satellite has a MEO or IGSO orbit
-    {
-        // Corrected longitude of ascending node [rad]
-        Omega_k = Omega_0 + (Omega_dot - Omega_e_dot) * t_k - Omega_e_dot * static_cast<double>(toe.toGPSweekTow(BDT).tow);
-        LOG_DATA("    Omega_k {} [rad] (Corrected longitude of ascending node)", Omega_k);
-
-        // Earth-fixed x coordinates [m]
-        x_k = x_k_op * std::cos(Omega_k) - y_k_op * std::cos(i_k) * std::sin(Omega_k);
-        LOG_DATA("    x_k {} [m] (Earth-fixed x coordinates)", x_k);
-        // Earth-fixed y coordinates [m]
-        y_k = x_k_op * std::sin(Omega_k) + y_k_op * std::cos(i_k) * std::cos(Omega_k);
-        LOG_DATA("    y_k {} [m] (Earth-fixed y coordinates)", y_k);
-        // Earth-fixed z coordinates [m]
-        z_k = y_k_op * std::sin(i_k);
-        LOG_DATA("    z_k {} [m] (Earth-fixed z coordinates)", z_k);
-
-        e_pos = Eigen::Vector3d{ x_k, y_k, z_k };
-    }
+    e_pos = Eigen::Vector3d{ x_k, y_k, z_k };
 
     if (calc & Calc_Velocity || calc & Calc_Acceleration)
     {
@@ -335,14 +308,15 @@ Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
              .e_accel = e_accel };
 }
 
-bool BDSEphemeris::isHealthy() const
+bool QZSSEphemeris::isHealthy() const // TODO Parse Signal Id as a parameter and differentiate depending on the bitset
 {
-    return satH1 == 0;
+    return svHealth.none();
 }
 
-double BDSEphemeris::calcSatellitePositionVariance() const
+double QZSSEphemeris::calcSatellitePositionVariance() const
 {
-    return std::pow(svAccuracy, 2);
+    // Getting the index and value again will discretize the URA values
+    return std::pow(gpsUraIdx2Val(gpsUraVal2Idx(svAccuracy)), 2);
 }
 
 } // namespace NAV

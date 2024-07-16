@@ -298,4 +298,63 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent-SimGEN_static_duration-
     testNavFile(Spirent, "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N", files);
 }
 
+TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast)", "[Ephemeris][flow]")
+{
+    // Margins determined by running the test and adapting
+    Margin marginL1{ .clock = 0, .pos = 9.1e-5, .vel = 8.4e-4, .accel = 8.1e-1 };
+    Margin marginL2{ .clock = 0, .pos = 2.4e-4, .vel = 8.4e-4, .accel = 8.1e-1 };
+    Margin marginL5{ .clock = 0, .pos = 2.9e-4, .vel = 8.4e-4, .accel = 8.1e-1 };
+
+    std::string path = "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast/sat_data_V1A1.csv";
+    std::vector<std::tuple<SatSigId, std::string, Margin>> files = {
+        { SatSigId(Code::G1C, 1), path, marginL1 },
+        { SatSigId(Code::G1C, 3), path, marginL1 },
+        { SatSigId(Code::G1C, 6), path, marginL1 },
+        { SatSigId(Code::G1C, 7), path, marginL1 },
+        { SatSigId(Code::G1C, 8), path, marginL1 },
+        { SatSigId(Code::G1C, 9), path, marginL1 },
+        { SatSigId(Code::G1C, 11), path, marginL1 },
+        { SatSigId(Code::G1C, 13), path, marginL1 },
+        { SatSigId(Code::G1C, 14), path, marginL1 },
+        { SatSigId(Code::G1C, 17), path, marginL1 },
+        { SatSigId(Code::G1C, 19), path, marginL1 },
+        { SatSigId(Code::G1C, 20), path, marginL1 },
+        { SatSigId(Code::G1C, 21), path, marginL1 },
+        { SatSigId(Code::G1C, 24), path, marginL1 },
+        { SatSigId(Code::G1C, 30), path, marginL1 },
+        { SatSigId(Code::G2C, 1), path, marginL2 },
+        { SatSigId(Code::G2C, 3), path, marginL2 },
+        { SatSigId(Code::G2C, 6), path, marginL2 },
+        { SatSigId(Code::G2C, 7), path, marginL2 },
+        { SatSigId(Code::G2C, 8), path, marginL2 },
+        { SatSigId(Code::G2C, 9), path, marginL2 },
+        { SatSigId(Code::G2C, 11), path, marginL2 },
+        { SatSigId(Code::G2C, 13), path, marginL2 },
+        { SatSigId(Code::G2C, 14), path, marginL2 },
+        { SatSigId(Code::G2C, 17), path, marginL2 },
+        { SatSigId(Code::G2C, 19), path, marginL2 },
+        { SatSigId(Code::G2C, 20), path, marginL2 },
+        { SatSigId(Code::G2C, 21), path, marginL2 },
+        { SatSigId(Code::G2C, 24), path, marginL2 },
+        { SatSigId(Code::G2C, 30), path, marginL2 },
+        { SatSigId(Code::G5X, 1), path, marginL5 },
+        { SatSigId(Code::G5X, 3), path, marginL5 },
+        { SatSigId(Code::G5X, 6), path, marginL5 },
+        { SatSigId(Code::G5X, 7), path, marginL5 },
+        { SatSigId(Code::G5X, 8), path, marginL5 },
+        { SatSigId(Code::G5X, 9), path, marginL5 },
+        { SatSigId(Code::G5X, 11), path, marginL5 },
+        { SatSigId(Code::G5X, 13), path, marginL5 },
+        { SatSigId(Code::G5X, 14), path, marginL5 },
+        { SatSigId(Code::G5X, 17), path, marginL5 },
+        { SatSigId(Code::G5X, 19), path, marginL5 },
+        { SatSigId(Code::G5X, 20), path, marginL5 },
+        { SatSigId(Code::G5X, 21), path, marginL5 },
+        { SatSigId(Code::G5X, 24), path, marginL5 },
+        { SatSigId(Code::G5X, 30), path, marginL5 },
+    };
+
+    testNavFile(Spirent, "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N", files);
+}
+
 } // namespace NAV::TESTS::EphemerisTests

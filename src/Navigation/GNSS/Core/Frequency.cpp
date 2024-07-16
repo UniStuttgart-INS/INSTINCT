@@ -573,7 +573,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
                         continue;
                     }
                     ImGui::TableSetColumnIndex(c);
-                    if (c >= 3)
+                    if (c >= 5)
                     {
                         ImGui::BeginDisabled();
                     }
@@ -595,7 +595,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
                             valueChanged = true;
                         }
                     }
-                    if (c >= 3)
+                    if (c >= 5)
                     {
                         ImGui::EndDisabled();
                     }

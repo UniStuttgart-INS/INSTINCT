@@ -156,6 +156,59 @@ class InsConst
         static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
     };
 
+    /// @brief BeiDou related constants (China Geodetic Coordinate System 2000 (CGCS2000))
+    class BDS
+    {
+      public:
+        /// @brief Default Constructor
+        BDS() = delete;
+
+        /// Semi-major axis = equatorial radius
+        static constexpr Scalar a = 6378137.0;
+        /// Flattening f = (a-b)/a
+        static constexpr Scalar f = 1.0 / 298.257222101;
+        /// Semi-minor axis = polar radius
+        static constexpr Scalar b = a - f * a;
+        /// Square of the first eccentricity of the ellipsoid
+        static constexpr Scalar e_squared = 2 * f - f * f;
+        /// Earth angular velocity BeiDou (CGCS2000) [rad/s]
+        static constexpr Scalar omega_ie = 7.2921150e-5;
+        /// Earth gravitational constant BeiDou (CGCS2000) [m³/s²]
+        static constexpr Scalar MU = 3.986004418e+14;
+        /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
+        static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
+    };
+
+    /// @brief QZSS related constants
+    class QZSS
+    {
+      public:
+        /// @brief Default Constructor
+        QZSS() = delete;
+
+        /// Earth angular velocity QZSS [rad/s]
+        static constexpr Scalar omega_ie = WGS84::omega_ie;
+        /// Earth gravitational constant QZSS [m³/s²]
+        static constexpr Scalar MU = 3.986005e+14;
+        /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
+        static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
+    };
+
+    /// @brief IRNSS related constants
+    class IRNSS
+    {
+      public:
+        /// @brief Default Constructor
+        IRNSS() = delete;
+
+        /// Earth angular velocity IRNSS [rad/s]
+        static constexpr Scalar omega_ie = WGS84::omega_ie;
+        /// Earth gravitational constant IRNSS [m³/s²]
+        static constexpr Scalar MU = 3.986005e+14;
+        /// Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
+        static constexpr Scalar F = -2.0 * gcem::sqrt(MU) / (C * C);
+    };
+
     /// @brief Nominal mean angular velocity of the Earth in [rad/s]
     /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
     ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf

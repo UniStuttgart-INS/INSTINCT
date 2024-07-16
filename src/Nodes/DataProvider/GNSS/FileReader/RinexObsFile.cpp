@@ -11,6 +11,7 @@
 #include "util/Eigen.hpp"
 
 #include "internal/NodeManager.hpp"
+#include "util/Logger.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -378,7 +379,9 @@ void RinexObsFile::readHeader()
 
                 NAV::vendor::RINEX::ObsType type = NAV::vendor::RINEX::obsTypeFromChar(line.at(i));
                 Frequency freq = NAV::vendor::RINEX::getFrequencyFromBand(satSys, line.at(i + 1) - '0');
-                Code code = Code::fromFreqAttr(freq, line.at(i + 2));
+                auto attribute = line.at(i + 2);
+                if (freq == B01 && attribute == 'I') { freq = B02; }
+                Code code = Code::fromFreqAttr(freq, attribute);
 
                 _obsDescription[satSys].push_back(NAV::vendor::RINEX::ObservationDescription{ .type = type, .code = code });
 
@@ -478,7 +481,7 @@ void RinexObsFile::readHeader()
         }
         else
         {
-            LOG_ERROR("{}: Unknown header label '{}' in line '{}'", nameId(), headerLabel, line);
+            LOG_WARN("{}: Unknown header label '{}' in line '{}'", nameId(), headerLabel, line);
         }
     }
 

@@ -229,6 +229,7 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
             case G01:
             case E01:
             case R04:
+            case B01:
             case J01:
             case I09:
             case S01:
@@ -262,7 +263,6 @@ void testEphemerisData(const SatId& satId, const Ephemeris& eph, const std::stri
                 break;
             case E07: // TODO: sort these
             case E05:
-            case B01:
             case B02:
             case B08:
                 REQUIRE(false);

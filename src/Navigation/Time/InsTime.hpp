@@ -1082,10 +1082,10 @@ class InsTime
         case GST: // = GALILEO Time (~ GPS) (UTC = GST - 18) is synchronized with TAI with a nominal offset below 50 ns
             return this->leapGps2UTC();
         case QZSST:
-            return 0; // TODO: Implement QZSST<->UTC time difference
+            return this->leapGps2UTC(); // TODO citation for synchronization accuracy
         case IRNSST:
-            return 0; // TODO: Implement IRNSST<->UTC time difference
-        case BDT:     // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
+            return this->leapGps2UTC(); // TODO citation for synchronization accuracy
+        case BDT:                       // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
             return this->leapGps2UTC() - 14;
         case UTC:
         case TimeSys_None:

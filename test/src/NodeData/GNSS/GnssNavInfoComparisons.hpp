@@ -35,6 +35,7 @@
 #include "Navigation/GNSS/Satellite/Ephemeris/GalileoEphemeris.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/BDSEphemeris.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/QZSSEphemeris.hpp"
 
 namespace NAV
 {
@@ -272,6 +273,63 @@ inline bool operator==(const BDSEphemeris& lhs, const BDSEphemeris& rhs)
     return true;
 }
 
+inline bool operator==(const QZSSEphemeris& lhs, const QZSSEphemeris& rhs)
+{
+    LOG_DEBUG("   [{}] == [{}] | toc", lhs.toc.toYMDHMS(GPST), rhs.toc.toYMDHMS(GPST));
+    REQUIRE(lhs.toc == rhs.toc);
+    LOG_DEBUG("   [{}] == [{}] | toe", lhs.toe.toYMDHMS(GPST), rhs.toe.toYMDHMS(GPST));
+    REQUIRE(lhs.toe == rhs.toe);
+    LOG_DEBUG("    [{}] == [{}] | IODE", lhs.IODE, rhs.IODE);
+    REQUIRE(lhs.IODE == rhs.IODE);
+    LOG_DEBUG("    [{}] == [{}] | IODC", lhs.IODC, rhs.IODC);
+    REQUIRE(lhs.IODC == rhs.IODC);
+    LOG_DEBUG("    [{}] == [{}] | a", joinToString(lhs.a), joinToString(rhs.a));
+    REQUIRE_THAT(lhs.a, Catch::Matchers::EqualsSigDigitsContainer(rhs.a, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | sqrt_A", lhs.sqrt_A, rhs.sqrt_A);
+    REQUIRE_THAT(lhs.sqrt_A, Catch::Matchers::EqualsSigDigits(rhs.sqrt_A, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | e", lhs.e, rhs.e);
+    REQUIRE_THAT(lhs.e, Catch::Matchers::EqualsSigDigits(rhs.e, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | i_0", lhs.i_0, rhs.i_0);
+    REQUIRE_THAT(lhs.i_0, Catch::Matchers::EqualsSigDigits(rhs.i_0, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Omega_0", lhs.Omega_0, rhs.Omega_0);
+    REQUIRE_THAT(lhs.Omega_0, Catch::Matchers::EqualsSigDigits(rhs.Omega_0, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | omega", lhs.omega, rhs.omega);
+    REQUIRE_THAT(lhs.omega, Catch::Matchers::EqualsSigDigits(rhs.omega, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | M_0", lhs.M_0, rhs.M_0);
+    REQUIRE_THAT(lhs.M_0, Catch::Matchers::EqualsSigDigits(rhs.M_0, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | delta_n", lhs.delta_n, rhs.delta_n);
+    REQUIRE_THAT(lhs.delta_n, Catch::Matchers::EqualsSigDigits(rhs.delta_n, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Omega_dot", lhs.Omega_dot, rhs.Omega_dot);
+    REQUIRE_THAT(lhs.Omega_dot, Catch::Matchers::EqualsSigDigits(rhs.Omega_dot, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | i_dot", lhs.i_dot, rhs.i_dot);
+    REQUIRE_THAT(lhs.i_dot, Catch::Matchers::EqualsSigDigits(rhs.i_dot, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Cus", lhs.Cus, rhs.Cus);
+    REQUIRE_THAT(lhs.Cus, Catch::Matchers::EqualsSigDigits(rhs.Cus, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Cuc", lhs.Cuc, rhs.Cuc);
+    REQUIRE_THAT(lhs.Cuc, Catch::Matchers::EqualsSigDigits(rhs.Cuc, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Cis", lhs.Cis, rhs.Cis);
+    REQUIRE_THAT(lhs.Cis, Catch::Matchers::EqualsSigDigits(rhs.Cis, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Cic", lhs.Cic, rhs.Cic);
+    REQUIRE_THAT(lhs.Cic, Catch::Matchers::EqualsSigDigits(rhs.Cic, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Crs", lhs.Crs, rhs.Crs);
+    REQUIRE_THAT(lhs.Crs, Catch::Matchers::EqualsSigDigits(rhs.Crs, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | Crc", lhs.Crc, rhs.Crc);
+    REQUIRE_THAT(lhs.Crc, Catch::Matchers::EqualsSigDigits(rhs.Crc, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | svAccuracy", lhs.svAccuracy, rhs.svAccuracy);
+    REQUIRE(lhs.svAccuracy == rhs.svAccuracy);
+    LOG_DEBUG("    [{}] == [{}] | svHealth", lhs.svHealth, rhs.svHealth);
+    REQUIRE(lhs.svHealth == rhs.svHealth);
+    LOG_DEBUG("    [{}] == [{}] | L2ChannelCodes", lhs.L2ChannelCodes, rhs.L2ChannelCodes);
+    REQUIRE(lhs.L2ChannelCodes == rhs.L2ChannelCodes);
+    LOG_DEBUG("    [{}] == [{}] | L2DataFlagPCode", lhs.L2DataFlagPCode, rhs.L2DataFlagPCode);
+    REQUIRE(lhs.L2DataFlagPCode == rhs.L2DataFlagPCode);
+    LOG_DEBUG("    [{}] == [{}] | T_GD", lhs.T_GD, rhs.T_GD);
+    REQUIRE_THAT(lhs.T_GD, Catch::Matchers::EqualsSigDigits(rhs.T_GD, 12)); // RINEX Format: D19.12
+    LOG_DEBUG("    [{}] == [{}] | fitInterval", lhs.fitIntervalFlag, rhs.fitIntervalFlag);
+    REQUIRE(lhs.fitIntervalFlag == rhs.fitIntervalFlag);
+    return true;
+}
+
 inline bool operator==(const std::shared_ptr<NAV::SatNavData>& lhs, const std::shared_ptr<NAV::SatNavData>& rhs)
 {
     REQUIRE(lhs->type == rhs->type);
@@ -290,6 +348,9 @@ inline bool operator==(const std::shared_ptr<NAV::SatNavData>& lhs, const std::s
         break;
     case SatNavData::Type::BeiDouEphemeris:
         REQUIRE(*std::dynamic_pointer_cast<BDSEphemeris>(lhs) == *std::dynamic_pointer_cast<BDSEphemeris>(rhs));
+        break;
+    case SatNavData::Type::QZSSEphemeris:
+        REQUIRE(*std::dynamic_pointer_cast<QZSSEphemeris>(lhs) == *std::dynamic_pointer_cast<QZSSEphemeris>(rhs));
         break;
     default:
         FAIL(fmt::format("SatNavData::Type '{}' is not supported in the test yet. Please implement the comparison operator overload.", lhs->type));
