@@ -25,6 +25,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/VanLoan.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -394,7 +395,7 @@ class KeyedKalmanFilter
 
         if (ret.triggered)
         {
-            LOG_DEBUG("{}: NIS test triggered because: NIS = {:.3f} > {:.3f} = r2", nameId, ret.NIS, ret.r2);
+            LOG_TRACE("{}: NIS test triggered because: NIS = {:.3f} > {:.3f} = r2", nameId, ret.NIS, ret.r2);
         }
         else
         {
