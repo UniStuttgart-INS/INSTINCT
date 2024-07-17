@@ -62,6 +62,14 @@ class PosVelAttFile : public Node, public FileReader
     constexpr static size_t OUTPUT_PORT_INDEX_PVA = 0;            ///< @brief Flow (PosVelAtt)
     constexpr static size_t OUTPUT_PORT_INDEX_HEADER_COLUMNS = 1; ///< @brief Object (std::vector<std::string>)
 
+    /// @brief Data included in the file
+    enum class FileContent
+    {
+        Pos,       ///< Position only
+        PosVel,    ///< Position and Velocity
+        PosVelAtt, ///< Position, Velocity and Attitude
+    };
+
     /// @brief Initialize the node
     bool initialize() override;
 
@@ -71,6 +79,9 @@ class PosVelAttFile : public Node, public FileReader
     /// @brief Polls data from the file
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollData();
+
+    /// Data included in the file
+    FileContent _fileContent = FileContent::Pos;
 };
 
 } // namespace NAV

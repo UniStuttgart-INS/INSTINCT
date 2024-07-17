@@ -96,15 +96,15 @@ void NAV::ImuFile::guiConfig()
 
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsCycle", "GpsCycle");
-        TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+        TextColoredIfExists(1, "Mag", "MagX");
         TextColoredIfExists(2, "DeltaTime", "DeltaTime");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsWeek", "GpsWeek");
-        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+        TextColoredIfExists(1, "Acc", "AccX");
         TextColoredIfExists(2, "DeltaTheta", "DeltaThetaX");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsToW", "GpsToW");
-        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+        TextColoredIfExists(1, "Gyro", "GyroX");
         TextColoredIfExists(2, "DeltaVel", "DeltaVelX");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "TimeStartup", "TimeStartup");
@@ -169,6 +169,15 @@ bool NAV::ImuFile::initialize()
     }
 
     outputPins[OUTPUT_PORT_INDEX_IMU_OBS].dataIdentifier = { NAV::ImuObs::type(), NAV::ImuObsWDelta::type() };
+
+    for (auto& link : outputPins[OUTPUT_PORT_INDEX_IMU_OBS].links)
+    {
+        if (auto* pin = link.getConnectedPin())
+        {
+            outputPins[OUTPUT_PORT_INDEX_IMU_OBS].recreateLink(*pin);
+        }
+    }
+
     return false;
 }
 
@@ -325,19 +334,22 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
         }
     }
 
-    if (_withDelta && deltaTime && deltaThetaX && deltaThetaY && deltaThetaZ && deltaVelX && deltaVelY && deltaVelZ)
+    if (_withDelta)
     {
-        if (auto obsWDelta = std::reinterpret_pointer_cast<ImuObsWDelta>(obs))
+        if (deltaTime && deltaThetaX && deltaThetaY && deltaThetaZ && deltaVelX && deltaVelY && deltaVelZ)
         {
-            obsWDelta->dtime = deltaTime.value();
-            obsWDelta->dtheta = { deltaThetaX.value(), deltaThetaY.value(), deltaThetaZ.value() };
-            obsWDelta->dvel = { deltaVelX.value(), deltaVelY.value(), deltaVelZ.value() };
+            if (auto obsWDelta = std::reinterpret_pointer_cast<ImuObsWDelta>(obs))
+            {
+                obsWDelta->dtime = deltaTime.value();
+                obsWDelta->dtheta = { deltaThetaX.value(), deltaThetaY.value(), deltaThetaZ.value() };
+                obsWDelta->dvel = { deltaVelX.value(), deltaVelY.value(), deltaVelZ.value() };
+            }
         }
-    }
-    else
-    {
-        LOG_ERROR("{}: Columns 'DeltaTime', 'DeltaThetaX', 'DeltaThetaY', 'DeltaThetaZ', 'DeltaVelX', 'DeltaVelY', 'DeltaVelZ' are needed.", nameId());
-        return nullptr;
+        else
+        {
+            LOG_ERROR("{}: Columns 'DeltaTime', 'DeltaThetaX', 'DeltaThetaY', 'DeltaThetaZ', 'DeltaVelX', 'DeltaVelY', 'DeltaVelZ' are needed.", nameId());
+            return nullptr;
+        }
     }
 
     if (!gpsCycle || !gpsWeek || !gpsToW)
