@@ -10,10 +10,13 @@
 #include <array>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <implot.h>
 #include <utility>
 
+#include "util/Container/ScrollingBuffer.hpp"
 #include "util/Logger.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -93,7 +96,11 @@ void to_json(json& j, const Plot::PinData& data)
 void from_json(const json& j, Plot::PinData& data)
 {
     if (j.contains("dataIdentifier")) { j.at("dataIdentifier").get_to(data.dataIdentifier); }
-    if (j.contains("size")) { j.at("size").get_to(data.size); }
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(data.size);
+        data.rawNodeData.resize(static_cast<size_t>(data.size));
+    }
     if (j.contains("plotData") && j.at("plotData").is_array())
     {
         j.at("plotData").get_to(data.plotData);
@@ -254,6 +261,7 @@ NAV::Plot::PinData::PinData(const PinData& other)
     : size(other.size),
       dataIdentifier(other.dataIdentifier),
       plotData(other.plotData),
+      rawNodeData(other.rawNodeData),
       pinType(other.pinType),
       stride(other.stride) {}
 
@@ -261,6 +269,7 @@ NAV::Plot::PinData::PinData(PinData&& other) noexcept
     : size(other.size),
       dataIdentifier(std::move(other.dataIdentifier)),
       plotData(std::move(other.plotData)),
+      rawNodeData(std::move(other.rawNodeData)),
       pinType(other.pinType),
       stride(other.stride) {}
 
@@ -271,6 +280,7 @@ NAV::Plot::PinData& NAV::Plot::PinData::operator=(const PinData& rhs)
         size = rhs.size;
         dataIdentifier = rhs.dataIdentifier;
         plotData = rhs.plotData;
+        rawNodeData = rhs.rawNodeData;
         pinType = rhs.pinType;
         stride = rhs.stride;
     }
@@ -285,6 +295,7 @@ NAV::Plot::PinData& NAV::Plot::PinData::operator=(PinData&& rhs) noexcept
         size = rhs.size;
         dataIdentifier = std::move(rhs.dataIdentifier);
         plotData = std::move(rhs.plotData);
+        rawNodeData = std::move(rhs.rawNodeData);
         pinType = rhs.pinType;
         stride = rhs.stride;
     }
@@ -976,8 +987,10 @@ void NAV::Plot::guiConfig()
                 }
 
                 std::vector<PlotInfo::PlotItem> plotItemsToRemove;
-                for (auto& plotItem : plot.plotItems)
+                uint8_t hoverTooltipShown = 0;
+                for (size_t plotItemIdx = 0; plotItemIdx < plot.plotItems.size(); plotItemIdx++)
                 {
+                    auto& plotItem = plot.plotItems.at(plotItemIdx);
                     auto& pinData = _pinData.at(plotItem.pinIndex);
 
                     // Lock the buffer so no data can be inserted till plotting finishes
@@ -1171,6 +1184,145 @@ void NAV::Plot::guiConfig()
                                                 static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.offset()) / static_cast<double>(stride))),
                                                 stride * static_cast<int>(sizeof(double)));
                         }
+
+                        // ----------------------------------- Tooltips --------------------------------------
+                        std::vector<size_t> tooltipsToClose;
+                        for (size_t tipIdx = 0; tipIdx < plot.tooltips.size(); tipIdx++)
+                        {
+                            auto& tooltip = plot.tooltips.at(tipIdx);
+                            if (tooltip.plotItemIdx == plotItemIdx)
+                            {
+                                bool open = true;
+                                if (tooltip.startPos)
+                                {
+                                    ImGui::SetNextWindowPos(*tooltip.startPos);
+                                    tooltip.startPos.reset();
+                                }
+
+                                const auto& nodeData = pinData.rawNodeData.at(tooltip.dataIdx);
+                                auto tooltipTime = nodeData->insTime.toYMDHMS(GPST);
+                                auto windowName = fmt::format("{} - {}", plotItem.style.legendName, tooltipTime);
+                                auto tooltipUID = fmt::format("{} {} {} {}", size_t(id), plotItem.pinIndex, plotItem.displayName, tooltip.dataIdx);
+
+                                ImGuiWindow* plotWindow = ImGui::GetCurrentWindow();
+                                ImGui::PushFont(Application::MonoFont());
+                                ImGui::Begin(fmt::format("{}##{}", windowName, tooltipUID).c_str(),
+                                             &open,
+                                             ImGuiWindowFlags_AlwaysAutoResize);
+
+                                // Do not make tooltips go behind the plot window
+                                if (ImGuiWindow* tooltipWindow = ImGui::GetCurrentWindow();
+                                    ImGui::IsWindowAbove(plotWindow, tooltipWindow))
+                                {
+                                    ImGui::BringWindowToDisplayFront(tooltipWindow);
+                                }
+
+                                if (ImGui::GetWindowSize().x < ImGui::CalcTextSize(windowName.c_str()).x + 50.0F)
+                                {
+                                    ImGui::TextUnformatted(fmt::format("{}", tooltipTime).c_str());
+                                    ImGui::Separator();
+                                }
+
+                                auto nEvents = nodeData->events().size();
+                                if (nEvents > 0)
+                                {
+                                    ImGui::SetNextItemOpen(false, ImGuiCond_Once);
+                                    if (ImGui::TreeNode(fmt::format("Events: {}", nEvents).c_str()))
+                                    {
+                                        for (const auto& text : nodeData->events())
+                                        {
+                                            ImGui::BulletText("%s", text.c_str());
+                                        }
+                                        ImGui::TreePop();
+                                    }
+                                }
+                                else { ImGui::BulletText("Events: 0"); }
+                                if (nodeData->hasTooltip())
+                                {
+                                    nodeData->guiTooltip(true, false, plotItem.displayName.c_str(), tooltipUID.c_str());
+                                }
+                                ImGui::End();
+                                ImGui::PopFont();
+                                if (!open) { tooltipsToClose.push_back(tipIdx); }
+                            }
+                        }
+                        for (const size_t tipIdx : tooltipsToClose)
+                        {
+                            plot.tooltips.erase(std::next(plot.tooltips.begin(), static_cast<int64_t>(tipIdx)));
+                        }
+
+                        if (ImPlot::IsPlotHovered() && ImGui::IsKeyDown(ImGuiKey_ModCtrl))
+                        {
+                            if (const auto* item = ImPlot::GetCurrentPlot()->Items.GetItem(plotName.c_str());
+                                item && item->Show)
+                            {
+                                constexpr double HOVER_PIXEL_SIZE = 5.0;
+                                auto limits = ImPlot::GetPlotLimits(IMPLOT_AUTO, plotItem.axis);
+
+                                ImVec2 scaling = ImVec2(static_cast<float>(HOVER_PIXEL_SIZE * (limits.X.Max - limits.X.Min) / ImPlot::GetCurrentPlot()->PlotRect.GetWidth()),
+                                                        static_cast<float>(HOVER_PIXEL_SIZE * (limits.Y.Max - limits.Y.Min) / ImPlot::GetCurrentPlot()->PlotRect.GetHeight()));
+                                ImPlotPoint mouse = ImPlot::GetPlotMousePos();
+
+                                std::vector<PlotInfo::PlotItem::Tooltip> tooltips;
+
+                                for (size_t i = 0; i < plotData.buffer.size(); i++)
+                                {
+                                    if (std::abs(mouse.x - plotDataX.buffer.at(i)) < scaling.x
+                                        && std::abs(mouse.y - plotData.buffer.at(i)) < scaling.y)
+                                    {
+                                        ImGui::PushFont(Application::MonoFont());
+                                        ImGui::BeginTooltip();
+                                        const auto& nodeData = pinData.rawNodeData.at(i);
+                                        if (hoverTooltipShown)
+                                        {
+                                            ImGui::PushStyleColor(ImGuiCol_Separator, ImGui::GetStyleColorVec4(ImGuiCol_SeparatorActive));
+                                            ImGui::Separator();
+                                            ImGui::Separator();
+                                            ImGui::PopStyleColor();
+                                        }
+                                        ImGui::TextUnformatted(fmt::format("{} - {}", plotItem.style.legendName,
+                                                                           nodeData->insTime.toYMDHMS(GPST))
+                                                                   .c_str());
+                                        ImGui::Separator();
+
+                                        auto nEvents = nodeData->events().size();
+                                        if (nEvents > 0)
+                                        {
+                                            ImGui::SetNextItemOpen(false, ImGuiCond_Always);
+                                            if (ImGui::TreeNode(fmt::format("Events: {}", nEvents).c_str())) { ImGui::TreePop(); }
+                                        }
+                                        else { ImGui::BulletText("Events: 0"); }
+
+                                        if (pinData.rawNodeData.at(i)->hasTooltip())
+                                        {
+                                            auto tooltipUID = fmt::format("{} {} {} {}", size_t(id), plotItem.pinIndex, plotItem.displayName, i);
+                                            pinData.rawNodeData.at(i)->guiTooltip(ImGui::IsKeyDown(ImGuiKey_ModShift), true,
+                                                                                  plotItem.displayName.c_str(), tooltipUID.c_str());
+                                        }
+
+                                        ImGui::EndTooltip();
+                                        ImGui::PopFont();
+                                        hoverTooltipShown++;
+
+                                        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+                                        {
+                                            LOG_TRACE("Adding Tooltip for Plot {}, item {}", plotIdx, plotItemIdx);
+                                            if (std::find_if(plot.tooltips.begin(), plot.tooltips.end(), [&](const PlotInfo::Tooltip& tooltip) {
+                                                    return tooltip.plotItemIdx == plotItemIdx && tooltip.dataIdx == i;
+                                                })
+                                                == plot.tooltips.end())
+                                            {
+                                                auto mousePos = ImGui::GetMousePos();
+                                                mousePos.x += 25.0F;
+                                                plot.tooltips.emplace_back(plotItemIdx, i, mousePos);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        // ###################################################################################
 
                         if (plotItem.style.eventsEnabled)
                         {
@@ -1708,9 +1860,22 @@ bool NAV::Plot::initialize()
     _startTime.reset();
     if (!_overridePositionStartValues) { _originPosition.reset(); }
 
+    for (auto& plot : _plots)
+    {
+        plot.tooltips.clear();
+        for (auto& plotItem : plot.plotItems)
+        {
+            plotItem.colormapMaskColors.clear();
+            plotItem.markerColormapMaskColors.clear();
+            plotItem.eventMarker.clear();
+            plotItem.eventTooltips.clear();
+        }
+    }
     for (auto& pinData : _pinData)
     {
         std::scoped_lock<std::mutex> guard(pinData.mutex); // Lock the buffer for multithreaded access
+
+        pinData.rawNodeData.clear();
 
         for (auto& plotData : pinData.plotData)
         {
@@ -1722,16 +1887,6 @@ bool NAV::Plot::initialize()
             pinData.plotData.erase(pinData.plotData.begin() + pinData.dynamicDataStartIndex, pinData.plotData.end());
         }
         pinData.events.clear();
-    }
-    for (auto& plot : _plots)
-    {
-        for (auto& plotItem : plot.plotItems)
-        {
-            plotItem.colormapMaskColors.clear();
-            plotItem.markerColormapMaskColors.clear();
-            plotItem.eventMarker.clear();
-            plotItem.eventTooltips.clear();
-        }
     }
 
     return true;
@@ -2216,6 +2371,8 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
     LOG_DATA("{}: Plotting data on pin '{}' with time {} GPST", nameId(), inputPins[pinIdx].name, nodeData->insTime.toYMDHMS(GPST));
 
     std::scoped_lock<std::mutex> guard(_pinData.at(pinIdx).mutex);
+    _pinData.at(pinIdx).rawNodeData.push_back(nodeData);
+
     // NodeData
     size_t i = 0;
     addData(pinIdx, i++, CommonLog::calcTimeIntoRun(nodeData->insTime));
@@ -2320,9 +2477,12 @@ void NAV::Plot::plotDynamicData(const std::shared_ptr<const DynamicData>& obs, s
     {
         auto dataIndex = addData(pinIndex, data.description, data.value);
 
-        for (const auto& event : data.events)
+        for (const auto& raw : data.rawData)
         {
-            addEvent(pinIndex, obs->insTime, event, static_cast<int32_t>(dataIndex));
+            for (const auto& event : raw.second->events())
+            {
+                addEvent(pinIndex, obs->insTime, event, static_cast<int32_t>(dataIndex));
+            }
         }
     }
 }

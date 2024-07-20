@@ -14,12 +14,15 @@
 #pragma once
 
 #include <array>
+#include <imgui.h>
 #include <implot.h>
 
 #include <map>
+#include <memory>
 #include <mutex>
 #include <unordered_set>
 
+#include "NodeData/NodeData.hpp"
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/DynamicInputPins.hpp"
 #include "internal/gui/widgets/PositionInput.hpp"
@@ -154,6 +157,8 @@ class Plot : public Node, public CommonLog
         std::string dataIdentifier;
         /// List with all the data
         std::vector<PlotData> plotData;
+        /// List with the raw data received
+        ScrollingBuffer<std::shared_ptr<const NodeData>> rawNodeData;
         /// Pin Type
         PinType pinType = PinType::Flow;
         /// Amount of points to skip for plotting
@@ -349,6 +354,23 @@ class Plot : public Node, public CommonLog
 
         /// Flag whether the whole plot is visible. If not, then it should be deleted
         bool visible = true;
+
+        /// Plot Tooltip windows to show
+        struct Tooltip
+        {
+            /// @brief Constructor
+            /// @param[in] plotItemIdx The plot item index the tooltip belongs to
+            /// @param[in] dataIdx The data index the tooltip belongs to
+            /// @param[in] startPos Initial start position of the tooltip window
+            Tooltip(size_t plotItemIdx, size_t dataIdx, const ImVec2& startPos)
+                : plotItemIdx(plotItemIdx), dataIdx(dataIdx), startPos(startPos) {}
+
+            size_t plotItemIdx = 0;         ///< The plot item index the tooltip belongs to
+            size_t dataIdx = 0;             ///< The data index the tooltip belongs to
+            std::optional<ImVec2> startPos; ///< Initial start position of the tooltip window
+        };
+        /// List of tooltip windows to show
+        std::vector<Tooltip> tooltips;
     };
 
   private:

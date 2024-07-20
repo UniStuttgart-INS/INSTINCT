@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Combiner.hpp"
+#include "Navigation/Time/TimeSystem.hpp"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
@@ -474,10 +475,11 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
 
             LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
             term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
-            term.events.push_back(nodeData->events());
-            if (!nodeData->events().empty())
+            term.rawData.push_back(nodeData);
+            LOG_DATA("{}:       Adding NodeData to the end of term.rawData. It now includes:", nameId());
+            for ([[maybe_unused]] const auto& data : term.rawData)
             {
-                LOG_DATA("{}:       NodeData has {} events", nameId(), nodeData->events().size());
+                LOG_DATA("{}:           {}", nameId(), data->insTime.toYMDHMS(GPST));
             }
 
             // Check for all combinations with new info:
@@ -520,14 +522,14 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                                      math::round(calcTimeIntoRun(sendRequestTime), 8));
                             sendRequest.termIndices.insert(t);
                             sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
-                            while (!term.events.empty())
+
+                            for (const auto& rawData : term.rawData)
                             {
-                                if (!term.events.front().empty())
-                                {
-                                    LOG_DATA("{}:           Adding {} events", nameId(), term.events.front().size());
-                                    std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sendRequest.events));
-                                }
-                                term.events.pop_front();
+                                LOG_DATA("{}:           Adding [{}] {}", nameId(),
+                                         rawData->insTime.toYMDHMS(GPST),
+                                         term.description(this, getDataDescriptors(term.pinIndex)));
+                                sendRequest.rawData.emplace_back(term.description(this, getDataDescriptors(term.pinIndex)),
+                                                                 rawData);
                             }
                         }
                     }
@@ -551,7 +553,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                     .combIndex = c,
                     .termIndices = {},
                     .result = 0.0,
-                    .events = {},
+                    .rawData = {},
                 };
                 for (size_t t = 0; t < comb.terms.size(); t++)
                 {
@@ -564,15 +566,13 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                                  term.factor, poly.f(nodeDataTimeIntoRun));
                         sr.termIndices.insert(t);
                         sr.result += term.factor * poly.f(nodeDataTimeIntoRun);
-                        while (!term.events.empty())
-                        {
-                            if (!term.events.front().empty())
-                            {
-                                LOG_DATA("{}:         {}: Adding {} events", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), term.events.front().size());
-                                std::copy(term.events.front().begin(), term.events.front().end(), std::back_inserter(sr.events));
-                            }
-                            term.events.pop_front();
-                        }
+
+                        LOG_DATA("{}:         {}: Adding rawData at {}", nameId(),
+                                 term.description(this, getDataDescriptors(term.pinIndex)),
+                                 nodeData->insTime.toYMDHMS(GPST));
+
+                        sr.rawData.emplace_back(term.description(this, getDataDescriptors(term.pinIndex)),
+                                                nodeData);
                     }
                 }
                 _sendRequests[nodeData->insTime].push_back(sr);
@@ -587,7 +587,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     if (!_sendRequests.empty()) { LOG_DATA("{}:   Send requests", nameId()); }
     for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
     {
-        LOG_DATA("{}:     [{:.3f}s]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8));
+        LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
         for (const auto& sendRequest : sendRequests)
         {
             const auto& comb = _combinations.at(sendRequest.combIndex);
@@ -606,7 +606,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
         std::vector<InsTime> requestsToRemove;
         for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
         {
-            LOG_DATA("{}:     [{:.3f}s]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8));
+            LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
             LOG_DATA("{}:       Combinations (all terms in all combinations must be calculated)", nameId());
             if (std::all_of(sendRequests.begin(), sendRequests.end(), [&](const auto& sendRequest) {
                     const auto& comb = _combinations.at(sendRequest.combIndex);
@@ -617,7 +617,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                 // If all combinations for this send request epoch are calculated, send it out
                 auto dynData = std::make_shared<DynamicData>();
                 dynData->insTime = sendRequestTime;
-                LOG_DATA("{}:       Sending out dynamic data and deleting send request", nameId());
+                LOG_DATA("{}:       Sending out dynamic data at [{}] and deleting send request", nameId(), dynData->insTime.toYMDHMS(GPST));
 
                 for (const auto& sendRequest : sendRequests)
                 {
@@ -625,8 +625,13 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                     DynamicData::Data data{
                         .description = comb.description(this),
                         .value = sendRequest.result,
-                        .events = sendRequest.events
+                        .rawData = sendRequest.rawData
                     };
+                    LOG_DATA("{}:         {} includes raw data", nameId(), data.description);
+                    for ([[maybe_unused]] const auto& raw : data.rawData)
+                    {
+                        LOG_DATA("{}:           [{}] from '{}'", nameId(), raw.second->insTime.toYMDHMS(GPST), raw.first);
+                    }
                     dynData->data.push_back(data);
                 }
 

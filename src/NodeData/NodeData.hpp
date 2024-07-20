@@ -85,6 +85,17 @@ class NodeData
     /// @brief Returns a vector of data descriptors and values for the dynamic data
     [[nodiscard]] virtual std::vector<std::pair<std::string, double>> getDynamicData() const { return {}; }
 
+    /// @brief Shows a GUI tooltip to look into details of the observation
+    /// @param[in] detailView Flag to show the detailed view
+    /// @param[in] firstOpen Flag whether the tooltip is opened once
+    /// @param[in] displayName Data identifier, can be used in dynamic data to identify the correct data
+    /// @param[in] id Unique identifier
+    virtual void guiTooltip([[maybe_unused]] bool detailView, [[maybe_unused]] bool firstOpen,
+                            [[maybe_unused]] const char* displayName, [[maybe_unused]] const char* id) const {}
+
+    /// @brief Return whether this data has a tooltip
+    [[nodiscard]] virtual bool hasTooltip() const { return false; }
+
     /// Time at which the message was received
     InsTime insTime;
 

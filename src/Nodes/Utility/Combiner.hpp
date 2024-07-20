@@ -13,9 +13,11 @@
 
 #pragma once
 
+#include <memory>
 #include <unordered_set>
 #include <map>
 
+#include "NodeData/NodeData.hpp"
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/DynamicInputPins.hpp"
 
@@ -106,8 +108,8 @@ class Combiner : public Node, public CommonLog
             size_t pinIndex = 0;                                         ///< Pin Index
             std::variant<size_t, std::string> dataSelection = size_t(0); ///< Data Index or Data identifier
 
-            PolynomialRegressor<double> polyReg{ 1, 2 };           ///< Polynomial Regressor to interpolate data
-            ScrollingBuffer<std::vector<std::string>> events{ 2 }; ///< Last events to add if we send
+            PolynomialRegressor<double> polyReg{ 1, 2 };                   ///< Polynomial Regressor to interpolate data
+            ScrollingBuffer<std::shared_ptr<const NodeData>> rawData{ 2 }; ///< Last raw data to add if we send
 
             /// @brief Get a string description of the combination
             /// @param node Combiner node pointer
@@ -176,10 +178,10 @@ class Combiner : public Node, public CommonLog
     /// Send request information
     struct SendRequest
     {
-        size_t combIndex = 0;                   ///< Combination Index
-        std::unordered_set<size_t> termIndices; ///< Term indices, which are already calculated
-        double result = 0.0;                    ///< Calculation result
-        std::vector<std::string> events;        ///< List of events of all terms contributing to the result
+        size_t combIndex = 0;                                                         ///< Combination Index
+        std::unordered_set<size_t> termIndices;                                       ///< Term indices, which are already calculated
+        double result = 0.0;                                                          ///< Calculation result
+        std::vector<std::pair<std::string, std::shared_ptr<const NodeData>>> rawData; ///< List of the raw data of all terms contributing to the result
     };
 
     /// Chronological list of send request
