@@ -42,6 +42,7 @@
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
+#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 
 namespace NAV
 {

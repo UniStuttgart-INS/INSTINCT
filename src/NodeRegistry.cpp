@@ -191,7 +191,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/WiFi/WiFiObsLogger.hpp"
-#include "Nodes/DataLogger/WiFi/WiFiPositioningSolutionLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
@@ -264,7 +263,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UartDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     registerNodeType<WiFiObsLogger>();
-    registerNodeType<WiFiPositioningSolutionLogger>();
     // Data Processor
     registerNodeType<ErrorModel>();
     registerNodeType<GnssAnalyzer>();

@@ -1854,8 +1854,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         }
         else if (startPin.dataIdentifier.front() == WiFiPositioningSolution::type())
         {
-            for (const auto& desc : SppSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
+            for (const auto& desc : WiFiPositioningSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
         else if (startPin.dataIdentifier.front() == RtklibPosObs::type())
         {
