@@ -42,6 +42,18 @@ class SNRMask
     /// @return True if the value passed the mask
     [[nodiscard]] bool checkSNRMask(Frequency freq, double elevation, double SNR) const;
 
+    /// @brief Disables the SNR mask by setting all values to 0
+    void disable()
+    {
+        for (auto& m : mask)
+        {
+            for (auto& snr : m.second.first)
+            {
+                snr = 0.0;
+            }
+        }
+    }
+
   private:
     /// @brief Elevations [rad]. Checks to smaller or equal than the value
     static constexpr std::array<double, 10> elevations = {

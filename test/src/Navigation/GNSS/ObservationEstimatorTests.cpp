@@ -121,7 +121,7 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
         algorithm._receiver[SPP::Algorithm::Rover].lla_posMarker = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
+        [[maybe_unused]] auto [observations, filtered] = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
         algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 
@@ -306,7 +306,7 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
         algorithm._receiver[SPP::Algorithm::Rover].lla_posMarker = lla_refRecvPos;
         algorithm._receiver[SPP::Algorithm::Rover].e_vel.setZero();
 
-        auto observations = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
+        [[maybe_unused]] auto [observations, filtered] = algorithm._obsFilter.selectObservationsForCalculation(algorithm._receiver, gnssNavInfos, nameId, false);
         algorithm.updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
         algorithm._obsEstimator.calcObservationEstimates(observations, algorithm._receiver, ionosphericCorrections, nameId, ObservationEstimator::NoDifference);
 

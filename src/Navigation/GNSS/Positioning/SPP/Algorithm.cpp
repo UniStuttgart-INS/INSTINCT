@@ -114,7 +114,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                      SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value);
         }
 
-        auto observations = _obsFilter.selectObservationsForCalculation(_receiver, gnssNavInfos, nameId, e_oldPos.isZero());
+        [[maybe_unused]] auto [observations, filtered] = _obsFilter.selectObservationsForCalculation(_receiver, gnssNavInfos, nameId, e_oldPos.isZero());
         if (observations.signals.empty())
         {
             LOG_ERROR("{}: [{}] SPP cannot calculate position because no valid observations. Try changing filter settings or reposition your antenna.",
