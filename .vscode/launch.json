@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Mac Debug",
+            "name": "Linux Debug",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
@@ -26,7 +26,7 @@
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "lldb",
+            "MIMode": "gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

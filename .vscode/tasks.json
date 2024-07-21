@@ -1,14 +1,17 @@
 {
     "version": "2.0.0",
     "tasks": [
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       CLEAN Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // CLEAN: Remove Build Files
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
             "command": "rm",
             "args": [
                 "-rf",
-                "build"
+                "build",
             ],
             "windows": {
                 "command": "Remove-Item",
@@ -23,16 +26,16 @@
                 "clear": true,
                 "showReuseMessage": false,
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // CLEAN: Tests
             "label": "CLEAN: Tests",
             "type": "shell",
             "group": "build",
             "command": "rm",
             "args": [
                 "-rf",
-                "test/logs/[^\\.]*"
+                "test/logs/[^\\.]*",
             ],
             "windows": {
                 "command": "Get-ChildItem",
@@ -60,9 +63,12 @@
                 "clear": true,
                 "showReuseMessage": false,
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       Conan Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // Conan: Detect
             "label": "Conan: Detect",
             "type": "shell",
             "group": "build",
@@ -86,11 +92,11 @@
                 },
             },
             "presentation": {
-                "clear": true
+                "clear": true,
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // Conan
             "label": "Conan",
             "type": "shell",
             "group": "build",
@@ -118,11 +124,11 @@
                 },
             },
             "dependsOn": [
-                "Conan: Detect"
+                "Conan: Detect",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // Conan: Debug
             "label": "Conan: Debug",
             "type": "shell",
             "group": "build",
@@ -150,11 +156,11 @@
                 },
             },
             "dependsOn": [
-                "Conan: Detect"
+                "Conan: Detect",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // Conan: Release
             "label": "Conan: Release",
             "type": "shell",
             "group": "build",
@@ -182,11 +188,14 @@
                 },
             },
             "dependsOn": [
-                "Conan: Detect"
+                "Conan: Detect",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                       CMAKE Tasks                                        ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // CMAKE: Main
             "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
@@ -214,16 +223,16 @@
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252"
+                        "chcp": "1252",
                     }
-                }
+                },
             },
             "dependsOn": [
-                "Conan"
+                "Conan",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // CMAKE: Testing
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
@@ -246,21 +255,21 @@
                     "-DENABLE_CLANG_TIDY=OFF",
                     "-DENABLE_CPPCHECK=OFF",
                     "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-                    "-DWARNINGS_AS_ERRORS=OFF"
+                    "-DWARNINGS_AS_ERRORS=OFF",
                 ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252"
+                        "chcp": "1252",
                     }
-                }
+                },
             },
             "dependsOn": [
-                "Conan"
+                "Conan",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // CMAKE: Coverage
             "label": "CMAKE: Coverage",
             "type": "shell",
             "group": "build",
@@ -287,11 +296,11 @@
                 }
             },
             "dependsOn": [
-                "Conan: Debug"
+                "Conan: Debug",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // CMAKE: Documentation
             "label": "CMAKE: Documentation",
             "type": "shell",
             "group": "build",
@@ -301,11 +310,11 @@
                 "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc-${input:Compiler} -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
-                "Conan: Release"
+                "Conan: Release",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // CMAKE: Documentation Check
             "label": "CMAKE: Documentation Check",
             "type": "shell",
             "group": "build",
@@ -315,11 +324,14 @@
                 "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Release-doc-${input:Compiler} -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES -DUSE_ALTERNATE_LINKER=${input:Linker}",
             ],
             "dependsOn": [
-                "Conan: Release"
+                "Conan: Release",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                  CMAKE Configure Tasks                                   ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // CMAKE: Configure
             "label": "CMAKE: Configure",
             "type": "shell",
             "group": "build",
@@ -339,11 +351,14 @@
                 "focus": true
             },
             "dependsOn": [
-                "CMAKE: Main"
+                "CMAKE: Main",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                        Build Tasks                                       ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // MAIN: Build project
             "label": "MAIN: Build project",
             "type": "shell",
             "group": "build",
@@ -373,16 +388,16 @@
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252"
+                        "chcp": "1252",
                     }
-                }
+                },
             },
             "dependsOn": [
-                "CMAKE: Main"
+                "CMAKE: Main",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // TEST: Build project
             "label": "TEST: Build project",
             "type": "shell",
             "group": "build",
@@ -412,16 +427,16 @@
                 "options": {
                     "env": {
                         "VSLANG": "1033",
-                        "chcp": "1252"
+                        "chcp": "1252",
                     }
-                }
+                },
             },
             "dependsOn": [
-                "CMAKE: Testing"
+                "CMAKE: Testing",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Build Coverage Report
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
@@ -440,11 +455,11 @@
                 ],
             },
             "dependsOn": [
-                "CMAKE: Coverage"
+                "CMAKE: Coverage",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
             "group": "build",
@@ -453,14 +468,14 @@
                 "--build",
                 "build/Release-doc-${input:Compiler}",
                 "--target",
-                "doc"
+                "doc",
             ],
             "dependsOn": [
-                "CMAKE: Documentation"
+                "CMAKE: Documentation",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // DOXYGEN: Check for errors
             "label": "DOXYGEN: Check for errors",
             "type": "shell",
             "group": "test",
@@ -469,14 +484,17 @@
                 "--build",
                 "build/Release-doc-${input:Compiler}",
                 "--target",
-                "doc"
+                "doc",
             ],
             "dependsOn": [
-                "CMAKE: Documentation Check"
+                "CMAKE: Documentation Check",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                        Run Tasks                                         ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // MAIN: Build & run project
             "label": "MAIN: Build & run project",
             "type": "shell",
             "group": {
@@ -506,14 +524,14 @@
                 // "--output-path=test/logs",
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
             "dependsOn": [
-                "MAIN: Build project"
+                "MAIN: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // TEST: Build & run
             "label": "TEST: Build & run",
             "type": "shell",
             "group": {
@@ -522,7 +540,11 @@
             },
             "command": "ctest",
             "args": [
-                "--output-on-failure"
+                // "-j4",
+                "--output-on-failure",
+                // "--tests-regex",
+                // "'PVAError|PosVelAtt'",
+                // "--verbose",
             ],
             "options": {
                 "cwd": "${workspaceFolder}/build/${input:Build-Type}-${input:Compiler}",
@@ -533,11 +555,11 @@
                 },
             },
             "dependsOn": [
-                "TEST: Build project"
+                "TEST: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // TEST: Build & run w/o flow tests
             "label": "TEST: Build & run w/o flow tests",
             "type": "shell",
             "group": "test",
@@ -555,28 +577,29 @@
                 "cwd": "${workspaceFolder}/build/${input:Build-Type}-${input:Compiler}",
             },
             "dependsOn": [
-                "TEST: Build project"
+                "TEST: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Run Coverage Tests
             "label": "COVERAGE: Run Coverage Tests",
             "type": "shell",
             "group": "test",
             "command": "ctest",
             "args": [
                 "-j4",
-                "--output-on-failure"
+                "--output-on-failure",
+                // "--verbose",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug-cov"
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
-                "COVERAGE: Build Coverage Report"
+                "COVERAGE: Build Coverage Report",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Run Coverage Tests w/o flow tests
             "label": "COVERAGE: Run Coverage Tests w/o flow tests",
             "type": "shell",
             "group": "test",
@@ -586,83 +609,87 @@
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
+                // "--verbose",
             ],
             "options": {
-                "cwd": "${workspaceFolder}/build/Debug-cov"
+                "cwd": "${workspaceFolder}/build/Debug-cov",
             },
             "dependsOn": [
-                "COVERAGE: Build Coverage Report"
+                "COVERAGE: Build Coverage Report",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create
             "label": "COVERAGE: Create",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg"
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
             "dependsOn": [
-                "COVERAGE: Run Coverage Tests"
+                "COVERAGE: Run Coverage Tests",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create w/o flow tests
             "label": "COVERAGE: Create w/o flow tests",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg"
+                "mkdir -p build/coverage && gcovr --config doc/coverage/gcovr.cfg",
             ],
             "dependsOn": [
-                "COVERAGE: Run Coverage Tests w/o flow tests"
+                "COVERAGE: Run Coverage Tests w/o flow tests",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create & Show
             "label": "COVERAGE: Create & Show",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/coverage/index.html"
+                "build/coverage/index.html",
             ],
             "dependsOn": [
-                "COVERAGE: Create"
+                "COVERAGE: Create",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create & Show w/o flow tests
             "label": "COVERAGE: Create & Show w/o flow tests",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/coverage/index.html"
+                "build/coverage/index.html",
             ],
             "dependsOn": [
-                "COVERAGE: Create w/o flow tests"
+                "COVERAGE: Create w/o flow tests",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // DOXYGEN: Create & Show
             "label": "DOXYGEN: Create & Show",
             "type": "shell",
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "build/doc/html/index.html"
+                "build/doc/html/index.html",
             ],
             "dependsOn": [
-                "DOXYGEN: Build Documentation"
+                "DOXYGEN: Build Documentation",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+        // ║                                     Debugging Tasks                                      ║
+        // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
+        { // Gperftools: Run profiler
             "label": "Gperftools: Run profiler",
             "type": "shell",
             "group": "test",
@@ -689,7 +716,7 @@
                 // "--output-path=test/logs",
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
             "linux": {
                 "options": {
@@ -700,11 +727,11 @@
                 }
             },
             "dependsOn": [
-                "MAIN: Build project"
+                "MAIN: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // Gperftools: Show profiled output
             "label": "Gperftools: Show profiled output",
             "type": "shell",
             "group": "test",
@@ -718,11 +745,11 @@
                 // "build/bin/${input:Build-Type}/callgrind.out", // For --callgrind option
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // VALGRIND: Run profiler
             "label": "VALGRIND: Run profiler",
             "type": "shell",
             "group": "test",
@@ -732,14 +759,14 @@
                 "valgrind --callgrind-out-file=build/bin/${input:Build-Type}/callgrind.out --tool=callgrind build/bin/${input:Build-Type}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind build/bin/${input:Build-Type}/callgrind.out",
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
             "dependsOn": [
-                "MAIN: Build project"
+                "MAIN: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // VALGRIND: Show profiled output
             "label": "VALGRIND: Show profiled output",
             "type": "shell",
             "group": "test",
@@ -748,11 +775,11 @@
                 "build/bin/${input:Build-Type}/callgrind.out",
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
-        {
+        { // VALGRIND: Memory Leak Check
             "label": "VALGRIND: Memory Leak Check",
             "type": "shell",
             "group": "test",
@@ -764,15 +791,15 @@
                 "config.ini",
                 "--nogui",
                 "-l",
-                "flow/Default.flow"
+                "flow/Default.flow",
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
             },
             "dependsOn": [
-                "MAIN: Build project"
+                "MAIN: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         }
     ],
     // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
