@@ -301,7 +301,7 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
     std::istringstream iss(receivedData);
     std::string line;
 
-    while (std::getline(iss, line) && line.find("Peer-bssid") == std::string::npos); // Skip lines until the header "Peer-bssid" is found
+    while (std::getline(iss, line) && line.find("Peer-bssid") == std::string::npos) {} // Skip lines until the header "Peer-bssid" is found
 
     // Skip the header lines
     std::getline(iss, line);
