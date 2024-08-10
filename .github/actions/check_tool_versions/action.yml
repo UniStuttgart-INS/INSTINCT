@@ -1,0 +1,74 @@
+
+name: 'check_tool_versions'
+description: 'Checks all tool versions'
+inputs:
+  clangtidy:
+    required: false
+    default: 'false'
+  clangformat:
+    required: false
+    default: 'false'
+  documentation:
+    required: false
+    default: 'false'
+  coverage:
+    required: false
+    default: 'false'
+  compiler:
+    required: false
+    default: ''
+
+runs:
+  using: "composite"
+  steps:
+    - run: uname -a
+      shell: bash
+      if: ${{ runner.os == 'Linux' }}
+    - run: cat /etc/issue
+      shell: bash
+      if: ${{ runner.os == 'Linux' }}
+    - run: sw_vers
+      shell: bash
+      if: ${{ runner.os == 'macOS' }}
+    - run: g++ --version
+      shell: bash
+      if: ${{ runner.os == 'Linux' && startsWith(inputs.compiler, 'gcc') }}
+    - run: clang++ --version
+      shell: bash
+      if: ${{ runner.os == 'macOS' || (runner.os == 'Linux' && startsWith(inputs.compiler, 'llvm')) }}
+    - run: cl.exe
+      shell: pwsh
+      if: ${{ runner.os == 'Windows' }}
+    - run: clang-tidy --version
+      shell: bash
+      if: ${{ inputs.clangtidy == 'true' }}
+    - run: clang-format --version
+      shell: bash
+      if: ${{ inputs.clangformat == 'true' }}
+    - run: cmake --version
+      shell: bash
+    - run: conan --version
+      shell: bash
+    - run: conan profile show
+      shell: bash
+    - run: gcovr --version
+      shell: bash
+      if: ${{ runner.os == 'Linux' && inputs.coverage == 'true' }}
+    - run: gcov --version
+      shell: bash
+      if: ${{ runner.os == 'Linux' && inputs.coverage == 'true' }}
+    - run: doxygen --version
+      shell: bash
+      if: ${{ inputs.documentation == 'true' }}
+    - run: dvips --version
+      shell: bash
+      if: ${{ inputs.documentation == 'true' }}
+    - run: gs --version
+      shell: bash
+      if: ${{ inputs.documentation == 'true' }}
+    - run: latex --version
+      shell: bash
+      if: ${{ inputs.documentation == 'true' }}
+    - run: command -v pdf2svg
+      shell: bash
+      if: ${{ inputs.documentation == 'true' }}

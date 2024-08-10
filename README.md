@@ -1,5 +1,10 @@
 # INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
+[![ci](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/UniStuttgart-INS/INSTINCT/graph/badge.svg?token=TB87OFDQ01)](https://codecov.io/gh/UniStuttgart-INS/INSTINCT)
+[![documentation](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
+
 Flow-Based Navigation Software of the Institut of Navigation (INS) of the University of Stuttgart, Germany.
 
 ![overview](resources/images/titleimage.png)
@@ -16,8 +21,7 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ### Read the documentation
 
-Read the docs on
-[![](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
+Read the docs on https://unistuttgart-ins.github.io/INSTINCT/
 
 ### Working with the Repository
 
