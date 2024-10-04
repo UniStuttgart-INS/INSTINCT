@@ -249,24 +249,6 @@
                         "qCalculationAlgorithm": 0
                     },
                     "obsEstimator": {
-                        "antenna": [
-                            {
-                                "autoDetermine": true,
-                                "enabled": true,
-                                "hen_delta": {
-                                    "0": {
-                                        "0": 0.0
-                                    },
-                                    "1": {
-                                        "0": 0.0
-                                    },
-                                    "2": {
-                                        "0": 0.0
-                                    }
-                                },
-                                "name": ""
-                            }
-                        ],
                         "gnssMeasurementError": {
                             "carrierStdDev": 0.001,
                             "codeStdDev": 0.1,

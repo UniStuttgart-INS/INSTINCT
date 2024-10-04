@@ -7,9 +7,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "Combiner.hpp"
+#include "NodeRegistry.hpp"
 #include "Navigation/Time/TimeSystem.hpp"
+#include "internal/Node/Pin.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
 #include "util/Assert.h"
@@ -153,14 +155,14 @@ void Combiner::guiConfig()
                                     _combinations.size() > 1 ? &keepCombination : nullptr, ImGuiTreeNodeFlags_DefaultOpen))
         {
             constexpr int COL_PER_TERM = 3;
-            constexpr float COL_SIGN_WIDTH = 50.0F;
-            constexpr float COL_PIN_WIDTH = 100.0F;
+            const float COL_SIGN_WIDTH = 50.0F * gui::NodeEditorApplication::windowFontRatio();
+            const float COL_PIN_WIDTH = 100.0F * gui::NodeEditorApplication::windowFontRatio();
 
             std::vector<size_t> termToDelete;
             bool addTerm = false;
             if (ImGui::BeginTable(fmt::format("##Table id{} c{}", size_t(id), c).c_str(), COL_PER_TERM * static_cast<int>(comb.terms.size()),
                                   ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX,
-                                  ImVec2(0, 70.0F)))
+                                  ImVec2(0, 70.0F * gui::NodeEditorApplication::windowFontRatio())))
             {
                 ImGui::TableNextRow();
 
@@ -197,7 +199,7 @@ void Combiner::guiConfig()
 
                     ImGui::TableSetColumnIndex(static_cast<int>(t) * COL_PER_TERM + 1);
                     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2.0F);
-                    float radius = 8.0F;
+                    float radius = 8.0F * gui::NodeEditorApplication::windowFontRatio();
                     ImGui::GetWindowDrawList()->AddCircleFilled(ImGui::GetCursorScreenPos() + ImVec2(radius, ImGui::GetTextLineHeight() / 2.0F + 2.0F), radius,
                                                                 term.polyReg.empty() ? IM_COL32(255, 0, 0, 255) : IM_COL32(0, 255, 0, 255));
                     ImGui::Dummy(ImVec2(radius * 2.0F, ImGui::GetTextLineHeight()));
@@ -400,23 +402,44 @@ void Combiner::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
+namespace internal
+{
+
+template<typename T>
+bool getDescriptorsOfType(OutputPin* sourcePin, std::vector<std::string>& dataDescriptors)
+{
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { T::type() }))
+    {
+        dataDescriptors = T::GetStaticDataDescriptors();
+        return true;
+    }
+    return false;
+}
+
+} // namespace internal
+
 std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
 {
     std::vector<std::string> dataDescriptors;
-    if (auto* sourcePin = inputPins.at(pinIndex).link.getConnectedPin())
+    if (OutputPin* sourcePin = inputPins.at(pinIndex).link.getConnectedPin())
     {
-        if (sourcePin->dataIdentifier.front() == Pos::type()) { dataDescriptors = Pos::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == PosVel::type()) { dataDescriptors = PosVel::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == PosVelAtt::type()) { dataDescriptors = PosVelAtt::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == InsGnssLCKFSolution::type()) { dataDescriptors = InsGnssLCKFSolution::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == InsGnssTCKFSolution::type()) { dataDescriptors = InsGnssTCKFSolution::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == SppSolution::type()) { dataDescriptors = SppSolution::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type()) { dataDescriptors = RtklibPosObs::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObs::type()) { dataDescriptors = ImuObs::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type()) { dataDescriptors = ImuObsWDelta::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == ImuObsSimulated::type()) { dataDescriptors = ImuObsSimulated::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == KvhObs::type()) { dataDescriptors = KvhObs::GetStaticDataDescriptors(); }
-        else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type()) { dataDescriptors = VectorNavBinaryOutput::GetStaticDataDescriptors(); }
+        if ( // IMU
+            !internal::getDescriptorsOfType<ImuObsSimulated>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<ImuObsWDelta>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<KvhObs>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<ImuObs>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<VectorNavBinaryOutput>(sourcePin, dataDescriptors)
+            // State
+            && !internal::getDescriptorsOfType<InsGnssTCKFSolution>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<InsGnssLCKFSolution>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<PosVelAtt>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<SppSolution>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<RtklibPosObs>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<PosVel>(sourcePin, dataDescriptors)
+            && !internal::getDescriptorsOfType<Pos>(sourcePin, dataDescriptors))
+        {
+            LOG_ERROR("{}: The input type '{}' is implemented yet", nameId(), sourcePin->dataIdentifier.front());
+        }
     }
     if (!_pinData.at(pinIndex).dynDataDescriptors.empty())
     {

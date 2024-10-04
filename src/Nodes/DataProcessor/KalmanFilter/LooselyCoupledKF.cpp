@@ -43,9 +43,9 @@ namespace nm = NAV::NodeManager;
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
-constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst<>::pseudometre;
+constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst<>::G_NORM;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -1042,7 +1042,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
         sigma_ra = _stdev_ra * 1e-3;      // [g / √(Hz)]
-        sigma_ra *= InsConst<>::G_NORM;   // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
+        sigma_ra *= InsConst::G_NORM;     // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
         // sigma_ra /= 1.;                // [m / (s^2 · √(s))]
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
@@ -1073,9 +1073,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Vector3d sigma_bad = Eigen::Vector3d::Zero();
     switch (_stdevAccelBiasUnits)
     {
-    case StdevAccelBiasUnits::microg:    // [µg]
-        sigma_bad = _stdev_bad * 1e-6;   // [g]
-        sigma_bad *= InsConst<>::G_NORM; // [m / s^2]
+    case StdevAccelBiasUnits::microg:  // [µg]
+        sigma_bad = _stdev_bad * 1e-6; // [g]
+        sigma_bad *= InsConst::G_NORM; // [m / s^2]
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
         sigma_bad = _stdev_bad;
@@ -1137,7 +1137,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
         // omega_in^n = omega_ie^n + omega_en^n
-        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie
+        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
                                      + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
@@ -1168,7 +1168,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst<>::e_omega_ie, _tau_bad, _tau_bgd);
+        _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -1264,14 +1264,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVel>& posVelObs)
 {
     INS_ASSERT_USER_ERROR(_inertialIntegrator.getLatestState().has_value(), "The update should not even trigger without an initial state.");
-    decltype(auto) latestInertialNavSol = _inertialIntegrator.getLatestState().value().get();
 
-    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), posVelObs->insTime.toYMDHMS(GPST), latestInertialNavSol.insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), posVelObs->insTime.toYMDHMS(GPST), _inertialIntegrator.getLatestState().value().get().insTime.toYMDHMS(GPST));
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position = latestInertialNavSol.lla_position();
+    const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // GNSS measurement uncertainty for the position (Variance σ²) in [m^2]
@@ -1291,11 +1290,11 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
             gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_gnssMeasurementUncertaintyPosition.cwiseSqrt(), lla_position)) - lla_position).array().pow(2);
             break;
         case GnssMeasurementUncertaintyPositionUnit::rad_rad_m:
-            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - latestInertialNavSol.e_position()).array().pow(2);
+            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition) - _inertialIntegrator.getLatestState().value().get().e_position()).array().pow(2);
             gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition.array().pow(2);
             break;
         case GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2:
-            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - latestInertialNavSol.e_position()).array().pow(2);
+            gnssSigmaSquaredPosition = (trafo::lla2ecef_WGS84(lla_position + _gnssMeasurementUncertaintyPosition.cwiseSqrt()) - _inertialIntegrator.getLatestState().value().get().e_position()).array().pow(2);
             gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition;
             break;
         }
@@ -1347,7 +1346,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d n_Dcm_b = latestInertialNavSol.n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_Dcm_b = _inertialIntegrator.getLatestState().value().get().n_Quat_b().toRotationMatrix();
         LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
         // Conversion matrix between cartesian and curvilinear perturbations to the position
@@ -1355,7 +1354,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(latestInertialNavSol.n_Quat_e() * InsConst<>::e_omega_ie);
+        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_inertialIntegrator.getLatestState().value().get().n_Quat_e() * InsConst::e_omega_ie);
         LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
@@ -1365,18 +1364,18 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         _kalmanFilter.R = n_measurementNoiseCovariance_R(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), latestInertialNavSol.lla_position(),
-                                                     posVelObs->n_velocity(), latestInertialNavSol.n_velocity(),
-                                                     T_rn_p, latestInertialNavSol.n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().lla_position(),
+                                                     posVelObs->n_velocity(), _inertialIntegrator.getLatestState().value().get().n_velocity(),
+                                                     T_rn_p, _inertialIntegrator.getLatestState().value().get().n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d e_Dcm_b = latestInertialNavSol.e_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d e_Dcm_b = _inertialIntegrator.getLatestState().value().get().e_Quat_b().toRotationMatrix();
         LOG_DATA("{}:     e_Dcm_b =\n{}", nameId(), e_Dcm_b);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d e_Omega_ie = math::skewSymmetricMatrix(InsConst<>::e_omega_ie);
+        Eigen::Matrix3d e_Omega_ie = math::skewSymmetricMatrix(InsConst::e_omega_ie);
         LOG_DATA("{}:     e_Omega_ie =\n{}", nameId(), e_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
@@ -1386,9 +1385,9 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         _kalmanFilter.R = e_measurementNoiseCovariance_R(gnssSigmaSquaredPosition, gnssSigmaSquaredVelocity);
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), latestInertialNavSol.e_position(),
-                                                     posVelObs->e_velocity(), latestInertialNavSol.e_velocity(),
-                                                     latestInertialNavSol.e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().e_position(),
+                                                     posVelObs->e_velocity(), _inertialIntegrator.getLatestState().value().get().e_velocity(),
+                                                     _inertialIntegrator.getLatestState().value().get().e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
     }
 
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
@@ -1463,20 +1462,18 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         lckfSolution->positionError = lckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
         _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        decltype(auto) state = _inertialIntegrator.getLatestState().value().get();
-        lckfSolution->setStateAndStdDev_n(state.lla_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          state.n_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          state.n_Quat_b());
+        lckfSolution->setStateAndStdDev_n(_inertialIntegrator.getLatestState().value().get().lla_position(), _kalmanFilter.P(KFPos, KFPos),
+                                          _inertialIntegrator.getLatestState().value().get().n_velocity(), _kalmanFilter.P(KFVel, KFVel),
+                                          _inertialIntegrator.getLatestState().value().get().n_Quat_b());
         lckfSolution->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
         _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        decltype(auto) state = _inertialIntegrator.getLatestState().value().get();
-        lckfSolution->setStateAndStdDev_e(state.e_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          state.e_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          state.e_Quat_b());
+        lckfSolution->setStateAndStdDev_e(_inertialIntegrator.getLatestState().value().get().e_position(), _kalmanFilter.P(KFPos, KFPos),
+                                          _inertialIntegrator.getLatestState().value().get().e_velocity(), _kalmanFilter.P(KFVel, KFVel),
+                                          _inertialIntegrator.getLatestState().value().get().e_Quat_b());
         lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
     }
 

@@ -30,8 +30,10 @@ enum GuiMatrixViewFlags_
 
 namespace NAV::gui::widgets
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
 
 /// @brief Shows GUI elements to display the coefficients of a matrix
 /// @tparam _Scalar Data Type of the matrix
@@ -80,7 +82,9 @@ void MatrixView(const char* label, const Eigen::Matrix<_Scalar, _Rows, _Cols>* m
         ImGui::EndTable();
     }
 }
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 /// @brief Shows GUI elements to modify the coefficients of a matrix with
 /// @tparam _Scalar Data Type of the matrix

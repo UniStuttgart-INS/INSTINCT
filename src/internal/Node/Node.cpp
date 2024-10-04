@@ -18,6 +18,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "util/Json.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
@@ -194,7 +195,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                 }
 
                 targetPin->queue.push_back(data);
-                LOG_DATA("{}: Waking up worker of node '{}'. New data on pin '{}'", nameId(), link.connectedNode->nameId(), targetPin->name);
+                LOG_DATA("{}: Waking up worker of node {}. New data on pin '{}'", nameId(), size_t(link.connectedNode->id), targetPin->name);
                 link.connectedNode->wakeWorker();
             }
         }
@@ -982,7 +983,7 @@ void NAV::to_json(json& j, const Node& node)
 {
     ImVec2 realSize = ed::GetNodeSize(node.id);
     realSize.x -= 16;
-    realSize.y -= 38;
+    realSize.y -= 38.0F;
     j = json{
         { "id", size_t(node.id) },
         { "type", node.type() },
@@ -1009,6 +1010,10 @@ void NAV::from_json(const json& j, Node& node)
     if (j.contains("size"))
     {
         j.at("size").get_to(node._size);
+        if (node.kind == Node::Kind::GroupBox && gui::NodeEditorApplication::isUsingBigDefaultFont())
+        {
+            node._size.y -= 20;
+        }
     }
     if (j.contains("enabled"))
     {

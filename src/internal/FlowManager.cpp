@@ -25,6 +25,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/FlowExecutor.hpp"
 
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Plot/Colormap.hpp"
 
 #include <fstream>
@@ -91,6 +92,10 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
         j["implot"]["style"] = ImPlot::GetStyle();
         j["implot"]["prefereFlowOverGlobal"] = gui::windows::prefereFlowOverGlobal;
     }
+
+    j["fonts"]["useBigDefaultFont"] = gui::NodeEditorApplication::isUsingBigDefaultFont();
+    j["fonts"]["useBigWindowFont"] = gui::NodeEditorApplication::isUsingBigWindowFont();
+    j["fonts"]["useBigMonoFont"] = gui::NodeEditorApplication::isUsingBigMonoFont();
 
     j["colormaps"] = ColormapsFlow;
 
@@ -223,6 +228,21 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     else
     {
         ColormapsFlow.clear();
+    }
+    if (!ConfigManager::Get<bool>("nogui") && j.contains("fonts"))
+    {
+        if (j.at("fonts").contains("useBigDefaultFont"))
+        {
+            gui::NodeEditorApplication::swapDefaultFont(j.at("fonts").at("useBigDefaultFont").get<bool>());
+        }
+        if (j.at("fonts").contains("useBigWindowFont"))
+        {
+            gui::NodeEditorApplication::swapWindowFont(j.at("fonts").at("useBigWindowFont").get<bool>());
+        }
+        if (j.at("fonts").contains("useBigMonoFont"))
+        {
+            gui::NodeEditorApplication::swapMonoFont(j.at("fonts").at("useBigMonoFont").get<bool>());
+        }
     }
 
     if (j.contains("nodes"))

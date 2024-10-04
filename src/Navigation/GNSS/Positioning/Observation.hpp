@@ -13,9 +13,12 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Functions.hpp"
@@ -52,34 +55,20 @@ struct Observations
 
             /// @brief Constructor
             /// @param[in] gnssObs GNSS observation
-            /// @param obsIdx GNSS observation index for this measurement
-            /// @param[in] e_recPos Receiver position in e frame
-            /// @param[in] lla_recPos Receiver position in lla frame
-            /// @param[in] e_recVel Receiver velocity in e frame
+            /// @param[in] obsIdx GNSS observation index for this measurement
             /// @param[in] e_satPos Satellite position in e frame
             /// @param[in] e_satVel Satellite velocity in e frame
             /// @param[in] satClock Satellite clock information
             ReceiverSpecificData(std::shared_ptr<const GnssObs> gnssObs,
                                  size_t obsIdx,
-                                 const Eigen::Vector3d& e_recPos,
-                                 const Eigen::Vector3d& lla_recPos,
-                                 const Eigen::Vector3d& e_recVel,
-                                 const Eigen::Vector3d& e_satPos,
-                                 const Eigen::Vector3d& e_satVel,
+                                 Eigen::Vector3d e_satPos,
+                                 Eigen::Vector3d e_satVel,
                                  Clock::Corrections satClock)
-                : _gnssObs(std::move(gnssObs)), _obsIdx(obsIdx), _e_satPos(e_satPos), _e_satVel(e_satVel), _satClock(satClock)
-            {
-                _e_pLOS = e_calcLineOfSightUnitVector(e_recPos, e_satPos);
-                _e_vLOS = (e_recVel - e_satVel) / (e_recPos - e_satPos).norm();
-                Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recPos(0), lla_recPos(1)) * _e_pLOS;
-                _satElevation = calcSatElevation(n_lineOfSightUnitVector);
-                _satAzimuth = calcSatAzimuth(n_lineOfSightUnitVector);
-
-                LOG_DATA("    e_lineOfSightUnitVector {}", _e_pLOS.transpose());
-                LOG_DATA("    n_lineOfSightUnitVector {}", n_lineOfSightUnitVector.transpose());
-                LOG_DATA("    satElevation {}°", rad2deg(_satElevation));
-                LOG_DATA("    satAzimuth   {}°", rad2deg(_satAzimuth));
-            }
+                : _gnssObs(std::move(gnssObs)),
+                  _obsIdx(obsIdx),
+                  _e_satPos(std::move(e_satPos)),
+                  _e_satVel(std::move(e_satVel)),
+                  _satClock(satClock) {}
 
             /// Receiver observation of the signal
             unordered_map<GnssObs::ObservationType, Observation> obs;
@@ -91,13 +80,39 @@ struct Observations
             /// @brief Satellite velocity in ECEF frame coordinates [m/s]
             [[nodiscard]] const Eigen::Vector3d& e_satVel() const { return _e_satVel; }
             /// @brief Position Line-of-sight unit vector in ECEF frame coordinates
-            [[nodiscard]] const Eigen::Vector3d& e_pLOS() const { return _e_pLOS; }
+            /// @param[in] e_recPos Receiver position in e frame
+            [[nodiscard]] Eigen::Vector3d e_pLOS(const Eigen::Vector3d& e_recPos) const
+            {
+                return e_calcLineOfSightUnitVector(e_recPos, _e_satPos);
+            }
             /// @brief Velocity Line-of-sight unit vector in ECEF frame coordinates
-            [[nodiscard]] const Eigen::Vector3d& e_vLOS() const { return _e_vLOS; }
+            /// @param[in] e_recPos Receiver position in e frame
+            /// @param[in] e_recVel Receiver velocity in e frame
+            [[nodiscard]] Eigen::Vector3d e_vLOS(const Eigen::Vector3d& e_recPos,
+                                                 const Eigen::Vector3d& e_recVel) const
+            {
+                return (_e_satVel - e_recVel) / (_e_satPos - e_recPos).norm();
+            }
             /// @brief Satellite Elevation [rad]
-            [[nodiscard]] const double& satElevation() const { return _satElevation; }
+            /// @param[in] e_recPos Receiver position in e frame
+            /// @param[in] lla_recPos Receiver position in lla frame
+            [[nodiscard]] double satElevation(const Eigen::Vector3d& e_recPos,
+                                              const Eigen::Vector3d& lla_recPos) const
+            {
+                Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recPos(0), lla_recPos(1))
+                                                          * e_pLOS(e_recPos);
+                return calcSatElevation(n_lineOfSightUnitVector);
+            }
             /// @brief Satellite Azimuth [rad]
-            [[nodiscard]] const double& satAzimuth() const { return _satAzimuth; }
+            /// @param[in] e_recPos Receiver position in e frame
+            /// @param[in] lla_recPos Receiver position in lla frame
+            [[nodiscard]] double satAzimuth(const Eigen::Vector3d& e_recPos,
+                                            const Eigen::Vector3d& lla_recPos) const
+            {
+                Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recPos(0), lla_recPos(1))
+                                                          * e_pLOS(e_recPos);
+                return calcSatAzimuth(n_lineOfSightUnitVector);
+            }
             /// @brief Satellite clock information
             [[nodiscard]] const Clock::Corrections& satClock() const { return _satClock; }
 
@@ -117,11 +132,7 @@ struct Observations
             size_t _obsIdx = 0;                                ///< Gnss observation data index
             Eigen::Vector3d _e_satPos;                         ///< Satellite position in ECEF frame coordinates [m] (has to be calculated per signal because of TGD)
             Eigen::Vector3d _e_satVel;                         ///< Satellite velocity in ECEF frame coordinates [m/s]
-            Eigen::Vector3d _e_pLOS;                           ///< Position Line-of-sight unit vector in ECEF frame coordinates
-            Eigen::Vector3d _e_vLOS;                           ///< Velocity Line-of-sight unit vector in ECEF frame coordinates
             Clock::Corrections _satClock;                      ///< Satellite clock information
-            double _satElevation = 0.0;                        ///< Satellite Elevation [rad]
-            double _satAzimuth = 0.0;                          ///< Satellite Azimuth [rad]
         };
 
         /// @brief Constructor
@@ -133,7 +144,9 @@ struct Observations
               _freqNum(freqNum) {}
 
         /// @brief Receiver specific data
-        std::vector<ReceiverSpecificData> recvObs;
+        ///
+        /// This is a shared_ptr so that e.g. the FGO can hold on to it over multiple epochs
+        std::unordered_map<size_t, std::shared_ptr<ReceiverSpecificData>> recvObs;
 
         /// @brief Satellite Navigation data
         [[nodiscard]] const std::shared_ptr<const SatNavData>& navData() const { return _navData; }
@@ -147,6 +160,7 @@ struct Observations
 
     unordered_map<SatSigId, SignalObservation> signals; ///< Observations and calculated data for each signal
 
+    std::unordered_set<size_t> receivers;                                             ///< Receivers included
     std::set<SatelliteSystem> systems;                                                ///< Satellite systems used
     std::unordered_set<SatId> satellites;                                             ///< Satellites used
     std::array<size_t, GnssObs::ObservationType_COUNT> nObservables{};                ///< Number of observables

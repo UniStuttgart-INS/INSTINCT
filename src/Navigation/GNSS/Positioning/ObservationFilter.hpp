@@ -13,7 +13,10 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -21,6 +24,7 @@
 #include <vector>
 
 #include <imgui.h>
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 
 #include "Navigation/GNSS/Core/Code.hpp"
@@ -55,7 +59,18 @@ class ObservationFilter
     explicit ObservationFilter(size_t receiverCount,
                                const std::unordered_set<GnssObs::ObservationType>& availableObsTypes = { GnssObs::Pseudorange, GnssObs::Carrier, GnssObs::Doppler },
                                std::unordered_set<GnssObs::ObservationType> neededObsTypes = {})
-        : _snrMask(receiverCount), _availableObsTypes(availableObsTypes), _neededObsTypes(std::move(neededObsTypes)), _usedObsTypes(availableObsTypes) {}
+        : _snrMask(receiverCount), _availableObsTypes(availableObsTypes), _neededObsTypes(std::move(neededObsTypes)), _usedObsTypes(availableObsTypes)
+    {
+        // Disable Geostationary satellites, as they not working correctly
+        for (const auto& satSys : SatelliteSystem::GetAll())
+        {
+            for (const auto& satNum : satSys.getSatellites())
+            {
+                if (SatId satId(satSys, satNum);
+                    satId.isGeo()) { _excludedSatellites.push_back(satId); }
+            }
+        }
+    }
 
     /// @brief Destructor
     ~ObservationFilter() = default;
@@ -135,124 +150,107 @@ class ObservationFilter
     };
 
     /// @brief Returns a list of satellites and observations filtered by GUI settings & NAV data available & ...)
-    /// @param[in] receivers List of receivers
+    /// @param[in] receiverType Receiver type index to filter
+    /// @param[in] e_posMarker Marker Position in ECEF frame [m]
+    /// @param[in] lla_posMarker Marker Position in LLA frame [rad, rad, m]
+    /// @param[in] gnssObs GNSS observation
     /// @param[in] gnssNavInfos Collection of navigation data providers
     /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @param[in] observations List of observations which will be filled. If you have multiple receivers, the observations list will be the same object
+    /// @param[in] filtered Optional Filtered object to get back the filtered signals
     /// @param[in] ignoreElevationMask Flag wether the elevation mask should be ignored
-    /// @return 0: List of satellite data; 1: List of observations
-    template<typename ReceiverType>
-    [[nodiscard]] std::pair<Observations, Filtered>
-        selectObservationsForCalculation(const std::array<Receiver<ReceiverType>, ReceiverType::ReceiverType_COUNT>& receivers,
-                                         const std::vector<const GnssNavInfo*>& gnssNavInfos,
-                                         [[maybe_unused]] const std::string& nameId,
-                                         bool ignoreElevationMask = false)
+    template<typename ReceiverType, typename DerivedPe, typename DerivedPn>
+    void selectObservationsForCalculation(ReceiverType receiverType,
+                                          const Eigen::MatrixBase<DerivedPe>& e_posMarker,
+                                          const Eigen::MatrixBase<DerivedPn>& lla_posMarker,
+                                          const std::shared_ptr<const GnssObs>& gnssObs,
+                                          const std::vector<const GnssNavInfo*>& gnssNavInfos,
+                                          Observations& observations,
+                                          Filtered* filtered,
+                                          [[maybe_unused]] const std::string& nameId,
+                                          bool ignoreElevationMask = false)
     {
-        Observations observations;
-        Filtered filtered;
-        observations.signals.reserve(receivers.front().gnssObs->data.size());
+        bool firstReceiver = observations.receivers.empty();
+        observations.receivers.insert(receiverType);
 
-        std::array<std::unordered_set<SatId>, GnssObs::ObservationType_COUNT> nMeasUniqueSat;
+        observations.signals.reserve(gnssObs->data.size());
 
-        for (const auto& obsData : receivers.front().gnssObs->data)
+        for (size_t obsIdx = 0; obsIdx < gnssObs->data.size(); obsIdx++)
         {
-            SatId satId = obsData.satSigId.toSatId();
+            const GnssObs::ObservationData& obsData = gnssObs->data.at(obsIdx);
+            SatSigId satSigId = obsData.satSigId;
+            SatId satId = satSigId.toSatId();
+            LOG_DATA("{}: Considering [{}] for receiver {}", nameId, satSigId, receiverType);
 
             // Decrease the temporary exclude counter
-            if (_temporarilyExcludedSignalsSatellites.contains(obsData.satSigId))
+            if (firstReceiver && _temporarilyExcludedSignalsSatellites.contains(satSigId))
             {
-                if (_temporarilyExcludedSignalsSatellites.at(obsData.satSigId)-- == 0)
+                if (_temporarilyExcludedSignalsSatellites.at(satSigId)-- == 0)
                 {
-                    _temporarilyExcludedSignalsSatellites.erase(obsData.satSigId);
+                    _temporarilyExcludedSignalsSatellites.erase(satSigId);
                 }
             }
 
-            if (!(obsData.satSigId.freq() & _filterFreq))
+            if (!(satSigId.freq() & _filterFreq))
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI frequency filter", nameId, obsData.satSigId);
-                filtered.frequencyFilter.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs due to GUI frequency filter", nameId, satSigId);
+                if (filtered) { filtered->frequencyFilter.push_back(satSigId); }
                 continue;
             }
-            if (!(obsData.satSigId.code & _filterCode))
+            if (!(satSigId.code & _filterCode))
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI code filter", nameId, obsData.satSigId);
-                filtered.codeFilter.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs due to GUI code filter", nameId, satSigId);
+                if (filtered) { filtered->codeFilter.push_back(satSigId); }
                 continue;
             }
             if (std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) != _excludedSatellites.end())
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI excluded satellites", nameId, obsData.satSigId);
-                filtered.excludedSatellites.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs due to GUI excluded satellites", nameId, satSigId);
+                if (filtered) { filtered->excludedSatellites.push_back(satSigId); }
                 continue;
             }
-            if (_temporarilyExcludedSignalsSatellites.contains(obsData.satSigId))
+            if (_temporarilyExcludedSignalsSatellites.contains(satSigId))
             {
-                LOG_DATA("{}:  [{}] Skipping obs because temporarily excluded signal", nameId, obsData.satSigId);
-                filtered.tempExcludedSignal.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs because temporarily excluded signal", nameId, satSigId);
+                if (filtered) { filtered->tempExcludedSignal.push_back(satSigId); }
                 continue;
             }
 
-            unordered_map<GnssObs::ObservationType, size_t> availableObservations;
-            if (std::any_of(receivers.begin(), receivers.end(),
-                            [&](const Receiver<ReceiverType>& recv) {
-                                auto obsDataOther = std::find_if(recv.gnssObs->data.begin(), recv.gnssObs->data.end(),
-                                                                 [&obsData](const GnssObs::ObservationData& obsDataOther) {
-                                                                     return obsDataOther.satSigId == obsData.satSigId;
-                                                                 });
-
-                                if (obsDataOther == recv.gnssObs->data.end())
-                                {
-                                    LOG_DATA("{}:  [{}] Receiver '{}' did not observe the signal.", nameId, obsData.satSigId, recv.type);
-                                    return true;
-                                } // All receivers must have this observation
-
-                                for (const auto& obsType : _usedObsTypes)
-                                {
-                                    switch (obsType)
-                                    {
-                                    case GnssObs::Pseudorange:
-                                        if (obsDataOther->pseudorange) { availableObservations[obsType]++; }
-                                        break;
-                                    case GnssObs::Carrier:
-                                        if (obsDataOther->carrierPhase) { availableObservations[obsType]++; }
-                                        break;
-                                    case GnssObs::Doppler:
-                                        if (obsDataOther->doppler) { availableObservations[obsType]++; }
-                                        break;
-                                    case GnssObs::ObservationType_COUNT:
-                                        break;
-                                    }
-                                }
-                                return false;
-                            }))
+            if (!obsData.pseudorange)
             {
-                LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, obsData.satSigId);
-                filtered.notAllReceiversObserved.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs because no pseudorange measurement (needed for satellite position calculation)", nameId, satSigId);
+                if (filtered) { filtered->noPseudorangeMeasurement.push_back(satSigId); }
                 continue;
             }
 
-            if (std::any_of(receivers.begin(), receivers.end(),
-                            [&](const Receiver<ReceiverType>& recv) {
-                                auto obsDataOther = std::find_if(recv.gnssObs->data.begin(), recv.gnssObs->data.end(),
-                                                                 [&obsData](const GnssObs::ObservationData& obsDataOther) {
-                                                                     return obsDataOther.satSigId == obsData.satSigId;
-                                                                 });
-                                return !obsDataOther->pseudorange;
-                            }))
+            if (!firstReceiver && !observations.signals.contains(satSigId)) // TODO:
             {
-                LOG_DATA("{}:  [{}] Skipping obs because no pseudorange measurement (needed for satellite position calculation)", nameId, obsData.satSigId);
-                filtered.noPseudorangeMeasurement.push_back(obsData.satSigId);
-                continue;
+                bool signalWithSameFrequencyFound = false;
+                for (const auto& signals : observations.signals)
+                {
+                    if (signals.first.toSatId() == satId && signals.first.freq() == satSigId.freq() // e.g. Rover has [G5Q], but Base has [G5X]
+                        && signals.second.recvObs.size() != observations.receivers.size())          // But not: Rover has [G5Q], but Base has [G5Q] and [G5X]
+                    {
+                        LOG_DATA("{}:  [{}] Not observed by all receivers, but other receivers have [{}]. Treating as such.",
+                                 nameId, satSigId, signals.first);
+                        satSigId = signals.first;
+                        satId = satSigId.toSatId();
+                        signalWithSameFrequencyFound = true;
+                        break;
+                    }
+                }
+                if (!signalWithSameFrequencyFound)
+                {
+                    LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
+                    if (filtered) { filtered->notAllReceiversObserved.push_back((satSigId)); }
+                    continue;
+                }
             }
-
-            LOG_DATA("{}:  [{}]   Observed psr {}x, carrier {}x, doppler {}x", nameId, obsData.satSigId,
-                     availableObservations.contains(GnssObs::Pseudorange) ? availableObservations.at(GnssObs::Pseudorange) : 0,
-                     availableObservations.contains(GnssObs::Carrier) ? availableObservations.at(GnssObs::Carrier) : 0,
-                     availableObservations.contains(GnssObs::Doppler) ? availableObservations.at(GnssObs::Doppler) : 0);
 
             std::shared_ptr<NAV::SatNavData> satNavData = nullptr;
-            for (const auto& gnssNavInfo : gnssNavInfos)
+            for (const auto* gnssNavInfo : gnssNavInfos)
             {
-                auto satNav = gnssNavInfo->searchNavigationData(satId, receivers.front().gnssObs->insTime);
+                auto satNav = gnssNavInfo->searchNavigationData(satId, gnssObs->insTime);
                 if (satNav && satNav->isHealthy())
                 {
                     satNavData = satNav;
@@ -261,8 +259,8 @@ class ObservationFilter
             }
             if (satNavData == nullptr)
             {
-                LOG_DATA("{}:  [{}] Skipping obs because no navigation data available to calculaten the satellite position", nameId, obsData.satSigId);
-                filtered.navigationDataMissing.push_back(obsData.satSigId);
+                LOG_DATA("{}:  [{}] Skipping obs because no navigation data available to calculaten the satellite position", nameId, satSigId);
+                if (filtered) { filtered->navigationDataMissing.push_back(satSigId); }
                 continue;
             }
 
@@ -275,97 +273,136 @@ class ObservationFilter
                 }
             }
 
-            Observations::SignalObservation sigObs(satNavData, freqNum);
+            auto satClk = satNavData->calcClockCorrections(gnssObs->insTime,
+                                                           obsData.pseudorange->value,
+                                                           satSigId.freq());
+            auto satPosVel = satNavData->calcSatellitePosVel(satClk.transmitTime);
 
-            bool skipObservation = false;
-            for (const auto& recv : receivers)
+            auto recvData = std::make_shared<Observations::SignalObservation::ReceiverSpecificData>(
+                gnssObs, obsIdx,
+                satPosVel.e_pos, satPosVel.e_vel, satClk);
+
+            if (!ignoreElevationMask)
             {
-                auto recvObsData = std::find_if(recv.gnssObs->data.begin(), recv.gnssObs->data.end(),
-                                                [&obsData](const GnssObs::ObservationData& recvObsData) {
-                                                    return recvObsData.satSigId == obsData.satSigId;
-                                                });
-                auto satClk = satNavData->calcClockCorrections(recv.gnssObs->insTime,
-                                                               recvObsData->pseudorange->value,
-                                                               recvObsData->satSigId.freq());
-                auto satPosVel = satNavData->calcSatellitePosVel(satClk.transmitTime);
-
-                LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, obsData.satSigId, recv.type);
-                sigObs.recvObs.emplace_back(recv.gnssObs, static_cast<size_t>(recvObsData - recv.gnssObs->data.begin()),
-                                            recv.e_posMarker, recv.lla_posMarker, recv.e_vel,
-                                            satPosVel.e_pos, satPosVel.e_vel, satClk);
-
-                if (!ignoreElevationMask)
+                const auto& satElevation = recvData->satElevation(e_posMarker, lla_posMarker);
+                if (satElevation < _elevationMask)
                 {
-                    const auto& satElevation = sigObs.recvObs.back().satElevation();
-                    if (satElevation < _elevationMask)
-                    {
-                        LOG_DATA("{}: Signal {} is skipped because of elevation mask. ({} < {})", nameId, obsData.satSigId,
-                                 rad2deg(satElevation), rad2deg(_elevationMask));
-                        skipObservation = true;
-                        filtered.elevationMaskTriggered.emplace_back(obsData.satSigId, satElevation);
-                        break;
-                    }
-                    if (recvObsData->CN0 // If no CN0 available, we use the signal
-                        && !_snrMask
-                                .at(_sameSnrMaskForAllReceivers ? static_cast<ReceiverType>(0) : recv.type)
-                                .checkSNRMask(obsData.satSigId.freq(), satElevation, recvObsData->CN0.value()))
-                    {
-                        LOG_DATA("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
-                                 nameId, receivers.front().gnssObs->insTime.toYMDHMS(GPST), obsData.satSigId, recv.type, recvObsData->CN0.value());
-                        skipObservation = true;
-                        filtered.snrMaskTriggered.emplace_back(obsData.satSigId, *recvObsData->CN0);
-                        break;
-                    }
+                    LOG_DATA("{}: Signal {} is skipped because of elevation mask. ({} < {})", nameId, satSigId,
+                             rad2deg(satElevation), rad2deg(_elevationMask));
+                    if (filtered) { filtered->elevationMaskTriggered.emplace_back(satSigId, satElevation); }
+                    continue;
                 }
-            }
-            if (skipObservation) { continue; }
-
-            for (const auto& recv : receivers)
-            {
-                auto& recvObsData = sigObs.recvObs.at(recv.type);
-
-                for (const auto& obsType : _usedObsTypes)
+                if (obsData.CN0 // If no CN0 available, we do not check the SNR mask, so we use the signal
+                    && !_snrMask
+                            .at(_sameSnrMaskForAllReceivers ? static_cast<ReceiverType>(0) : receiverType)
+                            .checkSNRMask(satSigId.freq(), satElevation, obsData.CN0.value()))
                 {
-                    if (availableObservations.contains(obsType) && availableObservations.at(obsType) == receivers.size())
-                    {
-                        observations.nObservables.at(obsType)++;
-                        nMeasUniqueSat.at(obsType).insert(satId);
-                        switch (obsType)
-                        {
-                        case GnssObs::Pseudorange:
-                            recvObsData.obs[obsType].measurement = recvObsData.gnssObsData().pseudorange->value;
-                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, obsData.satSigId,
-                                     obsType, recv.type, recvObsData.obs[obsType].measurement);
-                            break;
-                        case GnssObs::Carrier:
-                            recvObsData.obs[obsType].measurement = InsConst<>::C / obsData.satSigId.freq().getFrequency(freqNum)
-                                                                   * recvObsData.gnssObsData().carrierPhase->value;
-                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, obsData.satSigId,
-                                     obsType, recv.type, recvObsData.obs[obsType].measurement, recvObsData.gnssObsData().carrierPhase->value);
-                            break;
-                        case GnssObs::Doppler:
-                            recvObsData.obs[obsType].measurement = doppler2rangeRate(recvObsData.gnssObsData().doppler.value(),
-                                                                                     obsData.satSigId.freq(),
-                                                                                     freqNum);
-                            LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, obsData.satSigId,
-                                     obsType, recv.type, recvObsData.obs[obsType].measurement, recvObsData.gnssObsData().doppler.value());
-                            break;
-                        case GnssObs::ObservationType_COUNT:
-                            break;
-                        }
-                    }
+                    LOG_DATA("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
+                             nameId, gnssObs->insTime.toYMDHMS(GPST), satSigId, receiverType, *obsData.CN0);
+                    if (filtered) { filtered->snrMaskTriggered.emplace_back(satSigId, *obsData.CN0); }
+                    continue;
                 }
             }
 
-            observations.systems.insert(satId.satSys);
-            observations.satellites.insert(satId);
-            observations.signals.insert(std::make_pair(obsData.satSigId, sigObs));
+            for (const GnssObs::ObservationType& obsType : _usedObsTypes)
+            {
+                auto removeObsTypeIfExist = [&]() {
+                    if (!observations.signals.contains(satSigId)) { return; }
+                    std::for_each(observations.signals.at(satSigId).recvObs.begin(),
+                                  observations.signals.at(satSigId).recvObs.end(),
+                                  [&](auto& r) {
+                                      if (r.second->obs.contains(obsType))
+                                      {
+                                          LOG_DATA("{}:  [{}] Erasing previously added obs '{}' on this signal.", nameId, satSigId, obsType);
+                                          r.second->obs.erase(obsType);
+                                      }
+                                  });
+                };
+
+                if (!firstReceiver
+                    && std::any_of(observations.signals.at(satSigId).recvObs.begin(),
+                                   observations.signals.at(satSigId).recvObs.end(),
+                                   [&](const auto& r) {
+                                       return !r.second->obs.contains(obsType);
+                                   }))
+                {
+                    LOG_DATA("{}:  [{}][{}] Skipping '{}' measurement. Not all receivers have this observation.", nameId, receiverType, satSigId, obsType);
+                    removeObsTypeIfExist();
+                    continue;
+                }
+                switch (obsType)
+                {
+                case GnssObs::Pseudorange:
+                    if (recvData->gnssObsData().pseudorange)
+                    {
+                        recvData->obs[obsType].measurement = recvData->gnssObsData().pseudorange->value;
+                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, satSigId,
+                                 obsType, receiverType, recvData->obs[obsType].measurement);
+                    }
+                    else { removeObsTypeIfExist(); }
+                    break;
+                case GnssObs::Carrier:
+                    if (recvData->gnssObsData().carrierPhase)
+                    {
+                        recvData->obs[obsType].measurement = InsConst::C / satSigId.freq().getFrequency(freqNum)
+                                                             * recvData->gnssObsData().carrierPhase->value;
+                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, satSigId,
+                                 obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().carrierPhase->value);
+                    }
+                    else { removeObsTypeIfExist(); }
+                    break;
+                case GnssObs::Doppler:
+                    if (recvData->gnssObsData().doppler)
+                    {
+                        recvData->obs[obsType].measurement = doppler2rangeRate(recvData->gnssObsData().doppler.value(),
+                                                                               satSigId.freq(),
+                                                                               freqNum);
+                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, satSigId,
+                                 obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().doppler.value());
+                    }
+                    else { removeObsTypeIfExist(); }
+                    break;
+                case GnssObs::ObservationType_COUNT:
+                    break;
+                }
+            }
+
+            if (!firstReceiver
+                && std::any_of(observations.signals.at(satSigId).recvObs.begin(),
+                               observations.signals.at(satSigId).recvObs.end(),
+                               [&](const auto& r) {
+                                   return r.second->obs.empty();
+                               }))
+            {
+                LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
+                if (filtered) { filtered->notAllReceiversObserved.push_back(satSigId); }
+                observations.signals.erase(satSigId);
+                continue;
+            }
+            LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, satSigId, receiverType);
+            if (!observations.signals.contains(satSigId))
+            {
+                observations.signals.insert(std::make_pair(satSigId,
+                                                           Observations::SignalObservation{ satNavData, freqNum }));
+            }
+            observations.signals.at(satSigId).recvObs.emplace(receiverType, recvData);
         }
-
-        for (size_t obsType = 0; obsType < GnssObs::ObservationType_COUNT; obsType++)
+        std::vector<SatSigId> sigToRemove;
+        for (const auto& [satSigId, sigObs] : observations.signals)
         {
-            observations.nObservablesUniqueSatellite.at(obsType) = nMeasUniqueSat.at(obsType).size();
+            if (sigObs.recvObs.size() != observations.receivers.size())
+            {
+                sigToRemove.push_back(satSigId);
+            }
         }
+        for (const auto& satSigId : sigToRemove)
+        {
+            LOG_DATA("{}: [{}] Removing signal because not observed by all receivers.", nameId, satSigId);
+            if (filtered) { filtered->notAllReceiversObserved.push_back(satSigId); }
+            observations.signals.erase(satSigId);
+        }
+
+        observations.recalcObservableCounts();
 
 #if LOG_LEVEL <= LOG_LEVEL_DATA
         LOG_DATA("{}: usedSatSystems = [{}]", nameId, joinToString(observations.systems));
@@ -374,7 +411,6 @@ class ObservationFilter
         for (size_t obsType = 0; obsType < GnssObs::ObservationType_COUNT; obsType++)
         {
             auto& nMeas = observations.nObservables.at(obsType);
-            nMeas /= receivers.size();
             nMeasStr += fmt::format("{} {}, ", nMeas, static_cast<GnssObs::ObservationType>(obsType));
             nMeasTotal += nMeas;
         }
@@ -390,8 +426,8 @@ class ObservationFilter
             satData[obs.first.toSatId()].second |= obs.first.code;
             for (size_t obsType = 0; obsType < GnssObs::ObservationType_COUNT; obsType++)
             {
-                if (std::all_of(obs.second.recvObs.begin(), obs.second.recvObs.end(), [&obsType](const Observations::SignalObservation::ReceiverSpecificData& recvObs) {
-                        return recvObs.obs.contains(static_cast<GnssObs::ObservationType>(obsType));
+                if (std::all_of(obs.second.recvObs.begin(), obs.second.recvObs.end(), [&obsType](const auto& recvObs) {
+                        return recvObs.second->obs.contains(static_cast<GnssObs::ObservationType>(obsType));
                     }))
                 {
                     sigData[obs.first].insert(static_cast<GnssObs::ObservationType>(obsType));
@@ -414,8 +450,6 @@ class ObservationFilter
             }
         }
 #endif
-
-        return { observations, filtered };
     }
 
     /// @brief Shows the GUI input to select the options
@@ -453,7 +487,7 @@ class ObservationFilter
             changed = true;
         }
 
-        for (size_t i = 0; i < ReceiverType::ReceiverType_COUNT; ++i)
+        for (size_t i = 0; i < _snrMask.size(); ++i)
         {
             if (i != 0)
             {
@@ -466,7 +500,7 @@ class ObservationFilter
             }
             if (i != 0 && _sameSnrMaskForAllReceivers) { ImGui::EndDisabled(); }
         }
-        if (ReceiverType::ReceiverType_COUNT > 1)
+        if (_snrMask.size() > 1)
         {
             ImGui::SameLine();
             if (ImGui::Checkbox(fmt::format("Use same SNR for all receivers##{}", id).c_str(), &_sameSnrMaskForAllReceivers))
@@ -627,7 +661,26 @@ class ObservationFilter
             obj._filterFreq = Frequency_(value);
         }
         if (j.contains("codes")) { j.at("codes").get_to(obj._filterCode); }
-        if (j.contains("excludedSatellites")) { j.at("excludedSatellites").get_to(obj._excludedSatellites); }
+        if (j.contains("excludedSatellites"))
+        {
+            j.at("excludedSatellites").get_to(obj._excludedSatellites);
+            // Disable Geostationary satellites, as they not working correctly
+            for (const auto& satSys : SatelliteSystem::GetAll())
+            {
+                for (const auto& satNum : satSys.getSatellites())
+                {
+                    if (SatId satId(satSys, satNum);
+                        satId.isGeo()
+                        && std::find(obj._excludedSatellites.begin(),
+                                     obj._excludedSatellites.end(),
+                                     satId)
+                               == obj._excludedSatellites.end())
+                    {
+                        obj._excludedSatellites.push_back(satId);
+                    }
+                }
+            }
+        }
         if (j.contains("elevationMask"))
         {
             j.at("elevationMask").get_to(obj._elevationMask);

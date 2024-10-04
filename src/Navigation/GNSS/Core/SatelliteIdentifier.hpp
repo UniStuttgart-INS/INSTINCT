@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <cstdint>
+#include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
@@ -55,6 +57,9 @@ struct SatId
         return satSys == rhs.satSys ? satNum < rhs.satNum
                                     : satSys < rhs.satSys;
     }
+
+    /// Checks if the satellite is geostationary
+    [[nodiscard]] bool isGeo() const;
 };
 
 /// @brief Identifies a satellite signal (satellite frequency and number)
@@ -105,6 +110,12 @@ struct SatSigId
         return code.getFrequency();
     }
 };
+
+/// @brief Less than comparison from string representation
+/// @param[in] lhs Left hand side of the operator
+/// @param[in] rhs Right hand side of the operator
+/// @return True if lhs < rhs
+bool lessCompareSatSigId(const std::string& lhs, const std::string& rhs);
 
 /// @brief Converts the provided link into a json object
 /// @param[out] j Json object which gets filled with the info

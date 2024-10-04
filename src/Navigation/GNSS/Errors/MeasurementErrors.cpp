@@ -15,6 +15,7 @@
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "Navigation/GNSS/Functions.hpp"
 
@@ -119,8 +120,8 @@ void GnssMeasurementErrorModel::updateStdDevCurvePlot(Model model)
 
 bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
 {
-    constexpr float UNIT_WIDTH = 100.0F;
-    constexpr float BUTTON_WIDTH = 25.0F;
+    const float UNIT_WIDTH = 100.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float BUTTON_WIDTH = 25.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(width - BUTTON_WIDTH - 2 * ImGui::GetStyle().ItemInnerSpacing.x);
     bool changed = gui::widgets::EnumCombo(fmt::format("##GNSS Measurement Error Model EnumCombo {}", id).c_str(), _model);
@@ -133,24 +134,24 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
     ImGui::TextUnformatted("Weighting Function");
 
     int combo_current_item = 0;
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
                                                  &_carrierStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
                                                  &_codeStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
 
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
                                                  &_dopplerStdDev, &combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
     ImGui::SameLine();
     ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(_dopplerStdDev, G01, -128)));
 
     if (ImGui::BeginPopup(fmt::format("{} GnssMeasurementError Popup", id).c_str()))
     {
-        constexpr float PLOT_WIDTH = 500.0F;
-        constexpr float PLOT_HEIGHT = 450.0F;
-        constexpr float TABLE_WIDTH = 440.0F;
-        constexpr float ITEM_WIDTH = 160.0F;
+        const float PLOT_WIDTH = 500.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float PLOT_HEIGHT = 450.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float TABLE_WIDTH = 440.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float ITEM_WIDTH = 160.0F * gui::NodeEditorApplication::windowFontRatio();
 
-        constexpr float WINDOW_HEIGHT = PLOT_HEIGHT + 30.0F;
+        const float WINDOW_HEIGHT = PLOT_HEIGHT + 30.0F * gui::NodeEditorApplication::windowFontRatio();
 
         if (ImGui::BeginChild("left pane", ImVec2(PLOT_WIDTH, WINDOW_HEIGHT), false, ImGuiWindowFlags_NoScrollbar))
         {
@@ -167,7 +168,7 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
                 }
                 ImPlot::EndPlot();
             }
-            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 40.0F);
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 40.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::SliderDouble(fmt::format("c/n₀##{}", id).c_str(), &_plotCN0, 0.0, 60.0, "%.2f dB-Hz"))
             {
                 updateStdDevCurvePlot(Model::SINE_CN0);

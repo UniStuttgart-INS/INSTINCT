@@ -70,7 +70,7 @@ template<typename DerivedA, typename DerivedB>
 /// @return Centrifugal acceleration in the Earth coordinate frame in [m/s^2]
 template<typename DerivedA, typename DerivedB = DerivedA>
 [[nodiscard]] Eigen::Vector3<typename DerivedA::Scalar> e_calcCentrifugalAcceleration(const Eigen::MatrixBase<DerivedA>& e_position,
-                                                                                      const Eigen::MatrixBase<DerivedB>& e_omega_ie = InsConst<typename DerivedB::Scalar>::e_omega_ie)
+                                                                                      const Eigen::MatrixBase<DerivedB>& e_omega_ie = InsConst::e_omega_ie)
 {
     // ω_ie_e ⨯ [ω_ie_e ⨯ x_e]
     return e_omega_ie.cross(e_omega_ie.cross(e_position));

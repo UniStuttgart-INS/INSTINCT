@@ -30,8 +30,8 @@ SOFTWARE.
 #include <iomanip>
 #include <sstream>
 
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
 
@@ -214,5 +214,7 @@ std::string SHA256::toString(const uint8_t* digest)
 
 } // namespace NAV
 
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 // NOLINTEND

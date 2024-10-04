@@ -57,6 +57,7 @@ void NAV::ConfigManager::initialize()
             ("global-log-level",  bpo::value<std::string>()->default_value("trace"),                "Global log level of all sinks (possible values: trace/debug/info/warning/error/critical/off" )
             ("console-log-level", bpo::value<std::string>()->default_value("info"),                 "Log level on the console      (possible values: trace/debug/info/warning/error/critical/off" )
             ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file     (possible values: trace/debug/info/warning/error/critical/off" )
+            ("flush-log-level",    bpo::value<std::string>()->default_value("info"),               "Log level to flush on         (possible values: trace/debug/info/warning/error/critical/off" )
             ("log-filter",        bpo::value<std::string>(),                                        "Filter/Regex for log messages"                                                               )
         ;
         // clang-format on
@@ -112,7 +113,7 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
 {
     LOG_DEBUG("{} arguments were provided over the command line", argc);
 
-    for (const char* logger : { "global-log-level", "console-log-level", "file-log-level" })
+    for (const char* logger : { "global-log-level", "console-log-level", "file-log-level", "flush-log-level" })
     {
         if (vm[logger].as<std::string>() != "trace"
             && vm[logger].as<std::string>() != "debug"

@@ -35,8 +35,9 @@ bool elementsCutted = false;
 /// @brief Clipboard storage
 json clipboard;
 
-/// @brief Maximum size of the action list
-constexpr size_t ACTION_LIST_MAX_SIZE = 20;
+// /// @brief Maximum size of the action list
+// constexpr size_t ACTION_LIST_MAX_SIZE = 20;
+
 /// @brief Current action in the action list
 size_t currentAction = 0;
 /// @brief List of actions performed by the user
@@ -310,97 +311,97 @@ void NAV::gui::clearLastActionList()
     currentAction = 0;
 }
 
-void restoreAction(const json& target)
+void restoreAction(const json& /* target */)
 {
-    // TODO: Compare against current config and only load the nodes/links which were changed
-    // json current;
-    // for (const auto& node : nm::m_Nodes())
+    // // TODO: Compare against current config and only load the nodes/links which were changed
+    // // json current;
+    // // for (const auto& node : nm::m_Nodes())
+    // // {
+    // //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+    // //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+    // // }
+    // // for (const auto& link : nm::m_Links())
+    // // {
+    // //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    // // }
+
+    // NAV::flow::saveLastActions = false;
+    // nm::DeleteAllNodes();
+
+    // NAV::flow::LoadJson(target);
+    // if (!target["unsavedChanges"].get<bool>())
     // {
-    //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
-    //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+    //     NAV::flow::DiscardChanges();
     // }
-    // for (const auto& link : nm::m_Links())
+    // else
     // {
-    //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    //     NAV::flow::ApplyChanges();
     // }
 
-    NAV::flow::saveLastActions = false;
-    nm::DeleteAllNodes();
+    // NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
+    // NAV::flow::saveLastActions = true;
 
-    NAV::flow::LoadJson(target);
-    if (!target["unsavedChanges"].get<bool>())
-    {
-        NAV::flow::DiscardChanges();
-    }
-    else
-    {
-        NAV::flow::ApplyChanges();
-    }
-
-    NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
-    NAV::flow::saveLastActions = true;
-
-    nm::InitializeAllNodesAsync();
+    // nm::InitializeAllNodesAsync();
 }
 
 void NAV::gui::undoLastAction()
 {
-    LOG_DEBUG("Undoing last action");
+    // LOG_DEBUG("Undoing last action");
 
-    restoreAction(actionList.at(--currentAction));
+    // restoreAction(actionList.at(--currentAction));
 }
 
 void NAV::gui::redoLastAction()
 {
-    LOG_DEBUG("Redoing last action");
+    // LOG_DEBUG("Redoing last action");
 
-    restoreAction(actionList.at(++currentAction));
+    // restoreAction(actionList.at(++currentAction));
 }
 
 void NAV::gui::saveLastAction()
 {
-    LOG_DEBUG("Saving last action to action list");
+    // LOG_DEBUG("Saving last action to action list");
 
-    // TODO: Check if event was triggered by a slider and discard the save, because it triggers it every step
+    // // TODO: Check if event was triggered by a slider and discard the save, because it triggers it every step
 
-    if (actionList.size() > ACTION_LIST_MAX_SIZE) // List is full
-    {
-        LOG_TRACE("Action list full, therefore discarding first element.");
-        actionList.pop_front();
-        if (currentAction)
-        {
-            currentAction--;
-        }
-    }
-    while (currentAction + 1 < actionList.size())
-    {
-        LOG_TRACE("Discarding element which is past the current action");
-        actionList.pop_back();
-    }
+    // if (actionList.size() > ACTION_LIST_MAX_SIZE) // List is full
+    // {
+    //     LOG_TRACE("Action list full, therefore discarding first element.");
+    //     actionList.pop_front();
+    //     if (currentAction)
+    //     {
+    //         currentAction--;
+    //     }
+    // }
+    // while (currentAction + 1 < actionList.size())
+    // {
+    //     LOG_TRACE("Discarding element which is past the current action");
+    //     actionList.pop_back();
+    // }
 
-    json j;
-    for (const auto* node : nm::m_Nodes())
-    {
-        j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
-        j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+    // json j;
+    // for (const auto* node : nm::m_Nodes())
+    // {
+    //     j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+    //     j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
 
-        for (const auto& outputPin : node->outputPins)
-        {
-            for (const auto& link : outputPin.links)
-            {
-                auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
-                j["id"] = size_t(link.linkId);
-                j["startPinId"] = size_t(outputPin.id);
-                j["endPinId"] = size_t(link.connectedPinId);
-            }
-        }
-    }
+    //     for (const auto& outputPin : node->outputPins)
+    //     {
+    //         for (const auto& link : outputPin.links)
+    //         {
+    //             auto& j = clipboard["links"]["link-" + std::to_string(size_t(link.linkId))];
+    //             j["id"] = size_t(link.linkId);
+    //             j["startPinId"] = size_t(outputPin.id);
+    //             j["endPinId"] = size_t(link.connectedPinId);
+    //         }
+    //     }
+    // }
 
-    j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
+    // j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
 
-    if (!actionList.empty())
-    {
-        currentAction++;
-    }
-    actionList.push_back(j);
+    // if (!actionList.empty())
+    // {
+    //     currentAction++;
+    // }
+    // actionList.push_back(j);
 }

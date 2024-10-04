@@ -70,8 +70,6 @@ class ImuSimulator : public Imu
     bool resetNode() override;
 
   private:
-    using Scalar = long double; ///< Precision of the ImuSimulator and all underlying types
-
     constexpr static size_t INPUT_PORT_INDEX_CSV = 0;          ///< @brief Object (CsvData)
     constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;     ///< @brief Flow (ImuObs)
     constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 1; ///< @brief Flow (PosVelAtt)
@@ -98,7 +96,7 @@ class ImuSimulator : public Imu
     /// @param[in] time Current simulation time
     /// @param[in] lla_position Current position
     /// @return True if it should be stopped
-    bool checkStopCondition(Scalar time, const Eigen::Vector3<Scalar>& lla_position);
+    bool checkStopCondition(double time, const Eigen::Vector3d& lla_position);
 
     // ###########################################################################################################
 
@@ -220,7 +218,7 @@ class ImuSimulator : public Imu
     double _simulationDuration = 5 * 60;
 
     /// Duration from the CSV file in [s]
-    Scalar _csvDuration = 0;
+    double _csvDuration = 0;
 
     /// Distance in [m] to the start position to stop the simulation
     double _linearTrajectoryDistanceForStop = 100;
@@ -259,24 +257,24 @@ class ImuSimulator : public Imu
     /// @param[in] line Line with data from the csv
     /// @param[in] description Description of the data
     /// @return Position in ECEF coordinates in [m] or NaN if data not found
-    [[nodiscard]] Eigen::Vector3<Scalar> e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
+    [[nodiscard]] Eigen::Vector3d e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
 
     /// @brief Get the Attitude quaternion n_quat_b from a CSV line
     /// @param[in] line Line with data from the csv
     /// @param[in] description Description of the data
     /// @return Attitude quaternion n_quat_b or NaN if data not found
-    static Eigen::Quaternion<Scalar> n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description);
+    static Eigen::Quaterniond n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description);
 
     /// Assign a variable that holds the Spline information
     struct
     {
-        Scalar sampleInterval = 0.03; ///< Spline sample interval
-        CubicSpline<Scalar> x;        ///< ECEF X Position [m]
-        CubicSpline<Scalar> y;        ///< ECEF Y Position [m]
-        CubicSpline<Scalar> z;        ///< ECEF Z Position [m]
-        CubicSpline<Scalar> roll;     ///< Roll angle [rad]
-        CubicSpline<Scalar> pitch;    ///< Pitch angle [rad]
-        CubicSpline<Scalar> yaw;      ///< Yaw angle [rad]
+        double sampleInterval = 0.03;   ///< Spline sample interval
+        CubicSpline<long double> x;     ///< ECEF X Position [m]
+        CubicSpline<long double> y;     ///< ECEF Y Position [m]
+        CubicSpline<long double> z;     ///< ECEF Z Position [m]
+        CubicSpline<long double> roll;  ///< Roll angle [rad]
+        CubicSpline<long double> pitch; ///< Pitch angle [rad]
+        CubicSpline<long double> yaw;   ///< Yaw angle [rad]
     } _splines;
 
     /// @brief Initializes the spline values
@@ -291,36 +289,36 @@ class ImuSimulator : public Imu
     uint64_t _gnssUpdateCnt = 0.0;
 
     /// Update rate for the internal solution of linear movement in [Hz]
-    static constexpr Scalar INTERNAL_LINEAR_UPDATE_FREQUENCY = 1000;
+    static constexpr double INTERNAL_LINEAR_UPDATE_FREQUENCY = 1000;
 
     /// Last time the IMU message was calculated in [s]
-    Scalar _imuLastUpdateTime = 0.0;
+    double _imuLastUpdateTime = 0.0;
     /// Last time the GNSS message was calculated in [s]
-    Scalar _gnssLastUpdateTime = 0.0;
+    double _gnssLastUpdateTime = 0.0;
     /// Last calculated position for the IMU in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
-    Eigen::Vector3<Scalar> _lla_imuLastLinearPosition = Eigen::Vector3<Scalar>::Zero();
+    Eigen::Vector3d _lla_imuLastLinearPosition = Eigen::Vector3d::Zero();
     /// Last calculated position for the GNSS in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
-    Eigen::Vector3<Scalar> _lla_gnssLastLinearPosition = Eigen::Vector3<Scalar>::Zero();
+    Eigen::Vector3d _lla_gnssLastLinearPosition = Eigen::Vector3d::Zero();
     /// Last calculated acceleration measurement in platform coordinates [m/s²]
-    Eigen::Vector3<Scalar> _p_lastImuAccelerationMeas = Eigen::Vector3<Scalar>::Ones() * std::nan("");
+    Eigen::Vector3d _p_lastImuAccelerationMeas = Eigen::Vector3d::Ones() * std::nan("");
     /// Last calculated angular rate measurement in platform coordinates [rad/s]
-    Eigen::Vector3<Scalar> _p_lastImuAngularRateMeas = Eigen::Vector3<Scalar>::Ones() * std::nan("");
+    Eigen::Vector3d _p_lastImuAngularRateMeas = Eigen::Vector3d::Ones() * std::nan("");
 
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] time Time in [s]
     /// @return Roll, pitch, yaw in [rad]
-    [[nodiscard]] std::array<Scalar, 3> calcFlightAngles(Scalar time) const;
+    [[nodiscard]] std::array<double, 3> calcFlightAngles(double time) const;
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @return LatLonAlt in [rad, rad, m]
-    [[nodiscard]] Eigen::Vector3<Scalar> lla_calcPosition(Scalar time) const;
+    [[nodiscard]] Eigen::Vector3d lla_calcPosition(double time) const;
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
     /// @return n_velocity in [rad, rad, m]
-    [[nodiscard]] Eigen::Vector3<Scalar> n_calcVelocity(Scalar time, const Eigen::Quaternion<Scalar>& n_Quat_e) const;
+    [[nodiscard]] Eigen::Vector3d n_calcVelocity(double time, const Eigen::Quaterniond& n_Quat_e) const;
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
@@ -328,15 +326,15 @@ class ImuSimulator : public Imu
     /// @param[in] lla_position Current position as latitude, longitude, altitude [rad, rad, m]
     /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @return n_accel in [rad, rad, m]
-    [[nodiscard]] Eigen::Vector3<Scalar> n_calcTrajectoryAccel(Scalar time, const Eigen::Quaternion<Scalar>& n_Quat_e,
-                                                               const Eigen::Vector3<Scalar>& lla_position, const Eigen::Vector3<Scalar>& n_velocity) const;
+    [[nodiscard]] Eigen::Vector3d n_calcTrajectoryAccel(double time, const Eigen::Quaterniond& n_Quat_e,
+                                                        const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity) const;
 
     /// @brief Calculates ω_nb_n, the turn rate of the body with respect to the navigation system expressed in NED coordinates
     /// @param[in] time Time in [s]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
     /// @param[in] n_Quat_b Rotation quaternion from body frame to the local-navigation frame
     /// @return ω_nb_n [rad/s]
-    [[nodiscard]] Eigen::Vector3<Scalar> n_calcOmega_nb(Scalar time, const Eigen::Vector3<Scalar>& rollPitchYaw, const Eigen::Quaternion<Scalar>& n_Quat_b) const;
+    [[nodiscard]] Eigen::Vector3d n_calcOmega_nb(double time, const Eigen::Vector3d& rollPitchYaw, const Eigen::Quaterniond& n_Quat_b) const;
 };
 
 } // namespace NAV

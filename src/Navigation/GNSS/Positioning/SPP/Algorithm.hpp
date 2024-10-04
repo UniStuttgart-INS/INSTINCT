@@ -84,8 +84,18 @@ class Algorithm
     /// Observation Estimator
     ObservationEstimator _obsEstimator{ ReceiverType_COUNT };
 
+    /// Estimate Inter-frequency biases
+    bool _estimateInterFreqBiases = true;
+
   private:
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver
+
+    /// @brief All position keys
+    const std::vector<SPP::States::StateKeyType>& PosKey = Keys::Pos<SPP::States::StateKeyType>;
+    /// @brief All velocity keys
+    const std::vector<SPP::States::StateKeyType>& VelKey = Keys::Vel<SPP::States::StateKeyType>;
+    /// @brief All position and velocity keys
+    const std::vector<SPP::States::StateKeyType>& PosVelKey = Keys::PosVel<SPP::States::StateKeyType>;
 
     /// @brief Checks if the SPP algorithm can calculate the position (always true for Kalman filter)
     /// @param[in] nDoppMeas Amount of Doppler measurements
@@ -93,12 +103,6 @@ class Algorithm
 
     /// @brief Checks if the SPP algorithm can estimate inter-frequency biases
     [[nodiscard]] bool canEstimateInterFrequencyBias() const;
-
-    /// @brief Updates the inter system reference system
-    /// @param[in] usedSatSystems Used Satellite systems this epoch
-    /// @param[in] nDoppMeas Amount of Doppler measurements
-    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    void updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId);
 
     /// @brief Updates the inter frequency biases
     /// @param[in] observations List of GNSS observation data used for the calculation
@@ -109,7 +113,7 @@ class Algorithm
     /// @param[in] usedSatSystems Used Satellite systems this epoch
     /// @param[in] nDoppMeas Amount of Doppler measurements
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    std::vector<States::StateKeyTypes> determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId) const;
+    std::vector<States::StateKeyType> determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId) const;
 
     /// @brief Returns a list of measurement keys
     /// @param[in] observations List of GNSS observation data used for the calculation
@@ -124,10 +128,10 @@ class Algorithm
     /// @param[in] observations List of GNSS observation data used for the calculation
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
     /// @return The 𝐇 matrix
-    [[nodiscard]] KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> calcMatrixH(const std::vector<States::StateKeyTypes>& stateKeys,
-                                                                                       const std::vector<Meas::MeasKeyTypes>& measKeys,
-                                                                                       const Observations& observations,
-                                                                                       const std::string& nameId) const;
+    [[nodiscard]] KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> calcMatrixH(const std::vector<States::StateKeyType>& stateKeys,
+                                                                                      const std::vector<Meas::MeasKeyTypes>& measKeys,
+                                                                                      const Observations& observations,
+                                                                                      const std::string& nameId) const;
 
     /// @brief Calculates the measurement noise covariance matrix 𝐑
     /// @param[in] measKeys Measurement Keys
@@ -155,8 +159,8 @@ class Algorithm
     /// @param[in] nUniqueDopplerMeas Number of available doppler measurements (unique per satellite)
     /// @param[in] dt Time step size in [s]
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    void assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTypes>& state,
-                                  const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
+    void assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyType>& state,
+                                  const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                   const Eigen::Vector3d& e_oldPos,
                                   size_t nParams, size_t nUniqueDopplerMeas, double dt, const std::string& nameId);
 
@@ -164,18 +168,15 @@ class Algorithm
     /// @param state Total state
     /// @param variance Variance of the state
     /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
-    void assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTypes>& state,
-                                  const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
+    void assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyType>& state,
+                                  const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                   const std::string& nameId);
 
     /// Receiver
-    std::array<Receiver, ReceiverType::ReceiverType_COUNT> _receiver = { { Receiver(Rover) } };
+    Receiver _receiver{ Rover, _obsFilter.getSystemFilter().toVector() };
 
     /// Estimator type used for the calculations
     EstimatorType _estimatorType = EstimatorType::WeightedLeastSquares;
-
-    /// Estimate Inter-frequency biases
-    bool _estimateInterFreqBiases = true;
 
     /// SPP specific Kalman filter
     SPP::KalmanFilter _kalmanFilter;

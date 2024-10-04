@@ -26,6 +26,13 @@ using json = nlohmann::json; ///< json namespace
 
 namespace Eigen
 {
+using Array5d = Array<double, 5, 1>;   ///< Double 5x1 Eigen::Array
+using Array6d = Array<double, 6, 1>;   ///< Double 6x1 Eigen::Array
+using Vector5d = Matrix<double, 5, 1>; ///< Double 5x1 Eigen::Vector
+using Vector6d = Matrix<double, 6, 1>; ///< Double 6x1 Eigen::Vector
+using Matrix5d = Matrix<double, 5, 5>; ///< Double 5x5 Eigen::Matrix
+using Matrix6d = Matrix<double, 6, 6>; ///< Double 6x6 Eigen::Matrix
+
 using Array3ld = Array<long double, 3, 1>; ///< Long double 3x1 Eigen::Array
 
 using Vector3ld = Matrix<long double, 3, 1>; ///< Long double 3x1 Eigen::Vector

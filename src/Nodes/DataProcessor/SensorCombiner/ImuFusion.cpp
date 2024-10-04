@@ -1554,7 +1554,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     // Detect jumps back in time
     if (imuObsFiltered->insTime < _lastFiltObs)
     {
-        LOG_ERROR("{}: imuObsFiltered->insTime < _lastFiltObs --> {}", nameId(), (imuObsFiltered->insTime - _lastFiltObs).count());
+        LOG_ERROR("{}: imuObsFiltered->insTime < _lastFiltObs --> {}", nameId(), static_cast<double>((imuObsFiltered->insTime - _lastFiltObs).count()));
     }
     _lastFiltObs = imuObsFiltered->insTime;
 

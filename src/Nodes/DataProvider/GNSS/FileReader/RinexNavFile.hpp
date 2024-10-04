@@ -166,6 +166,9 @@ class RinexNavFile : public Node, public FileReader
 
     /// @brief Version of the RINEX file
     double _version = 0.0;
+
+    /// Only warn once
+    bool _sbasNotSupportedWarned = false;
 };
 
 } // namespace NAV

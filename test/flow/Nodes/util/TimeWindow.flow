@@ -1,29 +1,40 @@
 {
+    "colormaps": [],
     "links": {
         "link-14": {
             "endPinId": 8,
             "id": 14,
             "startPinId": 2
         },
-        "link-7": {
-            "endPinId": 1,
-            "id": 7,
+        "link-19": {
+            "endPinId": 15,
+            "id": 19,
             "startPinId": 4
+        },
+        "link-20": {
+            "endPinId": 1,
+            "id": 20,
+            "startPinId": 17
         }
     },
     "nodes": {
         "node-13": {
             "data": {
-                "nInputPins": 1,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "nPlots": 0,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
-                        "dataIdentifier": "ImuObs",
+                        "dataIdentifier": "ImuObsSimulated",
                         "pinType": 0,
                         "plotData": [
                             {
                                 "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
                             },
                             {
                                 "displayName": "GPS time of week [s]"
@@ -32,61 +43,91 @@
                                 "displayName": "Time since startup [ns]"
                             },
                             {
-                                "displayName": "Mag uncomp X [Gauss]"
+                                "displayName": "Accel X [m/s^2]"
                             },
                             {
-                                "displayName": "Mag uncomp Y [Gauss]"
+                                "displayName": "Accel Y [m/s^2]"
                             },
                             {
-                                "displayName": "Mag uncomp Z [Gauss]"
+                                "displayName": "Accel Z [m/s^2]"
                             },
                             {
-                                "displayName": "Accel uncomp X [m/s^2]"
+                                "displayName": "Gyro X [rad/s]"
                             },
                             {
-                                "displayName": "Accel uncomp Y [m/s^2]"
+                                "displayName": "Gyro Y [rad/s]"
                             },
                             {
-                                "displayName": "Accel uncomp Z [m/s^2]"
+                                "displayName": "Gyro Z [rad/s]"
                             },
                             {
-                                "displayName": "Gyro uncomp X [rad/s]"
+                                "displayName": "Mag X [Gauss]"
                             },
                             {
-                                "displayName": "Gyro uncomp Y [rad/s]"
+                                "displayName": "Mag Y [Gauss]"
                             },
                             {
-                                "displayName": "Gyro uncomp Z [rad/s]"
-                            },
-                            {
-                                "displayName": "Mag Comp X [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Y [Gauss]"
-                            },
-                            {
-                                "displayName": "Mag Comp Z [Gauss]"
-                            },
-                            {
-                                "displayName": "Accel Comp X [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Y [m/s^2]"
-                            },
-                            {
-                                "displayName": "Accel Comp Z [m/s^2]"
-                            },
-                            {
-                                "displayName": "Gyro Comp X [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Y [rad/s]"
-                            },
-                            {
-                                "displayName": "Gyro Comp Z [rad/s]"
+                                "displayName": "Mag Z [Gauss]"
                             },
                             {
                                 "displayName": "Temperature [°C]"
+                            },
+                            {
+                                "displayName": "dTime [s]"
+                            },
+                            {
+                                "displayName": "dTheta X [deg]"
+                            },
+                            {
+                                "displayName": "dTheta Y [deg]"
+                            },
+                            {
+                                "displayName": "dTheta Z [deg]"
+                            },
+                            {
+                                "displayName": "dVelocity X [m/s]"
+                            },
+                            {
+                                "displayName": "dVelocity Y [m/s]"
+                            },
+                            {
+                                "displayName": "dVelocity Z [m/s]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsN [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsE [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsD [m/s^2]"
+                            },
+                            {
+                                "displayName": "AngularRateN (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateE (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateD (ω_nb_n) [rad/s]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsX ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsY ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AccelDynamicsZ ECEF [m/s^2]"
+                            },
+                            {
+                                "displayName": "AngularRateX ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateY ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
                             }
                         ],
                         "size": 2000,
@@ -115,6 +156,38 @@
                 "y": 0.0
             },
             "type": "Plot"
+        },
+        "node-18": {
+            "data": null,
+            "enabled": true,
+            "id": 18,
+            "inputPins": [
+                {
+                    "id": 15,
+                    "name": ""
+                },
+                {
+                    "id": 16,
+                    "name": ""
+                }
+            ],
+            "kind": "Simple",
+            "name": "",
+            "outputPins": [
+                {
+                    "id": 17,
+                    "name": ""
+                }
+            ],
+            "pos": {
+                "x": 392.0,
+                "y": 316.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Merger"
         },
         "node-3": {
             "data": {
@@ -157,8 +230,8 @@
                 }
             ],
             "pos": {
-                "x": 452.0,
-                "y": 284.0
+                "x": 520.0,
+                "y": 286.0
             },
             "size": {
                 "x": 0.0,
@@ -253,11 +326,6 @@
                 "circularHarmonicAmplitudeFactor": 0.1,
                 "circularHarmonicFrequency": 0,
                 "circularTrajectoryCircleCountForStop": 1.0,
-                "circularTrajectoryDirection": 1,
-                "circularTrajectoryHorizontalSpeed": 10.0,
-                "circularTrajectoryOriginAngle": 0.0,
-                "circularTrajectoryRadius": 50.0,
-                "circularTrajectoryVerticalSpeed": 0.0,
                 "coriolisAccelerationEnabled": true,
                 "fixedTrajectoryStartOrientation": {
                     "0": {
@@ -273,6 +341,7 @@
                 "gnssFrequency": 1.0,
                 "gravitationModel": 4,
                 "imuFrequency": 10.0,
+                "imuInternalFrequency": 1000.0,
                 "linearTrajectoryDistanceForStop": 100.0,
                 "n_linearTrajectoryStartVelocity": {
                     "0": {
@@ -285,6 +354,10 @@
                         "0": 0.0
                     }
                 },
+                "rosePetDenom": 1,
+                "rosePetNum": 2,
+                "roseStepLengthMax": 0.1,
+                "roseTrajectoryCountForStop": 1.0,
                 "simulationDuration": 10.0,
                 "simulationStopCondition": 0,
                 "splineSampleInterval": 0.1,
@@ -311,7 +384,12 @@
                     "system": "UTC"
                 },
                 "startTimeSource": 0,
-                "trajectoryType": 0
+                "trajectoryDirection": 1,
+                "trajectoryHorizontalSpeed": 10.0,
+                "trajectoryRadius": 50.0,
+                "trajectoryRotationAngle": 0.0,
+                "trajectoryType": 0,
+                "trajectoryVerticalSpeed": 0.0
             },
             "enabled": true,
             "id": 6,

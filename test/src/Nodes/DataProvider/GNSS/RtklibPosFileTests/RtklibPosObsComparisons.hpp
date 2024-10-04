@@ -18,8 +18,8 @@
 #include "CatchMatchers.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -29,7 +29,9 @@
 #include <cmath>
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV
 {

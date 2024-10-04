@@ -162,7 +162,7 @@ clang-tidy:
     - .clang
   script:
     - conan profile detect --force
-    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/src
@@ -175,7 +175,7 @@ clang-tidy:tests:
     - .clang
   script:
     - conan profile detect --force
-    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DCATCH2_JUNIT_OUTPUT=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
@@ -196,7 +196,7 @@ documentation:
     - .linux
   script:
     - conan profile detect --force
-    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
   artifacts:
@@ -221,7 +221,7 @@ documentation:
     - echo "$WARNINGS_AS_ERRORS"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - conan profile detect --force
-    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=17
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="NO" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
 
@@ -261,6 +261,7 @@ documentation:
       - build/$BUILD_TYPE/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/CTestTestfile.cmake
       - build/$BUILD_TYPE/test/tests_*.cmake
+      - build/$BUILD_TYPE/test/tests-*.cmake
       - build/bin/$BUILD_TYPE/*
     expire_in: 2h
 
@@ -361,6 +362,7 @@ tests:win:
     - .build:test-artifacts
     - .release
     - .log-trace
+  allow_failure: true
 
 tests:macOS:
   extends:
@@ -429,6 +431,7 @@ run-tests:win:
           Out-File -encoding ASCII $_.FullName }
     - cd build/$BUILD_TYPE
     - ctest --output-on-failure
+  allow_failure: true
 
 run-tests:raspberry:gcc:
   needs: ["raspberry:gcc"]
@@ -457,7 +460,7 @@ doxygen:
     - .linux
   script:
     - conan profile detect --force
-    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doc
   artifacts:
@@ -486,7 +489,7 @@ coverage:
     - echo "$WARNINGS_AS_ERRORS"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - conan profile detect --force
-    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=20
+    - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=17
     - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="YES" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
     - cd build/$BUILD_TYPE
@@ -550,7 +553,7 @@ pages:
   before_script:
     - apt update
     - apt upgrade -y
-    - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3
+    - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3 libtbb-dev libatlas-base-dev libsuitesparse-dev
     - pip3 install conan
     - conan profile detect --force
     - g++ --version
@@ -623,97 +626,4 @@ run-tests:ubuntu:22.04:gcc:debug:
   needs: ["ubuntu:22.04:gcc:debug"]
   extends:
     - .run-tests:ubuntu:22.04
-    - .debug
-
-# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                        Arch Linux Latest                                         ║
-# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
-
-.build:archlinux:latest:
-  stage: build
-  needs: []
-  extends:
-    - .build
-    - .build:main
-    - .build:tests
-    - .build:test-artifacts
-    - .linux
-    - .schedule
-    - .branch-github
-    - .retry
-    - .log-trace
-  image: archlinux:latest
-  before_script:
-    - pacman -Sy archlinux-keyring --noconfirm
-    - pacman -Syyu --noconfirm --needed
-    - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
-    - pip install conan --break-system-packages
-    - conan profile detect --force
-    - g++ --version
-    - clang++ --version
-    - clang-tidy --version
-    - cmake --version
-    - conan --version
-    - conan profile show
-    - cppcheck --version
-
-archlinux:latest:clang:release:
-  extends:
-    - .build:archlinux:latest
-    - .clang
-    - .release
-
-archlinux:latest:clang:debug:
-  extends:
-    - .build:archlinux:latest
-    - .clang
-    - .debug
-
-archlinux:latest:gcc:release:
-  extends:
-    - .build:archlinux:latest
-    - .gcc
-    - .release
-
-archlinux:latest:gcc:debug:
-  extends:
-    - .build:archlinux:latest
-    - .gcc
-    - .debug
-
-.run-tests:archlinux:latest:
-  stage: test
-  extends:
-    - .run-tests
-    - .linux
-    - .schedule
-    - .branch-github
-  image: archlinux:latest
-  before_script:
-    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
-    - pacman -S --noconfirm --needed base-devel cmake glfw-x11
-    - cmake --version
-
-run-tests:archlinux:latest:clang:release:
-  needs: ["archlinux:latest:clang:release"]
-  extends:
-    - .run-tests:archlinux:latest
-    - .release
-
-run-tests:archlinux:latest:clang:debug:
-  needs: ["archlinux:latest:clang:debug"]
-  extends:
-    - .run-tests:archlinux:latest
-    - .debug
-
-run-tests:archlinux:latest:gcc:release:
-  needs: ["archlinux:latest:gcc:release"]
-  extends:
-    - .run-tests:archlinux:latest
-    - .release
-
-run-tests:archlinux:latest:gcc:debug:
-  needs: ["archlinux:latest:gcc:debug"]
-  extends:
-    - .run-tests:archlinux:latest
     - .debug

@@ -64,7 +64,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
                     LOG_DATA("{}:   [{}] LLI check passed", nameId, SatSigId(signal.code, obs.satId.satNum));
                 }
             }
-            auto lambda = InsConst<double>::C / satSigId.freq().getFrequency(obs.freqNum);
+            auto lambda = InsConst::C / satSigId.freq().getFrequency(obs.freqNum);
 
             auto result = _singleFrequencyDetector.checkForCycleSlip(satSigId, insTime,
                                                                      signal.measurement.value * lambda,
@@ -107,8 +107,8 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
                 auto satSigId2 = SatSigId(signal2.code, obs.satId.satNum);
 
                 auto key = DualFrequencyCombination{ .satId = obs.satId, .sig1 = signal1->code, .sig2 = signal2.code };
-                auto lambda1 = InsConst<double>::C / satSigId1.freq().getFrequency(obs.freqNum);
-                auto lambda2 = InsConst<double>::C / satSigId2.freq().getFrequency(obs.freqNum);
+                auto lambda1 = InsConst::C / satSigId1.freq().getFrequency(obs.freqNum);
+                auto lambda2 = InsConst::C / satSigId2.freq().getFrequency(obs.freqNum);
 
                 auto result = _dualFrequencyDetector.checkForCycleSlip(key, insTime,
                                                                        signal1->measurement.value * lambda1 - signal2.measurement.value * lambda2,
@@ -184,7 +184,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
             if (iter != resetThisEpoch.end())
             {
                 resetSignal(satSigId);
-                auto lambda = InsConst<double>::C / satSigId.freq().getFrequency(obs.freqNum);
+                auto lambda = InsConst::C / satSigId.freq().getFrequency(obs.freqNum);
                 _singleFrequencyDetector.addMeasurement(satSigId, insTime, signal.measurement.value * lambda);
             }
         }

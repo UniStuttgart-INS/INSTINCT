@@ -40,6 +40,8 @@ if(ENABLE_MAIN)
             libvncxx
             libUartSensor)
 
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
+
   if(NOT APPLE AND NOT WIN32)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
   endif()

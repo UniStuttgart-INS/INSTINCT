@@ -13,9 +13,10 @@
 
 #pragma once
 
+#include <cmath>
 #include <Eigen/Core>
+#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
-#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {
@@ -26,21 +27,34 @@ namespace NAV
 /// @return The line-of-sight unit vector in ECEF frame coordinates
 ///
 /// @note See \cite Groves2013 Groves, ch. 8.5.3, eq. 8.41, p. 341
-[[nodiscard]] Eigen::Vector3d e_calcLineOfSightUnitVector(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_posSat);
+template<typename DerivedA, typename DerivedB>
+[[nodiscard]] Eigen::Vector3<typename DerivedA::Scalar> e_calcLineOfSightUnitVector(const Eigen::MatrixBase<DerivedA>& e_posAnt,
+                                                                                    const Eigen::MatrixBase<DerivedB>& e_posSat)
+{
+    return (e_posSat - e_posAnt) / (e_posSat - e_posAnt).norm();
+}
 
 /// @brief Calculates the elevation of the satellite from the antenna
 /// @param[in] n_lineOfSightUnitVector Line-of-sight unit vector from the antenna to the satellite in NED frame coordinates
 /// @return Elevation [rad]
 ///
 /// @note See \cite Groves2013 Groves, ch. 8.5.4, eq. 8.57, p. 344
-[[nodiscard]] double calcSatElevation(const Eigen::Vector3d& n_lineOfSightUnitVector);
+template<typename Derived>
+[[nodiscard]] typename Derived::Scalar calcSatElevation(const Eigen::MatrixBase<Derived>& n_lineOfSightUnitVector)
+{
+    return -asin(n_lineOfSightUnitVector(2));
+}
 
 /// @brief Calculates the azimuth of the satellite from the antenna
 /// @param[in] n_lineOfSightUnitVector Line-of-sight unit vector from the antenna to the satellite in NED frame coordinates
 /// @return Azimuth [rad]
 ///
 /// @note See \cite Groves2013 Groves, ch. 8.5.4, eq. 8.57, p. 344
-[[nodiscard]] double calcSatAzimuth(const Eigen::Vector3d& n_lineOfSightUnitVector);
+template<typename Derived>
+[[nodiscard]] typename Derived::Scalar calcSatAzimuth(const Eigen::MatrixBase<Derived>& n_lineOfSightUnitVector)
+{
+    return atan2(n_lineOfSightUnitVector(1), n_lineOfSightUnitVector(0));
+}
 
 /// @brief Calculates the Earth rotation/Sagnac correction
 /// @param[in] e_posAnt Position of the user antenna in ECEF frame coordinates
@@ -48,17 +62,31 @@ namespace NAV
 /// @return Earth rotation/Sagnac correction [m]
 ///
 /// @note See \cite SpringerHandbookGNSS2017 Springer Handbook ch. 19.1.1, eq. 19.7, p. 562
-[[nodiscard]] double calcSagnacCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos);
+template<typename DerivedA, typename DerivedB>
+[[nodiscard]] typename DerivedA::Scalar calcSagnacCorrection(const Eigen::MatrixBase<DerivedA>& e_posAnt,
+                                                             const Eigen::MatrixBase<DerivedB>& e_satPos)
+{
+    return 1.0 / InsConst::C * (e_posAnt - e_satPos).dot(InsConst::e_omega_ie.cross(e_posAnt));
+}
 
 /// @brief Calculates the Range-rate Earth rotation/Sagnac correction
-/// @param[in] e_posAnt Position of the user antenna in ECEF frame coordinates
+/// @param[in] e_recvPos Position of the user antenna in ECEF frame coordinates
 /// @param[in] e_satPos Position of the satellite in ECEF frame coordinates
-/// @param[in] e_velAnt Velocity of the user antenna in ECEF frame coordinates
+/// @param[in] e_recvVel Velocity of the user antenna in ECEF frame coordinates
 /// @param[in] e_satVel Velocity of the satellite in ECEF frame coordinates
 /// @return Range-rate Earth rotation/Sagnac correction [m/s]
 ///
 /// @note See \cite Groves2013 Groves ch. 8.5.3, eq. 8.46, p. 342
-[[nodiscard]] double calcSagnacRateCorrection(const Eigen::Vector3d& e_posAnt, const Eigen::Vector3d& e_satPos, const Eigen::Vector3d& e_velAnt, const Eigen::Vector3d& e_satVel);
+template<typename DerivedA, typename DerivedB, typename DerivedC, typename DerivedD>
+[[nodiscard]] typename DerivedA::Scalar calcSagnacRateCorrection(const Eigen::MatrixBase<DerivedA>& e_recvPos,
+                                                                 const Eigen::MatrixBase<DerivedB>& e_satPos,
+                                                                 const Eigen::MatrixBase<DerivedC>& e_recvVel,
+                                                                 const Eigen::MatrixBase<DerivedD>& e_satVel)
+{
+    return InsConst::omega_ie / InsConst::C
+           * (e_satVel.y() * e_recvPos.x() + e_satPos.y() * e_recvVel.x()
+              - e_satVel.x() * e_recvPos.y() - e_satPos.x() * e_recvVel.y());
+}
 
 /// @brief Transforms a doppler-shift into a range-rate
 /// @param[in] doppler The doppler-shift to transform [Hz]

@@ -8,7 +8,6 @@
 
 #include "GnssAnalyzer.hpp"
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
 #include "util/Logger.hpp"
@@ -189,7 +188,7 @@ void NAV::GnssAnalyzer::guiConfig()
                     });
                     maxF != comb.terms.end())
                 {
-                    double lambda = InsConst<>::C / maxF->satSigId.freq().getFrequency(maxF->freqNum);
+                    double lambda = InsConst::C / maxF->satSigId.freq().getFrequency(maxF->freqNum);
                     double threshold = comb.polynomialCycleSlipDetectorThresholdPercentage * lambda;
                     description += fmt::format("\nFor [{} {}] the wavelength is λ = {:.3f} [m].\nThe threshold is then {:.3f} [m].",
                                                maxF->satSigId.toSatId().satSys, maxF->satSigId.freq(), lambda, threshold);
@@ -278,7 +277,7 @@ void NAV::GnssAnalyzer::guiConfig()
                     ImGui::TableSetColumnIndex(static_cast<int>(t) * 3 + 1);
                     double f = term.satSigId.freq().getFrequency(term.freqNum);
                     ImGui::TextUnformatted(fmt::format("{:.2f}", f * 1e-6).c_str());
-                    if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("Frequency in [Mhz]\nλ = {:.3f}m", InsConst<>::C / f).c_str()); }
+                    if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("Frequency in [Mhz]\nλ = {:.3f}m", InsConst::C / f).c_str()); }
 
                     ImGui::TableSetColumnIndex(static_cast<int>(t) * 3 + 2);
                     ImGui::SetNextItemWidth(62.0F);
@@ -292,7 +291,7 @@ void NAV::GnssAnalyzer::guiConfig()
                 ImGui::TableNextColumn();
                 double f = comb.calcCombinationFrequency();
                 ImGui::TextUnformatted(fmt::format("          {:.2f} MHz", f * 1e-6).c_str());
-                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("λ = {:.3f}m", InsConst<>::C / f).c_str()); }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("%s", fmt::format("λ = {:.3f}m", InsConst::C / f).c_str()); }
 
                 ImGui::EndTable();
             }
@@ -399,7 +398,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
                                 : GnssObs::ObservationType::Carrier;
 
             double freq = term.satSigId.freq().getFrequency(term.freqNum);
-            double lambda = InsConst<>::C / freq;
+            double lambda = InsConst::C / freq;
             lambdaMin = std::min(lambdaMin, lambda);
 
             if (auto obs = (*gnssObs)(term.satSigId))
@@ -454,7 +453,7 @@ void NAV::GnssAnalyzer::receiveGnssObs(NAV::InputPin::NodeDataQueue& queue, size
         }
         if (termsFound == comb.terms.size())
         {
-            auto lambda = InsConst<>::C / comb.calcCombinationFrequency();
+            auto lambda = InsConst::C / comb.calcCombinationFrequency();
             double resultCycles = result / lambda;
             combination.result = comb.unit == Combination::Unit::Cycles ? resultCycles : result;
 

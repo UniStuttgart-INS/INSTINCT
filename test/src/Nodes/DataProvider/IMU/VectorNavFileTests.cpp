@@ -31,8 +31,8 @@ namespace nm = NAV::NodeManager;
 #include "VectorNavFileTestsData.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -41,7 +41,9 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::VectorNavFileTests
 {

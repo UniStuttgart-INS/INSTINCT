@@ -61,7 +61,7 @@ Clock::Corrections GLONASSEphemeris::calcClockCorrections(const InsTime& recvTim
     LOG_DATA("    toc {} (Time of clock)", toc.toGPSweekTow());
 
     // Time at transmission
-    InsTime transTime = recvTime - std::chrono::duration<double>(dist / InsConst<>::C);
+    InsTime transTime = recvTime - std::chrono::duration<double>(dist / InsConst::C);
 
     // SV clock time offset [s]
     double dt_sv = -tau_n + gamma_n * static_cast<double>((transTime - toc).count());
@@ -99,14 +99,14 @@ Orbit::PosVelAccel GLONASSEphemeris::calcSatelliteData(const InsTime& transTime,
 
         double r = y.topRows<3>().norm();
 
-        double omega_ie2 = std::pow(InsConst<>::GLO::omega_ie, 2);
+        double omega_ie2 = std::pow(InsConst::GLO::omega_ie, 2);
 
-        double a = 1.5 * InsConst<>::GLO::J2 * InsConst<>::GLO::MU * std::pow(InsConst<>::GLO::a, 2) / std::pow(r, 5);
-        double c = -InsConst<>::GLO::MU / std::pow(r, 3) - a * (1. - 5. * std::pow(y(Z), 2) / std::pow(r, 2));
+        double a = 1.5 * InsConst::GLO::J2 * InsConst::GLO::MU * std::pow(InsConst::GLO::a, 2) / std::pow(r, 5);
+        double c = -InsConst::GLO::MU / std::pow(r, 3) - a * (1. - 5. * std::pow(y(Z), 2) / std::pow(r, 2));
 
         y_dot.topRows<3>() = y.bottomRows<3>();
-        y_dot(3) = (c + omega_ie2) * y(X) + 2 * InsConst<>::GLO::omega_ie * y(VY) + accelLuniSolar.x();
-        y_dot(4) = (c + omega_ie2) * y(Y) - 2 * InsConst<>::GLO::omega_ie * y(VX) + accelLuniSolar.y();
+        y_dot(3) = (c + omega_ie2) * y(X) + 2 * InsConst::GLO::omega_ie * y(VY) + accelLuniSolar.x();
+        y_dot(4) = (c + omega_ie2) * y(Y) - 2 * InsConst::GLO::omega_ie * y(VX) + accelLuniSolar.y();
         y_dot(5) = (c - 2. * a) * y(Z) + accelLuniSolar.z();
 
         return y_dot;

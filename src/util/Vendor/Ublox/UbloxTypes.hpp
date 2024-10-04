@@ -837,7 +837,7 @@ struct fmt::formatter<NAV::vendor::ublox::UbxClass> : fmt::formatter<std::string
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::vendor::ublox::UbxClass& ubxClass, FormatContext& ctx)
+    auto format(const NAV::vendor::ublox::UbxClass& ubxClass, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(NAV::vendor::ublox::getStringFromMsgClass(ubxClass), ctx);
     }

@@ -36,7 +36,7 @@ TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
     state.setPosition_e(e_position);
 
     CHECK(state.e_position() == e_position);
-    CHECK(state.lla_position() == Eigen::Vector3d{ state.latitude(), state.longitude(), state.altitude() });
+    CHECK(state.lla_position() == Eigen::Vector3d(state.latitude(), state.longitude(), state.altitude()));
     CHECK_THAT(state.latitude() - lla_position(0), Catch::Matchers::WithinAbs(0, 9e-9));
     CHECK_THAT(state.longitude() - lla_position(1), Catch::Matchers::WithinAbs(0, 6e-9));
     CHECK_THAT(state.altitude() - lla_position(2), Catch::Matchers::WithinAbs(0, 0.3));

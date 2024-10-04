@@ -24,8 +24,8 @@
 #include "util/Eigen.hpp"
 #include "util/Container/Unordered_map.hpp"
 
-#pragma GCC diagnostic push
-#if !defined(__clang__) && defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
@@ -2314,6 +2314,16 @@ using KeyedMatrix3d = KeyedMatrix<double, RowKeyType, ColKeyType, 3, 3>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix4d = KeyedMatrix<double, RowKeyType, ColKeyType, 4, 4>;
+/// @brief Static 5x5 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix5d = KeyedMatrix<double, RowKeyType, ColKeyType, 5, 5>;
+/// @brief Static 6x6 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix6d = KeyedMatrix<double, RowKeyType, ColKeyType, 6, 6>;
 
 /// @brief Dynamic size KeyedVector
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
@@ -2336,6 +2346,14 @@ using KeyedVector3d = KeyedVector<double, RowKeyType, 3>;
 /// @tparam RowKeyType Type of the key used for row lookup
 template<typename RowKeyType>
 using KeyedVector4d = KeyedVector<double, RowKeyType, 4>;
+/// @brief Static 5 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector5d = KeyedVector<double, RowKeyType, 5>;
+/// @brief Static 6 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector6d = KeyedVector<double, RowKeyType, 6>;
 
 /// @brief Dynamic size KeyedRowVector
 /// @tparam ColKeyType Type of the key used for col lookup
@@ -2357,10 +2375,20 @@ using KeyedRowVector3d = KeyedRowVector<double, ColKeyType, 3>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename ColKeyType>
 using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
+/// @brief Static 5 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector5d = KeyedRowVector<double, ColKeyType, 5>;
+/// @brief Static 6 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector6d = KeyedRowVector<double, ColKeyType, 6>;
 
 } // namespace NAV
 
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #ifndef DOXYGEN_IGNORE
 
@@ -2372,7 +2400,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
     /// @param[in] mat Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, format_context& ctx)
+    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, format_context& ctx) const
     {
         std::string result;
         auto rows = static_cast<size_t>(mat.rows());
@@ -2456,7 +2484,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatt
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, format_context& ctx)
+    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, format_context& ctx) const
     {
         std::string result;
         auto rows = static_cast<size_t>(vec.rows());
@@ -2511,7 +2539,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::form
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, format_context& ctx)
+    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, format_context& ctx) const
     {
         std::string result;
         auto cols = static_cast<size_t>(vec.cols());

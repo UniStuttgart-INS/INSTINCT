@@ -377,7 +377,7 @@ struct fmt::formatter<NAV::GnssObs::ObservationType> : fmt::formatter<const char
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::GnssObs::ObservationType& obsType, FormatContext& ctx)
+    auto format(const NAV::GnssObs::ObservationType& obsType, FormatContext& ctx) const
     {
         return fmt::formatter<const char*>::format(to_string(obsType), ctx);
     }

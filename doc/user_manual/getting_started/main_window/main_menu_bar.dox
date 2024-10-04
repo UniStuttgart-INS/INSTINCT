@@ -85,6 +85,11 @@ The *Debug* dropdown menu provides demo windows. Recommended for programmers, no
 - \ref dear_imgui_demo_window : Opens the *Dear ImGui Demo* window.
 - \ref implot_demo_window : Opens a demo window for ImPlot.
 
+Three checkboxes that allow for
+- Show Callback Flow: Displays dots along flow connections the the Flow is running
+- Show Notify Flow: Displays dots for other Pin types (see \ref demo_node)
+- Show Queue size on pins: Displays the size queued on a Pin (F,P,0-...)
+
 ________
 <i>Last updated: 2024-01-31</i>
 

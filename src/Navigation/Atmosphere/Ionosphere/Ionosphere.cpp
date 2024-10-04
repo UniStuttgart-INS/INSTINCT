@@ -46,6 +46,12 @@ double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
                             IonosphereModel ionosphereModel,
                             const IonosphericCorrections* corrections)
 {
+    if (lla_pos(2) < -1000.0)
+    {
+        LOG_TRACE("Not calculating ionospheric delay, due to altitude being invalid: {}m", lla_pos(2));
+        return 0.0;
+    }
+
     switch (ionosphereModel)
     {
     case IonosphereModel::Klobuchar:
@@ -57,7 +63,7 @@ double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
             if (alpha && beta)
             {
                 return calcIonosphericTimeDelay_Klobuchar(tow, freq, freqNum, lla_pos(0), lla_pos(1), elevation, azimuth, *alpha, *beta)
-                       * InsConst<>::C;
+                       * InsConst::C;
             }
         }
 

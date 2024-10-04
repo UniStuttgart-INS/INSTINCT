@@ -342,7 +342,8 @@ void NAV::ErrorModel::guiConfig()
                     ImGui::PushFont(Application::MonoFont());
 
                     if (ImGui::BeginTable(fmt::format("Ambiguities##{}", size_t(id)).c_str(), static_cast<int>(ambiguityTimes.size() + 1),
-                                          ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY))
+                                          ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY,
+                                          ImVec2(0.0F, 300.0F * gui::NodeEditorApplication::monoFontRatio())))
                     {
                         ImGui::TableSetupColumn("");
                         for (const auto& time : ambiguityTimes)
@@ -761,7 +762,7 @@ std::shared_ptr<NAV::ImuObs> NAV::ErrorModel::receiveImuObs(const std::shared_pt
 
     if (!_lastObservationTime.empty())
     {
-        long double dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
+        auto dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
 
         // Accelerometer RW standard deviation in platform frame coordinates [m/s^2]
         Eigen::Vector3d accelerometerRWStd = Eigen::Vector3d::Zero();
@@ -939,7 +940,7 @@ std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const st
 
     if (!_lastObservationTime.empty())
     {
-        long double dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
+        auto dt = std::chrono::duration<double>(imuObs->insTime - _lastObservationTime).count();
 
         // Accelerometer RW standard deviation in platform frame coordinates [m/s^2]
         Eigen::Vector3d accelerometerRWStd = Eigen::Vector3d::Zero();
@@ -1278,7 +1279,7 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
         if (obs.carrierPhase)
         {
             // ------------------------------------------- Noise ---------------------------------------------
-            auto lambda = InsConst<>::C / obs.satSigId.freq().getFrequency(0); // wave-length [m] // TODO: Add frequency number here for GLONASS
+            auto lambda = InsConst::C / obs.satSigId.freq().getFrequency(0); // wave-length [m] // TODO: Add frequency number here for GLONASS
             obs.carrierPhase.value().value += _carrierPhaseRng.getRand_normalDist(0.0, carrierPhaseNoise) / lambda;
 
             // ---------------------------------------- Cycle-slip -------------------------------------------

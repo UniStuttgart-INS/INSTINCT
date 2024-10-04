@@ -700,7 +700,7 @@ struct fmt::formatter<NAV::Code> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Code& code, FormatContext& ctx)
+    auto format(const NAV::Code& code, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(code), ctx);
     }

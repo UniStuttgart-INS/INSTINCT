@@ -440,7 +440,7 @@ struct fmt::formatter<NAV::SatelliteSystem> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatelliteSystem& satSys, FormatContext& ctx)
+    auto format(const NAV::SatelliteSystem& satSys, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(satSys), ctx);
     }

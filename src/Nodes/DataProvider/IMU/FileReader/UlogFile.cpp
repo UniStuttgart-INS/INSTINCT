@@ -770,7 +770,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                 if (lastGnssTime.timeSinceStartup)
                 {
                     [[maybe_unused]] auto newGnssTime = InsTime(1970, 1, 1, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
-                    LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), (newGnssTime - lastGnssTime.gnssTime).count());
+                    LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), static_cast<double>((newGnssTime - lastGnssTime.gnssTime).count()));
                     LOG_DATA("{}: Updating tStartup from {} to {} (Diff {} sec)", nameId(), lastGnssTime.timeSinceStartup, vehicleGpsPosition.timestamp, (vehicleGpsPosition.timestamp - lastGnssTime.timeSinceStartup) * 1e-6L);
                 }
 

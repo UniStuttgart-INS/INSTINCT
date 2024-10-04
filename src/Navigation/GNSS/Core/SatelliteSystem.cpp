@@ -7,10 +7,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "SatelliteSystem.hpp"
+#include <algorithm>
 #include <cstdint>
 #include <optional>
 #include <unordered_set>
 
+#include "SatelliteIdentifier.hpp"
 #include "util/Logger.hpp"
 
 namespace NAV
@@ -63,6 +65,7 @@ SatelliteSystem SatelliteSystem::fromChar(char typeChar)
     case 'J':
     case 'Q':
         return QZSS;
+    case 'B':
     case 'C':
         return BDS;
     case 'I':
@@ -214,11 +217,11 @@ std::optional<std::string> SatelliteSystem::GetSatelliteInfo(SatelliteSystem sat
     case GAL:
         break;
     case QZSS:
-        if (satNum == 3) { return "GEO"; }
+        if (SatId(satSys, satNum).isGeo()) { return "GEO"; }
         else { return "QZO"; }
         break;
     case BDS:
-        if (satNum <= 5 || (satNum >= 59 && satNum <= 62)) { return "GEO"; }
+        if (SatId(satSys, satNum).isGeo()) { return "GEO"; }
         else if (std::unordered_set<uint16_t> sats = {
                      6, 7, 8, 9, 10,
                      13, 16, 31, 38,
@@ -226,8 +229,7 @@ std::optional<std::string> SatelliteSystem::GetSatelliteInfo(SatelliteSystem sat
                  sats.contains(satNum)) { return "IGSO"; }
         else { return "MEO"; }
     case IRNSS:
-        if (std::unordered_set<uint16_t> sats = { 3, 6, 7 };
-            sats.contains(satNum)) { return "GEO"; }
+        if (SatId(satSys, satNum).isGeo()) { return "GEO"; }
         else { return "IGSO"; }
         break;
     case SBAS:

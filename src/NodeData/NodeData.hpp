@@ -90,8 +90,10 @@ class NodeData
     /// @param[in] firstOpen Flag whether the tooltip is opened once
     /// @param[in] displayName Data identifier, can be used in dynamic data to identify the correct data
     /// @param[in] id Unique identifier
+    /// @param[in] rootWindow Pointer to the root window opening the tooltip
     virtual void guiTooltip([[maybe_unused]] bool detailView, [[maybe_unused]] bool firstOpen,
-                            [[maybe_unused]] const char* displayName, [[maybe_unused]] const char* id) const {}
+                            [[maybe_unused]] const char* displayName, [[maybe_unused]] const char* id,
+                            [[maybe_unused]] int* rootWindow) const {}
 
     /// @brief Return whether this data has a tooltip
     [[nodiscard]] virtual bool hasTooltip() const { return false; }

@@ -239,11 +239,9 @@ class AntexReader
     /// @param[in] antennaType Antenna Type
     /// @param[in] freq Frequency
     /// @param[in] insTime Time
-    /// @param[in] receiver Receiver (used for warnings)
     /// @param[in] nameId NameId of the calling node for Log output
-    template<typename ReceiverType>
     std::optional<Eigen::Vector3d> getAntennaPhaseCenterOffsetToARP(const std::string& antennaType, Frequency_ freq, const InsTime& insTime,
-                                                                    [[maybe_unused]] ReceiverType receiver, [[maybe_unused]] const std::string& nameId)
+                                                                    [[maybe_unused]] const std::string& nameId)
     {
         if (_antennas.contains(antennaType))
         {
@@ -282,8 +280,8 @@ class AntexReader
         }
         else if (!_notFoundAnt.contains(antennaType))
         {
-            LOG_WARN("{}: Cannot determine phase center offset, because antenna type '{}' for receiver '{}' is not found in the ANTEX files.",
-                     nameId, antennaType, receiver);
+            LOG_WARN("{}: Cannot determine phase center offset, because antenna type '{}' is not found in the ANTEX files.",
+                     nameId, antennaType);
             _notFoundAnt.insert(antennaType);
         }
 

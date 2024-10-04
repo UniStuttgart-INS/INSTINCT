@@ -34,8 +34,8 @@ class BDSEphemeris final : public SatNavData
     //                                                Members
     // #######################################################################################################
 
-    // /// @brief Number of the satellite
-    // const uint16_t satNum;
+    /// @brief Number of the satellite
+    const uint16_t satNum;
 
     // ------------------------------------------ Time Parameters --------------------------------------------
 
@@ -144,7 +144,7 @@ class BDSEphemeris final : public SatNavData
     // #######################################################################################################
 
     /// @brief Constructor
-    // /// @param[in] satNum Number of the satellite
+    /// @param[in] satNum Number of the satellite
     /// @param[in] toc Time the Clock information is calculated (Time of Clock)
     /// @param[in] toe Time the Orbit information is calculated (Time of Ephemeris)
     /// @param[in] AODE Age of Data, Ephemeris
@@ -169,7 +169,7 @@ class BDSEphemeris final : public SatNavData
     /// @param[in] satH1 Autonomous Satellite Health flag
     /// @param[in] T_GD1 Equipment Group Delay Differential. B1/B3 [s]
     /// @param[in] T_GD2 Equipment Group Delay Differential. B2/B3 [s]
-    BDSEphemeris(/*const uint16_t& satNum, */ const InsTime& toc, const InsTime& toe,
+    BDSEphemeris(const uint16_t& satNum, const InsTime& toc, const InsTime& toe,
                  const size_t& AODE, const size_t& AODC,
                  const std::array<double, 3>& a,
                  const double& sqrt_A, const double& e, const double& i_0, const double& Omega_0, const double& omega, const double& M_0,
@@ -179,7 +179,7 @@ class BDSEphemeris final : public SatNavData
 
 #ifdef TESTING
     /// @brief Constructor for pasting raw data from Nav files
-    // /// @param[in] satNum Number of the satellite
+    /// @param[in] satNum Number of the satellite
     /// @param[in] year Time of Clock year
     /// @param[in] month Time of Clock month
     /// @param[in] day Time of Clock day
@@ -217,7 +217,7 @@ class BDSEphemeris final : public SatNavData
     /// @param[in] AODC Age of Data, Clock
     /// @param[in] spare3 Spare data
     /// @param[in] spare4 Spare data
-    BDSEphemeris(/*int32_t satNum, */ int32_t year, int32_t month, int32_t day, int32_t hour, int32_t minute, double second, double svClockBias, double svClockDrift, double svClockDriftRate,
+    BDSEphemeris(int32_t satNum, int32_t year, int32_t month, int32_t day, int32_t hour, int32_t minute, double second, double svClockBias, double svClockDrift, double svClockDriftRate,
                  double AODE, double Crs, double delta_n, double M_0,
                  double Cuc, double e, double Cus, double sqrt_A,
                  double Toe, double Cic, double Omega_0, double Cis,

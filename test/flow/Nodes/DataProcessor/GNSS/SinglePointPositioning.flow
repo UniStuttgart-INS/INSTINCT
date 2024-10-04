@@ -76,24 +76,33 @@
         "node-91": {
             "data": {
                 "algorithm": {
+                    "estimateInterFrequencyBiases": true,
                     "estimatorType": 1,
                     "kalmanFilter": {
-                        "covarianceAccel": [
-                            3.0,
-                            1.5
-                        ],
-                        "covarianceAccelUnit": 0,
-                        "covarianceClkFrequencyDrift": 0.04,
-                        "covarianceClkFrequencyDriftUnit": 1,
-                        "covarianceClkPhaseDrift": 0.01,
-                        "covarianceClkPhaseDriftUnit": 1,
-                        "covarianceInterSysClkFrequencyDrift": 0.04,
-                        "covarianceInterSysClkFrequencyDriftUnit": 1,
-                        "covarianceInterSysClkPhaseDrift": 0.01,
-                        "covarianceInterSysClkPhaseDriftUnit": 1,
-                        "qCalculationAlgorithm": 0
+                        "systemModelCalcAlgorithm": 1
                     },
                     "obsEstimator": {
+                        "antenna": [
+                            [
+                                0,
+                                {
+                                    "autoDetermine": true,
+                                    "enabled": true,
+                                    "hen_delta": {
+                                        "0": {
+                                            "0": 0.0
+                                        },
+                                        "1": {
+                                            "0": 0.0
+                                        },
+                                        "2": {
+                                            "0": 0.0
+                                        }
+                                    },
+                                    "name": ""
+                                }
+                            ]
+                        ],
                         "gnssMeasurementError": {
                             "carrierStdDev": 0.001,
                             "codeStdDev": 0.1,
@@ -174,7 +183,60 @@
                     "obsFilter": {
                         "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                         "elevationMask": 0.0,
-                        "excludedSatellites": [],
+                        "excludedSatellites": [
+                            {
+                                "num": 1,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 2,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 4,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 5,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 59,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 60,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 61,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 62,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "QZSS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 6,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 7,
+                                "sys": "IRNSS"
+                            }
+                        ],
                         "frequencies": 1,
                         "neededObsType": [
                             0
@@ -688,8 +750,8 @@
                             }
                         ],
                         "usedObsTypes": [
-                            2,
-                            0
+                            0,
+                            2
                         ]
                     }
                 },

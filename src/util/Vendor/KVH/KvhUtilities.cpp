@@ -153,6 +153,6 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
             obs->p_magneticField.emplace(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
         }
 
-        obs->p_acceleration *= InsConst<>::G_NORM;
+        obs->p_acceleration *= InsConst::G_NORM;
     }
 }

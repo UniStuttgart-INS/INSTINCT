@@ -14,6 +14,7 @@
 #pragma once
 
 #include <array>
+#include <cstddef>
 
 #include "util/Assert.h"
 
@@ -55,11 +56,11 @@ constexpr std::array<Scalar, N> genRangeArray(Scalar start, Scalar stepSize, [[m
     for (size_t i = 0; i < container.size(); i++)
     {
         container.at(i) = start;
-        INS_ASSERT_USER_ERROR(start < end, "The range exceeds the end value.");
+        INS_ASSERT_USER_ERROR(start < end, "The range exceeds the end value. Make the array bigger.");
         start += stepSize;
     }
 
-    INS_ASSERT_USER_ERROR(start + stepSize > end, "The end value exceeds the range.");
+    INS_ASSERT_USER_ERROR(start + stepSize > end, "The end value exceeds the range. Make the array smaller.");
 
     return container;
 };

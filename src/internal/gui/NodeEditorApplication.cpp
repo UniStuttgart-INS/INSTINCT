@@ -12,7 +12,6 @@
 #include <imgui_node_editor_internal.h>
 namespace ed = ax::NodeEditor;
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 

@@ -426,7 +426,7 @@ struct fmt::formatter<NAV::TimeSystem> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::TimeSystem& timeSys, FormatContext& ctx)
+    auto format(const NAV::TimeSystem& timeSys, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(timeSys), ctx);
     }

@@ -119,6 +119,14 @@ class NodeEditorApplication : public Application
     /// Ratio to multiply for node header elements
     static float headerFontRatio();
 
+    /// Available color settings
+    enum Colors : size_t
+    {
+        COLOR_GROUP_HEADER_TEXT,  ///< Color of the group header text
+        COLOR_GROUP_HEADER_BG,    ///< Color of the group header background
+        COLOR_GROUP_OUTER_BORDER, ///< Color of the group outer border
+    };
+
   private:
     constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
     constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
@@ -136,13 +144,6 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
 
-    /// Available color settings
-    enum Colors : size_t
-    {
-        COLOR_GROUP_HEADER_TEXT,  ///< Color of the group header text
-        COLOR_GROUP_HEADER_BG,    ///< Color of the group header background
-        COLOR_GROUP_OUTER_BORDER, ///< Color of the group outer border
-    };
     /// Color settings
     std::vector<ImVec4> m_colors = {
         { 1.0, 1.0, 1.0, 1.0 },  // GROUP_HEADER_TEXT

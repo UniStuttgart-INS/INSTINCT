@@ -45,9 +45,9 @@ namespace nm = NAV::NodeManager;
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
-constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst<>::pseudometre;
+constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst<>::G_NORM;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -1118,7 +1118,7 @@ bool NAV::TightlyCoupledKF::initialize()
     _lastImuObs = nullptr;
     _externalInitTime.reset();
 
-    _recvClk = {};
+    _recvClk = ReceiverClock({ GPS });
 
     _kalmanFilter.setZero();
 
@@ -1215,7 +1215,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s2)
     {
-        variance_clkPhase = std::pow(InsConst<>::C, 2) * _initCovariancePhase;
+        variance_clkPhase = std::pow(InsConst::C, 2) * _initCovariancePhase;
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::m)
     {
@@ -1223,7 +1223,7 @@ bool NAV::TightlyCoupledKF::initialize()
     }
     if (_initCovariancePhaseUnit == InitCovarianceClockPhaseUnit::s)
     {
-        variance_clkPhase = std::pow(InsConst<>::C * _initCovariancePhase, 2);
+        variance_clkPhase = std::pow(InsConst::C * _initCovariancePhase, 2);
     }
 
     // Initial Covariance of the receiver clock frequency drift
@@ -1366,7 +1366,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelNoiseUnits)
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
-        sigma2_ra = (_stdev_ra * 1e-3 * InsConst<>::G_NORM).array().square();
+        sigma2_ra = (_stdev_ra * 1e-3 * InsConst::G_NORM).array().square();
         break;
     case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
         sigma2_ra = _stdev_ra.array().square();
@@ -1392,7 +1392,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     switch (_stdevAccelBiasUnits)
     {
     case StdevAccelBiasUnits::microg: // [µg]
-        sigma2_bad = (_stdev_bad * 1e-6 * InsConst<>::G_NORM).array().square();
+        sigma2_bad = (_stdev_bad * 1e-6 * InsConst::G_NORM).array().square();
         break;
     case StdevAccelBiasUnits::m_s2: // [m / s^2]
         sigma2_bad = _stdev_bad.array().square();
@@ -1476,7 +1476,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         double g_0 = n_calcGravitation_EGM96(lla_position).norm();
 
         // omega_in^n = omega_ie^n + omega_en^n
-        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst<>::e_omega_ie
+        Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
                                      + n_calcTransportRate(lla_position, n_velocity, R_N, R_E);
         LOG_DATA("{}:     n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
@@ -1522,7 +1522,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
         Eigen::Vector3d e_gravitation = trafo::e_Quat_n(lla_position(0), lla_position(1)) * n_calcGravitation_EGM96(lla_position);
 
         // System Matrix
-        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst<>::e_omega_ie, _tau_bad, _tau_bgd);
+        F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), F);
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
@@ -1819,7 +1819,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // auto state = SPP::State{ .e_position = e_position,
     //                          .e_velocity = e_velocity,
     //                          .recvClk = _recvClk };
-    // // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
+    // // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
     // auto sppSol = std::make_shared<SppSolution>(); // TODO: Make the next function not require a sppSol by splitting it into a second function
     // SPP::calcDataBasedOnEstimates(sppSol, satelliteSystems, calcData, state,
     //                               nParam, nMeasPsr, nDopplerMeas, gnssObs->insTime, lla_position,
@@ -1859,9 +1859,9 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // //     if (calc.skipped) { continue; }
     // //     // Pseudorange estimate [m]
     // //     psrEst(static_cast<int>(ix)) = geometricDist
-    // //                                    + _recvClk.bias.value * InsConst<>::C
-    // //                                    + _recvClk.drift.value * InsConst<>::C * tau_epoch // TODO: Should we also do this in SPP KF and here?
-    // //                                    - calc.satClkBias * InsConst<>::C
+    // //                                    + _recvClk.bias.value * InsConst::C
+    // //                                    + _recvClk.drift.value * InsConst::C * tau_epoch // TODO: Should we also do this in SPP KF and here?
+    // //                                    - calc.satClkBias * InsConst::C
     // //                                    + dpsr_I
     // //                                    + dpsr_T
     // //                                    + dpsr_ie;
@@ -2004,8 +2004,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     //     }
     // }
 
-    // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst<>::C;
-    // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst<>::C;
+    // _recvClk.bias.value += _kalmanFilter.x(15, 0) / InsConst::C;
+    // _recvClk.drift.value += _kalmanFilter.x(16, 0) / InsConst::C;
 
     // // Push out the new data
     // auto tckfSolution = std::make_shared<InsGnssTCKFSolution>();
@@ -2021,8 +2021,8 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     // }
     // tckfSolution->b_biasAccel = _inertialIntegrator.p_getLastAccelerationBias();
     // tckfSolution->b_biasGyro = _inertialIntegrator.p_getLastAngularRateBias();
-    // tckfSolution->recvClkOffset = _recvClk.bias.value * InsConst<>::C;
-    // tckfSolution->recvClkDrift = _recvClk.drift.value * InsConst<>::C;
+    // tckfSolution->recvClkOffset = _recvClk.bias.value * InsConst::C;
+    // tckfSolution->recvClkDrift = _recvClk.drift.value * InsConst::C;
 
     // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     // {

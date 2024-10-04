@@ -21,8 +21,8 @@ namespace nm = NAV::NodeManager;
 #include "Logger.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -31,7 +31,9 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/Utility/TimeWindow.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::TimeWindowTests
 {
@@ -44,14 +46,14 @@ TEST_CASE("[TimeWindow][flow] Simulate IMU and cut off start and end time", "[Ti
     //                                              TimeWindow.flow
     // ###########################################################################################################
     //
-    //  ImuSimulator (6)             TimeWindow (3)                           Plot (13)
-    //     (4) ImuObs |>  ---(7)-->  |> Input (1)  (2) Output |>  ---(14)-->  |> Pin 1 (8)
-    //  (5) PosVelAtt |>
+    //  ImuSimulator (6)             Merger (18)               TimeWindow (3)                           Plot (13)
+    //     (4) ImuObs |>  ---(19)--> |> (15) (17) |> --(20)--> |> Input (1)  (2) Output |>  ---(14)-->  |> Pin 1 (8)
+    //  (5) PosVelAtt |>             |> (16)
     //
     // ###########################################################################################################
 
     size_t messageCounterInput = 0;
-    nm::RegisterWatcherCallbackToInputPin(1, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+    nm::RegisterWatcherCallbackToInputPin(15, [&messageCounterInput](const Node* /* node */, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
         messageCounterInput++;
     });
 

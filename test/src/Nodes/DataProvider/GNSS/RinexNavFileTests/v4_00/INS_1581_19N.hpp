@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GPSEphemeris.hpp"
 

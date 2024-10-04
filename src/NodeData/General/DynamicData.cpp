@@ -20,7 +20,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include <fmt/core.h>
 
-void NAV::DynamicData::guiTooltip(bool detailView, bool firstOpen, const char* displayName, const char* id) const
+void NAV::DynamicData::guiTooltip(bool detailView, bool firstOpen, const char* displayName, const char* id, int* rootWindow) const
 {
     ImGui::SetNextItemOpen(detailView, firstOpen ? ImGuiCond_Always : ImGuiCond_Once);
 
@@ -68,7 +68,7 @@ void NAV::DynamicData::guiTooltip(bool detailView, bool firstOpen, const char* d
             auto timeString = fmt::format("{}", raw.second->insTime.toYMDHMS(GPST));
             if (ImGui::BeginTabItem(fmt::format("{}##{} {}", raw.first, timeString, id).c_str()))
             {
-                raw.second->guiTooltip(detailView, firstOpen, displayName, fmt::format("{} {} {}", raw.first, timeString, id).c_str());
+                raw.second->guiTooltip(detailView, firstOpen, displayName, fmt::format("{} {} {}", raw.first, timeString, id).c_str(), rootWindow);
                 ImGui::EndTabItem();
             }
         }

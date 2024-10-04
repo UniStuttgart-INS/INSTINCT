@@ -19,6 +19,7 @@
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "Navigation/GNSS/Positioning/ReceiverClock.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
 
@@ -26,6 +27,7 @@
 
 #include "util/Assert.h"
 #include "util/Container/KeyedMatrix.hpp"
+#include "util/Container/UncertainValue.hpp"
 
 namespace NAV
 {
@@ -55,45 +57,40 @@ class SppSolution : public PosVel
         auto desc = PosVel::GetStaticDataDescriptors();
         desc.reserve(GetStaticDescriptorCount());
         desc.emplace_back("Number satellites");
-        desc.emplace_back("Receiver clock bias [s]");
-        desc.emplace_back("Receiver clock drift [s/s]");
-        desc.emplace_back("Receiver clock bias StDev [s]");
-        desc.emplace_back("Receiver clock drift StDev [s/s]");
-        desc.emplace_back("System time reference system");
-        desc.emplace_back("GPS system time difference [s]");
-        desc.emplace_back("GAL system time difference [s]");
-        desc.emplace_back("GLO system time difference [s]");
-        desc.emplace_back("BDS system time difference [s]");
-        desc.emplace_back("QZSS system time difference [s]");
-        desc.emplace_back("IRNSS system time difference [s]");
-        desc.emplace_back("SBAS system time difference [s]");
-        desc.emplace_back("GPS system time drift difference [s/s]");
-        desc.emplace_back("GAL system time drift difference [s/s]");
-        desc.emplace_back("GLO system time drift difference [s/s]");
-        desc.emplace_back("BDS system time drift difference [s/s]");
-        desc.emplace_back("QZSS system time drift difference [s/s]");
-        desc.emplace_back("IRNSS system time drift difference [s/s]");
-        desc.emplace_back("SBAS system time drift difference [s/s]");
-        desc.emplace_back("GPS system time difference StDev [s]");
-        desc.emplace_back("GAL system time difference StDev [s]");
-        desc.emplace_back("GLO system time difference StDev [s]");
-        desc.emplace_back("BDS system time difference StDev [s]");
-        desc.emplace_back("QZSS system time difference StDev [s]");
-        desc.emplace_back("IRNSS system time difference StDev [s]");
-        desc.emplace_back("SBAS system time difference StDev [s]");
-        desc.emplace_back("GPS system time drift difference StDev [s/s]");
-        desc.emplace_back("GAL system time drift difference StDev [s/s]");
-        desc.emplace_back("GLO system time drift difference StDev [s/s]");
-        desc.emplace_back("BDS system time drift difference StDev [s/s]");
-        desc.emplace_back("QZSS system time drift difference StDev [s/s]");
-        desc.emplace_back("IRNSS system time drift difference StDev [s/s]");
-        desc.emplace_back("SBAS system time drift difference StDev [s/s]");
+        desc.emplace_back("Receiver clock bias GPS [s]");
+        desc.emplace_back("Receiver clock drift GPS [s/s]");
+        desc.emplace_back("Receiver clock bias StDev GPS [s]");
+        desc.emplace_back("Receiver clock drift StDev GPS [s/s]");
+        desc.emplace_back("Receiver clock bias GAL [s]");
+        desc.emplace_back("Receiver clock drift GAL [s/s]");
+        desc.emplace_back("Receiver clock bias StDev GAL [s]");
+        desc.emplace_back("Receiver clock drift StDev GAL [s/s]");
+        desc.emplace_back("Receiver clock bias GLO [s]");
+        desc.emplace_back("Receiver clock drift GLO [s/s]");
+        desc.emplace_back("Receiver clock bias StDev GLO [s]");
+        desc.emplace_back("Receiver clock drift StDev GLO [s/s]");
+        desc.emplace_back("Receiver clock bias BDS [s]");
+        desc.emplace_back("Receiver clock drift BDS [s/s]");
+        desc.emplace_back("Receiver clock bias StDev BDS [s]");
+        desc.emplace_back("Receiver clock drift StDev BDS [s/s]");
+        desc.emplace_back("Receiver clock bias QZSS [s]");
+        desc.emplace_back("Receiver clock drift QZSS [s/s]");
+        desc.emplace_back("Receiver clock bias StDev QZSS [s]");
+        desc.emplace_back("Receiver clock drift StDev QZSS [s/s]");
+        desc.emplace_back("Receiver clock bias IRNSS [s]");
+        desc.emplace_back("Receiver clock drift IRNSS [s/s]");
+        desc.emplace_back("Receiver clock bias StDev IRNSS [s]");
+        desc.emplace_back("Receiver clock drift StDev IRNSS [s/s]");
+        desc.emplace_back("Receiver clock bias SBAS [s]");
+        desc.emplace_back("Receiver clock drift SBAS [s/s]");
+        desc.emplace_back("Receiver clock bias StDev SBAS [s]");
+        desc.emplace_back("Receiver clock drift StDev SBAS [s/s]");
 
         return desc;
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 73; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 29; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -107,145 +104,101 @@ class SppSolution : public PosVel
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < PosVel::GetStaticDescriptorCount()) { return PosVel::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Latitude [deg]
-        case 1:  // Longitude [deg]
-        case 2:  // Altitude [m]
-        case 3:  // North/South [m]
-        case 4:  // East/West [m]
-        case 5:  // X-ECEF [m]
-        case 6:  // Y-ECEF [m]
-        case 7:  // Z-ECEF [m]
-        case 8:  // X-ECEF StDev [m]
-        case 9:  // Y-ECEF StDev [m]
-        case 10: // Z-ECEF StDev [m]
-        case 11: // XY-ECEF StDev [m]
-        case 12: // XZ-ECEF StDev [m]
-        case 13: // YZ-ECEF StDev [m]
-        case 14: // North StDev [m]
-        case 15: // East StDev [m]
-        case 16: // Down StDev [m]
-        case 17: // NE StDev [m]
-        case 18: // ND StDev [m]
-        case 19: // ED StDev [m]
-        case 20: // Velocity norm [m/s]
-        case 21: // X velocity ECEF [m/s]
-        case 22: // Y velocity ECEF [m/s]
-        case 23: // Z velocity ECEF [m/s]
-        case 24: // North velocity [m/s]
-        case 25: // East velocity [m/s]
-        case 26: // Down velocity [m/s]
-        case 27: // X velocity ECEF StDev [m/s]
-        case 28: // Y velocity ECEF StDev [m/s]
-        case 29: // Z velocity ECEF StDev [m/s]
-        case 30: // XY velocity StDev [m]
-        case 31: // XZ velocity StDev [m]
-        case 32: // YZ velocity StDev [m]
-        case 33: // North velocity StDev [m/s]
-        case 34: // East velocity StDev [m/s]
-        case 35: // Down velocity StDev [m/s]
-        case 36: // NE velocity StDev [m]
-        case 37: // ND velocity StDev [m]
-        case 38: // ED velocity StDev [m]
-            return PosVel::getValueAt(idx);
-        case 39: // Number satellites
+        case PosVel::GetStaticDescriptorCount() + 0: // Number satellites
             return static_cast<double>(nSatellites);
-        case 40: // Receiver clock bias [s]
-            return recvClk.bias.value;
-        case 41: // Receiver clock drift [s/s]
-            if (recvClk.drift.value != 0.0) { return recvClk.drift.value; }
+
+        case PosVel::GetStaticDescriptorCount() + 1: // Receiver clock bias GPS [s]
+            if (const double* v = recvClk.biasFor(GPS)) { return *v; }
             break;
-        case 42: // Receiver clock bias StDev [s]
-            return recvClk.bias.stdDev;
-        case 43: // Receiver clock drift StDev [s/s]
-            if (recvClk.drift.value != 0.0) { return recvClk.drift.stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 2: // Receiver clock drift GPS [s/s]
+            if (const double* v = recvClk.driftFor(GPS)) { return *v; }
             break;
-        case 44: // System time reference system
-            return static_cast<double>(recvClk.referenceTimeSatelliteSystem.toEnumeration());
-        case 45: // GPS system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+        case PosVel::GetStaticDescriptorCount() + 3: // Receiver clock bias StDev GPS [s]
+            if (const double* v = recvClk.biasStdDevFor(GPS)) { return *v; }
             break;
-        case 46: // GAL system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+        case PosVel::GetStaticDescriptorCount() + 4: // Receiver clock drift StDev GPS [s/s]
+            if (const double* v = recvClk.driftStdDevFor(GPS)) { return *v; }
             break;
-        case 47: // GLO system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+
+        case PosVel::GetStaticDescriptorCount() + 5: // Receiver clock bias GAL [s]
+            if (const double* v = recvClk.biasFor(GAL)) { return *v; }
             break;
-        case 48: // BDS system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+        case PosVel::GetStaticDescriptorCount() + 6: // Receiver clock drift GAL [s/s]
+            if (const double* v = recvClk.driftFor(GAL)) { return *v; }
             break;
-        case 49: // QZSS system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+        case PosVel::GetStaticDescriptorCount() + 7: // Receiver clock bias StDev GAL [s]
+            if (const double* v = recvClk.biasStdDevFor(GAL)) { return *v; }
             break;
-        case 50: // IRNSS system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+        case PosVel::GetStaticDescriptorCount() + 8: // Receiver clock drift StDev GAL [s/s]
+            if (const double* v = recvClk.driftStdDevFor(GAL)) { return *v; }
             break;
-        case 51: // SBAS system time difference [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 45).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 45).value; }
+
+        case PosVel::GetStaticDescriptorCount() + 9: // Receiver clock bias GLO [s]
+            if (const double* v = recvClk.biasFor(GLO)) { return *v; }
             break;
-        case 52: // GPS system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 10: // Receiver clock drift GLO [s/s]
+            if (const double* v = recvClk.driftFor(GLO)) { return *v; }
             break;
-        case 53: // GAL system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 11: // Receiver clock bias StDev GLO [s]
+            if (const double* v = recvClk.biasStdDevFor(GLO)) { return *v; }
             break;
-        case 54: // GLO system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 12: // Receiver clock drift StDev GLO [s/s]
+            if (const double* v = recvClk.driftStdDevFor(GLO)) { return *v; }
             break;
-        case 55: // BDS system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+
+        case PosVel::GetStaticDescriptorCount() + 13: // Receiver clock bias BDS [s]
+            if (const double* v = recvClk.biasFor(BDS)) { return *v; }
             break;
-        case 56: // QZSS system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 14: // Receiver clock drift BDS [s/s]
+            if (const double* v = recvClk.driftFor(BDS)) { return *v; }
             break;
-        case 57: // IRNSS system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 15: // Receiver clock bias StDev BDS [s]
+            if (const double* v = recvClk.biasStdDevFor(BDS)) { return *v; }
             break;
-        case 58: // SBAS system time drift difference [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 52).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 52).value; }
+        case PosVel::GetStaticDescriptorCount() + 16: // Receiver clock drift StDev BDS [s/s]
+            if (const double* v = recvClk.driftStdDevFor(BDS)) { return *v; }
             break;
-        case 59: // GPS system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+
+        case PosVel::GetStaticDescriptorCount() + 17: // Receiver clock bias QZSS [s]
+            if (const double* v = recvClk.biasFor(QZSS)) { return *v; }
             break;
-        case 60: // GAL system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 18: // Receiver clock drift QZSS [s/s]
+            if (const double* v = recvClk.driftFor(QZSS)) { return *v; }
             break;
-        case 61: // GLO system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 19: // Receiver clock bias StDev QZSS [s]
+            if (const double* v = recvClk.biasStdDevFor(QZSS)) { return *v; }
             break;
-        case 62: // BDS system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 20: // Receiver clock drift StDev QZSS [s/s]
+            if (const double* v = recvClk.driftStdDevFor(QZSS)) { return *v; }
             break;
-        case 63: // QZSS system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+
+        case PosVel::GetStaticDescriptorCount() + 21: // Receiver clock bias IRNSS [s]
+            if (const double* v = recvClk.biasFor(IRNSS)) { return *v; }
             break;
-        case 64: // IRNSS system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 22: // Receiver clock drift IRNSS [s/s]
+            if (const double* v = recvClk.driftFor(IRNSS)) { return *v; }
             break;
-        case 65: // SBAS system time difference StDev [s]
-            if (recvClk.sysTimeDiffBias.at(idx - 59).value != 0.0) { return recvClk.sysTimeDiffBias.at(idx - 59).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 23: // Receiver clock bias StDev IRNSS [s]
+            if (const double* v = recvClk.biasStdDevFor(IRNSS)) { return *v; }
             break;
-        case 66: // GPS system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 24: // Receiver clock drift StDev IRNSS [s/s]
+            if (const double* v = recvClk.driftStdDevFor(IRNSS)) { return *v; }
             break;
-        case 67: // GAL system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+
+        case PosVel::GetStaticDescriptorCount() + 25: // Receiver clock bias SBAS [s]
+            if (const double* v = recvClk.biasFor(SBAS)) { return *v; }
             break;
-        case 68: // GLO system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 26: // Receiver clock drift SBAS [s/s]
+            if (const double* v = recvClk.driftFor(SBAS)) { return *v; }
             break;
-        case 69: // BDS system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 27: // Receiver clock bias StDev SBAS [s]
+            if (const double* v = recvClk.biasStdDevFor(SBAS)) { return *v; }
             break;
-        case 70: // QZSS system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
-            break;
-        case 71: // IRNSS system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
-            break;
-        case 72: // SBAS system time drift difference StDev [s/s]
-            if (recvClk.sysTimeDiffDrift.at(idx - 66).value != 0.0) { return recvClk.sysTimeDiffDrift.at(idx - 66).stdDev; }
+        case PosVel::GetStaticDescriptorCount() + 28: // Receiver clock drift StDev SBAS [s/s]
+            if (const double* v = recvClk.driftStdDevFor(SBAS)) { return *v; }
             break;
         default:
             return std::nullopt;
@@ -354,7 +307,7 @@ class SppSolution : public PosVel
     size_t nParam = 0;
 
     /// Estimated receiver clock parameter
-    ReceiverClock recvClk;
+    ReceiverClock recvClk{ {} };
 
     /// Inter-frequency biases
     std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias;
@@ -385,10 +338,10 @@ class SppSolution : public PosVel
     Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
 
     /// Covariance matrix in ECEF coordinates
-    std::optional<KeyedMatrixXd<SPP::States::StateKeyTypes, SPP::States::StateKeyTypes>> _e_covarianceMatrix;
+    std::optional<KeyedMatrixXd<SPP::States::StateKeyType, SPP::States::StateKeyType>> _e_covarianceMatrix;
 
     /// Covariance matrix in local navigation coordinates
-    std::optional<KeyedMatrixXd<SPP::States::StateKeyTypes, SPP::States::StateKeyTypes>> _n_covarianceMatrix;
+    std::optional<KeyedMatrixXd<SPP::States::StateKeyType, SPP::States::StateKeyType>> _n_covarianceMatrix;
 };
 
 } // namespace NAV

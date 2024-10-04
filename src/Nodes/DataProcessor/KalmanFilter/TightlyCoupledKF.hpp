@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "internal/Node/Node.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
@@ -148,7 +149,7 @@ class TightlyCoupledKF : public Node
     InsTime _externalInitTime;
 
     /// Estimated receiver clock parameters
-    ReceiverClock _recvClk;
+    ReceiverClock _recvClk{ std::vector<SatelliteSystem>{ GPS } };
 
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
@@ -166,10 +167,10 @@ class TightlyCoupledKF : public Node
     TroposphereModelSelection _troposphereModels;
 
     /// @brief All Inter-system clock error keys
-    std::vector<SPP::States::StateKeyTypes> _interSysErrs{};
+    std::vector<SPP::States::StateKeyType> _interSysErrs{};
     /// @brief All Inter-system clock drift keys
     /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-    std::vector<SPP::States::StateKeyTypes> _interSysDrifts{};
+    std::vector<SPP::States::StateKeyType> _interSysDrifts{};
 
     /// Time of last epoch
     InsTime _lastEpochTime; // TODO: Remove?

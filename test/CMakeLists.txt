@@ -52,6 +52,8 @@ target_link_libraries(
           libvncxx
           libUartSensor)
 
+target_compile_definitions(tests PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
+
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)
 endif()

@@ -22,8 +22,8 @@ void Observations::recalcObservableCounts()
         satellites.insert(satId);
         systems.insert(satId.satSys);
 
-        const auto& recvObs = sigObs.recvObs.front();
-        for (const auto& obs : recvObs.obs)
+        const auto& recvObs = sigObs.recvObs.begin();
+        for (const auto& obs : recvObs->second->obs)
         {
             auto obsType = static_cast<size_t>(obs.first);
             nObservables.at(obsType)++;

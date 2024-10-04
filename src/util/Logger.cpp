@@ -135,12 +135,13 @@ Logger::Logger(const std::string& logpath)
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("global-log-level", "trace")));
     // Minimum level which automatically triggers a flush
-    spdlog::flush_on(spdlog::level::trace);
+    spdlog::flush_on(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("flush-log-level", "info")));
+    LOG_TRACE("Setting log flush-on to: {}", NAV::ConfigManager::Get<std::string>("flush-log-level", "info"));
 
     writeHeader();
     if (NAV::ConfigManager::HasKey("log-filter"))
     {
-        LOG_DEBUG("Setting log filter to: {}", NAV::ConfigManager::Get<std::string>("log-filter"));
+        LOG_TRACE("Setting log filter to: {}", NAV::ConfigManager::Get<std::string>("log-filter"));
     }
 }
 

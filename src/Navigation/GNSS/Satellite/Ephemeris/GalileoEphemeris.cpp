@@ -101,9 +101,9 @@ Clock::Corrections GalileoEphemeris::calcClockCorrections(const InsTime& recvTim
 {
     LOG_DATA("Calc Sat Clock corrections at receiver time {}", recvTime.toGPSweekTow());
     // Earth gravitational constant [m³/s²] (WGS 84 value of the earth's gravitational constant for GPS user)
-    const auto mu = InsConst<>::GAL::MU;
+    const auto mu = InsConst::GAL::MU;
     // Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
-    const auto F = InsConst<>::GAL::F;
+    const auto F = InsConst::GAL::F;
 
     LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow());
 
@@ -115,7 +115,7 @@ Clock::Corrections GalileoEphemeris::calcClockCorrections(const InsTime& recvTim
     LOG_DATA("    n {} [rad/s] (Corrected mean motion)", n);
 
     // Time at transmission
-    InsTime transTime0 = recvTime - std::chrono::duration<double>(dist / InsConst<>::C);
+    InsTime transTime0 = recvTime - std::chrono::duration<double>(dist / InsConst::C);
 
     InsTime transTime = transTime0;
     LOG_DATA("    Iterating Time at transmission");
@@ -179,9 +179,9 @@ Orbit::PosVelAccel GalileoEphemeris::calcSatelliteData(const InsTime& transTime,
 
     LOG_DATA("Calc Sat Position at transmit time {}", transTime.toGPSweekTow());
     // Earth gravitational constant [m³/s²] (WGS 84 value of the earth's gravitational constant for GPS user)
-    const auto mu = InsConst<>::GAL::MU;
+    const auto mu = InsConst::GAL::MU;
     // Earth angular velocity [rad/s] (WGS 84 value of the earth's rotation rate)
-    const auto Omega_e_dot = InsConst<>::GAL::omega_ie;
+    const auto Omega_e_dot = InsConst::GAL::omega_ie;
 
     LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow());
 
@@ -292,7 +292,7 @@ Orbit::PosVelAccel GalileoEphemeris::calcSatelliteData(const InsTime& transTime,
         if (calc & Calc_Acceleration)
         {
             // Oblate Earth acceleration Factor [m/s^2]
-            auto F = -(3.0 / 2.0) * InsConst<>::GPS::J2 * (mu / std::pow(r_k, 2)) * std::pow(InsConst<>::GPS::R_E / r_k, 2);
+            auto F = -(3.0 / 2.0) * InsConst::GPS::J2 * (mu / std::pow(r_k, 2)) * std::pow(InsConst::GPS::R_E / r_k, 2);
             // Earth-Fixed x acceleration [m/s^2]
             auto ax_k = -mu * (x_k / std::pow(r_k, 3)) + F * ((1.0 - 5.0 * std::pow(z_k / r_k, 2)) * (x_k / r_k))
                         + 2 * vy_k * Omega_e_dot + x_k * std::pow(Omega_e_dot, 2);

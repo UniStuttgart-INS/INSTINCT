@@ -8,10 +8,13 @@
 
 #include "Frequency.hpp"
 
-#include "util/Assert.h"
+#include <algorithm>
 #include <cmath>
 #include <imgui.h>
 #include <imgui_internal.h>
+
+#include "util/Assert.h"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -538,6 +541,38 @@ Frequency::Enum Frequency::ToEnumeration(Frequency freq)
 Frequency::Enum Frequency::toEnumeration() const
 {
     return ToEnumeration(*this);
+}
+
+std::vector<Frequency> Frequency::ToVector(Frequency freq)
+{
+    std::vector<Frequency> v;
+    for (const Frequency& f : GetAll())
+    {
+        if (f.value & freq.value) { v.push_back(f); }
+    }
+    return v;
+}
+
+std::vector<Frequency> Frequency::toVector() const
+{
+    return ToVector(value);
+}
+
+bool Frequency::IsFirstFrequency(const Frequency& freq, const Frequency& filter)
+{
+    return freq.isFirstFrequency(filter);
+}
+
+bool Frequency::isFirstFrequency(const Frequency& filter) const
+{
+    Frequency_ f = filter & getSatSys();
+    f = Frequency_(f ^ value);
+
+    if (f == Freq_None) { return true; }
+
+    auto frequencies = Frequency(f).toVector();
+    return std::all_of(frequencies.begin(), frequencies.end(),
+                       [&](const Frequency& freq) { return value < Frequency_(freq); });
 }
 
 void to_json(json& j, const Frequency& data)

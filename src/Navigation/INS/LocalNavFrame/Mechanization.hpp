@@ -156,7 +156,7 @@ Eigen::Vector<Scalar, 10> n_calcPosVelAttDerivative(const Eigen::Vector<Scalar, 
     LOG_DATA("R_E = {} [m]", R_E);
 
     // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
-    Eigen::Vector3<Scalar> n_omega_ie = n_Quat_e * InsConst<>::e_omega_ie;
+    Eigen::Vector3<Scalar> n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
     LOG_DATA("n_omega_ie = {} [rad/s]", n_omega_ie.transpose());
     // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
     Eigen::Vector3<Scalar> n_omega_en = n_calcTransportRate(y.template segment<3>(7), y.template segment<3>(4), R_N, R_E);
@@ -175,7 +175,7 @@ Eigen::Vector<Scalar, 10> n_calcPosVelAttDerivative(const Eigen::Vector<Scalar, 
     LOG_DATA("n_coriolisAcceleration = {} [m/s^2]", n_coriolisAcceleration.transpose());
     // Centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path)
     Eigen::Vector3<Scalar> n_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
-                                                           ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.template segment<3>(7)), InsConst<>::e_omega_ie)
+                                                           ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.template segment<3>(7)), InsConst::e_omega_ie)
                                                            : Eigen::Vector3<Scalar>::Zero();
     LOG_DATA("n_centrifugalAcceleration = {} [m/s^2]", n_centrifugalAcceleration.transpose());
 

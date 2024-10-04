@@ -15,30 +15,6 @@
 
 #include <imgui.h>
 
-/// @brief Add operator
-/// @param lhs Left-hand side
-/// @param rhs Right-hand side
-/// @return Computation result
-constexpr ImVec4 operator+(const ImVec4& lhs, const ImVec4& rhs)
-{
-    return { lhs.x + rhs.x,
-             lhs.y + rhs.y,
-             lhs.z + rhs.z,
-             lhs.w + rhs.w };
-}
-
-/// @brief Subtract operator
-/// @param lhs Left-hand side
-/// @param rhs Right-hand side
-/// @return Computation result
-constexpr ImVec4 operator-(const ImVec4& lhs, const ImVec4& rhs)
-{
-    return { lhs.x - rhs.x,
-             lhs.y - rhs.y,
-             lhs.z - rhs.z,
-             lhs.w - rhs.w };
-}
-
 /// @brief Scalar multiplication operator
 /// @param lhs Left-hand side
 /// @param rhs Right-hand side

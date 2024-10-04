@@ -90,7 +90,8 @@ class DynamicData : public NodeData
     /// @param[in] firstOpen Flag whether the tooltip is opened once
     /// @param[in] displayName Data identifier, can be used in dynamic data to identify the correct data
     /// @param[in] id Unique identifier
-    void guiTooltip(bool detailView, bool firstOpen, const char* displayName, const char* id) const override;
+    /// @param[in] rootWindow Pointer to the root window opening the tooltip
+    void guiTooltip(bool detailView, bool firstOpen, const char* displayName, const char* id, int* rootWindow) const override;
 
     /// @brief Return whether this data has a tooltip
     [[nodiscard]] bool hasTooltip() const override { return true; }

@@ -18,7 +18,7 @@ namespace NAV::experimental
 {
 
 Delay::Delay()
-    : Node(fmt::format("z^-{}", _delayLength))
+    : Node("z^-1")
 {
     LOG_TRACE("{}: called", name);
 

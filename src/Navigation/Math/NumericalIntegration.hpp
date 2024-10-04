@@ -27,8 +27,8 @@ namespace NAV
 namespace ButcherTableau
 {
 
-#pragma GCC diagnostic push
-#if !defined(__clang__)
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
@@ -103,7 +103,9 @@ inline Y RungeKuttaExplicit(const Y& y_n, const std::array<Z, s> z, const Scalar
     return y_n + h * sum_b;
 }
 
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 /// @brief Butcher tableau for Runge-Kutta 1st order (explicit) / (Forward) Euler method
 template<typename Scalar>

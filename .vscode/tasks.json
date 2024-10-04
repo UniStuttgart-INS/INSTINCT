@@ -103,7 +103,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:Build-Type} -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=${input:Build-Type} -s compiler.cppstd=17",
             ],
             "windows": {
                 "command": "conan",
@@ -114,7 +114,7 @@
                     "-s",
                     "build_type=${input:Build-Type}",
                     "-s",
-                    "compiler.cppstd=20",
+                    "compiler.cppstd=17",
                 ],
                 "options": {
                     "env": {
@@ -135,7 +135,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Debug -s compiler.cppstd=17",
             ],
             "windows": {
                 "command": "conan",
@@ -146,7 +146,7 @@
                     "-s",
                     "build_type=Debug",
                     "-s",
-                    "compiler.cppstd=20",
+                    "compiler.cppstd=17",
                 ],
                 "options": {
                     "env": {
@@ -167,7 +167,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=20",
+                "export CC=${input:Compiler} && export CXX=$([[ \"${input:Compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && conan install . --build=missing -s build_type=Release -s compiler.cppstd=17",
             ],
             "windows": {
                 "command": "conan",
@@ -178,7 +178,7 @@
                     "-s",
                     "build_type=Release",
                     "-s",
-                    "compiler.cppstd=20",
+                    "compiler.cppstd=17",
                 ],
                 "options": {
                     "env": {
@@ -517,6 +517,7 @@
                 "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--flush-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning",
                 // ================ To configure tests ================
                 // "--flow-path=test/flow",
@@ -696,11 +697,11 @@
             "command": "${workspaceFolder}/build/bin/${input:Build-Type}/instinct",
             "args": [
                 "--config=config.ini",
-                "--load=\"flow/RTK-2020-08-05-Icare.flow\"",
+                "--load=\"flow/Default.flow\"",
                 // "--load=\"test/flow/Nodes/DataProcessor/GNSS/SinglePointPositioning.flow\"",
                 // "--sigterm",
                 // "--duration=60",
-                // "--nogui",
+                "--nogui",
                 // "--noinit",
                 // "--input-path=data",
                 // "--output-path=logs",
@@ -709,6 +710,7 @@
                 "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--flush-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",
                 // ================ To configure tests ================
                 // "--flow-path=test/flow",

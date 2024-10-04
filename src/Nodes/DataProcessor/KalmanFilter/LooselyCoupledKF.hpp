@@ -675,7 +675,7 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFStates> : fmt::formatter<const ch
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::LooselyCoupledKF::KFStates& st, FormatContext& ctx)
+    auto format(const NAV::LooselyCoupledKF::KFStates& st, FormatContext& ctx) const
     {
         switch (st)
         {
@@ -722,7 +722,7 @@ struct fmt::formatter<NAV::LooselyCoupledKF::KFMeas> : fmt::formatter<const char
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::LooselyCoupledKF::KFMeas& st, FormatContext& ctx)
+    auto format(const NAV::LooselyCoupledKF::KFMeas& st, FormatContext& ctx) const
     {
         switch (st)
         {

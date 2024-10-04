@@ -56,7 +56,7 @@ class PosVelAtt : public PosVel
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 46; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 7; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -70,62 +70,30 @@ class PosVelAtt : public PosVel
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < PosVel::GetStaticDescriptorCount()) { return PosVel::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Latitude [deg]
-        case 1:  // Longitude [deg]
-        case 2:  // Altitude [m]
-        case 3:  // North/South [m]
-        case 4:  // East/West [m]
-        case 5:  // X-ECEF [m]
-        case 6:  // Y-ECEF [m]
-        case 7:  // Z-ECEF [m]
-        case 8:  // X-ECEF StDev [m]
-        case 9:  // Y-ECEF StDev [m]
-        case 10: // Z-ECEF StDev [m]
-        case 11: // XY-ECEF StDev [m]
-        case 12: // XZ-ECEF StDev [m]
-        case 13: // YZ-ECEF StDev [m]
-        case 14: // North StDev [m]
-        case 15: // East StDev [m]
-        case 16: // Down StDev [m]
-        case 17: // NE StDev [m]
-        case 18: // ND StDev [m]
-        case 19: // ED StDev [m]
-        case 20: // Velocity norm [m/s]
-        case 21: // X velocity ECEF [m/s]
-        case 22: // Y velocity ECEF [m/s]
-        case 23: // Z velocity ECEF [m/s]
-        case 24: // North velocity [m/s]
-        case 25: // East velocity [m/s]
-        case 26: // Down velocity [m/s]
-        case 27: // X velocity ECEF StDev [m/s]
-        case 28: // Y velocity ECEF StDev [m/s]
-        case 29: // Z velocity ECEF StDev [m/s]
-        case 30: // XY velocity StDev [m]
-        case 31: // XZ velocity StDev [m]
-        case 32: // YZ velocity StDev [m]
-        case 33: // North velocity StDev [m/s]
-        case 34: // East velocity StDev [m/s]
-        case 35: // Down velocity StDev [m/s]
-        case 36: // NE velocity StDev [m]
-        case 37: // ND velocity StDev [m]
-        case 38: // ED velocity StDev [m]
-            return PosVel::getValueAt(idx);
-        case 39: // Roll [deg]
-            return rad2deg(rollPitchYaw().x());
-        case 40: // Pitch [deg]
-            return rad2deg(rollPitchYaw().y());
-        case 41: // Yaw [deg]
-            return rad2deg(rollPitchYaw().z());
-        case 42: // Quaternion::w
-            return n_Quat_b().w();
-        case 43: // Quaternion::x
-            return n_Quat_b().x();
-        case 44: // Quaternion::y
-            return n_Quat_b().y();
-        case 45: // Quaternion::z
-            return n_Quat_b().z();
+        case PosVel::GetStaticDescriptorCount() + 0: // Roll [deg]
+            if (_e_Quat_b.norm() != 0) { return rad2deg(rollPitchYaw().x()); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 1: // Pitch [deg]
+            if (_e_Quat_b.norm() != 0) { return rad2deg(rollPitchYaw().y()); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 2: // Yaw [deg]
+            if (_e_Quat_b.norm() != 0) { return rad2deg(rollPitchYaw().z()); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 3: // Quaternion::w
+            if (_e_Quat_b.norm() != 0) { return n_Quat_b().w(); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 4: // Quaternion::x
+            if (_e_Quat_b.norm() != 0) { return n_Quat_b().x(); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 5: // Quaternion::y
+            if (_e_Quat_b.norm() != 0) { return n_Quat_b().y(); }
+            break;
+        case PosVel::GetStaticDescriptorCount() + 6: // Quaternion::z
+            if (_e_Quat_b.norm() != 0) { return n_Quat_b().z(); }
+            break;
         default:
             return std::nullopt;
         }

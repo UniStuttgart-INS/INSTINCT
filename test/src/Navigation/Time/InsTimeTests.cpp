@@ -818,29 +818,29 @@ TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_MJD = InsTime(InsTime_MJD(53045, 0.5596990740740740740L));
-    LOG_DEBUG("insTime_MJD: {} <= {}", (insTime - insTime_MJD).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_MJD: {} <= {}", std::chrono::duration<double>(insTime - insTime_MJD).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_MJD);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_JD = InsTime(InsTime_JD(2453046, 0.0596990740740740740L));
-    LOG_DEBUG("insTime_JD: {} <= {}", (insTime - insTime_JD).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_JD: {} <= {}", std::chrono::duration<double>(insTime - insTime_JD).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_JD);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_GPSweekTow = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L), UTC);
-    LOG_DEBUG("insTime_GPSweekTow: {} <= {}", (insTime - insTime_GPSweekTow).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_GPSweekTow: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow);
     auto insTime_GPSweekTow2 = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
-    LOG_DEBUG("insTime_GPSweekTow2: {} <= {}", (insTime - insTime_GPSweekTow2).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_GPSweekTow2: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow2).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_YDoySod = InsTime(InsTime_YDoySod(2004, 41, 48358.0L));
-    LOG_DEBUG("insTime_YDoySod: {} <= {}", (insTime - insTime_YDoySod).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_YDoySod: {} <= {}", std::chrono::duration<double>(insTime - insTime_YDoySod).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_YDoySod);
 
     auto insTime_YMDHMS = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L));
-    LOG_DEBUG("insTime_YMDHMS: {} <= {}", (insTime - insTime_YMDHMS).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_YMDHMS: {} <= {}", std::chrono::duration<double>(insTime - insTime_YMDHMS).count(), InsTimeUtil::EPSILON);
     TEST_EQUAL_OBJECT(insTime, insTime_YMDHMS);
 }
 
@@ -881,39 +881,39 @@ TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_MJD_g_1 = InsTime(InsTime_MJD(53046, 0.5596990740740740740L));
     auto insTime_MJD_g_2 = InsTime(InsTime_MJD(53045, 0.5596991740740740740L));
-    LOG_DEBUG("insTime_MJD_g_1: {}", (insTime - insTime_MJD_g_1).count());
+    LOG_DEBUG("insTime_MJD_g_1: {}", static_cast<double>((insTime - insTime_MJD_g_1).count()));
     TEST_GREATER_OBJECT(insTime, insTime_MJD_g_1);
-    LOG_DEBUG("insTime_MJD_g_2: {}", (insTime - insTime_MJD_g_2).count());
+    LOG_DEBUG("insTime_MJD_g_2: {}", static_cast<double>((insTime - insTime_MJD_g_2).count()));
     TEST_GREATER_OBJECT(insTime, insTime_MJD_g_2);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_JD_g_1 = InsTime(InsTime_JD(2453047, 0.0596990740740740740L));
     auto insTime_JD_g_2 = InsTime(InsTime_JD(2453046, 0.0596990740740740740L + 2 * InsTimeUtil::EPSILON));
-    LOG_DEBUG("insTime_JD_g_1: {}", (insTime - insTime_JD_g_1).count());
+    LOG_DEBUG("insTime_JD_g_1: {}", static_cast<double>((insTime - insTime_JD_g_1).count()));
     TEST_GREATER_OBJECT(insTime, insTime_JD_g_1);
-    LOG_DEBUG("insTime_JD_g_2: {}", (insTime - insTime_JD_g_2).count());
+    LOG_DEBUG("insTime_JD_g_2: {}", static_cast<double>((insTime - insTime_JD_g_2).count()));
     TEST_GREATER_OBJECT(insTime, insTime_JD_g_2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_GPSweekTow_g_1 = InsTime(InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
     auto insTime_GPSweekTow_g_2 = InsTime(InsTime_GPSweekTow(1, 234, 221158.0L + InsTime::leapGps2UTC(insTime)));
     auto insTime_GPSweekTow_g_3 = InsTime(InsTime_GPSweekTow(1, 233, 221158.000000001L + InsTime::leapGps2UTC(insTime)));
-    LOG_DEBUG("insTime_GPSweekTow_g_1: {}", (insTime - insTime_GPSweekTow_g_1).count());
+    LOG_DEBUG("insTime_GPSweekTow_g_1: {}", static_cast<double>((insTime - insTime_GPSweekTow_g_1).count()));
     TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_1);
-    LOG_DEBUG("insTime_GPSweekTow_g_2: {}", (insTime - insTime_GPSweekTow_g_2).count());
+    LOG_DEBUG("insTime_GPSweekTow_g_2: {}", static_cast<double>((insTime - insTime_GPSweekTow_g_2).count()));
     TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_2);
-    LOG_DEBUG("insTime_GPSweekTow_g_3: {}", (insTime - insTime_GPSweekTow_g_3).count());
+    LOG_DEBUG("insTime_GPSweekTow_g_3: {}", static_cast<double>((insTime - insTime_GPSweekTow_g_3).count()));
     TEST_GREATER_OBJECT(insTime, insTime_GPSweekTow_g_3);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_YDoySod_g_1 = InsTime(InsTime_YDoySod(2005, 41, 48358.0L + InsTime::leapGps2UTC(insTime)));
     auto insTime_YDoySod_g_2 = InsTime(InsTime_YDoySod(2004, 42, 48358.0L + InsTime::leapGps2UTC(insTime)));
     auto insTime_YDoySod_g_3 = InsTime(InsTime_YDoySod(2004, 41, 48358.01L + InsTime::leapGps2UTC(insTime)));
-    LOG_DEBUG("insTime_YDoySod_g_1: {}", (insTime - insTime_YDoySod_g_1).count());
+    LOG_DEBUG("insTime_YDoySod_g_1: {}", static_cast<double>((insTime - insTime_YDoySod_g_1).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_1);
-    LOG_DEBUG("insTime_YDoySod_g_2: {}", (insTime - insTime_YDoySod_g_2).count());
+    LOG_DEBUG("insTime_YDoySod_g_2: {}", static_cast<double>((insTime - insTime_YDoySod_g_2).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_2);
-    LOG_DEBUG("insTime_YDoySod_g_3: {}", (insTime - insTime_YDoySod_g_3).count());
+    LOG_DEBUG("insTime_YDoySod_g_3: {}", static_cast<double>((insTime - insTime_YDoySod_g_3).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YDoySod_g_3);
 
     auto insTime_YMDHMS_g_1 = InsTime(InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L));
@@ -921,15 +921,15 @@ TEST_CASE("[InsTime] Comparisons greater", "[InsTime]")
     auto insTime_YMDHMS_g_3 = InsTime(InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L));
     auto insTime_YMDHMS_g_4 = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L));
     auto insTime_YMDHMS_g_5 = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.000000001L));
-    LOG_DEBUG("insTime_YMDHMS_g_1: {}", (insTime - insTime_YMDHMS_g_1).count());
+    LOG_DEBUG("insTime_YMDHMS_g_1: {}", static_cast<double>((insTime - insTime_YMDHMS_g_1).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_1);
-    LOG_DEBUG("insTime_YMDHMS_g_2: {}", (insTime - insTime_YMDHMS_g_2).count());
+    LOG_DEBUG("insTime_YMDHMS_g_2: {}", static_cast<double>((insTime - insTime_YMDHMS_g_2).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_2);
-    LOG_DEBUG("insTime_YMDHMS_g_3: {}", (insTime - insTime_YMDHMS_g_3).count());
+    LOG_DEBUG("insTime_YMDHMS_g_3: {}", static_cast<double>((insTime - insTime_YMDHMS_g_3).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_3);
-    LOG_DEBUG("insTime_YMDHMS_g_4: {}", (insTime - insTime_YMDHMS_g_4).count());
+    LOG_DEBUG("insTime_YMDHMS_g_4: {}", static_cast<double>((insTime - insTime_YMDHMS_g_4).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_4);
-    LOG_DEBUG("insTime_YMDHMS_g_5: {}", (insTime - insTime_YMDHMS_g_5).count());
+    LOG_DEBUG("insTime_YMDHMS_g_5: {}", static_cast<double>((insTime - insTime_YMDHMS_g_5).count()));
     TEST_GREATER_OBJECT(insTime, insTime_YMDHMS_g_5);
 }
 

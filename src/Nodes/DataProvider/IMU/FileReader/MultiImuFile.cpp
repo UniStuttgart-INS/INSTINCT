@@ -583,7 +583,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
         // Detect jumps back in time
         if (obs->insTime < _lastFiltObs)
         {
-            LOG_ERROR("{}: Jumped back in time on line {} (at {}), by {} s", nameId(), _lineCounter, obs->insTime.toYMDHMS(), (obs->insTime - _lastFiltObs).count());
+            LOG_ERROR("{}: Jumped back in time on line {} (at {}), by {} s", nameId(), _lineCounter, obs->insTime.toYMDHMS(), static_cast<double>((obs->insTime - _lastFiltObs).count()));
             return obs;
         }
         _lastFiltObs = obs->insTime;

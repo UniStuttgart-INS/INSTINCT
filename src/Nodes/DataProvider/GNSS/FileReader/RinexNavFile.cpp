@@ -59,8 +59,8 @@ std::string RinexNavFile::category()
 
 void RinexNavFile::guiConfig()
 {
-    if (auto res = FileReader::guiConfig(R"(Rinex Nav (.nav .rnx .gal .geo .glo .*N .*P){.nav,.rnx,.gal,.geo,.glo,(.+[.]\d\d?N),(.+[.]\d\d?L),(.+[.]\d\d?P)},.*)",
-                                         { ".nav", ".rnx", ".gal", ".geo", ".glo", "(.+[.]\\d\\d?N)", "(.+[.]\\d\\d?L)", "(.+[.]\\d\\d?P)" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(R"(Rinex Nav (.nav .rnx .gal .geo .glo .*N .*P){.nav,.rnx,.gal,.geo,.glo,(.+[.]\d\d?[Nn]),(.+[.]\d\d?[Ll]),(.+[.]\d\d?[Pp])},.*)",
+                                         { ".nav", ".rnx", ".gal", ".geo", ".glo", "(.+[.]\\d\\d?[Nn])", "(.+[.]\\d\\d?[Ll])", "(.+[.]\\d\\d?[Pp])" }, size_t(id), nameId()))
     {
         LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
@@ -111,6 +111,7 @@ bool RinexNavFile::initialize()
         _gnssNavInfo.reset();
     }
     _version = 0.0;
+    _sbasNotSupportedWarned = false;
 
     if (!FileReader::initialize())
     {
@@ -869,7 +870,7 @@ void RinexNavFile::parseOrbit2()
                 }
                 else if (satSys == BDS)
                 {
-                    _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<BDSEphemeris>(epoch, toe,
+                    _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<BDSEphemeris>(satNum, epoch, toe,
                                                                                                         IODE_IODnav_AODE_IODEC, fitInterval_AODC, a,
                                                                                                         sqrt_A, e, i_0, Omega_0, omega, M_0,
                                                                                                         delta_n, Omega_dot, i_dot, Cus, Cuc,
@@ -970,9 +971,10 @@ void RinexNavFile::parseOrbit2()
                                                                                                             pos, vel, accelLuniSolar,
                                                                                                             frequencyNumber_accuracyCode));
                 }
-                else if (satSys == SBAS)
+                else if (satSys == SBAS && !_sbasNotSupportedWarned)
                 {
                     LOG_WARN("SBAS is not yet supported. Therefore the Navigation file data will be skipped.");
+                    _sbasNotSupportedWarned = true;
                 }
             }
         }
@@ -1524,7 +1526,7 @@ bool RinexNavFile::parseEphemeris(std::string& line, SatelliteSystem satSys, uin
         }
         else if (satSys == BDS)
         {
-            _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<BDSEphemeris>(epoch, toe,
+            _gnssNavInfo.addSatelliteNavData({ satSys, satNum }, std::make_shared<BDSEphemeris>(satNum, epoch, toe,
                                                                                                 IODE_IODnav_AODE_IODEC, fitInterval_AODC, a,
                                                                                                 sqrt_A, e, i_0, Omega_0, omega, M_0,
                                                                                                 delta_n, Omega_dot, i_dot, Cus, Cuc,
@@ -1669,9 +1671,10 @@ bool RinexNavFile::parseEphemeris(std::string& line, SatelliteSystem satSys, uin
                                                                                                     pos, vel, accelLuniSolar,
                                                                                                     frequencyNumber_accuracyCode));
         }
-        else if (satSys == SBAS)
+        else if (satSys == SBAS && !_sbasNotSupportedWarned)
         {
             LOG_WARN("SBAS is not yet supported. Therefore the Navigation file data will be skipped.");
+            _sbasNotSupportedWarned = true;
         }
     }
     return true;

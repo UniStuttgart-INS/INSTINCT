@@ -2,7 +2,7 @@
 
 { callPackage, fetchFromGitHub, lib, stdenv,
   cmake, conan, gdb, lldb, gcovr, mold, clang-tools_17, llvmPackages_17, gcc13, gcc13Stdenv, libcxx,
-  doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools,
+  doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools, gv,
   xorg, glfw, gl3w, libGLU, libunwind, libGL
 }:
 
@@ -29,8 +29,8 @@ mainPkg.overrideAttrs (oa: {
 
       ccache
       ccacheStdenv
-      llvmPackages_latest.libcxxClang # When using 'gcc' this needs to be commented out
-      gperftools
+      llvmPackages_latest.libcxxClang
+      gv
     ] ++ (oa.nativeBuildInputs or [ ]);
     buildInputs = [
       xorg.libX11.dev
@@ -40,5 +40,10 @@ mainPkg.overrideAttrs (oa: {
       libunwind
       gperftools
     ] ++ (oa.buildInputs or [ ]);
-    LD_LIBRARY_PATH = "${libGL}/lib:${glfw}/lib:${libGLU}/lib:${stdenv.cc.cc.lib}/lib:${libcxx}/lib:${gperftools}/lib";
+    LD_LIBRARY_PATH = "${libGL}/lib"
+                      + ":${glfw}/lib"
+                      + ":${libGLU}/lib"
+                      + ":${stdenv.cc.cc.lib}/lib"
+                      + ":${libcxx}/lib"
+                      + ":${gperftools}/lib";
 })

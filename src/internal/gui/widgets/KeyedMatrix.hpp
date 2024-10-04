@@ -192,8 +192,10 @@ void KeyedRowVectorView(const char* label, const KeyedRowVector<Scalar, ColKeyTy
     ImGui::PopFont();
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
 
 /// @brief Shows GUI elements to modify the coefficients of a matrix with
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
@@ -403,6 +405,8 @@ bool InputKeyedRowVector(const char* label, KeyedRowVector<Scalar, ColKeyType, C
     return changed;
 }
 
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 } // namespace NAV::gui::widgets

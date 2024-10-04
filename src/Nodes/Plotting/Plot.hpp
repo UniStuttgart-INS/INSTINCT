@@ -29,7 +29,9 @@
 
 #include "util/Container/ScrollingBuffer.hpp"
 #include "util/Container/Vector.hpp"
-#include "util/Plot/Colormap.hpp"
+#include "util/Plot/PlotEventTooltip.hpp"
+#include "util/Plot/PlotItemStyle.hpp"
+#include "util/Plot/PlotTooltip.hpp"
 #include "util/Logger/CommonLog.hpp"
 
 #include "NodeData/General/DynamicData.hpp"
@@ -177,69 +179,6 @@ class Plot : public Node, public CommonLog
         /// Info needed to draw a data set
         struct PlotItem
         {
-            /// @brief Specifying the look of a certain line in the plot
-            struct Style
-            {
-                /// @brief Possible line types
-                enum class LineType : int
-                {
-                    Scatter, ///< Scatter plot (only markers)
-                    Line,    ///< Line plot
-                };
-
-                /// Display name in the legend (if not set falls back to PlotData::displayName)
-                std::string legendName;
-                /// Legend name which gets changed in the gui
-                std::string legendNameGui;
-                /// Line type
-                LineType lineType = LineType::Line;
-                /// Line Color
-                ImVec4 color = IMPLOT_AUTO_COL;
-                /// Colormap mask (pair: type and id)
-                std::pair<ColormapMaskType, int64_t> colormapMask = { ColormapMaskType::None, -1 };
-                /// Index of the plot data to compare for the color
-                size_t colormapMaskDataCmpIdx = 0;
-                /// Line thickness
-                float thickness = 1.0F;
-                /// Line Flags (overrides the plot selection)
-                std::optional<ImPlotLineFlags> lineFlags;
-
-                /// Amount of points to skip for plotting
-                int stride = 0;
-
-                /// Colormap mask (pair: type and id)
-                std::pair<ColormapMaskType, int64_t> markerColormapMask = { ColormapMaskType::None, -1 };
-                /// Index of the plot data to compare for the color
-                size_t markerColormapMaskDataCmpIdx = 0;
-                /// Display markers for the line plot (no effect for scatter type)
-                bool markers = false;
-                /// Style of the marker to display
-                ImPlotMarker markerStyle = ImPlotMarker_Cross;
-                /// Size of the markers (makes the marker smaller/bigger)
-                float markerSize = 1.0F;
-                /// Weight of the markers (increases thickness of marker lines)
-                float markerWeight = 1.0F;
-                /// Fill color for markers
-                ImVec4 markerFillColor = IMPLOT_AUTO_COL;
-                /// Outline/Border color for markers
-                ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
-
-                /// Show events on this data
-                bool eventsEnabled = false;
-                /// Style of the marker to display
-                ImPlotMarker eventMarkerStyle = ImPlotMarker_Cross;
-                /// Size of the markers (makes the marker smaller/bigger)
-                float eventMarkerSize = 6.0F;
-                /// Weight of the markers (increases thickness of marker lines)
-                float eventMarkerWeight = 2.0F;
-                /// Fill color for markers
-                ImVec4 eventMarkerFillColor = ImVec4(1.0, 0.0, 0.0, 1.0);
-                /// Outline/Border color for markers
-                ImVec4 eventMarkerOutlineColor = ImVec4(1.0, 0.0, 0.0, 1.0);
-                /// Tooltip search regex
-                std::string eventTooltipFilterRegex;
-            };
-
             /// @brief Default constructor (needed to make serialization with json working)
             PlotItem() = default;
 
@@ -277,7 +216,7 @@ class Plot : public Node, public CommonLog
             size_t dataIndex{};       ///< Index of the data on the pin
             std::string displayName;  ///< Display name of the data (not changing and unique)
             ImAxis axis{ ImAxis_Y1 }; ///< Axis to plot the data on (Y1, Y2, Y3)
-            Style style{};            ///< Defines how the data should be plotted
+            PlotItemStyle style{};    ///< Defines how the data should be plotted
             /// Buffer for the colormap mask
             ScrollingBuffer<ImU32> colormapMaskColors = ScrollingBuffer<ImU32>(0);
             /// Colormap version (to track updates of the colormap)
@@ -290,14 +229,8 @@ class Plot : public Node, public CommonLog
             /// Buffer for event markers
             ScrollingBuffer<double> eventMarker = ScrollingBuffer<double>(0);
 
-            /// Tooltip info
-            struct Tooltip
-            {
-                InsTime time;                   ///< Time of the event
-                std::vector<std::string> texts; ///< List of event texts
-            };
             /// List of tooltips (x,y, tooltip)
-            std::vector<std::tuple<double, double, Tooltip>> eventTooltips;
+            std::vector<std::tuple<double, double, PlotEventTooltip>> eventTooltips;
         };
 
         /// @brief Default constructor
@@ -355,22 +288,8 @@ class Plot : public Node, public CommonLog
         /// Flag whether the whole plot is visible. If not, then it should be deleted
         bool visible = true;
 
-        /// Plot Tooltip windows to show
-        struct Tooltip
-        {
-            /// @brief Constructor
-            /// @param[in] plotItemIdx The plot item index the tooltip belongs to
-            /// @param[in] dataIdx The data index the tooltip belongs to
-            /// @param[in] startPos Initial start position of the tooltip window
-            Tooltip(size_t plotItemIdx, size_t dataIdx, const ImVec2& startPos)
-                : plotItemIdx(plotItemIdx), dataIdx(dataIdx), startPos(startPos) {}
-
-            size_t plotItemIdx = 0;         ///< The plot item index the tooltip belongs to
-            size_t dataIdx = 0;             ///< The data index the tooltip belongs to
-            std::optional<ImVec2> startPos; ///< Initial start position of the tooltip window
-        };
         /// List of tooltip windows to show
-        std::vector<Tooltip> tooltips;
+        std::vector<PlotTooltip> tooltips;
     };
 
   private:
@@ -504,29 +423,6 @@ class Plot : public Node, public CommonLog
             addData(pinIndex, plotIndex++, obs->getValueAtOrNaN(i));
         }
     }
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
-    void plotDynamicData(const std::shared_ptr<const DynamicData>& obs, size_t pinIndex, size_t& plotIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
-    void plotGnssCombination(const std::shared_ptr<const GnssCombination>& obs, size_t pinIndex, size_t& plotIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    /// @param[in, out] plotIndex Index for inserting the data into the plot data vector
-    void plotGnssObs(const std::shared_ptr<const GnssObs>& obs, size_t pinIndex, size_t& plotIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSppSolutionDynamicData(const std::shared_ptr<const SppSolution>& obs, size_t pinIndex);
 };
 
 } // namespace NAV

@@ -198,6 +198,22 @@ class Frequency
     /// @brief Returns a continuous enumeration of the object
     [[nodiscard]] Enum toEnumeration() const;
 
+    /// @brief Get a vector representation of the specified Frequency
+    /// @param[in] freq Frequency to get the vector for
+    static std::vector<Frequency> ToVector(Frequency freq);
+
+    /// @brief Get a vector representation of the specified Frequency
+    [[nodiscard]] std::vector<Frequency> toVector() const;
+
+    /// @brief Checks wether the given frequency is the first in the filter (per system)
+    /// @param[in] freq Single Frequency
+    /// @param[in] filter Filter of multiple frequencies
+    static bool IsFirstFrequency(const Frequency& freq, const Frequency& filter);
+
+    /// @brief Checks wether the frequency is the first in the filter (per system)
+    /// @param[in] filter Filter of multiple frequencies
+    [[nodiscard]] bool isFirstFrequency(const Frequency& filter) const;
+
   private:
     /// @brief Internal value
     Frequency_ value = Frequency_::Freq_None;
@@ -632,7 +648,7 @@ struct fmt::formatter<NAV::Frequency> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Frequency& freq, FormatContext& ctx)
+    auto format(const NAV::Frequency& freq, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(freq), ctx);
     }

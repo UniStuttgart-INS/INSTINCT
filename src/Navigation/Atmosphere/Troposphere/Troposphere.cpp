@@ -9,6 +9,7 @@
 #include "Troposphere.hpp"
 
 #include "internal/gui/widgets/EnumCombo.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Logger.hpp"
 
 #include "Models/Saastamoinen.hpp"
@@ -129,7 +130,7 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 {
     bool changed = false;
 
-    constexpr float BUTTON_WIDTH = 25.0F;
+    const float BUTTON_WIDTH = 25.0F * gui::NodeEditorApplication::windowFontRatio();
 
     std::string mapFuncPreview;
     if (troposphereModelSelection.zwdMappingFunction.first != std::get<1>(ModelDefaults(troposphereModelSelection.zwdModel.first))
@@ -164,7 +165,7 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
     }
     if (ImGui::BeginPopup(fmt::format("{} Popup", label).c_str()))
     {
-        constexpr float ATMOSPHERE_COMBO_WIDTH = 95.0F;
+        const float ATMOSPHERE_COMBO_WIDTH = 95.0F * gui::NodeEditorApplication::windowFontRatio();
         if (ImGui::BeginTable(fmt::format("{} Table", label).c_str(), 5))
         {
             ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed);
@@ -284,6 +285,9 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen::Vector3d& lla_pos, double elevation, double /* azimuth */,
                                             const TroposphereModelSelection& troposphereModels)
 {
+    if (troposphereModels.zhdModel.first == TroposphereModel::None
+        && troposphereModels.zwdModel.first == TroposphereModel::None) { return {}; }
+
     if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
     {
         LOG_TRACE("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
