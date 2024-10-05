@@ -13,10 +13,12 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 #include <unordered_set>
 #include <map>
 
+#include "Navigation/Time/InsTime.hpp"
 #include "NodeData/NodeData.hpp"
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/DynamicInputPins.hpp"
@@ -168,12 +170,22 @@ class Combiner : public Node, public CommonLog
     /// Pin data
     struct PinData
     {
+        /// Time of the last observation processed
+        InsTime lastTime;
+        /// Min time between messages
+        double minTimeStep = std::numeric_limits<double>::infinity();
         /// Extra data descriptors for dynamic data
         std::vector<std::string> dynDataDescriptors;
     };
 
     /// Data per pin
     std::vector<PinData> _pinData;
+
+    /// Reference pin
+    size_t _refPinIdx = 0;
+
+    /// Output missing combinations with NaN instead of removing
+    bool _outputMissingAsNaN = false;
 
     /// Send request information
     struct SendRequest
@@ -208,10 +220,6 @@ class Combiner : public Node, public CommonLog
     /// @brief Returns a list of descriptors for the pin
     /// @param pinIndex Pin Index to look for the descriptor
     [[nodiscard]] std::vector<std::string> getDataDescriptors(size_t pinIndex) const;
-
-    /// @brief Checks if there are more pins with data for the same epoch
-    /// @param insTime Time to check for
-    [[nodiscard]] bool isLastObsThisEpoch(const InsTime& insTime) const;
 
     /// @brief Receive Data Function
     /// @param[in] queue Queue with all the received data messages

@@ -2,7 +2,7 @@
 
 { callPackage, fetchFromGitHub, lib, stdenv,
   cmake, conan, gdb, lldb, gcovr, mold, clang-tools_17, llvmPackages_17, gcc13, gcc13Stdenv, libcxx,
-  doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools, gv,
+  doxygen, texlive, graphviz, ghostscript, pdf2svg, ccache, ccacheStdenv, llvmPackages_latest, gperftools, gv, valgrind, kdePackages,
   xorg, glfw, gl3w, libGLU, libunwind, libGL
 }:
 
@@ -31,6 +31,8 @@ mainPkg.overrideAttrs (oa: {
       ccacheStdenv
       llvmPackages_latest.libcxxClang
       gv
+      valgrind
+      kdePackages.kcachegrind
     ] ++ (oa.nativeBuildInputs or [ ]);
     buildInputs = [
       xorg.libX11.dev

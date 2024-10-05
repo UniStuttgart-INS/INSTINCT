@@ -8,16 +8,24 @@
 
 #include "Combiner.hpp"
 #include "NodeRegistry.hpp"
+#include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Time/TimeSystem.hpp"
 #include "internal/Node/Pin.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <imgui.h>
 #include <imgui_internal.h>
+#include <vector>
+#include <spdlog/common.h>
 
 #include "util/Assert.h"
 #include "util/Logger.hpp"
 
 #include "internal/NodeManager.hpp"
+#include <fmt/core.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
@@ -101,6 +109,30 @@ std::string Combiner::category()
 
 void Combiner::guiConfig()
 {
+    ImGui::SetNextItemWidth(150.0F * gui::NodeEditorApplication::windowFontRatio());
+    if (ImGui::BeginCombo(fmt::format("Reference pin##{}", size_t(id)).c_str(), inputPins.at(_refPinIdx).name.c_str()))
+    {
+        for (size_t i = 0; i < inputPins.size(); i++)
+        {
+            const bool is_selected = _refPinIdx == i;
+            if (ImGui::Selectable(inputPins.at(i).name.c_str(), is_selected))
+            {
+                _refPinIdx = i;
+                flow::ApplyChanges();
+            }
+            if (is_selected) { ImGui::SetItemDefaultFocus(); }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Outputs will be sent at epochs of this input pin");
+
+    ImGui::SameLine();
+    if (ImGui::Checkbox(fmt::format("Output missing as NaN##{}", size_t(id)).c_str(), &_outputMissingAsNaN))
+    {
+        flow::ApplyChanges();
+    }
+
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Pins##{}", size_t(id)).c_str()))
     {
@@ -109,6 +141,7 @@ void Combiner::guiConfig()
         for (const auto& pin : inputPins) { pinIds.push_back(size_t(pin.id)); }
         if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this))
         {
+            if (_refPinIdx > inputPins.size()) { _refPinIdx--; }
             std::vector<size_t> inputPinIds;
             inputPinIds.reserve(inputPins.size());
             for (const auto& pin : inputPins) { inputPinIds.push_back(size_t(pin.id)); }
@@ -131,6 +164,7 @@ void Combiner::guiConfig()
                                 if (term.pinIndex == i) { term.pinIndex = newPinIdx + 10000; }
                             }
                         }
+                        if (_refPinIdx == i) { _refPinIdx = newPinIdx + 10000; }
                     }
                 }
                 for (auto& comb : _combinations)
@@ -140,6 +174,7 @@ void Combiner::guiConfig()
                         if (term.pinIndex >= 10000) { term.pinIndex -= 10000; }
                     }
                 }
+                if (_refPinIdx >= 10000) { _refPinIdx -= 10000; }
             }
             flow::ApplyChanges();
         }
@@ -331,6 +366,8 @@ void Combiner::guiConfig()
     return {
         { "dynamicInputPins", _dynamicInputPins },
         { "combinations", _combinations },
+        { "refPinIdx", _refPinIdx },
+        { "outputMissingAsNaN", _outputMissingAsNaN },
     };
 }
 
@@ -340,6 +377,8 @@ void Combiner::restore(json const& j)
 
     if (j.contains("dynamicInputPins")) { NAV::gui::widgets::from_json(j.at("dynamicInputPins"), _dynamicInputPins, this); }
     if (j.contains("combinations")) { j.at("combinations").get_to(_combinations); }
+    if (j.contains("refPinIdx")) { j.at("refPinIdx").get_to(_refPinIdx); }
+    if (j.contains("outputMissingAsNaN")) { j.at("outputMissingAsNaN").get_to(_outputMissingAsNaN); }
 }
 
 void Combiner::pinAddCallback(Node* node)
@@ -352,6 +391,7 @@ void Combiner::pinAddCallback(Node* node)
 void Combiner::pinDeleteCallback(Node* node, size_t pinIdx)
 {
     auto* combiner = static_cast<Combiner*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+    if (pinIdx == combiner->_refPinIdx && combiner->_refPinIdx && combiner->_refPinIdx >= combiner->inputPins.size()) { combiner->_refPinIdx--; }
     combiner->_pinData.erase(std::next(combiner->_pinData.begin(), static_cast<int64_t>(pinIdx)));
     nm::DeleteInputPin(node->inputPins.at(pinIdx));
 
@@ -389,6 +429,8 @@ bool Combiner::initialize()
 
     for (auto& pinData : _pinData)
     {
+        pinData.lastTime.reset();
+        pinData.minTimeStep = std::numeric_limits<double>::infinity();
         pinData.dynDataDescriptors.clear();
     }
 
@@ -449,19 +491,50 @@ std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
     return dataDescriptors;
 }
 
-[[nodiscard]] bool Combiner::isLastObsThisEpoch(const InsTime& insTime) const
-{
-    return std::none_of(inputPins.begin(), inputPins.end(), [&insTime](const InputPin& pin) {
-        return !pin.queue.empty() && pin.queue.front()->insTime == insTime;
-    });
-}
-
 void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     auto nodeData = queue.extract_front();
     auto nodeDataTimeIntoRun = math::round(calcTimeIntoRun(nodeData->insTime), 8);
     LOG_DATA("{}: [{:.3f}s][{} ({})] Received obs for time [{} GPST] ", nameId(),
              nodeDataTimeIntoRun, inputPins.at(pinIdx).name, pinIdx, nodeData->insTime.toYMDHMS(GPST));
+
+    if (!_pinData.at(pinIdx).lastTime.empty())
+    {
+        auto dt = static_cast<double>((nodeData->insTime - _pinData.at(pinIdx).lastTime).count());
+        if (dt > 1e-6) { _pinData.at(pinIdx).minTimeStep = std::min(_pinData.at(pinIdx).minTimeStep, dt); }
+    }
+    _pinData.at(pinIdx).lastTime = nodeData->insTime;
+
+    if (pinIdx == _refPinIdx)
+    {
+        std::vector<SendRequest> requests;
+        for (size_t c = 0; c < _combinations.size(); ++c)
+        {
+            if (std::any_of(_combinations.at(c).terms.begin(),
+                            _combinations.at(c).terms.end(),
+                            [&](const Combination::Term& term) { return _pinData.at(term.pinIndex).lastTime.empty()
+                                                                        && (inputPins.at(term.pinIndex).queue.empty() || inputPins.at(term.pinIndex).queue.front()->insTime != nodeData->insTime); }))
+            {
+                continue; // We cannot add a term when the first data appears later
+            }
+            SendRequest sr{
+                .combIndex = c,
+                .termIndices = {},
+                .result = 0.0,
+                .rawData = {},
+            };
+            requests.push_back(sr);
+        }
+        if (!requests.empty())
+        {
+            LOG_DATA("{}:    Adding new send request with", nameId(), nodeDataTimeIntoRun, nodeData->insTime.toYMDHMS(GPST));
+            for ([[maybe_unused]] const auto& request : requests)
+            {
+                LOG_DATA("{}:     Combination: {}", nameId(), _combinations.at(request.combIndex).description(this));
+            }
+            _sendRequests.emplace(nodeData->insTime, requests);
+        }
+    }
 
     // Add dynamic data descriptors to display in GUI
     auto& dataDescriptors = _pinData.at(pinIdx).dynDataDescriptors;
@@ -519,95 +592,101 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                 continue;
             }
 
-            bool termInAnySendRequestFound = false;
             if (!_sendRequests.empty()) { LOG_DATA("{}:       Checking if term is in a send request", nameId()); }
             for (auto& [sendRequestTime, sendRequests] : _sendRequests)
             {
+                std::set<size_t> combsToRemove;
                 for (auto& sendRequest : sendRequests)
                 {
                     if (sendRequest.combIndex != c) { continue; }
                     const auto& srComb = _combinations.at(sendRequest.combIndex);
 
-                    auto poly = term.polyReg.calcPolynomial();
-
                     for (const auto& srTerm : srComb.terms)
                     {
+                        if (combsToRemove.contains(sendRequest.combIndex)) { continue; }
                         if (srTerm.pinIndex != term.pinIndex || srTerm.dataSelection != term.dataSelection) { continue; }
                         LOG_DATA("{}:         [{:.3f}s] Term found in combination and term is {}", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8),
                                  sendRequest.termIndices.contains(t) ? "already calculated." : "still missing");
-                        // We found this term within the send requests
-                        termInAnySendRequestFound = true;
 
-                        if (!sendRequest.termIndices.contains(t)) // The send request was waiting for this term
+                        if (sendRequest.termIndices.contains(t)) { continue; } // The term was already calculated
+
+                        if (auto dt = static_cast<double>((nodeData->insTime - sendRequestTime).count()); // Out of bounds (do not interpolate)
+                            dt > 1.1 * _pinData.at(pinIdx).minTimeStep
+                            || (srTerm.rawData.full()
+                                && static_cast<double>((srTerm.rawData.back()->insTime - srTerm.rawData.front()->insTime).count())
+                                       > 2.0 * _pinData.at(pinIdx).minTimeStep))
                         {
-                            LOG_DATA("{}:           Updating send request: {} {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
-                                     sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
-                                     math::round(calcTimeIntoRun(sendRequestTime), 8));
-                            sendRequest.termIndices.insert(t);
-                            sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
-
-                            for (const auto& rawData : term.rawData)
+                            if (_outputMissingAsNaN)
                             {
-                                LOG_DATA("{}:           Adding [{}] {}", nameId(),
+                                sendRequest.result = std::nan("");
+                                LOG_DATA("{}:           Setting combination {} to NaN (dt = {} > dt_min = {})", nameId(),
+                                         _combinations.at(sendRequest.combIndex).description(this),
+                                         dt, 1.1 * _pinData.at(srTerm.pinIndex).minTimeStep);
+                            }
+                            else
+                            {
+                                combsToRemove.emplace(sendRequest.combIndex);
+                                LOG_DATA("{}:           Removing combination {} (dt = {} > dt_min = {})", nameId(),
+                                         _combinations.at(sendRequest.combIndex).description(this),
+                                         dt, 1.1 * _pinData.at(srTerm.pinIndex).minTimeStep);
+                                continue;
+                            }
+                        }
+
+                        auto poly = term.polyReg.calcPolynomial();
+                        LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
+                                 sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
+                                 math::round(calcTimeIntoRun(sendRequestTime), 8));
+                        sendRequest.termIndices.insert(t);
+                        sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
+
+                        bool exactTimeFound = false;
+                        for (const auto& rawData : term.rawData)
+                        {
+                            if (rawData->insTime == sendRequestTime)
+                            {
+                                LOG_DATA("{}:           Adding rawData [{}] {}", nameId(),
                                          rawData->insTime.toYMDHMS(GPST),
                                          term.description(this, getDataDescriptors(term.pinIndex)));
+
                                 sendRequest.rawData.emplace_back(term.description(this, getDataDescriptors(term.pinIndex)),
                                                                  rawData);
+                                exactTimeFound = true;
+                                break;
                             }
+                        }
+                        if (exactTimeFound) { continue; }
+                        for (const auto& rawData : term.rawData)
+                        {
+                            LOG_DATA("{}:           Adding rawData [{}] {}", nameId(),
+                                     rawData->insTime.toYMDHMS(GPST),
+                                     term.description(this, getDataDescriptors(term.pinIndex)));
+
+                            sendRequest.rawData.emplace_back(term.description(this, getDataDescriptors(term.pinIndex)),
+                                                             rawData);
                         }
                     }
                 }
-            }
-            if (termInAnySendRequestFound) { continue; }
-
-            LOG_DATA("{}:       Checking if term should be sent. Other terms must be between or at right border of times.", nameId());
-            if (std::all_of(comb.terms.begin(), comb.terms.end(), [&](const Combination::Term& t) {
-                    LOG_DATA("{}:          [{:.3f}s {:.3f}s] and [{:.3f}s] on '{}'", nameId(),
-                             term.polyReg.data().front().first, term.polyReg.data().back().first,
-                             t.polyReg.data().back().first, t.description(this, getDataDescriptors(t.pinIndex)));
-
-                    return (!term.polyReg.windowSizeReached() && t.polyReg.data().back().first == term.polyReg.data().back().first)
-                           || (term.polyReg.data().front().first < t.polyReg.data().back().first
-                               && t.polyReg.data().back().first <= term.polyReg.data().back().first);
-                }))
-            {
-                LOG_DATA("{}:       Adding new send request", nameId());
-                SendRequest sr{
-                    .combIndex = c,
-                    .termIndices = {},
-                    .result = 0.0,
-                    .rawData = {},
-                };
-                for (size_t t = 0; t < comb.terms.size(); t++)
+                for (const auto& comb : combsToRemove)
                 {
-                    auto& term = comb.terms.at(t);
-                    auto [timeIntoRun, val] = term.polyReg.data().back();
-                    if (timeIntoRun == nodeDataTimeIntoRun)
-                    {
-                        auto poly = term.polyReg.calcPolynomial();
-                        LOG_DATA("{}:         {}: {:.2f} * {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)),
-                                 term.factor, poly.f(nodeDataTimeIntoRun));
-                        sr.termIndices.insert(t);
-                        sr.result += term.factor * poly.f(nodeDataTimeIntoRun);
-
-                        LOG_DATA("{}:         {}: Adding rawData at {}", nameId(),
-                                 term.description(this, getDataDescriptors(term.pinIndex)),
-                                 nodeData->insTime.toYMDHMS(GPST));
-
-                        sr.rawData.emplace_back(term.description(this, getDataDescriptors(term.pinIndex)),
-                                                nodeData);
-                    }
+                    std::erase_if(sendRequests, [&](const SendRequest& sr) { return sr.combIndex == comb; });
                 }
-                _sendRequests[nodeData->insTime].push_back(sr);
-            }
-            else
-            {
-                LOG_DATA("{}:       Not adding send request", nameId());
             }
         }
     }
 
-    if (!_sendRequests.empty()) { LOG_DATA("{}:   Send requests", nameId()); }
+    std::vector<InsTime> emptySendRequests;
+    for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
+    {
+        if (sendRequests.empty())
+        {
+            LOG_DATA("{}:   Discarding send request at [{}]", nameId(), sendRequestTime.toYMDHMS(GPST));
+            emptySendRequests.push_back(sendRequestTime);
+        }
+    }
+    for (const auto& sendRequestTime : emptySendRequests) { _sendRequests.erase(sendRequestTime); }
+
+    if (!_sendRequests.empty()) { LOG_DATA("{}:   Send requests ({})", nameId(), _sendRequests.size()); }
     for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
     {
         LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
@@ -623,55 +702,52 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
         }
     }
 
-    if (isLastObsThisEpoch(nodeData->insTime))
+    LOG_DATA("{}: [{:.3f}s] Checking wether a send request can be sent ({} requests)", nameId(), nodeDataTimeIntoRun, _sendRequests.size());
+    std::vector<InsTime> requestsToRemove;
+    for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
     {
-        LOG_DATA("{}: [{:.3f}s] Checking wether a send request can be sent ({} requests)", nameId(), nodeDataTimeIntoRun, _sendRequests.size());
-        std::vector<InsTime> requestsToRemove;
-        for (const auto& [sendRequestTime, sendRequests] : _sendRequests)
+        LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
+        LOG_DATA("{}:       Combinations (all terms in all combinations must be calculated)", nameId());
+        if (std::all_of(sendRequests.begin(), sendRequests.end(), [&](const auto& sendRequest) {
+                const auto& comb = _combinations.at(sendRequest.combIndex);
+                LOG_DATA("{}:         '{}' has {}/{} terms set", nameId(), comb.description(this), sendRequest.termIndices.size(), comb.terms.size());
+                return comb.terms.size() == sendRequest.termIndices.size();
+            }))
         {
-            LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
-            LOG_DATA("{}:       Combinations (all terms in all combinations must be calculated)", nameId());
-            if (std::all_of(sendRequests.begin(), sendRequests.end(), [&](const auto& sendRequest) {
-                    const auto& comb = _combinations.at(sendRequest.combIndex);
-                    LOG_DATA("{}:         '{}' has {}/{} terms set", nameId(), comb.description(this), sendRequest.termIndices.size(), comb.terms.size());
-                    return comb.terms.size() == sendRequest.termIndices.size();
-                }))
-            {
-                // If all combinations for this send request epoch are calculated, send it out
-                auto dynData = std::make_shared<DynamicData>();
-                dynData->insTime = sendRequestTime;
-                LOG_DATA("{}:       Sending out dynamic data at [{}] and deleting send request", nameId(), dynData->insTime.toYMDHMS(GPST));
+            // If all combinations for this send request epoch are calculated, send it out
+            auto dynData = std::make_shared<DynamicData>();
+            dynData->insTime = sendRequestTime;
+            LOG_DATA("{}:       Sending out dynamic data at [{}] and deleting send request", nameId(), dynData->insTime.toYMDHMS(GPST));
 
-                for (const auto& sendRequest : sendRequests)
+            for (const auto& sendRequest : sendRequests)
+            {
+                const auto& comb = _combinations.at(sendRequest.combIndex);
+                DynamicData::Data data{
+                    .description = comb.description(this),
+                    .value = sendRequest.result,
+                    .rawData = sendRequest.rawData
+                };
+                LOG_DATA("{}:         {} includes raw data", nameId(), data.description);
+                for ([[maybe_unused]] const auto& raw : data.rawData)
                 {
-                    const auto& comb = _combinations.at(sendRequest.combIndex);
-                    DynamicData::Data data{
-                        .description = comb.description(this),
-                        .value = sendRequest.result,
-                        .rawData = sendRequest.rawData
-                    };
-                    LOG_DATA("{}:         {} includes raw data", nameId(), data.description);
-                    for ([[maybe_unused]] const auto& raw : data.rawData)
-                    {
-                        LOG_DATA("{}:           [{}] from '{}'", nameId(), raw.second->insTime.toYMDHMS(GPST), raw.first);
-                    }
-                    dynData->data.push_back(data);
+                    LOG_DATA("{}:           [{}] from '{}'", nameId(), raw.second->insTime.toYMDHMS(GPST), raw.first);
                 }
-
-                invokeCallbacks(OUTPUT_PORT_INDEX_DYN_DATA, dynData);
-
-                requestsToRemove.push_back(sendRequestTime);
+                dynData->data.push_back(data);
             }
-            else
-            {
-                // If not, break, because we always have to send out the first request first
-                break;
-            }
+
+            invokeCallbacks(OUTPUT_PORT_INDEX_DYN_DATA, dynData);
+
+            requestsToRemove.push_back(sendRequestTime);
         }
-        for (const auto& insTime : requestsToRemove)
+        else
         {
-            _sendRequests.erase(insTime);
+            // If not, break, because we always have to send out the first request first
+            break;
         }
+    }
+    for (const auto& insTime : requestsToRemove)
+    {
+        _sendRequests.erase(insTime);
     }
 }
 
