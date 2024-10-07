@@ -81,33 +81,33 @@ void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data);
 /// @param[in] value Value to convert
 /// @param[in] unit Unit the value is in
 /// @return Value in unit of the first item in the Unit enum
-double convertUnit(const double& value, Units::CovarianceAccelUnits unit);
+[[nodiscard]] double convertUnit(const double& value, Units::CovarianceAccelUnits unit);
 
 /// @brief Converts the value depending on the unit provided
 /// @param[in] value Value to convert
 /// @param[in] unit Unit the value is in
 /// @return Value in unit of the first item in the Unit enum
-double convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits unit);
+[[nodiscard]] double convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits unit);
 
 /// @brief Converts the value depending on the unit provided
 /// @param[in] value Value to convert
 /// @param[in] unit Unit the value is in
 /// @return Value in unit of the first item in the Unit enum
-double convertUnit(const double& value, Units::CovarianceClkFrequencyDriftUnits unit);
+[[nodiscard]] double convertUnit(const double& value, Units::CovarianceClkFrequencyDriftUnits unit);
 
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
-std::string to_string(Units::CovarianceAccelUnits unit);
+[[nodiscard]] std::string to_string(Units::CovarianceAccelUnits unit);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
-std::string to_string(Units::CovarianceClkPhaseDriftUnits unit);
+[[nodiscard]] std::string to_string(Units::CovarianceClkPhaseDriftUnits unit);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
-std::string to_string(Units::CovarianceClkFrequencyDriftUnits unit);
+[[nodiscard]] std::string to_string(Units::CovarianceClkFrequencyDriftUnits unit);
 
 /// @brief Units separated by '\0' and terminated by double '\0'
 template<typename T>
-std::string MakeComboItems()
+[[nodiscard]] std::string MakeComboItems()
 {
     std::string str;
     for (size_t i = 0; i < static_cast<size_t>(T::COUNT); i++)

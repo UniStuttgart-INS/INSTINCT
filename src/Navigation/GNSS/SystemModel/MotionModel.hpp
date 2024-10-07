@@ -70,10 +70,10 @@ class MotionModel
     void initialize(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& F,
                     KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
     {
-        for (auto& covarianceAccel : _gui_covarianceAccel)
+        for (size_t i = 0; i < _gui_covarianceAccel.size(); i++)
         {
             // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
-            convertUnit(covarianceAccel, _gui_covarianceAccelUnit);
+            _covarianceAccel.at(i) = convertUnit(_gui_covarianceAccel.at(i), _gui_covarianceAccelUnit);
         }
 
         F.template block<3>(Pos, Vel) = Eigen::Matrix3d::Identity();

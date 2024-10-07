@@ -184,15 +184,15 @@ struct fmt::formatter<NAV::SPP::States::StateKeyType> : fmt::formatter<std::stri
         }
         if (const auto* recvClkErr = std::get_if<RecvClkBias>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("RecvClkBias({}))", recvClkErr->satSys), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("RecvClkBias({})", recvClkErr->satSys), ctx);
         }
         if (const auto* recvClkDrift = std::get_if<RecvClkDrift>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("RecvClkDrift({}))", recvClkDrift->satSys), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("RecvClkDrift({})", recvClkDrift->satSys), ctx);
         }
         if (const auto* interFreqBias = std::get_if<NAV::Keys::InterFreqBias>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("InterFreqBias({}))", interFreqBias->freq), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("InterFreqBias({})", interFreqBias->freq), ctx);
         }
 
         return fmt::formatter<std::string>::format("ERROR", ctx);
