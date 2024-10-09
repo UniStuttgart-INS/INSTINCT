@@ -145,7 +145,8 @@ class PosVelAtt : public PosVel
 
     /// @brief Set the Quaternion from body to earth frame
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setAttitude_e_Quat_b(const Eigen::Quaterniond& e_Quat_b)
+    template<typename Derived>
+    void setAttitude_e_Quat_b(const Eigen::QuaternionBase<Derived>& e_Quat_b)
     {
         _e_Quat_b = e_Quat_b;
         _n_Quat_b = n_Quat_e() * e_Quat_b;
@@ -153,7 +154,8 @@ class PosVelAtt : public PosVel
 
     /// @brief Set the Quaternion from body to navigation frame
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setAttitude_n_Quat_b(const Eigen::Quaterniond& n_Quat_b)
+    template<typename Derived>
+    void setAttitude_n_Quat_b(const Eigen::QuaternionBase<Derived>& n_Quat_b)
     {
         _e_Quat_b = e_Quat_n() * n_Quat_b;
         _n_Quat_b = n_Quat_b;
@@ -163,7 +165,8 @@ class PosVelAtt : public PosVel
     /// @param[in] e_position New Position in ECEF coordinates
     /// @param[in] e_velocity The new velocity in the earth frame
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setState_e(const Eigen::Vector3d& e_position, const Eigen::Vector3d& e_velocity, const Eigen::Quaterniond& e_Quat_b)
+    template<typename DerivedP, typename DerivedV, typename DerivedA>
+    void setState_e(const Eigen::MatrixBase<DerivedP>& e_position, const Eigen::MatrixBase<DerivedV>& e_velocity, const Eigen::QuaternionBase<DerivedA>& e_Quat_b)
     {
         setPosition_e(e_position);
         setVelocity_e(e_velocity);
@@ -174,7 +177,8 @@ class PosVelAtt : public PosVel
     /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
     /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setState_n(const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity, const Eigen::Quaterniond& n_Quat_b)
+    template<typename DerivedP, typename DerivedV, typename DerivedA>
+    void setState_n(const Eigen::MatrixBase<DerivedP>& lla_position, const Eigen::MatrixBase<DerivedV>& n_velocity, const Eigen::QuaternionBase<DerivedA>& n_Quat_b)
     {
         setPosition_lla(lla_position);
         setVelocity_n(n_velocity);
@@ -187,9 +191,10 @@ class PosVelAtt : public PosVel
     /// @param[in] e_velocity The new velocity in the earth frame
     /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setStateAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionCovarianceMatrix,
-                             const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix,
-                             const Eigen::Quaterniond& e_Quat_b)
+    template<typename DerivedP, typename DerivedP2, typename DerivedV, typename DerivedV2, typename DerivedA>
+    void setStateAndStdDev_e(const Eigen::MatrixBase<DerivedP>& e_position, const Eigen::MatrixBase<DerivedP2>& e_positionCovarianceMatrix,
+                             const Eigen::MatrixBase<DerivedV>& e_velocity, const Eigen::MatrixBase<DerivedV2>& e_velocityCovarianceMatrix,
+                             const Eigen::QuaternionBase<DerivedA>& e_Quat_b)
     {
         setPositionAndStdDev_e(e_position, e_positionCovarianceMatrix);
         setVelocityAndStdDev_e(e_velocity, e_velocityCovarianceMatrix);
@@ -202,9 +207,10 @@ class PosVelAtt : public PosVel
     /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
     /// @param[in] n_velocityCovarianceMatrix Covariance matrix of Velocity in NED coordinates [m/s]
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setStateAndStdDev_n(const Eigen::Vector3d& lla_position, const Eigen::Matrix3d& n_positionCovarianceMatrix,
-                             const Eigen::Vector3d& n_velocity, const Eigen::Matrix3d& n_velocityCovarianceMatrix,
-                             const Eigen::Quaterniond& n_Quat_b)
+    template<typename DerivedP, typename DerivedP2, typename DerivedV, typename DerivedV2, typename DerivedA>
+    void setStateAndStdDev_n(const Eigen::MatrixBase<DerivedP>& lla_position, const Eigen::MatrixBase<DerivedP2>& n_positionCovarianceMatrix,
+                             const Eigen::MatrixBase<DerivedV>& n_velocity, const Eigen::MatrixBase<DerivedV2>& n_velocityCovarianceMatrix,
+                             const Eigen::QuaternionBase<DerivedA>& n_Quat_b)
     {
         setPositionAndStdDev_lla(lla_position, n_positionCovarianceMatrix);
         setVelocityAndStdDev_n(n_velocity, n_velocityCovarianceMatrix);

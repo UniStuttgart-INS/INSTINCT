@@ -357,7 +357,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
         if (e_positionStdDev_x.has_value() && e_positionStdDev_y.has_value() && e_positionStdDev_z.has_value())
         {
             obs->setPositionAndStdDev_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() },
-                                        Eigen::DiagonalMatrix<double, 3>{ e_positionStdDev_x.value(), e_positionStdDev_y.value(), e_positionStdDev_z.value() });
+                                        Eigen::DiagonalMatrix<double, 3>{ e_positionStdDev_x.value(), e_positionStdDev_y.value(), e_positionStdDev_z.value() }.toDenseMatrix());
         }
         else
         {
@@ -369,7 +369,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
         if (n_positionStdDev_n.has_value() && n_positionStdDev_e.has_value() && n_positionStdDev_d.has_value())
         {
             obs->setPositionAndStdDev_lla(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() },
-                                          Eigen::DiagonalMatrix<double, 3>{ n_positionStdDev_n.value(), n_positionStdDev_e.value(), n_positionStdDev_d.value() });
+                                          Eigen::DiagonalMatrix<double, 3>{ n_positionStdDev_n.value(), n_positionStdDev_e.value(), n_positionStdDev_d.value() }.toDenseMatrix());
         }
         else
         {
@@ -391,7 +391,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
                 if (e_velocityStdDev_x.has_value() && e_velocityStdDev_y.has_value() && e_velocityStdDev_z.has_value())
                 {
                     posVel->setVelocityAndStdDev_e(Eigen::Vector3d{ e_velocity_x.value(), e_velocity_y.value(), e_velocity_z.value() },
-                                                   Eigen::DiagonalMatrix<double, 3>{ e_velocityStdDev_x.value(), e_velocityStdDev_y.value(), e_velocityStdDev_z.value() });
+                                                   Eigen::DiagonalMatrix<double, 3>{ e_velocityStdDev_x.value(), e_velocityStdDev_y.value(), e_velocityStdDev_z.value() }.toDenseMatrix());
                 }
                 else
                 {
@@ -406,7 +406,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
                 if (n_velocityStdDev_n.has_value() && n_velocityStdDev_e.has_value() && n_velocityStdDev_d.has_value())
                 {
                     posVel->setVelocityAndStdDev_n(Eigen::Vector3d{ n_velocity_n.value(), n_velocity_e.value(), n_velocity_d.value() },
-                                                   Eigen::DiagonalMatrix<double, 3>{ n_velocityStdDev_n.value(), n_velocityStdDev_e.value(), n_velocityStdDev_d.value() });
+                                                   Eigen::DiagonalMatrix<double, 3>{ n_velocityStdDev_n.value(), n_velocityStdDev_e.value(), n_velocityStdDev_d.value() }.toDenseMatrix());
                 }
                 else
                 {

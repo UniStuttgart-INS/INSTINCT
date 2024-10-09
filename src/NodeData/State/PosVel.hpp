@@ -193,7 +193,8 @@ class PosVel : public Pos
 
     /// @brief Set the Velocity in the earth frame
     /// @param[in] e_velocity The new velocity in the earth frame
-    void setVelocity_e(const Eigen::Vector3d& e_velocity)
+    template<typename Derived>
+    void setVelocity_e(const Eigen::MatrixBase<Derived>& e_velocity)
     {
         _e_velocity = e_velocity;
         _n_velocity = n_Quat_e() * e_velocity;
@@ -201,7 +202,8 @@ class PosVel : public Pos
 
     /// @brief Set the Velocity in the NED frame
     /// @param[in] n_velocity The new velocity in the NED frame
-    void setVelocity_n(const Eigen::Vector3d& n_velocity)
+    template<typename Derived>
+    void setVelocity_n(const Eigen::MatrixBase<Derived>& n_velocity)
     {
         _e_velocity = e_Quat_n() * n_velocity;
         _n_velocity = n_velocity;
@@ -210,7 +212,8 @@ class PosVel : public Pos
     /// @brief Set the Velocity in ECEF coordinates and its standard deviation
     /// @param[in] e_velocity New Velocity in ECEF coordinates [m/s]
     /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
-    void setVelocityAndStdDev_e(const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setVelocityAndStdDev_e(const Eigen::MatrixBase<Derived>& e_velocity, const Eigen::MatrixBase<Derived2>& e_velocityCovarianceMatrix)
     {
         setVelocity_e(e_velocity);
         _e_velocityStdev = e_velocityCovarianceMatrix.diagonal().cwiseSqrt();
@@ -220,7 +223,8 @@ class PosVel : public Pos
     /// @brief Set the Velocity in NED coordinates and its standard deviation
     /// @param[in] n_velocity New Velocity in NED coordinates [m/s]
     /// @param[in] n_velocityCovarianceMatrix Covariance matrix of Velocity in navigation coordinates [m/s]
-    void setVelocityAndStdDev_n(const Eigen::Vector3d& n_velocity, const Eigen::Matrix3d& n_velocityCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setVelocityAndStdDev_n(const Eigen::MatrixBase<Derived>& n_velocity, const Eigen::MatrixBase<Derived2>& n_velocityCovarianceMatrix)
     {
         setVelocity_n(n_velocity);
         _n_velocityStdev = n_velocityCovarianceMatrix.diagonal().cwiseSqrt();

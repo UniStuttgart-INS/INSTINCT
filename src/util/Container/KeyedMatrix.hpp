@@ -2392,7 +2392,7 @@ using KeyedRowVector6d = KeyedRowVector<double, ColKeyType, 6>;
 
 #ifndef DOXYGEN_IGNORE
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedMatrix
 template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
 struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>> : fmt::formatter<std::string>
 {
@@ -2476,7 +2476,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
     }
 };
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedVector
 template<typename Scalar, typename RowKeyType, int Rows>
 struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatter<std::string>
 {
@@ -2531,7 +2531,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatt
     }
 };
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedRowVector
 template<typename Scalar, typename ColKeyType, int Cols>
 struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::formatter<std::string>
 {

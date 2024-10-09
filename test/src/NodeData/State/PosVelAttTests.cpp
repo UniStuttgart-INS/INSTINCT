@@ -118,7 +118,7 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     PosVelAtt state;
-    state.setPosition_lla({ deg2rad(48.78081), deg2rad(9.172012), 254 });
+    state.setPosition_lla(Eigen::Vector3d{ deg2rad(48.78081), deg2rad(9.172012), 254 });
 
     double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]

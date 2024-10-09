@@ -217,7 +217,8 @@ class Pos : public NodeData
 
     /// @brief Set the Position in  coordinates
     /// @param[in] e_position New Position in ECEF coordinates
-    void setPosition_e(const Eigen::Vector3d& e_position)
+    template<typename Derived>
+    void setPosition_e(const Eigen::MatrixBase<Derived>& e_position)
     {
         _e_position = e_position;
         _lla_position = trafo::ecef2lla_WGS84(e_position);
@@ -225,7 +226,8 @@ class Pos : public NodeData
 
     /// @brief Set the Position lla object
     /// @param[in] lla_position New Position in LatLonAlt coordinates
-    void setPosition_lla(const Eigen::Vector3d& lla_position)
+    template<typename Derived>
+    void setPosition_lla(const Eigen::MatrixBase<Derived>& lla_position)
     {
         _e_position = trafo::lla2ecef_WGS84(lla_position);
         _lla_position = lla_position;
@@ -234,7 +236,8 @@ class Pos : public NodeData
     /// @brief Set the Position in ECEF coordinates and its standard deviation
     /// @param[in] e_position New Position in ECEF coordinates [m]
     /// @param[in] e_positionCovarianceMatrix Covariance matrix of position in ECEF coordinates [m]
-    void setPositionAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setPositionAndStdDev_e(const Eigen::MatrixBase<Derived>& e_position, const Eigen::MatrixBase<Derived2>& e_positionCovarianceMatrix)
     {
         setPosition_e(e_position);
         _e_positionStdev = e_positionCovarianceMatrix.diagonal().cwiseSqrt();
@@ -244,7 +247,8 @@ class Pos : public NodeData
     /// @brief Set the Position in LLA coordinates and its standard deviation
     /// @param[in] lla_position New Position in LatLonAlt coordinates
     /// @param[in] n_positionCovarianceMatrix Covariance matrix of Position in NED coordinates [m]
-    void setPositionAndStdDev_lla(const Eigen::Vector3d& lla_position, const Eigen::Matrix3d& n_positionCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setPositionAndStdDev_lla(const Eigen::MatrixBase<Derived>& lla_position, const Eigen::MatrixBase<Derived2>& n_positionCovarianceMatrix)
     {
         setPosition_lla(lla_position);
         _n_positionStdev = n_positionCovarianceMatrix.diagonal().cwiseSqrt();
