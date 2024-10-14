@@ -234,28 +234,6 @@ class ObservationEstimator
                 {
                     obsData.measVar += _gnssMeasurementErrorModel.codeBiasErrorVar();
                     LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Code bias variance", nameId, satSigId, obsType, receiver.type, _gnssMeasurementErrorModel.codeBiasErrorVar());
-
-                    if (receiver.interFrequencyBias.contains(freq))
-                    {
-                        obsData.measVar += std::pow(receiver.interFrequencyBias.at(freq).stdDev, 2);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Inter-frequency bias variance", nameId, satSigId, obsType, receiver.type,
-                                 std::pow(InsConst::C * receiver.interFrequencyBias.at(freq).stdDev, 2));
-                    }
-                }
-            }
-            if (obsDiff != DoubleDifference)
-            {
-                if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
-                {
-                    double recvClockVariance = std::pow(InsConst::C * *receiver.recvClk.biasStdDevFor(satSys), 2);
-                    obsData.measVar += recvClockVariance;
-                    LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Receiver clock bias variance", nameId, satSigId, obsType, receiver.type, recvClockVariance);
-                }
-                else if (obsType == GnssObs::Doppler)
-                {
-                    double recvClockVariance = std::pow(InsConst::C * *receiver.recvClk.driftStdDevFor(satSys), 2);
-                    obsData.measVar += recvClockVariance;
-                    LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2/s^2] Receiver clock drift variance", nameId, satSigId, obsType, receiver.type, recvClockVariance);
                 }
             }
             LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4g} [{}] Observation error variance", nameId, satSigId, obsType, receiver.type, obsData.measVar,
@@ -406,9 +384,6 @@ class ObservationEstimator
     /// @param[in] obsType Observation type to calculate the variance for
     /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
     /// @param[in] e_satPos Satellite position in ECEF coordinates [m]
-    /// @param[in] recvClockBiasStdDev Receiver clock bias standard deviation [s]
-    /// @param[in] recvClockDriftStdDev Receiver clock drift standard deviation [s/s]
-    /// @param[in] interFreqBiasStdDev Receiver inter-frequency bias standard deviation [s]
     /// @param[in] cn0 Carrier-to-Noise density [dBHz]
     /// @param[in] gnssObs GNSS observation
     /// @param[in] navData Navigation data including this satellite
@@ -422,9 +397,6 @@ class ObservationEstimator
                                    GnssObs::ObservationType obsType,
                                    const Eigen::Vector3d& e_recvPosMarker,
                                    const Eigen::Vector3d& e_satPos,
-                                   double recvClockBiasStdDev,
-                                   double recvClockDriftStdDev,
-                                   double interFreqBiasStdDev,
                                    double cn0,
                                    const std::shared_ptr<const GnssObs>& gnssObs,
                                    const std::shared_ptr<const SatNavData>& navData,
@@ -475,20 +447,6 @@ class ObservationEstimator
             if (obsType == GnssObs::Pseudorange)
             {
                 variance += _gnssMeasurementErrorModel.codeBiasErrorVar();
-                variance += std::pow(interFreqBiasStdDev, 2);
-            }
-        }
-        if (obsDiff != DoubleDifference)
-        {
-            if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
-            {
-                double recvClockVariance = std::pow(InsConst::C * recvClockBiasStdDev, 2);
-                variance += recvClockVariance;
-            }
-            else if (obsType == GnssObs::Doppler)
-            {
-                double recvClockVariance = std::pow(InsConst::C * recvClockDriftStdDev, 2);
-                variance += recvClockVariance;
             }
         }
 
