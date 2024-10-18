@@ -24,7 +24,7 @@
 ///
 /// - absolute temperature in [K]
 ///     \anchor eq-Saastamoinen-temperature \f{equation}{ \label{eq:eq-Saastamoinen-temperature}
-///         T = 15.0 - 6.5 \cdot 10^{-3} \cdot h + 273.16
+///         T = 15.0 - 6.5 \cdot 10^{-3} \cdot h + 273.15
 ///     \f}
 ///
 ///     where

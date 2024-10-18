@@ -305,6 +305,29 @@ typename Derived::PlainObject lerp(const Eigen::MatrixBase<Derived>& a, const Ei
     return a + t * (b - a);
 }
 
+/// Lerp Search Result
+struct LerpSearchResult
+{
+    size_t l; ///< Lower bound index
+    size_t u; ///< Upper bound index (l + 1)
+    double t; ///< [0, 1] for Interpolation, otherwise Extrapolation
+};
+
+/// @brief Searches the value in the data container
+/// @param[in] data Data container
+/// @param[in] value Value to search
+LerpSearchResult lerpSearch(const auto& data, const auto& value)
+{
+    auto i = static_cast<size_t>(std::distance(data.begin(), std::upper_bound(data.begin(), data.end(), value)));
+    if (i > 0) { i--; }
+    if (i == data.size() - 1) { i--; }
+    const auto& lb = data.at(i);
+    const auto& ub = data.at(i + 1);
+    double t = (value - lb) / (ub - lb);
+
+    return { .l = i, .u = i + 1, .t = t };
+}
+
 /// @brief Calculates the incomplete elliptical integral of the second kind
 /// @param[in] phi Interval bound the integration uses from 0 to phi
 /// @param[in] m Function parameter that is integrated 1-m*sin(t)^2

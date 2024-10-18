@@ -51,6 +51,7 @@ enum class MappingFunction : int
     None,     ///< Mapping Function turned off (= 1)
     Cosecant, ///< Cosecant of elevation
     GMF,      ///< Global Mapping Function (GMF)
+    NMF,      ///< Niell Mapping Function (NMF)
     VMF_GPT2, ///< Vienna Mapping Function based on the GPT2 grid
     VMF_GPT3, ///< Vienna Mapping Function based on the GPT3 grid
     COUNT,    ///< Amount of items in the enum

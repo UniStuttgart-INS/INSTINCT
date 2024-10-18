@@ -17,6 +17,7 @@
 
 #include "MappingFunctions/Cosecant.hpp"
 #include "MappingFunctions/GMF.hpp"
+#include "MappingFunctions/NiellMappingFunction.hpp"
 #include <boost/algorithm/string.hpp>
 
 namespace NAV
@@ -50,6 +51,8 @@ const char* to_string(MappingFunction mappingFunction)
         return "Cosecant(elevation)";
     case MappingFunction::GMF:
         return "GMF";
+    case MappingFunction::NMF:
+        return "NMF";
     case MappingFunction::VMF_GPT2:
         return "VMF(GPT2)";
     case MappingFunction::VMF_GPT3:
@@ -69,6 +72,10 @@ AtmosphereModels MappingFunctionDefaults(MappingFunction mappingFunction)
                  .temperatureModel = TemperatureModel::ISA,
                  .waterVaporModel = WaterVaporModel::ISA };
     case MappingFunction::GMF:
+        return { .pressureModel = PressureModel::ISA,
+                 .temperatureModel = TemperatureModel::ISA,
+                 .waterVaporModel = WaterVaporModel::ISA };
+    case MappingFunction::NMF:
         return { .pressureModel = PressureModel::ISA,
                  .temperatureModel = TemperatureModel::ISA,
                  .waterVaporModel = WaterVaporModel::ISA };
@@ -100,8 +107,8 @@ std::tuple<AtmosphereModels, MappingFunction, AtmosphereModels> ModelDefaults(Tr
         return { AtmosphereModels{ .pressureModel = PressureModel::ISA,
                                    .temperatureModel = TemperatureModel::ISA,
                                    .waterVaporModel = WaterVaporModel::ISA },
-                 MappingFunction::Cosecant,
-                 MappingFunctionDefaults(MappingFunction::Cosecant) };
+                 MappingFunction::GMF,
+                 MappingFunctionDefaults(MappingFunction::GMF) };
     case TroposphereModel::GPT2:
         return { AtmosphereModels{ .pressureModel = PressureModel::GPT2,
                                    .temperatureModel = TemperatureModel::GPT2,
@@ -476,6 +483,9 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     case MappingFunction::GMF:
         zhdMappingFactor = calcTropoMapFunc_GMFH(mjd, lla_pos, elevation);
         break;
+    case MappingFunction::NMF:
+        zhdMappingFactor = calcTropoMapFunc_NMFH(insTime, lla_pos, elevation);
+        break;
     case MappingFunction::VMF_GPT2:
         zhdMappingFactor = vmf1h(gpt2outputs.ah, mjd, lla_pos(0), lla_pos(2), M_PI / 2.0 - elevation);
         break;
@@ -495,6 +505,9 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         break;
     case MappingFunction::GMF:
         zhdMappingFactor = calcTropoMapFunc_GMFW(mjd, lla_pos, elevation);
+        break;
+    case MappingFunction::NMF:
+        zhdMappingFactor = calcTropoMapFunc_NMFW(lla_pos, elevation);
         break;
     case MappingFunction::VMF_GPT2:
         zwdMappingFactor = vmf1w(gpt2outputs.aw, M_PI / 2.0 - elevation);
