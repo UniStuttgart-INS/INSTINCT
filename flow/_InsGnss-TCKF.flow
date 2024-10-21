@@ -1,5 +1,10 @@
 {
     "colormaps": [],
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigWindowFont": false
+    },
     "implot": {
         "prefereFlowOverGlobal": true,
         "style": {
@@ -8,7 +13,129 @@
                 "y": 2.0
             },
             "Colormap": {
-                "active": 0
+                "active": 0,
+                "maps": [
+                    {
+                        "keys": [
+                            {
+                                "w": 1.0,
+                                "x": 0.2980392277240753,
+                                "y": 0.44705885648727417,
+                                "z": 0.6901960968971252
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8666667342185974,
+                                "y": 0.5176470875740051,
+                                "z": 0.32156863808631897
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3333333432674408,
+                                "y": 0.658823549747467,
+                                "z": 0.4078431725502014
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.7686275243759155,
+                                "y": 0.30588236451148987,
+                                "z": 0.32156863808631897
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5058823823928833,
+                                "y": 0.44705885648727417,
+                                "z": 0.7019608020782471
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5764706134796143,
+                                "y": 0.4705882668495178,
+                                "z": 0.3764706254005432
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8549020290374756,
+                                "y": 0.545098066329956,
+                                "z": 0.7647059559822083
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.5490196347236633,
+                                "y": 0.5490196347236633,
+                                "z": 0.5490196347236633
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.8000000715255737,
+                                "y": 0.7254902124404907,
+                                "z": 0.4549019932746887
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3921568989753723,
+                                "y": 0.7098039388656616,
+                                "z": 0.803921639919281
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.14509804546833038,
+                                "y": 0.4274510145187378,
+                                "z": 0.8901961445808411
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9372549653053284,
+                                "y": 0.3921568989753723,
+                                "z": 0.08235294371843338
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.08235294371843338,
+                                "y": 0.8941177129745483,
+                                "z": 0.2705882489681244
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9372549653053284,
+                                "y": 0.0784313753247261,
+                                "z": 0.1098039299249649
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.3921568989753723,
+                                "y": 0.250980406999588,
+                                "z": 0.8509804606437683
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.6431372761726379,
+                                "y": 0.30588236451148987,
+                                "z": 0.007843137718737125
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.9098039865493774,
+                                "y": 0.15294118225574493,
+                                "z": 0.6901960968971252
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 1.0,
+                                "y": 0.8117647767066956,
+                                "z": 0.12156863510608673
+                            },
+                            {
+                                "w": 1.0,
+                                "x": 0.21176472306251526,
+                                "y": 0.8941177129745483,
+                                "z": 0.6823529601097107
+                            }
+                        ],
+                        "name": "DeepEx",
+                        "qualitative": true
+                    }
+                ]
             },
             "Colors": {
                 "AxisBg": {
@@ -188,11 +315,6 @@
             "id": 1162,
             "startPinId": 844
         },
-        "link-1163": {
-            "endPinId": 1155,
-            "id": 1163,
-            "startPinId": 822
-        },
         "link-1194": {
             "endPinId": 1190,
             "id": 1194,
@@ -213,35 +335,10 @@
             "id": 1199,
             "startPinId": 1192
         },
-        "link-1244": {
+        "link-1245": {
             "endPinId": 841,
-            "id": 1244,
+            "id": 1245,
             "startPinId": 402
-        },
-        "link-845": {
-            "endPinId": 819,
-            "id": 845,
-            "startPinId": 844
-        },
-        "link-846": {
-            "endPinId": 843,
-            "id": 846,
-            "startPinId": 823
-        },
-        "link-847": {
-            "endPinId": 842,
-            "id": 847,
-            "startPinId": 822
-        },
-        "link-848": {
-            "endPinId": 820,
-            "id": 848,
-            "startPinId": 561
-        },
-        "link-849": {
-            "endPinId": 821,
-            "id": 849,
-            "startPinId": 558
         },
         "link-956": {
             "endPinId": 401,
@@ -308,84 +405,7 @@
                                 "displayName": "Time [s]"
                             },
                             {
-                                "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "Latitude [deg]"
-                            },
-                            {
-                                "displayName": "Longitude [deg]"
-                            },
-                            {
-                                "displayName": "Altitude [m]"
-                            },
-                            {
-                                "displayName": "North/South [m]"
-                            },
-                            {
-                                "displayName": "East/West [m]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "X velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Y velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Z velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "North velocity [m/s]"
-                            },
-                            {
-                                "displayName": "East velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Down velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Roll [deg]"
-                            },
-                            {
-                                "displayName": "Pitch [deg]"
-                            },
-                            {
-                                "displayName": "Yaw [deg]"
-                            },
-                            {
-                                "displayName": "Quaternion::w"
-                            },
-                            {
-                                "displayName": "Quaternion::x"
-                            },
-                            {
-                                "displayName": "Quaternion::y"
-                            },
-                            {
-                                "displayName": "Quaternion::z"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "InertialNavSol",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
+                                "displayName": "GPST Time"
                             },
                             {
                                 "displayName": "GPS time of week [s]"
@@ -413,116 +433,6 @@
                             },
                             {
                                 "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "X velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Y velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Z velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "North velocity [m/s]"
-                            },
-                            {
-                                "displayName": "East velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Down velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Roll [deg]"
-                            },
-                            {
-                                "displayName": "Pitch [deg]"
-                            },
-                            {
-                                "displayName": "Yaw [deg]"
-                            },
-                            {
-                                "displayName": "Quaternion::w"
-                            },
-                            {
-                                "displayName": "Quaternion::x"
-                            },
-                            {
-                                "displayName": "Quaternion::y"
-                            },
-                            {
-                                "displayName": "Quaternion::z"
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 1
-                    },
-                    {
-                        "dataIdentifier": "SppSolution",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]"
-                            },
-                            {
-                                "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "Latitude [deg]"
-                            },
-                            {
-                                "displayName": "Longitude [deg]"
-                            },
-                            {
-                                "displayName": "Altitude [m]"
-                            },
-                            {
-                                "displayName": "North/South [m]"
-                            },
-                            {
-                                "displayName": "East/West [m]"
-                            },
-                            {
-                                "displayName": "X-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]"
-                            },
-                            {
-                                "displayName": "Velocity norm [m/s]"
-                            },
-                            {
-                                "displayName": "X velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Y velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "Z velocity ECEF [m/s]"
-                            },
-                            {
-                                "displayName": "North velocity [m/s]"
-                            },
-                            {
-                                "displayName": "East velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Down velocity [m/s]"
-                            },
-                            {
-                                "displayName": "Number satellites"
-                            },
-                            {
-                                "displayName": "Receiver clock bias [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock drift [s/s]"
                             },
                             {
                                 "displayName": "X-ECEF StDev [m]"
@@ -552,13 +462,34 @@
                                 "displayName": "Down StDev [m]"
                             },
                             {
-                                "displayName": "NE-ECEF StDev [m]"
+                                "displayName": "NE StDev [m]"
                             },
                             {
-                                "displayName": "ND-ECEF StDev [m]"
+                                "displayName": "ND StDev [m]"
                             },
                             {
-                                "displayName": "ED-ECEF StDev [m]"
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
                             },
                             {
                                 "displayName": "X velocity ECEF StDev [m/s]"
@@ -597,97 +528,341 @@
                                 "displayName": "ED velocity StDev [m]"
                             },
                             {
-                                "displayName": "Receiver clock bias StDev [s]"
+                                "displayName": "Roll [deg]"
                             },
                             {
-                                "displayName": "Receiver clock drift StDev [s/s]"
+                                "displayName": "Pitch [deg]"
                             },
                             {
-                                "displayName": "System time reference system"
+                                "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "GPS system time difference [s]"
+                                "displayName": "Quaternion::w"
                             },
                             {
-                                "displayName": "GAL system time difference [s]"
+                                "displayName": "Quaternion::x"
                             },
                             {
-                                "displayName": "GLO system time difference [s]"
+                                "displayName": "Quaternion::y"
                             },
                             {
-                                "displayName": "BDS system time difference [s]"
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
                             },
                             {
-                                "displayName": "QZSS system time difference [s]"
+                                "displayName": "GPST Time"
                             },
                             {
-                                "displayName": "IRNSS system time difference [s]"
+                                "displayName": "GPS time of week [s]"
                             },
                             {
-                                "displayName": "SBAS system time difference [s]"
+                                "displayName": "Latitude [deg]"
                             },
                             {
-                                "displayName": "GPS system time drift difference [s/s]"
+                                "displayName": "Longitude [deg]"
                             },
                             {
-                                "displayName": "GAL system time drift difference [s/s]"
+                                "displayName": "Altitude [m]"
                             },
                             {
-                                "displayName": "GLO system time drift difference [s/s]"
+                                "displayName": "North/South [m]"
                             },
                             {
-                                "displayName": "BDS system time drift difference [s/s]"
+                                "displayName": "East/West [m]"
                             },
                             {
-                                "displayName": "QZSS system time drift difference [s/s]"
+                                "displayName": "X-ECEF [m]"
                             },
                             {
-                                "displayName": "IRNSS system time drift difference [s/s]"
+                                "displayName": "Y-ECEF [m]"
                             },
                             {
-                                "displayName": "SBAS system time drift difference [s/s]"
+                                "displayName": "Z-ECEF [m]"
                             },
                             {
-                                "displayName": "GPS system time difference StDev [s]"
+                                "displayName": "X-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "GAL system time difference StDev [s]"
+                                "displayName": "Y-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "GLO system time difference StDev [s]"
+                                "displayName": "Z-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "BDS system time difference StDev [s]"
+                                "displayName": "XY-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "QZSS system time difference StDev [s]"
+                                "displayName": "XZ-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "IRNSS system time difference StDev [s]"
+                                "displayName": "YZ-ECEF StDev [m]"
                             },
                             {
-                                "displayName": "SBAS system time difference StDev [s]"
+                                "displayName": "North StDev [m]"
                             },
                             {
-                                "displayName": "GPS system time drift difference StDev [s/s]"
+                                "displayName": "East StDev [m]"
                             },
                             {
-                                "displayName": "GAL system time drift difference StDev [s/s]"
+                                "displayName": "Down StDev [m]"
                             },
                             {
-                                "displayName": "GLO system time drift difference StDev [s/s]"
+                                "displayName": "NE StDev [m]"
                             },
                             {
-                                "displayName": "BDS system time drift difference StDev [s/s]"
+                                "displayName": "ND StDev [m]"
                             },
                             {
-                                "displayName": "QZSS system time drift difference StDev [s/s]"
+                                "displayName": "ED StDev [m]"
                             },
                             {
-                                "displayName": "IRNSS system time drift difference StDev [s/s]"
+                                "displayName": "Velocity norm [m/s]"
                             },
                             {
-                                "displayName": "SBAS system time drift difference StDev [s/s]"
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF StDev [m/s]"
+                            },
+                            {
+                                "displayName": "XY velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "XZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "YZ velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "North velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity StDev [m/s]"
+                            },
+                            {
+                                "displayName": "NE velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ND velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "ED velocity StDev [m]"
+                            },
+                            {
+                                "displayName": "Roll [deg]"
+                            },
+                            {
+                                "displayName": "Pitch [deg]"
+                            },
+                            {
+                                "displayName": "Yaw [deg]"
+                            },
+                            {
+                                "displayName": "Quaternion::w"
+                            },
+                            {
+                                "displayName": "Quaternion::x"
+                            },
+                            {
+                                "displayName": "Quaternion::y"
+                            },
+                            {
+                                "displayName": "Quaternion::z"
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 1
+                    },
+                    {
+                        "dataIdentifier": "SppSolution",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]"
+                            },
+                            {
+                                "displayName": "GPST Time"
+                            },
+                            {
+                                "displayName": "GPS time of week [s]"
+                            },
+                            {
+                                "displayName": "Latitude [deg]"
+                            },
+                            {
+                                "displayName": "Longitude [deg]"
+                            },
+                            {
+                                "displayName": "Altitude [m]"
+                            },
+                            {
+                                "displayName": "North/South [m]"
+                            },
+                            {
+                                "displayName": "East/West [m]"
+                            },
+                            {
+                                "displayName": "X-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]"
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]"
+                            },
+                            {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
+                                "displayName": "Velocity norm [m/s]"
+                            },
+                            {
+                                "displayName": "X velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Y velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "Z velocity ECEF [m/s]"
+                            },
+                            {
+                                "displayName": "North velocity [m/s]"
+                            },
+                            {
+                                "displayName": "East velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]"
+                            },
+                            {
+                                "displayName": "Number satellites"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GPS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GPS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GAL [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GAL [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GLO [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GLO [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift BDS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev BDS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift QZSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev QZSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift IRNSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev IRNSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias SBAS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift SBAS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev SBAS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev SBAS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias [s]"
                             }
                         ],
                         "size": 0,
@@ -698,6 +873,7 @@
                     {
                         "headerText": "Position",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -718,47 +894,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Simulated Trajectory",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 5,
-                                "displayName": "North/South [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
+                                    "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "legendName": "TCKF",
-                                    "lineType": 1,
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -796,8 +955,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "SPP",
                                     "lineType": 0,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -847,6 +1028,7 @@
                     {
                         "headerText": "Velocity",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -867,8 +1049,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "North",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -906,8 +1110,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "East",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -957,6 +1183,7 @@
                     {
                         "headerText": "Flight angles",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -977,8 +1204,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Simulated Trajectory - Roll",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1016,8 +1265,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Simulated Trajectory - Pitch",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1055,125 +1326,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Simulated Trajectory - Yaw",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 16,
-                                "displayName": "Roll [deg]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
+                                    "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "legendName": "TCKF - Roll",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 17,
-                                "displayName": "Pitch [deg]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "legendName": "TCKF - Pitch",
-                                    "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 18,
-                                "displayName": "Yaw [deg]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
-                                        0,
-                                        -1
-                                    ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "legendName": "TCKF - Yaw",
-                                    "lineType": 1,
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1223,6 +1399,7 @@
                     {
                         "headerText": "Altitude",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -1243,47 +1420,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Simulated Trajectory",
                                     "lineType": 1,
-                                    "markerFillColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerOutlineColor": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "markerSize": 1.0,
-                                    "markerStyle": 7,
-                                    "markerWeight": 1.0,
-                                    "markers": false,
-                                    "stride": 0,
-                                    "thickness": 1.0
-                                }
-                            },
-                            {
-                                "axis": 3,
-                                "dataIndex": 4,
-                                "displayName": "Altitude [m]",
-                                "pinIndex": 1,
-                                "style": {
-                                    "color": {
-                                        "w": -1.0,
-                                        "x": 0.0,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    },
-                                    "colormapMask": [
+                                    "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 0,
-                                    "legendName": "TCKF",
-                                    "lineType": 1,
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1321,8 +1481,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "SPP",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1514,6 +1696,9 @@
                                 "displayName": "Time [s]"
                             },
                             {
+                                "displayName": "GPST Time"
+                            },
+                            {
                                 "displayName": "GPS time of week [s]"
                             },
                             {
@@ -1541,6 +1726,15 @@
                                 "displayName": "Z-ECEF [m]"
                             },
                             {
+                                "displayName": "NE StDev [m]"
+                            },
+                            {
+                                "displayName": "ND StDev [m]"
+                            },
+                            {
+                                "displayName": "ED StDev [m]"
+                            },
+                            {
                                 "displayName": "Velocity norm [m/s]"
                             },
                             {
@@ -1565,175 +1759,91 @@
                                 "displayName": "Number satellites"
                             },
                             {
+                                "displayName": "Receiver clock bias GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GPS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GPS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GPS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GAL [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GAL [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GAL [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift GLO [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev GLO [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev GLO [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift BDS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev BDS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev BDS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift QZSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev QZSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev QZSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift IRNSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev IRNSS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev IRNSS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias SBAS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift SBAS [s/s]"
+                            },
+                            {
+                                "displayName": "Receiver clock bias StDev SBAS [s]"
+                            },
+                            {
+                                "displayName": "Receiver clock drift StDev SBAS [s/s]"
+                            },
+                            {
                                 "displayName": "Receiver clock bias [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock drift [s/s]"
-                            },
-                            {
-                                "displayName": "X-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "Y-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "Z-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "XY-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "XZ-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "YZ-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "North StDev [m]"
-                            },
-                            {
-                                "displayName": "East StDev [m]"
-                            },
-                            {
-                                "displayName": "Down StDev [m]"
-                            },
-                            {
-                                "displayName": "NE-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "ND-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "ED-ECEF StDev [m]"
-                            },
-                            {
-                                "displayName": "X velocity ECEF StDev [m/s]"
-                            },
-                            {
-                                "displayName": "Y velocity ECEF StDev [m/s]"
-                            },
-                            {
-                                "displayName": "Z velocity ECEF StDev [m/s]"
-                            },
-                            {
-                                "displayName": "XY velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "XZ velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "YZ velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "North velocity StDev [m/s]"
-                            },
-                            {
-                                "displayName": "East velocity StDev [m/s]"
-                            },
-                            {
-                                "displayName": "Down velocity StDev [m/s]"
-                            },
-                            {
-                                "displayName": "NE velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "ND velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "ED velocity StDev [m]"
-                            },
-                            {
-                                "displayName": "Receiver clock bias StDev [s]"
-                            },
-                            {
-                                "displayName": "Receiver clock drift StDev [s/s]"
-                            },
-                            {
-                                "displayName": "System time reference system"
-                            },
-                            {
-                                "displayName": "GPS system time difference [s]"
-                            },
-                            {
-                                "displayName": "GAL system time difference [s]"
-                            },
-                            {
-                                "displayName": "GLO system time difference [s]"
-                            },
-                            {
-                                "displayName": "BDS system time difference [s]"
-                            },
-                            {
-                                "displayName": "QZSS system time difference [s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time difference [s]"
-                            },
-                            {
-                                "displayName": "SBAS system time difference [s]"
-                            },
-                            {
-                                "displayName": "GPS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GAL system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GLO system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "BDS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "QZSS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "SBAS system time drift difference [s/s]"
-                            },
-                            {
-                                "displayName": "GPS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GAL system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GLO system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "BDS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "QZSS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "SBAS system time difference StDev [s]"
-                            },
-                            {
-                                "displayName": "GPS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "GAL system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "GLO system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "BDS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "QZSS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "IRNSS system time drift difference StDev [s/s]"
-                            },
-                            {
-                                "displayName": "SBAS system time drift difference StDev [s/s]"
                             }
                         ],
                         "size": 0,
@@ -1744,6 +1854,7 @@
                     {
                         "headerText": "Accelerometer biases",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -1764,8 +1875,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "X",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1803,8 +1936,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Y",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1842,8 +1997,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Z",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1892,6 +2069,7 @@
                     {
                         "headerText": "Gyroscope biases accumulated",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -1912,8 +2090,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "X",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1951,8 +2151,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Y",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1990,8 +2212,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "Z",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2040,6 +2284,7 @@
                     {
                         "headerText": "Receiver clock offset",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -2060,8 +2305,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "TCKF",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2099,8 +2366,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "SPP",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2149,6 +2438,7 @@
                     {
                         "headerText": "Receiver clock drift",
                         "leftPaneWidth": 180.0,
+                        "lineFlags": 12288,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "plotItems": [
@@ -2169,8 +2459,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "TCKF",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2208,8 +2520,30 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 0,
+                                    "eventMarkerFillColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerOutlineColor": {
+                                        "w": 1.0,
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "eventMarkerSize": 6.0,
+                                    "eventMarkerStyle": 7,
+                                    "eventMarkerWeight": 2.0,
+                                    "eventTooltipFilterRegex": "",
+                                    "eventsEnabled": false,
                                     "legendName": "SPP",
                                     "lineType": 1,
+                                    "markerColormapMask": [
+                                        0,
+                                        -1
+                                    ],
+                                    "markerColormapMaskDataCmpIdx": 0,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2284,158 +2618,706 @@
         },
         "node-1193": {
             "data": {
-                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000000000011111",
-                "elevationMask": 14.999999999999998,
-                "estimatorType": 1,
-                "excludedSatellites": [],
-                "frequencies": 1,
-                "gnssMeasurementError": {
-                    "groves2013Params": {
-                        "sigmaR": [
-                            0.1,
-                            0.1
-                        ],
-                        "sigmaRho": [
-                            0.1,
-                            0.1
-                        ]
+                "algorithm": {
+                    "estimateInterFrequencyBiases": true,
+                    "estimatorType": 1,
+                    "kalmanFilter": {
+                        "interFrequencyBiasModel": {
+                            "covarianceInterFrequencyBias": 1e-06,
+                            "covarianceInterFrequencyBiasUnit": "m^2/s"
+                        },
+                        "motionModel": {
+                            "covarianceAccel": [
+                                3.0,
+                                1.5
+                            ],
+                            "covarianceAccelUnit": "m/√(s^3)"
+                        },
+                        "receiverClockModel": {
+                            "covarianceClkFrequencyDrift": 0.04,
+                            "covarianceClkFrequencyDriftUnit": "m^2/s^3",
+                            "covarianceClkPhaseDrift": 0.01,
+                            "covarianceClkPhaseDriftUnit": "m^2/s"
+                        },
+                        "systemModelCalcAlgorithm": 1
                     },
-                    "model": 1,
-                    "rtklibParams": {
-                        "carrierPhaseErrorAB": [
-                            0.003,
-                            0.003
+                    "obsEstimator": {
+                        "antenna": [
+                            [
+                                0,
+                                {
+                                    "autoDetermine": true,
+                                    "enabled": true,
+                                    "hen_delta": {
+                                        "0": {
+                                            "0": 0.0
+                                        },
+                                        "1": {
+                                            "0": 0.0
+                                        },
+                                        "2": {
+                                            "0": 0.0
+                                        }
+                                    },
+                                    "name": ""
+                                }
+                            ]
                         ],
-                        "dopplerFrequency": 1.0
+                        "gnssMeasurementError": {
+                            "carrierStdDev": 0.003,
+                            "codeStdDev": 0.9,
+                            "dopplerStdDev": 1.0,
+                            "model": 4,
+                            "modelParametersCosineType": {
+                                "a": 1.0,
+                                "b": 4.0,
+                                "n": 8
+                            },
+                            "modelParametersExponential": {
+                                "a": 1.0,
+                                "b": 3.5,
+                                "e0": 9.0
+                            },
+                            "modelParametersRtklib": {
+                                "a": 1.0,
+                                "b": 1.0
+                            },
+                            "modelParametersSine": {
+                                "a": 1.0
+                            },
+                            "modelParametersSineCN0": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "c": 1.0
+                            },
+                            "modelParametersSineOffset": {
+                                "a": 0.5,
+                                "b": 0.5
+                            },
+                            "modelParametersSineSqrt": {
+                                "a": 0.3,
+                                "b": 0.5
+                            },
+                            "modelParametersSineType": {
+                                "a": 0.64,
+                                "b": 0.36
+                            },
+                            "plotCN0": 30.0
+                        },
+                        "ionosphereModel": 1,
+                        "troposphereModels": {
+                            "zhdMappingFunction": [
+                                1,
+                                {
+                                    "pressureModel": 2,
+                                    "temperatureModel": 2,
+                                    "waterVaporModel": 1
+                                }
+                            ],
+                            "zhdModel": [
+                                1,
+                                {
+                                    "pressureModel": 2,
+                                    "temperatureModel": 2,
+                                    "waterVaporModel": 1
+                                }
+                            ],
+                            "zwdMappingFunction": [
+                                1,
+                                {
+                                    "pressureModel": 2,
+                                    "temperatureModel": 2,
+                                    "waterVaporModel": 1
+                                }
+                            ],
+                            "zwdModel": [
+                                1,
+                                {
+                                    "pressureModel": 2,
+                                    "temperatureModel": 2,
+                                    "waterVaporModel": 1
+                                }
+                            ]
+                        }
+                    },
+                    "obsFilter": {
+                        "codes": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
+                        "elevationMask": 10.0,
+                        "excludedSatellites": [
+                            {
+                                "num": 1,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 2,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 4,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 5,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 59,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 60,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 61,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 62,
+                                "sys": "BDS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "QZSS"
+                            },
+                            {
+                                "num": 3,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 6,
+                                "sys": "IRNSS"
+                            },
+                            {
+                                "num": 7,
+                                "sys": "IRNSS"
+                            }
+                        ],
+                        "frequencies": 7943,
+                        "neededObsType": [
+                            0
+                        ],
+                        "sameSnrMaskForAllReceivers": true,
+                        "snrMask": [
+                            {
+                                "allOverride": [
+                                    [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    true
+                                ],
+                                "mask": [
+                                    [
+                                        "L1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "L2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "L5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E6",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5b",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "E5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G3",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G1a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "G2a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B1-2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2a",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B3",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2b",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "B2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q2",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "Q6",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "I5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "IS",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "S1",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ],
+                                    [
+                                        "S5",
+                                        [
+                                            [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            true
+                                        ]
+                                    ]
+                                ]
+                            }
+                        ],
+                        "usedObsTypes": [
+                            2,
+                            0
+                        ]
                     }
                 },
-                "ionosphereModel": 0,
-                "kalmanFilter": {
-                    "_covarianceAccel": {
-                        "0": {
-                            "0": 9.0
-                        },
-                        "1": {
-                            "0": 2.25
-                        }
-                    },
-                    "_covarianceClkFrequencyDrift": 0.010000000000000002,
-                    "_covarianceClkPhaseDrift": 0.04000000000000001,
-                    "_covarianceInterSysClkFrequencyDrift": 0.020000000000000007,
-                    "_covarianceInterSysClkPhaseDrift": 0.08000000000000003,
-                    "_initCovarianceInterSysDrift": 0.0008987551787368178,
-                    "_initCovarianceInterSysErr": 8.987551787368178,
-                    "_initCovariancePosition": {
-                        "0": {
-                            "0": 100.0
-                        },
-                        "1": {
-                            "0": 100.0
-                        },
-                        "2": {
-                            "0": 100.0
-                        }
-                    },
-                    "_initCovarianceRecvClkDrift": 0.0008987551787368178,
-                    "_initCovarianceRecvClkErr": 8.987551787368178,
-                    "_initCovarianceVelocity": {
-                        "0": {
-                            "0": 9.0
-                        },
-                        "1": {
-                            "0": 9.0
-                        },
-                        "2": {
-                            "0": 9.0
-                        }
-                    },
-                    "gui_covarianceAccel": {
-                        "0": {
-                            "0": 3.0
-                        },
-                        "1": {
-                            "0": 1.5
-                        }
-                    },
-                    "gui_covarianceAccelUnit": 0,
-                    "gui_covarianceClkFrequencyDrift": 0.1,
-                    "gui_covarianceClkFrequencyDriftUnit": 0,
-                    "gui_covarianceClkPhaseDrift": 0.2,
-                    "gui_covarianceClkPhaseDriftUnit": 0,
-                    "gui_covarianceInterSysClkFrequencyDrift": 0.14142135623730953,
-                    "gui_covarianceInterSysClkFrequencyDriftUnit": 0,
-                    "gui_covarianceInterSysClkPhaseDrift": 0.28284271247461906,
-                    "gui_covarianceInterSysClkPhaseDriftUnit": 0,
-                    "gui_initCovarianceInterSysDrift": 1e-10,
-                    "gui_initCovarianceInterSysDriftUnit": 1,
-                    "gui_initCovarianceInterSysErr": 1e-08,
-                    "gui_initCovarianceInterSysErrUnit": 1,
-                    "gui_initCovariancePosition": {
-                        "0": {
-                            "0": 10.0
-                        },
-                        "1": {
-                            "0": 10.0
-                        },
-                        "2": {
-                            "0": 10.0
-                        }
-                    },
-                    "gui_initCovariancePositionUnit": 1,
-                    "gui_initCovarianceRecvClkDrift": 1e-10,
-                    "gui_initCovarianceRecvClkDriftUnit": 1,
-                    "gui_initCovarianceRecvClkErr": 1e-08,
-                    "gui_initCovarianceRecvClkErrUnit": 1,
-                    "gui_initCovarianceVelocity": {
-                        "0": {
-                            "0": 3.0
-                        },
-                        "1": {
-                            "0": 3.0
-                        },
-                        "2": {
-                            "0": 3.0
-                        }
-                    },
-                    "gui_initCovarianceVelocityUnit": 1,
-                    "qCalculationAlgorithm": 0
-                },
-                "nNavInfoPins": 1,
-                "troposphereModels": {
-                    "zhdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zhdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ]
-                },
-                "useDoppler": true
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                }
             },
             "enabled": true,
             "id": 1193,
@@ -2515,6 +3397,7 @@
                 "cycleSlipDetectionProbabilityUnit": 0,
                 "cycleSlipFrequency": 0.0,
                 "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRange": 20,
                 "cycleSlipRng": {
                     "seed": 2831845633577483680,
                     "useSeed": true
@@ -2527,7 +3410,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.1
@@ -2539,6 +3422,22 @@
                         "0": 0.3
                     }
                 },
+                "imuAccelerometerIRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerIRWRng": {
+                    "seed": 6487189788128234119,
+                    "useSeed": true
+                },
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.004
@@ -2550,12 +3449,28 @@
                         "0": 0.004
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerRWRng": {
+                    "seed": 6117242167227415860,
+                    "useSeed": true
+                },
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 4952344610738333436,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.001
@@ -2567,6 +3482,22 @@
                         "0": 0.003
                     }
                 },
+                "imuGyroscopeIRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeIRWRng": {
+                    "seed": 88977876113280917,
+                    "useSeed": true
+                },
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.005
@@ -2578,7 +3509,23 @@
                         "0": 0.005
                     }
                 },
-                "imuGyroscopeNoiseUnit": 1,
+                "imuGyroscopeNoiseUnit": "deg/s/√(s)",
+                "imuGyroscopeRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeRWRng": {
+                    "seed": 7937436474439946932,
+                    "useSeed": true
+                },
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 3109285768391481101,
                     "useSeed": true
@@ -2720,6 +3667,7 @@
                 "cycleSlipDetectionProbabilityUnit": 0,
                 "cycleSlipFrequency": 0.0,
                 "cycleSlipFrequencyUnit": 1,
+                "cycleSlipRange": 20,
                 "cycleSlipRng": {
                     "seed": 2722221807494498635,
                     "useSeed": true
@@ -2732,7 +3680,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000111010000011111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.0
@@ -2744,6 +3692,22 @@
                         "0": 0.0
                     }
                 },
+                "imuAccelerometerIRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerIRWRng": {
+                    "seed": 4305176714917234444,
+                    "useSeed": true
+                },
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.0
@@ -2755,12 +3719,28 @@
                         "0": 0.0
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
+                "imuAccelerometerRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuAccelerometerRWRng": {
+                    "seed": 28656565633824162,
+                    "useSeed": true
+                },
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 9076270972176598682,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.0
@@ -2772,6 +3752,22 @@
                         "0": 0.0
                     }
                 },
+                "imuGyroscopeIRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeIRWRng": {
+                    "seed": 5322625531253680981,
+                    "useSeed": true
+                },
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.0
@@ -2783,7 +3779,23 @@
                         "0": 0.0
                     }
                 },
-                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
+                "imuGyroscopeRW": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeRWRng": {
+                    "seed": 4534019179915964163,
+                    "useSeed": true
+                },
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 2482975760159199732,
                     "useSeed": true
@@ -2932,272 +3944,20 @@
             },
             "type": "RinexObsFile"
         },
-        "node-810": {
-            "data": {
-                "checkKalmanMatricesRanks": true,
-                "codes": "011110001000100111000111111000011110001110111111111111111111111010111111101110111011101110000000000000011111",
-                "elevationMask": 14.999999999999998,
-                "excludedSatellites": [],
-                "frame": 1,
-                "frequencies": 1,
-                "gnssMeasurementUncertaintyPseudorange": 0.5,
-                "gnssMeasurementUncertaintyPseudorangeRate": 0.05,
-                "gnssMeasurementUncertaintyPseudorangeRateUnit": 1,
-                "gnssMeasurementUncertaintyPseudorangeUnit": 1,
-                "initBiasAccel": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "initBiasAccelUnit": 0,
-                "initBiasGyro": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    }
-                },
-                "initBiasGyroUnit": 1,
-                "initCovarianceAttitudeAngles": {
-                    "0": {
-                        "0": 1.0
-                    },
-                    "1": {
-                        "0": 1.0
-                    },
-                    "2": {
-                        "0": 10.0
-                    }
-                },
-                "initCovarianceAttitudeAnglesUnit": 3,
-                "initCovarianceBiasAccel": {
-                    "0": {
-                        "0": 1.0
-                    },
-                    "1": {
-                        "0": 1.0
-                    },
-                    "2": {
-                        "0": 1.0
-                    }
-                },
-                "initCovarianceBiasAccelUnit": 1,
-                "initCovarianceBiasGyro": {
-                    "0": {
-                        "0": 0.01
-                    },
-                    "1": {
-                        "0": 0.01
-                    },
-                    "2": {
-                        "0": 0.01
-                    }
-                },
-                "initCovarianceBiasGyroUnit": 3,
-                "initCovarianceFreq": 30.0,
-                "initCovarianceFreqUnit": 1,
-                "initCovariancePhase": 300.0,
-                "initCovariancePhaseUnit": 2,
-                "initCovariancePosition": {
-                    "0": {
-                        "0": 10.0
-                    },
-                    "1": {
-                        "0": 10.0
-                    },
-                    "2": {
-                        "0": 10.0
-                    }
-                },
-                "initCovariancePositionUnit": 3,
-                "initCovarianceVelocity": {
-                    "0": {
-                        "0": 1.0
-                    },
-                    "1": {
-                        "0": 1.0
-                    },
-                    "2": {
-                        "0": 1.0
-                    }
-                },
-                "initCovarianceVelocityUnit": 1,
-                "ionosphereModel": 0,
-                "nNavInfoPins": 1,
-                "phiCalculationAlgorithm": 0,
-                "phiCalculationTaylorOrder": 2,
-                "qCalculationAlgorithm": 0,
-                "randomProcessAccel": 0,
-                "randomProcessGyro": 0,
-                "showKalmanFilterOutputPins": false,
-                "stdevAccelBiasUnits": 1,
-                "stdevAccelNoiseUnits": 1,
-                "stdevClockFreqUnits": 0,
-                "stdevGyroBiasUnits": 0,
-                "stdevGyroNoiseUnits": 0,
-                "stdev_bad": {
-                    "0": {
-                        "0": 0.001
-                    },
-                    "1": {
-                        "0": 0.001
-                    },
-                    "2": {
-                        "0": 0.001
-                    }
-                },
-                "stdev_bgd": {
-                    "0": {
-                        "0": 1.0
-                    },
-                    "1": {
-                        "0": 1.0
-                    },
-                    "2": {
-                        "0": 1.0
-                    }
-                },
-                "stdev_cf": 0.03,
-                "stdev_cp": 5.0,
-                "stdev_ra": {
-                    "0": {
-                        "0": 0.004
-                    },
-                    "1": {
-                        "0": 0.004
-                    },
-                    "2": {
-                        "0": 0.004
-                    }
-                },
-                "stdev_rg": {
-                    "0": {
-                        "0": 18.0
-                    },
-                    "1": {
-                        "0": 18.0
-                    },
-                    "2": {
-                        "0": 18.0
-                    }
-                },
-                "tau_bad": {
-                    "0": {
-                        "0": 10000.0
-                    },
-                    "1": {
-                        "0": 10000.0
-                    },
-                    "2": {
-                        "0": 10000.0
-                    }
-                },
-                "tau_bgd": {
-                    "0": {
-                        "0": 10000.0
-                    },
-                    "1": {
-                        "0": 10000.0
-                    },
-                    "2": {
-                        "0": 10000.0
-                    }
-                },
-                "troposphereModels": {
-                    "zhdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zhdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdMappingFunction": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ],
-                    "zwdModel": [
-                        0,
-                        {
-                            "pressureModel": 0,
-                            "temperatureModel": 0,
-                            "waterVaporModel": 0
-                        }
-                    ]
-                }
-            },
-            "enabled": true,
-            "id": 810,
-            "inputPins": [
-                {
-                    "id": 819,
-                    "name": "InertialNavSol"
-                },
-                {
-                    "id": 820,
-                    "name": "GnssObs"
-                },
-                {
-                    "id": 821,
-                    "name": "GnssNavInfo"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "TightlyCoupledKF",
-            "outputPins": [
-                {
-                    "id": 822,
-                    "name": "Errors"
-                },
-                {
-                    "id": 823,
-                    "name": "Sync"
-                }
-            ],
-            "pos": {
-                "x": 772.0,
-                "y": -514.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "TightlyCoupledKF"
-        },
         "node-837": {
             "data": {
-                "angularRateEarthRotationCompensationEnabled": true,
-                "angularRateTransportRateCompensationEnabled": true,
-                "centrifgalAccelerationCompensationEnabled": true,
-                "coriolisAccelerationCompensationEnabled": true,
-                "gravitationModel": 4,
-                "integrationAlgorithm": 0,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": false,
-                "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": true
+                "inertialIntegrator": {
+                    "integrationAlgorithm": 3,
+                    "integrationFrame": 1,
+                    "posVelAttDerivativeConstants": {
+                        "angularRateEarthRotationCompensationEnabled": true,
+                        "angularRateTransportRateCompensationEnabled": true,
+                        "centrifgalAccelerationCompensationEnabled": true,
+                        "coriolisAccelerationCompensationEnabled": true,
+                        "gravitationModel": 4
+                    }
+                },
+                "preferAccelerationOverDeltaMeasurements": false
             },
             "enabled": true,
             "id": 837,
@@ -3209,14 +3969,6 @@
                 {
                     "id": 841,
                     "name": "PosVelAttInit"
-                },
-                {
-                    "id": 842,
-                    "name": "PVAError"
-                },
-                {
-                    "id": 843,
-                    "name": "Sync"
                 }
             ],
             "kind": "Blueprint",
@@ -3339,6 +4091,7 @@
                 "gnssFrequency": 25.0,
                 "gravitationModel": 4,
                 "imuFrequency": 25.0,
+                "imuInternalFrequency": 1000.0,
                 "linearTrajectoryDistanceForStop": 5000.0,
                 "n_linearTrajectoryStartVelocity": {
                     "0": {

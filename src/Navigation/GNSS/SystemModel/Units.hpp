@@ -105,19 +105,4 @@ void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data);
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::CovarianceClkFrequencyDriftUnits unit);
 
-/// @brief Units separated by '\0' and terminated by double '\0'
-template<typename T>
-[[nodiscard]] std::string MakeComboItems()
-{
-    std::string str;
-    for (size_t i = 0; i < static_cast<size_t>(T::COUNT); i++)
-    {
-        if (!str.empty()) { str += '\0'; }
-        str += to_string(static_cast<T>(i));
-    }
-    str += '\0';
-    str += '\0';
-    return str;
-}
-
 } // namespace NAV

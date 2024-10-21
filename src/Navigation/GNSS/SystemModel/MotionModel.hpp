@@ -19,13 +19,14 @@
 #include <Eigen/Core>
 #include <imgui.h>
 
-#include "internal/gui/widgets/InputWithUnit.hpp"
+#include "Navigation/GNSS/SystemModel/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
 #include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/GNSS/SystemModel/SystemModel.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Units.hpp"
 #include "util/Container/KeyedMatrix.hpp"
+#include "internal/gui/widgets/InputWithUnit.hpp"
 
 namespace NAV
 {

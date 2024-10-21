@@ -9,6 +9,7 @@
 #include "Units.hpp"
 
 #include <cmath>
+#include "util/Logger.hpp"
 
 namespace NAV::Units
 {
@@ -19,6 +20,11 @@ void to_json(json& j, const CovarianceAccelUnits& data)
 }
 void from_json(const json& j, CovarianceAccelUnits& data)
 {
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into CovarianceAccelUnits. Consider resaving the flow", j.dump());
+        return;
+    }
     std::string str = j.get<std::string>();
     for (size_t i = 0; i < static_cast<size_t>(CovarianceAccelUnits::COUNT); i++)
     {
@@ -37,6 +43,11 @@ void to_json(json& j, const CovarianceClkPhaseDriftUnits& data)
 }
 void from_json(const json& j, CovarianceClkPhaseDriftUnits& data)
 {
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into CovarianceClkPhaseDriftUnits. Consider resaving the flow", j.dump());
+        return;
+    }
     std::string str = j.get<std::string>();
     for (size_t i = 0; i < static_cast<size_t>(CovarianceClkPhaseDriftUnits::COUNT); i++)
     {
@@ -55,6 +66,11 @@ void to_json(json& j, const CovarianceClkFrequencyDriftUnits& data)
 }
 void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data)
 {
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into CovarianceClkFrequencyDriftUnits. Consider resaving the flow", j.dump());
+        return;
+    }
     std::string str = j.get<std::string>();
     for (size_t i = 0; i < static_cast<size_t>(CovarianceClkFrequencyDriftUnits::COUNT); i++)
     {

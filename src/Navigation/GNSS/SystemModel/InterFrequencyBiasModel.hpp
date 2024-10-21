@@ -18,6 +18,7 @@
 #include "Navigation/GNSS/SystemModel/SystemModel.hpp"
 #include "util/Container/KeyedMatrix.hpp"
 #include <fmt/format.h>
+#include "Navigation/GNSS/SystemModel/Units.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
 

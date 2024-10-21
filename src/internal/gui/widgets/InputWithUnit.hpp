@@ -14,8 +14,27 @@
 #pragma once
 
 #include <imgui.h>
+#include <string>
 
-namespace NAV::gui::widgets
+namespace NAV
+{
+
+/// @brief Units separated by '\0' and terminated by double '\0'
+template<typename T>
+[[nodiscard]] std::string MakeComboItems()
+{
+    std::string str;
+    for (size_t i = 0; i < static_cast<size_t>(T::COUNT); i++)
+    {
+        if (!str.empty()) { str += '\0'; }
+        str += to_string(static_cast<T>(i));
+    }
+    str += '\0';
+    str += '\0';
+    return str;
+}
+
+namespace gui::widgets
 {
 /// Return value signaling that the input or the unit changed
 enum InputWithUnitChange : int
@@ -453,4 +472,5 @@ InputWithUnitChange SliderDouble4WithUnit(const char* label, float itemWidth, fl
                                           const char* format = "%.6f", ImGuiSliderFlags flags = 0,
                                           int combo_popup_max_height_in_items = -1);
 
-} // namespace NAV::gui::widgets
+} // namespace gui::widgets
+} // namespace NAV

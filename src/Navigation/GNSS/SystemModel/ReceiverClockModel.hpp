@@ -19,12 +19,13 @@
 #include "Units.hpp"
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
-#include "internal/gui/widgets/InputWithUnit.hpp"
 #include "util/Assert.h"
 #include "util/Container/KeyedMatrix.hpp"
 #include "Navigation/GNSS/SystemModel/SystemModel.hpp"
+#include "Navigation/GNSS/SystemModel/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"
 #include "Navigation/Math/VanLoan.hpp"
+#include "internal/gui/widgets/InputWithUnit.hpp"
 
 namespace NAV
 {
