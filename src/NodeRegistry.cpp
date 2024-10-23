@@ -191,6 +191,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
+#include "Nodes/DataProcessor/ErrorModel/AllanDeviation.hpp"
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/GNSS/GnssAnalyzer.hpp"
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
@@ -258,6 +259,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UartDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     // Data Processor
+    registerNodeType<AllanDeviation>();
     registerNodeType<ErrorModel>();
     registerNodeType<GnssAnalyzer>();
     registerNodeType<SinglePointPositioning>();
