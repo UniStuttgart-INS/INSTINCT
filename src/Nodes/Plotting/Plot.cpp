@@ -1022,6 +1022,20 @@ void NAV::Plot::guiConfig()
                                 plotItem.markerColormapMaskColors.clear();
                             }
                         }
+                        if (plotItem.style.errorBoundsEnabled)
+                        {
+                            if (plotItem.errorBoundsData[0].size() != plotData.buffer.size()
+                                && plotItem.style.errorBoundsDataIdx < pinData.plotData.size())
+                            {
+                                const auto& errorData = pinData.plotData.at(plotItem.style.errorBoundsDataIdx);
+                                for (size_t i = plotItem.errorBoundsData[0].size(); i < plotData.buffer.size(); i++)
+                                {
+                                    double errorValue = errorData.buffer.at(i);
+                                    plotItem.errorBoundsData[0].push_back(plotData.buffer.at(i) - errorValue);
+                                    plotItem.errorBoundsData[1].push_back(plotData.buffer.at(i) + errorValue);
+                                }
+                            }
+                        }
                         if (plotItem.style.eventsEnabled)
                         {
                             if (plotItem.eventMarker.size() != plotData.buffer.size())
@@ -1077,7 +1091,8 @@ void NAV::Plot::guiConfig()
                                                 pinData.stride,
                                                 plot.lineFlags,
                                                 &plotItem.colormapMaskColors,
-                                                &plotItem.markerColormapMaskColors);
+                                                &plotItem.markerColormapMaskColors,
+                                                &plotItem.errorBoundsData);
 
                         // ----------------------------------- Tooltips --------------------------------------
                         ImGuiWindow* plotWindow = ImGui::GetCurrentWindow();
@@ -1218,44 +1233,35 @@ void NAV::Plot::guiConfig()
                             ImPlot::EndDragDropSource();
                         }
 
-                        auto ShowColormapReferenceChooser = [&](size_t& colormapMaskDataCmpIdx, const char* label = "") -> bool {
+                        auto ShowDataReferenceChooser = [&](size_t& dataIdx, const char* label = "") -> bool {
                             bool changed = false;
-                            const char* preview = colormapMaskDataCmpIdx < pinData.plotData.size()
-                                                      ? pinData.plotData.at(colormapMaskDataCmpIdx).displayName.c_str()
+                            const char* preview = dataIdx < pinData.plotData.size()
+                                                      ? pinData.plotData.at(dataIdx).displayName.c_str()
                                                       : "";
-                            if (ImGui::BeginCombo(fmt::format("{}Colormap Ref", label).c_str(), preview))
+                            if (ImGui::BeginCombo(label, preview))
                             {
                                 for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
                                 {
                                     auto& plotData = pinData.plotData.at(plotDataIndex);
 
-                                    if (!plotData.hasData)
-                                    {
-                                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-                                    }
-                                    const bool is_selected = (colormapMaskDataCmpIdx == plotDataIndex);
+                                    if (!plotData.hasData) { ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F); }
+                                    const bool is_selected = (dataIdx == plotDataIndex);
                                     if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
                                     {
                                         changed = true;
-                                        colormapMaskDataCmpIdx = plotDataIndex;
+                                        dataIdx = plotDataIndex;
                                     }
-                                    if (!plotData.hasData)
-                                    {
-                                        ImGui::PopStyleVar();
-                                    }
+                                    if (!plotData.hasData) { ImGui::PopStyleVar(); }
 
                                     // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                                    if (is_selected)
-                                    {
-                                        ImGui::SetItemDefaultFocus();
-                                    }
+                                    if (is_selected) { ImGui::SetItemDefaultFocus(); }
                                 }
                                 ImGui::EndCombo();
                             }
                             return changed;
                         };
 
-                        if (plotItem.style.showLegendPopup(
+                        if (auto legendReturn = plotItem.style.showLegendPopup(
                                 plotName.c_str(),
                                 fmt::format("Pin {} - {}: {}", plotItem.pinIndex + 1,
                                             pinData.dataIdentifier, plotData.displayName)
@@ -1266,11 +1272,17 @@ void NAV::Plot::guiConfig()
                                 plot.lineFlags,
                                 &plotItem.colormapMaskColors,
                                 &plotItem.markerColormapMaskColors,
-                                ShowColormapReferenceChooser,
+                                ShowDataReferenceChooser,
                                 &plotItem.eventMarker,
-                                &plotItem.eventTooltips))
+                                &plotItem.eventTooltips);
+                            legendReturn.changed)
                         {
                             flow::ApplyChanges();
+
+                            if (legendReturn.errorBoundsReCalcNeeded)
+                            {
+                                for (auto& data : plotItem.errorBoundsData) { data.clear(); }
+                            }
                         }
 
                         plotElementIdx++;
@@ -1459,6 +1471,7 @@ bool NAV::Plot::initialize()
         {
             plotItem.colormapMaskColors.clear();
             plotItem.markerColormapMaskColors.clear();
+            for (auto& data : plotItem.errorBoundsData) { data.clear(); }
             plotItem.eventMarker.clear();
             plotItem.eventTooltips.clear();
         }

@@ -229,6 +229,9 @@ class Plot : public Node, public CommonLog
             /// Buffer for event markers
             ScrollingBuffer<double> eventMarker = ScrollingBuffer<double>(0);
 
+            /// Error bounds lower and upper data
+            std::array<ScrollingBuffer<double>, 2> errorBoundsData;
+
             /// List of tooltips (x,y, tooltip)
             std::vector<std::tuple<double, double, PlotEventTooltip>> eventTooltips;
         };

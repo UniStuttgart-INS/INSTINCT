@@ -10,7 +10,9 @@
 
 #include <cstddef>
 #include <functional>
+#include <imgui.h>
 #include <imgui_stdlib.h>
+#include <implot.h>
 #include <implot_internal.h>
 
 #include "util/Logger.hpp"
@@ -39,6 +41,10 @@ void to_json(json& j, const PlotItemStyle& style)
         { "markerWeight", style.markerWeight },
         { "markerFillColor", style.markerFillColor },
         { "markerOutlineColor", style.markerOutlineColor },
+        { "errorBoundsEnabled", style.errorBoundsEnabled },
+        { "errorBoundsDataIdx", style.errorBoundsDataIdx },
+        { "errorBoundsAlpha", style.errorBoundsAlpha },
+        { "errorBoundsModifierExpression", style.errorBoundsModifierExpression },
         { "eventsEnabled", style.eventsEnabled },
         { "eventMarkerStyle", style.eventMarkerStyle },
         { "eventMarkerSize", style.eventMarkerSize },
@@ -70,6 +76,10 @@ void from_json(const json& j, PlotItemStyle& style)
     if (j.contains("markerWeight")) { j.at("markerWeight").get_to(style.markerWeight); }
     if (j.contains("markerFillColor")) { j.at("markerFillColor").get_to(style.markerFillColor); }
     if (j.contains("markerOutlineColor")) { j.at("markerOutlineColor").get_to(style.markerOutlineColor); }
+    if (j.contains("errorBoundsEnabled")) { j.at("errorBoundsEnabled").get_to(style.errorBoundsEnabled); }
+    if (j.contains("errorBoundsDataIdx")) { j.at("errorBoundsDataIdx").get_to(style.errorBoundsDataIdx); }
+    if (j.contains("errorBoundsAlpha")) { j.at("errorBoundsAlpha").get_to(style.errorBoundsAlpha); }
+    if (j.contains("errorBoundsModifierExpression")) { j.at("errorBoundsModifierExpression").get_to(style.errorBoundsModifierExpression); }
     if (j.contains("eventsEnabled")) { j.at("eventsEnabled").get_to(style.eventsEnabled); }
     if (j.contains("eventMarkerStyle")) { j.at("eventMarkerStyle").get_to(style.eventMarkerStyle); }
     if (j.contains("eventMarkerSize")) { j.at("eventMarkerSize").get_to(style.eventMarkerSize); }
@@ -79,19 +89,19 @@ void from_json(const json& j, PlotItemStyle& style)
     if (j.contains("eventTooltipFilterRegex")) { j.at("eventTooltipFilterRegex").get_to(style.eventTooltipFilterRegex); }
 }
 
-bool PlotItemStyle::showLegendPopup(const char* id,
-                                    const char* displayTitle,
-                                    int plotDataBufferSize,
-                                    int plotElementIdx,
-                                    [[maybe_unused]] const char* nameId,
-                                    ImPlotLineFlags plotLineFlags,
-                                    ScrollingBuffer<ImU32>* colormapMaskColors,
-                                    ScrollingBuffer<ImU32>* markerColormapMaskColors,
-                                    const std::function<bool(size_t&, const char*)>& ShowColormapReferenceChooser,
-                                    ScrollingBuffer<double>* eventMarker,
-                                    std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips)
+PlotItemStyle::LegendPopupReturn PlotItemStyle::showLegendPopup(const char* id,
+                                                                const char* displayTitle,
+                                                                int plotDataBufferSize,
+                                                                int plotElementIdx,
+                                                                [[maybe_unused]] const char* nameId,
+                                                                ImPlotLineFlags plotLineFlags,
+                                                                ScrollingBuffer<ImU32>* colormapMaskColors,
+                                                                ScrollingBuffer<ImU32>* markerColormapMaskColors,
+                                                                const std::function<bool(size_t&, const char*)>& ShowDataReferenceChooser,
+                                                                ScrollingBuffer<double>* eventMarker,
+                                                                std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips)
 {
-    bool changed = false;
+    LegendPopupReturn ret;
 
     // Legend item context menu (right click on legend item)
     if (ImPlot::BeginLegendPopup(id))
@@ -110,7 +120,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
         if (legendNameGui != legendName && !ImGui::IsItemActive())
         {
             legendName = legendNameGui;
-            changed = true;
+            ret.changed = true;
             LOG_DEBUG("{}: Legend changed to {}", nameId, legendName);
         }
 
@@ -124,14 +134,14 @@ bool PlotItemStyle::showLegendPopup(const char* id,
             {
                 stride = plotDataBufferSize - 1;
             }
-            changed = true;
+            ret.changed = true;
             LOG_DEBUG("{}: Stride changed to {}", nameId, stride);
         }
 
         if (ImGui::Combo("Style", reinterpret_cast<int*>(&lineType),
                          "Scatter\0Line\0\0"))
         {
-            changed = true;
+            ret.changed = true;
         }
         ImPlotLineFlags lFlags = lineFlags.value_or(plotLineFlags);
         bool plotItemLineFlagsAuto = !lineFlags.has_value();
@@ -139,21 +149,21 @@ bool PlotItemStyle::showLegendPopup(const char* id,
         if (ImGui::CheckboxFlags("NoClip", &lFlags, ImPlotLineFlags_NoClip))
         {
             lineFlags = lFlags;
-            changed = true;
+            ret.changed = true;
         }
         if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Markers (if displayed) on the edge of a plot will not be clipped"); }
         ImGui::SameLine();
         if (ImGui::CheckboxFlags("SkipNaN", &lFlags, ImPlotLineFlags_SkipNaN))
         {
             lineFlags = lFlags;
-            changed = true;
+            ret.changed = true;
         }
         if (ImGui::IsItemHovered()) { ImGui::SetTooltip("NaNs values will be skipped instead of rendered as missing data"); }
         ImGui::SameLine();
         if (ImGui::CheckboxFlags("Loop", &lFlags, ImPlotLineFlags_Loop))
         {
             lineFlags = lFlags;
-            changed = true;
+            ret.changed = true;
         }
         if (ImGui::IsItemHovered()) { ImGui::SetTooltip("The last and first point will be connected to form a closed loop"); }
         if (lineFlags)
@@ -169,18 +179,18 @@ bool PlotItemStyle::showLegendPopup(const char* id,
         {
             if (ImGui::DragFloat("Line Thickness", &thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
             {
-                changed = true;
+                ret.changed = true;
             }
             if (colormapMaskColors && ShowColormapSelector(colormapMask.first, colormapMask.second))
             {
                 colormapMaskColors->clear();
-                changed = true;
+                ret.changed = true;
             }
             if (colormapMaskColors && colormapMask.first != ColormapMaskType::None
-                && ShowColormapReferenceChooser(colormapMaskDataCmpIdx, ""))
+                && ShowDataReferenceChooser(colormapMaskDataCmpIdx, "Colormap Ref"))
             {
                 colormapMaskColors->clear();
-                changed = true;
+                ret.changed = true;
             }
             if (colormapMask.first == ColormapMaskType::None)
             {
@@ -189,7 +199,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 if (ImGui::ColorEdit4("Line Color", &col.x))
                 {
                     color = col;
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (!isColorAuto)
                 {
@@ -202,7 +212,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
             }
             if (ImGui::Checkbox("Markers", &markers))
             {
-                changed = true;
+                ret.changed = true;
             }
         }
         if (lineType == PlotItemStyle::LineType::Scatter || markers)
@@ -210,28 +220,28 @@ bool PlotItemStyle::showLegendPopup(const char* id,
             if (ImGui::Combo("Marker Style", &markerStyle,
                              "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
             {
-                changed = true;
+                ret.changed = true;
             }
             if (ImGui::DragFloat("Marker Size", &markerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
             {
-                changed = true;
+                ret.changed = true;
             }
             if (ImGui::DragFloat("Marker Weight", &markerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
             {
-                changed = true;
+                ret.changed = true;
             }
             if (!markers)
             {
                 if (colormapMaskColors && ShowColormapSelector(colormapMask.first, colormapMask.second))
                 {
                     colormapMaskColors->clear();
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (colormapMaskColors && colormapMask.first != ColormapMaskType::None
-                    && ShowColormapReferenceChooser(colormapMaskDataCmpIdx, ""))
+                    && ShowDataReferenceChooser(colormapMaskDataCmpIdx, "Colormap Ref"))
                 {
                     colormapMaskColors->clear();
-                    changed = true;
+                    ret.changed = true;
                 }
             }
             if (markers && lineType != PlotItemStyle::LineType::Scatter)
@@ -239,13 +249,13 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 if (colormapMaskColors && ShowColormapSelector(markerColormapMask.first, markerColormapMask.second, "Marker "))
                 {
                     markerColormapMaskColors->clear();
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (colormapMaskColors && markerColormapMask.first != ColormapMaskType::None
-                    && ShowColormapReferenceChooser(markerColormapMaskDataCmpIdx, "Marker "))
+                    && ShowDataReferenceChooser(markerColormapMaskDataCmpIdx, "Marker Colormap Ref"))
                 {
                     markerColormapMaskColors->clear();
-                    changed = true;
+                    ret.changed = true;
                 }
             }
             if (markerColormapMask.first == ColormapMaskType::None
@@ -257,7 +267,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 if (ImGui::ColorEdit4("Marker Fill Color", &col.x))
                 {
                     markerFillColor = col;
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (!isColorAuto)
                 {
@@ -273,7 +283,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 if (ImGui::ColorEdit4("Marker Outline Color", &col.x))
                 {
                     markerOutlineColor = col;
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (!isColorAuto)
                 {
@@ -285,34 +295,54 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 }
             }
         }
+        if (lineType == PlotItemStyle::LineType::Line)
+        {
+            ImGui::Separator();
+            ret.changed |= ImGui::Checkbox("Show Error Bounds", &errorBoundsEnabled);
+            if (errorBoundsEnabled)
+            {
+                auto idx = errorBoundsDataIdx;
+                if (ShowDataReferenceChooser(errorBoundsDataIdx, "Error Bounds Ref") && errorBoundsDataIdx != idx)
+                {
+                    ret.changed = true;
+                    ret.errorBoundsReCalcNeeded = true;
+                }
+                ret.changed |= ImGui::SliderFloat("Error Bounds Alpha", &errorBoundsAlpha, 0.0F, 1.0F, "%.2f");
+                if (ImGui::InputTextWithHint("Error Bounds Modifier", "e.g. '3 * x' or 'sqrt(x)'", &errorBoundsModifierExpression))
+                {
+                    ret.changed = true;
+                    ret.errorBoundsReCalcNeeded = true;
+                }
+            }
+        }
         if (eventMarker && eventTooltips)
         {
             ImGui::Separator();
             if (ImGui::Checkbox("Events", &eventsEnabled))
             {
-                changed = true;
+                ret.changed = true;
             }
             if (eventsEnabled)
             {
                 if (ImGui::Combo("Event Marker Style", &eventMarkerStyle,
                                  "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
                 {
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (ImGui::DragFloat("Event Marker Size", &eventMarkerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
                 {
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (ImGui::DragFloat("Event Marker Weight", &eventMarkerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
                 {
-                    changed = true;
+                    ret.changed = true;
                 }
                 bool isColorAuto = ImPlot::IsColorAuto(eventMarkerFillColor);
                 auto col = isColorAuto ? ImPlot::GetColormapColor(plotElementIdx) : eventMarkerFillColor;
                 if (ImGui::ColorEdit4("Event Marker Fill Color", &col.x))
                 {
                     eventMarkerFillColor = col;
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (!isColorAuto)
                 {
@@ -328,7 +358,7 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 if (ImGui::ColorEdit4("Event Marker Outline Color", &col.x))
                 {
                     eventMarkerOutlineColor = col;
-                    changed = true;
+                    ret.changed = true;
                 }
                 if (!isColorAuto)
                 {
@@ -343,14 +373,14 @@ bool PlotItemStyle::showLegendPopup(const char* id,
                 {
                     eventMarker->clear();
                     eventTooltips->clear();
-                    changed = true;
+                    ret.changed = true;
                 }
             }
         }
 
         ImPlot::EndLegendPopup();
     }
-    return changed;
+    return ret;
 }
 
 void PlotItemStyle::plotData(const char* plotName,
@@ -360,12 +390,13 @@ void PlotItemStyle::plotData(const char* plotName,
                              int defaultStride,
                              ImPlotLineFlags plotLineFlags,
                              ScrollingBuffer<ImU32>* colormapMaskColors,
-                             ScrollingBuffer<ImU32>* markerColormapMaskColors) const
+                             ScrollingBuffer<ImU32>* markerColormapMaskColors,
+                             const std::array<ScrollingBuffer<double>, 2>* yErrorData) const
 {
+    auto lineColor = ImPlot::IsColorAuto(color) ? ImPlot::GetColormapColor(plotElementIdx) : color;
     if (lineType == PlotItemStyle::LineType::Line)
     {
-        ImPlot::SetNextLineStyle(ImPlot::IsColorAuto(color) ? ImPlot::GetColormapColor(plotElementIdx) : color,
-                                 thickness);
+        ImPlot::SetNextLineStyle(lineColor, thickness);
     }
     if (lineType == PlotItemStyle::LineType::Scatter || markers)
     {
@@ -404,6 +435,19 @@ void PlotItemStyle::plotData(const char* plotName,
                          lineFlags.value_or(plotLineFlags),
                          static_cast<int>(std::ceil(static_cast<double>(yData.offset()) / static_cast<double>(stride))),
                          stride * static_cast<int>(sizeof(double)));
+
+        if (errorBoundsEnabled && yErrorData && ImPlot::GetCurrentPlot()->Items.GetItemByIndex(plotElementIdx)->Show)
+        {
+            ImPlot::SetNextFillStyle(lineColor, errorBoundsAlpha);
+            ImPlot::PlotShaded("",
+                               xData.data(),
+                               (*yErrorData)[0].data(),
+                               (*yErrorData)[1].data(),
+                               dataPointCount,
+                               ImPlotShadedFlags_None,
+                               static_cast<int>(std::ceil(static_cast<double>(yData.offset()) / static_cast<double>(stride))),
+                               stride * static_cast<int>(sizeof(double)));
+        }
     }
     else if (lineType == PlotItemStyle::LineType::Scatter)
     {

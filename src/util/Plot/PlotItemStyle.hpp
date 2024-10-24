@@ -72,6 +72,15 @@ struct PlotItemStyle
     /// Outline/Border color for markers
     ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
 
+    /// Wether to plot the error bounds
+    bool errorBoundsEnabled = false;
+    /// Index of the plot data to use for error bounds
+    size_t errorBoundsDataIdx = 0;
+    /// Alpha value for the error bounds
+    float errorBoundsAlpha = 0.25F;
+    /// Expression to modify the error bounds with
+    std::string errorBoundsModifierExpression;
+
     /// Show events on this data
     bool eventsEnabled = false;
     /// Style of the marker to display
@@ -87,6 +96,13 @@ struct PlotItemStyle
     /// Tooltip search regex
     std::string eventTooltipFilterRegex;
 
+    /// @brief Legend popup return type
+    struct LegendPopupReturn
+    {
+        bool changed = false;                 ///< Some setting changed
+        bool errorBoundsReCalcNeeded = false; ///< Settings of the error bounds changed and needs to be recalculated
+    };
+
     /// @brief Shows a legend popup for plot items
     /// @param[in] id Unique id for the popup (should not change while open)
     /// @param[in] displayTitle Display title
@@ -96,21 +112,21 @@ struct PlotItemStyle
     /// @param[in] plotLineFlags LineFlags from a parent plot
     /// @param[in, out] colormapMaskColors Buffer for the colormap mask of line plots
     /// @param[in, out] markerColormapMaskColors Buffer for the colormap mask of the markers
-    /// @param[in] ShowColormapReferenceChooser Function to call to show a Combo to select the colormap reference
+    /// @param[in] ShowDataReferenceChooser Function to call to show a Combo to select the data reference
     /// @param[in, out] eventMarker Buffer for event markers
     /// @param[in, out] eventTooltips List of tooltips (x,y, tooltip)
     /// @return True if a change was made
-    bool showLegendPopup(const char* id,
-                         const char* displayTitle,
-                         int plotDataBufferSize,
-                         int plotElementIdx,
-                         const char* nameId,
-                         ImPlotLineFlags plotLineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN,
-                         ScrollingBuffer<ImU32>* colormapMaskColors = nullptr,
-                         ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr,
-                         const std::function<bool(size_t&, const char*)>& ShowColormapReferenceChooser = nullptr,
-                         ScrollingBuffer<double>* eventMarker = nullptr,
-                         std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips = nullptr);
+    [[nodiscard]] LegendPopupReturn showLegendPopup(const char* id,
+                                                    const char* displayTitle,
+                                                    int plotDataBufferSize,
+                                                    int plotElementIdx,
+                                                    const char* nameId,
+                                                    ImPlotLineFlags plotLineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN,
+                                                    ScrollingBuffer<ImU32>* colormapMaskColors = nullptr,
+                                                    ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr,
+                                                    const std::function<bool(size_t&, const char*)>& ShowDataReferenceChooser = nullptr,
+                                                    ScrollingBuffer<double>* eventMarker = nullptr,
+                                                    std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips = nullptr);
 
     /// @brief Plots the data with the style
     /// @param[in] plotName Plot name
@@ -121,6 +137,7 @@ struct PlotItemStyle
     /// @param[in] plotLineFlags LineFlags from a parent plot
     /// @param[in] colormapMaskColors Buffer for the colormap mask of line plots
     /// @param[in] markerColormapMaskColors Buffer for the colormap mask of the markers
+    /// @param[in] yErrorData Lower and upper data for error bounds
     void plotData(const char* plotName,
                   const ScrollingBuffer<double>& xData,
                   const ScrollingBuffer<double>& yData,
@@ -128,7 +145,8 @@ struct PlotItemStyle
                   int defaultStride = 1,
                   ImPlotLineFlags plotLineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN,
                   ScrollingBuffer<ImU32>* colormapMaskColors = nullptr,
-                  ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr) const;
+                  ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr,
+                  const std::array<ScrollingBuffer<double>, 2>* yErrorData = nullptr) const;
 };
 
 /// @brief Write info to a json object
