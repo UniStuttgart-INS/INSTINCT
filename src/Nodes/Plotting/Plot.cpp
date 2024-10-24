@@ -45,6 +45,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Transformations/Units.hpp"
 
 #include <implot_internal.h>
+#include <muParser.h>
 
 #include <algorithm>
 #include <regex>
@@ -1031,6 +1032,21 @@ void NAV::Plot::guiConfig()
                                 for (size_t i = plotItem.errorBoundsData[0].size(); i < plotData.buffer.size(); i++)
                                 {
                                     double errorValue = errorData.buffer.at(i);
+                                    if (!plotItem.style.errorBoundsModifierExpression.empty())
+                                    {
+                                        try
+                                        {
+                                            mu::Parser p;
+                                            double x = errorValue;
+                                            p.DefineVar("x", &x);
+                                            p.SetExpr(plotItem.style.errorBoundsModifierExpression);
+                                            errorValue = p.Eval();
+                                        }
+                                        catch (mu::Parser::exception_type& e)
+                                        {
+                                            LOG_ERROR("{}: Error bound modifier parse error on '{}': {}", nameId(), plotItem.style.legendName, e.GetMsg());
+                                        }
+                                    }
                                     plotItem.errorBoundsData[0].push_back(plotData.buffer.at(i) - errorValue);
                                     plotItem.errorBoundsData[1].push_back(plotData.buffer.at(i) + errorValue);
                                 }

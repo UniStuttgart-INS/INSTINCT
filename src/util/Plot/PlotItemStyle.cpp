@@ -14,7 +14,10 @@
 #include <imgui_stdlib.h>
 #include <implot.h>
 #include <implot_internal.h>
+#include <muParser.h>
+#include <string>
 
+#include "internal/gui/widgets/HelpMarker.hpp"
 #include "util/Logger.hpp"
 
 namespace NAV
@@ -308,10 +311,162 @@ PlotItemStyle::LegendPopupReturn PlotItemStyle::showLegendPopup(const char* id,
                     ret.errorBoundsReCalcNeeded = true;
                 }
                 ret.changed |= ImGui::SliderFloat("Error Bounds Alpha", &errorBoundsAlpha, 0.0F, 1.0F, "%.2f");
-                if (ImGui::InputTextWithHint("Error Bounds Modifier", "e.g. '3 * x' or 'sqrt(x)'", &errorBoundsModifierExpression))
+                if (errorBoundsModifierExpressionTemp.empty()) { errorBoundsModifierExpressionTemp = errorBoundsModifierExpression; }
+                std::string expression = errorBoundsModifierExpressionTemp;
+                if (errorBoundsModifierExpressionTemp != errorBoundsModifierExpression)
                 {
-                    ret.changed = true;
-                    ret.errorBoundsReCalcNeeded = true;
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImColor(220, 20, 60).Value);
+                }
+                ImGui::InputTextWithHint("Error Bounds Modifier", "e.g. '3 * x' or 'sqrt(x)'", &expression);
+                if (errorBoundsModifierExpressionTemp != errorBoundsModifierExpression)
+                {
+                    ImGui::PopStyleColor();
+                    if (!errorBoundsModifierExpression.empty() && ImGui::IsItemHovered()) { ImGui::SetTooltip("Currently used expression:\n%s", errorBoundsModifierExpression.c_str()); }
+                }
+                if (expression != errorBoundsModifierExpressionTemp && !ImGui::IsItemActive())
+                {
+                    errorBoundsModifierExpressionTemp = expression;
+                    try
+                    {
+                        if (!errorBoundsModifierExpressionTemp.empty())
+                        {
+                            double x = 1.0;
+                            mu::Parser p;
+                            p.DefineVar("x", &x);
+                            p.SetExpr(errorBoundsModifierExpressionTemp);
+                            x = p.Eval();
+                        }
+
+                        errorBoundsModifierExpression = errorBoundsModifierExpressionTemp;
+                        errorBoundsModifierExpressionTemp.clear();
+                        ret.changed = true;
+                        ret.errorBoundsReCalcNeeded = true;
+                    }
+                    catch (mu::Parser::exception_type& e)
+                    {
+                        LOG_ERROR("{}: Error bound modifier parse error on '{}': {} in expression: {}", nameId, legendName, e.GetMsg(), errorBoundsModifierExpressionTemp);
+                    }
+                }
+                ImGui::SameLine();
+                if (gui::widgets::BeginHelpMarker("(?)", 0.0F))
+                {
+                    auto tableEntry = [](const char* first, const char* second, const char* third) {
+                        ImGui::TableNextRow();
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(first);
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(second);
+                        ImGui::TableNextColumn();
+                        ImGui::TextUnformatted(third);
+                    };
+
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::TextUnformatted("Functions");
+                        if (ImGui::BeginTable(fmt::format("Functions##{}", id).c_str(), 3,
+                                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+                        {
+                            ImGui::TableSetupColumn("Name");
+                            ImGui::TableSetupColumn("Argc.");
+                            ImGui::TableSetupColumn("Explanation");
+                            ImGui::TableHeadersRow();
+
+                            tableEntry("sin", "1", "sine function");
+                            tableEntry("cos", "1", "cosine function");
+                            tableEntry("tan", "1", "tangens function");
+                            tableEntry("asin", "1", "arcus sine function");
+                            tableEntry("acos", "1", "arcus cosine function");
+                            tableEntry("atan", "1", "arcus tangens function");
+                            tableEntry("sinh", "1", "hyperbolic sine function");
+                            tableEntry("cosh", "1", "hyperbolic cosine");
+                            tableEntry("tanh", "1", "hyperbolic tangens function");
+                            tableEntry("asinh", "1", "hyperbolic arcus sine function");
+                            tableEntry("acosh", "1", "hyperbolic arcus tangens function");
+                            tableEntry("atanh", "1", "hyperbolic arcur tangens function");
+                            tableEntry("log2", "1", "logarithm to the base 2");
+                            tableEntry("log10", "1", "logarithm to the base 10");
+                            tableEntry("log", "1", "logarithm to base e (2.71828...)");
+                            tableEntry("ln", "1", "logarithm to base e (2.71828...)");
+                            tableEntry("exp", "1", "e raised to the power of x");
+                            tableEntry("sqrt", "1", "square root of a value");
+                            tableEntry("sign", "1", "sign function -1 if x<0; 1 if x>0");
+                            tableEntry("rint", "1", "round to nearest integer");
+                            tableEntry("abs", "1", "absolute value");
+                            tableEntry("min", "var.", "min of all arguments");
+                            tableEntry("max", "var.", "max of all arguments");
+                            tableEntry("sum", "var.", "sum of all arguments");
+                            tableEntry("avg", "var.", "mean value of all arguments");
+
+                            ImGui::EndTable();
+                        }
+                    }
+                    ImGui::EndGroup();
+
+                    ImGui::SameLine();
+
+                    ImGui::BeginGroup();
+                    {
+                        ImGui::TextUnformatted("Binary operators");
+                        if (ImGui::BeginTable(fmt::format("Binary operators##{}", id).c_str(), 3,
+                                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+                        {
+                            ImGui::TableSetupColumn("Operator");
+                            ImGui::TableSetupColumn("Description");
+                            ImGui::TableSetupColumn("Priority");
+                            ImGui::TableHeadersRow();
+
+                            tableEntry("=", "assignement *", "0");
+                            tableEntry("||", "logical or", "1");
+                            tableEntry("&&", "logical and", "2");
+                            tableEntry("|", "bitwise or", "3");
+                            tableEntry("&", "bitwise and", "4");
+                            tableEntry("<=", "less or equal", "5");
+                            tableEntry(">=", "greater or equal", "5");
+                            tableEntry("!=", "not equal", "5");
+                            tableEntry("==", "equal", "5");
+                            tableEntry(">", "greater than", "5");
+                            tableEntry("<", "less than", "5");
+                            tableEntry("+", "addition", "6");
+                            tableEntry("-", "subtraction", "6");
+                            tableEntry("*", "multiplication", "7");
+                            tableEntry("/", "division", "7");
+                            tableEntry("^", "raise x to the power of y", "8");
+
+                            ImGui::EndTable();
+                        }
+
+                        ImGui::TextUnformatted("Ternary Operators");
+                        if (ImGui::BeginTable(fmt::format("Ternary Operators##{}", id).c_str(), 3,
+                                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+                        {
+                            ImGui::TableSetupColumn("Operator");
+                            ImGui::TableSetupColumn("Description");
+                            ImGui::TableSetupColumn("Remarks");
+                            ImGui::TableHeadersRow();
+
+                            tableEntry("?:", "if then else operator", "C++ style syntax");
+
+                            ImGui::EndTable();
+                        }
+
+                        ImGui::TextUnformatted("Constants");
+                        if (ImGui::BeginTable(fmt::format("Constant##{}", id).c_str(), 3,
+                                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+                        {
+                            ImGui::TableSetupColumn("Constant");
+                            ImGui::TableSetupColumn("Description");
+                            ImGui::TableSetupColumn("Remarks");
+                            ImGui::TableHeadersRow();
+
+                            tableEntry("_pi", "The one and only pi", "3.14159265359");
+                            tableEntry("_e", "Euler's number", "2.71828182846");
+
+                            ImGui::EndTable();
+                        }
+                    }
+                    ImGui::EndGroup();
+
+                    gui::widgets::EndHelpMarker(false);
                 }
             }
         }

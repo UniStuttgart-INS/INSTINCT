@@ -80,6 +80,8 @@ struct PlotItemStyle
     float errorBoundsAlpha = 0.25F;
     /// Expression to modify the error bounds with
     std::string errorBoundsModifierExpression;
+    /// Expression to modify the error bounds with (temporary GUI variable, till it is a valid expression)
+    std::string errorBoundsModifierExpressionTemp;
 
     /// Show events on this data
     bool eventsEnabled = false;

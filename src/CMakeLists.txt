@@ -31,6 +31,7 @@ if(ENABLE_MAIN)
             Eigen3::Eigen
             nlohmann_json::nlohmann_json
             unordered_dense::unordered_dense
+            muparser::muparser
             Threads::Threads
             imgui
             imgui_node_editor

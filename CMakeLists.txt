@@ -119,6 +119,7 @@ find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(unordered_dense CONFIG REQUIRED)
+find_package(muparser REQUIRED)
 
 option(ENABLE_GPERFTOOLS "Enable use of Google Performance Tools (gperftools) profiler" OFF)
 if(ENABLE_GPERFTOOLS)
