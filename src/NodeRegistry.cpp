@@ -198,6 +198,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
+#include "Nodes/DataProcessor/DetectAndAvoid/DetectAndAvoid.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
@@ -263,6 +264,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<SinglePointPositioning>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
+    registerNodeType<DetectAndAvoid>();
     // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     // Data Provider
