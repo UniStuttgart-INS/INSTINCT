@@ -194,6 +194,9 @@ target_compile_definitions(application PUBLIC "_CONSOLE")
 set_target_properties(application PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
+# -------------------------------------------------- STB ------------------------------------------------- */
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/stb")
+
 # ----------------------------------------------- VectorNav ---------------------------------------------- */
 
 add_subdirectory(lib/vnproglib/cpp libvncxx)

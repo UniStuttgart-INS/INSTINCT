@@ -123,5 +123,6 @@
             "name": "RTKLib"
         }
     ],
-    "selectedImPlotColormap": 16
+    "plotScreenshotImPlotStyleFile": "implot-light.json",
+    "selectedImPlotColormap": 0
 }

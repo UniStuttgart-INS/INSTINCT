@@ -33,6 +33,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "util/ImPlot.hpp"
 #include "util/Json.hpp"
 #include "util/StringUtil.hpp"
 #include "util/Container/STL.hpp"
@@ -538,6 +540,7 @@ void NAV::Plot::guiConfig()
 
             bool saveForceXaxisRange = false;
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
+            auto optionsCursorPos = ImGui::GetCursorPos();
             if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotIdx).c_str()))
             {
                 std::string headerTitle = plot.headerText;
@@ -552,6 +555,23 @@ void NAV::Plot::guiConfig()
                 {
                     flow::ApplyChanges();
                     LOG_DEBUG("{}: Plot Title changed to {}", nameId(), plot.title);
+                }
+                bool plotWidthAutomatic = plot.size.x == -1.0;
+                float checkBoxStartX = ImGui::GetCursorPosX();
+                if (ImGui::Checkbox(fmt::format("{}Automatic Plot Width##{} - {}", plotWidthAutomatic ? "" : "##", size_t(id), plotIdx).c_str(), &plotWidthAutomatic))
+                {
+                    if (plotWidthAutomatic) { plot.size.x = -1.0; }
+                    else { plot.size.x = ImGui::GetWindowContentRegionWidth() - plot.leftPaneWidth - ImGui::GetStyle().ItemSpacing.x; }
+                    flow::ApplyChanges();
+                }
+                if (!plotWidthAutomatic)
+                {
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(ImGui::CalcItemWidth() - (ImGui::GetCursorPosX() - checkBoxStartX));
+                    if (ImGui::SliderFloat(fmt::format("Plot Width##{} - {}", size_t(id), plotIdx).c_str(), &plot.size.x, 1.0F, 2000, "%.0f"))
+                    {
+                        flow::ApplyChanges();
+                    }
                 }
                 if (ImGui::SliderFloat(fmt::format("Plot Height##{} - {}", size_t(id), plotIdx).c_str(), &plot.size.y, 0.0F, 1000, "%.0f"))
                 {
@@ -775,6 +795,30 @@ void NAV::Plot::guiConfig()
                 ImGui::TreePop();
             }
 
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+            {
+                auto afterOptionsCursorPos = ImGui::GetCursorPos();
+                float buttonSize = 0.6F * gui::NodeEditorApplication::windowFontRatio() * 24.0F;
+
+                ImGui::SetCursorPos(ImVec2(ImGui::GetWindowContentRegionWidth() - buttonSize - ImGui::GetStyle().ItemInnerSpacing.x, optionsCursorPos.y));
+                ImGui::PushID(fmt::format("{}{}", size_t(id), plotIdx).c_str());
+                if (ImGui::ImageButton(gui::NodeEditorApplication::m_SaveButtonImage, ImVec2(buttonSize, buttonSize)))
+                {
+                    if (_screenshotFrameCnt == 0)
+                    {
+                        _screenShotPlotIdx = plotIdx;
+                        _screenshotFrameCnt = 1;
+                    }
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Save as image");
+                }
+                ImGui::PopID();
+                ImGui::SetCursorPos(afterOptionsCursorPos);
+            }
+#endif
+
             auto plotSize = plot.size;
             if (gui::NodeEditorApplication::isUsingBigWindowFont()) { plotSize.y *= 0.8F * gui::NodeEditorApplication::windowFontRatio(); }
 
@@ -903,6 +947,45 @@ void NAV::Plot::guiConfig()
 
             if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plot.title, size_t(id), plotIdx).c_str(), plotSize, plot.plotFlags))
             {
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+                if (_screenShotPlotIdx == plotIdx)
+                {
+                    // can be static as its impossible to trigger multiple screenshots in different nodes at once
+                    static ImVec4 windowBgColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+                    static json imPlotStyle = ImPlot::GetStyle();
+                    if (_screenshotFrameCnt == 1)
+                    {
+                        windowBgColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+                        imPlotStyle = ImPlot::GetStyle();
+                        loadImPlotStyleFromConfigFile(gui::windows::plotScreenshotImPlotStyleFile.c_str(), ImPlot::GetStyle());
+                        if (!ImPlot::IsColorAuto(ImPlot::GetStyle().Colors[ImPlotCol_FrameBg])
+                            && ImPlot::GetStyle().Colors[ImPlotCol_FrameBg].w == 1.0F)
+                        {
+                            ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImPlot::GetStyle().Colors[ImPlotCol_FrameBg];
+                        }
+                        ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 1.0;
+                        _screenshotFrameCnt++;
+                    }
+                    else if (_screenshotFrameCnt == 4) // Need to delay a few frames in order for the background color to apply
+                    {
+                        ImRect CaptureRect = ImPlot::GetCurrentPlot()->FrameRect;
+                        ImGuiIO& io = ImGui::GetIO();
+                        ImGuiScreenshotImageBuf Output(static_cast<int>(CaptureRect.Min.x),
+                                                       static_cast<int>(io.DisplaySize.y) - static_cast<int>(CaptureRect.Max.y),
+                                                       static_cast<size_t>(CaptureRect.GetWidth()),
+                                                       static_cast<size_t>(CaptureRect.GetHeight()));
+                        auto savePath = flow::GetOutputPath() / fmt::format("Plot-{}_{}.png", size_t(id), plotIdx);
+                        Output.SaveFile(savePath.c_str());
+                        LOG_INFO("{}: Plot image saved as: {}", nameId(), savePath);
+
+                        ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = windowBgColor;
+                        imPlotStyle.get_to(ImPlot::GetStyle());
+                        _screenshotFrameCnt = 0;
+                    }
+                    else if (_screenshotFrameCnt != 0) { _screenshotFrameCnt++; } // Increment frame counter
+                }
+#endif
+
                 if (saveForceXaxisRange)
                 {
                     std::get<ImPlotRange>(_forceXaxisRange) = ImPlot::GetCurrentPlot()->XAxis(ImAxis_X1).Range;

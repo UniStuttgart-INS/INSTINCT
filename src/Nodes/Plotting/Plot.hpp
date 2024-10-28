@@ -350,6 +350,9 @@ class Plot : public Node, public CommonLog
     /// Index of the Collapsible Header currently being dragged
     int _dragAndDropHeaderIndex = -1;
 
+    size_t _screenshotFrameCnt = 0; ///< Frame counter for taking screenshots (> 0 when screenshot in progress)
+    size_t _screenShotPlotIdx = 0;  ///< Plot index a screenshot is taken of
+
     /// Values to force the x axis range to and a set of plotIdx to force
     std::pair<std::unordered_set<size_t>, ImPlotRange> _forceXaxisRange{};
 

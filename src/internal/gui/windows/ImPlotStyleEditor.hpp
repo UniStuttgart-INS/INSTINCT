@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace NAV::gui::windows
 {
 /// @brief Shows a window for editing the style of the ImPlot windows
@@ -24,5 +26,8 @@ extern bool saveConfigInFlow;
 
 /// @brief If true, the ImPlot config from the flow file will be preferred over the global settings file
 extern bool prefereFlowOverGlobal;
+
+/// @brief Json file containing the ImPlot style used for taking screenshots
+extern std::string plotScreenshotImPlotStyleFile;
 
 } // namespace NAV::gui::windows

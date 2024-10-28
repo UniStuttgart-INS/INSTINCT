@@ -99,6 +99,9 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the INS logo
     static inline std::array<ImTextureID, 2> m_InsLogo{ nullptr, nullptr };
 
+    /// @brief Pointer to the texture for the save button
+    static inline ImTextureID m_SaveButtonImage = nullptr;
+
     /// @brief Pointer to the texture for the rose figure (ImuSimulator node)
     static inline ImTextureID m_RoseFigure = nullptr;
 

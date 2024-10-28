@@ -23,6 +23,7 @@
 
 #include "util/Json.hpp"
 #include "util/Plot/Colormap.hpp"
+#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 namespace bpo = boost::program_options;
 
@@ -181,6 +182,7 @@ void NAV::ConfigManager::SaveGlobalSettings()
     // Save also global settings
     std::ofstream filestream(flow::GetConfigPath() / "globals.json");
     json j;
+    j["plotScreenshotImPlotStyleFile"] = gui::windows::plotScreenshotImPlotStyleFile;
     j["colormaps"] = ColormapsGlobal;
 
     ImPlotContext& gp = *ImPlot::GetCurrentContext();
@@ -217,6 +219,10 @@ void NAV::ConfigManager::LoadGlobalSettings()
     if (j.contains("colormaps"))
     {
         j.at("colormaps").get_to(ColormapsGlobal);
+    }
+    if (j.contains("plotScreenshotImPlotStyleFile"))
+    {
+        j.at("plotScreenshotImPlotStyleFile").get_to(gui::windows::plotScreenshotImPlotStyleFile);
     }
     if (j.contains("ImPlotColormaps"))
     {
