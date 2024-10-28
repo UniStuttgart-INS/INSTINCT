@@ -778,19 +778,23 @@ std::shared_ptr<NAV::ImuObs> NAV::ErrorModel::receiveImuObs(const std::shared_pt
     // #########################################################################################################################################
 
     imuObs->p_acceleration += accelerometerBias_p
-                              + Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0)),
-                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1)),
-                                                 _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) }
-                                    / (_dt > 1e-9 ? std::sqrt(_dt) : 1.0) // Scale with input frequency
                               + _randomWalkAccelerometer
                               + _integratedRandomWalkAccelerometer;
+
     imuObs->p_angularRate += gyroscopeBias_p
-                             + Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0)),
-                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1)),
-                                                _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) }
-                                   / (_dt > 1e-9 ? std::sqrt(_dt) : 1.0) // Scale with input frequency
                              + _randomWalkGyroscope
                              + _integratedRandomWalkGyroscope;
+    if (_dt > 1e-9)
+    {
+        imuObs->p_acceleration += Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0)),
+                                                   _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1)),
+                                                   _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2)) }
+                                  / std::sqrt(_dt); // Scale with input frequency
+        imuObs->p_angularRate += Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0)),
+                                                  _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1)),
+                                                  _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2)) }
+                                 / std::sqrt(_dt); // Scale with input frequency
+    }
 
     return imuObs;
 }
@@ -805,18 +809,19 @@ std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const st
 
     double imuObsWDeltaAverageWindow = _dt != 0.0 ? _dt / imuObs->dtime : 1.0;
 
-    imuObs->dvel += accelerometerBias_p * imuObs->dtime
-                    + Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                       _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                       _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
-                          / (_dt > 1e-9 ? std::sqrt(_dt) : 1.0) // Scale with input frequency
-                    + imuObs->dtime * (_randomWalkAccelerometer + _integratedRandomWalkAccelerometer);
-    imuObs->dtheta += gyroscopeBias_p * imuObs->dtime
-                      + Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                         _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                         _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
-                            / (_dt > 1e-9 ? std::sqrt(_dt) : 1.0) // Scale with input frequency
-                      + imuObs->dtime * (_randomWalkGyroscope + _integratedRandomWalkGyroscope);
+    imuObs->dvel += imuObs->dtime * (accelerometerBias_p + _randomWalkAccelerometer + _integratedRandomWalkAccelerometer);
+    imuObs->dtheta += imuObs->dtime * (gyroscopeBias_p + _randomWalkGyroscope + _integratedRandomWalkGyroscope);
+    if (_dt > 1e-9)
+    {
+        imuObs->dvel += Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                         _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                         _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
+                        * imuObs->dtime / std::sqrt(_dt); // Scale with input frequency
+        imuObs->dtheta += Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                           _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                           _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
+                          * imuObs->dtime / std::sqrt(_dt); // Scale with input frequency
+    }
 
     return imuObs;
 }
