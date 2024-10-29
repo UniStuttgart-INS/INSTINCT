@@ -204,6 +204,9 @@ include_directories(SYSTEM lib/vnproglib/cpp/include)
 set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
+# ----------------------------------------------- libssh ------------------------------------------------- */
+find_package(libssh REQUIRED)
+
 # ------------------------------------------------ Navio2 ------------------------------------------------ */
 
 if(NOT APPLE AND NOT WIN32)

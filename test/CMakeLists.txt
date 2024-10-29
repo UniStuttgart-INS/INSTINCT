@@ -51,6 +51,7 @@ target_link_libraries(
           implot
           application
           libvncxx
+          ssh
           libUartSensor)
 
 target_compile_definitions(tests PUBLIC IMGUI_DEFINE_MATH_OPERATORS)

@@ -33,6 +33,9 @@ class InsConst
     /// Speed of light [m/s]
     static constexpr double C = 299792458.0;
 
+    /// Speed of light in air: CGPM defined speed of light divided by approximate refractory index of dry air over sea level 1.0003 [m/s]
+    static constexpr double C_AIR = 299702547.0;
+
     /// Standard gravity in [m / s^2]
     static constexpr double G_NORM = 9.80665;
 

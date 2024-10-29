@@ -190,6 +190,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/GNSS/RinexObsLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UartDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
+#include "Nodes/DataLogger/WiFi/WiFiObsLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/ErrorModel/AllanDeviation.hpp"
 #include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
@@ -199,6 +200,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
+#include "Nodes/DataProcessor/WiFi/WiFiPositioning.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
@@ -218,6 +220,9 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProvider/IMU/FileReader/UlogFile.hpp"
 #include "Nodes/DataProvider/State/PosVelAttFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
+#include "Nodes/DataProvider/WiFi/Sensors/EspressifSensor.hpp"
+#include "Nodes/DataProvider/WiFi/Sensors/ArubaSensor.hpp"
+#include "Nodes/DataProvider/WiFi/FileReader/WiFiObsFile.hpp"
 // Data Simulator
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
@@ -258,6 +263,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<RinexObsLogger>();
     registerNodeType<UartDataLogger>();
     registerNodeType<VectorNavDataLogger>();
+    registerNodeType<WiFiObsLogger>();
     // Data Processor
     registerNodeType<AllanDeviation>();
     registerNodeType<ErrorModel>();
@@ -267,6 +273,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<LooselyCoupledKF>();
     // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
+    registerNodeType<WiFiPositioning>();
     // Data Provider
     registerNodeType<CsvFile>();
     registerNodeType<RinexNavFile>();
@@ -286,6 +293,9 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UlogFile>();
     registerNodeType<PosVelAttFile>();
     registerNodeType<MultiImuFile>();
+    registerNodeType<EspressifSensor>();
+    registerNodeType<ArubaSensor>();
+    registerNodeType<WiFiObsFile>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
     // Experimental
@@ -318,6 +328,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
+#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -344,4 +356,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();
+    // WiFi
+    registerNodeDataType<WiFiObs>();
+    registerNodeDataType<WiFiPositioningSolution>();
 }

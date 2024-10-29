@@ -1671,6 +1671,10 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         {
             for (const auto& desc : RtklibPosObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
+        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { WiFiPositioningSolution::type() }))
+        {
+            for (const auto& desc : WiFiPositioningSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+        }
         else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { PosVel::type() }))
         {
             for (const auto& desc : PosVel::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }

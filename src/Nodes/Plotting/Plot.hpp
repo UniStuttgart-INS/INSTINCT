@@ -47,6 +47,7 @@
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
+#include "NodeData/WiFi/WiFiPositioningSolution.hpp"
 
 namespace NAV
 {
@@ -345,6 +346,8 @@ class Plot : public Node, public CommonLog
         PosVel::type(),
         PosVelAtt::type(),
         InsGnssTCKFSolution::type(),
+        // WiFi
+        WiFiPositioningSolution::type(),
     };
 
     /// Index of the Collapsible Header currently being dragged

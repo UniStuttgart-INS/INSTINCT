@@ -6,34 +6,38 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file UartPacketConverter.hpp
-/// @brief Decrypts Uart packets
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @file WiFiObsLogger.hpp
+/// @brief Data Logger for WiFi observations
 /// @author R. Lintz (r-lintz@gmx.de) (master thesis)
-/// @date 2022-06-13
+/// @date 2024-03-14
 
 #pragma once
 
+#include "util/Logger/CommonLog.hpp"
+
 #include "internal/Node/Node.hpp"
+#include "Nodes/DataLogger/Protocol/FileWriter.hpp"
 
 namespace NAV
 {
-/// Decrypts Uart packets
-class UartPacketConverter : public Node
+class NodeData;
+
+/// Data Logger for WiFiObs observations
+class WiFiObsLogger : public Node, public FileWriter, public CommonLog
 {
   public:
     /// @brief Default constructor
-    UartPacketConverter();
+    WiFiObsLogger();
     /// @brief Destructor
-    ~UartPacketConverter() override;
+    ~WiFiObsLogger() override;
     /// @brief Copy constructor
-    UartPacketConverter(const UartPacketConverter&) = delete;
+    WiFiObsLogger(const WiFiObsLogger&) = delete;
     /// @brief Move constructor
-    UartPacketConverter(UartPacketConverter&&) = delete;
+    WiFiObsLogger(WiFiObsLogger&&) = delete;
     /// @brief Copy assignment operator
-    UartPacketConverter& operator=(const UartPacketConverter&) = delete;
+    WiFiObsLogger& operator=(const WiFiObsLogger&) = delete;
     /// @brief Move assignment operator
-    UartPacketConverter& operator=(UartPacketConverter&&) = delete;
+    WiFiObsLogger& operator=(WiFiObsLogger&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -55,44 +59,20 @@ class UartPacketConverter : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    void flush() override;
+
   private:
-    constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;  ///< @brief Flow
-    constexpr static size_t INPUT_PORT_INDEX_UART_PACKET = 0; ///< @brief Flow (UartPacket)
-    constexpr static size_t INPUT_PORT_INDEX_SYNC_IN = 1;     ///< @brief Flow (SyncIn)
-
-    /// Enum specifying the type of the output message
-    enum OutputType
-    {
-        OutputType_UbloxObs, ///< Extract UbloxObs data
-        OutputType_EmlidObs, ///< Extract EmlidObs data
-        OutputType_WiFiObs,  ///< Extract WiFiObs data
-    };
-
-    /// The selected output type in the GUI
-    OutputType _outputType = OutputType_UbloxObs;
-
-    /// Show the SyncIn Pin
-    bool _syncInPin = false;
-
-    /// Last received syncInCnt
-    int64_t _lastSyncInCnt = 0;
-
-    /// Last received syncOutCnt
-    int64_t _lastSyncOutCnt = 0;
-
-    /// Corrected SyncOut counter in case of a reset (initiator)
-    int64_t _syncOutCntCorr = 0;
-
-    /// Corrected SyncIn counter in case of a reset (target)
-    int64_t _syncInCntCorr = 0;
-
     /// @brief Initialize the node
     bool initialize() override;
 
-    /// @brief Converts the UartPacket to the selected message type
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
+    /// @brief Write Observation to the file
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
-    void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
+    void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 };
 
 } // namespace NAV

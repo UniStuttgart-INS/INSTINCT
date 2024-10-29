@@ -17,6 +17,7 @@ class InstinctRecipe(ConanFile):
         self.requires("nlohmann_json/3.11.3")
         self.requires("unordered_dense/4.4.0")
         self.requires("muparser/2.3.4")
+        self.requires("libssh/0.10.6")
 
     def configure(self):
         self.options["boost*"].without_atomic = True
