@@ -108,6 +108,7 @@ class NodeEditorApplication : public Application
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;
 
+    static inline bool hideLeftPane = false;          ///< Hide left pane
     inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
     inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
     inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
@@ -130,6 +131,19 @@ class NodeEditorApplication : public Application
         COLOR_GROUP_OUTER_BORDER, ///< Color of the group outer border
     };
 
+    /// Color settings
+    static inline std::vector<ImVec4> m_colors = {
+        { 1.0, 1.0, 1.0, 1.0 },  // GROUP_HEADER_TEXT
+        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_HEADER_BG
+        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_OUTER_BORDER
+    };
+    /// Color names
+    static inline std::vector<const char*> m_colorsNames = {
+        "GroupHeaderText",  // GROUP_HEADER_TEXT
+        "GroupHeaderBg",    // GROUP_HEADER_BG
+        "GroupOuterBorder", // GROUP_OUTER_BORDER
+    };
+
   private:
     constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
     constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
@@ -146,19 +160,6 @@ class NodeEditorApplication : public Application
 
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
-
-    /// Color settings
-    std::vector<ImVec4> m_colors = {
-        { 1.0, 1.0, 1.0, 1.0 },  // GROUP_HEADER_TEXT
-        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_HEADER_BG
-        { 1.0, 1.0, 1.0, 0.25 }, // GROUP_OUTER_BORDER
-    };
-    /// Color names
-    std::vector<const char*> m_colorsNames = {
-        "GroupHeaderText",  // GROUP_HEADER_TEXT
-        "GroupHeaderBg",    // GROUP_HEADER_BG
-        "GroupOuterBorder", // GROUP_OUTER_BORDER
-    };
 
     /// @brief Global action to execute
     GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable

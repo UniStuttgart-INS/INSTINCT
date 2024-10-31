@@ -23,7 +23,7 @@
 
 #include "util/Json.hpp"
 #include "util/Plot/Colormap.hpp"
-#include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "internal/gui/windows/Screenshotter.hpp"
 
 namespace bpo = boost::program_options;
 
@@ -182,7 +182,10 @@ void NAV::ConfigManager::SaveGlobalSettings()
     // Save also global settings
     std::ofstream filestream(flow::GetConfigPath() / "globals.json");
     json j;
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
     j["plotScreenshotImPlotStyleFile"] = gui::windows::plotScreenshotImPlotStyleFile;
+    j["copyScreenshotsToClipboard"] = gui::windows::copyScreenshotsToClipboard;
+#endif
     j["colormaps"] = ColormapsGlobal;
 
     ImPlotContext& gp = *ImPlot::GetCurrentContext();
@@ -220,10 +223,16 @@ void NAV::ConfigManager::LoadGlobalSettings()
     {
         j.at("colormaps").get_to(ColormapsGlobal);
     }
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
     if (j.contains("plotScreenshotImPlotStyleFile"))
     {
         j.at("plotScreenshotImPlotStyleFile").get_to(gui::windows::plotScreenshotImPlotStyleFile);
     }
+    if (j.contains("copyScreenshotsToClipboard"))
+    {
+        j.at("copyScreenshotsToClipboard").get_to(gui::windows::copyScreenshotsToClipboard);
+    }
+#endif
     if (j.contains("ImPlotColormaps"))
     {
         for (size_t i = 0; i < j["ImPlotColormaps"].size(); ++i)

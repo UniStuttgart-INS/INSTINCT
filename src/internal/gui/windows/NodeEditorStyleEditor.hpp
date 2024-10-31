@@ -24,4 +24,11 @@ namespace NAV::gui::windows
 /// @param[in] colorNames Names for the colors
 void ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames);
 
+/// Applies the currently selected mode
+/// @param[in, out] colors Colors of the GUI
+void ApplyDarkLightMode(std::vector<ImVec4>& colors);
+
+/// If true, light mode is selected
+extern bool nodeEditorLightMode;
+
 } // namespace NAV::gui::windows

@@ -37,7 +37,6 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/TextAnsiColored.hpp"
 
 #include "internal/gui/windows/Global.hpp"
-#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
@@ -844,11 +843,15 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
+    bool leftPaneActive = false;
+    if (!hideLeftPane)
+    {
+        gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
 
-    bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
+        leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
 
-    ImGui::SameLine(0.0F, 12.0F);
+        ImGui::SameLine(0.0F, 12.0F);
+    }
 
     // ToolTips have to be shown outside of the NodeEditor Context, so save the Tooltip and push it afterwards
     std::string tooltipText;

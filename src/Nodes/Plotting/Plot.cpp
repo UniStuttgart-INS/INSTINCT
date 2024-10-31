@@ -34,6 +34,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "internal/gui/windows/Screenshotter.hpp"
 #include "util/ImPlot.hpp"
 #include "util/Json.hpp"
 #include "util/StringUtil.hpp"
@@ -810,10 +811,6 @@ void NAV::Plot::guiConfig()
                         _screenshotFrameCnt = 1;
                     }
                 }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Save as image");
-                }
                 ImGui::PopID();
                 ImGui::SetCursorPos(afterOptionsCursorPos);
             }
@@ -977,6 +974,10 @@ void NAV::Plot::guiConfig()
                         auto savePath = flow::GetOutputPath() / fmt::format("Plot-{}_{}.png", size_t(id), plotIdx);
                         Output.SaveFile(savePath.c_str());
                         LOG_INFO("{}: Plot image saved as: {}", nameId(), savePath);
+                        if (gui::windows::copyScreenshotsToClipboard)
+                        {
+                            gui::windows::CopyFileToClipboard(savePath.c_str());
+                        }
 
                         ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = windowBgColor;
                         imPlotStyle.get_to(ImPlot::GetStyle());

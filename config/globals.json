@@ -123,6 +123,7 @@
             "name": "RTKLib"
         }
     ],
+    "copyScreenshotsToClipboard": true,
     "plotScreenshotImPlotStyleFile": "implot-light.json",
     "selectedImPlotColormap": 0
 }

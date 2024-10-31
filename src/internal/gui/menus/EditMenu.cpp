@@ -40,4 +40,7 @@ void NAV::gui::menus::ShowEditMenu()
     ImGui::MenuItem("ImPlot Style", nullptr, &gui::windows::showImPlotStyleEditor);
     ImGui::MenuItem("Font Size", nullptr, &gui::windows::showFontSizeEditor);
     ImGui::MenuItem("Colormap Editor", nullptr, &gui::windows::showColormapEditor);
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+    ImGui::MenuItem("Screenshots", nullptr, &gui::windows::showScreenshotter);
+#endif
 }

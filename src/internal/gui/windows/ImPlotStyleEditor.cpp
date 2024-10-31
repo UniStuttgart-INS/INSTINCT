@@ -36,7 +36,6 @@ namespace NAV::gui::windows
 
 bool saveConfigInFlow = false;
 bool prefereFlowOverGlobal = true;
-std::string plotScreenshotImPlotStyleFile = "implot-light.json";
 
 } // namespace NAV::gui::windows
 
@@ -50,10 +49,8 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
 
     static std::string path = ConfigManager::Get<std::string>("implot-config");
 
-    float startX = ImGui::GetCursorPosX();
     ImGui::TextUnformatted("Plot style: ");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(ImGui::CalcItemWidth() - (ImGui::GetCursorPosX() - startX));
     if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, flow::GetConfigPath(), 0, "ImPlotStyleEditor"))
     {
         LOG_DEBUG("ImPlot config file changed to: {}", path);
@@ -96,15 +93,6 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
     {
         loadImPlotStyleFromConfigFile(prefereFlowOverGlobal ? flow::GetCurrentFilename().c_str() : path.c_str(), ImPlot::GetStyle());
         flow::ApplyChanges();
-    }
-
-    ImGui::TextUnformatted("Plot screenshot style: ");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(ImGui::CalcItemWidth() - (ImGui::GetCursorPosX() - startX));
-    if (widgets::FileDialogLoad(plotScreenshotImPlotStyleFile, "Plot screenshot config file", ".json", { ".json" },
-                                flow::GetConfigPath(), 1, "ImPlotStyleEditorScreenshot"))
-    {
-        LOG_DEBUG("Plot screenshot config file changed to: {}", plotScreenshotImPlotStyleFile);
     }
 
     ImPlotStyle& style = ImPlot::GetStyle();

@@ -15,6 +15,7 @@
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 #include "internal/gui/windows/FontSizeEditor.hpp"
 #include "internal/gui/windows/ColormapEditor.hpp"
+#include "internal/gui/windows/Screenshotter.hpp"
 
 namespace NAV::gui::windows
 {
@@ -24,6 +25,7 @@ bool showNodeEditorStyleEditor = false;
 bool showImPlotStyleEditor = false;
 bool showFontSizeEditor = false;
 bool showColormapEditor = false;
+bool showScreenshotter = false;
 
 } // namespace NAV::gui::windows
 
@@ -53,4 +55,10 @@ void NAV::gui::windows::renderGlobalWindows(std::vector<ImVec4>& colors, const s
     {
         gui::windows::ShowColormapEditor(&showColormapEditor);
     }
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+    if (showScreenshotter)
+    {
+        gui::windows::ShowScreenshotter(&showScreenshotter);
+    }
+#endif
 }

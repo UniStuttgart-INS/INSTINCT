@@ -6,23 +6,34 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file ImPlotStyleEditor.hpp
-/// @brief ImPlot style editor window
+/// @file Screenshotter.hpp
+/// @brief Screenshot utility
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2022-03-22
+/// @date 2024-10-31
 
 #pragma once
 
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+
+    #include <string>
+
 namespace NAV::gui::windows
 {
-/// @brief Shows a window for editing the style of the ImPlot windows
+
+/// @brief Shows a window for taking screenshots
 /// @param[in, out] show Flag which indicates whether the window is shown
-void ShowImPlotStyleEditor(bool* show = nullptr);
+void ShowScreenshotter(bool* show = nullptr);
 
-/// @brief If true, the ImPlot config will be saved into the flow file
-extern bool saveConfigInFlow;
+/// @brief Copies the file given to the clipboard
+/// @param[in] path Path to the file
+void CopyFileToClipboard(const char* path);
 
-/// @brief If true, the ImPlot config from the flow file will be preferred over the global settings file
-extern bool prefereFlowOverGlobal;
+/// @brief Json file containing the ImPlot style used for taking screenshots
+extern std::string plotScreenshotImPlotStyleFile;
+
+/// If true, copy screenshots to clipboard
+extern bool copyScreenshotsToClipboard;
 
 } // namespace NAV::gui::windows
+
+#endif
