@@ -101,6 +101,9 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
     size_t nIter = _estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized() ? 1 : N_ITER_MAX_LSQ;
     Eigen::Vector3d e_oldPos = _receiver.e_posMarker;
     bool accuracyAchieved = false;
+
+    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> H;
+
     for (size_t iteration = 0; iteration < nIter; iteration++)
     {
         LOG_DATA("{}: [{}] iteration {}/{}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, nIter);
@@ -173,7 +176,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
         sppSol->nParam = stateKeys.size();
 
-        auto H = calcMatrixH(stateKeys, measKeys, observations, nameId);
+        H = calcMatrixH(stateKeys, measKeys, observations, nameId);
         auto R = calcMatrixR(measKeys, observations, nameId);
         auto dz = calcMeasInnovation(measKeys, observations, nameId);
 
@@ -313,6 +316,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             }
         }
     }
+    // use H matrix to calculate DOPs
+    computeDOPs(sppSol, H, nameId);
 
     sppSol->recvClk = _receiver.recvClk;
     sppSol->interFrequencyBias = _receiver.interFrequencyBias;
@@ -752,6 +757,27 @@ void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTyp
     {
         LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
     }
+}
+
+void Algorithm::computeDOPs(const std::shared_ptr<SppSolution>& sppSol,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType>& H,
+                            [[maybe_unused]] const std::string& nameId)
+{
+    KeyedMatrixXd<States::StateKeyType, States::StateKeyType> N(H(all, all).transpose() * H(all, all), H.colKeys());
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(N(all, all));
+    if (lu_decomp.rank() == H.cols())
+    {
+        auto Q = N.inverse();
+        Eigen::Matrix3d Qpp = Q(PosKey, PosKey);
+        Eigen::Matrix3d Qlocal = sppSol->n_Quat_e() * Qpp * sppSol->e_Quat_n();
+        sppSol->HDOP = std::sqrt(Qlocal(0, 0) + Qlocal(1, 1));
+        sppSol->VDOP = std::sqrt(Qlocal(2, 2));
+        sppSol->PDOP = std::sqrt(Qpp.trace());
+    }
+
+    LOG_DATA("{}: HDOP   = {}", nameId, sppSol->HDOP);
+    LOG_DATA("{}: VDOP   = {}", nameId, sppSol->VDOP);
+    LOG_DATA("{}: PDOP   = {}", nameId, sppSol->PDOP);
 }
 
 /// @brief Converts the provided object into json

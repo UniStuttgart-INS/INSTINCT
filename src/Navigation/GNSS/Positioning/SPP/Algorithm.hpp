@@ -172,6 +172,14 @@ class Algorithm
                                   const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                   const std::string& nameId);
 
+    /// @brief Computes all DOP values (by reference)
+    /// @param[in, out] sppSol SppSol to fill with DOP values
+    /// @param[in] H Measurement sensitivity matrix 𝐇
+    /// @param[in] nameId Name and id of the node calling this (only used for logging purposes)
+    void computeDOPs(const std::shared_ptr<SppSolution>& sppSol,
+                     const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType>& H,
+                     const std::string& nameId);
+
     /// Receiver
     Receiver _receiver{ Rover, _obsFilter.getSystemFilter().toVector() };
 

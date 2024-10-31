@@ -85,12 +85,15 @@ class SppSolution : public PosVel
         desc.emplace_back("Receiver clock drift SBAS [s/s]");
         desc.emplace_back("Receiver clock bias StDev SBAS [s]");
         desc.emplace_back("Receiver clock drift StDev SBAS [s/s]");
+        desc.emplace_back("HDOP");
+        desc.emplace_back("VDOP");
+        desc.emplace_back("PDOP");
 
         return desc;
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 29; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 32; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -200,6 +203,12 @@ class SppSolution : public PosVel
         case PosVel::GetStaticDescriptorCount() + 28: // Receiver clock drift StDev SBAS [s/s]
             if (const double* v = recvClk.driftStdDevFor(SBAS)) { return *v; }
             break;
+        case PosVel::GetStaticDescriptorCount() + 29: // HDOP
+            return HDOP;
+        case PosVel::GetStaticDescriptorCount() + 30: // VDOP
+            return VDOP;
+        case PosVel::GetStaticDescriptorCount() + 31: // PDOP
+            return PDOP;
         default:
             return std::nullopt;
         }
@@ -305,6 +314,13 @@ class SppSolution : public PosVel
     size_t nMeasDopp = 0;
     /// Amount of Parameters estimated in this epoch
     size_t nParam = 0;
+
+    /// HDOP value
+    double HDOP = std::nan("");
+    /// VDOP value
+    double VDOP = std::nan("");
+    /// PDOP value
+    double PDOP = std::nan("");
 
     /// Estimated receiver clock parameter
     ReceiverClock recvClk{ {} };
