@@ -482,6 +482,8 @@ void NAV::LooselyCoupledKF::guiConfig()
                 LOG_DEBUG("{}: initBiasAccelUnit changed to {}", nameId(), fmt::underlying(_initBiasAccelUnit));
                 flow::ApplyChanges();
             }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("In body frame coordinates");
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyro biases##{}", size_t(id)).c_str(),
                                                    configWidth, unitWidth, _initBiasGyro.data(), reinterpret_cast<int*>(&_initBiasGyroUnit), "rad/s\0deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
@@ -490,6 +492,8 @@ void NAV::LooselyCoupledKF::guiConfig()
                 LOG_DEBUG("{}: initBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initBiasGyroUnit));
                 flow::ApplyChanges();
             }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("In body frame coordinates");
 
             ImGui::TreePop();
         }
@@ -750,6 +754,7 @@ bool NAV::LooselyCoupledKF::initialize()
     _inertialIntegrator.reset();
     _lastImuObs = nullptr;
     _externalInitTime.reset();
+    _initialSensorBiasesApplied = false;
 
     _kalmanFilter.setZero();
 
@@ -847,14 +852,14 @@ bool NAV::LooselyCoupledKF::initialize()
                                                       variance_accelBias, // Accelerometer Bias covariance
                                                       variance_gyroBias); // Gyroscope Bias covariance
 
-    // Initial acceleration bias in [m/s^2]
+    // Initial acceleration bias in body frame coordinates in [m/s^2]
     Eigen::Vector3d accelBias = Eigen::Vector3d::Zero();
     if (_initBiasAccelUnit == InitBiasAccelUnit::m_s2)
     {
         accelBias = _initBiasAccel;
     }
 
-    // Initial angular rate bias in [rad/s]
+    // Initial angular rate bias in body frame coordinates in [rad/s]
     Eigen::Vector3d gyroBias = Eigen::Vector3d::Zero();
     if (_initBiasGyroUnit == InitBiasGyroUnit::deg_s)
     {
@@ -864,10 +869,6 @@ bool NAV::LooselyCoupledKF::initialize()
     {
         gyroBias = _initBiasGyro;
     }
-
-    // Initial bias states
-    _kalmanFilter.x.segment<3>(KFAccBias) = accelBias;
-    _kalmanFilter.x.segment<3>(KFGyrBias) = gyroBias;
 
     LOG_DEBUG("{}: initialized", nameId());
     LOG_DATA("{}: P_0 =\n{}", nameId(), _kalmanFilter.P);
@@ -902,8 +903,8 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
 
     if (_lastImuObs)
     {
-        lckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * _inertialIntegrator.p_getLastAccelerationBias();
-        lckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * _inertialIntegrator.p_getLastAngularRateBias();
+        lckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * -_inertialIntegrator.p_getLastAccelerationBias();
+        lckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * -_inertialIntegrator.p_getLastAngularRateBias();
     }
     invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
 }
@@ -927,12 +928,26 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         auto obs = std::static_pointer_cast<const ImuObsWDelta>(nodeData);
         LOG_DATA("{}: [{}] recvImuObsWDelta", nameId(), obs->insTime.toYMDHMS(GPST));
 
-        inertialNavSol = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+        // Initialize biases
+        if (!_initialSensorBiasesApplied)
+        {
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_initBiasAccel, obs->imuPos.p_quatGyro_b() * -_initBiasGyro);
+            _initialSensorBiasesApplied = true;
+        }
+
+        inertialNavSol = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos);
     }
     else
     {
         auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
         LOG_DATA("{}: [{}] recvImuObs", nameId(), obs->insTime.toYMDHMS(GPST));
+
+        // Initialize biases
+        if (!_initialSensorBiasesApplied)
+        {
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_initBiasAccel, obs->imuPos.p_quatGyro_b() * -_initBiasGyro);
+            _initialSensorBiasesApplied = true;
+        }
 
         inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
     }
@@ -1452,10 +1467,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
     lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
 
+    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
+
     _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
                                                     _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
-    lckfSolution->b_biasAccel = _inertialIntegrator.p_getLastAccelerationBias();
-    lckfSolution->b_biasGyro = _inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasAccel = -_inertialIntegrator.p_getLastAccelerationBias();
+    lckfSolution->b_biasGyro = -_inertialIntegrator.p_getLastAngularRateBias();
+
+    LOG_DATA("{}: Biases after error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), lckfSolution->b_biasAccel.transpose(), lckfSolution->b_biasGyro.transpose());
 
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {

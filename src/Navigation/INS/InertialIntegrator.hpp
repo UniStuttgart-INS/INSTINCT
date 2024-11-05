@@ -53,7 +53,7 @@ class InertialIntegrator
     /// @brief Inertial Measurement
     struct Measurement
     {
-        double dt = 0.0;                ///< Time since previous observation
+        double dt = 0.0;                ///< Time since previous observation in [s]
         Eigen::Vector3d p_acceleration; ///< Acceleration in platform frame coordinates in [m/s^2]
         Eigen::Vector3d p_angularRate;  ///< Angular rate in platform frame coordinates in [rad/s]
 
@@ -135,15 +135,13 @@ class InertialIntegrator
 
     /// @brief Calculates the inertial navigation solution
     /// @param[in] obsTime Time of the observation
-    /// @param[in] dt Delte Time over which the deltaVelocity and deltaTheta were measured
-    /// @param[in] p_deltaVelocity Integrated Acceleration in platform frame coordinates in [m/s]
-    /// @param[in] p_deltaTheta Integrated Angular rate in platform frame coordinates in [rad]
-    /// @param[in] p_acceleration Acceleration in platform frame coordinates in [m/s^2]
-    /// @param[in] p_angularRate Angular rate in platform frame coordinates in [rad/s]
+    /// @param[in] dt Delta time over which the deltaVelocity and deltaTheta were measured in [s]
+    /// @param[in] p_deltaVelocity Integrated acceleration in platform frame coordinates in [m/s]
+    /// @param[in] p_deltaTheta Integrated angular rate in platform frame coordinates in [rad]
     /// @param[in] imuPos IMU platform frame position with respect to body frame
     /// @return The new state at the observation time
-    std::shared_ptr<PosVelAtt> calcInertialSolutionDelta(const InsTime& obsTime, const double& dt, Eigen::Vector3d p_deltaVelocity, Eigen::Vector3d p_deltaTheta,
-                                                         Eigen::Vector3d p_acceleration, Eigen::Vector3d p_angularRate, const ImuPos& imuPos);
+    std::shared_ptr<PosVelAtt> calcInertialSolutionDelta(const InsTime& obsTime, const double& dt, const Eigen::Vector3d& p_deltaVelocity,
+                                                         const Eigen::Vector3d& p_deltaTheta, const ImuPos& imuPos);
 
   private:
     /// @brief Calculates the inertial navigation solution

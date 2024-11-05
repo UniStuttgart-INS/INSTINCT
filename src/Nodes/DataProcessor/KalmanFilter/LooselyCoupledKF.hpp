@@ -169,6 +169,9 @@ class LooselyCoupledKF : public Node
     /// Time from the external init
     InsTime _externalInitTime;
 
+    /// Whether the accumulated biases have been initialized in the 'inertialIntegrator'
+    bool _initialSensorBiasesApplied = false;
+
     /// @brief Vector with all state keys
     inline static const std::vector<KFStates> States = { KFStates::Roll, KFStates::Pitch, KFStates::Yaw,
                                                          KFStates::VelN, KFStates::VelE, KFStates::VelD,

@@ -289,7 +289,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
         {
             imuObs->dtime = vnObs->imuOutputs->deltaTime;
-            imuObs->dtheta = vnObs->imuOutputs->deltaTheta.cast<double>();
+            imuObs->dtheta = deg2rad(vnObs->imuOutputs->deltaTheta.cast<double>());
             dThetaFound = true;
         }
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)

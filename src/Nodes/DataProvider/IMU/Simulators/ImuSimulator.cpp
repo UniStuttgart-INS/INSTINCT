@@ -1629,7 +1629,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
     obs->dtime = dTime;
     obs->dvel = p_deltaVel.cast<double>();
     obs->dtheta = p_deltaTheta.cast<double>();
-    LOG_DATA("{}: dt = {}, dvel = {}, dtheta = {}", nameId(), obs->dtime, obs->dvel.transpose(), obs->dtheta.transpose());
+    LOG_DATA("{}: dtime = {}, dvel = {}, dtheta = {}", nameId(), obs->dtime, obs->dvel.transpose(), obs->dtheta.transpose());
 
     _imuUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);

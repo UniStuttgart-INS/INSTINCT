@@ -799,31 +799,31 @@ std::shared_ptr<NAV::ImuObs> NAV::ErrorModel::receiveImuObs(const std::shared_pt
     return imuObs;
 }
 
-std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs,
+std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObsWDelta,
                                                                         const Eigen::Vector3d& accelerometerBias_p,
                                                                         const Eigen::Vector3d& gyroscopeBias_p,
                                                                         const Eigen::Vector3d& accelerometerNoiseStd,
                                                                         const Eigen::Vector3d& gyroscopeNoiseStd)
 {
-    receiveImuObs(imuObs, accelerometerBias_p, gyroscopeBias_p, accelerometerNoiseStd, gyroscopeNoiseStd);
+    receiveImuObs(imuObsWDelta, accelerometerBias_p, gyroscopeBias_p, accelerometerNoiseStd, gyroscopeNoiseStd);
 
-    double imuObsWDeltaAverageWindow = _dt != 0.0 ? _dt / imuObs->dtime : 1.0;
+    double imuObsWDeltaAverageWindow = _dt != 0.0 ? _dt / imuObsWDelta->dtime : 1.0;
 
-    imuObs->dvel += imuObs->dtime * (accelerometerBias_p + _randomWalkAccelerometer + _integratedRandomWalkAccelerometer);
-    imuObs->dtheta += imuObs->dtime * (gyroscopeBias_p + _randomWalkGyroscope + _integratedRandomWalkGyroscope);
+    imuObsWDelta->dvel += imuObsWDelta->dtime * (accelerometerBias_p + _randomWalkAccelerometer + _integratedRandomWalkAccelerometer);
+    imuObsWDelta->dtheta += imuObsWDelta->dtime * (gyroscopeBias_p + _randomWalkGyroscope + _integratedRandomWalkGyroscope);
     if (_dt > 1e-9)
     {
-        imuObs->dvel += Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                         _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                         _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
-                        * imuObs->dtime / std::sqrt(_dt); // Scale with input frequency
-        imuObs->dtheta += Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                           _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
-                                           _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
-                          * imuObs->dtime / std::sqrt(_dt); // Scale with input frequency
+        imuObsWDelta->dvel += Eigen::Vector3d{ _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                               _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                               _imuAccelerometerRng.getRand_normalDist(0.0, accelerometerNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
+                              * imuObsWDelta->dtime / std::sqrt(_dt); // Scale with input frequency
+        imuObsWDelta->dtheta += Eigen::Vector3d{ _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(0) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                                 _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(1) / std::sqrt(imuObsWDeltaAverageWindow)),
+                                                 _imuGyroscopeRng.getRand_normalDist(0.0, gyroscopeNoiseStd(2) / std::sqrt(imuObsWDeltaAverageWindow)) }
+                                * imuObsWDelta->dtime / std::sqrt(_dt); // Scale with input frequency
     }
 
-    return imuObs;
+    return imuObsWDelta;
 }
 
 std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)

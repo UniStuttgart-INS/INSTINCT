@@ -143,7 +143,7 @@ void NAV::ImuIntegrator::recvObservation(NAV::InputPin::NodeDataQueue& queue, si
         auto obs = std::static_pointer_cast<const ImuObsWDelta>(nodeData);
         LOG_DATA("{}: recvImuObsWDelta at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-        integratedPosVelAtt = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+        integratedPosVelAtt = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos);
     }
     else
     {

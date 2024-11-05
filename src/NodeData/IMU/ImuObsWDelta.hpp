@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ImuObs.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV
 {
@@ -75,11 +76,11 @@ class ImuObsWDelta : public ImuObs
         case ImuObs::GetStaticDescriptorCount() + 0: // dTime [s]
             return dtime;
         case ImuObs::GetStaticDescriptorCount() + 1: // dTheta X [deg]
-            return dtheta.x();
+            return rad2deg(dtheta.x());
         case ImuObs::GetStaticDescriptorCount() + 2: // dTheta Y [deg]
-            return dtheta.y();
+            return rad2deg(dtheta.y());
         case ImuObs::GetStaticDescriptorCount() + 3: // dTheta Z [deg]
-            return dtheta.z();
+            return rad2deg(dtheta.z());
         case ImuObs::GetStaticDescriptorCount() + 4: // dVelocity X [m/s]
             return dvel.x();
         case ImuObs::GetStaticDescriptorCount() + 5: // dVelocity Y [m/s]
@@ -94,7 +95,7 @@ class ImuObsWDelta : public ImuObs
 
     /// The time interval that the delta angle and velocities are integrated over in [seconds].
     double dtime = 0.0;
-    /// The delta rotation angles in [degree] incurred due to rotation, by the local platform reference frame,
+    /// The delta rotation angles in [rad] incurred due to rotation, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
     Eigen::Vector3d dtheta;
     /// The delta velocity in [m/s] incurred due to motion, by the local platform reference frame,
