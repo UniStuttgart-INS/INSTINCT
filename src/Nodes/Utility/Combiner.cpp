@@ -18,9 +18,11 @@
 #include <cstddef>
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <limits>
 #include <vector>
 #include <spdlog/common.h>
 
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "util/Assert.h"
 #include "util/Logger.hpp"
 
@@ -132,6 +134,34 @@ void Combiner::guiConfig()
     {
         flow::ApplyChanges();
     }
+
+    if (ImGui::Checkbox(fmt::format("##_noOutputIfTimeDiffLarge{}", size_t(id)).c_str(), &_noOutputIfTimeDiffLarge))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    if (!_noOutputIfTimeDiffLarge) { ImGui::BeginDisabled(); }
+    ImGui::SetNextItemWidth(200.0F * gui::NodeEditorApplication::windowFontRatio());
+    if (ImGui::DragDouble(fmt::format("Max time diff to interpolate##{}", size_t(id)).c_str(),
+                          &_maxTimeDiffMultiplierFrequency, 1.0F, 0.0, std::numeric_limits<double>::max(), "%.1f * dt_min"))
+    {
+        flow::ApplyChanges();
+    }
+    if (!_noOutputIfTimeDiffLarge) { ImGui::EndDisabled(); }
+
+    if (ImGui::Checkbox(fmt::format("##_noOutputIfTimeStepLarge{}", size_t(id)).c_str(), &_noOutputIfTimeStepLarge))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    if (!_noOutputIfTimeStepLarge) { ImGui::BeginDisabled(); }
+    ImGui::SetNextItemWidth(200.0F * gui::NodeEditorApplication::windowFontRatio());
+    if (ImGui::DragDouble(fmt::format("Max observation time diff##{}", size_t(id)).c_str(),
+                          &_maxTimeStepMultiplierFrequency, 1.0F, 0.0, std::numeric_limits<double>::max(), "%.1f * dt_min"))
+    {
+        flow::ApplyChanges();
+    }
+    if (!_noOutputIfTimeStepLarge) { ImGui::EndDisabled(); }
 
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Pins##{}", size_t(id)).c_str()))
@@ -368,6 +398,10 @@ void Combiner::guiConfig()
         { "combinations", _combinations },
         { "refPinIdx", _refPinIdx },
         { "outputMissingAsNaN", _outputMissingAsNaN },
+        { "noOutputIfTimeDiffLarge", _noOutputIfTimeDiffLarge },
+        { "maxTimeDiffMultiplierFrequency", _maxTimeDiffMultiplierFrequency },
+        { "noOutputIfTimeStepLarge", _noOutputIfTimeStepLarge },
+        { "maxTimeStepMultiplierFrequency", _maxTimeStepMultiplierFrequency },
     };
 }
 
@@ -379,6 +413,10 @@ void Combiner::restore(json const& j)
     if (j.contains("combinations")) { j.at("combinations").get_to(_combinations); }
     if (j.contains("refPinIdx")) { j.at("refPinIdx").get_to(_refPinIdx); }
     if (j.contains("outputMissingAsNaN")) { j.at("outputMissingAsNaN").get_to(_outputMissingAsNaN); }
+    if (j.contains("noOutputIfTimeDiffLarge")) { j.at("noOutputIfTimeDiffLarge").get_to(_noOutputIfTimeDiffLarge); }
+    if (j.contains("maxTimeDiffMultiplierFrequency")) { j.at("maxTimeDiffMultiplierFrequency").get_to(_maxTimeDiffMultiplierFrequency); }
+    if (j.contains("noOutputIfTimeStepLarge")) { j.at("noOutputIfTimeStepLarge").get_to(_noOutputIfTimeStepLarge); }
+    if (j.contains("maxTimeStepMultiplierFrequency")) { j.at("maxTimeStepMultiplierFrequency").get_to(_maxTimeStepMultiplierFrequency); }
 }
 
 void Combiner::pinAddCallback(Node* node)
@@ -611,24 +649,30 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                         if (sendRequest.termIndices.contains(t)) { continue; } // The term was already calculated
 
                         if (auto dt = static_cast<double>((nodeData->insTime - sendRequestTime).count()); // Out of bounds (do not interpolate)
-                            dt > 1.1 * _pinData.at(pinIdx).minTimeStep
-                            || (srTerm.rawData.full()
+                            (_noOutputIfTimeDiffLarge && dt > _maxTimeDiffMultiplierFrequency * _pinData.at(pinIdx).minTimeStep)
+                            || (_noOutputIfTimeStepLarge && srTerm.rawData.full()
                                 && static_cast<double>((srTerm.rawData.back()->insTime - srTerm.rawData.front()->insTime).count())
-                                       > 2.0 * _pinData.at(pinIdx).minTimeStep))
+                                       > _maxTimeStepMultiplierFrequency * _pinData.at(pinIdx).minTimeStep))
                         {
                             if (_outputMissingAsNaN)
                             {
                                 sendRequest.result = std::nan("");
-                                LOG_DATA("{}:           Setting combination {} to NaN (dt = {} > dt_min = {})", nameId(),
+                                LOG_DATA("{}:           Setting combination {} to NaN (({} && dt = {} > dt_min = {}) || ({} && dt_interp = {} > {}))", nameId(),
                                          _combinations.at(sendRequest.combIndex).description(this),
-                                         dt, 1.1 * _pinData.at(srTerm.pinIndex).minTimeStep);
+                                         _noOutputIfTimeDiffLarge, dt, _maxTimeDiffMultiplierFrequency * _pinData.at(pinIdx).minTimeStep,
+                                         _noOutputIfTimeStepLarge,
+                                         static_cast<double>((srTerm.rawData.back()->insTime - srTerm.rawData.front()->insTime).count()),
+                                         _maxTimeStepMultiplierFrequency * _pinData.at(pinIdx).minTimeStep);
                             }
                             else
                             {
                                 combsToRemove.emplace(sendRequest.combIndex);
-                                LOG_DATA("{}:           Removing combination {} (dt = {} > dt_min = {})", nameId(),
+                                LOG_DATA("{}:           Removing combination {} (({} && dt = {} > dt_min = {}) || ({} && dt_interp = {} > {}))", nameId(),
                                          _combinations.at(sendRequest.combIndex).description(this),
-                                         dt, 1.1 * _pinData.at(srTerm.pinIndex).minTimeStep);
+                                         _noOutputIfTimeDiffLarge, dt, _maxTimeDiffMultiplierFrequency * _pinData.at(pinIdx).minTimeStep,
+                                         _noOutputIfTimeStepLarge,
+                                         static_cast<double>((srTerm.rawData.back()->insTime - srTerm.rawData.front()->insTime).count()),
+                                         _maxTimeStepMultiplierFrequency * _pinData.at(pinIdx).minTimeStep);
                                 continue;
                             }
                         }

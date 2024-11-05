@@ -187,6 +187,12 @@ class Combiner : public Node, public CommonLog
     /// Output missing combinations with NaN instead of removing
     bool _outputMissingAsNaN = false;
 
+    bool _noOutputIfTimeDiffLarge = true;         ///< Wether to not output a term if the interpolation time point is too far away
+    double _maxTimeDiffMultiplierFrequency = 2.1; ///< Multiply frequency with this to get maximum allowed time difference to interpolate to
+
+    bool _noOutputIfTimeStepLarge = true;         ///< Wether to not output a term if the time step to interpolate in between is large
+    double _maxTimeStepMultiplierFrequency = 5.0; ///< Multiply frequency with this to get maximum allowed time step of incoming observations
+
     /// Send request information
     struct SendRequest
     {
