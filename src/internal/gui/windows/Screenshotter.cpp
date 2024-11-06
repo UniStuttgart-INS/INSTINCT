@@ -212,7 +212,7 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
         ImGui::SetNextItemWidth(ITEM_WIDTH_HALF);
-        ImGui::DragFloat("Max##Capture area y", &_screenshotCaptureRect.Max.y, 1.0F, _screenshotCaptureRect.Min.x + 1, io.DisplaySize.y);
+        ImGui::DragFloat("Max##Capture area y", &_screenshotCaptureRect.Max.y, 1.0F, _screenshotCaptureRect.Min.y + 1, io.DisplaySize.y);
 
         if (ImGui::Button("Take screenshot"))
         {

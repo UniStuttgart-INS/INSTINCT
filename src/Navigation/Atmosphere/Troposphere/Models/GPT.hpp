@@ -70,7 +70,7 @@ double mjd2doy(const double& mjd);
 /// @param[in] Tm mean temperature in Kelvin
 /// @param[in] la water vapor lapse rate (see definition in Askne and Nordius 1987)
 /// @return zwd: zenith wet delay in meter
-/// @note See \cite askne1987estimation Aske and Nordius (1987), eq. 22
+/// @note See \cite Askne1987 Aske and Nordius (1987), eq. 22
 double asknewet(const double& e, const double& Tm, const double& la);
 
 } // namespace NAV

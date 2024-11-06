@@ -135,6 +135,11 @@ void NAV::gui::windows::ApplyDarkLightMode(std::vector<ImVec4>& colors)
         {
             editorStyle.Colors[i] = defaultStyle.Colors[i]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
         }
+
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_TEXT] = ImColor(1.0F, 1.0F, 1.0F, 1.0F);
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_BG] = ImColor(1.0F, 1.0F, 1.0F, 0.25F);
+        colors[NodeEditorApplication::COLOR_GROUP_OUTER_BORDER] = ImColor(1.0F, 1.0F, 1.0F, 0.25F);
+
         ImGui::StyleColorsDark();
     }
 }
