@@ -22,6 +22,9 @@
 [submodule "lib/implot"]
 	path = lib/implot
 	url = https://github.com/niavok/implot.git
+[submodule "lib/mavlink/mavlink"]
+	path = lib/mavlink/mavlink
+	url = https://github.com/mavlink/c_library_v2.git
 [submodule "doc/doxygen-awesome-css"]
 	path = doc/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git

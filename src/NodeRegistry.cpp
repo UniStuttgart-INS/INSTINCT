@@ -181,6 +181,9 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/Converter/GNSS/UbloxGnssOrbitCollector.hpp"
 #include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Link
+#if __linux__ || __APPLE__
+    #include "Nodes/DataLink/mavlinkSend.hpp"
+#endif
 #include "Nodes/DataLink/udpSend.hpp"
 #include "Nodes/DataLink/udpRecv.hpp"
 // Data Logger
@@ -254,6 +257,9 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<UbloxGnssOrbitCollector>();
     registerNodeType<VectorNavBinaryConverter>();
     // Data Link
+#if __linux__ || __APPLE__
+    registerNodeType<MavlinkSend>();
+#endif
     registerNodeType<UdpSend>();
     registerNodeType<UdpRecv>();
     // Data Logger
