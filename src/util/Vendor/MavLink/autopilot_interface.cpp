@@ -173,7 +173,7 @@ void set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t& sp)
 // ------------------------------------------------------------------------------
 //   Con/De structors
 // ------------------------------------------------------------------------------
-Autopilot_Interface::Autopilot_Interface(Generic_Port* port_) : port(port_)
+Autopilot_Interface::Autopilot_Interface(const std::shared_ptr<Generic_Port>& port_) : port(port_)
 {
     current_messages.sysid = system_id;
     current_messages.compid = autopilot_id;
@@ -182,7 +182,7 @@ Autopilot_Interface::Autopilot_Interface(Generic_Port* port_) : port(port_)
 // ------------------------------------------------------------------------------
 //   Set Port
 // ------------------------------------------------------------------------------
-void Autopilot_Interface::setPort(Generic_Port* port_new)
+void Autopilot_Interface::setPort(const std::shared_ptr<Generic_Port>& port_new)
 {
     port = port_new;
 }
@@ -603,15 +603,16 @@ int Autopilot_Interface::GPS_Input(int32_t lat_d, int32_t lon_d, float alt, floa
     GPS.lat = lat_d; // Latitude (WGS84)  (degE7)
     GPS.lon = lon_d; // Longitude (WGS84) (degE7)
     GPS.alt = alt;   // Altitude (MSL)  Positive for up (m)
-    // GPS.hdop = 0;
-    // GPS.vdop = 0;
+    GPS.hdop = 0.0F;
+    GPS.vdop = 0.0F;
     GPS.vn = vn;
     GPS.ve = ve;
     GPS.vd = vd;
-    // GPS.speed_accuracy = 0;
-    // GPS.horiz_accuracy = 0;
-    // GPS.vert_accuracy = 0;
+    GPS.speed_accuracy = 0.0F;
+    GPS.horiz_accuracy = 0.0F;
+    GPS.vert_accuracy = 0.0F;
     GPS.satellites_visible = 20;
+    GPS.yaw = 0;
 
     // Encode
     mavlink_message_t message;

@@ -60,7 +60,7 @@ bool NAV::ShowPlotTooltip(std::vector<PlotTooltip>& tooltips,
 
                     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
                     {
-                        if (std::find_if(tooltips.begin(), tooltips.end(), [&](const auto& tooltip) {
+                        if (std::ranges::find_if(tooltips, [&](const auto& tooltip) {
                                 return tooltip.plotItemIdx == plotItemIdx && tooltip.dataIdx == i;
                             })
                             == tooltips.end())

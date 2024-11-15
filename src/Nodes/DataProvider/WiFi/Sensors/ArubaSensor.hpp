@@ -80,7 +80,7 @@ class ArubaSensor : public Node
     ssh_session _session{};
 
     /// Timer object to handle async data requests
-    CallbackTimer _timer{};
+    CallbackTimer _timer;
 
     /// Ssh options
 

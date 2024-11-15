@@ -779,7 +779,7 @@ void NAV::WiFiPositioning::updateNumberOfInputPins()
 void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto obs = std::static_pointer_cast<const WiFiObs>(queue.extract_front());
-    auto it = std::find(_deviceMacAddresses.begin(), _deviceMacAddresses.end(), obs->macAddress);
+    auto it = std::ranges::find(_deviceMacAddresses, obs->macAddress);
     if (it != _deviceMacAddresses.end()) // Check if the MAC address is in the list
     {
         // Get the index of the found element

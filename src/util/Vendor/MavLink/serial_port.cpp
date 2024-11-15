@@ -286,7 +286,7 @@ int Serial_Port::_open_port(const char* port)
 //   Helper Function - Setup Serial Port
 // ------------------------------------------------------------------------------
 // Sets configuration, flags, and baud rate
-bool Serial_Port::_setup_port(int baud, int /* data_bits */, int /* stop_bits */, bool /* parity */, bool /* hardware_control */)
+bool Serial_Port::_setup_port(int baud, int /* data_bits */, int /* stop_bits */, bool /* parity */, bool /* hardware_control */) const
 {
     // Check file descriptor
     if (!isatty(fd))
@@ -296,8 +296,7 @@ bool Serial_Port::_setup_port(int baud, int /* data_bits */, int /* stop_bits */
     }
 
     // Read file descritor configuration
-    struct termios config
-    {};
+    termios config{};
 
     if (tcgetattr(fd, &config) < 0)
     {
@@ -442,7 +441,7 @@ int Serial_Port::_read_port(uint8_t& cp)
     // Lock
     pthread_mutex_lock(&lock);
 
-    auto result = static_cast<int8_t>(read(fd, &cp, 1)); // NOLINT(bugprone-signed-char-misuse,cert-str34-c)
+    auto result = static_cast<int8_t>(read(fd, &cp, 1)); // NOLINT(bugprone-signed-char-misuse,cert-str34-c,clang-analyzer-unix.BlockInCriticalSection)
 
     // Unlock
     pthread_mutex_unlock(&lock);

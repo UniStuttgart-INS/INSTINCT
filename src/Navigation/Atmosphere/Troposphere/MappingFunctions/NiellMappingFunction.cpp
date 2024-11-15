@@ -27,6 +27,9 @@ constexpr double a_ht = 2.53e-5;
 constexpr double b_ht = 5.49e-3;
 constexpr double c_ht = 1.14e-3;
 
+namespace
+{
+
 std::array<double, 3> interpolateAverage(double lat)
 {
     std::array<double, 5> a{ 1.2769934e-3, 1.2683230e-3, 1.2465397e-3, 1.2196049e-3, 1.2045996e-3 };
@@ -76,6 +79,8 @@ double mappingNormalizedAtZenith(double elevation, double a, double b, double c)
     return (1.0 + a / (1.0 + b / (1.0 + c)))
            / (sinE + a / (sinE + b / (sinE + c)));
 }
+
+} // namespace
 
 } // namespace NAV::internal::NMF
 

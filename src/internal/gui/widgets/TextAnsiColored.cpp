@@ -22,7 +22,8 @@ std::array<bool, kMaxChar> char_skip;
 
 namespace jet
 {
-
+namespace
+{
 std::vector<std::string> split(const std::string& str, const std::string& delim = " ")
 {
     std::vector<std::string> res;
@@ -38,11 +39,14 @@ std::vector<std::string> split(const std::string& str, const std::string& delim 
     return res;
 }
 
+} // namespace
 } // namespace jet
 
 namespace ImGui
 {
 
+namespace
+{
 bool ParseColor(const char* s, ImU32* col, int* skipChars)
 {
     if (s[0] != '\033' || s[1] != '[')
@@ -240,10 +244,10 @@ void ImFont_RenderAnsiText(const ImFont* font,
             if (!word_wrap_eol)
             {
                 word_wrap_eol = font->CalcWordWrapPositionA(scale, s, text_end, wrap_width - (x - pos.x));
-                if (word_wrap_eol == s) // Wrap_width is too small to fit anything. Force displaying 1 character to
-                {                       // minimize the height discontinuity.
-                    word_wrap_eol++;    // +1 may not be a character start point in UTF-8 but it's ok because we use s
-                }                       // >= word_wrap_eol below
+                if (word_wrap_eol == s) // Wrap_width is too small to fit anything. Force displaying 1 character to minimize the height discontinuity.
+                {                       // +1 may not be a character start point in UTF-8 but it's ok because we use s >= word_wrap_eol below
+                    word_wrap_eol++;
+                }
             }
 
             if (s >= word_wrap_eol)
@@ -519,6 +523,7 @@ void RenderAnsiTextWrapped(ImVec2 pos, const char* text, const char* text_end, f
     }
 }
 
+} // namespace
 } // namespace ImGui
 
 void ImGui::TextAnsiUnformatted(const char* text, const char* text_end)

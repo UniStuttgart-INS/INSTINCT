@@ -17,6 +17,7 @@
 #include <cmath>
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include <Eigen/Core>
+#include <cstdint>
 #include <imgui.h>
 
 #include "Navigation/GNSS/SystemModel/Units.hpp"
@@ -35,7 +36,7 @@ namespace Keys
 {
 
 /// Keys used in the model
-enum MotionModelKey
+enum MotionModelKey : uint8_t
 {
     PosX,                 ///< Position ECEF_X [m]
     PosY,                 ///< Position ECEF_Y [m]

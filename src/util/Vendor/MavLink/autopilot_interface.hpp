@@ -62,6 +62,8 @@
     #include <pthread.h> // This uses POSIX Threads
     #include <unistd.h>  // UNIX standard function definitions
     #include <mutex>
+    #include <cstdint>
+    #include <memory>
 
     #include <mavlink/common/mavlink.h>
 
@@ -116,30 +118,33 @@ constexpr size_t MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_LAND = 0x2000;    ///
 constexpr size_t MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_LOITER = 0x3000;  ///< MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_LOITER
 constexpr size_t MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_IDLE = 0x4000;    ///< MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_IDLE
 
-    /// Available Baudrates
-    #define AUTOPILOT_MODE_STABILIZED 0   ///< Self-levels the roll and pitch axis
-    #define AUTOPILOT_MODE_ACRO 1         ///< Holds attitude, no self-level
-    #define AUTOPILOT_MODE_ALTHOLD 2      ///< Holds altitude and self-levels the roll & pitch
-    #define AUTOPILOT_MODE_AUTO 3         ///< Executes pre-defined mission
-    #define AUTOPILOT_MODE_GUIDED 4       ///< Navigates to single points commanded by GCS
-    #define AUTOPILOT_MODE_LOITER 5       ///< Holds altitude and position, uses GPS for movements
-    #define AUTOPILOT_MODE_RTL 6          ///< Returns above takeoff location, may also include landing
-    #define AUTOPILOT_MODE_CIRCLE 7       ///< Automatically circles a point in front of the vehicle
-    #define AUTOPILOT_MODE_LAND 9         ///< Reduces altitude to ground level, attempts to go straight down
-    #define AUTOPILOT_MODE_DRIFT 11       ///< Like stabilize, but coordinates yaw with roll like a plane
-    #define AUTOPILOT_MODE_SPORT 13       ///< Alt-hold, but holds pitch & roll when sticks centered
-    #define AUTOPILOT_MODE_FLIP 14        ///< Rises and completes an automated flip
-    #define AUTOPILOT_MODE_AUTOTUNE 15    ///< Automated pitch and bank procedure to improve control loops
-    #define AUTOPILOT_MODE_POSHOLD 16     ///< Like loiter, but manual roll and pitch when sticks not centered
-    #define AUTOPILOT_MODE_BRAKE 17       ///< Brings copter to an immediate stop
-    #define AUTOPILOT_MODE_THROW 18       ///< Holds position after a throwing takeoff
-    #define AUTOPILOT_MODE_AVOIDADSB 19   ///< ADS-B based avoidance of manned aircraft
-    #define AUTOPILOT_MODE_GUIDEDNOGPS 20 ///< This variation of Guided mode does not require a GPS but it only accepts attitude targets
-    #define AUTOPILOT_MODE_SMARTRTL 21    ///< RTL, but traces path to get home
-    #define AUTOPILOT_MODE_FOLOWHOLD 22   ///< Position control using Optical Flow
-    #define AUTOPILOT_MODE_FOLLOW 23      ///< Follows another vehicle
-    #define AUTOPILOT_MODE_ZIGZAG 24      ///< Useful for crop spraying
-    #define AUTOPILOT_MODE_SYSTEMID 25    ///< Special diagnostic/modeling mode
+/// Autopilot modes
+enum AUTOPILOT_MODE_ : uint8_t
+{
+    AUTOPILOT_MODE_STABILIZED = 0,   ///< Self-levels the roll and pitch axis
+    AUTOPILOT_MODE_ACRO = 1,         ///< Holds attitude, no self-level
+    AUTOPILOT_MODE_ALTHOLD = 2,      ///< Holds altitude and self-levels the roll & pitch
+    AUTOPILOT_MODE_AUTO = 3,         ///< Executes pre-defined mission
+    AUTOPILOT_MODE_GUIDED = 4,       ///< Navigates to single points commanded by GCS
+    AUTOPILOT_MODE_LOITER = 5,       ///< Holds altitude and position, uses GPS for movements
+    AUTOPILOT_MODE_RTL = 6,          ///< Returns above takeoff location, may also include landing
+    AUTOPILOT_MODE_CIRCLE = 7,       ///< Automatically circles a point in front of the vehicle
+    AUTOPILOT_MODE_LAND = 9,         ///< Reduces altitude to ground level, attempts to go straight down
+    AUTOPILOT_MODE_DRIFT = 11,       ///< Like stabilize, but coordinates yaw with roll like a plane
+    AUTOPILOT_MODE_SPORT = 13,       ///< Alt-hold, but holds pitch & roll when sticks centered
+    AUTOPILOT_MODE_FLIP = 14,        ///< Rises and completes an automated flip
+    AUTOPILOT_MODE_AUTOTUNE = 15,    ///< Automated pitch and bank procedure to improve control loops
+    AUTOPILOT_MODE_POSHOLD = 16,     ///< Like loiter, but manual roll and pitch when sticks not centered
+    AUTOPILOT_MODE_BRAKE = 17,       ///< Brings copter to an immediate stop
+    AUTOPILOT_MODE_THROW = 18,       ///< Holds position after a throwing takeoff
+    AUTOPILOT_MODE_AVOIDADSB = 19,   ///< ADS-B based avoidance of manned aircraft
+    AUTOPILOT_MODE_GUIDEDNOGPS = 20, ///< This variation of Guided mode does not require a GPS but it only accepts attitude targets
+    AUTOPILOT_MODE_SMARTRTL = 21,    ///< RTL, but traces path to get home
+    AUTOPILOT_MODE_FOLOWHOLD = 22,   ///< Position control using Optical Flow
+    AUTOPILOT_MODE_FOLLOW = 23,      ///< Follows another vehicle
+    AUTOPILOT_MODE_ZIGZAG = 24,      ///< Useful for crop spraying
+    AUTOPILOT_MODE_SYSTEMID = 25,    ///< Special diagnostic/modeling mode
+};
 
 // ------------------------------------------------------------------------------
 //   Prototypes
@@ -247,7 +252,7 @@ struct Mavlink_Messages
 
     // System Parameters?
 
-    Time_Stamps time_stamps{}; ///< Time Stamps
+    Time_Stamps time_stamps; ///< Time Stamps
 
     /// @brief Reset timestamps
     void reset_timestamps()
@@ -281,7 +286,7 @@ class Autopilot_Interface
     /// @brief Default constructor
     Autopilot_Interface() = default;
     /// @brief Constructor
-    explicit Autopilot_Interface(Generic_Port* port_);
+    explicit Autopilot_Interface(const std::shared_ptr<Generic_Port>& port_);
     /// @brief Destructor
     ~Autopilot_Interface() = default;
     /// @brief Copy constructor
@@ -400,7 +405,7 @@ class Autopilot_Interface
 
     /// @brief Set port
     /// @param[in] port_new Generic port
-    void setPort(Generic_Port* port_new);
+    void setPort(const std::shared_ptr<Generic_Port>& port_new);
 
     /// @brief Set GPS frequency
     /// @param[in] _Frequency Frequency to set
@@ -419,7 +424,7 @@ class Autopilot_Interface
     void setMOCAP_Active(bool _Active);
 
   private:
-    Generic_Port* port = nullptr; ///< Generic port
+    std::shared_ptr<Generic_Port> port; ///< Generic port
 
     bool time_to_exit = false; ///< Time to exit
 

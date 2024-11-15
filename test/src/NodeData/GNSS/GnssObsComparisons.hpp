@@ -79,7 +79,7 @@ inline bool operator==(const GnssObs& lhs, const GnssObs& rhs)
     for (const auto& l : lhs.data)
     {
         LOG_DEBUG("  [{}] | satId", l.satSigId);
-        auto r = std::find_if(rhs.data.begin(), rhs.data.end(), [&](const auto& r) { return l.satSigId == r.satSigId; });
+        auto r = std::ranges::find_if(rhs.data, [&](const auto& r) { return l.satSigId == r.satSigId; });
         REQUIRE(r != rhs.data.end());
         REQUIRE(*r == l);
     }

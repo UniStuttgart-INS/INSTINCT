@@ -38,7 +38,8 @@ const char* to_string(gui::widgets::PositionWithFrame::ReferenceFrame refFrame)
 
 namespace gui::widgets
 {
-
+namespace
+{
 /// @brief Shows a ComboBox to select the position input reference frame
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in] refFrame Reference to the frame to select
@@ -46,7 +47,7 @@ bool ComboPositionInputReferenceFrame(const char* label, PositionWithFrame::Refe
 {
     return gui::widgets::EnumCombo(label, refFrame);
 }
-
+} // namespace
 } // namespace gui::widgets
 
 } // namespace NAV

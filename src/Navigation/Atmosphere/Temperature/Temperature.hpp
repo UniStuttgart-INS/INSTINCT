@@ -13,11 +13,13 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace NAV
 {
 
 /// Available temperature Models
-enum class TemperatureModel : int
+enum class TemperatureModel : uint8_t
 {
     None,    ///< No temperature model
     ConstNN, ///< Constant value at zero altitude

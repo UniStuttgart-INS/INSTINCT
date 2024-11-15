@@ -30,7 +30,7 @@ namespace vendor::RINEX
 {
 
 /// @brief Observation types of the 'SYS / # / OBS TYPES' header
-enum class ObsType
+enum class ObsType : uint8_t
 {
     Error, ///< Error Type
     C,     ///< Code / Pseudorange
@@ -68,7 +68,7 @@ struct ObsHeader
     std::string markerNumber;          ///< Number of antenna marker [A20] (Optional)
 
     /// Available marker types
-    enum class MarkerTypes
+    enum class MarkerTypes : uint8_t
     {
         GEODETIC,      ///< Earth-fixed, high-precision monument
         NON_GEODETIC,  ///< Earth-fixed, low-precision monument

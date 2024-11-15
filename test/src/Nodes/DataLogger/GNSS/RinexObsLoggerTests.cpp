@@ -43,6 +43,8 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::RinexObsLoggerTests
 {
+namespace
+{
 
 void compareObservations(std::deque<std::shared_ptr<const NAV::GnssObs>>& data1, std::deque<std::shared_ptr<const NAV::GnssObs>>& data2)
 {
@@ -149,6 +151,8 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
     }
     REQUIRE(headerCount == expectedHeader.size());
 }
+
+} // namespace
 
 TEST_CASE("[RinexObsLoggerTests][flow] DataLogger/GNSS/RinexObsLogger-1.obs", "[RinexObsLoggerTests][flow]")
 {

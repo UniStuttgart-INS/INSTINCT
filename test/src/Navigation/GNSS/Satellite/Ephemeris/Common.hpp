@@ -29,7 +29,7 @@
 namespace NAV::TESTS::EphemerisTests
 {
 
-enum DataSource
+enum DataSource : uint8_t
 {
     Spirent,
     Skydel,

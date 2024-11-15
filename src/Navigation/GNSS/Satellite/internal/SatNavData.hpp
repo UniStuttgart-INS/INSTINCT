@@ -17,6 +17,7 @@
 
 #include "Clock.hpp"
 #include "Orbit.hpp"
+#include <cstdint>
 
 namespace NAV
 {
@@ -26,7 +27,7 @@ class SatNavData : public Clock, public Orbit
 {
   public:
     /// @brief Child type
-    enum Type
+    enum Type : uint8_t
     {
         GPSEphemeris,     ///< GPS Broadcast Ephemeris
         GalileoEphemeris, ///< Galileo Broadcast Ephemeris

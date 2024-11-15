@@ -47,6 +47,8 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::VectorNavFileTests
 {
+namespace
+{
 auto extractBit(auto& group, auto value)
 {
     auto ret = group & value;
@@ -54,9 +56,12 @@ auto extractBit(auto& group, auto value)
     return ret;
 }
 
+} // namespace
+
 namespace FixedSize
 {
-
+namespace
+{
 void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -182,6 +187,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
     // ---------------------------------------------- GpsGroup 2 -------------------------------------------------
     REQUIRE(obs->gnss2Outputs == nullptr);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
@@ -241,6 +247,8 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' a
     REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
+namespace
+{
 void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -506,6 +514,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
 
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
@@ -570,6 +579,8 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' 
 namespace DynamicSize
 {
 
+namespace
+{
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -843,6 +854,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
 
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {

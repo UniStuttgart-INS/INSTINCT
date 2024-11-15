@@ -144,7 +144,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
         {
             if (ref.counter == ref.refData.size())
             {
-                auto iter = std::find_if(sppSol->satData.begin(), sppSol->satData.end(), [&ref](const auto& satData) { return satData.first == ref.satSigId.toSatId(); });
+                auto iter = std::ranges::find_if(sppSol->satData, [&ref](const auto& satData) { return satData.first == ref.satSigId.toSatId(); });
                 REQUIRE(iter == sppSol->satData.end());
                 continue;
             }
@@ -153,17 +153,16 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
 
             if (sppSol->insTime == refData.recvTime)
             {
-                auto iter = std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
-                                         [&ref](const auto& satData) {
-                                             return satData.first == ref.satSigId.toSatId();
-                                         });
+                auto iter = std::ranges::find_if(sppSol->satData, [&ref](const auto& satData) {
+                    return satData.first == ref.satSigId.toSatId();
+                });
                 REQUIRE(iter != sppSol->satData.end()); // This means something was calculated for the satellite
                 ref.counter++;
                 signalsCompared.insert(ref.satSigId);
                 satellitesCompared.insert(ref.satSigId.toSatId());
 
                 LOG_DEBUG("Checking {} line {}/{}. Elapsed time: {:.0f} ms", ref.satSigId, ref.counter, ref.refData.size(), refData.Elapsed_Time);
-                const auto& satData = std::find_if(sppSol->satData.begin(), sppSol->satData.end(), [&ref](const auto& data) {
+                const auto& satData = std::ranges::find_if(sppSol->satData, [&ref](const auto& data) {
                                           return data.first == ref.satSigId.toSatId();
                                       })->second;
 

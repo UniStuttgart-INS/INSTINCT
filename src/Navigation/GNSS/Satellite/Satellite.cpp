@@ -46,16 +46,18 @@ bool Satellite::isHealthy(const InsTime& recvTime) const
 void Satellite::addSatNavData(const std::shared_ptr<SatNavData>& satNavData)
 {
     // First check if item with same time already exists
-    auto iter = std::find_if(m_navigationData.begin(), m_navigationData.end(),
-                             [&satNavData](const std::shared_ptr<SatNavData>& navData) { return navData->refTime == satNavData->refTime; });
+    auto iter = std::ranges::find_if(m_navigationData, [&satNavData](const std::shared_ptr<SatNavData>& navData) {
+        return navData->refTime == satNavData->refTime;
+    });
     if (iter != m_navigationData.end()) // Item with this time does already exist, so we update this item
     {
         *iter = satNavData;
     }
     else // Otherwise we insert the item into the list in a time sorted way
     {
-        iter = std::find_if(m_navigationData.begin(), m_navigationData.end(),
-                            [&satNavData](const std::shared_ptr<SatNavData>& navData) { return navData->refTime > satNavData->refTime; });
+        iter = std::ranges::find_if(m_navigationData, [&satNavData](const std::shared_ptr<SatNavData>& navData) {
+            return navData->refTime > satNavData->refTime;
+        });
 
         m_navigationData.insert(iter, satNavData);
     }
@@ -71,43 +73,44 @@ std::shared_ptr<SatNavData> Satellite::searchNavigationData(const InsTime& time)
     if (m_navigationData.empty()) { return nullptr; }
 
     auto prevDiff = std::numeric_limits<long double>::max();
-    auto diff = prevDiff;
+    // auto diff = prevDiff;
 
     auto riter = m_navigationData.rbegin();
     for (; riter != m_navigationData.rend(); riter++)
     {
-        diff = std::abs(((*riter)->refTime - time).count());
+        auto diff = std::abs(((*riter)->refTime - time).count());
         if (diff < prevDiff)
         {
             prevDiff = diff;
         }
         else
         {
-            diff = prevDiff;
+            // diff = prevDiff;
             break;
         }
     }
 
-    switch (m_navigationData.front()->type)
-    {
-    case NAV::SatNavData::Type::GPSEphemeris:
-    case NAV::SatNavData::Type::GalileoEphemeris:
-    case NAV::SatNavData::Type::BeiDouEphemeris:
-    case NAV::SatNavData::Type::IRNSSEphemeris:
-    case NAV::SatNavData::Type::QZSSEphemeris:
-        if (diff > InsTimeUtil::SECONDS_PER_HOUR * 2 + 1e-6)
-        {
-            return nullptr;
-        }
-        break;
-    case NAV::SatNavData::Type::GLONASSEphemeris:
-    case NAV::SatNavData::Type::SBASEphemeris:
-        if (diff > InsTimeUtil::SECONDS_PER_MINUTE * 15 + 1e-6)
-        {
-            return nullptr;
-        }
-        break;
-    }
+    // This limits the time the navigation data can be used
+    // switch (m_navigationData.front()->type)
+    // {
+    // case NAV::SatNavData::Type::GPSEphemeris:
+    // case NAV::SatNavData::Type::GalileoEphemeris:
+    // case NAV::SatNavData::Type::BeiDouEphemeris:
+    // case NAV::SatNavData::Type::IRNSSEphemeris:
+    // case NAV::SatNavData::Type::QZSSEphemeris:
+    //     if (diff > InsTimeUtil::SECONDS_PER_HOUR * 2 + 1e-6)
+    //     {
+    //         return nullptr;
+    //     }
+    //     break;
+    // case NAV::SatNavData::Type::GLONASSEphemeris:
+    // case NAV::SatNavData::Type::SBASEphemeris:
+    //     if (diff > InsTimeUtil::SECONDS_PER_MINUTE * 15 + 1e-6)
+    //     {
+    //         return nullptr;
+    //     }
+    //     break;
+    // }
 
     return *(--riter);
 }

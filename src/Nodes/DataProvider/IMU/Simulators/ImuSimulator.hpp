@@ -101,7 +101,7 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
     /// Types where the start time should be pulled from
-    enum class StartTimeSource
+    enum class StartTimeSource : uint8_t
     {
         CustomTime,          ///< Custom time selected by the user
         CurrentComputerTime, ///< Gets the current computer time as start time
@@ -128,7 +128,7 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
     /// Types of Trajectories available for simulation
-    enum class TrajectoryType
+    enum class TrajectoryType : uint8_t
     {
         Fixed,      ///< Static position without movement
         Linear,     ///< Linear movement with constant velocity
@@ -164,7 +164,7 @@ class ImuSimulator : public Imu
     double _circularHarmonicAmplitudeFactor = 0.1;
 
     /// Possible directions for the circular trajectory
-    enum class Direction
+    enum class Direction : uint8_t
     {
         CW,    ///< Clockwise
         CCW,   ///< Counterclockwise
@@ -205,7 +205,7 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
     /// Possible stop conditions for the simulation
-    enum StopCondition
+    enum StopCondition : uint8_t
     {
         Duration,                 ///< Time Duration
         DistanceOrCirclesOrRoses, ///< Distance for Linear trajectory / Circle count for Circular / Count for rose figure trajectory

@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <Eigen/Dense>
 #include <Eigen/Core>
 
@@ -26,7 +27,7 @@
 namespace NAV
 {
 /// Available Gravitation Models
-enum class GravitationModel : int
+enum class GravitationModel : uint8_t
 {
     None,         ///< Gravity Model turned off
     WGS84,        ///< World Geodetic System 1984
@@ -53,7 +54,7 @@ bool ComboGravitationModel(const char* label, GravitationModel& gravitationModel
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_SomiglianaAltitude(const Scalar& latitude, const Scalar& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
@@ -78,7 +79,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Skydel API plug-in 'skydel_plugin/source/library/inertial_math/Sources/source/gravity.cpp'
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84_Skydel(const Scalar& latitude, const Scalar& altitude)
 {
     // geocentric latitude determination from geographic latitude
@@ -101,7 +102,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See 'INS-Projects/INSTINCT/SpecificLiterature/GravityPotentialWGS84' in NC folder (eq. (3) derived after 'r')
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84(const Scalar& latitude, const Scalar& altitude)
 {
     // Geocentric latitude determination from geographic latitude

@@ -15,6 +15,7 @@
 
 #include "util/Eigen.hpp"
 #include "PosVelAtt.hpp"
+#include <cstdint>
 
 #include "Navigation/Transformations/Units.hpp"
 
@@ -160,7 +161,7 @@ class InsGnssLCKFSolution : public PosVelAtt
     }
 
     /// @brief Available Frames
-    enum class Frame : int
+    enum class Frame : uint8_t
     {
         ECEF, ///< Earth-Centered Earth-Fixed frame
         NED,  ///< Local North-East-Down frame

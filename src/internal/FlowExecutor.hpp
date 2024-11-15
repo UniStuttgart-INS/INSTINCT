@@ -19,8 +19,8 @@ namespace NAV
 class Node;
 
 namespace FlowExecutor
-
 {
+
 /// @brief Checks if the thread is running
 [[nodiscard]] bool isRunning() noexcept;
 

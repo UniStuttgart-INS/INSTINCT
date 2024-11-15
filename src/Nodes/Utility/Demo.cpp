@@ -26,6 +26,8 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+namespace
+{
 InsTime getCurrentInsTime()
 {
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -38,11 +40,12 @@ InsTime getCurrentInsTime()
              static_cast<uint16_t>(t->tm_min),
              static_cast<long double>(t->tm_sec) };
 }
+} // namespace
 
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const Demo::DemoData& data)
+static void to_json(json& j, const Demo::DemoData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "boolean", data.boolean },
@@ -52,7 +55,7 @@ void to_json(json& j, const Demo::DemoData& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, Demo::DemoData& data)
+static void from_json(const json& j, Demo::DemoData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("boolean"))
     {
@@ -202,14 +205,8 @@ void NAV::Demo::guiConfig()
             if (ImGui::InputInt("Int", &_valueInt)) // Returns true if a change was made
             {
                 // Limit the values to [-2,5]
-                if (_valueInt < -2)
-                {
-                    _valueInt = -2;
-                }
-                if (_valueInt > 5)
-                {
-                    _valueInt = 5;
-                }
+                _valueInt = std::max(_valueInt, -2);
+                _valueInt = std::min(_valueInt, 5);
 
                 flow::ApplyChanges();
             }
@@ -273,7 +270,7 @@ void NAV::Demo::guiConfig()
                 {
                     if (!isInitialized()) { LOG_WARN("{}: Notifying connected nodes requires this node to be initialized.", nameId()); }
                     else if (!callbacksEnabled) { LOG_WARN("{}: Notifying connected nodes requires enabled callbacks on this node.", nameId()); }
-                    else if (std::none_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) { return link.connectedNode->isInitialized(); }))
+                    else if (std::ranges::none_of(outputPin.links, [](const OutputPin::OutgoingLink& link) { return link.connectedNode->isInitialized(); }))
                     {
                         LOG_WARN("{}: Notifying connected nodes requires at least one connected node to be initialized.", nameId());
                     }

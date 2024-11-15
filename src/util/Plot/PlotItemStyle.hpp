@@ -29,7 +29,7 @@ namespace NAV
 struct PlotItemStyle
 {
     /// @brief Possible line types
-    enum class LineType : int
+    enum class LineType : uint8_t
     {
         Scatter, ///< Scatter plot (only markers)
         Line,    ///< Line plot

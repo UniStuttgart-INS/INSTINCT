@@ -210,7 +210,7 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
     }
 }
 
-std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
+std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
@@ -309,7 +309,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
     return nullptr;
 }
 
-std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
+std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto imuObs = std::make_shared<ImuObs>(vnObs->imuPos);
 

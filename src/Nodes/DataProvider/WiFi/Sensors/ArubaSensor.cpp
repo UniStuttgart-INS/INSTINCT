@@ -330,7 +330,7 @@ void NAV::ArubaSensor::readSensorDataThread(void* userData)
         {
             InsTime_YMDHMS yearMonthDayHMS(std::stoi(timeStamp1.substr(0, 4)), std::stoi(timeStamp1.substr(5, 2)), std::stoi(timeStamp1.substr(8, 2)), std::stoi(timeStamp2.substr(0, 2)), std::stoi(timeStamp2.substr(3, 2)), std::stoi(timeStamp2.substr(6, 2)));
             InsTime timeOfMeasurement(yearMonthDayHMS, UTC);
-            std::transform(macAddress.begin(), macAddress.end(), macAddress.begin(), ::toupper); // Convert to uppercase
+            std::ranges::transform(macAddress, macAddress.begin(), ::toupper); // Convert to uppercase
             obs->distance = measuredDistance;
             obs->distanceStd = measuredDistanceStd;
             obs->macAddress = macAddress;

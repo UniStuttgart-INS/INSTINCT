@@ -319,10 +319,10 @@ void Combiner::guiConfig()
                                         if (t2 == t) { continue; }
                                         auto& term2 = comb.terms.at(t2);
                                         auto dataDescriptors2 = getDataDescriptors(term2.pinIndex);
-                                        auto iter = std::find(dataDescriptors2.begin(), dataDescriptors2.end(),
-                                                              std::holds_alternative<size_t>(term.dataSelection)
-                                                                  ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
-                                                                  : std::get<std::string>(term.dataSelection));
+                                        auto iter = std::ranges::find(dataDescriptors2,
+                                                                      std::holds_alternative<size_t>(term.dataSelection)
+                                                                          ? dataDescriptors.at(std::get<size_t>(term.dataSelection))
+                                                                          : std::get<std::string>(term.dataSelection));
                                         if (iter != dataDescriptors2.end())
                                         {
                                             if (std::holds_alternative<size_t>(term.dataSelection))
@@ -484,6 +484,8 @@ void Combiner::deinitialize()
 
 namespace internal
 {
+namespace
+{
 
 template<typename T>
 bool getDescriptorsOfType(OutputPin* sourcePin, std::vector<std::string>& dataDescriptors)
@@ -496,6 +498,7 @@ bool getDescriptorsOfType(OutputPin* sourcePin, std::vector<std::string>& dataDe
     return false;
 }
 
+} // namespace
 } // namespace internal
 
 std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
@@ -579,7 +582,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     const std::vector<std::string> nodeDataDescriptors = nodeData->dynamicDataDescriptors();
     for (const auto& desc : nodeDataDescriptors)
     {
-        if (std::find(dataDescriptors.begin(), dataDescriptors.end(), desc) == dataDescriptors.end())
+        if (std::ranges::find(dataDescriptors, desc) == dataDescriptors.end())
         {
             dataDescriptors.push_back(desc);
         }
@@ -618,7 +621,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
 
             // Check for all combinations with new info:
 
-            if (std::any_of(comb.terms.begin(), comb.terms.end(), [&](const auto& t) {
+            if (std::ranges::any_of(comb.terms, [&](const auto& t) {
                     bool termHasNoData = t.polyReg.empty();
                     if (termHasNoData)
                     {
@@ -752,7 +755,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
     {
         LOG_DATA("{}:     [{:.3f}s] [{}]", nameId(), math::round(calcTimeIntoRun(sendRequestTime), 8), sendRequestTime.toYMDHMS(GPST));
         LOG_DATA("{}:       Combinations (all terms in all combinations must be calculated)", nameId());
-        if (std::all_of(sendRequests.begin(), sendRequests.end(), [&](const auto& sendRequest) {
+        if (std::ranges::all_of(sendRequests, [&](const auto& sendRequest) {
                 const auto& comb = _combinations.at(sendRequest.combIndex);
                 LOG_DATA("{}:         '{}' has {}/{} terms set", nameId(), comb.description(this), sendRequest.termIndices.size(), comb.terms.size());
                 return comb.terms.size() == sendRequest.termIndices.size();

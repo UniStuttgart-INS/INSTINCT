@@ -5,20 +5,66 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
-      forAllSystems = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
-      pkgsFor = nixpkgs.legacyPackages;
+      forAllSystems = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
     in
-    rec {
-      packages = forAllSystems (system: {
-        default = pkgsFor.${system}.callPackage ./default.nix { };
-      });
+    {
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            nativeBuildInputs = with pkgs; [
+              cmake
+              conan
+              gdb
+              lldb
+              gcovr
+              mold
+              llvmPackages_19.clang-tools # clang-format, clang-tidy
+              gcc13
+              gcc13Stdenv
+              doxygen
+              texlive.combined.scheme-full
+              graphviz
+              ghostscript
+              pdf2svg
 
-      devShells = forAllSystems (system: {
-        default = pkgsFor.${system}.callPackage ./shell.nix { };
-      });
+              ccache
+              ccacheStdenv
+              llvmPackages_19.libcxxClang
+              gv
+              valgrind
+              kdePackages.kcachegrind
 
-      hydraJobs = packages;
+              xclip
+              wl-clipboard
+            ];
+            buildInputs = with pkgs; [
+              xorg.libX11.dev
+              glfw
+              gl3w
+              libGLU
+              libunwind
+              gperftools
+            ];
+            LD_LIBRARY_PATH =
+              with pkgs;
+              "${libGL}/lib"
+              + ":${glfw}/lib"
+              + ":${libGLU}/lib"
+              + ":${stdenv.cc.cc.lib}/lib"
+              + ":${llvmPackages_19.libcxx}/lib"
+              + ":${gperftools}/lib";
+          };
+        }
+      );
     };
 }

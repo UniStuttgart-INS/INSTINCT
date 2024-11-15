@@ -202,6 +202,9 @@ void legfdn(unsigned m, double theta, double rleg[_361 + 1]) // NOLINT
     }
 }
 
+namespace
+{
+
 /*!
  * \param lat : Latitude in radians.
  * \param lon : Longitude in radians.
@@ -261,6 +264,8 @@ double undulation(double lat, double lon)
 
     return hundu(p, sinml, cosml, gr, re);
 }
+
+} // namespace
 
 /* ************************************************************************** */
 

@@ -36,17 +36,27 @@ namespace ed = ax::NodeEditor;
 
 #include <iostream>
 
+namespace NAV::flow
+{
+namespace
+{
+
 bool unsavedChanges = false;
-bool NAV::flow::saveLastActions = true;
 
 constexpr int loadingFramesToWait = 2;
-int NAV::flow::loadingFrameCount = 0;
 
 std::string currentFilename;
 std::filesystem::path programRootPath;
 
 // The current number for the rotated parent folder
 size_t currentRotatedParentFolderNumber;
+
+} // namespace
+
+bool saveLastActions = true;
+int loadingFrameCount = 0;
+
+} // namespace NAV::flow
 
 void NAV::flow::SaveFlow(GlobalActions& globalAction)
 {

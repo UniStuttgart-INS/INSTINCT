@@ -13,11 +13,13 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace NAV
 {
 
 /// Available pressure Models
-enum class PressureModel : int
+enum class PressureModel : uint8_t
 {
     None,    ///< No pressure model
     ConstNN, ///< Constant value at zero altitude

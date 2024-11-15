@@ -46,6 +46,14 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::MultiImuFileTests
 {
+namespace
+{
+
+long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)
+{
+    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator);
+}
+
 void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t messageCounterData, size_t pinIdx)
 {
     // --------------------------------------------- Sensor ID -----------------------------------------------
@@ -74,10 +82,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t
     REQUIRE_THAT(obs->p_angularRate(2) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroZ)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 }
 
-long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)
-{
-    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator);
-}
+} // namespace
 
 TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt' and compare content with hardcoded values", "[MultiImuFile][flow]")
 {

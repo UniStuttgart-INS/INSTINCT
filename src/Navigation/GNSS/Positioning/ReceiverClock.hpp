@@ -45,7 +45,7 @@ struct ReceiverClock
     /// @param[in] satSys Satellite System to add
     void addSystem(SatelliteSystem satSys)
     {
-        if (std::find(satelliteSystems.begin(), satelliteSystems.end(), satSys) != satelliteSystems.end())
+        if (std::ranges::find(satelliteSystems, satSys) != satelliteSystems.end())
         {
             return;
         }
@@ -69,10 +69,10 @@ struct ReceiverClock
     /// @brief Resets all structures to 0 (not removing them)
     void reset()
     {
-        std::for_each(bias.begin(), bias.end(), [](double& v) { v = 0; });
-        std::for_each(biasStdDev.begin(), biasStdDev.end(), [](double& v) { v = 0; });
-        std::for_each(drift.begin(), drift.end(), [](double& v) { v = 0; });
-        std::for_each(driftStdDev.begin(), driftStdDev.end(), [](double& v) { v = 0; });
+        std::ranges::for_each(bias, [](double& v) { v = 0; });
+        std::ranges::for_each(biasStdDev, [](double& v) { v = 0; });
+        std::ranges::for_each(drift, [](double& v) { v = 0; });
+        std::ranges::for_each(driftStdDev, [](double& v) { v = 0; });
     }
 
     /// @brief Get the bias for the given satellite system

@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <vector>
 #include <Eigen/Core>
 #include "Navigation/GNSS/Core/Frequency.hpp"
@@ -22,7 +23,7 @@ namespace NAV
 {
 
 /// Available Ionosphere Models
-enum class IonosphereModel : int
+enum class IonosphereModel : uint8_t
 {
     None,      ///< Ionosphere model turned off
     Klobuchar, ///< Klobuchar model (GPS), also called Broadcast sometimes

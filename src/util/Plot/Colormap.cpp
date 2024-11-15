@@ -35,7 +35,7 @@ Colormap::Colormap()
 
 void Colormap::addColor(double value, ImColor color)
 {
-    colormap.insert(std::upper_bound(colormap.begin(), colormap.end(), value,
+    colormap.insert(std::upper_bound(colormap.begin(), colormap.end(), value, // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::upper_bound with lambda is not supported yet
                                      [](double value, const std::pair<double, ImColor>& item) { return value < item.first; }),
                     std::make_pair(value, color));
     version++;
@@ -305,14 +305,14 @@ std::optional<std::reference_wrapper<const Colormap>> ColormapSearch(const Color
     case ColormapMaskType::None:
         break;
     case ColormapMaskType::Global:
-        if (auto iter = std::find_if(ColormapsGlobal.begin(), ColormapsGlobal.end(), [&id](const Colormap& cmap) { return id == cmap.getId(); });
+        if (auto iter = std::ranges::find_if(ColormapsGlobal, [&id](const Colormap& cmap) { return id == cmap.getId(); });
             iter != ColormapsGlobal.end())
         {
             return std::cref(*iter);
         }
         break;
     case ColormapMaskType::Flow:
-        if (auto iter = std::find_if(ColormapsFlow.begin(), ColormapsFlow.end(), [&id](const Colormap& cmap) { return id == cmap.getId(); });
+        if (auto iter = std::ranges::find_if(ColormapsFlow, [&id](const Colormap& cmap) { return id == cmap.getId(); });
             iter != ColormapsFlow.end())
         {
             return std::cref(*iter);

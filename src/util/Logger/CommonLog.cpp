@@ -34,14 +34,14 @@ void CommonLog::initialize() const
     std::scoped_lock lk(_mutex);
     _wantsInit.at(_index) = true;
 
-    if (std::all_of(_wantsInit.begin(), _wantsInit.end(), [](bool val) { return val; }))
+    if (std::ranges::all_of(_wantsInit, [](bool val) { return val; }))
     {
         LOG_DEBUG("Resetting common log variables.");
         _startTime.reset();
         _originLatitude = std::nan("");
         _originLongitude = std::nan("");
 
-        std::fill(_wantsInit.begin(), _wantsInit.end(), false);
+        std::ranges::fill(_wantsInit, false);
     }
 }
 

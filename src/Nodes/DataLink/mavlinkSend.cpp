@@ -6,6 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include <memory>
 #if __linux__ || __APPLE__
 
     #include "mavlinkSend.hpp"
@@ -23,10 +24,6 @@ namespace nm = NAV::NodeManager;
     #include "util/Vendor/MavLink/autopilot_interface.hpp"
 
     #include "util/Logger.hpp"
-
-Generic_Port* port{};
-
-Autopilot_Interface autopilot_interface(port);
 
 NAV::MavlinkSend::MavlinkSend()
     : Node(typeStatic())
@@ -260,11 +257,11 @@ bool NAV::MavlinkSend::initialize()
 {
     if (_portType == PortType::UDP_Port)
     {
-        port = new UDP_Port(convertArrayToIPAddress(_ip).c_str(), _portNumber);
+        port = std::make_shared<UDP_Port>(convertArrayToIPAddress(_ip).c_str(), _portNumber);
     }
     if (_portType == PortType::Serial_Port)
     {
-        port = new Serial_Port(_serialPort.c_str(), getBaudrateValue(_baudrate));
+        port = std::make_shared<Serial_Port>(_serialPort.c_str(), getBaudrateValue(_baudrate));
     }
     autopilot_interface.setPort(port);
     autopilot_interface.setGPS_Active(_GPS_INPUT_Active);

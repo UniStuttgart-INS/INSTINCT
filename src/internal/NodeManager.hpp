@@ -81,8 +81,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+template<std::derived_from<Node> T>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
                          void (T::*callback)(InputPin::NodeDataQueue&, size_t) = nullptr,
                          InputPin::FlowFirableCheckFunc firable = nullptr,
@@ -102,8 +101,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
 /// @param[in] notifyFunc Function to call when the data is updated
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+template<std::derived_from<Node> T>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
                          void (T::*notifyFunc)(const InsTime&, size_t), int idx = -1)
 {
@@ -131,8 +129,7 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 /// @param[in] peekPollDataFunc Function to poll for data on this pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+template<std::derived_from<Node> T>
 OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
                            std::shared_ptr<const NAV::NodeData> (T::*peekPollDataFunc)(size_t, bool) = nullptr, int idx = -1)
 {
@@ -153,8 +150,7 @@ OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, cons
 /// @param[in] pollDataFunc Function to poll for data on this pin
 /// @param[in] idx Index where to put the new pin (-1 means at the end)
 /// @return Pointer to the created pin
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+template<std::derived_from<Node> T>
 OutputPin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
                            std::shared_ptr<const NAV::NodeData> (T::*pollDataFunc)() = nullptr, int idx = -1)
 {

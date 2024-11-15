@@ -196,7 +196,7 @@ class AntexReader
                         {
                             auto& antenna = _antennas[antennaType];
                             _antennaNames.insert(antennaType);
-                            auto antInfo = std::find_if(antenna.antennaInfo.begin(), antenna.antennaInfo.end(), [&](const Antenna::AntennaInfo& antInfo) {
+                            auto antInfo = std::ranges::find_if(antenna.antennaInfo, [&](const Antenna::AntennaInfo& antInfo) {
                                 return antInfo.from == validFrom && antInfo.until == validUntil;
                             });
                             if (antInfo == antenna.antennaInfo.end())
@@ -254,7 +254,7 @@ class AntexReader
             }
             else // No element is not possible, so more than one here, so search for time
             {
-                antInfo = std::find_if(antenna.antennaInfo.begin(), antenna.antennaInfo.end(), [&](const Antenna::AntennaInfo& antInfo) {
+                antInfo = std::ranges::find_if(antenna.antennaInfo, [&](const Antenna::AntennaInfo& antInfo) {
                     return (antInfo.from.empty() && antInfo.until.empty())
                            || (antInfo.from.empty() && insTime <= antInfo.until)
                            || (antInfo.until.empty() && antInfo.from <= insTime)

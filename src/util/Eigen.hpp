@@ -142,7 +142,7 @@ void removeRows(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIn
     rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
     for (int i = 0; i < matrix.rows(); i++)
     {
-        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        if (std::ranges::find(rowIndices, i) == rowIndices.end())
         {
             rowIndicesToKeep.push_back(i);
         }
@@ -178,7 +178,7 @@ void removeCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& colIn
     colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
     for (int i = 0; i < matrix.cols(); i++)
     {
-        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        if (std::ranges::find(colIndices, i) == colIndices.end())
         {
             colIndicesToKeep.push_back(i);
         }
@@ -223,7 +223,7 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
     rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
     for (int i = 0; i < matrix.rows(); i++)
     {
-        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        if (std::ranges::find(rowIndices, i) == rowIndices.end())
         {
             rowIndicesToKeep.push_back(i);
         }
@@ -233,7 +233,7 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
     colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
     for (int i = 0; i < matrix.cols(); i++)
     {
-        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        if (std::ranges::find(colIndices, i) == colIndices.end())
         {
             colIndicesToKeep.push_back(i);
         }

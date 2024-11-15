@@ -129,14 +129,8 @@ PlotItemStyle::LegendPopupReturn PlotItemStyle::showLegendPopup(const char* id,
 
         if (ImGui::InputInt("Stride", &stride))
         {
-            if (stride < 0)
-            {
-                stride = 0;
-            }
-            if (stride > plotDataBufferSize - 1)
-            {
-                stride = plotDataBufferSize - 1;
-            }
+            stride = std::max(stride, 0);
+            stride = std::min(stride, plotDataBufferSize - 1);
             ret.changed = true;
             LOG_DEBUG("{}: Stride changed to {}", nameId, stride);
         }

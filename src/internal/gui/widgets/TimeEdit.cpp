@@ -33,6 +33,8 @@ const char* to_string(gui::widgets::TimeEditFormat::Format timeEditFormat)
 
 namespace gui::widgets
 {
+namespace
+{
 
 /// @brief Shows a ComboBox to select the time edit format
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
@@ -42,6 +44,7 @@ bool ComboTimeEditFormat(const char* label, TimeEditFormat::Format& format)
     return gui::widgets::EnumCombo(label, format);
 }
 
+} // namespace
 } // namespace gui::widgets
 
 } // namespace NAV

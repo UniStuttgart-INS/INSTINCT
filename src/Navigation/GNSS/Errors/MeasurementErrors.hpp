@@ -34,7 +34,7 @@ class GnssMeasurementErrorModel
     GnssMeasurementErrorModel();
 
     /// @brief Models
-    enum Model : int
+    enum Model : uint8_t
     {
         None,        ///< Measurement error model turned off
         SINE,        ///< Sine. See \cite Dach2015 Dach 2015

@@ -63,7 +63,7 @@ class PosVelAttFile : public Node, public FileReader
     constexpr static size_t OUTPUT_PORT_INDEX_HEADER_COLUMNS = 1; ///< @brief Object (std::vector<std::string>)
 
     /// @brief Data included in the file
-    enum class FileContent
+    enum class FileContent : uint8_t
     {
         Pos,       ///< Position only
         PosVel,    ///< Position and Velocity

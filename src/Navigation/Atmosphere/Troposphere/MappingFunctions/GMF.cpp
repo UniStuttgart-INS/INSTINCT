@@ -18,6 +18,10 @@
 
 namespace NAV::internal::GMF
 {
+
+namespace
+{
+
 // degree n and order m
 constexpr int nmax = 9;
 
@@ -63,6 +67,8 @@ std::array<Eigen::Matrix<double, nmax + 1, nmax + 1>, 2> calcLegendrePolynomials
 
     return { V, W };
 }
+
+} // namespace
 
 } // namespace NAV::internal::GMF
 

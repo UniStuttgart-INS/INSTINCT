@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
@@ -173,7 +174,7 @@ class Pos : public NodeData
         States() = delete;
 
         /// @brief State Keys
-        enum StateKeys
+        enum StateKeys : uint8_t
         {
             PosX,         ///< Position ECEF_X [m]
             PosY,         ///< Position ECEF_Y [m]

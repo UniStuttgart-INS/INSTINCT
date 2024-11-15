@@ -40,10 +40,11 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22c = {
         { .satSys = BDS, .alphaBeta = IonosphericCorrections::Beta, .data = { 0.1475e+06, -0.6881e+06, 0.4588e+07, -0.3408e+07 } },
     } },
     .timeSysCorr = {
-        { { BDT, UTC }, { 0.000000000000e+00, 0.000000000000e+00 } },
+        { { BDT, UTC }, { .a0 = 0.000000000000e+00, .a1 = 0.000000000000e+00 } },
     },
     .m_satellites = {
         { { BDS, 16 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<BDSEphemeris>(16, 2022, 8, 11, 11, 0, 0, 0.142745906487e-03, -0.669686528454e-12, 0.000000000000e+00, //
                                                               0.100000000000e+01, 0.648437500000e+01, 0.100147028669e-08, -0.288849817208e+01,        //
@@ -62,8 +63,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22c = {
                                                               0.200000000000e+01, 0.000000000000e+00, -0.249999998481e-08, 0.460000000000e-08,        //
                                                               0.388800000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),        //
                            },
+                           // NOLINTEND
                        } },
         { { BDS, 39 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<BDSEphemeris>(39, 2022, 8, 11, 11, 0, 0, -0.201049260795e-06, -0.116351372981e-12, 0.000000000000e+00, //
                                                               0.100000000000e+01, -0.385000000000e+02, 0.877536552920e-09, -0.205606119447e+01,        //
@@ -74,6 +77,7 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22c = {
                                                               0.200000000000e+01, 0.000000000000e+00, 0.849999981511e-08, 0.850000000000e-08,          //
                                                               0.385200000000e+06, 0.100000000000e+01, 0.000000000000e+00, 0.000000000000e+00),         //
                            },
+                           // NOLINTEND
                        } },
     },
 };

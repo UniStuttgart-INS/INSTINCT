@@ -21,6 +21,7 @@
 #include "NodeData/GNSS/GnssObs.hpp"
 
 #include <array>
+#include <cstdint>
 #include <memory>
 
 namespace NAV
@@ -63,7 +64,7 @@ class VectorNavBinaryConverter : public Node
     void restore(const json& j) override;
 
     /// Enum specifying the type of the output message
-    enum class OutputType
+    enum class OutputType : uint8_t
     {
         ImuObs,       ///< Extract ImuObs data
         ImuObsWDelta, ///< Extract ImuObsWDelta data
@@ -80,7 +81,7 @@ class VectorNavBinaryConverter : public Node
     OutputType _outputType = OutputType::ImuObsWDelta;
 
     /// Enum specifying the source for the PosVelAtt conversion
-    enum PosVelSource
+    enum PosVelSource : uint8_t
     {
         PosVelSource_Best,  ///< INS > GNSS1 > GNSS2
         PosVelSource_Ins,   ///< Take only INS values into account
@@ -111,12 +112,12 @@ class VectorNavBinaryConverter : public Node
     /// @brief Converts the VectorNavBinaryOutput to a ImuObsWDelta observation
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<const ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
+    std::shared_ptr<const ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const;
 
     /// @brief Converts the VectorNavBinaryOutput to a ImuObs observation
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<const ImuObs> convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
+    std::shared_ptr<const ImuObs> convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const;
 
     /// @brief Converts the VectorNavBinaryOutput to a PosVelAtt observation
     /// @param[in] vnObs VectorNavBinaryOutput to process

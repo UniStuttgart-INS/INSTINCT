@@ -76,7 +76,7 @@ bool SNRMask::ShowGuiWidgets(const char* label)
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(INPUT_WIDTH);
                 if (allOverride.second && i != 0) { ImGui::BeginDisabled(); }
-                bool anyValueDiffers = std::any_of(mask.begin(), mask.end(), [&](const auto& freqMask) {
+                bool anyValueDiffers = std::ranges::any_of(mask, [&](const auto& freqMask) {
                     return allOverride.first.at(i) != freqMask.second.first.at(i);
                 });
                 if (anyValueDiffers) { ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]); }
@@ -171,8 +171,8 @@ bool SNRMask::ShowGuiWidgets(const char* label)
 
 bool SNRMask::isInactive() const
 {
-    return std::all_of(mask.begin(), mask.end(), [](const auto& freqMask) {
-        return std::all_of(freqMask.second.first.begin(), freqMask.second.first.end(), [](const auto& SNR) {
+    return std::ranges::all_of(mask, [](const auto& freqMask) {
+        return std::ranges::all_of(freqMask.second.first, [](const auto& SNR) {
             return SNR < 1e-7;
         });
     });

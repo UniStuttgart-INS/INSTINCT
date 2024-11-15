@@ -130,7 +130,7 @@ struct message_logging_tagged_s
 };
 
 /// @brief tag attributes of message_logging_tagged_s
-enum class ulog_tag : uint16_t
+enum class ulog_tag : uint8_t
 {
     unassigned,      ///< Unassigned
     mavlink_handler, ///< MAVLink handler

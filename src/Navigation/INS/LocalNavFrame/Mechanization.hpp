@@ -135,7 +135,7 @@ Eigen::Vector3<typename Derived::Scalar> lla_calcTimeDerivativeForPosition(const
 /// @param[in] z [fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
 /// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 Eigen::Vector<Scalar, 10> n_calcPosVelAttDerivative(const Eigen::Vector<Scalar, 10>& y, const Eigen::Vector<Scalar, 6>& z, const PosVelAttDerivativeConstants<Scalar>& c, Scalar /* t */ = 0.0)
 {
     //  0  1  2  3   4    5    6   7  8  9

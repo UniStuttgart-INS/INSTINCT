@@ -30,7 +30,7 @@ namespace gui::widgets
 struct PositionWithFrame
 {
     /// Reference frames
-    enum class ReferenceFrame
+    enum class ReferenceFrame : uint8_t
     {
         ECEF,  ///< Earth-centered Earth-fixed
         LLA,   ///< Latitude, Longitude, Altitude
@@ -81,7 +81,7 @@ void to_json(json& j, const PositionWithFrame& position);
 void from_json(const json& j, PositionWithFrame& position);
 
 /// Layout options for the Position input
-enum class PositionInputLayout
+enum class PositionInputLayout : uint8_t
 {
     SINGLE_COLUMN, ///< All elements in a single column
     SINGLE_ROW,    ///< All elements in a single row

@@ -37,10 +37,11 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
     .satelliteSystems = { GLO },
     .ionosphericCorrections = {},
     .timeSysCorr = {
-        { { GLNT, UTC }, { 0.139698386192e-08, 0.0 } },
+        { { GLNT, UTC }, { .a0 = 0.139698386192e-08, .a1 = 0.0 } },
     },
     .m_satellites = {
         { { GLO, 24 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GLONASSEphemeris>(2022, 8, 11, 11, 45, 0, 0.108333304524e-03, 0.181898940355e-11, 0.388770000000e+06, //
                                                                   0.172943281250e+05, 0.181065464020e+01, 0.558793544769e-08, 0.000000000000e+00,     //
@@ -55,8 +56,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
                                                                   0.909288671875e+04, 0.364751815796e+00, -0.279396772385e-08, 0.200000000000e+01,    //
                                                                   0.748119677734e+04, -0.338889980316e+01, 0.186264514923e-08, 0.000000000000e+00),   //
                            },
+                           // NOLINTEND
                        } },
         { { GLO, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GLONASSEphemeris>(2022, 8, 11, 11, 45, 0, 0.526603311300e-03, 0.909494701773e-12, 0.388770000000e+06, //
                                                                  0.248142031250e+05, -0.453983306885e+00, 0.558793544769e-08, 0.000000000000e+00,    //
@@ -71,8 +74,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
                                                                  -0.392729882813e+04, 0.887322425842e+00, -0.186264514923e-08, -0.400000000000e+01,  //
                                                                  0.147466245117e+05, 0.275202178955e+01, 0.931322574615e-09, 0.000000000000e+00),    //
                           },
+                          // NOLINTEND
                       } },
         { { GLO, 17 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GLONASSEphemeris>(2022, 8, 11, 11, 45, 0, 0.551442615688e-03, 0.272848410532e-11, 0.388770000000e+06, //
                                                                   0.561331103516e+04, 0.223770999908e+01, 0.372529029846e-08, 0.000000000000e+00,     //
@@ -87,8 +92,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
                                                                   -0.261300878906e+04, 0.132287883759e+01, -0.931322574615e-09, 0.400000000000e+01,   //
                                                                   0.207967924805e+05, -0.160356426239e+01, 0.000000000000e+00, 0.000000000000e+00),   //
                            },
+                           // NOLINTEND
                        } },
         { { GLO, 8 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GLONASSEphemeris>(2022, 8, 11, 11, 45, 0, -0.666277483106e-04, 0.000000000000e+00, 0.388770000000e+06, //
                                                                  -0.108043505859e+04, -0.298648166656e+01, 0.279396772385e-08, 0.000000000000e+00,    //
@@ -103,8 +110,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
                                                                  0.156258193359e+05, 0.130270195007e+01, -0.931322574615e-09, 0.600000000000e+01,     //
                                                                  0.173827475586e+05, -0.235358428955e+01, -0.372529029846e-08, 0.000000000000e+00),   //
                           },
+                          // NOLINTEND
                       } },
         { { GLO, 1 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GLONASSEphemeris>(2022, 8, 11, 12, 15, 0, 0.129472464323e-04, 0.000000000000e+00, 0.388800000000e+06, //
                                                                  0.110683095703e+05, -0.276156330109e+01, 0.465661287308e-08, 0.000000000000e+00,    //
@@ -115,14 +124,17 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
                                                                  0.916439746094e+04, 0.166910076141e+01, -0.186264514923e-08, 0.100000000000e+01,    //
                                                                  0.229989335938e+05, 0.485391616821e-01, -0.931322574615e-09, 0.000000000000e+00),   //
                           },
+                          // NOLINTEND
                       } },
         { { GLO, 11 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GLONASSEphemeris>(2022, 8, 11, 12, 45, 0, 0.307131558657e-04, -0.909494701773e-12, 0.392100000000e+06, //
                                                                   -0.198892236328e+04, 0.141057968140e+00, -0.931322574615e-09, 0.000000000000e+00,    //
                                                                   0.248074682617e+05, -0.775429725647e+00, -0.279396772385e-08, 0.000000000000e+00,    //
                                                                   0.565030126953e+04, 0.346162700653e+01, -0.931322574615e-09, 0.000000000000e+00),    //
                            },
+                           // NOLINTEND
                        } },
     },
 };

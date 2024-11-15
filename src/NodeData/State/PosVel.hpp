@@ -150,7 +150,7 @@ class PosVel : public Pos
         States() = delete;
 
         /// @brief State Keys
-        enum StateKeys
+        enum StateKeys : uint8_t
         {
             PosX,         ///< Position ECEF_X [m]
             PosY,         ///< Position ECEF_Y [m]

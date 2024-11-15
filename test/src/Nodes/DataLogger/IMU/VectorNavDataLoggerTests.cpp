@@ -11,24 +11,28 @@
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-05-15
 
-#include <catch2/catch_test_macros.hpp>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <atomic>
-#include <mutex>
+#if !__APPLE__ // This test continously fails on MacOS but can be recovered by restarting the test a few times. So we decided to disable it
 
-#include "FlowTester.hpp"
+    #include <catch2/catch_test_macros.hpp>
+    #include <string>
+    #include <fstream>
+    #include <sstream>
+    #include <deque>
+    #include <atomic>
+    #include <mutex>
 
-#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+    #include "FlowTester.hpp"
 
-#include "internal/NodeManager.hpp"
+    #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+
+    #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "Logger.hpp"
+    #include "Logger.hpp"
 
 namespace NAV::TESTS::VectorNavDataLoggerTests
+{
+namespace
 {
 [[maybe_unused]] constexpr size_t MESSAGE_COUNT_IMU = 18;  ///< Amount of messages expected in the Imu files
 [[maybe_unused]] constexpr size_t MESSAGE_COUNT_GNSS = 12; ///< Amount of messages expected in the Gnss files
@@ -817,10 +821,10 @@ void compareObservations(std::deque<std::shared_ptr<const NAV::VectorNavBinaryOu
     logs_vnb.reset();
 }
 
+} // namespace
+
 TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", "[VectorNavDataLogger][flow]")
 {
-#if !__APPLE__ // This test continously fails on MacOS but can be recovered by restarting the test a few times. So we decided to disable it
-
     messageCounterImuDataCsv = 0;
     messageCounterImuLogCsv = 0;
     messageCounterImuLogVnb = 0;
@@ -984,8 +988,8 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     CHECK(messageCounterGnssDataCsv == MESSAGE_COUNT_GNSS);
     CHECK(messageCounterGnssLogCsv == MESSAGE_COUNT_GNSS);
     CHECK(messageCounterGnssLogVnb == MESSAGE_COUNT_GNSS);
-
-#endif
 }
 
 } // namespace NAV::TESTS::VectorNavDataLoggerTests
+
+#endif

@@ -17,6 +17,8 @@
 namespace NAV::gui::widgets
 {
 
+namespace
+{
 InputWithUnitChange Unit(const char* label, float unitWidth,
                          int* combo_current_item, const char* combo_items_separated_by_zeros,
                          int combo_popup_max_height_in_items)
@@ -113,6 +115,8 @@ InputWithUnitChange SliderWithUnit(const char* label, float itemWidth, float uni
 
     return retVal;
 }
+
+} // namespace
 
 InputWithUnitChange InputFloatWithUnit(const char* label, float itemWidth, float unitWidth,
                                        float* v, int* combo_current_item, const char* combo_items_separated_by_zeros,

@@ -600,7 +600,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
         invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
     }
-    else if (std::all_of(inputPins.begin(), inputPins.end(), [](const InputPin& inputPin) {
+    else if (std::ranges::all_of(inputPins, [](const InputPin& inputPin) {
                  if (auto* connectedPin = inputPin.link.getConnectedPin())
                  {
                      return connectedPin->noMoreDataAvailable.load();

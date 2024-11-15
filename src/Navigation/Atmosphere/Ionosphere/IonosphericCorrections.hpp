@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <vector>
 #include <optional>
 #include <functional>
@@ -30,7 +31,7 @@ class IonosphericCorrections
 {
   public:
     /// @brief Alpha or beta values
-    enum AlphaBeta
+    enum AlphaBeta : uint8_t
     {
         Alpha, ///< Coefficients of a cubic equation representing the amplitude of the vertical delay
         Beta,  ///< Coefficients of a cubic equation representing the period of the model
@@ -61,7 +62,7 @@ class IonosphericCorrections
     /// @return List with the correction values (3 for GAL, otherwise 4)
     [[nodiscard]] const std::array<double, 4>* get(SatelliteSystem satSys, AlphaBeta alphaBeta) const
     {
-        auto iter = std::find_if(m_ionosphericCorrections.begin(), m_ionosphericCorrections.end(), [satSys, alphaBeta](const Corrections& c) {
+        auto iter = std::ranges::find_if(m_ionosphericCorrections, [satSys, alphaBeta](const Corrections& c) {
             return c.satSys == satSys && c.alphaBeta == alphaBeta;
         });
         if (iter != m_ionosphericCorrections.end())
@@ -76,7 +77,7 @@ class IonosphericCorrections
     /// @param[in] alphaBeta Alpha or beta values (Galileo only alpha)
     [[nodiscard]] bool contains(SatelliteSystem satSys, AlphaBeta alphaBeta) const
     {
-        auto iter = std::find_if(m_ionosphericCorrections.begin(), m_ionosphericCorrections.end(), [satSys, alphaBeta](const Corrections& c) {
+        auto iter = std::ranges::find_if(m_ionosphericCorrections, [satSys, alphaBeta](const Corrections& c) {
             return c.satSys == satSys && c.alphaBeta == alphaBeta;
         });
         return iter != m_ionosphericCorrections.end();
@@ -94,7 +95,7 @@ class IonosphericCorrections
     /// @param[in] values Values to add [s, s/semi-circle, s/semi-circle^2, s/semi-circle^3]
     void insert(SatelliteSystem satSys, AlphaBeta alphaBeta, const std::array<double, 4>& values)
     {
-        auto iter = std::find_if(m_ionosphericCorrections.begin(), m_ionosphericCorrections.end(), [satSys, alphaBeta](const Corrections& c) {
+        auto iter = std::ranges::find_if(m_ionosphericCorrections, [satSys, alphaBeta](const Corrections& c) {
             return c.satSys == satSys && c.alphaBeta == alphaBeta;
         });
         if (iter == m_ionosphericCorrections.end())

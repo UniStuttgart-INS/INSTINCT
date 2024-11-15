@@ -54,7 +54,7 @@ class EmlidObs : public NodeData
         vendor::emlid::ErbSvi,  // SVI: Space vehicle information
         vendor::emlid::ErbRtk   // RTK: RTK information
         >
-        data{};
+        data;
 };
 
 } // namespace NAV

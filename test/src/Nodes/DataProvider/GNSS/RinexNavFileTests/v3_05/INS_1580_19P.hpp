@@ -46,12 +46,13 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
         { .satSys = GAL, .alphaBeta = IonosphericCorrections::Alpha, .data = { 2.8500e+01, 7.8125e-03, 1.1169e-02, 0.0000e+00 } },
     } },
     .timeSysCorr = {
-        { { GPST, UTC }, { -3.7252902985e-09, -7.105427358e-15 } },
-        { { GST, UTC }, { -9.3132257462e-10, 0.000000000e+00 } },
-        { { GST, GPST }, { 3.6961864680e-09, -1.332267630e-15 } },
+        { { GPST, UTC }, { .a0 = -3.7252902985e-09, .a1 = -7.105427358e-15 } },
+        { { GST, UTC }, { .a0 = -9.3132257462e-10, .a1 = 0.000000000e+00 } },
+        { { GST, GPST }, { .a0 = 3.6961864680e-09, .a1 = -1.332267630e-15 } },
     },
     .m_satellites = {
         { { GPS, 1 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -3.462424501777e-05, -9.436007530894e-12, 0.000000000000e+00, //
                                                              4.100000000000e+01, -1.273437500000e+02, 4.150530029093e-09, 2.600635796634e+00,    //
@@ -70,8 +71,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                              2.000000000000e+00, 0.000000000000e+00, 5.587935447693e-09, 5.100000000000e+01,     //
                                                              4.248180000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
         { { GPS, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -2.312315627933e-04, -8.981260180008e-12, 0.000000000000e+00, //
                                                              6.600000000000e+01, -1.488750000000e+02, 4.714482091388e-09, 2.879261055706e+00,    //
@@ -82,8 +85,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                              2.000000000000e+00, 0.000000000000e+00, -2.048909664154e-08, 6.600000000000e+01,    //
                                                              4.240260000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
         { { GLO, 4 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GLONASSEphemeris>(2019, 6, 6, 21, 15, 0, 3.091366961598e-04, 9.094947017729e-13, 4.212000000000e+05, //
                                                                  -4.091441894531e+03, -1.242310523987e+00, 9.313225746155e-10, 0.000000000000e+00,  //
@@ -96,8 +101,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                                  1.148081054688e+04, -3.093800544739e+00, -2.793967723846e-09, 0.000000000000e+00,  //
                                                                  2.470000000000e+02, -2.793967723846e-09, 3.000000000000e+00, 0.000000000000e+00),  //
                           },
+                          // NOLINTEND
                       } },
         { { GLO, 5 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GLONASSEphemeris>(2019, 6, 6, 23, 15, 0, 2.956017851830e-05, 9.094947017729e-13, 4.284000000000e+05, //
                                                                  2.064522460938e+03, 2.200222015381e-02, 1.862645149231e-09, 0.000000000000e+00,    //
@@ -105,8 +112,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                                  9.612238769531e+03, -3.253516197205e+00, -2.793967723846e-09, 0.000000000000e+00,  //
                                                                  1.830000000000e+02, 2.793967723846e-09, 1.000000000000e+00, 0.000000000000e+00),   //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 22, 40, 0, 6.366008892655e-05, 1.733724275255e-12, 0.000000000000e+00, //
                                                                  7.200000000000e+01, 1.047812500000e+02, 2.312596328920e-09, -7.626860954287e-01,   //
@@ -125,8 +134,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                                  3.120000000000e+00, 0.000000000000e+00, -3.259629011154e-09, -4.190951585770e-09,  //
                                                                  4.284650000000e+05),                                                               //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 3 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 22, 50, 0, -1.744942856021e-04, -4.149569576839e-12, 0.000000000000e+00, //
                                                                  7.300000000000e+01, 1.693750000000e+01, 3.498717164185e-09, -2.962133938551e+00,     //
@@ -137,6 +148,7 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                                  3.120000000000e+00, 0.000000000000e+00, 6.984919309616e-10, 9.313225746155e-10,      //
                                                                  4.284650000000e+05),                                                                 //
                           },
+                          // NOLINTEND
                       } },
         // { { SBAS, 36 }, Satellite{
         //                     .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
@@ -167,6 +179,7 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
         //                     },
         //                 } },
         { { BDS, 5 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<BDSEphemeris>(5, 2019, 6, 6, 22, 0, 0, -2.213711850345e-04, -4.911271389574e-11, 0.000000000000e+00, //
                                                              1.000000000000e+00, -4.562968750000e+02, -3.752656313198e-09, -1.273125246548e+00,     //
@@ -185,8 +198,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                              2.000000000000e+00, 0.000000000000e+00, -4.000000000000e-10, -8.900000000000e-09,      //
                                                              4.284276000000e+05, 0.000000000000e+00),                                               //
                           },
+                          // NOLINTEND
                       } },
         { { BDS, 6 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<BDSEphemeris>(6, 2019, 6, 6, 20, 0, 0, 9.215852478519e-04, -3.255529179569e-11, 0.000000000000e+00, //
                                                              1.000000000000e+00, 7.567187500000e+01, 1.792931825664e-09, -1.855979805191e+00,      //
@@ -197,8 +212,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                              2.000000000000e+00, 0.000000000000e+00, 8.100000000000e-09, -1.800000000000e-09,      //
                                                              4.176180000000e+05, 0.000000000000e+00),                                              //
                           },
+                          // NOLINTEND
                       } },
         { { QZSS, 2 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<QZSSEphemeris>(2019, 6, 7, 0, 0, 0, -1.583248376846e-07, -2.273736754432e-13, 0.000000000000e+00, //
                                                                2.900000000000e+01, 2.212812500000e+02, 1.510420057915e-09, -2.724294029461e+00,   //
@@ -217,6 +234,7 @@ const GnssNavInfo gnssNavInfo_INS_1580_19P = {
                                                                2.800000000000e+00, 0.000000000000e+00, 1.396983861923e-09, 8.010000000000e+02,    //
                                                                4.320180000000e+05, 0.000000000000e+00),                                           //
                            },
+                           // NOLINTEND
                        } },
     },
 };

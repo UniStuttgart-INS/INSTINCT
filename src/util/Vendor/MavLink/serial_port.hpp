@@ -154,7 +154,7 @@ class Serial_Port : public Generic_Port
     /// @param[in] stop_bits Stop bits
     /// @param[in] parity Parity
     /// @param[in] hardware_control Hardware control
-    bool _setup_port(int baud, int data_bits, int stop_bits, bool parity, bool hardware_control); // NOLINT(readability-make-member-function-const)
+    [[nodiscard]] bool _setup_port(int baud, int data_bits, int stop_bits, bool parity, bool hardware_control) const;
 
     /// @brief Read port
     /// @param[in] cp Port to read

@@ -189,8 +189,6 @@
         "CMakeUserPresets.json": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
-        "default.nix": true,
-        "flake.nix": true,
         "flake.lock": true,
     },
     "todo-tree.filtering.excludeGlobs": [

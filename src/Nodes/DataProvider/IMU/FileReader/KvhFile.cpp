@@ -80,7 +80,7 @@ void NAV::KvhFile::guiConfig()
 
             auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
                 ImGui::TableSetColumnIndex(index);
-                if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
+                if (alwaysNormal || std::ranges::find(_headerColumns, searchText) != _headerColumns.end())
                 {
                     ImGui::TextUnformatted(displayText);
                 }
@@ -201,7 +201,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
         std::string line;
         getline(line);
         // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+        line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
         if (line.empty())
         {
@@ -231,7 +231,7 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
             if (std::getline(lineStream, cell, ','))
             {
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
                 if (cell.empty())
                 {
                     continue;
@@ -381,7 +381,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
         std::getline(filestream, line);
         filestream.close();
 
-        auto n = std::count(line.begin(), line.end(), ',');
+        auto n = std::ranges::count(line, ',');
 
         if (n >= 3)
         {

@@ -82,11 +82,17 @@ class MavlinkSend : public Node
     void receivePosVelAtt(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// Available PortTypes
-    enum class PortType
+    enum class PortType : uint8_t
     {
         Serial_Port, ///< Serial_Port
         UDP_Port,    ///< UDP_Port
     };
+
+    /// Serial or UDP port
+    std::shared_ptr<Generic_Port> port;
+
+    /// Autopilot interface
+    Autopilot_Interface autopilot_interface;
 
     /// Port type
     PortType _portType = PortType::Serial_Port;
@@ -115,7 +121,7 @@ class MavlinkSend : public Node
     std::string _serialPort;
 
     /// Available Baudrates
-    enum class Baudrate
+    enum class Baudrate : uint8_t
     {
         BAUDRATE_1200,    ///< Baudrate with    1200 symbols per second [Baud]
         BAUDRATE_2400,    ///< Baudrate with    2400 symbols per second [Baud]

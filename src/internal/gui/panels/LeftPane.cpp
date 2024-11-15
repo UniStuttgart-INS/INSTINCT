@@ -135,7 +135,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
                                                         5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
 
-            bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
+            bool isSelected = std::ranges::find(selectedNodes, node->id) != selectedNodes.end();
             if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
             if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {

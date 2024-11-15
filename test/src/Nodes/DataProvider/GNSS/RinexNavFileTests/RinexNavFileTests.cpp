@@ -64,6 +64,9 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::RinexNavFileTests
 {
 
+namespace
+{
+
 void testRinexNavFileFlow(const std::string& path, const GnssNavInfo& gnssNavInfoRef)
 {
     auto logger = initializeTestLogger();
@@ -90,6 +93,8 @@ void testRinexNavFileFlow(const std::string& path, const GnssNavInfo& gnssNavInf
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexNavFile.flow"));
 }
+
+} // namespace
 
 // ###########################################################################################################
 //                                                   v2.01

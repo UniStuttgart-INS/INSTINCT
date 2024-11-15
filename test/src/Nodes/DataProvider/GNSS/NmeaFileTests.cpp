@@ -13,6 +13,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <CatchMatchers.hpp>
+#include <cstdint>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -31,7 +32,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::NMEAFileTests
 {
 
-enum NmeaRef : size_t
+enum NmeaRef : uint8_t
 {
     NMEA_Year,
     NMEA_Month,
@@ -49,6 +50,9 @@ constexpr std::array<std::array<double, 9>, 3> NMEA_REFERENCE_DATA = { {
     { 2022, 11, 5, 16, 16, 1.756, 0.916802548339058, 0.234095485694035, 0.0 },
     { 2022, 11, 3, 14, 05, 18.000, 0.851383885268465, 0.160074500200709, 327.812 },
 } };
+
+namespace
+{
 
 void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messageCounterNMEA)
 {
@@ -73,6 +77,8 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
     REQUIRE(std::isnan(obs->e_velocity()[1]));
     REQUIRE(std::isnan(obs->e_velocity()[2]));
 }
+
+} // namespace
 
 TEST_CASE("[NMEAFile][flow] Read 'test.nmea'", "[NMEAFile][flow]")
 {

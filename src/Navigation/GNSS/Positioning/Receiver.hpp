@@ -49,7 +49,7 @@ struct Receiver
     /// Estimated receiver clock parameters
     ReceiverClock recvClk;
     /// Inter frequency biases [s]
-    std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias = std::unordered_map<Frequency, UncertainValue<double>>{};
+    std::unordered_map<Frequency, UncertainValue<double>> interFrequencyBias;
     /// Latest GNSS observation
     std::shared_ptr<const GnssObs> gnssObs = nullptr;
 

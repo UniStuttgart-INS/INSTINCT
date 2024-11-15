@@ -48,7 +48,7 @@ uint8_t gpsUraVal2Idx(double val)
 {
     constexpr std::array<double, 15> URA = { 2.4, 3.4, 4.85, 6.85, 9.65, 13.65, 24.0, 48.0, 96.0, 192.0, 384.0, 768.0, 1536.0, 3072.0, 6144.0 };
     return val < 0.0 ? static_cast<uint8_t>(URA.size())
-                     : static_cast<uint8_t>(std::lower_bound(URA.begin(), URA.end(), val) - URA.begin());
+                     : static_cast<uint8_t>(std::ranges::lower_bound(URA, val) - URA.begin());
 }
 
 double gpsUraIdx2Val(uint8_t idx)

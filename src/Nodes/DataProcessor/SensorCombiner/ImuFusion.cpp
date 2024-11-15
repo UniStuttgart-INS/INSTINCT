@@ -37,7 +37,7 @@ namespace NAV
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinData& data)
+static void to_json(json& j, const PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -68,7 +68,7 @@ void to_json(json& j, const PinData& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinData& data)
+static void from_json(const json& j, PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
     if (j.contains("initAngularRateBias"))
@@ -158,7 +158,7 @@ void from_json(const json& j, PinData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinDataIRWKF& data)
+static void to_json(json& j, const PinDataIRWKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -185,7 +185,7 @@ void to_json(json& j, const PinDataIRWKF& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinDataIRWKF& data)
+static void from_json(const json& j, PinDataIRWKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
     if (j.contains("initAngularRate"))
@@ -260,7 +260,7 @@ void from_json(const json& j, PinDataIRWKF& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinDataBsplineKF& data)
+static void to_json(json& j, const PinDataBsplineKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -283,7 +283,7 @@ void to_json(json& j, const PinDataBsplineKF& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinDataBsplineKF& data)
+static void from_json(const json& j, PinDataBsplineKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
 
@@ -339,6 +339,7 @@ void from_json(const json& j, PinDataBsplineKF& data)
         j.at("varCoeffsAccelUnit").get_to(data.varCoeffsAccelUnit);
     }
 }
+
 } // namespace NAV
 
 NAV::ImuFusion::ImuFusion()

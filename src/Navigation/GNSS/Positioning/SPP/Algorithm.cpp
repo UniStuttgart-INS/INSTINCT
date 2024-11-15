@@ -152,7 +152,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         LOG_DATA("{}: nMeasDopp   = {}", nameId, sppSol->nMeasDopp);
         for (const auto& satSys : observations.systems)
         {
-            [[maybe_unused]] auto satCount = std::count_if(observations.satellites.begin(), observations.satellites.end(), [&](const SatId& satId) {
+            [[maybe_unused]] auto satCount = std::ranges::count_if(observations.satellites, [&](const SatId& satId) {
                 return satId.satSys == satSys;
             });
 
@@ -269,8 +269,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 sppSol->satData.reserve(observations.satellites.size());
                 for (const auto& [satSigId, signalObs] : observations.signals)
                 {
-                    if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
-                                     [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                    if (std::ranges::find_if(sppSol->satData,
+                                             [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
                         == sppSol->satData.end())
                     {
                         sppSol->satData.emplace_back(satSigId.toSatId(),
@@ -305,8 +305,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             sppSol->satData.reserve(observations.satellites.size());
             for (const auto& [satSigId, signalObs] : observations.signals)
             {
-                if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
-                                 [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                if (std::ranges::find_if(sppSol->satData,
+                                         [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
                     == sppSol->satData.end())
                 {
                     sppSol->satData.emplace_back(satSigId.toSatId(),
@@ -428,7 +428,7 @@ std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<S
                       + usedSatSystems.size() * (1 + canCalculateVelocity(nDoppMeas)));
     if (canCalculateVelocity(nDoppMeas))
     {
-        std::copy(VelKey.cbegin(), VelKey.cend(), std::back_inserter(stateKeys));
+        std::ranges::copy(VelKey, std::back_inserter(stateKeys));
     }
 
     for (const auto& satSys : usedSatSystems)

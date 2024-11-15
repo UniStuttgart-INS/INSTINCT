@@ -24,11 +24,11 @@ bool NAV::vendor::espressif::decryptWiFiObs(const std::shared_ptr<NAV::WiFiObs>&
         packet.extractUint16(); // payloadLength
         // Mac address
         std::array<uint8_t, 6> mac{};
-        std::generate(mac.begin(), mac.end(), [&]() { return packet.extractUint8(); });
+        std::ranges::generate(mac, [&]() { return packet.extractUint8(); });
         // Format the MAC address in the correct order (independent of compiler)
         obs->macAddress = fmt::format("{:02X}:{:02X}:{:02X}:{:02X}:{:02X}:{:02X}",
                                       mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-        std::transform(obs->macAddress.begin(), obs->macAddress.end(), obs->macAddress.begin(), ::toupper); // Convert to uppercase
+        std::ranges::transform(obs->macAddress, obs->macAddress.begin(), ::toupper); // Convert to uppercase
         // Distance
         int rtt = packet.extractInt32(); // Round trip time in picoseconds
         obs->distance = static_cast<double>(rtt) * InsConst::C_AIR * 1e-12 / 2;

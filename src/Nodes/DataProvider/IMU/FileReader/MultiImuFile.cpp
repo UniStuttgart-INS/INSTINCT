@@ -123,30 +123,12 @@ void NAV::MultiImuFile::guiConfig()
             if (ImGui::InputFloat3(fmt::format("Rotation Accel [deg]##{}", size_t(id)).c_str(), imuRotAccel.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                if (imuRotAccel.at(0) < -179.9999F)
-                {
-                    imuRotAccel.at(0) = -179.9999F;
-                }
-                if (imuRotAccel.at(0) > 180)
-                {
-                    imuRotAccel.at(0) = 180;
-                }
-                if (imuRotAccel.at(1) < -89.9999F)
-                {
-                    imuRotAccel.at(1) = -89.9999F;
-                }
-                if (imuRotAccel.at(1) > 90)
-                {
-                    imuRotAccel.at(1) = 90;
-                }
-                if (imuRotAccel.at(2) < -179.9999F)
-                {
-                    imuRotAccel.at(2) = -179.9999F;
-                }
-                if (imuRotAccel.at(2) > 180)
-                {
-                    imuRotAccel.at(2) = 180;
-                }
+                imuRotAccel.at(0) = std::max(imuRotAccel.at(0), -179.9999F);
+                imuRotAccel.at(0) = std::min(imuRotAccel.at(0), 180.0F);
+                imuRotAccel.at(1) = std::max(imuRotAccel.at(1), -89.9999F);
+                imuRotAccel.at(1) = std::min(imuRotAccel.at(1), 90.0F);
+                imuRotAccel.at(2) = std::max(imuRotAccel.at(2), -179.9999F);
+                imuRotAccel.at(2) = std::min(imuRotAccel.at(2), 180.0F);
 
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatAccel_p = trafo::b_Quat_p(deg2rad(imuRotAccel.at(0)), deg2rad(imuRotAccel.at(1)), deg2rad(imuRotAccel.at(2)));
@@ -157,30 +139,12 @@ void NAV::MultiImuFile::guiConfig()
             if (ImGui::InputFloat3(fmt::format("Rotation Gyro [deg]##{}", size_t(id)).c_str(), imuRotGyro.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                if (imuRotGyro.at(0) < -179.9999F)
-                {
-                    imuRotGyro.at(0) = -179.9999F;
-                }
-                if (imuRotGyro.at(0) > 180)
-                {
-                    imuRotGyro.at(0) = 180;
-                }
-                if (imuRotGyro.at(1) < -89.9999F)
-                {
-                    imuRotGyro.at(1) = -89.9999F;
-                }
-                if (imuRotGyro.at(1) > 90)
-                {
-                    imuRotGyro.at(1) = 90;
-                }
-                if (imuRotGyro.at(2) < -179.9999F)
-                {
-                    imuRotGyro.at(2) = -179.9999F;
-                }
-                if (imuRotGyro.at(2) > 180)
-                {
-                    imuRotGyro.at(2) = 180;
-                }
+                imuRotGyro.at(0) = std::max(imuRotGyro.at(0), -179.9999F);
+                imuRotGyro.at(0) = std::min(imuRotGyro.at(0), 180.0F);
+                imuRotGyro.at(1) = std::max(imuRotGyro.at(1), -89.9999F);
+                imuRotGyro.at(1) = std::min(imuRotGyro.at(1), 90.0F);
+                imuRotGyro.at(2) = std::max(imuRotGyro.at(2), -179.9999F);
+                imuRotGyro.at(2) = std::min(imuRotGyro.at(2), 180.0F);
 
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatGyro_p = trafo::b_Quat_p(deg2rad(imuRotGyro.at(0)), deg2rad(imuRotGyro.at(1)), deg2rad(imuRotGyro.at(2)));
@@ -191,30 +155,12 @@ void NAV::MultiImuFile::guiConfig()
             if (ImGui::InputFloat3(fmt::format("Rotation Mag [deg]##{}", size_t(id)).c_str(), imuRotMag.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                if (imuRotMag.at(0) < -179.9999F)
-                {
-                    imuRotMag.at(0) = -179.9999F;
-                }
-                if (imuRotMag.at(0) > 180)
-                {
-                    imuRotMag.at(0) = 180;
-                }
-                if (imuRotMag.at(1) < -89.9999F)
-                {
-                    imuRotMag.at(1) = -89.9999F;
-                }
-                if (imuRotMag.at(1) > 90)
-                {
-                    imuRotMag.at(1) = 90;
-                }
-                if (imuRotMag.at(2) < -179.9999F)
-                {
-                    imuRotMag.at(2) = -179.9999F;
-                }
-                if (imuRotMag.at(2) > 180)
-                {
-                    imuRotMag.at(2) = 180;
-                }
+                imuRotMag.at(0) = std::max(imuRotMag.at(0), -179.9999F);
+                imuRotMag.at(0) = std::min(imuRotMag.at(0), 180.0F);
+                imuRotMag.at(1) = std::max(imuRotMag.at(1), -89.9999F);
+                imuRotMag.at(1) = std::min(imuRotMag.at(1), 90.0F);
+                imuRotMag.at(2) = std::max(imuRotMag.at(2), -179.9999F);
+                imuRotMag.at(2) = std::min(imuRotMag.at(2), 180.0F);
 
                 flow::ApplyChanges();
                 _imuPosAll[i]._b_quatMag_p = trafo::b_Quat_p(deg2rad(imuRotMag.at(0)), deg2rad(imuRotMag.at(1)), deg2rad(imuRotMag.at(2)));
@@ -315,14 +261,12 @@ NAV::FileReader::FileType NAV::MultiImuFile::determineFileType()
 {
     LOG_TRACE("called");
 
-    auto filepath = getFilepath();
-
     if (good())
     {
         return FileType::ASCII;
     }
 
-    LOG_ERROR("Could not open file {}", filepath.string());
+    LOG_ERROR("Could not open file {}", getFilepath().string());
     return FileType::NONE;
 }
 
@@ -344,7 +288,7 @@ void NAV::MultiImuFile::readHeader()
         _lineCounter++;
 
         // Remove any trailing non text characters
-        line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+        line.erase(std::ranges::find_if(line, [](int ch) { return std::iscntrl(ch); }), line.end());
 
         if ((line.find(gpzda)) != std::string::npos)
         {
@@ -367,7 +311,7 @@ void NAV::MultiImuFile::readHeader()
                 if (std::getline(lineStream, cell, ','))
                 {
                     // Remove any trailing non text characters
-                    cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                    cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
                     while (cell.empty())
                     {
                         std::getline(lineStream, cell, ',');
@@ -453,7 +397,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
             _lineCounter++;
 
             // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+            line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
             if (line.empty())
             {
@@ -481,7 +425,7 @@ std::shared_ptr<const NAV::NodeData> NAV::MultiImuFile::pollData(size_t pinIdx, 
                 if (std::getline(lineStream, cell, _delim))
                 {
                     // Remove any trailing non text characters
-                    cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                    cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
                     while (cell.empty())
                     {
                         std::getline(lineStream, cell, ' ');

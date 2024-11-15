@@ -12,6 +12,7 @@
 #include "Navigation/Constants.hpp"
 #include <cmath>
 #include <array>
+#include <numbers>
 
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(double theta, size_t ndegree)
 {
@@ -27,8 +28,8 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(do
 #endif
     // Recurrence relations for the normalized associated Legendre functions (see 'GUT User Guide' eq. 4.2.2 and eq. 4.2.3)
     P(0, 0) = 1.0;
-    P(1, 0) = std::sqrt(3.0) * std::cos(theta);
-    P(1, 1) = std::sqrt(3.0) * std::sin(theta);
+    P(1, 0) = std::numbers::sqrt3 * std::cos(theta);
+    P(1, 1) = std::numbers::sqrt3 * std::sin(theta);
 #if defined(__GNUC__) || defined(__clang__)
     #pragma GCC diagnostic pop
 #endif
@@ -56,8 +57,8 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(do
 
     // Recurrence relations for the derivative of the normalized associated Legendre functions (see 'GUT User Guide' eq. 4.2.6)
     Pd(0, 0) = 0.0;
-    Pd(1, 0) = -std::sqrt(3.0) * std::sin(theta);
-    Pd(1, 1) = std::sqrt(3.0) * std::cos(theta);
+    Pd(1, 0) = -std::numbers::sqrt3 * std::sin(theta);
+    Pd(1, 1) = std::numbers::sqrt3 * std::cos(theta);
 
     for (int n = 2; n <= N - 1; n++) // 2nd for-loop is necessary, because for the calculation of 'Pd', all coefficients of 'P' must be available
     {

@@ -95,7 +95,7 @@ class WiFiPositioning : public Node
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
     /// @brief Available Frames
-    enum class Frame : int
+    enum class Frame : uint8_t
     {
         ECEF, ///< Earth-Centered Earth-Fixed frame
         LLA,  ///< Latitude-Longitude-Altitude frame
@@ -104,7 +104,7 @@ class WiFiPositioning : public Node
     Frame _frame = Frame::ECEF;
 
     /// @brief Available Solution Modes
-    enum class SolutionMode : int
+    enum class SolutionMode : uint8_t
     {
         LSQ, ///< Least Squares
         KF,  ///< Kalman Filter
@@ -157,7 +157,7 @@ class WiFiPositioning : public Node
     struct Device
     {
         Eigen::Vector3d position{ Eigen::Vector3d::Zero() }; ///< Position vector
-        InsTime time{};                                      ///< Time
+        InsTime time;                                        ///< Time
         double distance{ 0.0 };                              ///< Distance
         double distanceStd{ 0.0 };                           ///< Standard deviation of distance measurement
     };
@@ -182,7 +182,7 @@ class WiFiPositioning : public Node
     // ###########################################################################################################
 
     /// Possible Units for the measurement noise (standard deviation σ or Variance σ²)
-    enum class MeasurementNoiseUnit
+    enum class MeasurementNoiseUnit : uint8_t
     {
         meter2, ///< Variance NED [m^2, m^2, m^2]
         meter,  ///< Standard deviation NED [m, m, m]
@@ -196,7 +196,7 @@ class WiFiPositioning : public Node
     // ###########################################################################################################
 
     /// @brief Possible Units for the process noise (standard deviation σ or Variance σ²)
-    enum class ProcessNoiseUnit
+    enum class ProcessNoiseUnit : uint8_t
     {
         meter2, ///< Variance NED [m^2, m^2, m^2]
         meter,  ///< Standard deviation NED [m, m, m]
@@ -210,7 +210,7 @@ class WiFiPositioning : public Node
     // ###########################################################################################################
 
     /// @brief Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
-    enum class InitCovariancePositionUnit
+    enum class InitCovariancePositionUnit : uint8_t
     {
         meter2, ///< Variance NED [m^2, m^2, m^2]
         meter,  ///< Standard deviation NED [m, m, m]
@@ -224,7 +224,7 @@ class WiFiPositioning : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the velocity (standard deviation σ or Variance σ²)
-    enum class InitCovarianceVelocityUnit
+    enum class InitCovarianceVelocityUnit : uint8_t
     {
         m2_s2, ///< Variance [m^2/s^2]
         m_s,   ///< Standard deviation [m/s]
@@ -238,7 +238,7 @@ class WiFiPositioning : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the bias (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasUnit
+    enum class InitCovarianceBiasUnit : uint8_t
     {
         meter2, ///< Variance [m^2]
         meter,  ///< Standard deviation [m]

@@ -63,10 +63,7 @@ double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq, int8_t fre
     {
         PER += beta.at(n) * std::pow(phi_m, n);
     }
-    if (PER < 72000.0)
-    {
-        PER = 72000.0;
-    }
+    PER = std::max(PER, 72000.0);
     LOG_DATA("PER {} [s] (Period of the model)", PER);
 
     // Amplitude of the vertical delay in [s]
@@ -75,10 +72,7 @@ double calcIonosphericTimeDelay_Klobuchar(double tow, Frequency freq, int8_t fre
     {
         AMP += alpha.at(n) * std::pow(phi_m, n);
     }
-    if (AMP < 0.0)
-    {
-        AMP = 0.0;
-    }
+    AMP = std::max(AMP, 0.0);
     LOG_DATA("AMP {} [s] (Amplitude of the vertical delay)", AMP);
 
     // Phase [rad]

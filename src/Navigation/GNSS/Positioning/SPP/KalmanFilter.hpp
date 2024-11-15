@@ -120,7 +120,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     // ###########################################################################################################
 
     /// Possible Units for the P matrix initialization velocity uncertainty
-    enum class InitCovarianceVelocityUnits
+    enum class InitCovarianceVelocityUnits : uint8_t
     {
         m_s,   ///< [ m / s ]
         m2_s2, ///< [ m^2 / s^2 ]
@@ -136,7 +136,7 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     // ###########################################################################################################
 
     /// Possible Units for the P matrix initialization clock drift uncertainty
-    enum class InitCovarianceClockDriftUnits
+    enum class InitCovarianceClockDriftUnits : uint8_t
     {
         m_s,   ///< [ m / s ]
         s_s,   ///< [ s / s ]

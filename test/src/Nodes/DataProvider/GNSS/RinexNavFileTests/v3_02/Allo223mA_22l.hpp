@@ -39,11 +39,12 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
         { .satSys = GAL, .alphaBeta = IonosphericCorrections::Alpha, .data = { 0.9600e+02, 0.2891e+00, 0.1132e-01 } },
     } },
     .timeSysCorr = {
-        { { GST, UTC }, { -0.1862645149e-08, 0.888178420e-15 } },
-        { { GST, GPST }, { 0.1600710675e-08, 0.355271368e-14 } },
+        { { GST, UTC }, { .a0 = -0.1862645149e-08, .a1 = 0.888178420e-15 } },
+        { { GST, GPST }, { .a0 = 0.1600710675e-08, .a1 = 0.355271368e-14 } },
     },
     .m_satellites = {
         { { GAL, 12 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GalileoEphemeris>(2022, 8, 11, 11, 10, 0, -0.109432556201e-03, -0.200373051484e-10, 0.000000000000e+00, //
                                                                   0.300000000000e+01, 0.152093750000e+03, 0.296619498250e-08, 0.594633784838e+00,       //
@@ -54,8 +55,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
                                                                   0.312000000000e+01, 0.000000000000e+00, -0.102445483208e-07, -0.100117176771e-07,     //
                                                                   0.386485000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),      //
                            },
+                           // NOLINTEND
                        } },
         { { GAL, 4 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2022, 8, 11, 11, 10, 0, -0.109109678306e-02, -0.828492829896e-11, 0.000000000000e+00, //
                                                                  0.300000000000e+01, -0.114000000000e+03, 0.270439836333e-08, 0.779660129094e+00,      //
@@ -66,8 +69,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
                                                                  0.312000000000e+01, 0.000000000000e+00, -0.279396772385e-08, -0.302679836750e-08,     //
                                                                  0.386464000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),      //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 10 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GalileoEphemeris>(2022, 8, 11, 11, 50, 0, -0.506716956987e-03, -0.262900812231e-11, 0.000000000000e+00, //
                                                                   0.700000000000e+01, 0.152312500000e+03, 0.292583615853e-08, -0.529350941203e+00,      //
@@ -78,6 +83,7 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
                                                                   0.360000000000e+01, 0.455000000000e+03, 0.465661287308e-09, 0.116415321827e-08,       //
                                                                   0.391965000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),      //
                            },
+                           // NOLINTEND
                        } },
     },
 };

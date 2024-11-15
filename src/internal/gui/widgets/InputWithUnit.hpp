@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <imgui.h>
 #include <string>
 
@@ -37,7 +38,7 @@ template<typename T>
 namespace gui::widgets
 {
 /// Return value signaling that the input or the unit changed
-enum InputWithUnitChange : int
+enum InputWithUnitChange : uint8_t
 {
     InputWithUnitChange_None = 0, ///< Nothing changed
     InputWithUnitChange_Input,    ///< The Input changed

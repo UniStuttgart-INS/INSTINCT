@@ -34,11 +34,14 @@ namespace NAV::gui::windows
 std::string plotScreenshotImPlotStyleFile = "implot-light.json";
 bool copyScreenshotsToClipboard = true;
 
+namespace
+{
 ImRect _screenshotNavigateRect;
 ImRect _screenshotCaptureRect;
 bool _showScreenshotCaptureRect = false;
 size_t _screenshotFrameCnt = 0;
 
+} // namespace
 } // namespace NAV::gui::windows
 
 void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)

@@ -10,6 +10,7 @@
 
 #include <imgui.h>
 #include <unordered_set>
+#include <algorithm>
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/BDSEphemeris.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/QZSSEphemeris.hpp"
@@ -115,7 +116,7 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
                 for (const auto& num : satSystem.getSatellites())
                 {
                     SatId satId{ satSystem, num };
-                    auto iter = std::find(satellites.begin(), satellites.end(), satId);
+                    auto iter = std::ranges::find(satellites, satId);
                     bool isExcluded = iter != satellites.end();
                     if (!SatelliteSystem_(satSystem & filterSys) || satId.isGeo()) { ImGui::BeginDisabled(); }
 
@@ -132,7 +133,7 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
                         if (isExcluded)
                         {
                             satellites.push_back(satId);
-                            std::sort(satellites.begin(), satellites.end());
+                            std::sort(satellites.begin(), satellites.end()); // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::sort is not supported yet
                         }
                         else
                         {

@@ -71,7 +71,7 @@ class ErrorModel : public Node
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
     /// Input type
-    enum class InputType
+    enum class InputType : uint8_t
     {
         None,         ///< None
         ImuObs,       ///< ImuObs
@@ -223,7 +223,7 @@ class ErrorModel : public Node
     // --------------------------------------------------------------- Offset ------------------------------------------------------------------
 
     /// Possible units to specify a position bias with
-    enum class PositionBiasUnits
+    enum class PositionBiasUnits : uint8_t
     {
         meter,     ///< NED [m m m]
         rad_rad_m, ///< LatLonAlt [rad, rad, m]
@@ -235,7 +235,7 @@ class ErrorModel : public Node
     Eigen::Vector3d _positionBias = Eigen::Vector3d::Zero();
 
     /// Possible units to specify an velocity bias with
-    enum class VelocityBiasUnits
+    enum class VelocityBiasUnits : uint8_t
     {
         m_s, ///< [m/s]
     };
@@ -245,7 +245,7 @@ class ErrorModel : public Node
     Eigen::Vector3d _velocityBias = Eigen::Vector3d::Zero();
 
     /// Possible units to specify a attitude bias with
-    enum class AttitudeBiasUnits
+    enum class AttitudeBiasUnits : uint8_t
     {
         rad, ///< [rad]
         deg, ///< [deg]
@@ -258,7 +258,7 @@ class ErrorModel : public Node
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
     /// Possible units to specify a position noise with
-    enum class PositionNoiseUnits
+    enum class PositionNoiseUnits : uint8_t
     {
         meter,        ///< NED [m m m] (Standard deviation)
         rad_rad_m,    ///< LatLonAlt [rad, rad, m] (Standard deviation)
@@ -275,7 +275,7 @@ class ErrorModel : public Node
     /// Random number generator for the position noise
     RandomNumberGenerator _positionRng;
     /// Possible units to specify an velocity noise with
-    enum class VelocityNoiseUnits
+    enum class VelocityNoiseUnits : uint8_t
     {
         m_s,   ///< [m/s] (Standard deviation)
         m2_s2, ///< [m^2/s^2] (Variance)
@@ -288,7 +288,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _velocityRng;
 
     /// Possible units to specify a attitude noise with
-    enum class AttitudeNoiseUnits
+    enum class AttitudeNoiseUnits : uint8_t
     {
         rad,  ///< [rad] (Standard deviation)
         deg,  ///< [deg] (Standard deviation)
@@ -309,7 +309,7 @@ class ErrorModel : public Node
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
     /// Possible units to specify a pseudorange noise with
-    enum class PseudorangeNoiseUnits
+    enum class PseudorangeNoiseUnits : uint8_t
     {
         meter, ///< [m] (Standard deviation)
     };
@@ -321,7 +321,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _pseudorangeRng;
 
     /// Possible units to specify a carrier-phase noise with
-    enum class CarrierPhaseNoiseUnits
+    enum class CarrierPhaseNoiseUnits : uint8_t
     {
         meter, ///< [m] (Standard deviation)
     };
@@ -333,7 +333,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _carrierPhaseRng;
 
     /// Possible units to specify a range-rate noise with
-    enum class DopplerNoiseUnits
+    enum class DopplerNoiseUnits : uint8_t
     {
         m_s, ///< [m/s] (Standard deviation)
     };
@@ -356,7 +356,7 @@ class ErrorModel : public Node
     // ------------------------------------------------------------- Cycle-slip ----------------------------------------------------------------
 
     /// Possible units to specify the cycle-slip rate with
-    enum class CycleSlipFrequencyUnits
+    enum class CycleSlipFrequencyUnits : uint8_t
     {
         per_day,    ///< [1/d]
         per_hour,   ///< [1/h]
@@ -372,7 +372,7 @@ class ErrorModel : public Node
     InsTime _cycleSlipWindowStartTime;
 
     /// Possible units to specify the cycle-slip detection probability with
-    enum class CycleSlipDetectionProbabilityUnits
+    enum class CycleSlipDetectionProbabilityUnits : uint8_t
     {
         percent, ///< [%]
     };

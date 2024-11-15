@@ -58,6 +58,8 @@ namespace NAV::TESTS::ObservationEstimatorTests
 {
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
+namespace
+{
 
 void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoModel, TroposphereModelSelection tropoModel, double elevationMaskDeg,
                     const Eigen::Vector3d& lla_refRecvPos,
@@ -147,7 +149,7 @@ void testSkydelData(Frequency filterFreq, Code filterCode, IonosphereModel ionoM
                 REQUIRE(observations.signals.contains(ref.satSigId));
                 ref.counter++;
 
-                auto marginIter = std::find_if(margins.begin(), margins.end(), [&](const auto& m) { return m.first & ref.satSigId.freq(); });
+                auto marginIter = std::ranges::find_if(margins, [&](const auto& m) { return m.first & ref.satSigId.freq(); });
                 REQUIRE(marginIter != margins.end());
                 const auto& margin = marginIter->second;
                 auto& marginMax = marginsMax[ref.satSigId.freq()];
@@ -328,7 +330,7 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
             REQUIRE(ref.has_value());
             LOG_DEBUG("    {}:", satSigId);
 
-            auto marginIter = std::find_if(margins.begin(), margins.end(), [&satSigId = satSigId](const auto& m) { return m.first & satSigId.freq(); });
+            auto marginIter = std::ranges::find_if(margins, [&satSigId = satSigId](const auto& m) { return m.first & satSigId.freq(); });
             REQUIRE(marginIter != margins.end());
             const auto& margin = marginIter->second;
             auto& marginMax = marginsMax[satSigId.freq()];
@@ -424,6 +426,8 @@ void testSpirentData(Frequency filterFreq, Code filterCode, IonosphereModel iono
         }
     }
 }
+
+} // namespace
 
 TEST_CASE("[ObservationEstimator][flow] Check estimates with Skydel data (GPS - no Iono - no Tropo)", "[ObservationEstimator][flow]")
 {

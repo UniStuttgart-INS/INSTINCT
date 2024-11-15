@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <limits>
 #include <optional>
 #include <vector>
@@ -32,7 +33,7 @@ class GnssObs : public NodeData
 {
   public:
     /// @brief Observation types
-    enum ObservationType
+    enum ObservationType : uint8_t
     {
         Pseudorange,           ///< Pseudorange
         Carrier,               ///< Carrier-Phase
@@ -166,7 +167,7 @@ class GnssObs : public NodeData
     /// @return The satellite data
     SatelliteData& satData(const SatId& satId)
     {
-        auto iter = std::find_if(_satData.begin(), _satData.end(), [&satId](const SatelliteData& sat) {
+        auto iter = std::ranges::find_if(_satData, [&satId](const SatelliteData& sat) {
             return sat.satId == satId;
         });
         if (iter != _satData.end())
@@ -184,7 +185,7 @@ class GnssObs : public NodeData
     /// @return The satellite data if in the list
     [[nodiscard]] std::optional<std::reference_wrapper<const SatelliteData>> satData(const SatId& satId) const
     {
-        auto iter = std::find_if(_satData.begin(), _satData.end(), [&satId](const SatelliteData& sat) {
+        auto iter = std::ranges::find_if(_satData, [&satId](const SatelliteData& sat) {
             return sat.satId == satId;
         });
         if (iter != _satData.end())
@@ -199,7 +200,7 @@ class GnssObs : public NodeData
     /// @return True if the element exists
     [[nodiscard]] bool contains(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+        auto iter = std::ranges::find_if(data, [&satSigId](const ObservationData& idData) {
             return idData.satSigId == satSigId;
         });
         return iter != data.end();
@@ -210,7 +211,7 @@ class GnssObs : public NodeData
     /// @return The element found in the observations or a newly constructed one
     ObservationData& operator()(const SatSigId& satSigId)
     {
-        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+        auto iter = std::ranges::find_if(data, [&satSigId](const ObservationData& idData) {
             return idData.satSigId == satSigId;
         });
         if (iter != data.end())
@@ -227,7 +228,7 @@ class GnssObs : public NodeData
     /// @return The element found in the observations
     [[nodiscard]] std::optional<std::reference_wrapper<const ObservationData>> operator()(const SatSigId& satSigId) const
     {
-        auto iter = std::find_if(data.begin(), data.end(), [&satSigId](const ObservationData& idData) {
+        auto iter = std::ranges::find_if(data, [&satSigId](const ObservationData& idData) {
             return idData.satSigId == satSigId;
         });
 
@@ -289,13 +290,13 @@ class GnssObs : public NodeData
             {
                 return obsData.carrierPhase->LLI;
             }
-            if (descriptor == fmt::format("{} Doppler [Hz]", obsData.satSigId) && obsData.doppler)
+            if (descriptor == fmt::format("{} Doppler [Hz]", obsData.satSigId))
             {
-                return obsData.doppler.value();
+                return obsData.doppler;
             }
-            if (descriptor == fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId) && obsData.CN0)
+            if (descriptor == fmt::format("{} Carrier-to-Noise density [dBHz]", obsData.satSigId))
             {
-                return obsData.CN0.value();
+                return obsData.CN0;
             }
         }
         return std::nullopt;

@@ -95,7 +95,7 @@ void NAV::Merger::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinInd
 
         for (const auto& dataIdentifier : inputPins.at(otherPinIndex).dataIdentifier)
         {
-            if (std::find(connectedPinParents.begin(), connectedPinParents.end(), dataIdentifier) != connectedPinParents.end())
+            if (std::ranges::find(connectedPinParents, dataIdentifier) != connectedPinParents.end())
             {
                 outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = inputPins.at(otherPinIndex).dataIdentifier;
             }

@@ -91,7 +91,7 @@ void NAV::SinglePointPositioning::guiConfig()
         return false;
     };
 
-    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, { { "# Sat", nSatColumnContent } }))
+    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, { { .header = "# Sat", .content = nSatColumnContent } }))
     {
         flow::ApplyChanges();
     }

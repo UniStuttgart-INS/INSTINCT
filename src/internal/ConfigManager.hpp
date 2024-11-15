@@ -55,7 +55,7 @@ void CheckOptions(const int argc, const char* argv[]); // NOLINT
 /// @param[in] defaultValue If key is not found, the default value is returned
 /// @return The value found with the key or the default value
 template<typename T>
-const T& Get(const std::string& key, const T& defaultValue)
+const T& Get(const std::string& key, const T&& defaultValue)
 {
     if (vm.count(key))
     {

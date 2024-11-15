@@ -21,6 +21,7 @@ namespace NAV::TESTS::EphemerisTests
 TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris]")
 {
     // G01 - Taken from real data
+    // NOLINTBEGIN
     GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.270475961268e-04, -4.774847184308e-12, 0.000000000000e+00,
                      1.800000000000e+01, 4.412500000000e+01, 4.154815921903e-09, 9.534843171347e-02,
                      2.287328243256e-06, 1.217866723891e-02, 9.965151548386e-07, 5.153653379440e+03,
@@ -29,6 +30,7 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
                      1.185763677531e-10, 1.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 1.800000000000e+01,
                      3.601800000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |

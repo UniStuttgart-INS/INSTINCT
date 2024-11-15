@@ -81,7 +81,7 @@ void NAV::PosVelAttFile::guiConfig()
 
         auto TextColoredIfExists = [this](int index, const char* text) {
             ImGui::TableSetColumnIndex(index);
-            if (std::find(_headerColumns.begin(), _headerColumns.end(), text) != _headerColumns.end())
+            if (std::ranges::find(_headerColumns, text) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(text);
             }
@@ -158,7 +158,7 @@ bool NAV::PosVelAttFile::initialize()
         }
 
         auto hasCol = [&](const char* text) {
-            return std::find(_headerColumns.begin(), _headerColumns.end(), text) != _headerColumns.end();
+            return std::ranges::find(_headerColumns, text) != _headerColumns.end();
         };
 
         if (!hasCol("GpsCycle") || !hasCol("GpsWeek") || !hasCol("GpsToW [s]"))
@@ -241,7 +241,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
     std::string line;
     getline(line);
     // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+    line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
     if (line.empty())
     {
@@ -293,7 +293,7 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
         if (std::getline(lineStream, cell, ','))
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
             if (cell.empty())
             {
                 continue;

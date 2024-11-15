@@ -62,7 +62,15 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/CMakeRC.hpp"
 
+namespace NAV::gui
+{
+namespace
+{
+
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
+
+} // namespace
+} // namespace NAV::gui
 
 void NAV::gui::NodeEditorApplication::OnStart()
 {
@@ -1218,7 +1226,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         }
                         else if (startPin->type == Pin::Type::Delegate
                                  && (startPin->parentNode == nullptr
-                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
+                                     || std::ranges::find(endPin->dataIdentifier, startPin->parentNode->type()) == endPin->dataIdentifier.end()))
                         {
                             if (startPin->parentNode != nullptr)
                             {

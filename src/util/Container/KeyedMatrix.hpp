@@ -84,14 +84,14 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param keys Row keys to check for
     bool hasRows(const std::vector<RowKeyType>& keys) const
     {
-        return std::all_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
+        return std::ranges::all_of(keys, [&](const RowKeyType& key) { return hasRow(key); });
     }
 
     /// @brief Checks if the matrix has any key
     /// @param keys Row keys to check for
     bool hasAnyRows(const std::vector<RowKeyType>& keys) const
     {
-        return std::any_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
+        return std::ranges::any_of(keys, [&](const RowKeyType& key) { return hasRow(key); });
     }
 
     /// @brief Replace the old with the new key
@@ -99,7 +99,7 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param[in] newKey New key to use instead
     void replaceRowKey(const RowKeyType& oldKey, const RowKeyType& newKey)
     {
-        auto iter = std::find(rowKeysVector.begin(), rowKeysVector.end(), oldKey);
+        auto iter = std::ranges::find(rowKeysVector, oldKey);
         INS_ASSERT_USER_ERROR(iter != rowKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
 
         *iter = newKey;
@@ -176,7 +176,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMa
         std::vector<int> indices;
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = std::ranges::find_if(this->rowIndices, [&](const auto& item) { return item.first == rowKey; });
             INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
             if (iter != this->rowIndices.end())
             {
@@ -187,7 +187,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMa
 
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = std::ranges::find_if(this->rowIndices, [&](const auto& item) { return item.first == rowKey; });
             if (iter != this->rowIndices.end())
             {
                 std::erase_if(this->rowKeysVector, [&](const auto& item) { return item == rowKey; });
@@ -228,14 +228,14 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param keys Col keys to check for
     bool hasCols(const std::vector<ColKeyType>& keys) const
     {
-        return std::all_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+        return std::ranges::all_of(keys, [&](const ColKeyType& key) { return hasCol(key); });
     }
 
     /// @brief Checks if the matrix has any keys
     /// @param keys Col keys to check for
     bool hasAnyCols(const std::vector<ColKeyType>& keys) const
     {
-        return std::any_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+        return std::ranges::any_of(keys, [&](const ColKeyType& key) { return hasCol(key); });
     }
 
     /// @brief Replace the old with the new key
@@ -243,7 +243,7 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param[in] newKey New key to use instead
     void replaceColKey(const ColKeyType& oldKey, const ColKeyType& newKey)
     {
-        auto iter = std::find(colKeysVector.begin(), colKeysVector.end(), oldKey);
+        auto iter = std::ranges::find(colKeysVector, oldKey);
         INS_ASSERT_USER_ERROR(iter != colKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
 
         *iter = newKey;
@@ -320,7 +320,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
         std::vector<int> indices;
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = std::ranges::find_if(this->colIndices, [&](const auto& item) { return item.first == colKey; });
             INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
             if (iter != this->colIndices.end())
             {
@@ -331,7 +331,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
 
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = std::ranges::find_if(this->colIndices, [&](const auto& item) { return item.first == colKey; });
             if (iter != this->colIndices.end())
             {
                 std::erase_if(this->colKeysVector, [&](const auto& item) { return item == colKey; });
@@ -2203,7 +2203,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         std::vector<int> rowIndices;
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = std::ranges::find_if(this->rowIndices, [&](const auto& item) { return item.first == rowKey; });
             INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
             if (iter != this->rowIndices.end())
             {
@@ -2213,7 +2213,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         std::vector<int> colIndices;
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = std::ranges::find_if(this->colIndices, [&](const auto& item) { return item.first == colKey; });
             INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
             if (iter != this->colIndices.end())
             {
@@ -2225,7 +2225,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
 
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = std::ranges::find_if(this->rowIndices, [&](const auto& item) { return item.first == rowKey; });
             if (iter != this->rowIndices.end())
             {
                 std::erase_if(this->rowKeysVector, [&](const auto& item) { return item == rowKey; });
@@ -2240,7 +2240,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         }
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = std::ranges::find_if(this->colIndices, [&](const auto& item) { return item.first == colKey; });
             if (iter != this->colIndices.end())
             {
                 std::erase_if(this->colKeysVector, [&](const auto& item) { return item == colKey; });

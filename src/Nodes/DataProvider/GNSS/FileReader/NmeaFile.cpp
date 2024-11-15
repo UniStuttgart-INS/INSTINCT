@@ -217,7 +217,7 @@ std::shared_ptr<const NAV::NodeData> NAV::NmeaFile::pollData()
         }
 
         // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+        line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
         splittedData = str::split(line, ",");
 

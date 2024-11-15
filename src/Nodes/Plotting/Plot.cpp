@@ -58,7 +58,7 @@ namespace NAV
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const Plot::PinData::PlotData& data)
+static void to_json(json& j, const Plot::PinData::PlotData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "displayName", data.displayName },
@@ -67,7 +67,7 @@ void to_json(json& j, const Plot::PinData::PlotData& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, Plot::PinData::PlotData& data)
+static void from_json(const json& j, Plot::PinData::PlotData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("displayName")) { j.at("displayName").get_to(data.displayName); }
 }
@@ -75,7 +75,7 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const std::vector<Plot::PinData::PlotData>& data)
+static void to_json(json& j, const std::vector<Plot::PinData::PlotData>& data) // NOLINT(misc-use-anonymous-namespace)
 {
     for (const auto& i : data)
     {
@@ -87,7 +87,7 @@ void to_json(json& j, const std::vector<Plot::PinData::PlotData>& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const Plot::PinData& data)
+static void to_json(json& j, const Plot::PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "dataIdentifier", data.dataIdentifier },
@@ -100,7 +100,7 @@ void to_json(json& j, const Plot::PinData& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, Plot::PinData& data)
+static void from_json(const json& j, Plot::PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("dataIdentifier")) { j.at("dataIdentifier").get_to(data.dataIdentifier); }
     if (j.contains("size"))
@@ -123,7 +123,7 @@ void from_json(const json& j, Plot::PinData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const Plot::PlotInfo::PlotItem& data)
+static void to_json(json& j, const Plot::PlotInfo::PlotItem& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "pinIndex", data.pinIndex },
@@ -136,7 +136,7 @@ void to_json(json& j, const Plot::PlotInfo::PlotItem& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, Plot::PlotInfo::PlotItem& data)
+static void from_json(const json& j, Plot::PlotInfo::PlotItem& data) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("pinIndex")) { j.at("pinIndex").get_to(data.pinIndex); }
     if (j.contains("dataIndex")) { j.at("dataIndex").get_to(data.dataIndex); }
@@ -148,7 +148,7 @@ void from_json(const json& j, Plot::PlotInfo::PlotItem& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const Plot::PlotInfo& data)
+static void to_json(json& j, const Plot::PlotInfo& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "size", data.size },
@@ -175,7 +175,7 @@ void to_json(json& j, const Plot::PlotInfo& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, Plot::PlotInfo& data)
+static void from_json(const json& j, Plot::PlotInfo& data) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("size")) { j.at("size").get_to(data.size); }
     if (j.contains("xAxisFlags")) { j.at("xAxisFlags").get_to(data.xAxisFlags); }
@@ -265,9 +265,7 @@ void NAV::Plot::PinData::addPlotDataItem(size_t dataIndex, const std::string& di
             LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
                      displayName, dataIndex, plotData.at(dataIndex).displayName);
         }
-        auto searchIter = std::find_if(plotData.begin(),
-                                       plotData.end(),
-                                       [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
+        auto searchIter = std::ranges::find_if(plotData, [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
         auto iter = plotData.begin();
         std::advance(iter, dataIndex);
         iter->markedForDelete = false;
@@ -280,9 +278,7 @@ void NAV::Plot::PinData::addPlotDataItem(size_t dataIndex, const std::string& di
             move(plotData, static_cast<size_t>(searchIter - plotData.begin()), dataIndex);
         }
     }
-    else if (std::find_if(plotData.begin(),
-                          plotData.end(),
-                          [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
+    else if (std::ranges::find_if(plotData, [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
              != plotData.end())
     {
         LOG_ERROR("Adding the PlotData item {} at position {}, but this plot item was found at another position already",
@@ -408,10 +404,7 @@ void NAV::Plot::guiConfig()
             if (ImGui::DragInt(fmt::format("##Data Points {} - {}", size_t(id), pinIndex + 1).c_str(),
                                &pinData.size, 10.0F, 0, INT32_MAX / 2))
             {
-                if (pinData.size < 0)
-                {
-                    pinData.size = 0;
-                }
+                pinData.size = std::max(pinData.size, 0);
                 std::scoped_lock<std::mutex> guard(pinData.mutex);
                 for (auto& plotData : pinData.plotData)
                 {
@@ -432,10 +425,7 @@ void NAV::Plot::guiConfig()
             if (ImGui::InputInt(fmt::format("##Stride {} - {}", size_t(id), pinIndex + 1).c_str(),
                                 &pinData.stride))
             {
-                if (pinData.stride < 1)
-                {
-                    pinData.stride = 1;
-                }
+                pinData.stride = std::max(pinData.stride, 1);
                 changed = true;
             }
             if (ImGui::IsItemHovered())
@@ -446,9 +436,9 @@ void NAV::Plot::guiConfig()
         };
 
         if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this,
-                                             { { "Pin Type", columnContentPinType },
-                                               { "# Data Points", columnContentDataPoints },
-                                               { "Stride", columnContentStride } }))
+                                             { { .header = "Pin Type", .content = columnContentPinType },
+                                               { .header = "# Data Points", .content = columnContentDataPoints },
+                                               { .header = "Stride", .content = columnContentStride } }))
         {
             flow::ApplyChanges();
         }
@@ -857,7 +847,7 @@ void NAV::Plot::guiConfig()
                     {
                         auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
+                        auto iter = std::ranges::find(plot.plotItems, PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end())
                         {
                             plot.plotItems.erase(iter);
@@ -882,7 +872,7 @@ void NAV::Plot::guiConfig()
                         }
                         std::string label = plotData.displayName;
 
-                        if (auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ plot.selectedPin, dataIndex, plotData.displayName });
+                        if (auto iter = std::ranges::find(plot.plotItems, PlotInfo::PlotItem{ plot.selectedPin, dataIndex, plotData.displayName });
                             iter != plot.plotItems.end())
                         {
                             label += fmt::format(" (Y{})", iter->axis + 1 - 3);
@@ -1402,7 +1392,7 @@ void NAV::Plot::guiConfig()
                     {
                         auto [pinIndex, dataIndex, displayName] = *static_cast<std::tuple<size_t, size_t, std::string*>*>(payloadData->Data);
 
-                        auto iter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
+                        auto iter = std::ranges::find(plot.plotItems, PlotInfo::PlotItem{ pinIndex, dataIndex, *displayName });
                         if (iter != plot.plotItems.end()) // Item gets dragged from one axis to another
                         {
                             iter->axis = dragDropAxis;
@@ -1630,8 +1620,8 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             {
                 while (true)
                 {
-                    auto plotItemIter = std::find_if(plot.plotItems.begin(), plot.plotItems.end(),
-                                                     [pinIndex](const PlotInfo::PlotItem& plotItem) { return plotItem.pinIndex == pinIndex; });
+                    auto plotItemIter = std::ranges::find_if(plot.plotItems,
+                                                             [pinIndex](const PlotInfo::PlotItem& plotItem) { return plotItem.pinIndex == pinIndex; });
                     if (plotItemIter != plot.plotItems.end())
                     {
                         plot.plotItems.erase(plotItemIter);
@@ -1765,7 +1755,7 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
                 const auto& displayName = _pinData.at(pinIndex).plotData.at(dataIndex).displayName;
                 for (auto& plot : _plots)
                 {
-                    auto plotItemIter = std::find(plot.plotItems.begin(), plot.plotItems.end(), PlotInfo::PlotItem{ pinIndex, dataIndex, displayName });
+                    auto plotItemIter = std::ranges::find(plot.plotItems, PlotInfo::PlotItem{ pinIndex, dataIndex, displayName });
                     if (plotItemIter != plot.plotItems.end())
                     {
                         plot.plotItems.erase(plotItemIter);
@@ -1875,7 +1865,7 @@ size_t NAV::Plot::addData(size_t pinIndex, std::string displayName, double value
 {
     auto& pinData = _pinData.at(pinIndex);
 
-    auto plotData = std::find_if(pinData.plotData.begin(), pinData.plotData.end(), [&](const auto& data) {
+    auto plotData = std::ranges::find_if(pinData.plotData, [&](const auto& data) {
         return data.displayName == displayName;
     });
     if (plotData == pinData.plotData.end()) // Item is new

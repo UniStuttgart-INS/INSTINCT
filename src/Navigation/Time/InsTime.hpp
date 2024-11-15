@@ -946,7 +946,7 @@ class InsTime
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
-        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+        return static_cast<uint16_t>(std::ranges::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD, mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
 
     /// @brief Checks if the current time is a leap year
@@ -1097,7 +1097,7 @@ class InsTime
 
   private:
     /// @brief Modified Julien Date of this InsTime object
-    InsTime_MJD _mjd{};
+    InsTime_MJD _mjd;
 };
 
 /// @brief Stream insertion operator overload

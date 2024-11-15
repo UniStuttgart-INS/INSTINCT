@@ -13,11 +13,13 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace NAV
 {
 
 /// Available Water vapor Models
-enum class WaterVaporModel : int
+enum class WaterVaporModel : uint8_t
 {
     None,  ///< Water vapor model turned off
     ISA,   ///< ICAO Standard Atmosphere

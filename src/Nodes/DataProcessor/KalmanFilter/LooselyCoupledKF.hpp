@@ -63,23 +63,23 @@ class LooselyCoupledKF : public Node
     void restore(const json& j) override;
 
     /// @brief State Keys of the Kalman filter
-    enum KFStates
+    enum KFStates : uint8_t
     {
-        Roll,     ///< Roll
-        Pitch,    ///< Pitch
-        Yaw,      ///< Yaw
-        VelN,     ///< Velocity North
-        VelE,     ///< Velocity East
-        VelD,     ///< Velocity Down
-        PosLat,   ///< Latitude
-        PosLon,   ///< Longitude
-        PosAlt,   ///< Altitude
-        AccBiasX, ///< Accelerometer Bias X
-        AccBiasY, ///< Accelerometer Bias Y
-        AccBiasZ, ///< Accelerometer Bias Z
-        GyrBiasX, ///< Gyroscope Bias X
-        GyrBiasY, ///< Gyroscope Bias Y
-        GyrBiasZ, ///< Gyroscope Bias Z
+        Roll = 0,      ///< Roll
+        Pitch = 1,     ///< Pitch
+        Yaw = 2,       ///< Yaw
+        VelN = 3,      ///< Velocity North
+        VelE = 4,      ///< Velocity East
+        VelD = 5,      ///< Velocity Down
+        PosLat = 6,    ///< Latitude
+        PosLon = 7,    ///< Longitude
+        PosAlt = 8,    ///< Altitude
+        AccBiasX = 9,  ///< Accelerometer Bias X
+        AccBiasY = 10, ///< Accelerometer Bias Y
+        AccBiasZ = 11, ///< Accelerometer Bias Z
+        GyrBiasX = 12, ///< Gyroscope Bias X
+        GyrBiasY = 13, ///< Gyroscope Bias Y
+        GyrBiasZ = 14, ///< Gyroscope Bias Z
 
         Psi_eb_1 = Roll,  ///< Angle between Earth and Body frame around 1. axis
         Psi_eb_2 = Pitch, ///< Angle between Earth and Body frame around 2. axis
@@ -93,14 +93,14 @@ class LooselyCoupledKF : public Node
     };
 
     /// @brief Measurement Keys of the Kalman filter
-    enum KFMeas
+    enum KFMeas : uint8_t
     {
-        dPosLat, ///< Latitude difference
-        dPosLon, ///< Longitude difference
-        dPosAlt, ///< Altitude difference
-        dVelN,   ///< Velocity North difference
-        dVelE,   ///< Velocity East difference
-        dVelD,   ///< Velocity Down difference
+        dPosLat = 0, ///< Latitude difference
+        dPosLon = 1, ///< Longitude difference
+        dPosAlt = 2, ///< Altitude difference
+        dVelN = 3,   ///< Velocity North difference
+        dVelE = 4,   ///< Velocity East difference
+        dVelD = 5,   ///< Velocity Down difference
 
         dPosX = dPosLat, ///< ECEF Position X difference
         dPosY = dPosLon, ///< ECEF Position Y difference
@@ -220,7 +220,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
-    enum class StdevAccelNoiseUnits
+    enum class StdevAccelNoiseUnits : uint8_t
     {
         mg_sqrtHz,   ///< [mg / √(Hz)]
         m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
@@ -235,7 +235,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
-    enum class StdevGyroNoiseUnits
+    enum class StdevGyroNoiseUnits : uint8_t
     {
         deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
         rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
@@ -250,7 +250,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevAccelBiasUnits
+    enum class StdevAccelBiasUnits : uint8_t
     {
         microg, ///< [µg]
         m_s2,   ///< [m / s^2]
@@ -268,7 +268,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevGyroBiasUnits
+    enum class StdevGyroBiasUnits : uint8_t
     {
         deg_h, ///< [°/h]
         rad_s, ///< [1/s]
@@ -286,7 +286,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// @brief Available Random processes
-    enum class RandomProcess
+    enum class RandomProcess : uint8_t
     {
         // WhiteNoise,     ///< White noise
         // RandomConstant, ///< Random constant
@@ -306,7 +306,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the GNSS measurement uncertainty for the position (standard deviation σ or Variance σ²)
-    enum class GnssMeasurementUncertaintyPositionUnit
+    enum class GnssMeasurementUncertaintyPositionUnit : uint8_t
     {
         rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
         rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
@@ -326,7 +326,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the GNSS measurement uncertainty for the velocity (standard deviation σ or Variance σ²)
-    enum class GnssMeasurementUncertaintyVelocityUnit
+    enum class GnssMeasurementUncertaintyVelocityUnit : uint8_t
     {
         m2_s2, ///< Variance [m^2/s^2]
         m_s,   ///< Standard deviation [m/s]
@@ -343,7 +343,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
-    enum class InitCovariancePositionUnit
+    enum class InitCovariancePositionUnit : uint8_t
     {
         rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
         rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
@@ -359,7 +359,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the velocity (standard deviation σ or Variance σ²)
-    enum class InitCovarianceVelocityUnit
+    enum class InitCovarianceVelocityUnit : uint8_t
     {
         m2_s2, ///< Variance [m^2/s^2]
         m_s,   ///< Standard deviation [m/s]
@@ -373,7 +373,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the attitude angles (standard deviation σ or Variance σ²)
-    enum class InitCovarianceAttitudeAnglesUnit
+    enum class InitCovarianceAttitudeAnglesUnit : uint8_t
     {
         rad2, ///< Variance [rad^2]
         deg2, ///< Variance [deg^2]
@@ -389,7 +389,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the accelerometer biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasAccelUnit
+    enum class InitCovarianceBiasAccelUnit : uint8_t
     {
         m2_s4, ///< Variance [m^2/s^4]
         m_s2,  ///< Standard deviation [m/s^2]
@@ -403,7 +403,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the gyroscope biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasGyroUnit
+    enum class InitCovarianceBiasGyroUnit : uint8_t
     {
         rad2_s2, ///< Variance [rad²/s²]
         deg2_s2, ///< Variance [deg²/s²]
@@ -419,7 +419,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial accelerometer biases
-    enum class InitBiasAccelUnit
+    enum class InitBiasAccelUnit : uint8_t
     {
         m_s2, ///< acceleration [m/s^2]
     };
@@ -432,7 +432,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial gyroscope biases
-    enum class InitBiasGyroUnit
+    enum class InitBiasGyroUnit : uint8_t
     {
         rad_s, ///< angular rate [rad/s]
         deg_s, ///< angular rate [deg/s]
@@ -446,7 +446,7 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// GUI option for the Phi calculation algorithm
-    enum class PhiCalculationAlgorithm
+    enum class PhiCalculationAlgorithm : uint8_t
     {
         Exponential, ///< Van-Loan
         Taylor,      ///< Taylor
@@ -458,7 +458,7 @@ class LooselyCoupledKF : public Node
     int _phiCalculationTaylorOrder = 2;
 
     /// GUI option for the Q calculation algorithm
-    enum class QCalculationAlgorithm
+    enum class QCalculationAlgorithm : uint8_t
     {
         VanLoan, ///< Van-Loan
         Taylor1, ///< Taylor

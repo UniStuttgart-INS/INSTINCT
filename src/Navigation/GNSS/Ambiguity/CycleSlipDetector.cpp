@@ -27,7 +27,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
     std::vector<SatSigId> resetThisEpoch;
 
     auto searchCycleSlipAlreadyFound = [&cycleSlips](const SatSigId& satSigId) {
-        return std::find_if(cycleSlips.begin(), cycleSlips.end(), [&](const Result& cycleSlip) {
+        return std::ranges::find_if(cycleSlips, [&](const Result& cycleSlip) {
             if (const auto* s = std::get_if<CycleSlipLossOfLockIndicator>(&cycleSlip)) { return s->signal == satSigId; }
             if (const auto* s = std::get_if<CycleSlipSingleFrequency>(&cycleSlip)) { return s->signal == satSigId; }
             return false;
@@ -95,7 +95,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
         if (obs.signals.size() >= 2)
         {
             // Signal with largest frequency, e.g. L1
-            auto signal1 = std::max_element(obs.signals.begin(), obs.signals.end(), [&obs](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
+            auto signal1 = std::ranges::max_element(obs.signals, [&obs](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
                 return s1.code.getFrequency().getFrequency(obs.freqNum) < s2.code.getFrequency().getFrequency(obs.freqNum);
             });
             // Signal with lower frequency, e.g. L2/L5
@@ -180,7 +180,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
         for (const auto& signal : obs.signals)
         {
             auto satSigId = SatSigId(signal.code, obs.satId.satNum);
-            auto iter = std::find(resetThisEpoch.begin(), resetThisEpoch.end(), satSigId);
+            auto iter = std::ranges::find(resetThisEpoch, satSigId);
             if (iter != resetThisEpoch.end())
             {
                 resetSignal(satSigId);

@@ -100,7 +100,7 @@ class KvhObs final : public ImuObs
     ///  5  | Accelerometer Y status | 1 = Valid data, 0 = Invalid data
     ///  6  | Accelerometer Z status | 1 = Valid data, 0 = Invalid data
     ///  7  | Reserved               | Always 0
-    std::bitset<8> status{};
+    std::bitset<8> status;
 
     /// Increments for each message and resets to 0 after 127
     uint8_t sequenceNumber = UINT8_MAX;

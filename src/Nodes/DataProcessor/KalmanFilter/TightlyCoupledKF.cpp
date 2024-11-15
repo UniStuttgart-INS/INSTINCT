@@ -304,7 +304,7 @@ void NAV::TightlyCoupledKF::guiConfig()
                         for (const auto& satellite : gnssNavInfo->v->satellites())
                         {
                             if ((satellite.first.satSys & _filterFreq)
-                                && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satellite.first) == _excludedSatellites.end())
+                                && std::ranges::find(_excludedSatellites, satellite.first) == _excludedSatellites.end())
                             {
                                 usedSatNum++;
                                 usedSats += (allSats.empty() ? "" : filler) + fmt::format("{}", satellite.first);
@@ -1353,7 +1353,7 @@ void NAV::TightlyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, si
 void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const PosVelAtt>& inertialNavSol, double tau_i, const ImuPos& imuPos)
 {
     auto dt = fmt::format("{:0.5f}", tau_i);
-    dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end());
+    dt.erase(std::find_if(dt.rbegin(), dt.rend(), [](char ch) { return ch != '0'; }).base(), dt.end()); // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::find_last_if is C++23 and not supported yet
 
     [[maybe_unused]] InsTime predictTime = inertialNavSol->insTime + std::chrono::duration<double>(tau_i);
     LOG_DATA("{}: Predicting (dt = {}s) from [{} - {}] to [{} - {}]", nameId(), dt,

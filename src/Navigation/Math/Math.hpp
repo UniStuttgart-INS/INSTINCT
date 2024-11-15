@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 #include <type_traits>
 #include <Eigen/Core>
@@ -34,8 +35,7 @@ uint64_t factorial(uint64_t n);
 /// @param[in] value Value to round
 /// @param[in] digits Amount of digits
 /// @return The rounded value
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 constexpr T round(const T& value, size_t digits)
 {
     auto factor = std::pow(10, digits);
@@ -46,8 +46,7 @@ constexpr T round(const T& value, size_t digits)
 /// @param[in] value Value to round
 /// @param[in] digits Amount of digits
 /// @return The rounded value
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 constexpr T roundSignificantDigits(T value, size_t digits)
 {
     if (value == 0.0) { return 0.0; }
@@ -69,9 +68,7 @@ constexpr T roundSignificantDigits(T value, size_t digits)
 /// @tparam In Input data type (needs to be bigger than the amount of Bits)
 /// @param[in] in Number as two's complement, with the sign bit (+ or -) occupying the MSB
 /// @return Output type
-template<typename Out, size_t Bits, typename In,
-         typename = std::enable_if_t<std::is_integral_v<Out>>,
-         typename = std::enable_if_t<std::is_integral_v<In>>>
+template<std::integral Out, size_t Bits, std::integral In>
 constexpr Out interpretAs(In in)
 {
     static_assert(Bits < sizeof(In) * 8);
@@ -120,16 +117,14 @@ Eigen::Matrix<typename Derived::Scalar, 3, 3> skewSymmetricMatrixSquared(const E
 }
 
 /// @brief Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 T sec(const T& x)
 {
     return 1.0 / std::cos(x);
 }
 
 /// @brief Calculates the cosecant of a value (csc(x) = sec(pi/2 - x) = 1 / sin(x))
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 T csc(const T& x)
 {
     return 1.0 / std::sin(x);
@@ -216,10 +211,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
         }
         double t = L(j, j) - L(seq(j + 1, n - 1), j).dot(L(seq(j + 1, n - 1), j));
         double c = t / L(j, j);
-        if (c < cmin)
-        {
-            cmin = c;
-        }
+        cmin = std::min(c, cmin);
         L(j, j) = std::sqrt(t);
     }
     for (Eigen::Index i = 0; i < n; i++)

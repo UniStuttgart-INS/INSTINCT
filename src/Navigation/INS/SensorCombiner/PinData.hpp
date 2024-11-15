@@ -23,20 +23,20 @@ struct PinData
 {
     // ------------------------------------- State and variance units ----------------------------------------
     /// Possible Units for the angular rate
-    enum class AngRateUnit
+    enum class AngRateUnit : uint8_t
     {
         deg_s, ///< in [deg/s, deg/s, deg/s]
         rad_s, ///< in [rad/s, rad/s, rad/s]
     };
 
     /// Possible Units for the acceleration
-    enum class AccelerationUnit
+    enum class AccelerationUnit : uint8_t
     {
         m_s2, ///< in [m/s², m/s², m/s²]
     };
 
     /// Possible Units for the variance for the process noise of the angular rate (standard deviation σ or Variance σ²)
-    enum class AngRateVarianceUnit
+    enum class AngRateVarianceUnit : uint8_t
     {
         rad2_s2, ///< Variance [rad²/s², rad²/s², rad²/s²]
         rad_s,   ///< Standard deviation [rad/s, rad/s, rad/s]
@@ -45,7 +45,7 @@ struct PinData
     };
 
     /// Possible Units for the variance for the process noise of the acceleration (standard deviation σ or Variance σ²)
-    enum class AccelerationVarianceUnit
+    enum class AccelerationVarianceUnit : uint8_t
     {
         m2_s4, ///< Variance [(m^2)/(s^4), (m^2)/(s^4), (m^2)/(s^4)]
         m_s2,  ///< Standard deviation [m/s², m/s², m/s²]
@@ -105,19 +105,19 @@ struct PinDataIRWKF
 {
     // ----------------------------------- State and variance units --------------------------------------
     /// Possible Units for the angular acceleration
-    enum class AngularAccUnit
+    enum class AngularAccUnit : uint8_t
     {
         deg_s2, ///< in [deg/s², deg/s², deg/s²]
         rad_s2, ///< in [rad/s², rad/s², rad/s²]
     };
     /// Possible Units for the jerk
-    enum class JerkUnit
+    enum class JerkUnit : uint8_t
     {
         m_s3, ///< in [m/s³, m/s³, m/s³]
     };
 
     /// Possible Units for the variance for the process noise of the angular acceleration (standard deviation σ or Variance σ²)
-    enum class AngularAccVarianceUnit
+    enum class AngularAccVarianceUnit : uint8_t
     {
         rad2_s4, ///< Variance [(rad^2)/(s^4), (rad^2)/(s^4), (rad^2)/(s^4)]
         rad_s2,  ///< Standard deviation [rad/s², rad/s², rad/s²]
@@ -125,7 +125,7 @@ struct PinDataIRWKF
         deg_s2,  ///< Standard deviation [deg/s², deg/s², deg/s²]
     };
     /// Possible Units for the variance for the process noise of the jerk (standard deviation σ or Variance σ²)
-    enum class JerkVarianceUnit
+    enum class JerkVarianceUnit : uint8_t
     {
         m2_s6, ///< Variance [(m^2)/(s^6), (m^2)/(s^6), (m^2)/(s^6)]
         m_s3,  ///< Standard deviation [m/s³, m/s³, m/s³]

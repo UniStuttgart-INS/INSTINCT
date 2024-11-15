@@ -51,6 +51,9 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::RtklibPosFileTests
 {
+namespace
+{
+
 void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosObs>& rtklibPosObsRef)
 {
     auto logger = initializeTestLogger();
@@ -85,6 +88,9 @@ void testRtklibPosFileFlow(const std::string& path, const std::vector<RtklibPosO
 
     REQUIRE(msgCounter == rtklibPosObsRef.size());
 }
+
+} // namespace
+
 // ###########################################################################################################
 //                                                 LAT/LONG/ALT (lla)
 // ###########################################################################################################

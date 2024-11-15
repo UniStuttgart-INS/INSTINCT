@@ -40,10 +40,11 @@ const GnssNavInfo gnssNavInfo_INS_1581_19N = {
         { .satSys = GPS, .alphaBeta = IonosphericCorrections::Beta, .data = { 8.601600000000E+04, 9.830400000000E+04, -6.553600000000E+04, -5.242880000000E+05 } },
     } },
     .timeSysCorr = {
-        { { GPST, UTC }, { -3.725290298462E-09, -7.105427357601E-15 } },
+        { { GPST, UTC }, { .a0 = -3.725290298462E-09, .a1 = -7.105427357601E-15 } },
     },
     .m_satellites = {
         { { GPS, 1 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -3.462424501777e-05, -9.436007530894e-12, 0.000000000000e+00, //
                                                              4.100000000000e+01, -1.273437500000e+02, 4.150530029093e-09, 2.600635796634e+00,    //
@@ -62,8 +63,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19N = {
                                                              2.000000000000e+00, 0.000000000000e+00, 5.587935447693e-09, 5.100000000000e+01,     //
                                                              4.248180000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
         { { GPS, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -2.312315627933e-04, -8.981260180008e-12, 0.000000000000e+00, //
                                                              6.600000000000e+01, -1.488750000000e+02, 4.714482091388e-09, 2.879261055706e+00,    //
@@ -74,8 +77,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19N = {
                                                              2.000000000000e+00, 0.000000000000e+00, -2.048909664154e-08, 6.600000000000e+01,    //
                                                              4.240260000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
         { { GPS, 4 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 7, 2, 0, 0, 1.658042892814E-04, 2.160049916711E-12, 0.000000000000E+00,  //
                                                              1.850000000000E+02, 1.321875000000E+01, 4.916633368943E-09, -2.475223719598E+00,  //
@@ -86,8 +91,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19N = {
                                                              2.048000000000E+03, 6.300000000000E+01, -8.847564458847E-09, 9.530000000000E+02,  //
                                                              4.320180000000E+05, 4.000000000000E+00),                                          //
                           },
+                          // NOLINTEND
                       } },
         { { GPS, 9 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 7, 2, 0, 0, 3.966777585447E-04, -7.503331289627E-12, 0.000000000000E+00,  //
                                                              8.000000000000E+01, 1.409375000000E+01, 5.058424989419E-09, 9.150000348870E-01,    //
@@ -98,6 +105,7 @@ const GnssNavInfo gnssNavInfo_INS_1581_19N = {
                                                              2.000000000000E+00, 0.000000000000E+00, 1.396983861923E-09, 8.000000000000E+01,    //
                                                              4.320180000000E+05, 4.000000000000E+00),                                           //
                           },
+                          // NOLINTEND
                       } },
     },
 };

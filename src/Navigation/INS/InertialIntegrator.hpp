@@ -37,7 +37,7 @@ class InertialIntegrator
 {
   public:
     /// Available Integration Algorithms
-    enum class IntegrationAlgorithm
+    enum class IntegrationAlgorithm : uint8_t
     {
         SingleStepRungeKutta1, ///< Runge-Kutta 1st order (explicit) / (Forward) Euler method
         SingleStepRungeKutta2, ///< Runge-Kutta 2nd order (explicit) / Explicit midpoint method
@@ -110,7 +110,7 @@ class InertialIntegrator
     [[nodiscard]] const Eigen::Vector3d& p_getLastAngularRateBias() const;
 
     /// Available Integration Frames
-    enum class IntegrationFrame : int
+    enum class IntegrationFrame : uint8_t
     {
         ECEF, ///< Earth-Centered Earth-Fixed frame
         NED,  ///< Local North-East-Down frame

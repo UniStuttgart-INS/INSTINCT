@@ -623,7 +623,10 @@ class InputPin : public Pin
             }
             /// @brief Move constructor
             ValueWrapper(ValueWrapper&& other) noexcept
-                : v(std::move(other.v)), outputPin(std::move(other.outputPin)) {}
+                : v(std::move(other.v)), outputPin(other.outputPin)
+            {
+                other.outputPin = nullptr;
+            }
             /// @brief Copy assignment operator
             ValueWrapper& operator=(const ValueWrapper& other)
             {
@@ -642,7 +645,8 @@ class InputPin : public Pin
                 if (this != &other)
                 {
                     v = std::move(other.v);
-                    outputPin = std::move(other.outputPin);
+                    outputPin = other.outputPin;
+                    other.outputPin = nullptr;
                 }
                 return *this;
             }
@@ -665,7 +669,7 @@ class InputPin : public Pin
             {
                 // if (!connectedPin->parentNode->isInitialized()) { return nullptr; } // TODO: Check this here (Problem: member access into incomplete type 'NAV::Node')
 
-                auto outgoingLink = std::find_if(connectedPin->links.begin(), connectedPin->links.end(), [&](const OutputPin::OutgoingLink& link) {
+                auto outgoingLink = std::ranges::find_if(connectedPin->links, [&](const OutputPin::OutgoingLink& link) {
                     return link.linkId == linkId;
                 });
 

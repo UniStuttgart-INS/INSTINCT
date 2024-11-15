@@ -39,12 +39,12 @@ void ObsHeader::reset()
 bool ObsHeader::addObsType(const Code& code, ObsType type)
 {
     auto& obsDescriptions = systemObsTypes[code.getFrequency().getSatSys()];
-    if (std::find_if(obsDescriptions.begin(), obsDescriptions.end(), [&code, &type](const auto& obsDesc) {
+    if (std::ranges::find_if(obsDescriptions, [&code, &type](const auto& obsDesc) {
             return obsDesc.code == code && obsDesc.type == type;
         })
         == obsDescriptions.end())
     {
-        obsDescriptions.push_back(ObservationDescription{ type, code });
+        obsDescriptions.push_back(ObservationDescription{ .type = type, .code = code });
         return true;
     }
     return false;

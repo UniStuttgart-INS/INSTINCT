@@ -43,7 +43,7 @@ enum SatelliteSystem_ : uint64_t
 struct SatelliteSystem
 {
     /// @brief Satellite System enumeration with continuous range. Not usable as a mask
-    enum Enum : size_t
+    enum Enum : uint8_t
     {
         Enum_GPS,   ///< Global Positioning System
         Enum_GAL,   ///< Galileo

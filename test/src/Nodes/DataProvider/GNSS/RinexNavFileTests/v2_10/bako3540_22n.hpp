@@ -40,7 +40,7 @@ const GnssNavInfo gnssNavInfo_bako3540_22n = {
         { .satSys = GPS, .alphaBeta = IonosphericCorrections::Beta, .data = { 1.4336e+05, -2.1299e+05, 0.0000e+00, 2.6214e+05 } },
     } },
     .timeSysCorr = {
-        { { GPST, UTC }, { 2.793967723846e-09, 2.664535259100e-15 } },
+        { { GPST, UTC }, { .a0 = 2.793967723846e-09, .a1 = 2.664535259100e-15 } },
     },
     .m_satellites = {
         { { GPS, 1 }, Satellite{

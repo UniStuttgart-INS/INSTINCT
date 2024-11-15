@@ -118,13 +118,13 @@ sudo pacman -S --noconfirm --needed ccache cppcheck
 sudo pacman -S --noconfirm --needed valgrind kcachegrind
 ```
 
-#### Ubuntu 22.04
+#### Ubuntu 24.04
 ```shell
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
-pip3 install conan --user
+sudo apt install -y build-essential clang clang-tidy clang-format cmake pipx libglfw3-dev libglfw3
+pipx install conan
 conan profile detect --force
 
 # Documentation (Ubuntu 22.04 has too old doxygen version)
@@ -163,8 +163,12 @@ brew install ccache cppcheck
 
 #### Windows 11
 
-- For development Windows Subsystem for Linux is recommended. Follow the Ubuntu instructions
-- For executing, INSTINCT can be compiled with MSVC
+- For development Windows Subsystem for Linux `WSL` is **recommended**. Follow the Ubuntu instructions.
+- For executing, INSTINCT can be compiled with `MSVC` directly on Windows
+  - Use the `Build Tools for Visual Studio 2022` ([download](https://visualstudio.microsoft.com/downloads/))
+  - Install both the C++ Toolchain and Cmake
+  - Use the Developer Powershell to invoke commands
+  - Windows specifies the build type at compile time, not during cmake generation. Therefore the toolchain file has a different path. See above
 
 ### VSCode Configuration
 
@@ -251,7 +255,10 @@ Recommended changes to the User's ```keybindings.json```
     * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
     * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-green.svg)](https://opensource.org/licenses/MPL-2.0)
     * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
-    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator. [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [unordered_dense](https://github.com/martinus/unordered_dense) A fast & densely stored hashmap and hashset [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [muparser](https://github.com/beltoforion/muparser) Fast math parser library for C/C++ [![License](https://img.shields.io/badge/License-BSD_2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
+    * [libssh](https://github.com/canonical/libssh) Fulitplatform C library implementing the SSHv2 and SSHv1 protocol [![License](https://img.shields.io/badge/License-LGPL_2.1-blue.svg)](https://opensource.org/license/lgpl-2-1)
     * [gcem](https://github.com/kthohr/gcem) GCE-Math (Generalized Constant Expression Math) is a templated C++ library enabling compile-time computation of mathematical functions. [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
     * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [Navio2](https://github.com/emlid/Navio2) Collection of drivers and examples for Navio 2 - autopilot shield for Raspberry Pi. [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -263,10 +270,10 @@ Recommended changes to the User's ```keybindings.json```
 
 ## Authors
 
-* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-* [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Thomas Topp, M.Sc.](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Marcel Maier, M.Sc.](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Rui Wang, M.Sc.](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 
 ## License
 

@@ -47,6 +47,9 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::RinexObsFileTests
 {
 
+namespace
+{
+
 void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& gnssObsRef)
 {
     auto logger = initializeTestLogger();
@@ -81,6 +84,8 @@ void testRinexObsFileFlow(const std::string& path, const std::vector<GnssObs>& g
 
     REQUIRE(msgCounter == gnssObsRef.size());
 }
+
+} // namespace
 
 // ###########################################################################################################
 //                                                   v2.01

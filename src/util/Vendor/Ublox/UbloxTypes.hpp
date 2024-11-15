@@ -26,14 +26,14 @@
 namespace NAV::vendor::ublox
 {
 /// @brief Error detection modes available
-enum ErrorDetectionMode
+enum ErrorDetectionMode : uint8_t
 {
     ERRORDETECTIONMODE_NONE,     ///< No error detection is used
     ERRORDETECTIONMODE_CHECKSUM, ///< 16-bit checksum is used
 };
 
 /// @brief Enumeration of the available asynchronous ASCII talker IDs.
-enum NmeaTalkerID
+enum NmeaTalkerID : uint8_t
 {
     NMEA_TALKER_ID_OFF = 0, ///< Asynchronous output is turned off.
     NMEA_TALKER_ID_GP = 1,  ///< GPS, SBAS, QZSS
@@ -44,7 +44,7 @@ enum NmeaTalkerID
 };
 
 /// @brief NMEA Message Type.
-enum NmeaMessageClass
+enum NmeaMessageClass : uint8_t
 {
     NMEA_MSG_CLASS_STANDARD = 0xF0, ///< Standard Messages
     NMEA_MSG_CLASS_PUBX = 0xF1      ///< PUBX Messages
@@ -52,7 +52,7 @@ enum NmeaMessageClass
 
 /// @brief NMEA Standard Messages.
 /// Class ID = 0xF0
-enum NmeaStandardMessages
+enum NmeaStandardMessages : uint8_t
 {
     NMEA_STANDARD_MSG_DTM = 0x0A, ///< Datum Reference
     NMEA_STANDARD_MSG_GBQ = 0x44, ///< Poll a standard message (if the current Talker ID is GB)
@@ -76,7 +76,7 @@ enum NmeaStandardMessages
 
 /// @brief NMEA PUBX Messages.
 /// Class ID = 0xF1
-enum NmeaPubxMessages
+enum NmeaPubxMessages : uint8_t
 {
     NMEA_PUBX_MSG_CONFIG = 0x41,   ///< Set Protocols and Baudrate
     NMEA_PUBX_MSG_POSITION = 0x00, ///< Lat/Long Position Data
@@ -86,7 +86,7 @@ enum NmeaPubxMessages
 };
 
 /// @brief The available UBX Class IDs
-enum UbxClass
+enum UbxClass : uint8_t
 {
     UBX_CLASS_NONE = 0x00,               ///< No Message Class specified
     UBX_CLASS_NAV = 0x01,                ///< Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
@@ -106,7 +106,7 @@ enum UbxClass
 };
 
 /// @brief The available ACK Messages
-enum UbxAckMessages
+enum UbxAckMessages : uint8_t
 {
     /// Message Acknowledged (Length = 2; Type = Output)
     UBX_ACK_ACK = 0x01,
@@ -133,7 +133,7 @@ struct UbxAckNak
 };
 
 /// @brief The available CFG Messages
-enum UbxCfgMessages
+enum UbxCfgMessages : uint8_t
 {
     /// Antenna Control Settings (Length = 4; Type = Get/Set)
     UBX_CFG_ANT = 0x13,
@@ -224,7 +224,7 @@ enum UbxCfgMessages
 };
 
 /// @brief The available ESF Messages
-enum UbxEsfMessages
+enum UbxEsfMessages : uint8_t
 {
     /// Vehicle dynamics information (Length = 36; Type = Periodic/Polled)
     UBX_ESF_INS = 0x15,
@@ -322,7 +322,7 @@ struct UbxEsfStatus
 };
 
 /// @brief The available HNR Messages
-enum UbxHnrMessages
+enum UbxHnrMessages : uint8_t
 {
     /// Vehicle dynamics information (Length = 36; Type = Periodic/Polled)
     UBX_HNR_INS = 0x02,
@@ -331,7 +331,7 @@ enum UbxHnrMessages
 };
 
 /// @brief The available INF Messages
-enum UbxInfMessages
+enum UbxInfMessages : uint8_t
 {
     /// ASCII output with debug contents (Length = 0 + 1*N; Type = Output)
     UBX_INF_DEBUG = 0x04,
@@ -346,7 +346,7 @@ enum UbxInfMessages
 };
 
 /// @brief The available LOG Messages
-enum UbxLogMessages
+enum UbxLogMessages : uint8_t
 {
     /// Batched data (Length = 100; Type = Polled)
     UBX_LOG_BATCH = 0x11,
@@ -375,7 +375,7 @@ enum UbxLogMessages
 };
 
 /// @brief The available MGA Messages
-enum UbxMgaMessages
+enum UbxMgaMessages : uint8_t
 {
     /// Multiple GNSS Acknowledge message (Length = 8; Type = Output)
     UBX_MGA_ACK_DATA0 = 0x60,
@@ -447,7 +447,7 @@ enum UbxMgaMessages
 };
 
 /// @brief The available MON Messages
-enum UbxMonMessages
+enum UbxMonMessages : uint8_t
 {
     /// Data batching buffer status (Length = 12; Type = Polled)
     UBX_MON_BATCH = 0x32,
@@ -478,7 +478,7 @@ enum UbxMonMessages
 };
 
 /// @brief The available NAV Messages
-enum UbxNavMessages
+enum UbxNavMessages : uint8_t
 {
     /// AssistNow Autonomous Status (Length = 16; Type = Periodic/Polled)
     UBX_NAV_AOPSTATUS = 0x60,
@@ -611,7 +611,7 @@ struct UbxNavVelned
 };
 
 /// @brief The available RXM Messages
-enum UbxRxmMessages
+enum UbxRxmMessages : uint8_t
 {
     /// Indoor Messaging System Information (Length = 4 + 44*numTx; Type = Periodic/Polled)
     UBX_RXM_IMES = 0x61,
@@ -721,14 +721,14 @@ struct UbxRxmSfrbx
 };
 
 /// @brief The available SEC Messages
-enum UbxSecMessages
+enum UbxSecMessages : uint8_t
 {
     /// Unique Chip ID (Length = 9; Type = Output)
     UBX_SEC_UNIQID = 0x03,
 };
 
 /// @brief The available TIM Messages
-enum UbxTimMessages
+enum UbxTimMessages : uint8_t
 {
     /// Oscillator frequency changed notification (Length = 32; Type = Periodic/Polled)
     UBX_TIM_FCHG = 0x16,
@@ -753,7 +753,7 @@ enum UbxTimMessages
 };
 
 /// @brief The available UPD Messages
-enum UbxUpdMessages
+enum UbxUpdMessages : uint8_t
 {
     /// - Poll Backup File Restore Status (Length = 0; Type = Poll Request)
     /// - Create Backup File in Flash (Length = 4; Type = Command)

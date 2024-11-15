@@ -54,10 +54,7 @@ void Delay::guiConfig()
 {
     if (ImGui::InputInt(fmt::format("Delay length##{}", size_t(id)).c_str(), &_delayLength))
     {
-        if (_delayLength < 1)
-        {
-            _delayLength = 1;
-        }
+        _delayLength = std::max(_delayLength, 1);
         LOG_DEBUG("{}: delayLength changed to {}", nameId(), _delayLength);
         if (name.starts_with("z^-"))
         {

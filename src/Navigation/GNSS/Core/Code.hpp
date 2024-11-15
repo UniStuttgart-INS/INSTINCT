@@ -14,6 +14,7 @@
 #pragma once
 
 #include <bitset>
+#include <cstdint>
 #include <fmt/format.h>
 
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
@@ -88,7 +89,7 @@ class Code
 {
   public:
     /// @brief Enumeration of all Codes
-    enum Enum
+    enum Enum : uint8_t
     {
         None, ///< None
 
@@ -207,7 +208,7 @@ class Code
         S5X, ///< SBAS L5 - Combined
     };
     /// @brief Helper variables
-    enum
+    enum : uint8_t
     {
         _GPS_START = G1C,   ///< GPS start index in the Enum
         _GPS_END = G5X,     ///< GPS end index in the Enum
@@ -589,7 +590,7 @@ class Code
 
   private:
     /// Code bitset
-    Set value{};
+    Set value;
 };
 
 // #########################################################################################################################################

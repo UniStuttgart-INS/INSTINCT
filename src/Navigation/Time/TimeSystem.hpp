@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <fmt/format.h>
 
@@ -22,7 +23,7 @@ using json = nlohmann::json; ///< json namespace
 namespace NAV
 {
 /// @brief List of all time systems
-enum TimeSystem_
+enum TimeSystem_ : uint8_t
 {
     TimeSys_None = 0x00, ///< No Time system
     UTC = 0x01,          ///< Coordinated Universal Time
@@ -134,7 +135,7 @@ class TimeSystem
     }
 
     /// Continuous enum for the time systems
-    enum class TimeSystemEnum
+    enum class TimeSystemEnum : uint8_t
     {
         TimeSys_None, ///< No Time system
         UTC,          ///< Coordinated Universal Time

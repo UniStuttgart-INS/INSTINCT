@@ -134,7 +134,7 @@ class MultiImuFile : public Node, public FileReader
     std::vector<ImuPos> _imuPosAll;
 
     /// @brief Previous observation (for timestamp)
-    InsTime _lastFiltObs{};
+    InsTime _lastFiltObs;
 
     /// @brief Flag that indicates whether a 'GPZDA' message was found in the Multi-IMU-Logs header
     bool _gpzdaFound = false;
@@ -142,7 +142,7 @@ class MultiImuFile : public Node, public FileReader
     bool _gpggaFound = false;
 
     /// Types of NMEA messages available
-    enum class NmeaType
+    enum class NmeaType : uint8_t
     {
         GPGGA, ///< NMEA message type
         GPZDA, ///< NMEA message type

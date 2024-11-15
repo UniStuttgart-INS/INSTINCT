@@ -82,7 +82,7 @@ void NAV::ImuFile::guiConfig()
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
             if (alwaysNormal
-                || std::find_if(_headerColumns.begin(), _headerColumns.end(), [&searchText](const std::string& header) {
+                || std::ranges::find_if(_headerColumns, [&searchText](const std::string& header) {
                        return header.starts_with(searchText);
                    }) != _headerColumns.end())
             {
@@ -205,7 +205,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
     std::string line;
     getline(line);
     // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+    line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
     if (line.empty())
     {
@@ -243,7 +243,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
         if (std::getline(lineStream, cell, ','))
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
 
             if (cell.empty()) { continue; }
 

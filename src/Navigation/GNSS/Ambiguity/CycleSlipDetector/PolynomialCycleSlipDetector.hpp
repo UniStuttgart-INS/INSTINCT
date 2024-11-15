@@ -35,7 +35,7 @@ class GnssAnalyzer;
 class CycleSlipDetector;
 
 /// Cycle-slip detection result type
-enum class PolynomialCycleSlipDetectorResult
+enum class PolynomialCycleSlipDetectorResult : uint8_t
 {
     Disabled,               ///< The cycle-slip detector is disabled
     LessDataThanWindowSize, ///< Less data than the specified window size (cannot predict cycle-slip yet)

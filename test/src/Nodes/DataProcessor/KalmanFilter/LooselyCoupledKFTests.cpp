@@ -53,6 +53,8 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV::TESTS::LooselyCoupledKFTests
 {
+namespace
+{
 
 void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU, size_t MESSAGE_COUNT_IMU_FIX)
 {
@@ -192,6 +194,8 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
     },
                           settings);
 }
+
+} // namespace
 
 TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow]")
 {

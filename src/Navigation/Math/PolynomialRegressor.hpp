@@ -39,7 +39,7 @@ class PolynomialRegressor
 {
   public:
     /// Possible Fit strategies
-    enum class Strategy
+    enum class Strategy : uint8_t
     {
         IncrementalLeastSquares, ///< Incremental Least Squares (only polynomials of order <= 2)
         LeastSquares,            ///< Least Squares (bas if even mildly ill-conditioned)

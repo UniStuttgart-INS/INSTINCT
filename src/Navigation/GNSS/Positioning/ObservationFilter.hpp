@@ -203,7 +203,7 @@ class ObservationFilter
                 if (filtered) { filtered->codeFilter.push_back(satSigId); }
                 continue;
             }
-            if (std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) != _excludedSatellites.end())
+            if (std::ranges::find(_excludedSatellites, satId) != _excludedSatellites.end())
             {
                 LOG_DATA("{}:  [{}] Skipping obs due to GUI excluded satellites", nameId, satSigId);
                 if (filtered) { filtered->excludedSatellites.push_back(satSigId); }
@@ -426,7 +426,7 @@ class ObservationFilter
             satData[obs.first.toSatId()].second |= obs.first.code;
             for (size_t obsType = 0; obsType < GnssObs::ObservationType_COUNT; obsType++)
             {
-                if (std::all_of(obs.second.recvObs.begin(), obs.second.recvObs.end(), [&obsType](const auto& recvObs) {
+                if (std::ranges::all_of(obs.second.recvObs, [&obsType](const auto& recvObs) {
                         return recvObs.second->obs.contains(static_cast<GnssObs::ObservationType>(obsType));
                     }))
                 {
@@ -539,7 +539,7 @@ class ObservationFilter
     [[nodiscard]] bool isSatelliteAllowed(const SatId& satId) const
     {
         return (satId.satSys & _filterFreq)
-               && std::find(_excludedSatellites.begin(), _excludedSatellites.end(), satId) == _excludedSatellites.end();
+               && std::ranges::find(_excludedSatellites, satId) == _excludedSatellites.end();
     }
 
     /// @brief Checks if the Observation type is used by the GUI settings
@@ -671,10 +671,7 @@ class ObservationFilter
                 {
                     if (SatId satId(satSys, satNum);
                         satId.isGeo()
-                        && std::find(obj._excludedSatellites.begin(),
-                                     obj._excludedSatellites.end(),
-                                     satId)
-                               == obj._excludedSatellites.end())
+                        && std::ranges::find(obj._excludedSatellites, satId) == obj._excludedSatellites.end())
                     {
                         obj._excludedSatellites.push_back(satId);
                     }

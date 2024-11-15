@@ -25,7 +25,7 @@ void NAV::gui::widgets::Spinner(const char* label, const ImU32& color, float rad
     const ImGuiID id = window->GetID(label);
 
     ImVec2 pos = window->DC.CursorPos;
-    ImVec2 size((radius)*2 + style.FramePadding.x, (radius + style.FramePadding.y) * 2);
+    ImVec2 size((radius) * 2 + style.FramePadding.x, (radius + style.FramePadding.y) * 2);
 
     const ImRect bb(pos, ImVec2(pos.x + size.x, pos.y + size.y));
     ImGui::ItemSize(bb, style.FramePadding.y);

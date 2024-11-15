@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <unordered_map>
 #include <utility>
@@ -65,7 +66,7 @@ class ObservationEstimator
     }
 
     /// @brief How the observation gets used. Influenced the measurement variance
-    enum ObservationDifference
+    enum ObservationDifference : uint8_t
     {
         NoDifference,     ///< Estimation is not differenced
         SingleDifference, ///< Single Difference

@@ -24,12 +24,12 @@ void NAV::DynamicData::guiTooltip(bool detailView, bool firstOpen, const char* d
 {
     ImGui::SetNextItemOpen(detailView, firstOpen ? ImGuiCond_Always : ImGuiCond_Once);
 
-    auto d = std::find_if(data.begin(), data.end(), [&](const auto& dat) {
+    auto d = std::ranges::find_if(data, [&](const auto& dat) {
         return dat.description == displayName;
     });
     if (d == data.end()) { return; }
 
-    if (std::any_of(d->rawData.begin(), d->rawData.end(), [&](const auto& raw) {
+    if (std::ranges::any_of(d->rawData, [&](const auto& raw) {
             return raw.second->insTime != insTime;
         }))
     {

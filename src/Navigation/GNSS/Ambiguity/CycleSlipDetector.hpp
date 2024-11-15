@@ -27,7 +27,7 @@ class CycleSlipDetector
 {
   public:
     /// @brief Detectors in use
-    enum class Detector
+    enum class Detector : uint8_t
     {
         LLI,             ///< Loss-of-Lock Indicator check
         SingleFrequency, ///< Single frequency detector

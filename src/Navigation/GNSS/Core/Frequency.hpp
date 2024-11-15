@@ -59,7 +59,7 @@ class Frequency
 {
   public:
     /// @brief Satellite System enumeration with continuous range. Not usable as a mask
-    enum Enum : size_t
+    enum Enum : uint8_t
     {
         Enum_G01,   ///< GPS L1 (1575.42 MHz).
         Enum_G02,   ///< GPS L2 (1227.6 MHz).

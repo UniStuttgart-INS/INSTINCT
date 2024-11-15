@@ -14,10 +14,11 @@
 #pragma once
 
 #include "imgui.h"
+#include <cstdint>
 
 namespace NAV::gui::widgets::PinIcon
 {
-enum class Type : ImU32
+enum class Type : uint8_t
 {
     Flow,
     Circle,

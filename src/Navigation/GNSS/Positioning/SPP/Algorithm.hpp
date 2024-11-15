@@ -14,6 +14,7 @@
 #pragma once
 
 #include <fmt/format.h>
+#include <cstdint>
 #include <set>
 
 #include "Navigation/GNSS/Positioning/Observation.hpp"
@@ -37,7 +38,7 @@ class Algorithm
 {
   public:
     /// Possible SPP estimation algorithms
-    enum class EstimatorType
+    enum class EstimatorType : uint8_t
     {
         LeastSquares,         ///< Linear Least Squares
         WeightedLeastSquares, ///< Weighted Linear Least Squares
@@ -46,7 +47,7 @@ class Algorithm
     };
 
     /// @brief Receiver Types
-    enum ReceiverType
+    enum ReceiverType : uint8_t
     {
         Rover,              ///< Rover
         ReceiverType_COUNT, ///< Amount of receiver types

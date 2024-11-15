@@ -496,7 +496,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
         {
             const auto& obsDesc = obsDescriptions.at(i);
 
-            auto signal = std::find_if(obs->data.begin(), obs->data.end(), [&obsDesc, &satId](const auto& sig) {
+            auto signal = std::ranges::find_if(obs->data, [&obsDesc, &satId](const auto& sig) {
                 return sig.satSigId == SatSigId{ obsDesc.code, satId.satNum };
             });
 

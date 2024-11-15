@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdint>
 #include <locale>
 #include <vector>
 #include <string>
@@ -30,9 +31,7 @@ static inline void ltrim(std::string& s)
     {
         s.erase(0, 1);
     }
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
-                return !std::isspace(ch);
-            }));
+    s.erase(s.begin(), std::ranges::find_if(s, [](int ch) { return !std::isspace(ch); }));
 }
 
 /// @brief Trim from end (in place)
@@ -43,9 +42,10 @@ static inline void rtrim(std::string& s)
     {
         s.erase(s.length() - 1);
     }
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) { // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::find_last_if is C++23 and not supported yet
                 return !std::isspace(ch);
-            }).base(),
+            })
+                .base(),
             s.end());
 }
 
@@ -134,7 +134,7 @@ static inline std::string_view trim_copy(std::string_view sv)
 }
 
 /// @brief Enum for case sensitive tasks
-enum CaseSensitivity
+enum CaseSensitivity : uint8_t
 {
     RespectCase, ///< Respect the case
     IgnoreCase,  ///< Ignore case
@@ -152,7 +152,7 @@ static inline bool replace(std::string& str, const std::string& from, const std:
     {
         return false;
     }
-    auto it = std::search(str.begin(), str.end(),
+    auto it = std::search(str.begin(), str.end(), // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::search is C++23 and not supported yet
                           from.begin(), from.end(),
                           [cs](char ch1, char ch2) { return cs == RespectCase
                                                                 ? ch1 == ch2

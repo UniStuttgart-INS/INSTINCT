@@ -571,8 +571,8 @@ bool Frequency::isFirstFrequency(const Frequency& filter) const
     if (f == Freq_None) { return true; }
 
     auto frequencies = Frequency(f).toVector();
-    return std::all_of(frequencies.begin(), frequencies.end(),
-                       [&](const Frequency& freq) { return value < Frequency_(freq); });
+    return std::ranges::all_of(frequencies,
+                               [&](const Frequency& freq) { return value < Frequency_(freq); });
 }
 
 void to_json(json& j, const Frequency& data)

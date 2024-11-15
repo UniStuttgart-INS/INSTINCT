@@ -25,7 +25,7 @@ namespace Units
 {
 
 /// Possible Units for the Standard deviation of the acceleration due to user motion
-enum class CovarianceAccelUnits
+enum class CovarianceAccelUnits : uint8_t
 {
     m2_s3,    ///< [ m^2 / s^3 ]
     m_sqrts3, ///< [ m / √(s^3) ]
@@ -33,7 +33,7 @@ enum class CovarianceAccelUnits
 };
 
 /// Possible Units for the Standard deviation of the clock phase drift
-enum class CovarianceClkPhaseDriftUnits
+enum class CovarianceClkPhaseDriftUnits : uint8_t
 {
     m2_s,    ///< [ m^2 / s ]
     m_sqrts, ///< [ m / √(s) ]
@@ -41,7 +41,7 @@ enum class CovarianceClkPhaseDriftUnits
 };
 
 /// Possible Units for the Standard deviation of the clock frequency drift
-enum class CovarianceClkFrequencyDriftUnits
+enum class CovarianceClkFrequencyDriftUnits : uint8_t
 {
     m2_s3,    ///< [ m^2 / s^3 ]
     m_sqrts3, ///< [ m / √(s^3) ]

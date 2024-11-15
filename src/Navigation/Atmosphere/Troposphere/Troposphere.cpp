@@ -63,6 +63,9 @@ const char* to_string(MappingFunction mappingFunction)
     return "";
 }
 
+namespace
+{
+
 AtmosphereModels MappingFunctionDefaults(MappingFunction mappingFunction)
 {
     switch (mappingFunction)
@@ -132,6 +135,8 @@ std::tuple<AtmosphereModels, MappingFunction, AtmosphereModels> ModelDefaults(Tr
              MappingFunction::None,
              MappingFunctionDefaults(MappingFunction::None) };
 }
+
+} // namespace
 
 bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposphereModelSelection, float width)
 {
@@ -301,7 +306,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         return {};
     }
 
-    enum
+    enum : uint8_t
     {
         ZHD,
         ZWD,
@@ -330,10 +335,10 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         || troposphereModels.zwdModel.first == TroposphereModel::GPT2
         || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT2
         || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT2
-        || std::any_of(atmosphereModels.begin(), atmosphereModels.end(),
-                       [](const auto& model) { return model.get().pressureModel == PressureModel::GPT2
-                                                      || model.get().temperatureModel == TemperatureModel::GPT2
-                                                      || model.get().waterVaporModel == WaterVaporModel::GPT2; }))
+        || std::ranges::any_of(atmosphereModels,
+                               [](const auto& model) { return model.get().pressureModel == PressureModel::GPT2
+                                                              || model.get().temperatureModel == TemperatureModel::GPT2
+                                                              || model.get().waterVaporModel == WaterVaporModel::GPT2; }))
     {
         LOG_DATA("Calculating GPT2 parameters");
         gpt2outputs = GPT2_param(mjd, lla_pos);
@@ -343,10 +348,10 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         || troposphereModels.zwdModel.first == TroposphereModel::GPT3
         || troposphereModels.zhdMappingFunction.first == MappingFunction::VMF_GPT3
         || troposphereModels.zwdMappingFunction.first == MappingFunction::VMF_GPT3
-        || std::any_of(atmosphereModels.begin(), atmosphereModels.end(),
-                       [](const auto& model) { return model.get().pressureModel == PressureModel::GPT3
-                                                      || model.get().temperatureModel == TemperatureModel::GPT3
-                                                      || model.get().waterVaporModel == WaterVaporModel::GPT3; }))
+        || std::ranges::any_of(atmosphereModels,
+                               [](const auto& model) { return model.get().pressureModel == PressureModel::GPT3
+                                                              || model.get().temperatureModel == TemperatureModel::GPT3
+                                                              || model.get().waterVaporModel == WaterVaporModel::GPT3; }))
     {
         LOG_DATA("Calculating GPT3 parameters");
         gpt3outputs = GPT3_param(mjd, lla_pos);

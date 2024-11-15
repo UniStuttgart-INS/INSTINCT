@@ -25,7 +25,8 @@
 
 namespace NAV::TESTS::Saastamoinen
 {
-
+namespace
+{
 /* troposphere model -----------------------------------------------------------
  * compute tropospheric delay by standard atmosphere and saastamoinen model
  * args   : gtime_t time     I   time
@@ -54,6 +55,7 @@ double tropmodel(const double* pos, const double* azel, double humi)
     trpw = 0.002277 * (1255.0 / temp + 0.05) * e / cos(z);
     return trph + trpw;
 }
+} // namespace
 
 TEST_CASE("[Saastamoinen] Compare with Rtklib code", "[Saastamoinen]")
 {

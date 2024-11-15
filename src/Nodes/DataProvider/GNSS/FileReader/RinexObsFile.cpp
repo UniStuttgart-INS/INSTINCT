@@ -75,7 +75,7 @@ void RinexObsFile::guiConfig()
         }
     }
     ImGui::Text("Supported versions: ");
-    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+    std::ranges::for_each(_supportedVersions, [](double x) {
         ImGui::SameLine();
         ImGui::Text("%0.2f", x);
     });
@@ -144,7 +144,7 @@ FileReader::FileType RinexObsFile::determineFileType()
 {
     auto extHeaderLabel = [](std::string line) {
         // Remove any trailing non text characters
-        line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+        line.erase(std::ranges::find_if(line, [](int ch) { return std::iscntrl(ch); }), line.end());
 
         return str::trim_copy(std::string_view(line).substr(60, 20));
     };
@@ -738,7 +738,7 @@ void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gn
     auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
         auto eraseSatDataWithCode = [&](const Code& code) {
             LOG_DATA("{}: Searching for {}-{}", nameId(), code, satNum);
-            auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [code, satNum](const GnssObs::ObservationData& idData) {
+            auto iter = std::ranges::find_if(gnssObs->data, [code, satNum](const GnssObs::ObservationData& idData) {
                 return idData.satSigId == SatSigId{ code, satNum };
             });
             if (iter != gnssObs->data.end())

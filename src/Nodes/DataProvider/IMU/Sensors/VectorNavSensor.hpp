@@ -37,7 +37,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Information needed to sync Master/Slave sensors
     struct TimeSync
     {
-        InsTime ppsTime{};     ///< Time of the last message with GNSS Time available (or empty otherwise)
+        InsTime ppsTime;       ///< Time of the last message with GNSS Time available (or empty otherwise)
         uint32_t syncOutCnt{}; ///< The number of SyncOut trigger events that have occurred.
     };
 
@@ -98,7 +98,7 @@ class VectorNavSensor : public Imu, public UartSensor
     static void asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t index);
 
     /// @brief VectorNav Model enumeration
-    enum class VectorNavModel : int
+    enum class VectorNavModel : uint8_t
     {
         /// VN-100/SMD (Miniature, lightweight and high-performance IMU & AHRS)
         /// VN-110/E (Rugged and Miniature Tactical-Grade IMU and AHRS)
@@ -131,7 +131,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Last received GNSS time
     struct
     {
-        InsTime lastGnssTime{};      ///< Last GNSS time received
+        InsTime lastGnssTime;        ///< Last GNSS time received
         uint64_t timeSinceStartup{}; ///< Time since startup when the GNSS time was received
     } _gnssTimeCounter;
 
@@ -203,7 +203,7 @@ class VectorNavSensor : public Imu, public UartSensor
     };
 
     /// Possible Merge combinations between the binary output registers
-    enum class BinaryRegisterMerge
+    enum class BinaryRegisterMerge : uint8_t
     {
         None,            ///< Do not merge any outputs
         Output1_Output2, ///< Merge Output 1 and 2

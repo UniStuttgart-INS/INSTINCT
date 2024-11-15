@@ -30,6 +30,10 @@ using json = nlohmann::json; ///< json namespace
 #include <limits>
 #include <iterator>
 
+namespace NAV::gui
+{
+namespace
+{
 /// @brief Specifies if the elements in the clipboard are cutted or copied
 bool elementsCutted = false;
 /// @brief Clipboard storage
@@ -42,6 +46,9 @@ json clipboard;
 size_t currentAction = 0;
 /// @brief List of actions performed by the user
 std::deque<json> actionList;
+
+} // namespace
+} // namespace NAV::gui
 
 bool NAV::gui::canCutOrCopyFlowElements()
 {
@@ -145,14 +152,8 @@ void NAV::gui::pasteFlowElements()
             {
                 nodeJson.at("pos").get_to(pos);
 
-                if (pos.x < leftTopMostPos.x)
-                {
-                    leftTopMostPos.x = pos.x;
-                }
-                if (pos.y < leftTopMostPos.y)
-                {
-                    leftTopMostPos.y = pos.y;
-                }
+                leftTopMostPos.x = std::min(pos.x, leftTopMostPos.x);
+                leftTopMostPos.y = std::min(pos.y, leftTopMostPos.y);
             }
         }
     }
@@ -311,38 +312,44 @@ void NAV::gui::clearLastActionList()
     currentAction = 0;
 }
 
-void restoreAction(const json& /* target */)
-{
-    // // TODO: Compare against current config and only load the nodes/links which were changed
-    // // json current;
-    // // for (const auto& node : nm::m_Nodes())
-    // // {
-    // //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
-    // //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
-    // // }
-    // // for (const auto& link : nm::m_Links())
-    // // {
-    // //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
-    // // }
+// namespace NAV::gui
+// {
+// namespace
+// {
+// void restoreAction(const json& /* target */)
+// {
+//     // TODO: Compare against current config and only load the nodes/links which were changed
+//     // json current;
+//     // for (const auto& node : nm::m_Nodes())
+//     // {
+//     //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+//     //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+//     // }
+//     // for (const auto& link : nm::m_Links())
+//     // {
+//     //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
+//     // }
 
-    // NAV::flow::saveLastActions = false;
-    // nm::DeleteAllNodes();
+//     NAV::flow::saveLastActions = false;
+//     nm::DeleteAllNodes();
 
-    // NAV::flow::LoadJson(target);
-    // if (!target["unsavedChanges"].get<bool>())
-    // {
-    //     NAV::flow::DiscardChanges();
-    // }
-    // else
-    // {
-    //     NAV::flow::ApplyChanges();
-    // }
+//     NAV::flow::LoadJson(target);
+//     if (!target["unsavedChanges"].get<bool>())
+//     {
+//         NAV::flow::DiscardChanges();
+//     }
+//     else
+//     {
+//         NAV::flow::ApplyChanges();
+//     }
 
-    // NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
-    // NAV::flow::saveLastActions = true;
+//     NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
+//     NAV::flow::saveLastActions = true;
 
-    // nm::InitializeAllNodesAsync();
-}
+//     nm::InitializeAllNodesAsync();
+// }
+// } // namespace
+// } // namespace NAV::gui
 
 void NAV::gui::undoLastAction()
 {

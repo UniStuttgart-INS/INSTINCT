@@ -103,8 +103,7 @@ class ImuObs : public NodeData
             if (p_magneticField.has_value()) { return p_magneticField->z(); }
             break;
         case 10: // Temperature [°C]
-            if (temperature.has_value()) { return temperature.value(); }
-            break;
+            return temperature;
         default:
             return std::nullopt;
         }

@@ -46,11 +46,11 @@
 #define C_WHITE "\033[1;37m"
 
 // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
-const char* logPatternTrace = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] [%!()] %v";
-const char* logPatternTraceColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] [" C_ORANGE "%!()" C_NO "] %v";
-const char* logPatternDebug = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] %v";
-const char* logPatternDebugColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] %v";
-const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
+[[maybe_unused]] constexpr const char* logPatternTrace = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] [%!()] %v";
+[[maybe_unused]] constexpr const char* logPatternTraceColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] [" C_ORANGE "%!()" C_NO "] %v";
+[[maybe_unused]] constexpr const char* logPatternDebug = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] %v";
+[[maybe_unused]] constexpr const char* logPatternDebugColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] %v";
+[[maybe_unused]] constexpr const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
 
 Logger::Logger(const std::string& logpath)
 {

@@ -25,6 +25,7 @@ namespace NAV::Geoid::EGM96::internal
 {
 
 // clang-format off
+// NOLINTBEGIN
 
 //! Precomputed EGM96 correction and harmonic coefficients
 static const double egm96_data[65342][4] = // NOLINT
@@ -65372,6 +65373,7 @@ static const double egm96_data[65342][4] = // NOLINT
 {-0.00738649,0.000547504,1.83972e-11,-3.10124e-11},
 {2.05446e-18,0.00725247,-4.47516e-25,-8.30225e-11},
 };
+// NOLINTEND
 // clang-format off
 
 } // namespace NAV::Geoid::EGM96::internal

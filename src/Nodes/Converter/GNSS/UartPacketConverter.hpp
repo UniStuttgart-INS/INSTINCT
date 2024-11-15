@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "internal/Node/Node.hpp"
 
 namespace NAV
@@ -61,7 +62,7 @@ class UartPacketConverter : public Node
     constexpr static size_t INPUT_PORT_INDEX_SYNC_IN = 1;     ///< @brief Flow (SyncIn)
 
     /// Enum specifying the type of the output message
-    enum OutputType
+    enum OutputType : uint8_t
     {
         OutputType_UbloxObs, ///< Extract UbloxObs data
         OutputType_EmlidObs, ///< Extract EmlidObs data

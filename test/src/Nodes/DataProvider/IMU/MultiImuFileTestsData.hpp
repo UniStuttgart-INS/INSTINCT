@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "NodeData/IMU/ImuObs.hpp"
 
 namespace NAV::TESTS::MultiImuFileTests
@@ -30,7 +31,7 @@ static inline InsTime IMU_STARTTIME = InsTime(2023, 8, 9, 9, 34, 35., UTC); // U
 constexpr double SCALEFACTOR_ACCEL = 0.001;
 constexpr double SCALEFACTOR_GYRO = 1. / 131.;
 
-enum ImuRef : size_t
+enum ImuRef : uint8_t
 {
     SensorId,
     GpsSec, // timestamp from GPS, but with UTC as time base
@@ -43,6 +44,8 @@ enum ImuRef : size_t
     GyroY,
     GyroZ,
 };
+
+// NOLINTBEGIN
 
 // IMU reference data - the first 20 lines of data
 constexpr std::array<std::array<double, 12>, 100> IMU_REFERENCE_DATA{ {
@@ -147,5 +150,6 @@ constexpr std::array<std::array<double, 12>, 100> IMU_REFERENCE_DATA{ {
     { 3., 34476., 791360., 992500., 637., 198., 10888., -425., 147., -93., 269., 40052. },
     { 2., 34476., 797584., 992500., 972., 482., 9613., 497., -1041., -87., 275., 40724. },
 } };
+// NOLINTEND
 
 } // namespace NAV::TESTS::MultiImuFileTests

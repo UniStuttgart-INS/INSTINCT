@@ -22,6 +22,8 @@ namespace NAV::TESTS::CoordinateFramesTests
 
 namespace ref
 {
+namespace
+{
 
 Eigen::Vector4d qCoeffsFromDcm(const Eigen::Matrix3d& C)
 {
@@ -129,6 +131,7 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& e_position, double a = InsC
     return { latitude, longitude, altitude };
 }
 
+} // namespace
 } // namespace ref
 
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")

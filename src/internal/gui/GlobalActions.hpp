@@ -13,8 +13,10 @@
 
 #pragma once
 
+#include <cstdint>
+
 /// @brief Possible Global Actions to perform in the GUI
-enum GlobalActions
+enum GlobalActions : uint8_t
 {
     None,        ///< None
     Quit,        ///< Quit the program

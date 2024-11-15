@@ -351,13 +351,13 @@ void NAV::ErrorModel::guiConfig()
                             for (const auto& time : ambiguityTimes)
                             {
                                 ImGui::TableNextColumn();
-                                auto iter = std::find_if(ambiguities->second.begin(), ambiguities->second.end(), [&time](const auto& timeAndAmb) {
+                                auto iter = std::ranges::find_if(ambiguities->second, [&time](const auto& timeAndAmb) {
                                     return timeAndAmb.first == time;
                                 });
                                 if (iter != ambiguities->second.end())
                                 {
                                     ImVec4 color;
-                                    auto cycleIter = std::find_if(_cycleSlips.begin(), _cycleSlips.end(), [&](const CycleSlipInfo& cycleSlip) {
+                                    auto cycleIter = std::ranges::find_if(_cycleSlips, [&](const CycleSlipInfo& cycleSlip) {
                                         return cycleSlip.time == time && cycleSlip.satSigId == ambiguities->first;
                                     });
                                     if (cycleIter != _cycleSlips.end()) { color = ImColor(240, 128, 128); }
@@ -1083,7 +1083,7 @@ std::shared_ptr<NAV::GnssObs> NAV::ErrorModel::receiveGnssObs(const std::shared_
                     {
                         obs.carrierPhase.value().LLI = 1;
                     }
-                    _cycleSlips.push_back(CycleSlipInfo{ gnssObs->insTime, obs.satSigId, obs.carrierPhase.value().LLI != 0 });
+                    _cycleSlips.push_back(CycleSlipInfo{ .time = gnssObs->insTime, .satSigId = obs.satSigId, .LLI = obs.carrierPhase.value().LLI != 0 });
                     LOG_DEBUG("{}: [{}] Simulating cycle-slip for satellite [{}] with LLI {}", nameId(), gnssObs->insTime.toYMDHMS(GPST),
                               obs.satSigId, obs.carrierPhase.value().LLI);
                 }

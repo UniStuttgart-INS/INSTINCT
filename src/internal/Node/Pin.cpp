@@ -38,7 +38,7 @@ bool NAV::Pin::canCreateLink(const OutputPin& startPin, const InputPin& endPin)
 
     if (startPin.type == Pin::Type::Delegate
         && (startPin.parentNode == nullptr
-            || std::find(endPin.dataIdentifier.begin(), endPin.dataIdentifier.end(), startPin.parentNode->type()) == endPin.dataIdentifier.end()))
+            || std::ranges::find(endPin.dataIdentifier, startPin.parentNode->type()) == endPin.dataIdentifier.end()))
     {
         dataTypesMatch = false;
     }
@@ -59,10 +59,7 @@ bool NAV::Pin::canCreateLink(const OutputPin& startPin, const InputPin& endPin)
 bool NAV::Pin::dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b)
 {
     return !a.empty() && !b.empty()
-           && std::find_if(a.begin(),
-                           a.end(),
-                           [&b](const std::string& str) { return std::find(b.begin(), b.end(), str) != b.end(); })
-                  != a.end();
+           && std::ranges::find_if(a, [&b](const std::string& str) { return std::ranges::find(b, str) != b.end(); }) != a.end();
 }
 
 ImColor NAV::Pin::getIconColor() const
@@ -251,7 +248,7 @@ bool NAV::OutputPin::isPinLinked() const
 
 bool NAV::OutputPin::isPinLinked(const NAV::InputPin& endPin) const
 {
-    auto iter = std::find_if(links.cbegin(), links.cend(), [&endPin](const OutgoingLink& link) {
+    auto iter = std::ranges::find_if(links, [&endPin](const OutgoingLink& link) {
         return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
     });
     return iter != links.cend();
@@ -289,7 +286,7 @@ void NAV::OutputPin::deleteLinks()
 
 void NAV::OutputPin::connect(NAV::InputPin& endPin, ax::NodeEditor::LinkId linkId)
 {
-    auto iter = std::find_if(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+    auto iter = std::ranges::find_if(links, [&endPin](const OutgoingLink& link) {
         return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
     });
     if (iter == links.end()) // Link does not yet exist
@@ -321,7 +318,7 @@ void NAV::OutputPin::connect(NAV::InputPin& endPin, ax::NodeEditor::LinkId linkI
 
 void NAV::OutputPin::disconnect(InputPin& endPin)
 {
-    auto iter = std::find_if(links.begin(), links.end(), [&endPin](const OutgoingLink& link) {
+    auto iter = std::ranges::find_if(links, [&endPin](const OutgoingLink& link) {
         return link.connectedNode == endPin.parentNode && link.connectedPinId == endPin.id;
     });
     if (iter != links.end())
@@ -385,7 +382,7 @@ void NAV::InputPin::connect(NAV::OutputPin& startPin, ax::NodeEditor::LinkId lin
         link.connectedNode = startPin.parentNode;
         link.connectedPinId = startPin.id;
 
-        auto iter = std::find_if(startPin.links.begin(), startPin.links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+        auto iter = std::ranges::find_if(startPin.links, [&, this](const OutputPin::OutgoingLink& link) {
             return link.connectedNode == parentNode && link.connectedPinId == id;
         });
 
@@ -426,7 +423,7 @@ void NAV::InputPin::disconnect()
 
         if (startPin)
         {
-            auto iter = std::find_if(startPin->links.begin(), startPin->links.end(), [&, this](const OutputPin::OutgoingLink& link) {
+            auto iter = std::ranges::find_if(startPin->links, [&, this](const OutputPin::OutgoingLink& link) {
                 return link.connectedNode == parentNode && link.connectedPinId == id;
             });
 

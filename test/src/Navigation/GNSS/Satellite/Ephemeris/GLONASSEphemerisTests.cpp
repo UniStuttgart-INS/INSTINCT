@@ -21,10 +21,12 @@ TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (ICD-GLONASS-5.1)", "[Ephemeris]
     // Vel value is really high, probably the ICD values are wrong
     Margin margin{ .clock = 0, .pos = 1.34, .vel = 138.0, .accel = 0 };
 
+    // NOLINTBEGIN
     GLONASSEphemeris eph(2007, 11, 15, 6, 15, 0, 0.0, 0.0, 0.0,
                          -14081.752701, -1.02576358, 0.0, 0.0,
                          18358.958252, 1.08672147, 0.0, 0.0,
                          10861.302124, -3.15732343, 0.0, 0.0);
+    // NOLINTEND
     LOG_TRACE("  eph.toc = {} ({})", eph.toc.toYMDHMS(), eph.toc.toGPSweekTow());
 
     InsTime transmitTime = InsTime{ 2007, 11, 15, 6, 30, 0.0 };
@@ -55,10 +57,12 @@ TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (ICD-GLONASS-CDMA-1.0)", "[Ephem
     // Pos value is high for a theoretical calculation
     Margin margin{ .clock = 0, .pos = 1.03, .vel = 3.5e-3, .accel = 0 };
 
+    // NOLINTBEGIN
     GLONASSEphemeris eph(2012, 9, 7, 0, 0, 11700, 0.0, 0.0, 0.0,
                          7003.008789, 0.7835417, 0.0, 0.0,
                          -12206.626953, 2.8042530, 1.7e-9, 0.0,
                          21280.765625, 1.3525150, -5.41e-9, 0.0);
+    // NOLINTEND
     LOG_TRACE("  eph.toc = {} ({})", eph.toc.toYMDHMS(), eph.toc.toGPSweekTow());
 
     InsTime transmitTime = InsTime{ 2012, 9, 7, 0, 0, 12300 };
@@ -84,11 +88,13 @@ TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (ICD-GLONASS-CDMA-1.0)", "[Ephem
 TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris]")
 {
     // R13 - Taken from real data
+    // NOLINTBEGIN
     GLONASSEphemeris eph(2023, 1, 8, 11, 45, 0, -3.075692802668e-05, 0.000000000000e+00, 4.143000000000e+04,
                          -3.571277832031e+03, -1.539720535278e+00, -9.313225746155e-10, 0.000000000000e+00,
                          1.760026269531e+04, 1.948561668396e+00, -1.862645149231e-09, -2.000000000000e+00,
                          1.809717138672e+04, -2.195667266846e+00, -9.313225746155e-10, 0.000000000000e+00,
                          0.0, 0.0, 0.0, 0.0, -1.8626451492e-09); // GLUT TIME SYSTEM CORR
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -106,11 +112,13 @@ TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
 TEST_CASE("[Ephemeris] GLO Ephemeris calc orbit (Spirent SimGEN data)", "[Ephemeris]")
 {
     // R13 - Exported from the Spirent SimGEN GUI
+    // NOLINTBEGIN
     GLONASSEphemeris eph(2023, 1, 8, 11, 45, 0, -3.077182918787e-05, 0.000000000000e+00, 4.140000000000e+04,
                          -3.571975579373e+03, -1.538787529527e+00, 0.000000000000e+00, 0.000000000000e+00,
                          1.760483613624e+04, 1.948528507402e+00, 0.000000000000e+00, -2.000000000000e+00,
                          1.809266202785e+04, -2.196646735467e+00, 0.000000000000e+00, 0.000000000000e+00,
                          0.0, 0.0, 0.0, 0.0, 5.5879354477e-09); // GLUT TIME SYSTEM CORR
+    // NOLINTEND
 
     Margin margin;     // Determined by running the test and adapting
     margin.pos = 2500; // TODO: Values are way too high

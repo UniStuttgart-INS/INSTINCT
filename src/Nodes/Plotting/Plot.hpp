@@ -121,7 +121,7 @@ class Plot : public Node, public CommonLog
         };
 
         /// @brief Possible Pin types
-        enum class PinType : int
+        enum class PinType : uint8_t
         {
             Flow,   ///< NodeData Trigger
             Bool,   ///< Boolean
@@ -357,7 +357,7 @@ class Plot : public Node, public CommonLog
     size_t _screenShotPlotIdx = 0;  ///< Plot index a screenshot is taken of
 
     /// Values to force the x axis range to and a set of plotIdx to force
-    std::pair<std::unordered_set<size_t>, ImPlotRange> _forceXaxisRange{};
+    std::pair<std::unordered_set<size_t>, ImPlotRange> _forceXaxisRange;
 
     /// Start position for the calculation of relative North-South and East-West
     std::optional<gui::widgets::PositionWithFrame> _originPosition;

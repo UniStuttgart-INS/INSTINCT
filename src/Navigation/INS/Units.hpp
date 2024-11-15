@@ -27,14 +27,14 @@ namespace Units
 {
 
 /// Possible units to specify an accelerometer with
-enum class ImuAccelerometerUnits
+enum class ImuAccelerometerUnits : uint8_t
 {
     m_s2,  ///< [m/s^2]
     COUNT, ///< Amount of items in the enum
 };
 
 /// Possible units to specify an gyroscope bias with
-enum class ImuGyroscopeUnits
+enum class ImuGyroscopeUnits : uint8_t
 {
     rad_s, ///< [rad/s]
     deg_s, ///< [deg/s]
@@ -42,7 +42,7 @@ enum class ImuGyroscopeUnits
 };
 
 /// Possible units to specify an accelerometer noise
-enum class ImuAccelerometerNoiseUnits
+enum class ImuAccelerometerNoiseUnits : uint8_t
 {
     m_s2_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
     m_s2_sqrth, ///< [m/s^2/sqrt(h)] (Standard deviation)
@@ -50,7 +50,7 @@ enum class ImuAccelerometerNoiseUnits
 };
 
 /// Possible units to specify an gyro noise
-enum class ImuGyroscopeNoiseUnits
+enum class ImuGyroscopeNoiseUnits : uint8_t
 {
     rad_s_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
     rad_s_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
@@ -60,7 +60,7 @@ enum class ImuGyroscopeNoiseUnits
 };
 
 /// Possible units to specify an accelerometer IRW
-enum class ImuAccelerometerIRWUnits
+enum class ImuAccelerometerIRWUnits : uint8_t
 {
     m_s3_sqrts, ///< [m/s^3/sqrt(s)] (Standard deviation)
     m_s3_sqrth, ///< [m/s^3/sqrt(h)] (Standard deviation)
@@ -68,7 +68,7 @@ enum class ImuAccelerometerIRWUnits
 };
 
 /// Possible units to specify an gyro RW
-enum class ImuGyroscopeIRWUnits
+enum class ImuGyroscopeIRWUnits : uint8_t
 {
     rad_s2_sqrts, ///< [rad/s^2/sqrt(s)] (Standard deviation)
     rad_s2_sqrth, ///< [rad/s^2/sqrt(h)] (Standard deviation)

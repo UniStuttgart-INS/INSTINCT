@@ -13,11 +13,13 @@
 
 #pragma once
 
+#include <cstdint>
+
 namespace NAV
 {
 
 /// Algorithms to calculate the system model with
-enum class SystemModelCalcAlgorithm
+enum class SystemModelCalcAlgorithm : uint8_t
 {
     VanLoan, ///< Van-Loan
     Taylor1, ///< Taylor

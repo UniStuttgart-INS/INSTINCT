@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <concepts>
 #include "Navigation/Constants.hpp"
 
 namespace NAV
@@ -24,7 +25,7 @@ namespace NAV
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Geocentric Radius in [m]
 /// @note \cite Groves2013 Groves, ch. 2.4.7, eq. 2.137, p. 71
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Scalar calcGeocentricRadius(const Scalar& latitude, const Scalar& R_E, const Scalar& e_squared = InsConst::WGS84::e_squared)
 {
     return R_E * std::sqrt(std::pow(std::cos(latitude), 2) + std::pow((1.0 - e_squared) * std::sin(latitude), 2));
@@ -37,7 +38,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return North/South (meridian) earth radius [m]
 /// @note See \cite Groves2013 Groves, ch. 2.4.2, eq. 2.105, p. 59
 /// @note See \cite Titterton2004 Titterton, ch. 3.7.2, eq. 3.83, p. 49
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Scalar calcEarthRadius_N(const Scalar& latitude, const Scalar& a = InsConst::WGS84::a, const Scalar& e_squared = InsConst::WGS84::e_squared)
 {
     Scalar k = std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
@@ -53,7 +54,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return East/West (prime vertical) earth radius [m]
 /// @note See \cite Groves2013 Groves, ch. 2.4.2, eq. 2.106, p. 59
 /// @note See \cite Titterton2004 Titterton, ch. 3.7.2, eq. 3.84, p. 49
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Scalar calcEarthRadius_E(const Scalar& latitude, const Scalar& a = InsConst::WGS84::a, const Scalar& e_squared = InsConst::WGS84::e_squared)
 {
     // East/West (prime vertical) earth radius [m]
@@ -83,7 +84,7 @@ template<typename Derived>
 /// @return The distance in [m]
 ///
 /// @note See Haversine Formula (https://www.movable-type.co.uk/scripts/latlong.html)
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Scalar calcGreatCircleDistance(Scalar lat1, Scalar lon1, Scalar lat2, Scalar lon2)
 {
     Scalar R = calcGeocentricRadius(lat1, calcEarthRadius_E(lat1));
@@ -102,7 +103,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return The distance in [m]
 ///
 /// @note See Lambert's formula for long lines (https://en.wikipedia.org/wiki/Geographical_distance#Lambert's_formula_for_long_lines)
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Scalar calcGeographicalDistance(Scalar lat1, Scalar lon1, Scalar lat2, Scalar lon2)
 {
     if (lat1 == lat2 && lon1 == lon2)

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <functional>
 #include <vector>
@@ -26,7 +27,7 @@ namespace NAV::TESTS
 {
 
 /// @brief Spirent ASCII satellite data parameters file description
-enum SpirentAsciiSatelliteData_ : size_t
+enum SpirentAsciiSatelliteData_ : uint8_t
 {
     SpirentAsciiSatelliteData_Time_ms,               ///< Time_ms
     SpirentAsciiSatelliteData_Channel,               ///< Channel
@@ -444,7 +445,7 @@ struct SpirentSatDataFile
     /// @return The data or none if not found
     [[nodiscard]] std::optional<std::reference_wrapper<const SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId) const
     {
-        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+        auto iter = std::ranges::find_if(refData, [&](const SpirentAsciiSatelliteData& spirentSatData) {
             return spirentSatData.recvTime == recvTime
                    && spirentSatData.satId == satId;
         });
@@ -461,7 +462,7 @@ struct SpirentSatDataFile
     /// @return The data or none if not found
     std::optional<std::reference_wrapper<SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId)
     {
-        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+        auto iter = std::ranges::find_if(refData, [&](const SpirentAsciiSatelliteData& spirentSatData) {
             return spirentSatData.recvTime == recvTime
                    && spirentSatData.satId == satId;
         });

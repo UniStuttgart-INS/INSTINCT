@@ -22,6 +22,7 @@ namespace NAV::TESTS::EphemerisTests
 TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (BRDC_20230080000) GEO Satellite", "[Ephemeris]")
 {
     // C01 - Taken from real data
+    // NOLINTBEGIN
     BDSEphemeris eph(1, 2023, 1, 8, 12, 0, 0, 9.214587043971e-04, -3.444355911597e-12, 0.000000000000e+00,
                      1.000000000000e+00, -5.703437500000e+02, -1.417916204758e-09, -2.600407961772e+00,
                      -1.850631088018e-05, 5.964186275378e-04, 1.725181937218e-05, 6.493409469604e+03,
@@ -30,6 +31,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (BRDC_20230080000) GEO Satellite
                      8.411064640318e-10, 0.000000000000e+00, 8.880000000000e+02, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, -4.700000000000e-09, -1.000000000000e-08,
                      4.320000000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -47,6 +49,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (BRDC_20230080000) GEO Satellite
 TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (BRDC_20230080000) MEO/IGSO Satellite", "[Ephemeris]")
 {
     // C06 - Taken from real data
+    // NOLINTBEGIN
     BDSEphemeris eph(6, 2023, 1, 8, 12, 0, 0, 2.072051865980e-04, -3.074873689002e-12, 0.000000000000e+00,
                      1.000000000000e+00, 3.406250000000e+01, 1.519349001270e-09, 6.931342476407e-01,
                      1.237727701664e-06, 3.453022218309e-03, 1.035863533616e-05, 6.492955289841e+03,
@@ -55,6 +58,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (BRDC_20230080000) MEO/IGSO Sate
                      9.136094840736e-10, 0.000000000000e+00, 8.880000000000e+02, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, 8.600000000000e-09, -1.800000000000e-09,
                      4.320000000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -73,6 +77,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Skydel data) GEO Satellite", "[
 {
     // C01 - Generated from Skydel
     // file: test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20238959_3600S_CN.rnx
+    // NOLINTBEGIN
     BDSEphemeris eph(1, 2023, 1, 8, 12, 0, 0, 9.214587043971e-04, -3.444355911597e-12, 0.000000000000e+00,
                      0.000000000000e+00, -5.703437500000e+02, -1.417916204758e-09, -2.600407961772e+00,
                      -1.850631088018e-05, 5.964186275378e-04, 1.725181937218e-05, 6.493409469604e+03,
@@ -81,6 +86,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Skydel data) GEO Satellite", "[
                      8.411064640318e-10, 0.000000000000e+00, 8.880000000000e+02, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, -4.700000000000e-09, -1.000000000000e-08,
                      9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin;        // Determined by running the test and adapting
     margin.clock = 5e-09; // file has only 16 digits after comma
@@ -95,6 +101,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Skydel data) MEO/IGSO Satellite
 {
     // C06 - Generated from Skydel
     // file: test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20238959_3600S_CN.rnx
+    // NOLINTBEGIN
     BDSEphemeris eph(6, 2023, 1, 8, 11, 0, 0, 2.073161779492e-04, -3.033129303276e-12, 0.000000000000e+00,
                      0.000000000000e+00, 1.189687500000e+02, 1.575065607805e-09, 4.278749074939e-01,
                      3.844499588013e-06, 3.454052493908e-03, 8.593313395977e-06, 6.492945194244e+03,
@@ -103,6 +110,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Skydel data) MEO/IGSO Satellite
                      1.040043321979e-09, 0.000000000000e+00, 8.880000000000e+02, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, 8.600000000000e-09, -1.800000000000e-09,
                      9.999000000000e+08, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin;          // Determined by running the test and adapting
     margin.clock = 8.7e-09; // file has only 16 digits after comma
@@ -117,6 +125,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Spirent SimGEN data) MEO/IGSO S
 {
     // C28 - Exported from the Spirent SimGEN GUI
     // file: test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ/Iono-none_tropo-none/Spirent_RINEX_CN.23C
+    // NOLINTBEGIN
     BDSEphemeris eph(28, 2023, 1, 8, 12, 0, 0, 5.650872060415e-05, 4.426681243785e-12, 0.000000000000e+00,
                      0.000000000000e+00, 1.461093750000e+02, 3.719440643918e-09, -3.037317177979e+00,
                      7.318798452616e-06, 2.175933914259e-04, 5.401205271482e-06, 5.282637744904e+03,
@@ -125,6 +134,7 @@ TEST_CASE("[Ephemeris] BDS Ephemeris calc orbit (Spirent SimGEN data) MEO/IGSO S
                      1.467918287546e-10, 0.000000000000e+00, 8.880000000000e+02, 0.000000000000e+00,
                      1.200000000000e+00, 0.000000000000e+00, -4.000000000000e-09, 0.000000000000e+00,
                      4.320000000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin; // Determined by running the test and adapting
     margin.pos = 8.2e-05;

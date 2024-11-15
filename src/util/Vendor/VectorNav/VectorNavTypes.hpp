@@ -589,7 +589,7 @@ class InsStatus
 {
   public:
     /// @brief Indicates the current mode of the INS filter.
-    enum class Mode
+    enum class Mode : uint8_t
     {
         /// @brief Not tracking.
         ///

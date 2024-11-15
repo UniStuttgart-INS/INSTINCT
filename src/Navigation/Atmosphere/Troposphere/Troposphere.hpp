@@ -36,7 +36,7 @@ struct AtmosphereModels
 };
 
 /// Available Troposphere delay models
-enum class TroposphereModel : int
+enum class TroposphereModel : uint8_t
 {
     None,         ///< Troposphere Model turned off
     Saastamoinen, ///< Saastamoinen model
@@ -46,7 +46,7 @@ enum class TroposphereModel : int
 };
 
 /// Available Mapping Functions
-enum class MappingFunction : int
+enum class MappingFunction : uint8_t
 {
     None,     ///< Mapping Function turned off (= 1)
     Cosecant, ///< Cosecant of elevation

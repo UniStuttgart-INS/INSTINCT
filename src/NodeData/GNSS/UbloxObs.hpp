@@ -73,7 +73,7 @@ class UbloxObs : public NodeData
         // TIM: Timing Messages: Time Pulse Output, Time Mark Results
         // UPD: Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
         >
-        data{};
+        data;
 };
 
 } // namespace NAV

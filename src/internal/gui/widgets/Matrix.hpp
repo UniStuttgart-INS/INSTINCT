@@ -14,13 +14,14 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <cstdint>
 #include <imgui.h>
 
 /// @brief Flags for MatrixView GUI elements @ref GuiMatrixViewFlags_
 using GuiMatrixViewFlags = int;
 
 /// @brief Flags to select the MatrixView behaviour
-enum GuiMatrixViewFlags_
+enum GuiMatrixViewFlags_ : uint8_t
 {
     GuiMatrixViewFlags_None = 0,                                                                ///< None
     GuiMatrixViewFlags_RowHeader = 1 << 0,                                                      ///< Print the Row Header

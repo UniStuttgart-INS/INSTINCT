@@ -21,6 +21,9 @@
 
 namespace NAV::NodeRegistry
 {
+namespace
+{
+
 /// List of all registered nodes.
 /// Key: category, Value: Nodes
 std::map<std::string, std::vector<NodeInfo>> _registeredNodes;
@@ -29,17 +32,13 @@ std::map<std::string, std::vector<NodeInfo>> _registeredNodes;
 /// Key: NodeData.type(), Value: parentTypes()
 std::map<std::string, std::vector<std::string>> _registeredNodeDataTypes;
 
-} // namespace NAV::NodeRegistry
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
 /* -------------------------------------------------------------------------------------------------------- */
 
-namespace NAV::NodeRegistry
-{
 /// @brief Registers a Node with the NodeManager
 /// @tparam T Node Class to register
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+template<std::derived_from<Node> T>
 void registerNodeType()
 {
     NodeInfo info;
@@ -61,13 +60,13 @@ void registerNodeType()
 
 /// @brief Register a NodeData with the NodeManager
 /// @tparam T NodeData Class to register
-template<typename T,
-         typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+template<std::derived_from<NodeData> T>
 void registerNodeDataType()
 {
     _registeredNodeDataTypes[T::type()] = T::parentTypes();
 }
 
+} // namespace
 } // namespace NAV::NodeRegistry
 
 /* -------------------------------------------------------------------------------------------------------- */
@@ -93,7 +92,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
             if ((pinInfo.type == Pin::Type::Flow
                  && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
-                    && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
+                    && std::ranges::find(endPinDataIdentifier, startPinParentNodeType) != endPinDataIdentifier.end())
                 || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) - false positive warning
                     && Pin::dataIdentifierHaveCommon(startPinDataIdentifier, endPinDataIdentifier))
                 || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)

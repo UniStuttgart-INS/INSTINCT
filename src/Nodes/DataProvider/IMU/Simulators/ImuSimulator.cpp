@@ -172,7 +172,7 @@ void NAV::ImuSimulator::guiConfig()
                 ImGui::TableSetColumnIndex(index);
                 auto displayTable = [&]() {
                     if (auto csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
-                        csvData && std::find(csvData->v->description.begin(), csvData->v->description.end(), text) != csvData->v->description.end())
+                        csvData && std::ranges::find(csvData->v->description, text) != csvData->v->description.end())
                     {
                         ImGui::TextUnformatted(text);
                         ImGui::TableNextColumn();
@@ -837,11 +837,11 @@ void NAV::ImuSimulator::restore(json const& j)
     }
 }
 
-NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
+NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto gpsCycleIter = std::find(description.begin(), description.end(), "GpsCycle");
-    auto gpsWeekIter = std::find(description.begin(), description.end(), "GpsWeek");
-    auto gpsTowIter = std::find(description.begin(), description.end(), "GpsToW [s]");
+    auto gpsCycleIter = std::ranges::find(description, "GpsCycle");
+    auto gpsWeekIter = std::ranges::find(description, "GpsWeek");
+    auto gpsTowIter = std::ranges::find(description, "GpsToW [s]");
     if (gpsCycleIter != description.end() && gpsWeekIter != description.end() && gpsTowIter != description.end())
     {
         auto gpsCycle = static_cast<int32_t>(std::get<double>(line.at(static_cast<size_t>(gpsCycleIter - description.begin()))));
@@ -850,12 +850,12 @@ NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line,
         return { gpsCycle, gpsWeek, gpsTow };
     }
 
-    auto yearUTCIter = std::find(description.begin(), description.end(), "YearUTC");
-    auto monthUTCIter = std::find(description.begin(), description.end(), "MonthUTC");
-    auto dayUTCIter = std::find(description.begin(), description.end(), "DayUTC");
-    auto hourUTCIter = std::find(description.begin(), description.end(), "HourUTC");
-    auto minUTCIter = std::find(description.begin(), description.end(), "MinUTC");
-    auto secUTCIter = std::find(description.begin(), description.end(), "SecUTC");
+    auto yearUTCIter = std::ranges::find(description, "YearUTC");
+    auto monthUTCIter = std::ranges::find(description, "MonthUTC");
+    auto dayUTCIter = std::ranges::find(description, "DayUTC");
+    auto hourUTCIter = std::ranges::find(description, "HourUTC");
+    auto minUTCIter = std::ranges::find(description, "MinUTC");
+    auto secUTCIter = std::ranges::find(description, "SecUTC");
     if (yearUTCIter != description.end() && monthUTCIter != description.end() && dayUTCIter != description.end()
         && hourUTCIter != description.end() && minUTCIter != description.end() && secUTCIter != description.end())
     {
@@ -872,11 +872,11 @@ NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line,
     return {};
 }
 
-Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
+Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto posXIter = std::find(description.begin(), description.end(), "Pos ECEF X [m]");
-    auto posYIter = std::find(description.begin(), description.end(), "Pos ECEF Y [m]");
-    auto posZIter = std::find(description.begin(), description.end(), "Pos ECEF Z [m]");
+    auto posXIter = std::ranges::find(description, "Pos ECEF X [m]");
+    auto posYIter = std::ranges::find(description, "Pos ECEF Y [m]");
+    auto posZIter = std::ranges::find(description, "Pos ECEF Z [m]");
     if (posXIter != description.end() && posYIter != description.end() && posZIter != description.end())
     {
         auto posX = std::get<double>(line.at(static_cast<size_t>(posXIter - description.begin())));
@@ -885,9 +885,9 @@ Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLi
         return { posX, posY, posZ };
     }
 
-    auto latIter = std::find(description.begin(), description.end(), "Latitude [deg]");
-    auto lonIter = std::find(description.begin(), description.end(), "Longitude [deg]");
-    auto altIter = std::find(description.begin(), description.end(), "Altitude [m]");
+    auto latIter = std::ranges::find(description, "Latitude [deg]");
+    auto lonIter = std::ranges::find(description, "Longitude [deg]");
+    auto altIter = std::ranges::find(description, "Altitude [m]");
     if (latIter != description.end() && lonIter != description.end() && altIter != description.end())
     {
         auto lat = deg2rad(std::get<double>(line.at(static_cast<size_t>(latIter - description.begin()))));
@@ -902,9 +902,9 @@ Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLi
 
 Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description)
 {
-    auto rollIter = std::find(description.begin(), description.end(), "Roll [deg]");
-    auto pitchIter = std::find(description.begin(), description.end(), "Pitch [deg]");
-    auto yawIter = std::find(description.begin(), description.end(), "Yaw [deg]");
+    auto rollIter = std::ranges::find(description, "Roll [deg]");
+    auto pitchIter = std::ranges::find(description, "Pitch [deg]");
+    auto yawIter = std::ranges::find(description, "Yaw [deg]");
     if (rollIter != description.end() && pitchIter != description.end() && yawIter != description.end())
     {
         auto roll = std::get<double>(line.at(static_cast<size_t>(rollIter - description.begin())));
@@ -913,10 +913,10 @@ Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const
         return trafo::n_Quat_b(deg2rad(roll), deg2rad(pitch), deg2rad(yaw));
     }
 
-    auto quatWIter = std::find(description.begin(), description.end(), "n_Quat_b w");
-    auto quatXIter = std::find(description.begin(), description.end(), "n_Quat_b x");
-    auto quatYIter = std::find(description.begin(), description.end(), "n_Quat_b y");
-    auto quatZIter = std::find(description.begin(), description.end(), "n_Quat_b z");
+    auto quatWIter = std::ranges::find(description, "n_Quat_b w");
+    auto quatXIter = std::ranges::find(description, "n_Quat_b x");
+    auto quatYIter = std::ranges::find(description, "n_Quat_b y");
+    auto quatZIter = std::ranges::find(description, "n_Quat_b z");
     if (quatWIter != description.end() && quatXIter != description.end() && quatYIter != description.end() && quatZIter != description.end())
     {
         auto w = std::get<double>(line.at(static_cast<size_t>(quatWIter - description.begin())));

@@ -117,7 +117,7 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
     std::string line;
     getline(line);
     // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+    line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
     if (line.empty())
     {
@@ -146,7 +146,7 @@ std::shared_ptr<const NAV::NodeData> NAV::WiFiObsFile::pollData()
         if (std::getline(lineStream, cell, ','))
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
             if (cell.empty())
             {
                 continue;

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <vector>
 
 #include <application.h>
@@ -124,7 +125,7 @@ class NodeEditorApplication : public Application
     static float headerFontRatio();
 
     /// Available color settings
-    enum Colors : size_t
+    enum Colors : uint8_t
     {
         COLOR_GROUP_HEADER_TEXT,  ///< Color of the group header text
         COLOR_GROUP_HEADER_BG,    ///< Color of the group header background
@@ -149,7 +150,7 @@ class NodeEditorApplication : public Application
     constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
 
     /// @brief Tabs displayed in the bottom view
-    enum class BottomViewTabItem
+    enum class BottomViewTabItem : uint8_t
     {
         None,      ///< The cross item is selected
         LogOutput, ///< The log output item is selected

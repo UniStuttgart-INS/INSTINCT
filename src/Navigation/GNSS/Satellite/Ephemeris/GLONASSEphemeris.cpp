@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "GLONASSEphemeris.hpp"
+#include <cstdint>
 
 #include "Navigation/Constants.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
@@ -87,7 +88,7 @@ Orbit::PosVelAccel GLONASSEphemeris::calcSatelliteData(const InsTime& transTime,
         // ∂/∂t [x, y, z, v_x, v_y, v_z]^T
         Eigen::Matrix<double, 6, 1> y_dot = Eigen::Matrix<double, 6, 1>::Zero();
 
-        enum State
+        enum State : uint8_t
         {
             X,
             Y,

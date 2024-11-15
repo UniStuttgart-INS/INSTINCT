@@ -26,9 +26,9 @@ class Clock
     /// Satellite clock corrections
     struct Corrections
     {
-        InsTime transmitTime{}; ///< Transmit time of the signal
-        double bias{};          ///< Satellite clock bias [s]
-        double drift{};         ///< Satellite clock drift [s/s]
+        InsTime transmitTime; ///< Transmit time of the signal
+        double bias{};        ///< Satellite clock bias [s]
+        double drift{};       ///< Satellite clock drift [s/s]
     };
 
     /// @brief Default Constructor

@@ -31,7 +31,7 @@ class FileReader
 {
   public:
     /// File Type Enumeration
-    enum FileType
+    enum FileType : uint8_t
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
@@ -50,7 +50,7 @@ class FileReader
     FileReader& operator=(FileReader&&) = delete;
 
     /// Results enum for the gui config
-    enum GuiResult
+    enum GuiResult : uint8_t
     {
         PATH_UNCHANGED = 0,   ///< No changes made
         PATH_CHANGED,         ///< The path changed and exists

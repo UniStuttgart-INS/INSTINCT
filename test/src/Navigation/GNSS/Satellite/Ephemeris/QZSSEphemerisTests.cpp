@@ -16,6 +16,7 @@ namespace NAV::TESTS::EphemerisTests
 TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (BRDC_20230080000) QZO Satellite", "[Ephemeris]")
 {
     // J02 - Taken from real data
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -5.154870450497e-07, -1.136868377216e-13, 0.000000000000e+00,
                       4.500000000000e+01, -9.359375000000e+01, 1.787574459651e-09, -1.781683475617e+00,
                       -4.431232810020e-06, 7.510575617198e-02, 1.722574234009e-05, 6.493197826385e+03,
@@ -24,6 +25,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (BRDC_20230080000) QZO Satellit
                       -8.221771041194e-10, 2.000000000000e+00, 2.244000000000e+03, 1.000000000000e+00,
                       2.800000000000e+00, 0.000000000000e+00, 4.656612873077e-10, 8.130000000000e+02,
                       3.960600000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -41,6 +43,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (BRDC_20230080000) QZO Satellit
 TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (BRDC_20230080000) GEO Satellite", "[Ephemeris]")
 {
     // J03 - Taken from real data
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -7.729977369308e-08, 1.136868377216e-13, 0.000000000000e+00,
                       4.500000000000e+01, 1.023968750000e+03, 1.978653847446e-09, 2.715028968426e+00,
                       3.195181488991e-05, 7.530548574869e-02, -1.731514930725e-05, 6.492851787567e+03,
@@ -49,6 +52,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (BRDC_20230080000) GEO Satellit
                       -2.928693420408e-10, 2.000000000000e+00, 2.244000000000e+03, 1.000000000000e+00,
                       2.800000000000e+00, 0.000000000000e+00, -4.656612873077e-10, 8.130000000000e+02,
                       3.960600000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -67,6 +71,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Skydel data) QZO Satellite", "
 {
     // J02 - Generated from Skydel
     // file: test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20238959_3600S_JN.rnx
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -5.200308805797E-07, -1.136868377216E-13, 0.000000000000E+00,
                       2.000000000000E+00, -2.813750000000E+02, 1.406129999530E-09, -1.781581877224E+00,
                       -8.951872587204E-06, 7.510803255718E-02, 1.034326851368E-05, 6.493260515213E+03,
@@ -75,6 +80,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Skydel data) QZO Satellite", "
                       -6.757424330990E-10, 2.000000000000E+00, 2.244000000000E+03, 1.000000000000E+00,
                       2.800000000000E+00, 0.000000000000E+00, 4.656612873077E-10, 2.000000000000E+00,
                       9.999000000000E+08, 0.000000000000E+00);
+    // NOLINTEND
 
     Margin margin;        // Determined by running the test and adapting
     margin.clock = 2e-17; // file has only 16 digits after comma
@@ -89,6 +95,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Skydel data) GEO Satellite", "
 {
     // J03 - Generated from Skydel
     // file: test/data/GNSS/Skydel_static_duration-4h_rate-5min_sys-GERCQIS/Iono-none_tropo-none/SkydelRINEX_S_20238959_3600S_JN.rnx
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -7.869675755501e-08, 0.000000000000e+00, 0.000000000000e+00,
                       2.000000000000e+00, 4.391875000000e+02, 1.447917454431e-09, 2.714520003919e+00,
                       1.654401421547e-05, 7.526671467349e-02, -8.506700396538e-06, 6.492790670395e+03,
@@ -97,6 +104,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Skydel data) GEO Satellite", "
                       -9.450393646828e-10, 2.000000000000e+00, 2.244000000000e+03, 1.000000000000e+00,
                       2.800000000000e+00, 0.000000000000e+00, -4.656612873077e-10, 2.000000000000e+00,
                       9.999000000000e+08, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin;          // Determined by running the test and adapting
     margin.clock = 4.2e-17; // file has only 16 digits after comma
@@ -111,6 +119,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Spirent SimGEN data) QZO Satel
 {
     // J02 - Exported from the Spirent SimGEN GUI
     // file: test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ/Iono-none_tropo-none/Spirent_RINEX_CN.23C
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -5.147103365743e-07, -1.136868377216e-13, 0.000000000000e+00,
                       8.570000000000e+02, -2.813750000000e+02, 1.406129999530e-09, -1.781581877224e+00,
                       -8.951872587204e-06, 7.510803255718e-02, 1.034326851368e-05, 6.493260515213e+03,
@@ -119,6 +128,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Spirent SimGEN data) QZO Satel
                       -6.757424330990e-10, 0.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
                       2.900000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 8.570000000000e+02,
                       4.320000000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin; // Determined by running the test and adapting
     margin.pos = 8.1e-05;
@@ -134,6 +144,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Spirent SimGEN data) GEO Satel
 {
     // J03 - Exported from the Spirent SimGEN GUI
     // file: test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQ/Iono-none_tropo-none/Spirent_RINEX_CN.23C
+    // NOLINTBEGIN
     QZSSEphemeris eph(2023, 1, 8, 12, 0, 0, -7.869675755501e-08, 0.000000000000e+00, 0.000000000000e+00,
                       8.570000000000e+02, 4.391875000000e+02, 1.447917454431e-09, 2.714520003919e+00,
                       1.654401421547e-05, 7.526671467349e-02, -8.506700396538e-06, 6.492790670395e+03,
@@ -142,6 +153,7 @@ TEST_CASE("[Ephemeris] QZSS Ephemeris calc orbit (Spirent SimGEN data) GEO Satel
                       -9.450393646828e-10, 0.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
                       2.900000000000e+00, 0.000000000000e+00, 0.000000000000e+00, 8.570000000000e+02,
                       4.320000000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     Margin margin; // Determined by running the test and adapting
     margin.pos = 6.6e-05;

@@ -183,7 +183,7 @@ void NAV::GnssAnalyzer::guiConfig()
                 }
                 ImGui::SameLine();
                 std::string description = "As percentage of the smallest wavelength of the combination terms.";
-                if (auto maxF = std::max_element(comb.terms.begin(), comb.terms.end(), [](const Combination::Term& a, const Combination::Term& b) {
+                if (auto maxF = std::ranges::max_element(comb.terms, [](const Combination::Term& a, const Combination::Term& b) {
                         return a.satSigId.freq().getFrequency(a.freqNum) < b.satSigId.freq().getFrequency(b.freqNum);
                     });
                     maxF != comb.terms.end())

@@ -160,7 +160,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         std::getline(filestreamHeader, line);
         filestreamHeader.close();
 
-        auto n = std::count(line.begin(), line.end(), ',');
+        auto n = std::ranges::count(line, ',');
 
         if (n >= 3)
         {
@@ -186,7 +186,7 @@ void NAV::FileReader::readHeader()
         std::string line;
         getline(line);
         // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
+        line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
         std::stringstream lineStream(line);
         std::string cell;
@@ -194,7 +194,7 @@ void NAV::FileReader::readHeader()
         while (std::getline(lineStream, cell, ','))
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
             _headerColumns.push_back(cell);
         }
     }

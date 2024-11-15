@@ -74,7 +74,7 @@ void RinexNavFile::guiConfig()
         }
     }
     ImGui::Text("Supported versions: ");
-    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+    std::ranges::for_each(_supportedVersions, [](double x) {
         ImGui::SameLine();
         ImGui::Text("%0.2f", x);
     });
@@ -244,11 +244,16 @@ FileReader::FileType RinexNavFile::determineFileType()
     return FileReader::FileType::NONE;
 }
 
+namespace
+{
+
 std::string_view extHeaderLabel(const std::string& line)
 {
     return line.size() >= 60 ? str::trim_copy(std::string_view(line).substr(60, 20))
                              : std::string_view{};
 };
+
+} // namespace
 
 void RinexNavFile::executeHeaderParser(double version)
 {
@@ -374,7 +379,7 @@ void RinexNavFile::parseHeader2()
             LOG_DATA("{}:     tau_c {}", nameId(), tau_c);
             if (tau_c != 0)
             {
-                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { tau_c, 0 };
+                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { .a0 = tau_c, .a1 = 0 };
             }
         }
         else if (headerLabel == "DELTA-UTC: A0,A1,T,W")
@@ -386,7 +391,7 @@ void RinexNavFile::parseHeader2()
 
             if (a0 != 0 || a1 != 0)
             {
-                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { a0, a1 };
+                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { .a0 = a0, .a1 = a1 };
             }
         }
         else if (headerLabel == "LEAP SECONDS")
@@ -508,7 +513,7 @@ void RinexNavFile::parseHeader3()
                     LOG_TRACE("{}:     Time System Correction '{}' not implemented yet", nameId(), correctionType);
                     continue;
                 }
-                _gnssNavInfo.timeSysCorr[timeSystems] = { a0, a1 };
+                _gnssNavInfo.timeSysCorr[timeSystems] = { .a0 = a0, .a1 = a1 };
             }
         }
         else if (headerLabel == "DELTA-UTC: A0,A1,T,W")
@@ -520,7 +525,7 @@ void RinexNavFile::parseHeader3()
 
             if (a0 != 0 || a1 != 0)
             {
-                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { a0, a1 };
+                _gnssNavInfo.timeSysCorr[{ satSys.getTimeSystem(), UTC }] = { .a0 = a0, .a1 = a1 };
             }
         }
         else if (headerLabel == "LEAP SECONDS")
@@ -614,7 +619,11 @@ void RinexNavFile::parseOrbit2()
     {
         while (getline(line) && !eof())
         {
-            if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+            if (line.size() > 82)
+            {
+                abortReading();
+                return;
+            } // 80 + \n\r
 
             // -------------------------------------- SV / EPOCH / SV CLK ----------------------------------------
 
@@ -672,7 +681,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 1 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // GPS/QZSS: Issue of Data, Ephemeris (IODE)
                 // GAL:      IODnav Issue of Data of the nav batch
@@ -691,7 +704,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 2 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Cuc (radians)
                 double Cuc = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase));
@@ -706,7 +723,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 3 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Toe Time of Ephemeris (sec of GPS week)
                 double toeSec = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase));
@@ -721,7 +742,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 4 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // i0 (radians)
                 double i_0 = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase));
@@ -736,7 +761,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 5 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // IDOT (radians/sec)
                 double i_dot = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase));
@@ -771,7 +800,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 6 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // GPS:  SV accuracy (meters) See GPS ICD 200H Section 20.3.3.3.1.3 use specified equations to define
                 //       nominal values, N = 0-6: use 2(1+N/2) (round to one decimal place i.e. 2.8, 5.7 and 11.3) ,
@@ -808,7 +841,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 7 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Transmission time of message (sec of GPS week, derived e.g.from Z-count in Hand Over Word (HOW))
                 [[maybe_unused]] auto transmissionTime = str::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase), 0.0);
@@ -843,11 +880,10 @@ void RinexNavFile::parseOrbit2()
                         && !std::bitset<10>(codesOnL2Channel_dataSources)[0])  // This message is not 'I/NAV E1-B'
                     {
                         const auto& navData = _gnssNavInfo.satellites().at({ satSys, satNum }).getNavigationData();
-                        auto existingEph = std::find_if(navData.begin(), navData.end(),
-                                                        [&](const std::shared_ptr<SatNavData>& satNavData) {
-                                                            return satNavData->type == SatNavData::GalileoEphemeris && satNavData->refTime == epoch
-                                                                   && std::dynamic_pointer_cast<GalileoEphemeris>(satNavData)->dataSource[0];
-                                                        });
+                        auto existingEph = std::ranges::find_if(navData, [&](const std::shared_ptr<SatNavData>& satNavData) {
+                            return satNavData->type == SatNavData::GalileoEphemeris && satNavData->refTime == epoch
+                                   && std::dynamic_pointer_cast<GalileoEphemeris>(satNavData)->dataSource[0];
+                        });
                         if (existingEph != navData.end()) // There is already a 'I/NAV E1-B' message
                         {
                             LOG_DATA("{}:    Skipping ephemeris data because of dataSource priority", nameId());
@@ -918,7 +954,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 1 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Satellite position X (km)
                 pos.x() = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase)) * 1e3;
@@ -934,7 +974,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 2 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Satellite position Y (km)
                 pos.y() = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase)) * 1e3;
@@ -950,7 +994,11 @@ void RinexNavFile::parseOrbit2()
 
                 // ------------------------------------ BROADCAST ORBIT - 3 --------------------------------------
                 getline(line);
-                if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+                if (line.size() > 82)
+                {
+                    abortReading();
+                    return;
+                } // 80 + \n\r
 
                 // Satellite position Z (km)
                 pos.z() = std::stod(str::replaceAll_copy(line.substr(3, 19), "d", "e", str::IgnoreCase)) * 1e3;
@@ -992,7 +1040,11 @@ void RinexNavFile::parseOrbit3()
     {
         while (getline(line) && !eof())
         {
-            if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+            if (line.size() > 82)
+            {
+                abortReading();
+                return;
+            } // 80 + \n\r
 
             // -------------------------------------- SV / EPOCH / SV CLK ----------------------------------------
 
@@ -1035,7 +1087,11 @@ void RinexNavFile::parseOrbit4()
     {
         while (getline(line) && !eof())
         {
-            if (line.size() > 82) { return abortReading(); } // 80 + \n\r
+            if (line.size() > 82)
+            {
+                abortReading();
+                return;
+            } // 80 + \n\r
 
             if (line.at(0) == '>')
             {
@@ -1071,7 +1127,11 @@ void RinexNavFile::parseOrbit4()
                 {
                     // Code for EPH
                     getline(line);
-                    if (line.size() > 82) { return abortReading(); }
+                    if (line.size() > 82)
+                    {
+                        abortReading();
+                        return;
+                    }
 
                     if (satSys != SatelliteSystem::fromChar(line.at(0)) || satNumStr != line.substr(1, 2)) { continue; }
 
@@ -1085,7 +1145,11 @@ void RinexNavFile::parseOrbit4()
                 {
                     // Code for STO
                     getline(line);
-                    if (line.size() > 82) { return abortReading(); }
+                    if (line.size() > 82)
+                    {
+                        abortReading();
+                        return;
+                    }
 
                     // Epoch: Toc - Time of Clock (GPS) year (4 digits) - 4X,I4,
                     // month, day, hour, minute, second - 5(1X,I2.2),
@@ -1107,7 +1171,11 @@ void RinexNavFile::parseOrbit4()
                     LOG_DATA("{}: Time System Correction: {}", nameId(), correctionType);
 
                     getline(line);
-                    if (line.size() > 82) { return abortReading(); }
+                    if (line.size() > 82)
+                    {
+                        abortReading();
+                        return;
+                    }
 
                     // auto t_tm = str::stod(str::trim_copy(line.substr(4, 19)), std::nan(""));
                     // LOG_DATA("{}:     t_tm {}", nameId(), t_tm);
@@ -1171,7 +1239,7 @@ void RinexNavFile::parseOrbit4()
                             LOG_TRACE("{}:     Time System Correction '{}' not implemented yet", nameId(), correctionType);
                             continue;
                         }
-                        _gnssNavInfo.timeSysCorr[timeSystems] = { a0, a1 };
+                        _gnssNavInfo.timeSysCorr[timeSystems] = { .a0 = a0, .a1 = a1 };
                     }
                 }
                 break;
@@ -1183,7 +1251,11 @@ void RinexNavFile::parseOrbit4()
                 {
                     // Code for ION
                     getline(line);
-                    if (line.size() > 82) { return abortReading(); }
+                    if (line.size() > 82)
+                    {
+                        abortReading();
+                        return;
+                    }
 
                     // Epoch: t_tm - Transmission timne of ION data, year (4 digits) - 4X,I4,
                     // month, day, hour, minute, second - 5(1X,I2.2),
@@ -1212,13 +1284,21 @@ void RinexNavFile::parseOrbit4()
                         alpha[1] = str::stod(str::trim_copy(line.substr(42, 19)), 0.0);
                         alpha[2] = str::stod(str::trim_copy(line.substr(61, 19)), 0.0);
                         getline(line);
-                        if (line.size() > 82) { return abortReading(); }
+                        if (line.size() > 82)
+                        {
+                            abortReading();
+                            return;
+                        }
                         alpha[3] = str::stod(str::trim_copy(line.substr(4, 19)), 0.0);
                         beta[0] = str::stod(str::trim_copy(line.substr(23, 19)), 0.0);
                         beta[1] = str::stod(str::trim_copy(line.substr(42, 19)), 0.0);
                         beta[2] = str::stod(str::trim_copy(line.substr(61, 19)), 0.0);
                         getline(line);
-                        if (line.size() > 82) { return abortReading(); }
+                        if (line.size() > 82)
+                        {
+                            abortReading();
+                            return;
+                        }
                         beta[3] = str::stod(str::trim_copy(line.substr(4, 19)), 0.0);
                         _gnssNavInfo.ionosphericCorrections.insert(satSys, IonosphericCorrections::Alpha, alpha);
                         _gnssNavInfo.ionosphericCorrections.insert(satSys, IonosphericCorrections::Beta, beta);
@@ -1235,7 +1315,11 @@ void RinexNavFile::parseOrbit4()
                         alpha[1] = str::stod(str::trim_copy(line.substr(42, 19)), 0.0);
                         alpha[2] = str::stod(str::trim_copy(line.substr(61, 19)), 0.0);
                         getline(line);
-                        if (line.size() > 82) { return abortReading(); }
+                        if (line.size() > 82)
+                        {
+                            abortReading();
+                            return;
+                        }
                         // TODO: Change Correction format to support Nequick-G
                         // This is a hack this data is not an alpha value but a disturbance flag
                         alpha[3] = str::stod(str::trim_copy(line.substr(4, 19)), 0.0);
@@ -1499,11 +1583,10 @@ bool RinexNavFile::parseEphemeris(std::string& line, SatelliteSystem satSys, uin
                 && !std::bitset<10>(codesOnL2Channel_dataSources)[0])  // This message is not 'I/NAV E1-B'
             {
                 const auto& navData = _gnssNavInfo.satellites().at({ satSys, satNum }).getNavigationData();
-                auto existingEph = std::find_if(navData.begin(), navData.end(),
-                                                [&](const std::shared_ptr<SatNavData>& satNavData) {
-                                                    return satNavData->type == SatNavData::GalileoEphemeris && satNavData->refTime == epoch
-                                                           && std::dynamic_pointer_cast<GalileoEphemeris>(satNavData)->dataSource[0];
-                                                });
+                auto existingEph = std::ranges::find_if(navData, [&](const std::shared_ptr<SatNavData>& satNavData) {
+                    return satNavData->type == SatNavData::GalileoEphemeris && satNavData->refTime == epoch
+                           && std::dynamic_pointer_cast<GalileoEphemeris>(satNavData)->dataSource[0];
+                });
                 if (existingEph != navData.end()) // There is already a 'I/NAV E1-B' message
                 {
                     LOG_DATA("{}:    Skipping ephemeris data because of dataSource priority", nameId());

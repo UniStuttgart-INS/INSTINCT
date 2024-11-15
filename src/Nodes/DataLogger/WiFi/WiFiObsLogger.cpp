@@ -102,8 +102,7 @@ bool NAV::WiFiObsLogger::initialize()
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s],"
                 << "MacAddress,"
                 << "Distance [m],"
-                << "DistanceStd [m]"
-                << std::endl;
+                << "DistanceStd [m]\n";
 
     return true;
 }

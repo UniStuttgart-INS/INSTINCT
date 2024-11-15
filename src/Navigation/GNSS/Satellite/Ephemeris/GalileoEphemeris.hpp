@@ -14,6 +14,7 @@
 #pragma once
 
 #include <bitset>
+#include <cstdint>
 
 #include "Navigation/GNSS/Satellite/internal/SatNavData.hpp"
 
@@ -32,13 +33,13 @@ class GalileoEphemeris final : public SatNavData
     struct SvHealth
     {
         /// @brief Navigation Data Validity
-        enum DataValidityStatus
+        enum DataValidityStatus : uint8_t
         {
             NavigationDataValid = 0,     ///< Navigation data valid
             WorkingWithoutGuarantee = 1, ///< Working without guarantee
         };
         /// @brief Signal Health Status
-        enum SignalHealthStatus
+        enum SignalHealthStatus : uint8_t
         {
             SignalOK = 0,                       ///< Signal OK
             SignalOutOfService = 1,             ///< Signal out of service
@@ -127,7 +128,7 @@ class GalileoEphemeris final : public SatNavData
     /// Bits 8-9 : exclusive (only one bit can be set)
     ///
     /// @note See \cite RINEX-3.04 RINEX-3.04, ch. A8, p. A25
-    std::bitset<10> dataSource{};
+    std::bitset<10> dataSource;
 
     /// SISA (Signal in space accuracy) [m]
     ///

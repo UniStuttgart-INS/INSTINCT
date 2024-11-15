@@ -18,6 +18,7 @@
 
 #include "util/Eigen.hpp"
 #include <array>
+#include <cstdint>
 #include <mutex>
 #include <vector>
 
@@ -77,7 +78,7 @@ class AllanDeviation : public Node
     // ------------------------------------------------------------ Algorithm --------------------------------------------------------------
 
     /// Sensor types
-    enum SensorType
+    enum SensorType : uint8_t
     {
         Accel,            ///< Accelerometer
         Gyro,             ///< Gyroscope
