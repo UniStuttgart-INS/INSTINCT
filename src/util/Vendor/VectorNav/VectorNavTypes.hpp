@@ -13,6 +13,15 @@
 
 #pragma once
 
+// VectorNav library includes <winsock2.h>, but <boost/asio.hpp> needs to be included before (even though not used in this file)
+// https://stackoverflow.com/questions/9750344/boostasio-winsock-and-winsock-2-compatibility-issue
+#ifdef _WIN32
+    // Set the proper SDK version before including boost/Asio
+    #include <SDKDDKVer.h>
+    // Note boost/ASIO includes Windows.h.
+    #include <boost/asio.hpp>
+#endif //_WIN32
+
 #include <cstdint>
 #include <vector>
 #include <iostream>

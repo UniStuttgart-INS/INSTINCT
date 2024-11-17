@@ -118,17 +118,17 @@ struct PlotItemStyle
     /// @param[in, out] eventMarker Buffer for event markers
     /// @param[in, out] eventTooltips List of tooltips (x,y, tooltip)
     /// @return True if a change was made
-    [[nodiscard]] LegendPopupReturn showLegendPopup(const char* id,
-                                                    const char* displayTitle,
-                                                    int plotDataBufferSize,
-                                                    int plotElementIdx,
-                                                    const char* nameId,
-                                                    ImPlotLineFlags plotLineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN,
-                                                    ScrollingBuffer<ImU32>* colormapMaskColors = nullptr,
-                                                    ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr,
-                                                    const std::function<bool(size_t&, const char*)>& ShowDataReferenceChooser = nullptr,
-                                                    ScrollingBuffer<double>* eventMarker = nullptr,
-                                                    std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips = nullptr);
+    LegendPopupReturn showLegendPopup(const char* id,
+                                      const char* displayTitle,
+                                      int plotDataBufferSize,
+                                      int plotElementIdx,
+                                      const char* nameId,
+                                      ImPlotLineFlags plotLineFlags = ImPlotLineFlags_NoClip | ImPlotLineFlags_SkipNaN,
+                                      ScrollingBuffer<ImU32>* colormapMaskColors = nullptr,
+                                      ScrollingBuffer<ImU32>* markerColormapMaskColors = nullptr,
+                                      const std::function<bool(size_t&, const char*)>& ShowDataReferenceChooser = nullptr,
+                                      ScrollingBuffer<double>* eventMarker = nullptr,
+                                      std::vector<std::tuple<double, double, PlotEventTooltip>>* eventTooltips = nullptr);
 
     /// @brief Plots the data with the style
     /// @param[in] plotName Plot name
