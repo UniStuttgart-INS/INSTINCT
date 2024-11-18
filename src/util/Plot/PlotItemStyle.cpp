@@ -135,9 +135,10 @@ PlotItemStyle::LegendPopupReturn PlotItemStyle::showLegendPopup(const char* id,
             LOG_DEBUG("{}: Stride changed to {}", nameId, stride);
         }
 
-        if (ImGui::Combo("Style", reinterpret_cast<int*>(&lineType),
-                         "Scatter\0Line\0\0"))
+        if (auto lt = static_cast<int>(lineType);
+            ImGui::Combo("Style", &lt, "Scatter\0Line\0\0"))
         {
+            lineType = static_cast<decltype(lineType)>(lt);
             ret.changed = true;
         }
         ImPlotLineFlags lFlags = lineFlags.value_or(plotLineFlags);

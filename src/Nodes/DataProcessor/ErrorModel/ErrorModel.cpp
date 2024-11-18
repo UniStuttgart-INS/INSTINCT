@@ -113,7 +113,7 @@ void NAV::ErrorModel::guiConfig()
 
     auto inputDoubleWithUnit = [&](const char* title, double& data, auto& unit, const char* combo_items_separated_by_zeros, const char* format) {
         if (auto response = gui::widgets::InputDoubleWithUnit(fmt::format("{}##{}", title, size_t(id)).c_str(), itemWidth, unitWidth,
-                                                              &data, reinterpret_cast<int*>(&unit), combo_items_separated_by_zeros, 0.0, 0.0,
+                                                              &data, unit, combo_items_separated_by_zeros, 0.0, 0.0,
                                                               format, ImGuiInputTextFlags_CharsScientific))
         {
             if (response == gui::widgets::InputWithUnitChange_Input) { LOG_DEBUG("{}: {} changed to {}", nameId(), title, data); }
@@ -124,7 +124,7 @@ void NAV::ErrorModel::guiConfig()
 
     auto inputVector3WithUnit = [&](const char* title, Eigen::Vector3d& data, auto& unit, const char* combo_items_separated_by_zeros, const char* format) {
         if (auto response = gui::widgets::InputDouble3WithUnit(fmt::format("{}##{}", title, size_t(id)).c_str(), itemWidth, unitWidth,
-                                                               data.data(), reinterpret_cast<int*>(&unit), combo_items_separated_by_zeros,
+                                                               data.data(), unit, combo_items_separated_by_zeros,
                                                                format, ImGuiInputTextFlags_CharsScientific))
         {
             if (response == gui::widgets::InputWithUnitChange_Input) { LOG_DEBUG("{}: {} changed to {}", nameId(), title, data.transpose()); }
@@ -271,7 +271,7 @@ void NAV::ErrorModel::guiConfig()
 
             if (auto response = gui::widgets::SliderDoubleWithUnit(fmt::format("Detection probability (LLI)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
                                                                    &_gui_cycleSlipDetectionProbability, 0.0, 100.0,
-                                                                   reinterpret_cast<int*>(&_gui_cycleSlipDetectionProbabilityUnit), "%\0\0", "%.2f"))
+                                                                   _gui_cycleSlipDetectionProbabilityUnit, "%\0\0", "%.2f"))
             {
                 if (response == gui::widgets::InputWithUnitChange_Input) { LOG_DEBUG("{}: Detection probability (LLI) changed to {}", nameId(), _gui_cycleSlipDetectionProbability); }
                 if (response == gui::widgets::InputWithUnitChange_Unit) { LOG_DEBUG("{}: Detection probability (LLI) unit changed to {}", nameId(), fmt::underlying(_gui_cycleSlipDetectionProbabilityUnit)); }

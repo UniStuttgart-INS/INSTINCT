@@ -177,8 +177,10 @@ void NAV::LooselyCoupledKF::guiConfig()
         {
             ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
         }
-        if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
+        if (auto phiCalculationAlgorithm = static_cast<int>(_phiCalculationAlgorithm);
+            ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), &phiCalculationAlgorithm, "Van Loan\0Taylor\0\0"))
         {
+            _phiCalculationAlgorithm = static_cast<decltype(_phiCalculationAlgorithm)>(phiCalculationAlgorithm);
             LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), fmt::underlying(_phiCalculationAlgorithm));
             flow::ApplyChanges();
         }
@@ -198,8 +200,10 @@ void NAV::LooselyCoupledKF::guiConfig()
         ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
 
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
+        if (auto qCalculationAlgorithm = static_cast<int>(_qCalculationAlgorithm);
+            ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), &qCalculationAlgorithm, "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
         {
+            _qCalculationAlgorithm = static_cast<decltype(_qCalculationAlgorithm)>(qCalculationAlgorithm);
             LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
             flow::ApplyChanges();
         }
@@ -217,16 +221,18 @@ void NAV::LooselyCoupledKF::guiConfig()
             if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
             {
                 ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-                if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
-                                                                                                                                                    "Gauss-Markov 1st Order\0\0"))
+                if (auto randomProcessAccel = static_cast<int>(_randomProcessAccel);
+                    ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), &randomProcessAccel, "Random Walk\0"
+                                                                                                                           "Gauss-Markov 1st Order\0\0"))
                 {
+                    _randomProcessAccel = static_cast<decltype(_randomProcessAccel)>(randomProcessAccel);
                     LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), fmt::underlying(_randomProcessAccel));
                     flow::ApplyChanges();
                 }
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
+                                                   configWidth, unitWidth, _stdev_ra.data(), _stdevAccelNoiseUnits, "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
@@ -239,7 +245,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : (_randomProcessAccel == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
+                                                   configWidth, unitWidth, _stdev_bad.data(), _stdevAccelBiasUnits, "µg\0m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
@@ -254,7 +260,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                     _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
                                                             .c_str(),
                                                         configWidth, unitWidth, _tau_bad.data(), 0., std::numeric_limits<double>::max(),
-                                                        &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+                                                        unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
                     flow::ApplyChanges();
@@ -268,16 +274,18 @@ void NAV::LooselyCoupledKF::guiConfig()
             if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
             {
                 ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-                if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
-                                                                                                                                               "Gauss-Markov 1st Order\0\0"))
+                if (auto randomProcessGyro = static_cast<int>(_randomProcessGyro);
+                    ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), &randomProcessGyro, "Random Walk\0"
+                                                                                                                      "Gauss-Markov 1st Order\0\0"))
                 {
+                    _randomProcessGyro = static_cast<decltype(_randomProcessGyro)>(randomProcessGyro);
                     LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), fmt::underlying(_randomProcessGyro));
                     flow::ApplyChanges();
                 }
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
+                                                   configWidth, unitWidth, _stdev_rg.data(), _stdevGyroNoiseUnits, "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
@@ -290,7 +298,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : (_randomProcessGyro == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
+                                                   configWidth, unitWidth, _stdev_bgd.data(), _stdevGyroBiasUnits, "°/h\0rad/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
@@ -305,7 +313,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                     _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
                                                             .c_str(),
                                                         configWidth, unitWidth, _tau_bgd.data(), 0., std::numeric_limits<double>::max(),
-                                                        &unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+                                                        unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
                     flow::ApplyChanges();
@@ -337,10 +345,10 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                                                                      "rad, rad, m\0"
-                                                                                                                                                                                                      "m^2, m^2, m^2\0"
-                                                                                                                                                                                                      "m, m, m\0\0",
+                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyPosition.data(), _gnssMeasurementUncertaintyPositionUnit, "rad^2, rad^2, m^2\0"
+                                                                                                                                                                             "rad, rad, m\0"
+                                                                                                                                                                             "m^2, m^2, m^2\0"
+                                                                                                                                                                             "m, m, m\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
@@ -357,8 +365,8 @@ void NAV::LooselyCoupledKF::guiConfig()
             if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", _gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&_gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                                                      "m/s\0\0",
+                                                   configWidth - checkWidth, unitWidth, _gnssMeasurementUncertaintyVelocity.data(), _gnssMeasurementUncertaintyVelocityUnit, "m^2/s^2\0"
+                                                                                                                                                                             "m/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
@@ -383,10 +391,10 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                                 "rad, rad, m\0"
-                                                                                                                                                                 "m^2, m^2, m^2\0"
-                                                                                                                                                                 "m, m, m\0\0",
+                                                   configWidth, unitWidth, _initCovariancePosition.data(), _initCovariancePositionUnit, "rad^2, rad^2, m^2\0"
+                                                                                                                                        "rad, rad, m\0"
+                                                                                                                                        "m^2, m^2, m^2\0"
+                                                                                                                                        "m, m, m\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
@@ -400,8 +408,8 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                 "m/s\0\0",
+                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), _initCovarianceVelocityUnit, "m^2/s^2\0"
+                                                                                                                                        "m/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
@@ -416,10 +424,10 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&_initCovarianceAttitudeAnglesUnit), "rad^2\0"
-                                                                                                                                                                             "deg^2\0"
-                                                                                                                                                                             "rad\0"
-                                                                                                                                                                             "deg\0\0",
+                                                   configWidth, unitWidth, _initCovarianceAttitudeAngles.data(), _initCovarianceAttitudeAnglesUnit, "rad^2\0"
+                                                                                                                                                    "deg^2\0"
+                                                                                                                                                    "rad\0"
+                                                                                                                                                    "deg\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), _initCovarianceAttitudeAngles);
@@ -437,8 +445,8 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&_initCovarianceBiasAccelUnit), "m^2/s^4\0"
-                                                                                                                                                                   "m/s^2\0\0",
+                                                   configWidth, unitWidth, _initCovarianceBiasAccel.data(), _initCovarianceBiasAccelUnit, "m^2/s^4\0"
+                                                                                                                                          "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), _initCovarianceBiasAccel);
@@ -453,10 +461,10 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&_initCovarianceBiasGyroUnit), "rad^2/s^2\0"
-                                                                                                                                                                 "deg^2/s^2\0"
-                                                                                                                                                                 "rad/s\0"
-                                                                                                                                                                 "deg/s\0\0",
+                                                   configWidth, unitWidth, _initCovarianceBiasGyro.data(), _initCovarianceBiasGyroUnit, "rad^2/s^2\0"
+                                                                                                                                        "deg^2/s^2\0"
+                                                                                                                                        "rad/s\0"
+                                                                                                                                        "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), _initCovarianceBiasGyro);
@@ -475,7 +483,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (ImGui::TreeNode(fmt::format("IMU biases (init)##{}", size_t(id)).c_str()))
         {
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer biases##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _initBiasAccel.data(), reinterpret_cast<int*>(&_initBiasAccelUnit), "m/s^2\0\0",
+                                                   configWidth, unitWidth, _initBiasAccel.data(), _initBiasAccelUnit, "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initBiasAccel changed to {}", nameId(), _initBiasAccel.transpose());
@@ -485,7 +493,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("In body frame coordinates");
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyro biases##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _initBiasGyro.data(), reinterpret_cast<int*>(&_initBiasGyroUnit), "rad/s\0deg/s\0\0",
+                                                   configWidth, unitWidth, _initBiasGyro.data(), _initBiasGyroUnit, "rad/s\0deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initBiasGyro changed to {}", nameId(), _initBiasGyro.transpose());

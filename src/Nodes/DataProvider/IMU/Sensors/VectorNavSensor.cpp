@@ -1668,8 +1668,10 @@ std::string NAV::VectorNavSensor::category()
 
 void NAV::VectorNavSensor::guiConfig()
 {
-    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&_sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
+    if (auto sensorModel = static_cast<int>(_sensorModel);
+        ImGui::Combo("Sensor", &sensorModel, "VN-100 / VN-110\0VN-310\0\0"))
     {
+        _sensorModel = static_cast<decltype(_sensorModel)>(_sensorModel);
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), fmt::underlying(_sensorModel));
         flow::ApplyChanges();
         doDeinitialize();
@@ -2884,11 +2886,13 @@ void NAV::VectorNavSensor::guiConfig()
                 const char* frequencyText = _binaryOutputSelectedFrequency.at(b) < _dividerFrequency.first.size()
                                                 ? _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)).c_str()
                                                 : "Unknown";
-                if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
-                                     reinterpret_cast<int*>(&_binaryOutputSelectedFrequency.at(b)),
+                if (auto freq = static_cast<int>(_binaryOutputSelectedFrequency.at(b));
+                    ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
+                                     &freq,
                                      0, static_cast<int>(_dividerFrequency.second.size()) - 1,
                                      frequencyText))
                 {
+                    _binaryOutputSelectedFrequency.at(b) = static_cast<size_t>(freq);
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
                     if (_coupleImuRateOutput)
@@ -3188,11 +3192,13 @@ void NAV::VectorNavSensor::guiConfig()
             }
         }
 
-        if (ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), reinterpret_cast<int*>(&_binaryOutputRegisterMerge), "None\0"
-                                                                                                                           "1 <-> 2\0"
-                                                                                                                           "1 <-> 3\0"
-                                                                                                                           "2 <-> 3\0\0"))
+        if (auto binaryOutputRegisterMerge = static_cast<int>(_binaryOutputRegisterMerge);
+            ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), &binaryOutputRegisterMerge, "None\0"
+                                                                                                  "1 <-> 2\0"
+                                                                                                  "1 <-> 3\0"
+                                                                                                  "2 <-> 3\0\0"))
         {
+            _binaryOutputRegisterMerge = static_cast<decltype(_binaryOutputRegisterMerge)>(binaryOutputRegisterMerge);
             flow::ApplyChanges();
             switch (_binaryOutputRegisterMerge)
             {

@@ -116,7 +116,7 @@ class InterFrequencyBiasModel
                                                           id)
                                                   .c_str(),
                                               itemWidth, unitWidth, &_gui_covarianceInterFrequencyBias,
-                                              reinterpret_cast<int*>(&_gui_covarianceInterFrequencyBiasUnit),
+                                              _gui_covarianceInterFrequencyBiasUnit,
                                               MakeComboItems<Units::CovarianceClkPhaseDriftUnits>().c_str(),
                                               0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {

@@ -70,8 +70,10 @@ void NAV::ImuSimulator::guiConfig()
 
     if (_trajectoryType != TrajectoryType::Csv && ImGui::TreeNode("Start Time"))
     {
-        if (ImGui::RadioButton(fmt::format("Current Computer Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CurrentComputerTime)))
+        auto startTimeSource = static_cast<int>(_startTimeSource);
+        if (ImGui::RadioButton(fmt::format("Current Computer Time##{}", size_t(id)).c_str(), &startTimeSource, static_cast<int>(StartTimeSource::CurrentComputerTime)))
         {
+            _startTimeSource = static_cast<decltype(_startTimeSource)>(startTimeSource);
             LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
@@ -87,8 +89,9 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::Unindent();
         }
 
-        if (ImGui::RadioButton(fmt::format("Custom Time##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_startTimeSource), static_cast<int>(StartTimeSource::CustomTime)))
+        if (ImGui::RadioButton(fmt::format("Custom Time##{}", size_t(id)).c_str(), &startTimeSource, static_cast<int>(StartTimeSource::CustomTime)))
         {
+            _startTimeSource = static_cast<decltype(_startTimeSource)>(startTimeSource);
             LOG_DEBUG("{}: startTimeSource changed to {}", nameId(), fmt::underlying(_startTimeSource));
             flow::ApplyChanges();
         }
@@ -503,10 +506,12 @@ void NAV::ImuSimulator::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (_trajectoryType != TrajectoryType::Csv && ImGui::TreeNode("Simulation Stop Condition"))
     {
+        auto simulationStopCondition = static_cast<int>(_simulationStopCondition);
         if (_trajectoryType != TrajectoryType::Fixed)
         {
-            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDuration{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::Duration)))
+            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDuration{}", size_t(id)).c_str(), &simulationStopCondition, static_cast<int>(StopCondition::Duration)))
             {
+                _simulationStopCondition = static_cast<decltype(_simulationStopCondition)>(simulationStopCondition);
                 LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), fmt::underlying(_simulationStopCondition));
                 flow::ApplyChanges();
                 doDeinitialize();
@@ -523,8 +528,9 @@ void NAV::ImuSimulator::guiConfig()
         }
         if (_trajectoryType != TrajectoryType::Fixed)
         {
-            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDistanceOrCirclesOrRoses{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_simulationStopCondition), static_cast<int>(StopCondition::DistanceOrCirclesOrRoses)))
+            if (ImGui::RadioButton(fmt::format("##simulationStopConditionDistanceOrCirclesOrRoses{}", size_t(id)).c_str(), &simulationStopCondition, static_cast<int>(StopCondition::DistanceOrCirclesOrRoses)))
             {
+                _simulationStopCondition = static_cast<decltype(_simulationStopCondition)>(simulationStopCondition);
                 LOG_DEBUG("{}: simulationStopCondition changed to {}", nameId(), fmt::underlying(_simulationStopCondition));
                 flow::ApplyChanges();
                 doDeinitialize();

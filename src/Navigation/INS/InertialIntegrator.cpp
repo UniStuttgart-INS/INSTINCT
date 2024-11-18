@@ -412,8 +412,10 @@ bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, fl
     bool changed = false;
 
     ImGui::SetNextItemWidth(width * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::Combo(fmt::format("Integration Frame##{}", label).c_str(), reinterpret_cast<int*>(&integrator._integrationFrame), "ECEF\0NED\0\0"))
+    if (auto integrationFrame = static_cast<int>(integrator._integrationFrame);
+        ImGui::Combo(fmt::format("Integration Frame##{}", label).c_str(), &integrationFrame, "ECEF\0NED\0\0"))
     {
+        integrator._integrationFrame = static_cast<decltype(integrator._integrationFrame)>(integrationFrame);
         LOG_DEBUG("Integration Frame changed to {}", integrator._integrationFrame == InertialIntegrator::IntegrationFrame::NED ? "NED" : "ECEF");
         changed = true;
     }

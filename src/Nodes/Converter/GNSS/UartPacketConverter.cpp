@@ -62,8 +62,10 @@ std::string NAV::UartPacketConverter::category()
 
 void NAV::UartPacketConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0WiFiObs\0\0"))
+    if (auto outputType = static_cast<int>(_outputType);
+        ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), &outputType, "UbloxObs\0EmlidObs\0WiFiObs\0\0"))
     {
+        _outputType = static_cast<decltype(_outputType)>(outputType);
         std::string outputTypeString;
         switch (_outputType)
         {

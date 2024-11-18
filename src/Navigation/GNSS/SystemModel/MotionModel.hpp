@@ -157,7 +157,7 @@ class MotionModel
                                                                : "Variance",
                                                            id)
                                                    .c_str(),
-                                               itemWidth, unitWidth, _gui_covarianceAccel.data(), reinterpret_cast<int*>(&_gui_covarianceAccelUnit),
+                                               itemWidth, unitWidth, _gui_covarianceAccel.data(), _gui_covarianceAccelUnit,
                                                MakeComboItems<Units::CovarianceAccelUnits>().c_str(), //"m/√(s^3)\0m^2/s^3\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {

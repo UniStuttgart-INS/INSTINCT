@@ -224,7 +224,7 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiCon
             if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the velocity uncertainty##{}",
                                                               _gui_initCovarianceVelocityUnit == InitCovarianceVelocityUnits::m_s ? "Standard deviation" : "Variance", id)
                                                       .c_str(),
-                                                  configWidth, unitWidth, &_gui_initCovarianceVelocity, reinterpret_cast<int*>(&_gui_initCovarianceVelocityUnit), "m/s\0m^2/s^2\0\0",
+                                                  configWidth, unitWidth, &_gui_initCovarianceVelocity, _gui_initCovarianceVelocityUnit, "m/s\0m^2/s^2\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: _gui_initCovarianceVelocity changed to {}", id, _gui_initCovarianceVelocity);
@@ -238,7 +238,7 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiCon
                                                                   : "Variance",
                                                               id)
                                                       .c_str(),
-                                                  configWidth, unitWidth, &_gui_initCovarianceClockDrift, reinterpret_cast<int*>(&_gui_initCovarianceClockDriftUnit), "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
+                                                  configWidth, unitWidth, &_gui_initCovarianceClockDrift, _gui_initCovarianceClockDriftUnit, "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
                                                   0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: _gui_initCovarianceClockDrift changed to {}", id, _gui_initCovarianceClockDrift);
@@ -253,7 +253,7 @@ bool KalmanFilter::ShowGuiWidgets(const char* id, bool useDoppler, bool multiCon
                                                                      : "Variance",
                                                                  id)
                                                          .c_str(),
-                                                     configWidth, unitWidth, &_gui_initCovarianceInterSysClockDrift, reinterpret_cast<int*>(&_gui_initCovarianceInterSysClockDriftUnit), "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
+                                                     configWidth, unitWidth, &_gui_initCovarianceInterSysClockDrift, _gui_initCovarianceInterSysClockDriftUnit, "m/s\0s/s\0m^2/s^2\0s^2/s^2\0\0",
                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: _gui_initCovarianceInterSysClockDrift changed to {}", id, _gui_initCovarianceInterSysClockDrift);

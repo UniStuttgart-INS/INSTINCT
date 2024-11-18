@@ -356,9 +356,11 @@ void NAV::Plot::guiConfig()
         auto columnContentPinType = [&](size_t pinIndex) -> bool {
             auto& pinData = _pinData.at(pinIndex);
             ImGui::SetNextItemWidth(100.0F * gui::NodeEditorApplication::windowFontRatio());
-            if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
-                             reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
+            if (auto pinType = static_cast<int>(pinData.pinType);
+                ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
+                             &pinType, "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
             {
+                pinData.pinType = static_cast<decltype(pinData.pinType)>(pinType);
                 if (inputPins.at(pinIndex).isPinLinked())
                 {
                     inputPins.at(pinIndex).deleteLink();

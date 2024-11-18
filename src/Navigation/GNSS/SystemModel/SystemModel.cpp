@@ -23,9 +23,10 @@ bool NAV::SystemModelGui(SystemModelCalcAlgorithm& algorithm, float itemWidth, c
     bool changed = false;
 
     ImGui::SetNextItemWidth(itemWidth);
-    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", id).c_str(), reinterpret_cast<int*>(&algorithm),
-                     "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
+    if (auto alg = static_cast<int>(algorithm);
+        ImGui::Combo(fmt::format("Q calculation algorithm##{}", id).c_str(), &alg, "Van Loan\0Taylor 1st Order (Groves 2013)\0\0"))
     {
+        algorithm = static_cast<SystemModelCalcAlgorithm>(alg);
         LOG_DEBUG("{}: Q calculation algorithm changed to {}", id, fmt::underlying(algorithm));
         changed = true;
     }

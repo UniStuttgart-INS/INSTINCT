@@ -61,8 +61,10 @@ void NAV::MavlinkSend::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Transmission protocol"))
     {
-        if (ImGui::RadioButton(fmt::format("UDP-Port##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_portType), static_cast<int>(PortType::UDP_Port)))
+        auto portType = static_cast<int>(_portType);
+        if (ImGui::RadioButton(fmt::format("UDP-Port##{}", size_t(id)).c_str(), &portType, static_cast<int>(PortType::UDP_Port)))
         {
+            _portType = static_cast<decltype(_portType)>(portType);
             LOG_DEBUG("{}: portType changed to {}", nameId(), fmt::underlying(_portType));
             flow::ApplyChanges();
         }
@@ -84,8 +86,9 @@ void NAV::MavlinkSend::guiConfig()
             ImGui::Unindent();
         }
 
-        if (ImGui::RadioButton(fmt::format("Serial-Port##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_portType), static_cast<int>(PortType::Serial_Port)))
+        if (ImGui::RadioButton(fmt::format("Serial-Port##{}", size_t(id)).c_str(), &portType, static_cast<int>(PortType::Serial_Port)))
         {
+            _portType = static_cast<decltype(_portType)>(portType);
             LOG_DEBUG("{}: portType changed to {}", nameId(), fmt::underlying(_portType));
             flow::ApplyChanges();
         }

@@ -179,7 +179,7 @@ class ReceiverClockModel
                                                           id)
                                                   .c_str(),
                                               itemWidth, unitWidth, &_gui_covarianceClkPhaseDrift,
-                                              reinterpret_cast<int*>(&_gui_covarianceClkPhaseDriftUnit),
+                                              _gui_covarianceClkPhaseDriftUnit,
                                               MakeComboItems<Units::CovarianceClkPhaseDriftUnits>().c_str(),
                                               0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -200,7 +200,7 @@ class ReceiverClockModel
                                                           id)
                                                   .c_str(),
                                               itemWidth, unitWidth, &_gui_covarianceClkFrequencyDrift,
-                                              reinterpret_cast<int*>(&_gui_covarianceClkFrequencyDriftUnit),
+                                              _gui_covarianceClkFrequencyDriftUnit,
                                               MakeComboItems<Units::CovarianceClkFrequencyDriftUnits>().c_str(),
                                               0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
         {

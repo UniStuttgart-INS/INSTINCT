@@ -96,8 +96,10 @@ void NAV::WiFiPositioning::guiConfig()
     // ###########################################################################################################
     if (_numOfDevices == 0)
     {
-        if (ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_frame), "ECEF\0LLA\0\0"))
+        if (auto frame = static_cast<int>(_frame);
+            ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), &frame, "ECEF\0LLA\0\0"))
         {
+            _frame = static_cast<decltype(_frame)>(frame);
             switch (_frame)
             {
             case Frame::ECEF:
@@ -237,8 +239,10 @@ void NAV::WiFiPositioning::guiConfig()
         }
     }
     ImGui::Separator();
-    if (ImGui::Combo(fmt::format("Solution##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_solutionMode), "Least squares\0Kalman Filter\0\0"))
+    if (auto solutionMode = static_cast<int>(_solutionMode);
+        ImGui::Combo(fmt::format("Solution##{}", size_t(id)).c_str(), &solutionMode, "Least squares\0Kalman Filter\0\0"))
     {
+        _solutionMode = static_cast<decltype(_solutionMode)>(solutionMode);
         switch (_solutionMode)
         {
         case SolutionMode::LSQ:
@@ -318,8 +322,8 @@ void NAV::WiFiPositioning::guiConfig()
                                                                   : "Standard deviation σ",
                                                               size_t(id))
                                                       .c_str(),
-                                                  configWidth, unitWidth, &_measurementNoise, reinterpret_cast<int*>(&_measurementNoiseUnit), "m^2, m^2, m^2\0"
-                                                                                                                                              "m, m, m\0\0",
+                                                  configWidth, unitWidth, &_measurementNoise, _measurementNoiseUnit, "m^2, m^2, m^2\0"
+                                                                                                                     "m, m, m\0\0",
                                                   0, 0, "%.3e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: measurementNoise changed to {}", nameId(), _measurementNoise);
@@ -341,8 +345,8 @@ void NAV::WiFiPositioning::guiConfig()
                                                                   : "Standard deviation σ",
                                                               size_t(id))
                                                       .c_str(),
-                                                  configWidth, unitWidth, &_processNoise, reinterpret_cast<int*>(&_processNoiseUnit), "m^2, m^2, m^2\0"
-                                                                                                                                      "m, m, m\0\0",
+                                                  configWidth, unitWidth, &_processNoise, _processNoiseUnit, "m^2, m^2, m^2\0"
+                                                                                                             "m, m, m\0\0",
                                                   0, 0, "%.3e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: processNoise changed to {}", nameId(), _processNoise);
@@ -422,8 +426,8 @@ void NAV::WiFiPositioning::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovariancePosition.data(), reinterpret_cast<int*>(&_initCovariancePositionUnit), "m^2, m^2, m^2\0"
-                                                                                                                                                                 "m, m, m\0\0",
+                                                   configWidth, unitWidth, _initCovariancePosition.data(), _initCovariancePositionUnit, "m^2, m^2, m^2\0"
+                                                                                                                                        "m, m, m\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), _initCovariancePosition);
@@ -437,8 +441,8 @@ void NAV::WiFiPositioning::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), reinterpret_cast<int*>(&_initCovarianceVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                 "m/s\0\0",
+                                                   configWidth, unitWidth, _initCovarianceVelocity.data(), _initCovarianceVelocityUnit, "m^2/s^2\0"
+                                                                                                                                        "m/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), _initCovarianceVelocity);
@@ -454,8 +458,8 @@ void NAV::WiFiPositioning::guiConfig()
                                                                       : "Standard deviation σ",
                                                                   size_t(id))
                                                           .c_str(),
-                                                      configWidth, unitWidth, &_initCovarianceBias, reinterpret_cast<int*>(&_initCovarianceBiasUnit), "m^2\0"
-                                                                                                                                                      "m\0\0",
+                                                      configWidth, unitWidth, &_initCovarianceBias, _initCovarianceBiasUnit, "m^2\0"
+                                                                                                                             "m\0\0",
                                                       0, 0, "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DEBUG("{}: initCovarianceBias changed to {}", nameId(), _initCovarianceBias);

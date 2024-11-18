@@ -135,12 +135,12 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
 
     int combo_current_item = 0;
     changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
-                                                 &_carrierStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+                                                 &_carrierStdDev, combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
     changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
-                                                 &_codeStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+                                                 &_codeStdDev, combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
 
     changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
-                                                 &_dopplerStdDev, &combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+                                                 &_dopplerStdDev, combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
     ImGui::SameLine();
     ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(_dopplerStdDev, G01, -128)));
 
