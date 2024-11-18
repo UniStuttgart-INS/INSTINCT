@@ -101,6 +101,7 @@ bool NAV::CsvLogger::initialize()
     CommonLog::initialize();
 
     _headerWritten = false;
+    _dynamicHeader.clear();
 
     return true;
 }
@@ -112,21 +113,64 @@ void NAV::CsvLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
+void NAV::CsvLogger::writeHeader(const std::shared_ptr<const NodeData>& obs)
+{
+    _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s]";
+
+    for (const auto& desc : obs->staticDataDescriptors())
+    {
+        _filestream << "," << desc;
+    }
+    for (const auto& desc : _dynamicHeader)
+    {
+        _filestream << "," << desc;
+    }
+    _filestream << std::endl; // NOLINT(performance-avoid-endl)
+
+    _headerWritten = true;
+}
+
+void NAV::CsvLogger::rewriteData(size_t oldSize, size_t newSize, const std::shared_ptr<const NodeData>& obs)
+{
+    FileWriter::deinitialize();
+    auto tmpFilePath = getFilepath().concat("_temp");
+    std::filesystem::rename(getFilepath(), tmpFilePath);
+    FileWriter::initialize();
+    writeHeader(obs);
+
+    std::ifstream tmpFilestream(tmpFilePath, std::ios_base::in | std::ios_base::binary);
+    if (tmpFilestream.good())
+    {
+        std::string delimiterEnd(newSize - oldSize, ',');
+        std::string line;
+        std::getline(tmpFilestream, line); // Old header
+        while (std::getline(tmpFilestream, line) && !tmpFilestream.eof())
+        {
+            _filestream << line << delimiterEnd << '\n';
+        }
+    }
+    if (tmpFilestream.is_open()) { tmpFilestream.close(); }
+    tmpFilestream.clear();
+    std::filesystem::remove(tmpFilePath);
+}
+
 void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto obs = queue.extract_front();
 
-    if (!_headerWritten)
+    size_t dynHeaderLength = _dynamicHeader.size();
+    for (const auto& desc : obs->dynamicDataDescriptors())
     {
-        _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s]";
-
-        for (const auto& desc : obs->staticDataDescriptors())
+        if (std::ranges::none_of(_dynamicHeader, [&](const auto& header) { return header == desc; }))
         {
-            _filestream << "," << desc;
+            _dynamicHeader.push_back(desc);
         }
-        _filestream << std::endl; // NOLINT(performance-avoid-endl)
+    }
 
-        _headerWritten = true;
+    if (!_headerWritten) { writeHeader(obs); }
+    else if (dynHeaderLength != _dynamicHeader.size())
+    {
+        rewriteData(dynHeaderLength, _dynamicHeader.size(), obs);
     }
 
     constexpr int gpsCyclePrecision = 3;
@@ -156,8 +200,15 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
 
     for (size_t i = 0; i < obs->staticDescriptorCount(); ++i)
     {
-        _filestream << ",";
+        _filestream << ',';
         if (auto val = obs->getValueAt(i)) { _filestream << *val; }
     }
+
+    for (const auto& desc : _dynamicHeader)
+    {
+        _filestream << ',';
+        if (auto val = obs->getDynamicDataAt(desc)) { _filestream << *val; }
+    }
+
     _filestream << '\n';
 }

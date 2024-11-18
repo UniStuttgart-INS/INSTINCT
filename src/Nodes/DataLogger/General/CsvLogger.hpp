@@ -68,6 +68,16 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Writes the header
+    /// @param[in] obs Observation containing data
+    void writeHeader(const std::shared_ptr<const NodeData>& obs);
+
+    /// @brief Rewrites the data file with a new size
+    /// @param oldSize Old dynamic size
+    /// @param newSize New dynamic size
+    /// @param obs Observation containing data
+    void rewriteData(size_t oldSize, size_t newSize, const std::shared_ptr<const NodeData>& obs);
+
     /// @brief Write Observation to the file
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
@@ -75,6 +85,9 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
 
     /// Flag whether the header was written already
     bool _headerWritten = false;
+
+    /// Dynamic Header
+    std::vector<std::string> _dynamicHeader;
 };
 
 } // namespace NAV
