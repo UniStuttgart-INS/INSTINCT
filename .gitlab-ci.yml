@@ -53,12 +53,9 @@ image: ins-cpp:24.04
   variables:
     LOG_LEVEL_INSTINCT: "OFF"
 
-.schedule:
+.schedule-or-github:
   only:
     - schedules
-
-.branch-github:
-  only:
     - github-develop
     - github-main
 
@@ -557,8 +554,7 @@ pages:
     - .build:tests
     - .build:test-artifacts
     - .linux
-    - .schedule
-    - .branch-github
+    - .schedule-or-github
     - .retry
     - .log-trace
   image: ubuntu:24.04
@@ -608,8 +604,7 @@ ubuntu:24.04:gcc:debug:
   extends:
     - .run-tests
     - .linux
-    - .schedule
-    - .branch-github
+    - .schedule-or-github
   image: ubuntu:24.04
   variables:
     DEBIAN_FRONTEND: noninteractive

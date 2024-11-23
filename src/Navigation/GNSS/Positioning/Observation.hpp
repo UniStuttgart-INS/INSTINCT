@@ -42,6 +42,50 @@ struct Observations
     /// @brief Receiver specific observation of the signal
     struct SignalObservation
     {
+        /// @brief Destructor
+        ~SignalObservation() = default;
+        /// @brief Copy constructor
+        /// @param other The other object
+        SignalObservation(const SignalObservation& other)
+            : _navData(other._navData), _freqNum(other._freqNum)
+        {
+            for (const auto& [index, obs] : other.recvObs)
+            {
+                recvObs.insert(std::make_pair(index, std::make_shared<ReceiverSpecificData>(*obs)));
+            }
+        }
+        /// @brief Copy assignment operator
+        /// @param other The other object
+        SignalObservation& operator=(const SignalObservation& other)
+        {
+            if (this == &other) { return *this; } // Guard self assignment
+
+            for (const auto& [index, obs] : other.recvObs)
+            {
+                recvObs.insert(std::make_pair(index, std::make_shared<ReceiverSpecificData>(*obs)));
+            }
+            _navData = other._navData;
+            _freqNum = other._freqNum;
+
+            return *this;
+        }
+        /// @brief Move constructor
+        /// @param other The other object
+        SignalObservation(SignalObservation&& other) noexcept
+            : recvObs(std::move(other.recvObs)), _navData(std::move(other._navData)), _freqNum(other._freqNum) {}
+        /// @brief Move assignment operator
+        /// @param other The other object
+        SignalObservation& operator=(SignalObservation&& other) noexcept
+        {
+            if (this == &other) { return *this; } // Guard self assignment
+
+            recvObs = std::move(other.recvObs);
+            _navData = std::move(other._navData);
+            _freqNum = other._freqNum;
+
+            return *this;
+        }
+
         /// Receiver specific data
         struct ReceiverSpecificData
         {
@@ -166,8 +210,63 @@ struct Observations
     std::array<size_t, GnssObs::ObservationType_COUNT> nObservables{};                ///< Number of observables
     std::array<size_t, GnssObs::ObservationType_COUNT> nObservablesUniqueSatellite{}; ///< Number of observables (counted once for each satellite)
 
+    /// @brief Counts how many observations for the specified signal ant type exist
+    /// @param[in] satSigId Signal identifier
+    /// @param[in] obsType Observation type
+    size_t countObservations(const SatSigId& satSigId, const GnssObs::ObservationType& obsType) const;
+
     /// @brief Calculates/Recalculates the number of observables
-    void recalcObservableCounts();
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    void recalcObservableCounts(const std::string& nameId);
+
+    /// @brief Remove the signal from the observations
+    /// @param[in] satSigId Signal identifier
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    /// @return True if something was removed
+    bool removeSignal(const SatSigId& satSigId, const std::string& nameId);
+
+    /// @brief Remove the signal from the observations
+    /// @param[in] satSigId Signal identifier
+    /// @param[in] obsType Observation type
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    /// @return True if something was removed
+    bool removeSignal(const SatSigId& satSigId, const GnssObs::ObservationType& obsType, const std::string& nameId);
+
+    /// @brief Remove all signals of the satellite
+    /// @param[in] satId Satellite identifier
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    /// @return True if something was removed
+    bool removeSatellite(const SatId& satId, const std::string& nameId);
+
+    /// @brief Remove all measurements for the provided code and observation type
+    /// @param[in] code Code
+    /// @param[in] obsType Observation type
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    /// @return True if something was removed
+    template<typename ReceiverType>
+    bool removeMeasurementsFor(const Code& code, const GnssObs::ObservationType& obsType, [[maybe_unused]] const std::string& nameId)
+    {
+        LOG_DATA("{}: Searching observations to remove on [{}][{}]", nameId, code, obsType);
+        bool somethingRemoved = false;
+        for (auto& [satSigId, sigObs] : signals)
+        {
+            if (satSigId.code != code) { continue; }
+
+            for (size_t i = 0; i < sigObs.recvObs.size(); i++)
+            {
+                if (!sigObs.recvObs.contains(i)) { continue; }
+                auto& recvObs = sigObs.recvObs.at(i);
+                if (recvObs->obs.contains(obsType))
+                {
+                    recvObs->obs.erase(obsType);
+                    LOG_DATA("{}:   Erasing observation [{}][{}] of receiver '{}'", nameId, satSigId, obsType, to_string(static_cast<ReceiverType>(i)));
+                    somethingRemoved = true;
+                }
+            }
+        }
+        if (somethingRemoved) { recalcObservableCounts(nameId); }
+        return somethingRemoved;
+    }
 };
 
 } // namespace NAV

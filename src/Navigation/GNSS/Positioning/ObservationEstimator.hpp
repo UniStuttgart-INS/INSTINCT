@@ -150,6 +150,8 @@ class ObservationEstimator
 
         double cn0 = recvObs->gnssObsData().CN0.value_or(1.0);
 
+        double pcv = calcPCV(freq, receiver.gnssObs->insTime, elevation, std::nullopt, receiver.type, receiver.gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
         for (auto& [obsType, obsData] : recvObs->obs)
         {
             LOG_DATA("{}:   [{}][{:11}][{:5}] Observation estimate", nameId, satSigId, obsType, receiver.type);
@@ -163,7 +165,8 @@ class ObservationEstimator
                                    + InsConst::C
                                          * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
                                             // + dt_rel_stc
-                                            + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0));
+                                            + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0))
+                                   - pcv;
                 obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, elevation, cn0);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
@@ -185,7 +188,8 @@ class ObservationEstimator
                                    + InsConst::C
                                          * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
                                             // + dt_rel_stc
-                                         );
+                                            )
+                                   - pcv;
                 obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, elevation, cn0);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
@@ -260,23 +264,37 @@ class ObservationEstimator
     };
 
     /// @brief Calculates the pseudorange estimate
-    /// @param[in] e_recvPosAPC Receiver antenna phase center position in ECEF coordinates [m]
+    /// @param[in] freq Signal frequency
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
     /// @param[in] recvClockBias Receiver clock bias [s]
     /// @param[in] interFreqBias Receiver inter-frequency bias [s]
     /// @param[in] dpsr_T_r_s Estimated troposphere propagation error [m]
     /// @param[in] dpsr_I_r_s Estimated ionosphere propagation error [m]
     /// @param[in] satInfo Satellite Information (pos, vel, clock)
+    /// @param[in] gnssObs GNSS observation
     /// @param[in] nameId Name and Id of the node used for log messages only
     /// @return The estimate [m] and the position line-of-sight unit vector (used for the Jacobian)
     template<typename Derived>
-    auto calcPseudorangeEstimate(const Eigen::MatrixBase<Derived>& e_recvPosAPC,
+    auto calcPseudorangeEstimate(Frequency freq,
+                                 size_t receiverType,
+                                 const Eigen::MatrixBase<Derived>& e_recvPosMarker,
                                  auto recvClockBias,
                                  auto interFreqBias,
                                  auto dpsr_T_r_s,
                                  auto dpsr_I_r_s,
                                  const std::shared_ptr<const SatelliteInfo>& satInfo,
+                                 const std::shared_ptr<const GnssObs>& gnssObs,
                                  [[maybe_unused]] const std::string& nameId) const
     {
+        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
+        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
+
+        Eigen::Vector3d e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, satInfo->e_satPos);
+        Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recvPosAPC(0), lla_recvPosAPC(1)) * e_pLOS;
+        double elevation = calcSatElevation(n_lineOfSightUnitVector);
+        // double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
+
         // Receiver-Satellite Range [m]
         auto rho_r_s = (satInfo->e_satPos - e_recvPosAPC).norm();
 
@@ -288,11 +306,14 @@ class ObservationEstimator
         // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
         //                                                                        : 0.0;
 
+        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
         return rho_r_s
                + dpsr_ie_r_s
                + dpsr_T_r_s
                + dpsr_I_r_s
-               + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias);
+               + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias)
+               - pcv;
     }
 
     /// @brief Calculates the carrier-phase estimate
@@ -340,11 +361,14 @@ class ObservationEstimator
         // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
         //                                                                        : 0.0;
 
+        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
         double estimate = rho_r_s
                           + dpsr_ie_r_s
                           + dpsr_T_r_s
                           - dpsr_I_r_s
-                          + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */);
+                          + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */)
+                          - pcv;
 
         return { estimate, e_pLOS };
     }
@@ -472,7 +496,7 @@ class ObservationEstimator
         auto e_recvPosAPC = trafo::e_posMarker2ARP(e_recvPosMarker,
                                                    gnssObs,
                                                    antenna.hen_delta);
-        if (antenna.enabled)
+        if (antenna.correctPCO)
         {
             std::string antennaType;
             if (antenna.autoDetermine && gnssObs->receiverInfo)
@@ -487,6 +511,49 @@ class ObservationEstimator
         }
 
         return e_recvPosAPC;
+    }
+
+    /// @brief Calculates the phase center variation
+    /// @param[in] freq Signal frequency
+    /// @param[in] insTime Time to lookup the PCV pattern
+    /// @param[in] elevation Elevation angle in [rad]
+    /// @param[in] azimuth Azimuth in [rad] or nullopt to use the azimuth independent (NOAZI)
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return The PCV value in [m]
+    [[nodiscard]] double calcPCV(const Frequency& freq,
+                                 const InsTime& insTime,
+                                 double elevation,
+                                 std::optional<double> azimuth,
+                                 size_t receiverType,
+                                 const std::shared_ptr<const GnssObs>& gnssObs,
+                                 [[maybe_unused]] const std::string& nameId) const
+    {
+        if (std::isnan(elevation)
+            || (azimuth.has_value() && std::isnan(*azimuth))) { return 0.0; }
+        const Antenna& antenna = _antenna.at(receiverType);
+        if (antenna.correctPCV)
+        {
+            std::string antennaType;
+            if (antenna.autoDetermine && gnssObs->receiverInfo)
+            {
+                antennaType = gnssObs->receiverInfo->get().antennaType;
+            }
+            else if (!antenna.autoDetermine)
+            {
+                antennaType = antenna.name;
+            }
+            return AntexReader::Get().getAntennaPhaseCenterVariation(antennaType,
+                                                                     Frequency_(freq),
+                                                                     insTime,
+                                                                     elevation,
+                                                                     azimuth,
+                                                                     nameId)
+                .value_or(0.0);
+        }
+
+        return 0.0;
     }
 
     /// @brief Calculate the ionospheric delay with the model selected in the GUI
@@ -574,18 +641,25 @@ class ObservationEstimator
                     if (!ImGui::TreeNode(fmt::format("{}", static_cast<ReceiverType>(i)).c_str())) { continue; }
                 }
 
-                if (ImGui::Checkbox(fmt::format("Correct Phase-center offset##antenna {} {}", id, i).c_str(), &_antenna.at(i).enabled))
+                if (ImGui::Checkbox(fmt::format("Correct Phase-center offset##antenna {} {}", id, i).c_str(), &_antenna.at(i).correctPCO))
                 {
-                    LOG_DEBUG("{}: Antenna {} enabled: {}", id, i, _antenna.at(i).enabled);
+                    LOG_DEBUG("{}: Antenna {} correctPCO: {}", id, i, _antenna.at(i).correctPCO);
                     changed = true;
                 }
                 ImGui::SameLine();
-                if (!_antenna.at(i).enabled) { ImGui::BeginDisabled(); }
+                if (ImGui::Checkbox(fmt::format("Correct Phase-center variation##antenna {} {}", id, i).c_str(), &_antenna.at(i).correctPCV))
+                {
+                    LOG_DEBUG("{}: Antenna {} correctPCV: {}", id, i, _antenna.at(i).correctPCV);
+                    changed = true;
+                }
+
+                if (!_antenna.at(i).correctPCO && !_antenna.at(i).correctPCV) { ImGui::BeginDisabled(); }
                 if (ImGui::Checkbox(fmt::format("Auto determine##antenna {} {}", id, i).c_str(), &_antenna.at(i).autoDetermine))
                 {
                     LOG_DEBUG("{}: Antenna {} auto: {}", id, i, _antenna.at(i).autoDetermine);
                     changed = true;
                 }
+                ImGui::SameLine();
                 if (_antenna.at(i).autoDetermine) { ImGui::BeginDisabled(); }
                 ImGui::SetNextItemWidth(itemWidth - (1.0F + static_cast<float>(_receiverCount > 1)) * ImGui::GetStyle().IndentSpacing);
 
@@ -610,7 +684,7 @@ class ObservationEstimator
                     ImGui::EndCombo();
                 }
                 if (_antenna.at(i).autoDetermine) { ImGui::EndDisabled(); }
-                if (!_antenna.at(i).enabled) { ImGui::EndDisabled(); }
+                if (!_antenna.at(i).correctPCO && !_antenna.at(i).correctPCV) { ImGui::EndDisabled(); }
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("Used for lookup in ANTEX file.");
 
@@ -649,7 +723,8 @@ class ObservationEstimator
     /// Antenna information
     struct Antenna
     {
-        bool enabled = true;                                 ///< Enabled
+        bool correctPCO = true;                              ///< Correct phase center offset
+        bool correctPCV = true;                              ///< Correct phase center variation
         bool autoDetermine = true;                           ///< Try determine antenna type from e.g. RINEX file
         std::string name;                                    ///< Type of the antenna for the Antex lookup
         Eigen::Vector3d hen_delta = Eigen::Vector3d::Zero(); ///< Delta values of marker to antenna base
@@ -663,7 +738,8 @@ class ObservationEstimator
     friend void to_json(json& j, const ObservationEstimator::Antenna& obj)
     {
         j = json{
-            { "enabled", obj.enabled },
+            { "correctPCO", obj.correctPCO },
+            { "correctPCV", obj.correctPCV },
             { "autoDetermine", obj.autoDetermine },
             { "name", obj.name },
             { "hen_delta", obj.hen_delta },
@@ -674,7 +750,8 @@ class ObservationEstimator
     /// @param[out] obj Object to fill from the json
     friend void from_json(const json& j, ObservationEstimator::Antenna& obj)
     {
-        if (j.contains("enabled")) { j.at("enabled").get_to(obj.enabled); }
+        if (j.contains("correctPCO")) { j.at("correctPCO").get_to(obj.correctPCO); }
+        if (j.contains("correctPCV")) { j.at("correctPCV").get_to(obj.correctPCV); }
         if (j.contains("autoDetermine")) { j.at("autoDetermine").get_to(obj.autoDetermine); }
         if (j.contains("name")) { j.at("name").get_to(obj.name); }
         if (j.contains("hen_delta")) { j.at("hen_delta").get_to(obj.hen_delta); }

@@ -39,7 +39,7 @@ NAV::RinexObsLogger::RinexObsLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 643, 728 };
 
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
+    _dynamicInputPins.addPin(this);
 }
 
 NAV::RinexObsLogger::~RinexObsLogger()
@@ -64,6 +64,11 @@ std::string NAV::RinexObsLogger::category()
 
 void NAV::RinexObsLogger::guiConfig()
 {
+    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, {}))
+    {
+        flow::ApplyChanges();
+    }
+
     constexpr float COL1_WIDTH = 470.0F;
 
     const auto now = std::chrono::system_clock::now();
@@ -311,6 +316,7 @@ void NAV::RinexObsLogger::guiConfig()
     LOG_TRACE("{}: called", nameId());
 
     return {
+        { "dynamicInputPins", _dynamicInputPins },
         { "FileWriter", FileWriter::save() },
         { "HeaderInfo", _header },
     };
@@ -320,6 +326,7 @@ void NAV::RinexObsLogger::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("dynamicInputPins")) { NAV::gui::widgets::from_json(j.at("dynamicInputPins"), _dynamicInputPins, this); }
     if (j.contains("FileWriter")) { FileWriter::restore(j.at("FileWriter")); }
     if (j.contains("HeaderInfo")) { j.at("HeaderInfo").get_to(_header); }
 }
@@ -394,6 +401,16 @@ void NAV::RinexObsLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
+}
+
+void NAV::RinexObsLogger::pinAddCallback(Node* node)
+{
+    nm::CreateInputPin(node, GnssObs::type().c_str(), Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
+}
+
+void NAV::RinexObsLogger::pinDeleteCallback(Node* node, size_t pinIdx)
+{
+    nm::DeleteInputPin(node->inputPins.at(pinIdx));
 }
 
 void NAV::RinexObsLogger::updateFileHeader(TimeSystem oldTimeSys)

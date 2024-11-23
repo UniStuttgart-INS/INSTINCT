@@ -300,7 +300,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     if (troposphereModels.zhdModel.first == TroposphereModel::None
         && troposphereModels.zwdModel.first == TroposphereModel::None) { return {}; }
 
-    if (lla_pos(2) < -1000 || lla_pos(2) > 1e4)
+    if (lla_pos(2) < -1000 || lla_pos(2) > 1e4 || std::isnan(elevation))
     {
         LOG_TRACE("Not calculating tropospheric delay, due to altitude being invalid: {}m", lla_pos(2));
         return {};

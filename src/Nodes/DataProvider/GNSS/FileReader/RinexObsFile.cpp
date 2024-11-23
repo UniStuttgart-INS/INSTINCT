@@ -60,8 +60,8 @@ std::string RinexObsFile::category()
 
 void RinexObsFile::guiConfig()
 {
-    if (auto res = FileReader::guiConfig(R"(Rinex Obs (.obs .rnx .*O){.obs,.rnx,(.+[.]\d\d?O)},.*)",
-                                         { ".obs", ".rnx", "(.+[.]\\d\\d?O)" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(R"(Rinex Obs (.obs .rnx .*o){.obs,.rnx,(.+[.]\d\d?[oO])},.*)",
+                                         { ".obs", ".rnx", "(.+[.]\\d\\d?[oO])" }, size_t(id), nameId()))
     {
         LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();

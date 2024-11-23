@@ -163,11 +163,13 @@ brew install ccache cppcheck
 
 #### Windows 11
 
-- For development Windows Subsystem for Linux `WSL` is **recommended**. Follow the Ubuntu instructions.
+- For development Windows Subsystem for Linux `WSL` is **recommended**.
+  - Follow the [VS Code WSL instructions](https://code.visualstudio.com/docs/remote/wsl)
+  - We recommend using Ubuntu inside WSL and following the Ubuntu instructions above.
 - For executing, INSTINCT can be compiled with `MSVC` directly on Windows
   - Use the `Build Tools for Visual Studio 2022` ([download](https://visualstudio.microsoft.com/downloads/))
-  - Install both the C++ Toolchain and Cmake
-  - Use the Developer Powershell to invoke commands
+  - Install both the C++ Toolchain and Cmake (not cmake from their website)
+  - Use the Developer Powershell to invoke commands and also to start VS Code
   - Windows specifies the build type at compile time, not during cmake generation. Therefore the toolchain file has a different path. See above
 
 ### VSCode Configuration

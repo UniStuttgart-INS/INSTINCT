@@ -143,6 +143,7 @@ class ObservationFilter
         std::vector<SatSigId> excludedSatellites;                        ///< Signals excluded because the satellite is excluded
         std::vector<SatSigId> tempExcludedSignal;                        ///< Signals temporarily excluded
         std::vector<SatSigId> notAllReceiversObserved;                   ///< Signals not observed by all receivers
+        std::vector<SatSigId> singleObservation;                         ///< Only signal for this code/type (relevant for double differences)
         std::vector<SatSigId> noPseudorangeMeasurement;                  ///< Signals without pseudorange measurement
         std::vector<SatSigId> navigationDataMissing;                     ///< Signals without navigation data
         std::vector<std::pair<SatSigId, double>> elevationMaskTriggered; ///< Signals triggering the elevation mask. Also includes elevation [rad]
@@ -402,7 +403,7 @@ class ObservationFilter
             observations.signals.erase(satSigId);
         }
 
-        observations.recalcObservableCounts();
+        observations.recalcObservableCounts(nameId);
 
 #if LOG_LEVEL <= LOG_LEVEL_DATA
         LOG_DATA("{}: usedSatSystems = [{}]", nameId, joinToString(observations.systems));

@@ -104,7 +104,10 @@ template<typename Derived>
                                                                                 typename Derived::Scalar(0.0),
                                                                                 typename Derived::Scalar(-neu_antennaPhaseCenterOffset->z()));
             auto lla_posARP = trafo::ecef2lla_WGS84(e_posARP);
-            e_posAPC += trafo::e_Quat_n(lla_posARP(0), lla_posARP(1)) * n_antennaPhaseCenterOffset;
+            if (!std::isnan(lla_posARP(0)) && !std::isnan(lla_posARP(1)))
+            {
+                e_posAPC += trafo::e_Quat_n(lla_posARP(0), lla_posARP(1)) * n_antennaPhaseCenterOffset;
+            }
         }
     }
     return e_posAPC;

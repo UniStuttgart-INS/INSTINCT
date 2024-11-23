@@ -66,9 +66,9 @@ struct TroposphereModelSelection
     std::pair<TroposphereModel, AtmosphereModels> zwdModel = std::make_pair(TroposphereModel::Saastamoinen, AtmosphereModels{});
 
     /// Mapping function ZHD, atmosphere models
-    std::pair<MappingFunction, AtmosphereModels> zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, AtmosphereModels{});
+    std::pair<MappingFunction, AtmosphereModels> zhdMappingFunction = std::make_pair(MappingFunction::GMF, AtmosphereModels{});
     /// Mapping function ZWD, atmosphere models
-    std::pair<MappingFunction, AtmosphereModels> zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, AtmosphereModels{});
+    std::pair<MappingFunction, AtmosphereModels> zwdMappingFunction = std::make_pair(MappingFunction::GMF, AtmosphereModels{});
 };
 
 /// @brief Converts the enum to a string

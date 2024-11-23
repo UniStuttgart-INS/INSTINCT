@@ -41,7 +41,6 @@ class GnssMeasurementErrorModel
         SINE_OFFSET, ///< Sine with offset. See \cite Zhang2021 Zhang 2021 eq. 7, p. 3
         SINE_CN0,    ///< Sine and CN0 dependent. See \cite Groves2013 Groves, ch. 9.4.2.4, eq. 9.168, p. 422 (range acceleration is neglected)
         RTKLIB,      ///< RTKLIB error model. See \cite RTKLIB RTKLIB ch. E.6, eq. E.6.24, p. 162
-        SINE_TYPE,   ///< Sine Type. See \cite KingBock2001 King and Bock 2001
         SINE_SQRT,   ///< Sine square-root. See \cite Kiliszek2022 Kiliszek 2022, table 2, p. 5
         EXPONENTIAL, ///< Exponential. See \cite EulerGoad1991 Euler and Goad 1991 / \cite Li2016 Li et al. 2016
         COSINE_TYPE, ///< Cosine Type. See \cite Hadas2020 Hadas 2020 eq. 14, p. 8
@@ -131,20 +130,11 @@ class GnssMeasurementErrorModel
     /// Model parameters for the 'RTKLIB' model
     ModelParametersRtklib _modelParametersRtklib;
 
-    /// Model parameters for the 'sine - type' model
-    struct ModelParametersSineType
-    {
-        double a = 0.64; ///< Coefficient
-        double b = 0.36; ///< Coefficient
-    };
-    /// Model parameters for the 'sine - type' model
-    ModelParametersSineType _modelParametersSineType;
-
     /// Model parameters for the 'sine - sqrt' model
     struct ModelParametersSineSqrt
     {
-        double a = 0.3; ///< Coefficient
-        double b = 0.5; ///< Coefficient
+        double a = 0.8; ///< Coefficient
+        double b = 0.6; ///< Coefficient
     };
     /// Model parameters for the 'sine - sqrt' model
     ModelParametersSineSqrt _modelParametersSineSqrt;
@@ -209,9 +199,6 @@ class GnssMeasurementErrorModel
     friend void to_json(json& j, const ModelParametersRtklib& obj);
     friend void from_json(const json& j, ModelParametersRtklib& obj);
 
-    friend void to_json(json& j, const ModelParametersSineType& obj);
-    friend void from_json(const json& j, ModelParametersSineType& obj);
-
     friend void to_json(json& j, const ModelParametersSineSqrt& obj);
     friend void from_json(const json& j, ModelParametersSineSqrt& obj);
 
@@ -271,15 +258,6 @@ void to_json(json& j, const GnssMeasurementErrorModel::ModelParametersRtklib& ob
 /// @param[in] j Json object with the needed values
 /// @param[out] obj Object to fill from the json
 void from_json(const json& j, GnssMeasurementErrorModel::ModelParametersRtklib& obj);
-
-/// @brief Converts the provided object into json
-/// @param[out] j Json object which gets filled with the info
-/// @param[in] obj Object to convert into json
-void to_json(json& j, const GnssMeasurementErrorModel::ModelParametersSineType& obj);
-/// @brief Converts the provided json object into a node object
-/// @param[in] j Json object with the needed values
-/// @param[out] obj Object to fill from the json
-void from_json(const json& j, GnssMeasurementErrorModel::ModelParametersSineType& obj);
 
 /// @brief Converts the provided object into json
 /// @param[out] j Json object which gets filled with the info

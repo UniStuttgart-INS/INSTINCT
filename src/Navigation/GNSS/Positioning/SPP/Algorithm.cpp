@@ -224,6 +224,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             accuracyAchieved = lsq.solution(all).norm() < 1e-4;
             if (accuracyAchieved) { LOG_DATA("{}: [{}] Accuracy achieved on iteration {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1); }
             else { LOG_DATA("{}: [{}] Bad accuracy on iteration {}: {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, lsq.solution(all).norm()); }
+            if (iteration == nIter - 1) { return nullptr; }
             if (accuracyAchieved || iteration == nIter - 1)
             {
                 if (_estimatorType == EstimatorType::KalmanFilter && !_kalmanFilter.isInitialized()
