@@ -530,6 +530,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // 0: OK | 1: power failure between previous and current epoch | > 1 : Special event
     int epochFlag = -1;
+    size_t nSatellites = 0;
     while (epochFlag != 0 && !eof() && getline(line)) // Read lines till epoch record with valid epoch flag
     {
         str::trim(line);
@@ -540,12 +541,13 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         }
         if (line.at(0) == '>') // EPOCH record - Record identifier: > - Format: A1,
         {
-            auto year = std::stoi(line.substr(2, 4));   // Format: 1X,I4,
-            auto month = std::stoi(line.substr(7, 2));  // Format: 1X,I2.2,
-            auto day = std::stoi(line.substr(10, 2));   // Format: 1X,I2.2,
-            auto hour = std::stoi(line.substr(13, 2));  // Format: 1X,I2.2,
-            auto min = std::stoi(line.substr(16, 2));   // Format: 1X,I2.2,
-            auto sec = std::stold(line.substr(18, 11)); // Format: F11.7,
+            auto year = std::stoi(line.substr(2, 4));         // Format: 1X,I4,
+            auto month = std::stoi(line.substr(7, 2));        // Format: 1X,I2.2,
+            auto day = std::stoi(line.substr(10, 2));         // Format: 1X,I2.2,
+            auto hour = std::stoi(line.substr(13, 2));        // Format: 1X,I2.2,
+            auto min = std::stoi(line.substr(16, 2));         // Format: 1X,I2.2,
+            auto sec = std::stold(line.substr(18, 11));       // Format: F11.7,2X,I1,
+            nSatellites = std::stoul(line.substr(29 + 3, 3)); // Format: I3,6X,F15.12
 
             [[maybe_unused]] double recClkOffset = 0.0;
             try
@@ -567,11 +569,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
             epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
 
-            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
-                                                                           // Reserved - Format 6X,
-
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
-                     epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
+                     epochTime.toYMDHMS(), epochFlag, nSatellites, recClkOffset);
         }
     }
     if (epochTime.empty())
@@ -584,6 +583,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // TODO: while loop till eof() or epochFlag == 0 (in case some other flags in the file)
 
+    size_t satCnt = 0;
     while (!eof() && peek() != '>' && getline(line)) // Read observation records till line with '>'
     {
         if (line.empty())
@@ -725,6 +725,11 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
             }
         }
+        satCnt++;
+    }
+    if (satCnt != nSatellites)
+    {
+        LOG_WARN("{}: [{}] {} satellites read, but epoch header specified {} satellites", nameId(), gnssObs->insTime.toYMDHMS(GPST), satCnt, nSatellites);
     }
 
     gnssObs->receiverInfo = _receiverInfo;

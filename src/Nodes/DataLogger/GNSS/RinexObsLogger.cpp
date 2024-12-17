@@ -448,16 +448,16 @@ void NAV::RinexObsLogger::updateFileHeader(TimeSystem oldTimeSys)
                     break;
                 }
 
-                LOG_DATA("{}: Read epoch [{}][{}][{}][{}][{}][{}]", nameId(), line.substr(2, 4), line.substr(7, 2), line.substr(10, 2),
-                         line.substr(13, 2), line.substr(16, 2), line.substr(18, 11));
+                LOG_DATA("{}: Read epoch [{}][{}][{}][{}][{}][{}] [{}]", nameId(), line.substr(2, 4), line.substr(7, 2), line.substr(10, 2),
+                         line.substr(13, 2), line.substr(16, 2), line.substr(18, 11), line.substr(29 + 3, 3));
                 auto epochTime = InsTime{ static_cast<uint16_t>(std::stoi(line.substr(2, 4))),  // year  [1X,I4]
                                           static_cast<uint16_t>(std::stoi(line.substr(7, 2))),  // month [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(10, 2))), // day   [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(13, 2))), // hour  [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(16, 2))), // min   [1X,I2.2]
-                                          std::stold(line.substr(18, 11)),                      // sec   [F11.7]
+                                          std::stold(line.substr(18, 11)),                      // sec   [F11.7,2X,I1,]
                                           oldTimeSys };
-                fsTmp << _header.epochRecordLine(epochTime);
+                fsTmp << _header.epochRecordLine(epochTime, std::stoul(line.substr(29 + 3, 3))); // Num satellites I3,6X,F15.12
             }
             else if (dataRecords)
             {
@@ -502,7 +502,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
         updateFileHeader(oldTimeSys);
     }
 
-    _filestream << _header.epochRecordLine(obs->insTime);
+    _filestream << _header.epochRecordLine(obs->insTime, satellites.size());
 
     for (const auto& satId : satellites)
     {
