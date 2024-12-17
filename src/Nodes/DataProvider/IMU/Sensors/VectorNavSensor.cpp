@@ -875,7 +875,6 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
                  ImGui::EndTable();
              } },
       [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& bor, uint32_t /* binaryField */) { return !(bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
-                                                                                                                              && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
@@ -995,27 +994,69 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     { /*  5 */ "PosLla", vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA,
       []() { ImGui::TextUnformatted("GNSS position (latitude, longitude, altitude)\n\nThe current GNSS position measurement given as the geodetic latitude, longitude and altitude above the\nellipsoid. The units are in [deg, deg, m] respectively."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  6 */ "PosEcef", vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF,
       []() { ImGui::TextUnformatted("GNSS position (ECEF)\n\nThe current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  7 */ "VelNed", vn::protocol::uart::GpsGroup::GPSGROUP_VELNED,
       []() { ImGui::TextUnformatted("GNSS velocity (NED)\n\nThe current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  8 */ "VelEcef", vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF,
       []() { ImGui::TextUnformatted("GNSS velocity (ECEF)\n\nThe current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  9 */ "PosU", vn::protocol::uart::GpsGroup::GPSGROUP_POSU,
       []() { ImGui::TextUnformatted("GNSS position uncertainty (NED)\n\nThe current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /* 10 */ "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU,
       []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /* 11 */ "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU,
       []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
@@ -1671,7 +1712,7 @@ void NAV::VectorNavSensor::guiConfig()
     if (auto sensorModel = static_cast<int>(_sensorModel);
         ImGui::Combo("Sensor", &sensorModel, "VN-100 / VN-110\0VN-310\0\0"))
     {
-        _sensorModel = static_cast<decltype(_sensorModel)>(_sensorModel);
+        _sensorModel = static_cast<decltype(_sensorModel)>(sensorModel);
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), fmt::underlying(_sensorModel));
         flow::ApplyChanges();
         doDeinitialize();
