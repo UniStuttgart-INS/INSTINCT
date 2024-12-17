@@ -61,6 +61,11 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;
 
+    /// @brief Called when a link is to be deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    void onDeleteLink(OutputPin& startPin, InputPin& endPin) override;
+
   private:
     /// @brief Initialize the node
     bool initialize() override;
@@ -88,6 +93,15 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
 
     /// Dynamic Header
     std::vector<std::string> _dynamicHeader;
+
+    /// Header which should be logged
+    std::vector<std::pair<std::string, bool>> _headerLogging;
+    /// Regex to search for when selecting
+    std::string _headerLoggingRegex;
+    /// Default for new headers
+    bool _headerLoggingDefault = true;
+    /// Sort headers in the GUI
+    bool _headerLoggingSortGui = false;
 };
 
 } // namespace NAV
