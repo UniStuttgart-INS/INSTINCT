@@ -161,7 +161,7 @@ TEST_CASE("[AntexReader] Get antenna phase center offset to ARP", "[AntexReader]
 
     testPCO("TRM59800.00     SCIS", G01, {}, Eigen::Vector3d(0.69, 0.16, 86.63));
     testPCO("CNTT300         NONE", G01, {}, Eigen::Vector3d(2.08, 1.36, 75.26));
-    testPCO("CNTT300         NONE", E01, {}, std::nullopt); // Frequency not in ANTEX files
+    testPCO("CNTT300         NONE", I09, {}, std::nullopt); // Frequency not in ANTEX files
 
     // has only `VALID FROM` not `VALID UNTIL`
     testPCO("IRNSS-1GEO:I03", I05, InsTime(2014, 10, 14, 23, 59, 59.9, GPST), Eigen::Vector3d(11.4, 1.1, 1280.8)); // before '2014-10-15 0:0:0.0 VALID FROM', we take the first entry
@@ -171,10 +171,10 @@ TEST_CASE("[AntexReader] Get antenna phase center offset to ARP", "[AntexReader]
     // 1992    11    22     0     0    0.0 to 2008    10    16    23    59   59.9999999
     // 2008    10    23     0     0    0.0 to 2009     1     6    23    59   59.9999999
     // 2011     6     2     0     0    0.0 to 2011     7    12    23    59   59.9999999
-    testPCO("BLOCK IIA:G01", G01, InsTime(2008, 10, 16, 23, 59, 59.9999999, GPST), Eigen::Vector3d(279.0, 0.0, 2319.5));
-    testPCO("BLOCK IIA:G01", G02, InsTime(2008, 10, 16, 23, 59, 59.9999999, GPST), Eigen::Vector3d(279.0, 0.0, 2319.5));
-    testPCO("BLOCK IIA:G01", G01, InsTime(2008, 10, 23, 0, 0, 0.0, GPST), Eigen::Vector3d(279.0, 0.0, 2289.3));
-    testPCO("BLOCK IIA:G01", G01, InsTime(2022, 10, 23, 0, 0, 0.0, GPST), Eigen::Vector3d(279.0, 0.0, 2574.2)); // after last 'VALID UNTIL', we take last entry
+    testPCO("BLOCK IIA:G01", G01, InsTime(2008, 10, 16, 23, 59, 59.9999999, GPST), Eigen::Vector3d(279.0, 0.0, 2253.47));
+    testPCO("BLOCK IIA:G01", G02, InsTime(2008, 10, 16, 23, 59, 59.9999999, GPST), Eigen::Vector3d(279.0, 0.0, 2253.47));
+    testPCO("BLOCK IIA:G01", G01, InsTime(2008, 10, 23, 0, 0, 0.0, GPST), Eigen::Vector3d(279.0, 0.0, 2220.62));
+    testPCO("BLOCK IIA:G01", G01, InsTime(2022, 10, 23, 0, 0, 0.0, GPST), Eigen::Vector3d(279.0, 0.0, 2512.76)); // after last 'VALID UNTIL', we take last entry
 }
 
 TEST_CASE("[AntexReader] Antenna phase center variation pattern (no azimuth)", "[AntexReader]")
