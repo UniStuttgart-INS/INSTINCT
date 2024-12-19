@@ -166,7 +166,7 @@ class ObservationEstimator
                                          * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
                                             // + dt_rel_stc
                                             + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0))
-                                   - pcv;
+                                   + pcv;
                 obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, elevation, cn0);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
@@ -189,7 +189,7 @@ class ObservationEstimator
                                          * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
                                             // + dt_rel_stc
                                             )
-                                   - pcv;
+                                   + pcv;
                 obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, elevation, cn0);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
                 LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
@@ -313,7 +313,7 @@ class ObservationEstimator
                + dpsr_T_r_s
                + dpsr_I_r_s
                + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias)
-               - pcv;
+               + pcv;
     }
 
     /// @brief Calculates the carrier-phase estimate
@@ -368,7 +368,7 @@ class ObservationEstimator
                           + dpsr_T_r_s
                           - dpsr_I_r_s
                           + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */)
-                          - pcv;
+                          + pcv;
 
         return { estimate, e_pLOS };
     }
