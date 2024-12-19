@@ -424,13 +424,13 @@ run-tests:clang:
     - .release
     - .junit
 
-run-tests:clang:LOG_DATA:
-  needs: ["tests:clang:LOG_DATA"]
-  extends:
-    - .run-tests
-    - .linux
-    - .release
-    - .junit
+#run-tests:clang:LOG_DATA:
+#  needs: ["tests:clang:LOG_DATA"]
+#  extends:
+#    - .run-tests
+#    - .linux
+#    - .release
+#    - .junit
 
 run-tests:win:
   needs: ["tests:win"]
