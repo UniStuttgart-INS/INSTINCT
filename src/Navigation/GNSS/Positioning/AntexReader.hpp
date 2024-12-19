@@ -147,6 +147,9 @@ class AntexReader
             double zenithStart = 0.0;
             double zenithEnd = 0.0;
             double zenithDelta = 0.0;
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+            bool patternLogging = false;
+#endif
             while (std::getline(fs, line) && !fs.eof())
             {
                 lineNumber++;
@@ -257,6 +260,10 @@ class AntexReader
                             continue;
                         }
 
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+                        patternLogging = true;
+#endif
+
                         antInfo = std::ranges::find_if(antenna->antennaInfo, [&](const Antenna::AntennaInfo& antInfo) {
                             return antInfo.from == validFrom && antInfo.until == validUntil;
                         });
@@ -309,7 +316,7 @@ class AntexReader
                             {
                                 pattern(1, c) = std::stod(line.substr((static_cast<size_t>(c) + 1) * 8, 8)) * 1e-3;
                             }
-                            LOG_DATA("  Adding antenna '{}' [{}] patternAzimuthIndependent:\n{}", antennaType, Frequency(frequency), pattern);
+                            LOG_DATA("  Adding antenna '{}' [{}] NOAZI pattern", antennaType, Frequency(frequency));
                         }
                         else if (azimuthDelta > 0.0)
                         {
@@ -336,7 +343,14 @@ class AntexReader
                             {
                                 pattern(r, c + 1) = std::stod(line.substr((static_cast<size_t>(c) + 1) * 8, 8)) * 1e-3;
                             }
-                            LOG_DATA("  Adding antenna '{}' [{}] patternAzimuthIndependent:\n{}", antennaType, Frequency(frequency), pattern);
+
+#if LOG_LEVEL <= LOG_LEVEL_DATA
+                            if (patternLogging)
+                            {
+                                LOG_DATA("  Adding antenna '{}' [{}] azimuth dependent pattern", antennaType, Frequency(frequency));
+                                patternLogging = false;
+                            }
+#endif
                         }
                     }
                 }
