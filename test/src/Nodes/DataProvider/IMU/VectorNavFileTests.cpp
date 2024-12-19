@@ -69,7 +69,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
 
     REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
     REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
-    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow)));
     REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow), Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
@@ -589,7 +589,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
     REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
 
-    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)));
     REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow), Catch::Matchers::WithinAbs(0.0L, 9e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------

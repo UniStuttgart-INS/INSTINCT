@@ -29,6 +29,7 @@ std::vector<const char*> argv = { "",
                                   "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                                   "--file-log-level=trace",    // trace/debug/info/warning/error/critical/off
 
+                                  //   "--flush-log-level=trace",   // trace/debug/info/warning/error/critical/off
                                   //   "--log-filter=GnssObsComparisons|UbloxGnssObsConverterTests|UbloxGnssObsConverter.cpp",
                                   nullptr };
 

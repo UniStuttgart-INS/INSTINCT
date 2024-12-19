@@ -886,6 +886,7 @@ class InsTime
     }
 
     /// @brief Converts this time object into a UNIX timestamp in [s]
+    /// @attention Do not pass `long double` to the LOG_... functions, it can loop indefinitely
     [[nodiscard]] constexpr long double toUnixTime() const
     {
         return static_cast<long double>((_mjd.mjd_day - InsTimeUtil::DIFF_TO_1_1_1970_MJD) * InsTimeUtil::SECONDS_PER_DAY)

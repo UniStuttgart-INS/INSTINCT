@@ -66,7 +66,7 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
 
     REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Hour)));
     REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Minute)));
-    LOG_DATA("{}", obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second)));
     REQUIRE_THAT(obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second), Catch::Matchers::WithinAbs(0.0, 9e-12));
 
     REQUIRE_THAT(obs->latitude(), Catch::Matchers::WithinAbs(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Latitude_rad), EPSILON));

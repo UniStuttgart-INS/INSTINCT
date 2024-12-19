@@ -1095,7 +1095,8 @@ bool NAV::ImuSimulator::initializeSplines()
         {
             splineTime.push_back(_splines.sampleInterval * static_cast<double>(i) - OFFSET);
         }
-        LOG_DATA("{}: Sim Time [{:.3f}, {:.3f}] with dt = {:.3f} (simDuration = {:.3f})", nameId(), splineTime.front(), splineTime.back(), splineTime.at(1) - splineTime.at(0), simDuration);
+        LOG_DATA("{}: Sim Time [{:.3f}, {:.3f}] with dt = {:.3f} (simDuration = {:.3f})", nameId(),
+                 static_cast<double>(splineTime.front()), static_cast<double>(splineTime.back()), static_cast<double>(splineTime.at(1) - splineTime.at(0)), simDuration);
 
         std::vector<long double> splineX(splineTime.size());
         std::vector<long double> splineY(splineTime.size());
@@ -1111,7 +1112,7 @@ bool NAV::ImuSimulator::initializeSplines()
             auto phi = _trajectoryHorizontalSpeed * static_cast<double>(splineTime[i]) / _trajectoryRadius; // Angle of the current point on the circle
             phi *= _trajectoryDirection == Direction::CW ? -1 : 1;
             phi += _trajectoryRotationAngle;
-            // LOG_DATA("{}: [t={:.3f}] phi = {:.3f}°", nameId(), splineTime.at(i), rad2deg(phi));
+            // LOG_DATA("{}: [t={:.3f}] phi = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), rad2deg(phi));
 
             Eigen::Vector3d n_relativePosition{ _trajectoryRadius * std::sin(phi) * (1 + _circularHarmonicAmplitudeFactor * std::sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
                                                 _trajectoryRadius * std::cos(phi) * (1 + _circularHarmonicAmplitudeFactor * std::sin(phi * static_cast<double>(_circularHarmonicFrequency))), // [m]
@@ -1390,7 +1391,7 @@ bool NAV::ImuSimulator::initializeSplines()
             splineYaw[i] = i > 0 ? unwrapAngle(yaw, splineYaw[i - 1], M_PI) : yaw;
             splineRoll[i] = 0.0;
             splinePitch[i] = n_velocity.head<2>().norm() > 1e-8 ? calcPitchFromVelocity(n_velocity) : 0;
-            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), splineTime.at(i), rad2deg(splineYaw[i]));
+            // LOG_DATA("{}: [t={:.3f}] yaw = {:.3f}°", nameId(), static_cast<double>(splineTime.at(i)), rad2deg(splineYaw[i]));
         }
 
         _splines.roll.setPoints(splineTime, splineRoll);

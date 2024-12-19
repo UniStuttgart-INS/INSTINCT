@@ -570,7 +570,7 @@ TEST_CASE("[InsTime] Unix Timestamp conversion", "[InsTime]")
 
     REQUIRE(InsTime(1970, 1, 1, 0, 0, 0.0, UTC).toUnixTime() == 0.0L);
 
-    LOG_INFO("{:.9f} == 1716365512.123456789", InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime());
+    LOG_INFO("{:.9f} == 1716365512.123456789", static_cast<double>(InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime()));
     REQUIRE(InsTime(2024, 5, 22, 8, 11, 52.123456789L, UTC).toUnixTime() == 1716365512.123456789L);
 }
 
@@ -818,29 +818,29 @@ TEST_CASE("[InsTime] Comparisons equal", "[InsTime]")
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_MJD = InsTime(InsTime_MJD(53045, 0.5596990740740740740L));
-    LOG_DEBUG("insTime_MJD: {} <= {}", std::chrono::duration<double>(insTime - insTime_MJD).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_MJD: {} <= {}", std::chrono::duration<double>(insTime - insTime_MJD).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_MJD);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_JD = InsTime(InsTime_JD(2453046, 0.0596990740740740740L));
-    LOG_DEBUG("insTime_JD: {} <= {}", std::chrono::duration<double>(insTime - insTime_JD).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_JD: {} <= {}", std::chrono::duration<double>(insTime - insTime_JD).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_JD);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_GPSweekTow = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L), UTC);
-    LOG_DEBUG("insTime_GPSweekTow: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_GPSweekTow: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow);
     auto insTime_GPSweekTow2 = InsTime(InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime)));
-    LOG_DEBUG("insTime_GPSweekTow2: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow2).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_GPSweekTow2: {} <= {}", std::chrono::duration<double>(insTime - insTime_GPSweekTow2).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_GPSweekTow2);
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_YDoySod = InsTime(InsTime_YDoySod(2004, 41, 48358.0L));
-    LOG_DEBUG("insTime_YDoySod: {} <= {}", std::chrono::duration<double>(insTime - insTime_YDoySod).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_YDoySod: {} <= {}", std::chrono::duration<double>(insTime - insTime_YDoySod).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_YDoySod);
 
     auto insTime_YMDHMS = InsTime(InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L));
-    LOG_DEBUG("insTime_YMDHMS: {} <= {}", std::chrono::duration<double>(insTime - insTime_YMDHMS).count(), InsTimeUtil::EPSILON);
+    LOG_DEBUG("insTime_YMDHMS: {} <= {}", std::chrono::duration<double>(insTime - insTime_YMDHMS).count(), static_cast<double>(InsTimeUtil::EPSILON));
     TEST_EQUAL_OBJECT(insTime, insTime_YMDHMS);
 }
 
