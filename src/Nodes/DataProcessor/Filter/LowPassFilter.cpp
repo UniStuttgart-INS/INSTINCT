@@ -185,7 +185,7 @@ void NAV::LowPassFilter::guiConfig()
                                       ? "Indicates wether the filter is working."
                                       : "Indicates wether the filter is working.\n"
                                         "Reasons why it is not working can be:\n"
-                                        "- Data rate of the incoming values must be greater then 2 * dt"
+                                        "- Data rate of the incoming values must be greater then 2 * dt\n"
                                         "- The data was never included in the observations (dynamic data)\n"
                                         "- The data cannot be modified because it is not implemented yet");
             }
