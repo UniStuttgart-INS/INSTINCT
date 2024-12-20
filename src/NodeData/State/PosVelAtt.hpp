@@ -31,6 +31,10 @@ class PosVelAtt : public PosVel
         return "PosVelAtt";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -98,6 +102,29 @@ class PosVelAtt : public PosVel
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < PosVel::GetStaticDescriptorCount()) { return PosVel::setValueAt(idx, value); }
+        // switch (idx)
+        // {
+        // case PosVel::GetStaticDescriptorCount() + 0: // Roll [deg]
+        // case PosVel::GetStaticDescriptorCount() + 1: // Pitch [deg]
+        // case PosVel::GetStaticDescriptorCount() + 2: // Yaw [deg]
+        // case PosVel::GetStaticDescriptorCount() + 3: // Quaternion::w
+        // case PosVel::GetStaticDescriptorCount() + 4: // Quaternion::x
+        // case PosVel::GetStaticDescriptorCount() + 5: // Quaternion::y
+        // case PosVel::GetStaticDescriptorCount() + 6: // Quaternion::z
+        // default:
+        // }
+
+        return false;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

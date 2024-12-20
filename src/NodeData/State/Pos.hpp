@@ -36,6 +36,10 @@ class Pos : public NodeData
         return "Pos";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -143,6 +147,66 @@ class Pos : public NodeData
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        switch (idx)
+        {
+        case 0: // Latitude [deg]
+            _lla_position(0) = deg2rad(value);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 1: // Longitude [deg]
+            _lla_position(1) = deg2rad(value);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 2: // Altitude [m]
+            _lla_position(2) = value;
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 3: // North/South [m]
+            _e_position += e_Quat_n() * Eigen::Vector3d(value, 0.0, 0.0);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 4: // East/West [m]
+            _e_position += e_Quat_n() * Eigen::Vector3d(0.0, value, 0.0);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 5: // X-ECEF [m]
+            _e_position(0) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 6: // Y-ECEF [m]
+            _e_position(1) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 7: // Z-ECEF [m]
+            _e_position(2) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 8:  // X-ECEF StDev [m]
+        case 9:  // Y-ECEF StDev [m]
+        case 10: // Z-ECEF StDev [m]
+        case 11: // XY-ECEF StDev [m]
+        case 12: // XZ-ECEF StDev [m]
+        case 13: // YZ-ECEF StDev [m]
+        case 14: // North StDev [m]
+        case 15: // East StDev [m]
+        case 16: // Down StDev [m]
+        case 17: // NE StDev [m]
+        case 18: // ND StDev [m]
+        case 19: // ED StDev [m]
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

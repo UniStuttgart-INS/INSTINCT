@@ -1643,66 +1643,13 @@ void NAV::Plot::afterCreateLink(OutputPin& startPin, InputPin& endPin)
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPST Time");
         _pinData.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
 
-        if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { InsGnssTCKFSolution::type() }))
+        for (const auto& desc : NAV::NodeRegistry::GetStaticDataDescriptors(startPin.dataIdentifier))
         {
-            for (const auto& desc : InsGnssTCKFSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
+            _pinData.at(pinIndex).addPlotDataItem(i++, desc);
         }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { InsGnssLCKFSolution::type() }))
-        {
-            for (const auto& desc : InsGnssLCKFSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { PosVelAtt::type() }))
-        {
-            for (const auto& desc : PosVelAtt::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { SppSolution::type() }))
-        {
-            for (const auto& desc : SppSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { RtklibPosObs::type() }))
-        {
-            for (const auto& desc : RtklibPosObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { WiFiPositioningSolution::type() }))
-        {
-            for (const auto& desc : WiFiPositioningSolution::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { PosVel::type() }))
-        {
-            for (const auto& desc : PosVel::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { Pos::type() }))
-        {
-            for (const auto& desc : Pos::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { GnssCombination::type() }))
+        if (NAV::NodeRegistry::TypeHasDynamicData(startPin.dataIdentifier.front()))
         {
             _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { GnssObs::type() }))
-        {
-            _pinData.at(pinIndex).dynamicDataStartIndex = static_cast<int>(i);
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { ImuObsSimulated::type() }))
-        {
-            for (const auto& desc : ImuObsSimulated::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { ImuObsWDelta::type() }))
-        {
-            for (const auto& desc : ImuObsWDelta::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { KvhObs::type() }))
-        {
-            for (const auto& desc : KvhObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { ImuObs::type() }))
-        {
-            for (const auto& desc : ImuObs::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
-        }
-        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin.dataIdentifier, { VectorNavBinaryOutput::type() }))
-        {
-            for (const auto& desc : VectorNavBinaryOutput::GetStaticDataDescriptors()) { _pinData.at(pinIndex).addPlotDataItem(i++, desc); }
         }
     }
     else

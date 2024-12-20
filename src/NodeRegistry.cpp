@@ -367,3 +367,75 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<WiFiObs>();
     registerNodeDataType<WiFiPositioningSolution>();
 }
+
+std::vector<std::string> NAV::NodeRegistry::GetStaticDataDescriptors(const std::vector<std::string>& dataIdentifier)
+{
+    // ATTENTION: Entries need to be in correct inheritance order (deepest inheritance first)
+
+    // NodeData
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { DynamicData::type() })) { return DynamicData::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { StringObs::type() })) { return StringObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { GnssCombination::type() })) { return GnssCombination::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { GnssObs::type() })) { return GnssObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { VectorNavBinaryOutput::type() })) { return VectorNavBinaryOutput::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { EmlidObs::type() })) { return EmlidObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { UbloxObs::type() })) { return UbloxObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { WiFiObs::type() })) { return WiFiObs::GetStaticDataDescriptors(); }
+    // Pos
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssTCKFSolution::type() })) { return InsGnssTCKFSolution::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { InsGnssLCKFSolution::type() })) { return InsGnssLCKFSolution::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { PosVelAtt::type() })) { return PosVelAtt::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { SppSolution::type() })) { return SppSolution::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { RtklibPosObs::type() })) { return RtklibPosObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { WiFiPositioningSolution::type() })) { return WiFiPositioningSolution::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { PosVel::type() })) { return PosVel::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { Pos::type() })) { return Pos::GetStaticDataDescriptors(); }
+    // ImuObs
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { ImuObsSimulated::type() })) { return ImuObsSimulated::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { ImuObsWDelta::type() })) { return ImuObsWDelta::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { KvhObs::type() })) { return KvhObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { ImuObs::type() })) { return ImuObs::GetStaticDataDescriptors(); }
+
+    return {};
+}
+
+bool NAV::NodeRegistry::TypeHasDynamicData(const std::string& type)
+{
+    return type == DynamicData::type()
+           || type == GnssCombination::type()
+           || type == GnssObs::type()
+           || type == SppSolution::type();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::NodeRegistry::CopyNodeData(const std::shared_ptr<const NodeData>& nodeData)
+{
+    if (nodeData == nullptr) { return nullptr; }
+
+    // General
+    if (nodeData->getType() == DynamicData::type()) { return std::make_shared<DynamicData>(*std::static_pointer_cast<const DynamicData>(nodeData)); }
+    if (nodeData->getType() == StringObs::type()) { return std::make_shared<StringObs>(*std::static_pointer_cast<const StringObs>(nodeData)); }
+    // GNSS
+    if (nodeData->getType() == EmlidObs::type()) { return std::make_shared<EmlidObs>(*std::static_pointer_cast<const EmlidObs>(nodeData)); }
+    if (nodeData->getType() == GnssCombination::type()) { return std::make_shared<GnssCombination>(*std::static_pointer_cast<const GnssCombination>(nodeData)); }
+    if (nodeData->getType() == GnssObs::type()) { return std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(nodeData)); }
+    if (nodeData->getType() == RtklibPosObs::type()) { return std::make_shared<RtklibPosObs>(*std::static_pointer_cast<const RtklibPosObs>(nodeData)); }
+    if (nodeData->getType() == SppSolution::type()) { return std::make_shared<SppSolution>(*std::static_pointer_cast<const SppSolution>(nodeData)); }
+    if (nodeData->getType() == UbloxObs::type()) { return std::make_shared<UbloxObs>(*std::static_pointer_cast<const UbloxObs>(nodeData)); }
+    // IMU
+    if (nodeData->getType() == ImuObs::type()) { return std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)); }
+    if (nodeData->getType() == ImuObsSimulated::type()) { return std::make_shared<ImuObsSimulated>(*std::static_pointer_cast<const ImuObsSimulated>(nodeData)); }
+    if (nodeData->getType() == ImuObsWDelta::type()) { return std::make_shared<ImuObsWDelta>(*std::static_pointer_cast<const ImuObsWDelta>(nodeData)); }
+    if (nodeData->getType() == KvhObs::type()) { return std::make_shared<KvhObs>(*std::static_pointer_cast<const KvhObs>(nodeData)); }
+    if (nodeData->getType() == VectorNavBinaryOutput::type()) { return std::make_shared<VectorNavBinaryOutput>(*std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData)); }
+    // State
+    if (nodeData->getType() == InsGnssLCKFSolution::type()) { return std::make_shared<InsGnssLCKFSolution>(*std::static_pointer_cast<const InsGnssLCKFSolution>(nodeData)); }
+    if (nodeData->getType() == InsGnssTCKFSolution::type()) { return std::make_shared<InsGnssTCKFSolution>(*std::static_pointer_cast<const InsGnssTCKFSolution>(nodeData)); }
+    if (nodeData->getType() == Pos::type()) { return std::make_shared<Pos>(*std::static_pointer_cast<const Pos>(nodeData)); }
+    if (nodeData->getType() == PosVel::type()) { return std::make_shared<PosVel>(*std::static_pointer_cast<const PosVel>(nodeData)); }
+    if (nodeData->getType() == PosVelAtt::type()) { return std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)); }
+    // WiFi
+    if (nodeData->getType() == WiFiObs::type()) { return std::make_shared<WiFiObs>(*std::static_pointer_cast<const WiFiObs>(nodeData)); }
+    if (nodeData->getType() == WiFiPositioningSolution::type()) { return std::make_shared<WiFiPositioningSolution>(*std::static_pointer_cast<const WiFiPositioningSolution>(nodeData)); }
+
+    return nullptr;
+}

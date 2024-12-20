@@ -29,6 +29,10 @@ class PosVel : public Pos
         return "PosVel";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -137,6 +141,63 @@ class PosVel : public Pos
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < Pos::GetStaticDescriptorCount()) { return Pos::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case Pos::GetStaticDescriptorCount() + 0: // Velocity norm [m/s]
+            _e_velocity = value * _e_velocity.normalized();
+            _n_velocity = value * _n_velocity.normalized();
+            break;
+        case Pos::GetStaticDescriptorCount() + 1: // X velocity ECEF [m/s]
+            _e_velocity(0) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 2: // Y velocity ECEF [m/s]
+            _e_velocity(1) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 3: // Z velocity ECEF [m/s]
+            _e_velocity(2) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 4: // North velocity [m/s]
+            _n_velocity(0) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 5: // East velocity [m/s]
+            _n_velocity(1) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 6: // Down velocity [m/s]
+            _n_velocity(2) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 7:  // X velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 8:  // Y velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 9:  // Z velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 10: // XY velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 11: // XZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 12: // YZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 13: // North velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 14: // East velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 15: // Down velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 16: // NE velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 17: // ND velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 18: // ED velocity StDev [m]
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

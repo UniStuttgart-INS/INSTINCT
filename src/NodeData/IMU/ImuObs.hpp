@@ -36,6 +36,10 @@ class ImuObs : public NodeData
         return "ImuObs";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -108,6 +112,72 @@ class ImuObs : public NodeData
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+
+        switch (idx)
+        {
+        case 0: // Time since startup [ns]
+            if (value >= 0.0)
+            {
+                timeSinceStartup = static_cast<size_t>(value);
+                return true;
+            }
+            break;
+        case 1: // Accel X [m/s^2]
+            p_acceleration.x() = value;
+            return true;
+        case 2: // Accel Y [m/s^2]
+            p_acceleration.y() = value;
+            return true;
+        case 3: // Accel Z [m/s^2]
+            p_acceleration.z() = value;
+            return true;
+        case 4: // Gyro X [rad/s]
+            p_angularRate.x() = value;
+            return true;
+        case 5: // Gyro Y [rad/s]
+            p_angularRate.y() = value;
+            return true;
+        case 6: // Gyro Z [rad/s]
+            p_angularRate.z() = value;
+            return true;
+        case 7: // Mag X [Gauss]
+            if (p_magneticField.has_value())
+            {
+                p_magneticField->x() = value;
+                return true;
+            }
+            break;
+        case 8: // Mag Y [Gauss]
+            if (p_magneticField.has_value())
+            {
+                p_magneticField->y() = value;
+                return true;
+            }
+            break;
+        case 9: // Mag Z [Gauss]
+            if (p_magneticField.has_value())
+            {
+                p_magneticField->z() = value;
+                return true;
+            }
+            break;
+        case 10: // Temperature [°C]
+            temperature = value;
+            return true;
+        default:
+            return false;
+        }
+
+        return false;
     }
 
     /// Position and rotation information for conversion from platform to body frame

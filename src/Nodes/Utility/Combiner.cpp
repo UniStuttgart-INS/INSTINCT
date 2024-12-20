@@ -482,47 +482,12 @@ void Combiner::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-namespace internal
-{
-namespace
-{
-
-template<typename T>
-bool getDescriptorsOfType(OutputPin* sourcePin, std::vector<std::string>& dataDescriptors)
-{
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { T::type() }))
-    {
-        dataDescriptors = T::GetStaticDataDescriptors();
-        return true;
-    }
-    return false;
-}
-
-} // namespace
-} // namespace internal
-
 std::vector<std::string> Combiner::getDataDescriptors(size_t pinIndex) const
 {
     std::vector<std::string> dataDescriptors;
     if (OutputPin* sourcePin = inputPins.at(pinIndex).link.getConnectedPin())
     {
-        if ( // IMU
-            !internal::getDescriptorsOfType<ImuObsSimulated>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<ImuObsWDelta>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<KvhObs>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<ImuObs>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<VectorNavBinaryOutput>(sourcePin, dataDescriptors)
-            // State
-            && !internal::getDescriptorsOfType<InsGnssTCKFSolution>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<InsGnssLCKFSolution>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<PosVelAtt>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<SppSolution>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<RtklibPosObs>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<PosVel>(sourcePin, dataDescriptors)
-            && !internal::getDescriptorsOfType<Pos>(sourcePin, dataDescriptors))
-        {
-            LOG_ERROR("{}: The input type '{}' is implemented yet", nameId(), sourcePin->dataIdentifier.front());
-        }
+        dataDescriptors = NAV::NodeRegistry::GetStaticDataDescriptors(sourcePin->dataIdentifier);
     }
     if (!_pinData.at(pinIndex).dynDataDescriptors.empty())
     {

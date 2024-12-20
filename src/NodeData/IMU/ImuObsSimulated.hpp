@@ -33,6 +33,10 @@ class ImuObsSimulated final : public ImuObsWDelta
         return "ImuObsSimulated";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -106,6 +110,59 @@ class ImuObsSimulated final : public ImuObsWDelta
         default:
             return std::nullopt;
         }
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObsWDelta::GetStaticDescriptorCount()) { return ImuObsWDelta::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case ImuObsWDelta::GetStaticDescriptorCount() + 0: // AccelDynamicsN [m/s^2]
+            n_accelDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 1: // AccelDynamicsE [m/s^2]
+            n_accelDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 2: // AccelDynamicsD [m/s^2]
+            n_accelDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 3: // AngularRateN (ω_nb_n) [rad/s]
+            n_angularRateDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 4: // AngularRateE (ω_nb_n) [rad/s]
+            n_angularRateDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 5: // AngularRateD (ω_nb_n) [rad/s]
+            n_angularRateDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 6: // AccelDynamicsX ECEF [m/s^2]
+            e_accelDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 7: // AccelDynamicsY ECEF [m/s^2]
+            e_accelDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 8: // AccelDynamicsZ ECEF [m/s^2]
+            e_accelDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 9: // AngularRateX ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 10: // AngularRateY ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 11: // AngularRateZ ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.z() = value;
+            break;
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /// The acceleration derived from the trajectory in [m/s^2], given in the NED frame.

@@ -7,29 +7,24 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file LowPassFilter.hpp
-/// @brief Adds errors (biases and noise) to measurements
+/// @brief Filters incoming data
+/// @author T. Hobiger (thomas.hobiger@ins.uni-stuttgart.de)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2021-12-21
+/// @date 2024-12-20
 
 #pragma once
 
 #include "internal/Node/Node.hpp"
 
-#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
-#include "Navigation/INS/Units.hpp"
-
-#include "util/Random/RandomNumberGenerator.hpp"
 
 #include "util/Eigen.hpp"
-#include <random>
 #include <map>
 
 namespace NAV
 {
-/// Adds errors (biases and noise) to measurements
+/// Filters incoming data
 class LowPassFilter : public Node
 {
   public:
@@ -70,17 +65,6 @@ class LowPassFilter : public Node
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
-    /// Input type
-    enum class InputType : uint8_t
-    {
-        None,        ///< None
-        ImuObs,      ///< ImuObs
-        ImuObsWDelta ///< ImuObsWDelta
-    };
-
-    /// Input type
-    InputType _inputType = InputType::None;
-
     // ###########################################################################################################
 
     /// Types of available filters (to be extended)
@@ -91,13 +75,44 @@ class LowPassFilter : public Node
         COUNT, ///< Amount of items in the enum
     };
 
+    /// Filter description
+    struct FilterItem
+    {
+        /// @brief Default Constructor
+        FilterItem() = default;
+
+        /// @brief Constructor
+        /// @param[in] dataDescription Description of the data (dynamic data identifier)
+        /// @param[in] dataIndex Index of the data (relevant for static data mostly)
+        FilterItem(std::string dataDescription, size_t dataIndex)
+            : dataDescription(std::move(dataDescription)), dataIndex(dataIndex) {}
+
+        /// Description of the data
+        std::string dataDescription;
+        /// Index of the data
+        size_t dataIndex = 0;
+        /// Selected filter type in the GUI
+        FilterType filterType = FilterType::Linear;
+        /// Cutoff frequency [Hz], inverse of this parameter equals to fitting period
+        double linear_filter_cutoff_frequency = 10.0;
+        /// Map which stores all last data points which were used in the previous fit
+        std::map<InsTime, double> dataToFilter;
+        /// Flag to show indicator that it was modified
+        bool modified = true;
+    };
+
+    /// @brief Selected item in the combo
+    size_t _gui_availableItemsSelection = 0;
+
+    /// Available items
+    std::vector<std::string> _availableItems;
+    /// Items to filter
+    std::vector<FilterItem> _filterItems;
+
     /// @brief Converts the enum to a string
     /// @param[in] value Enum value to convert into text
     /// @return String representation of the enum
     static const char* to_string(FilterType value);
-
-    /// Selected filter type in the GUI
-    FilterType _filterType = FilterType::Linear;
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
@@ -117,33 +132,23 @@ class LowPassFilter : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveObs(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Callback when receiving an ImuObs
-    [[nodiscard]] std::shared_ptr<ImuObs> receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    /// @brief Filter the provided data
+    /// @param[in] item Filter item to fit
+    /// @param[in] insTime Current Time
+    /// @param[in] value Current value to filter
+    [[nodiscard]] static std::optional<double> filterData(FilterItem& item, const InsTime& insTime, double value);
 
-    /// @brief Callback when receiving an ImuObsWDelta
-    [[nodiscard]] std::shared_ptr<ImuObsWDelta> receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs);
-
-    // #########################################################################################################################################
-    //                                                              LinearFitter
-    // #########################################################################################################################################
-
-    /// @brief Linear Trend Filter using ImuObs
-    [[nodiscard]] std::shared_ptr<ImuObs> FitLinearTrend(const std::shared_ptr<ImuObs>& imuObs);
-
-    /// @brief Linear Trend Filter using ImuObsWDelta
-    [[nodiscard]] std::shared_ptr<ImuObsWDelta> FitLinearTrend(const std::shared_ptr<ImuObsWDelta>& imuObsWDelta);
-
-    /// @brief Map which stores all last accelerometer data points which were used in the previous fit
-    std::map<InsTime, Eigen::VectorXd> DataToFilter_Accel;
-
-    /// @brief Map which stores all last gyro data points which were used in the previous fit
-    std::map<InsTime, Eigen::VectorXd> DataToFilter_Gyro;
-
-    /// @brief Cutoff frequency for accelerometer data, inverse of this parameter equals to fitting period
-    double _linear_filter_cutoff_frequency_accel = 10.0;
-
-    /// @brief Cutoff frequency for gyro data, inverse of this parameter equals to fitting period
-    double _linear_filter_cutoff_frequency_gyro = 1.0;
+    friend void to_json(json& j, const FilterItem& data);
+    friend void from_json(const json& j, FilterItem& data);
 };
+
+/// @brief Converts the provided link into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const NAV::LowPassFilter::FilterItem& data);
+/// @brief Converts the provided json object into a link object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, NAV::LowPassFilter::FilterItem& data);
 
 } // namespace NAV

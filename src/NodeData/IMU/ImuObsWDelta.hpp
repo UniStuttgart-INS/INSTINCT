@@ -34,6 +34,10 @@ class ImuObsWDelta : public ImuObs
         return "ImuObsWDelta";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -91,6 +95,44 @@ class ImuObsWDelta : public ImuObs
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObs::GetStaticDescriptorCount()) { return ImuObs::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case ImuObs::GetStaticDescriptorCount() + 0: // dTime [s]
+            dtime = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 1: // dTheta X [deg]
+            dtheta.x() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 2: // dTheta Y [deg]
+            dtheta.y() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 3: // dTheta Z [deg]
+            dtheta.z() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 4: // dVelocity X [m/s]
+            dvel.x() = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 5: // dVelocity Y [m/s]
+            dvel.y() = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 6: // dVelocity Z [m/s]
+            dvel.z() = value;
+            break;
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /// The time interval that the delta angle and velocities are integrated over in [seconds].

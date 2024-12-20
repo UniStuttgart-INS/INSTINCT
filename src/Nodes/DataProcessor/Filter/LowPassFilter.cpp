@@ -37,17 +37,6 @@ namespace nm = NAV::NodeManager;
 #include <set>
 #include <type_traits>
 
-// ---------------------------------------------------------- Private variabels ------------------------------------------------------------
-
-namespace NAV
-{
-/// List of supported data identifiers
-const std::vector<std::string> supportedDataIdentifier{ ImuObs::type(), ImuObsWDelta::type() };
-
-} // namespace NAV
-
-// ---------------------------------------------------------- Member functions -------------------------------------------------------------
-
 NAV::LowPassFilter::LowPassFilter()
     : Node(typeStatic())
 {
@@ -55,9 +44,9 @@ NAV::LowPassFilter::LowPassFilter()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 500, 300 };
 
-    nm::CreateInputPin(this, "True", Pin::Type::Flow, supportedDataIdentifier, &LowPassFilter::receiveObs);
+    nm::CreateInputPin(this, "Original", Pin::Type::Flow, { NAV::NodeData::type() }, &LowPassFilter::receiveObs);
 
-    nm::CreateOutputPin(this, "Biased", Pin::Type::Flow, supportedDataIdentifier);
+    nm::CreateOutputPin(this, "Filtered", Pin::Type::Flow, { NAV::NodeData::type() });
 }
 
 NAV::LowPassFilter::~LowPassFilter()
@@ -88,54 +77,134 @@ void NAV::LowPassFilter::guiConfig()
         return;
     }
 
-    float columnWidth = 140.0F * gui::NodeEditorApplication::windowFontRatio();
+    ImGui::SetNextItemWidth(400.0F * gui::NodeEditorApplication::defaultFontRatio());
 
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+    if (_gui_availableItemsSelection > _availableItems.size()) { _gui_availableItemsSelection = _availableItems.size() - (_availableItems.empty() ? 0 : 1); }
+    bool noMoreItems = _filterItems.size() == _availableItems.size();
+    if (noMoreItems) { ImGui::BeginDisabled(); }
+    if (ImGui::BeginCombo(fmt::format("##Available data combo {}", size_t(id)).c_str(), !_availableItems.empty() ? _availableItems.at(_gui_availableItemsSelection).c_str() : ""))
     {
-        ImGui::TextUnformatted("Filter Type:");
-
-        ImGui::SetNextItemWidth(columnWidth);
-        if (ImGui::BeginCombo(fmt::format("##{}", size_t(id)).c_str(), to_string(_filterType)))
+        for (size_t i = 0; i < _availableItems.size(); i++)
         {
-            for (size_t i = 0; i < static_cast<size_t>(FilterType::COUNT); i++)
+            const auto& item = _availableItems.at(i);
+            if (std::ranges::find_if(_filterItems, [&](const FilterItem& filterItem) {
+                    return filterItem.dataDescription == item;
+                })
+                != _filterItems.end()) { continue; }
+
+            const bool is_selected = (_gui_availableItemsSelection == i);
+            if (ImGui::Selectable(item.c_str(), is_selected))
             {
-                const bool is_selected = (static_cast<size_t>(_filterType) == i);
-                if (ImGui::Selectable(to_string(static_cast<FilterType>(i)), is_selected))
-                {
-                    _filterType = static_cast<FilterType>(i);
-                    LOG_DEBUG("{}: filterType changed to {}", nameId(), fmt::underlying(_filterType));
-                    flow::ApplyChanges();
-                    doDeinitialize();
-                }
-                if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                _gui_availableItemsSelection = i;
             }
-            ImGui::EndCombo();
+            if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
-
-        if (_filterType == FilterType::Linear)
+        ImGui::EndCombo();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(fmt::format("Add##Filter item {}", size_t(id)).c_str()))
+    {
+        _filterItems.emplace_back(_availableItems.at(_gui_availableItemsSelection), _gui_availableItemsSelection);
+        flow::ApplyChanges();
+        bool selectionChanged = false;
+        for (size_t i = _gui_availableItemsSelection + 1; i < _availableItems.size(); i++)
         {
-            const float ITEM_WIDTH = 100.0F * NodeEditorApplication::defaultFontRatio();
-            ImGui::TextUnformatted("Filter properties:");
-            ImGui::SetNextItemWidth(ITEM_WIDTH);
-            if (ImGui::InputDoubleL(fmt::format("Cutoff Frequency Accelerometer##{}", size_t(id)).c_str(), &_linear_filter_cutoff_frequency_accel, 1e-5, 1e5, 0.0, 0.0, "%.5f Hz"))
-            {
-                LOG_DEBUG("{}: Cutoff Freq. Accel changed to {}", nameId(), _linear_filter_cutoff_frequency_accel);
-                flow::ApplyChanges();
-                doDeinitialize();
-            }
+            const auto& item = _availableItems.at(i);
+            if (std::ranges::find_if(_filterItems, [&](const FilterItem& filterItem) {
+                    return filterItem.dataDescription == item;
+                })
+                != _filterItems.end()) { continue; }
 
-            ImGui::SetNextItemWidth(ITEM_WIDTH);
-            if (ImGui::InputDoubleL(fmt::format("Cutoff Frequency Gyroscope##{}", size_t(id)).c_str(), &_linear_filter_cutoff_frequency_gyro, 1e-5, 1e5, 0.0, 0.0, "%.5f Hz"))
+            _gui_availableItemsSelection = i;
+            selectionChanged = true;
+            break;
+        }
+        if (!selectionChanged && _gui_availableItemsSelection != 0)
+        {
+            for (int i = static_cast<int>(_gui_availableItemsSelection) - 1; i >= 0; i--)
             {
-                LOG_DEBUG("{}: Cutoff Freq. Gyro changed to {}", nameId(), _linear_filter_cutoff_frequency_gyro);
-                flow::ApplyChanges();
-                doDeinitialize();
+                const auto& item = _availableItems.at(static_cast<size_t>(i));
+                if (std::ranges::find_if(_filterItems, [&](const FilterItem& filterItem) {
+                        return filterItem.dataDescription == item;
+                    })
+                    != _filterItems.end()) { continue; }
+
+                _gui_availableItemsSelection = static_cast<size_t>(i);
+                break;
             }
         }
     }
+    if (noMoreItems) { ImGui::EndDisabled(); }
+
+    const float COMBO_WIDTH = 100.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float ITEM_WIDTH = 140.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    std::optional<size_t> itemToDelete;
+    for (size_t i = 0; i < _filterItems.size(); i++)
+    {
+        auto& item = _filterItems.at(i);
+        bool keep = true;
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::CollapsingHeader(fmt::format("{}##{}", item.dataDescription, size_t(id)).c_str(), &keep))
+        {
+            ImGui::SetNextItemWidth(COMBO_WIDTH);
+            if (ImGui::BeginCombo(fmt::format("Filter Type##{}", size_t(id)).c_str(), to_string(item.filterType)))
+            {
+                for (size_t i = 0; i < static_cast<size_t>(FilterType::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(item.filterType) == i);
+                    if (ImGui::Selectable(to_string(static_cast<FilterType>(i)), is_selected))
+                    {
+                        item.filterType = static_cast<FilterType>(i);
+                        LOG_DEBUG("{}: filterType changed to {}", nameId(), fmt::underlying(item.filterType));
+                        flow::ApplyChanges();
+                    }
+                    if (is_selected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            ImGui::SameLine();
+            float size = 7.0F * gui::NodeEditorApplication::windowFontRatio();
+            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
+                                                               ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                        size,
+                                                        item.modified
+                                                            ? ImColor(0.0F, 255.0F, 0.0F)
+                                                            : ImColor(255.0F, 0.0F, 0.0F));
+            ImGui::Dummy(ImVec2(2 * size, 3.0F * size));
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip(item.modified
+                                      ? "Indicates wether the filter is working."
+                                      : "Indicates wether the filter is working.\n"
+                                        "Reasons why it is not working can be:\n"
+                                        "- Data rate of the incoming values must be greater then 2 * dt"
+                                        "- The data was never included in the observations (dynamic data)\n"
+                                        "- The data cannot be modified because it is not implemented yet");
+            }
+
+            ImGui::Indent();
+            if (item.filterType == FilterType::Linear)
+            {
+                ImGui::SetNextItemWidth(ITEM_WIDTH);
+                if (ImGui::InputDoubleL(fmt::format("Cutoff Frequency##{} {}", size_t(id), item.dataDescription).c_str(), &item.linear_filter_cutoff_frequency, 1e-5, 1e5, 0.0, 0.0, "%.5f Hz"))
+                {
+                    LOG_DEBUG("{}: Cutoff Freq. {} changed to {}", nameId(), item.dataDescription, item.linear_filter_cutoff_frequency);
+                    flow::ApplyChanges();
+                }
+            }
+            ImGui::Unindent();
+        }
+        if (!keep) { itemToDelete = i; }
+    }
+    if (itemToDelete) { _filterItems.erase(std::next(_filterItems.begin(), static_cast<int64_t>(*itemToDelete))); }
 }
 
 json NAV::LowPassFilter::save() const
@@ -144,9 +213,8 @@ json NAV::LowPassFilter::save() const
 
     json j;
 
-    j["filterType"] = _filterType;
-    j["linear_filter_cutoff_frequency_accel"] = _linear_filter_cutoff_frequency_accel;
-    j["linear_filter_cutoff_frequency_gyro"] = _linear_filter_cutoff_frequency_gyro;
+    j["availableItems"] = _availableItems;
+    j["filterItems"] = _filterItems;
 
     return j;
 }
@@ -154,25 +222,24 @@ json NAV::LowPassFilter::save() const
 void NAV::LowPassFilter::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
-    if (j.contains("filterType")) { j.at("filterType").get_to(_filterType); }
-    if (j.contains("linear_filter_cutoff_frequency_accel")) { j.at("linear_filter_cutoff_frequency_accel").get_to(_linear_filter_cutoff_frequency_accel); }
-    if (j.contains("linear_filter_cutoff_frequency_gyro")) { j.at("linear_filter_cutoff_frequency_gyro").get_to(_linear_filter_cutoff_frequency_gyro); }
+    if (j.contains("availableItems")) { j.at("availableItems").get_to(_availableItems); }
+    if (j.contains("filterItems")) { j.at("filterItems").get_to(_filterItems); }
 }
 
 bool NAV::LowPassFilter::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+    for (auto& item : _filterItems)
     {
-        DataToFilter_Accel.clear();
-        DataToFilter_Gyro.clear();
+        item.dataToFilter.clear();
+        item.modified = false;
     }
 
     return true;
 }
 
-void NAV::LowPassFilter::afterCreateLink(OutputPin& startPin, InputPin& endPin)
+void NAV::LowPassFilter::afterCreateLink(OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
@@ -185,15 +252,6 @@ void NAV::LowPassFilter::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
     // Overwrite output pin identifier with input pin identifier
     outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
-
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsWDelta::type() }))
-    {
-        _inputType = InputType::ImuObsWDelta;
-    }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObs::type() }))
-    {
-        _inputType = InputType::ImuObs;
-    }
 
     if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
     {
@@ -222,18 +280,28 @@ void NAV::LowPassFilter::afterCreateLink(OutputPin& startPin, InputPin& endPin)
             }
         }
     }
+
+    if (auto* pin = inputPins.at(INPUT_PORT_INDEX_FLOW).link.getConnectedPin();
+        pin && _availableItems.empty())
+    {
+        _gui_availableItemsSelection = 0;
+        _availableItems = NAV::NodeRegistry::GetStaticDataDescriptors(pin->dataIdentifier);
+    }
 }
 
 void NAV::LowPassFilter::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
+    _gui_availableItemsSelection = 0;
+    _availableItems.clear();
+
     if ((endPin.parentNode->id != id                                  // Link on Output port is removed
          && !inputPins.at(INPUT_PORT_INDEX_FLOW).isPinLinked())       //     and the Input port is not linked
         || (startPin.parentNode->id != id                             // Link on Input port is removed
             && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
     {
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = { NodeData::type() };
     }
 }
 
@@ -241,170 +309,74 @@ void NAV::LowPassFilter::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t 
 {
     auto obs = queue.extract_front();
 
-    // #########################################################################################################################################
+    for (const auto& desc : obs->dynamicDataDescriptors())
+    {
+        if (std::ranges::none_of(_availableItems, [&](const auto& header) { return header == desc; }))
+        {
+            _availableItems.push_back(desc);
+            flow::ApplyChanges();
+        }
+    }
 
-    // Select the correct data type and make a copy of the node data to modify
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsSimulated::type() }))
+    auto out = NAV::NodeRegistry::CopyNodeData(obs);
+
+    for (auto& item : _filterItems)
     {
-        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
-                        receiveImuObsWDelta(std::make_shared<ImuObsSimulated>(*std::static_pointer_cast<const ImuObsSimulated>(obs))));
+        LOG_DATA("{}: [{}] {}", nameId(), item.dataIndex, item.dataDescription);
+        if (item.dataIndex < out->staticDescriptorCount())
+        {
+            if (auto value = out->getValueAt(item.dataIndex))
+            {
+                if (auto newValue = filterData(item, out->insTime, *value))
+                {
+                    item.modified |= out->setValueAt(item.dataIndex, *newValue);
+                }
+            }
+        }
+        else if (auto value = out->getDynamicDataAt(item.dataDescription))
+        {
+            if (auto newValue = filterData(item, out->insTime, *value))
+            {
+                item.modified |= out->setDynamicDataAt(item.dataDescription, *newValue);
+            }
+        }
     }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsWDelta::type() }))
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
-                        receiveImuObsWDelta(std::make_shared<ImuObsWDelta>(*std::static_pointer_cast<const ImuObsWDelta>(obs))));
-    }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObs::type() }))
-    {
-        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
-                        receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(obs))));
-    }
+
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, out);
 }
 
-std::shared_ptr<NAV::ImuObs> NAV::LowPassFilter::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
+std::optional<double> NAV::LowPassFilter::filterData(FilterItem& item, const InsTime& insTime, double value)
 {
-    if (_filterType == FilterType::Linear)
+    if (item.filterType == FilterType::Linear)
     {
-        return FitLinearTrend(imuObs);
-    }
+        // first we filter accelerations
+        item.dataToFilter[insTime] = value;
+        // for testing at the moment
+        double dt = 1.0 / item.linear_filter_cutoff_frequency;
+        // remove all entries that are outside filter time window
+        std::erase_if(item.dataToFilter, [&](const auto& pair) { return static_cast<double>((insTime - pair.first).count()) > dt; });
 
-    return imuObs;
-}
-
-std::shared_ptr<NAV::ImuObsWDelta> NAV::LowPassFilter::receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObsWDelta)
-{
-    if (_filterType == FilterType::Linear)
-    {
-        return FitLinearTrend(imuObsWDelta);
-    }
-
-    return imuObsWDelta;
-}
-
-std::shared_ptr<NAV::ImuObs> NAV::LowPassFilter::FitLinearTrend(const std::shared_ptr<ImuObs>& imuObs)
-{
-    // first we filter accelerations
-    DataToFilter_Accel[imuObs->insTime] = imuObs->p_acceleration;
-    // for testing at the moment
-    double dt_accel = 1.0 / _linear_filter_cutoff_frequency_accel;
-    // remove all entries that are outside filter time window
-    std::erase_if(DataToFilter_Accel, [&](const auto& pair) { return static_cast<double>((imuObs->insTime - pair.first).count()) > dt_accel; });
-
-    if (DataToFilter_Accel.size() > 2)
-    {
-        // average accelerations first
-        auto N11 = static_cast<double>(DataToFilter_Accel.size());
-        double N12 = 0.0;
-        double N22 = 0.0;
-        Eigen::VectorXd n1 = Eigen::VectorXd::Zero(3);
-        Eigen::VectorXd n2 = Eigen::VectorXd::Zero(3);
-        for (const auto& key_val : DataToFilter_Accel)
+        if (item.dataToFilter.size() > 2)
         {
-            double delta_t = static_cast<double>((key_val.first - imuObs->insTime).count());
-            N12 += delta_t;
-            N22 += delta_t * delta_t;
-            n1 += key_val.second;
-            n2 += delta_t * key_val.second;
+            // average accelerations first
+            auto N11 = static_cast<double>(item.dataToFilter.size());
+            double N12 = 0.0;
+            double N22 = 0.0;
+            double n1 = 0.0;
+            double n2 = 0.0;
+            for (const auto& key_val : item.dataToFilter)
+            {
+                auto delta_t = static_cast<double>((key_val.first - insTime).count());
+                N12 += delta_t;
+                N22 += delta_t * delta_t;
+                n1 += key_val.second;
+                n2 += delta_t * key_val.second;
+            }
+            double determinant_inverse = 1.0 / (N11 * N22 - N12 * N12);
+            return determinant_inverse * (N22 * n1 - N12 * n2);
         }
-        double determinant_inverse = 1.0 / (N11 * N22 - N12 * N12);
-        Eigen::VectorXd filtered = determinant_inverse * (N22 * n1 - N12 * n2);
-        imuObs->p_acceleration = filtered;
     }
-
-    // then we filter gyro data
-    DataToFilter_Gyro[imuObs->insTime] = imuObs->p_angularRate;
-
-    double dt_gyro = 1.0 / _linear_filter_cutoff_frequency_gyro;
-    // remove all entries that are outside filter time window
-    std::erase_if(DataToFilter_Gyro, [&](const auto& pair) { return static_cast<double>((imuObs->insTime - pair.first).count()) > dt_gyro; });
-    if (DataToFilter_Gyro.size() > 2)
-    {
-        // average accelerations first
-        auto N11 = static_cast<double>(DataToFilter_Gyro.size());
-        double N12 = 0.0;
-        double N22 = 0.0;
-        Eigen::VectorXd n1 = Eigen::VectorXd::Zero(3);
-        Eigen::VectorXd n2 = Eigen::VectorXd::Zero(3);
-        for (const auto& key_val : DataToFilter_Gyro)
-        {
-            double delta_t = static_cast<double>((key_val.first - imuObs->insTime).count());
-            N12 += delta_t;
-            N22 += delta_t * delta_t;
-            n1 += key_val.second;
-            n2 += delta_t * key_val.second;
-        }
-        double determinant_inverse = 1.0 / (N11 * N22 - N12 * N12);
-        Eigen::VectorXd filtered = determinant_inverse * (N22 * n1 - N12 * n2);
-        imuObs->p_angularRate = filtered;
-    }
-
-    return imuObs;
-}
-
-std::shared_ptr<NAV::ImuObsWDelta> NAV::LowPassFilter::FitLinearTrend(const std::shared_ptr<ImuObsWDelta>& imuObsWDelta)
-{
-    // first we filter accelerations
-    Eigen::VectorXd v1(6);
-    v1 << imuObsWDelta->p_acceleration, imuObsWDelta->dvel;
-    DataToFilter_Accel[imuObsWDelta->insTime] = v1;
-    // for testing at the moment
-    double dt_accel = 1.0 / _linear_filter_cutoff_frequency_accel;
-    // remove all entries that are outside filter time window
-    std::erase_if(DataToFilter_Accel, [&](const auto& pair) { return static_cast<double>((imuObsWDelta->insTime - pair.first).count()) > dt_accel; });
-
-    if (DataToFilter_Accel.size() > 2)
-    {
-        // average accelerations first
-        auto N11 = static_cast<double>(DataToFilter_Accel.size());
-        double N12 = 0.0;
-        double N22 = 0.0;
-        Eigen::VectorXd n1 = Eigen::VectorXd::Zero(6);
-        Eigen::VectorXd n2 = Eigen::VectorXd::Zero(6);
-        for (const auto& key_val : DataToFilter_Accel)
-        {
-            double delta_t = static_cast<double>((key_val.first - imuObsWDelta->insTime).count());
-            N12 += delta_t;
-            N22 += delta_t * delta_t;
-            n1 += key_val.second;
-            n2 += delta_t * key_val.second;
-        }
-        double determinant_inverse = 1.0 / (N11 * N22 - N12 * N12);
-        Eigen::VectorXd filtered = determinant_inverse * (N22 * n1 - N12 * n2);
-        imuObsWDelta->p_acceleration = filtered.segment(0, 3);
-        imuObsWDelta->dvel = filtered.segment(3, 3);
-    }
-
-    // then we filter gyro data
-    Eigen::VectorXd v2(6);
-    v2 << imuObsWDelta->p_angularRate, imuObsWDelta->dtheta;
-    DataToFilter_Gyro[imuObsWDelta->insTime] = v2;
-
-    double dt_gyro = 1.0 / _linear_filter_cutoff_frequency_gyro;
-
-    // remove all entries that are outside filter time window
-    std::erase_if(DataToFilter_Gyro, [&](const auto& pair) { return static_cast<double>((imuObsWDelta->insTime - pair.first).count()) > dt_gyro; });
-    if (DataToFilter_Gyro.size() > 2)
-    {
-        // average accelerations first
-        auto N11 = static_cast<double>(DataToFilter_Gyro.size());
-        double N12 = 0.0;
-        double N22 = 0.0;
-        Eigen::VectorXd n1 = Eigen::VectorXd::Zero(6);
-        Eigen::VectorXd n2 = Eigen::VectorXd::Zero(6);
-        for (const auto& key_val : DataToFilter_Gyro)
-        {
-            double delta_t = static_cast<double>((key_val.first - imuObsWDelta->insTime).count());
-            N12 += delta_t;
-            N22 += delta_t * delta_t;
-            n1 += key_val.second;
-            n2 += delta_t * key_val.second;
-        }
-        double determinant_inverse = 1.0 / (N11 * N22 - N12 * N12);
-        Eigen::VectorXd filtered = determinant_inverse * (N22 * n1 - N12 * n2);
-        imuObsWDelta->p_angularRate = filtered.segment(0, 3);
-        imuObsWDelta->dtheta = filtered.segment(3, 3);
-    }
-    return imuObsWDelta;
+    return {};
 }
 
 const char* NAV::LowPassFilter::to_string(FilterType value)
@@ -412,7 +384,7 @@ const char* NAV::LowPassFilter::to_string(FilterType value)
     switch (value)
     {
     case FilterType::Linear:
-        return "Linear fit filter";
+        return "Linear fit";
     // case FilterType::Experimental:
     //     return "Experimental";
     case FilterType::COUNT:
@@ -420,3 +392,24 @@ const char* NAV::LowPassFilter::to_string(FilterType value)
     }
     return "";
 }
+
+namespace NAV
+{
+
+void to_json(json& j, const LowPassFilter::FilterItem& data)
+{
+    j = json{
+        { "dataDescription", data.dataDescription },
+        { "filterType", data.filterType },
+        { "linear_filter_cutoff_frequency", data.linear_filter_cutoff_frequency },
+    };
+}
+
+void from_json(const json& j, LowPassFilter::FilterItem& data)
+{
+    if (j.contains("dataDescription")) { j.at("dataDescription").get_to(data.dataDescription); }
+    if (j.contains("filterType")) { j.at("filterType").get_to(data.filterType); }
+    if (j.contains("linear_filter_cutoff_frequency")) { j.at("linear_filter_cutoff_frequency").get_to(data.linear_filter_cutoff_frequency); }
+}
+
+} // namespace NAV
