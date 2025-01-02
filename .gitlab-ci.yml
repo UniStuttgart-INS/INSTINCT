@@ -564,8 +564,8 @@ pages:
   before_script:
     - apt update
     - apt upgrade -y
-    - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3 libtbb-dev libatlas-base-dev libsuitesparse-dev
-    - pip3 install conan
+    - apt install -y build-essential clang clang-tidy cmake pipx ccache cppcheck libglfw3-dev libglfw3 libtbb-dev libatlas-base-dev libsuitesparse-dev
+    - pipx install conan
     - conan profile detect --force
     - g++ --version
     - clang++ --version
