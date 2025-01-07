@@ -572,7 +572,7 @@ class ObservationFilter
     void excludeSignalTemporarily(const SatSigId& satSigId, size_t count)
     {
         if (count == 0) { return; }
-        _temporarilyExcludedSignalsSatellites.emplace(satSigId, count);
+        _temporarilyExcludedSignalsSatellites[satSigId] = count;
     }
 
     /// @brief Get the Frequency Filter

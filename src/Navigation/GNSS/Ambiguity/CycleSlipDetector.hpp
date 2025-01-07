@@ -208,7 +208,7 @@ class CycleSlipDetector
     bool _enableLLICheck = true;
 
     double _singleFrequencyThresholdPercentage = 11.0; ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
-    double _dualFrequencyThresholdPercentage = 0.6;    ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
+    double _dualFrequencyThresholdPercentage = 0.5;    ///< Threshold to detect a cycle-slip in [% of smallest wavelength]
 
     /// Single Frequency carrier-phase cycle-slip detector using polynomial fits
     PolynomialCycleSlipDetector<SatSigId> _singleFrequencyDetector{ 4, 2, false };
