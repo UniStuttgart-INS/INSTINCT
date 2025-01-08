@@ -460,6 +460,13 @@ void NAV::Plot::guiConfig()
             }
             ImGui::Unindent();
         }
+        if (!_overridePositionStartValues)
+        {
+            if (CommonLog::ShowOriginInput(nameId().c_str()))
+            {
+                flow::ApplyChanges();
+            }
+        }
     }
     ImGui::BulletText("Tipp: Ctrl + Hover = Tooltip (+ LClick = Tooltip window)");
 

@@ -27,6 +27,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Plot/Colormap.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 #include <fstream>
 #include <set>
@@ -108,6 +109,7 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     j["fonts"]["useBigMonoFont"] = gui::NodeEditorApplication::isUsingBigMonoFont();
 
     j["colormaps"] = ColormapsFlow;
+    j["commonLog"] = CommonLog::save();
 
     filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
 
@@ -239,6 +241,8 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     {
         ColormapsFlow.clear();
     }
+    CommonLog::restore(j.contains("commonLog") ? j.at("commonLog") : json{});
+
     if (!ConfigManager::Get<bool>("nogui") && j.contains("fonts"))
     {
         if (j.at("fonts").contains("useBigDefaultFont"))

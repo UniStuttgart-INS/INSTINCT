@@ -163,6 +163,11 @@ void Combiner::guiConfig()
     }
     if (!_noOutputIfTimeStepLarge) { ImGui::EndDisabled(); }
 
+    if (CommonLog::ShowOriginInput(nameId().c_str()))
+    {
+        flow::ApplyChanges();
+    }
+
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Pins##{}", size_t(id)).c_str()))
     {

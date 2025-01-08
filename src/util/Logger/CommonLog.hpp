@@ -15,9 +15,14 @@
 
 #include <mutex>
 #include <vector>
+#include <optional>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; ///< json namespace
 
 #include "util/Eigen.hpp"
 #include "Navigation/Time/InsTime.hpp"
+#include "internal/gui/widgets/PositionInput.hpp"
 
 namespace NAV
 {
@@ -56,16 +61,27 @@ class CommonLog
     /// @return Local positions in north/south and east/west directions in [m]
     static LocalPosition calcLocalPosition(const Eigen::Vector3d& lla_position);
 
+    /// @brief Shows a GUI to input a origin location
+    /// @param[in] id Unique id for ImGui
+    /// @return True if something was changed
+    static bool ShowOriginInput(const char* id);
+
+    /// @brief Returns a json object of the common log
+    [[nodiscard]] static json save();
+    /// @brief Read info from a json object
+    /// @param[in] j Json variable to read info from
+    static void restore(const json& j);
+
   protected:
     /// @brief Default constructor
     CommonLog();
 
     /// Start Time for calculation of relative time
     static inline InsTime _startTime;
-    /// Start Latitude [rad] for calculation of relative North-South
-    static inline double _originLatitude = std::nan("");
-    /// Start Longitude [rad] for calculation of relative East-West
-    static inline double _originLongitude = std::nan("");
+    /// Origin for calculation of relative position
+    static inline std::optional<gui::widgets::PositionWithFrame> _originPosition;
+    /// Use GUI inputs
+    static inline bool _useGuiInputs = false;
 
   private:
     /// Mutex to lock before writing

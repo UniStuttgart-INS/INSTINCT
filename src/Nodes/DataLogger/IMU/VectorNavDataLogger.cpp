@@ -63,6 +63,11 @@ void NAV::VectorNavDataLogger::guiConfig()
         doDeinitialize();
     }
 
+    if (CommonLog::ShowOriginInput(nameId().c_str()))
+    {
+        flow::ApplyChanges();
+    }
+
     static constexpr std::array<FileType, 2> fileTypes = {
         { FileType::ASCII,
           FileType::BINARY }

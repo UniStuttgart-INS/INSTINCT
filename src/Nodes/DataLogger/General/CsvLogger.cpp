@@ -64,6 +64,12 @@ void NAV::CsvLogger::guiConfig()
         flow::ApplyChanges();
         doDeinitialize();
     }
+
+    if (CommonLog::ShowOriginInput(nameId().c_str()))
+    {
+        flow::ApplyChanges();
+    }
+
     if (ImGui::Button(fmt::format("Clear header##{}", size_t(id)).c_str()))
     {
         _headerLogging.clear();

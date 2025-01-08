@@ -60,6 +60,11 @@ void NAV::WiFiObsLogger::guiConfig()
         flow::ApplyChanges();
         doDeinitialize();
     }
+
+    if (CommonLog::ShowOriginInput(nameId().c_str()))
+    {
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::WiFiObsLogger::save() const
