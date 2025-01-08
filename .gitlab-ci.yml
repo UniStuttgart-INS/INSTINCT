@@ -565,6 +565,7 @@ pages:
     - apt update
     - apt upgrade -y
     - apt install -y build-essential clang clang-tidy cmake pipx ccache cppcheck libglfw3-dev libglfw3 libtbb-dev libatlas-base-dev libsuitesparse-dev
+    - export PATH="$PATH:/root/.local/bin"
     - pipx install conan
     - conan profile detect --force
     - g++ --version
