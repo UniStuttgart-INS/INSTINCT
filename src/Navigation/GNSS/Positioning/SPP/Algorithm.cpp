@@ -400,7 +400,7 @@ void Algorithm::updateInterFrequencyBiases(const Observations& observations, [[m
             observedFrequencies.insert(obs.first.freq());
             allObservedFrequencies |= obs.first.freq();
         }
-        LOG_TRACE("{}: Observed frequencies {}", nameId, fmt::join(observedFrequencies, ", "));
+        LOG_DATA("{}: Observed frequencies {}", nameId, fmt::join(observedFrequencies, ", "));
 
         for (const auto& freq : observedFrequencies)
         {

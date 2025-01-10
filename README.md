@@ -127,11 +127,11 @@ sudo apt install -y build-essential clang clang-tidy clang-format cmake pipx lib
 pipx install conan
 conan profile detect --force
 
-# Documentation (Ubuntu 22.04 has too old doxygen version)
+# Documentation (Ubuntu has too old doxygen version)
 sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
 sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.10.0.src.tar.gz -O - | tar -xz
-cd doxygen-1.10.0 && mkdir build && cd build
+wget -c https://www.doxygen.nl/files/doxygen-1.12.0.src.tar.gz -O - | tar -xz
+cd doxygen-1.12.0 && mkdir build && cd build
 cmake -G "Unix Makefiles" .. && make && sudo make install
 
 # Optional
@@ -163,12 +163,12 @@ brew install ccache cppcheck
 
 #### Windows 11
 
-- For development Windows Subsystem for Linux `WSL` is **recommended**.
+- For development Linux is **recommended**. You can try Windows Subsystem for Linux `WSL`.
   - Follow the [VS Code WSL instructions](https://code.visualstudio.com/docs/remote/wsl)
   - We recommend using Ubuntu inside WSL and following the Ubuntu instructions above.
 - For executing, INSTINCT can be compiled with `MSVC` directly on Windows
   - Use the `Build Tools for Visual Studio 2022` ([download](https://visualstudio.microsoft.com/downloads/))
-  - Install both the C++ Toolchain and Cmake (not cmake from their website)
+  - Install both the C++ Toolchain and Cmake through the Build Tools
   - Use the Developer Powershell to invoke commands and also to start VS Code
   - Windows specifies the build type at compile time, not during cmake generation. Therefore the toolchain file has a different path. See above
 
