@@ -15,6 +15,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <fmt/format.h>
 #include <Eigen/Core>
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "IonosphericCorrections.hpp"
@@ -64,3 +65,18 @@ double calcIonosphericDelay(double tow, Frequency freq, int8_t freqNum,
 double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num);
 
 } // namespace NAV
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::IonosphereModel> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::IonosphereModel& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};

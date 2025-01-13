@@ -18,7 +18,7 @@
 #include "MappingFunctions/Cosecant.hpp"
 #include "MappingFunctions/GMF.hpp"
 #include "MappingFunctions/NiellMappingFunction.hpp"
-#include <boost/algorithm/string.hpp>
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV
 {
@@ -148,11 +148,11 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
     if (troposphereModelSelection.zwdMappingFunction.first != std::get<1>(ModelDefaults(troposphereModelSelection.zwdModel.first))
         || troposphereModelSelection.zhdMappingFunction.first != std::get<1>(ModelDefaults(troposphereModelSelection.zhdModel.first)))
     {
-        mapFuncPreview = fmt::format(" + {}", to_string(troposphereModelSelection.zhdMappingFunction.first));
+        mapFuncPreview = fmt::format(" + {}", troposphereModelSelection.zhdMappingFunction.first);
 
         if (troposphereModelSelection.zhdMappingFunction.first != troposphereModelSelection.zwdMappingFunction.first)
         {
-            mapFuncPreview += fmt::format(" | {}", to_string(troposphereModelSelection.zwdMappingFunction.first));
+            mapFuncPreview += fmt::format(" | {}", troposphereModelSelection.zwdMappingFunction.first);
         }
     }
 
@@ -357,7 +357,10 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         gpt3outputs = GPT3_param(mjd, lla_pos);
     }
 
-    LOG_DATA("Calculating Atmosphere parameters");
+    LOG_DATA("Calculating Atmosphere parameters ZHD=({},{}) ZWD=({},{}) [el={}°, pos={} {} {}]",
+             troposphereModels.zhdModel.first, troposphereModels.zhdMappingFunction.first,
+             troposphereModels.zwdModel.first, troposphereModels.zwdMappingFunction.first,
+             rad2deg(elevation), rad2deg(lla_pos(0)), rad2deg(lla_pos(1)), lla_pos(2));
     for (size_t i = 0; i < COUNT; i++)
     {
         bool alreadyCalculated = false;
@@ -386,7 +389,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel);
             }
         }
-        LOG_DATA("  [{}]: {} - p {} [millibar] (Total barometric pressure) - value {}", i, to_string(atmosphereModels.at(i).get().pressureModel),
+        LOG_DATA("  [{}]: {} - p {} [millibar] (Total barometric pressure) - value {}", i, atmosphereModels.at(i).get().pressureModel,
                  pressure.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
@@ -415,7 +418,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 temperature.at(i) = calcAbsoluteTemperature(lla_pos(2), atmosphereModels.at(i).get().temperatureModel);
             }
         }
-        LOG_DATA("  [{}]: {} - T {} [K] (Absolute temperature) - value {}", i, to_string(atmosphereModels.at(i).get().temperatureModel),
+        LOG_DATA("  [{}]: {} - T {} [K] (Absolute temperature) - value {}", i, atmosphereModels.at(i).get().temperatureModel,
                  temperature.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
@@ -445,7 +448,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel);
             }
         }
-        LOG_DATA("  [{}]: {} - e {} [millibar] (Partial pressure of water vapour) - value {}", i, to_string(atmosphereModels.at(i).get().waterVaporModel),
+        LOG_DATA("  [{}]: {} - e {} [millibar] (Partial pressure of water vapour) - value {}", i, atmosphereModels.at(i).get().waterVaporModel,
                  waterVapor.at(i), alreadyCalculated ? "reused" : "calculated");
     }
 
@@ -509,10 +512,10 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
         zwdMappingFactor = calcTropoMapFunc_cosecant(elevation);
         break;
     case MappingFunction::GMF:
-        zhdMappingFactor = calcTropoMapFunc_GMFW(mjd, lla_pos, elevation);
+        zwdMappingFactor = calcTropoMapFunc_GMFW(mjd, lla_pos, elevation);
         break;
     case MappingFunction::NMF:
-        zhdMappingFactor = calcTropoMapFunc_NMFW(lla_pos, elevation);
+        zwdMappingFactor = calcTropoMapFunc_NMFW(lla_pos, elevation);
         break;
     case MappingFunction::VMF_GPT2:
         zwdMappingFactor = vmf1w(gpt2outputs.aw, M_PI / 2.0 - elevation);
@@ -524,6 +527,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     case MappingFunction::COUNT:
         break;
     }
+    LOG_DATA("  ZHD = {}, ZHDMF = {}, ZWD = {}, ZWDMF = {}", zhd, zhdMappingFactor, zwd, zwdMappingFactor);
 
     return { .ZHD = zhd,
              .ZWD = zwd,

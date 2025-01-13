@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstdint>
+#include <fmt/format.h>
 
 namespace NAV
 {
@@ -46,3 +47,18 @@ bool ComboTemperatureModel(const char* label, TemperatureModel& temperatureModel
 [[nodiscard]] double calcAbsoluteTemperature(double altitudeMSL, TemperatureModel temperatureModel);
 
 } // namespace NAV
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::TemperatureModel> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::TemperatureModel& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};

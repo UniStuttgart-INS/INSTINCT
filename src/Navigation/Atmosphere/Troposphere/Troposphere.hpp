@@ -16,6 +16,7 @@
 
 #include <array>
 #include <Eigen/Core>
+#include <fmt/format.h>
 
 #include "ZenithDelay.hpp"
 #include "Navigation/Time/InsTime.hpp"
@@ -122,3 +123,37 @@ void to_json(json& j, const TroposphereModelSelection& obj);
 void from_json(const json& j, TroposphereModelSelection& obj);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::TroposphereModel> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::TroposphereModel& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::MappingFunction> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::MappingFunction& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};
+
+#endif
