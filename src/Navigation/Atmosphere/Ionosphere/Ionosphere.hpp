@@ -66,6 +66,8 @@ double ionoErrorVar(double dpsr_I, Frequency freq, int8_t num);
 
 } // namespace NAV
 
+#ifndef DOXYGEN_IGNORE
+
 /// @brief Formatter
 template<>
 struct fmt::formatter<NAV::IonosphereModel> : fmt::formatter<std::string>
@@ -80,3 +82,5 @@ struct fmt::formatter<NAV::IonosphereModel> : fmt::formatter<std::string>
         return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
     }
 };
+
+#endif

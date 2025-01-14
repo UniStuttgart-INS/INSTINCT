@@ -48,6 +48,8 @@ bool ComboWaterVaporModel(const char* label, WaterVaporModel& waterVaporModel);
 
 } // namespace NAV
 
+#ifndef DOXYGEN_IGNORE
+
 /// @brief Formatter
 template<>
 struct fmt::formatter<NAV::WaterVaporModel> : fmt::formatter<std::string>
@@ -62,3 +64,5 @@ struct fmt::formatter<NAV::WaterVaporModel> : fmt::formatter<std::string>
         return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
     }
 };
+
+#endif
