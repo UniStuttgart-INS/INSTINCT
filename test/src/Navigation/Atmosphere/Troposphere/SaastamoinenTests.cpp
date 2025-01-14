@@ -66,7 +66,7 @@ TEST_CASE("[Saastamoinen] Compare with Rtklib code", "[Saastamoinen]")
     double humidity = 0.7;
 
     double p = calcTotalPressure(lla_pos(2), PressureModel::ISA);
-    double T = calcAbsoluteTemperature(lla_pos(2), TemperatureModel::ISA);
+    double T = TemperatureModel(TemperatureModel::ISA).calcAbsoluteTemperature(lla_pos(2));
     double e = calcWaterVaporPartialPressure(T, humidity, WaterVaporModel::ISA);
 
     double ZHD = calcZHD_Saastamoinen(lla_pos, p);

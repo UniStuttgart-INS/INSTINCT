@@ -129,7 +129,7 @@ class ObservationEstimator
         recvObs->terms.rho_r_s = rho_r_s;
         // Troposphere
         auto tropo_r_s = calcTroposphericDelayAndMapping(receiver.gnssObs->insTime, lla_recvPosAPC,
-                                                         elevation, azimuth, _troposphereModels);
+                                                         elevation, azimuth, _troposphereModels, nameId);
         recvObs->terms.tropoZenithDelay = tropo_r_s;
         // Estimated troposphere propagation error [m]
         double dpsr_T_r_s = tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
@@ -350,7 +350,7 @@ class ObservationEstimator
         // Receiver-Satellite Range [m]
         double rho_r_s = (satInfo->e_satPos - e_recvPosAPC).norm();
         // Estimated troposphere propagation error [m]
-        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth);
+        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth, nameId);
         // Estimated ionosphere propagation error [m]
         double dpsr_I_r_s = calculateIonosphericDelay(freq, freqNum, lla_recvPosAPC, gnssObs, ionosphericCorrections, elevation, azimuth);
         // Sagnac correction [m]
@@ -440,7 +440,7 @@ class ObservationEstimator
         double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
 
         // Estimated troposphere propagation error [m]
-        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth);
+        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth, nameId);
         // Estimated ionosphere propagation error [m]
         double dpsr_I_r_s = calculateIonosphericDelay(freq, freqNum, lla_recvPosAPC, gnssObs, ionosphericCorrections, elevation, azimuth);
 
@@ -584,14 +584,16 @@ class ObservationEstimator
     /// @param[in] gnssObs GNSS observation
     /// @param[in] elevation Satellite elevation [rad]
     /// @param[in] azimuth Satellite azimuth [rad]
+    /// @param[in] nameId Name and Id of the node used for log messages only
     /// @return Estimated troposphere propagation error [m]
     double calculateTroposphericDelay(const Eigen::Vector3d& lla_recvPosAPC,
                                       const std::shared_ptr<const GnssObs>& gnssObs,
                                       double elevation,
-                                      double azimuth) const
+                                      double azimuth,
+                                      [[maybe_unused]] const std::string& nameId) const
     {
         auto tropo_r_s = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_recvPosAPC,
-                                                         elevation, azimuth, _troposphereModels);
+                                                         elevation, azimuth, _troposphereModels, nameId);
 
         return tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
     }

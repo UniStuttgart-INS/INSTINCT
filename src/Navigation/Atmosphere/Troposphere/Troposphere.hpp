@@ -31,9 +31,9 @@ namespace NAV
 /// @brief Atmospheric model selection for temperature, pressure and water vapor
 struct AtmosphereModels
 {
-    PressureModel pressureModel = PressureModel::ISA;          ///< Pressure model
-    TemperatureModel temperatureModel = TemperatureModel::ISA; ///< Temperature model
-    WaterVaporModel waterVaporModel = WaterVaporModel::ISA;    ///< WaterVapor model
+    PressureModel pressureModel = PressureModel::ISA;           ///< Pressure model
+    TemperatureModel temperatureModel{ TemperatureModel::ISA }; ///< Temperature model
+    WaterVaporModel waterVaporModel = WaterVaporModel::ISA;     ///< WaterVapor model
 };
 
 /// Available Troposphere delay models
@@ -94,9 +94,10 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 /// @param[in] elevation Satellite elevation [rad]
 /// @param[in] azimuth Satellite azimuth [rad]
 /// @param[in] troposphereModels Models to use for each calculation
+/// @param[in] nameId Name and Id of the node used for log messages only
 /// @return ZHD, ZWD and mapping factors for ZHD and ZWD
 ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen::Vector3d& lla_pos, double elevation, double azimuth,
-                                            const TroposphereModelSelection& troposphereModels);
+                                            const TroposphereModelSelection& troposphereModels, const std::string& nameId);
 
 /// @brief Calculates the tropospheric error variance
 /// @param[in] dpsr_T Tropospheric propagation error [m]

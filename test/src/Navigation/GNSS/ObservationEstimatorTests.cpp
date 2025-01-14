@@ -740,9 +740,11 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS -
     IonosphereModel ionoModel = IonosphereModel::Klobuchar;
     AtmosphereModels atmosphere{
         .pressureModel = PressureModel::ISA,
-        .temperatureModel = TemperatureModel::ISA,
+        .temperatureModel = TemperatureModel::Const,
         .waterVaporModel = WaterVaporModel::ISA,
     };
+    atmosphere.temperatureModel._constantTemperature = 290.0;
+
     auto tropoModel = TroposphereModelSelection{
         .zhdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
         .zwdModel = std::make_pair(TroposphereModel::Saastamoinen, atmosphere),
@@ -761,7 +763,7 @@ TEST_CASE("[ObservationEstimator][flow] Check estimates with Spirent data (GPS -
                                                        .satElevation = 3.2e-3, // High because Satellite position is calculated in ECEF frame at transmit time
                                                        .satAzimuth = 4.5e-3,
                                                        .dpsr_I = 3.9e-4,
-                                                       .dpsr_T = 3.5e-1,
+                                                       .dpsr_T = 2.0e-3,
                                                        .pseudorange = 5.0e-1,
                                                        .geometricDist = 1.8e-4 } },
     };
