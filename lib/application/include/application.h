@@ -26,16 +26,19 @@ struct Application
 
     static ImFont* DefaultFont();
     static ImFont* WindowFont();
+    static ImFont* PanelFont();
     static ImFont* MonoFont();
     static ImFont* HeaderFont();
 
     static void swapDefaultFont(bool big = false);
     static void swapWindowFont(bool big = false);
+    static void swapPanelFont(bool big = false);
     static void swapMonoFont(bool big = false);
     static void swapHeaderFont(bool big = false);
 
     static bool isUsingBigDefaultFont();
     static bool isUsingBigWindowFont();
+    static bool isUsingBigPanelFont();
     static bool isUsingBigMonoFont();
     static bool isUsingBigHeaderFont();
 
@@ -58,6 +61,7 @@ struct Application
   protected:
     static constexpr std::array<float, 2> defaultFontSize = { 18.F, 38.F };
     static constexpr std::array<float, 2> windowFontSize = { 18.F, 38.F };
+    static constexpr std::array<float, 2> panelFontSize = { 18.F, 38.F };
     static constexpr std::array<float, 2> monoFontSize = { 18.F, 38.F };
     static constexpr std::array<float, 2> headerFontSize = { 20.F, 42.F };
 
@@ -77,6 +81,9 @@ struct Application
     static inline ImFont* m_WindowFont = nullptr;
     static inline ImFont* m_WindowFontSmall = nullptr;
     static inline ImFont* m_WindowFontBig = nullptr;
+    static inline ImFont* m_PanelFont = nullptr;
+    static inline ImFont* m_PanelFontSmall = nullptr;
+    static inline ImFont* m_PanelFontBig = nullptr;
     static inline ImFont* m_MonoFont = nullptr;
     static inline ImFont* m_MonoFontSmall = nullptr;
     static inline ImFont* m_MonoFontBig = nullptr;

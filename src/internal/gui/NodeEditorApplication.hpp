@@ -34,6 +34,10 @@ namespace gui
 /// @brief Application class providing all relevant GUI callbacks
 class NodeEditorApplication : public Application
 {
+  private:
+    constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
+    constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
+
   public:
     /// @brief Default constructor
     NodeEditorApplication() = delete;
@@ -109,16 +113,20 @@ class NodeEditorApplication : public Application
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;
 
-    static inline bool hideLeftPane = false;          ///< Hide left pane
-    inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
-    inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
-    inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
-    constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
+    static inline bool hideLeftPane = false;                                 ///< Hide left pane
+    static inline bool hideFPS = false;                                      ///< Hide FPS counter
+    inline static float leftPaneWidth = 350.0F;                              ///< Width of the left pane
+    inline static float rightPaneWidth = 850.0F;                             ///< Width of the right pane
+    inline static float menuBarHeight = 20;                                  ///< Height of the menu bar on top
+    constexpr static float SPLITTER_THICKNESS = 4.0F;                        ///< Thickness of the splitter between left and right pane
+    inline static float bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT; ///< Height of the log viewer
 
     /// Ratio to multiply for default GUI elements
     static float defaultFontRatio();
     /// Ratio to multiply for GUI window elements
     static float windowFontRatio();
+    /// Ratio to multiply for GUI editor elements
+    static float panelFontRatio();
     /// Ratio to multiply for log output GUI elements
     static float monoFontRatio();
     /// Ratio to multiply for node header elements
@@ -146,9 +154,6 @@ class NodeEditorApplication : public Application
     };
 
   private:
-    constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
-    constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
-
     /// @brief Tabs displayed in the bottom view
     enum class BottomViewTabItem : uint8_t
     {
@@ -156,8 +161,7 @@ class NodeEditorApplication : public Application
         LogOutput, ///< The log output item is selected
     };
 
-    BottomViewTabItem bottomViewSelectedTab = BottomViewTabItem::None;       ///< Selected Tab item in the bottom view
-    inline static float bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT; ///< Height of the log viewer
+    BottomViewTabItem bottomViewSelectedTab = BottomViewTabItem::None; ///< Selected Tab item in the bottom view
 
     /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;

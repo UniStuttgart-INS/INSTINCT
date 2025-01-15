@@ -39,6 +39,7 @@ namespace
 ImRect _screenshotNavigateRect;
 ImRect _screenshotCaptureRect;
 bool _showScreenshotCaptureRect = false;
+bool _printScreenshotSaveLocation = true;
 size_t _screenshotFrameCnt = 0;
 
 } // namespace
@@ -65,7 +66,10 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
                             / fmt::format("Screenshot_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}-{:02d}.png",
                                           now->tm_year + 1900, now->tm_mon + 1, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
             Output.SaveFile(savePath.c_str());
-            LOG_INFO("Screenshot saved as: {}", savePath);
+            if (_printScreenshotSaveLocation)
+            {
+                LOG_INFO("Screenshot saved as: {}", savePath);
+            }
 
             if (copyScreenshotsToClipboard)
             {
@@ -106,27 +110,42 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
 
     ImGui::Checkbox("Copy screenshots to clipboard", &copyScreenshotsToClipboard);
 
-    if (ImGui::Checkbox("Light mode", &nodeEditorLightMode)) { ApplyDarkLightMode(NodeEditorApplication::m_colors); }
+    if (ImGui::Checkbox("Light mode", &nodeEditorLightMode))
+    {
+        ApplyDarkLightMode(NodeEditorApplication::m_colors);
+        flow::ApplyChanges();
+    }
     ImGui::SameLine();
     bool showGridLines = ed::GetStyle().Colors[ed::StyleColor_Grid].w != 0.0F;
     if (ImGui::Checkbox("Grid lines", &showGridLines))
     {
         ed::GetStyle().Colors[ed::StyleColor_Grid].w = showGridLines ? ed::Style().Colors[ed::StyleColor_Grid].w : 0.0F;
+        flow::ApplyChanges();
     }
     ImGui::SameLine();
     bool transparentWindows = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w != 1.0F;
     if (ImGui::Checkbox("Transparent windows", &transparentWindows))
     {
         ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = transparentWindows ? ImGuiStyle().Colors[ImGuiCol_WindowBg].w : 1.0F;
+        flow::ApplyChanges();
     }
 
-    ImGui::Checkbox("Hide left pane", &NodeEditorApplication::hideLeftPane);
+    if (ImGui::Checkbox("Hide left pane", &NodeEditorApplication::hideLeftPane))
+    {
+        flow::ApplyChanges();
+    }
     if (!NodeEditorApplication::hideLeftPane)
     {
         ImGui::SameLine();
         ImGui::SetNextItemWidth(ITEM_WIDTH_HALF);
         ImGui::DragFloat("Left pane width", &NodeEditorApplication::leftPaneWidth);
     }
+    if (ImGui::Checkbox("Hide FPS count", &NodeEditorApplication::hideFPS))
+    {
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    ImGui::Checkbox("Print save location", &_printScreenshotSaveLocation);
 
     ImGui::Separator();
 

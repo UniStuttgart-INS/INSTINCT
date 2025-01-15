@@ -840,8 +840,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         gui::checkShortcuts(globalAction);
     }
 
+    ImGui::PushFont(PanelFont());
     gui::menus::ShowMainMenuBar(globalAction);
     menuBarHeight = ImGui::GetCursorPosY();
+    ImGui::PopFont();
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -856,7 +858,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
 
+        ImGui::PushFont(PanelFont());
         leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
+        ImGui::PopFont();
 
         ImGui::SameLine(0.0F, 12.0F);
     }
@@ -873,7 +877,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (bottomViewSelectedTab != BottomViewTabItem::None)
     {
-        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + 28.5F;
+        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + (isUsingBigPanelFont() ? 48.5F : 28.5F);
         ImGui::PushStyleColor(ImGuiCol_Separator, IM_COL32_BLACK_TRANS);
         gui::widgets::Splitter("Log Splitter", false, 6.0F, &blueprintHeight, &bottomViewHeight, 400.0F, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
         ImGui::PopStyleColor();
@@ -1762,6 +1766,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ed::End();
 
+    ImGui::PushFont(PanelFont());
     ImGui::Indent(SPLITTER_THICKNESS);
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::BeginTabBar("BottomViewTabBar"))
@@ -1774,7 +1779,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (ImGui::BeginTabItem("▼"))
         {
             bottomViewSelectedTab = BottomViewTabItem::None;
-            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT * defaultFontRatio();
+            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT * panelFontRatio();
             ImGui::EndTabItem();
         }
         else
@@ -1811,7 +1816,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::OpenPopup("Options");
             }
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(100.0F * defaultFontRatio());
+            ImGui::SetNextItemWidth(100.0F * panelFontRatio());
             static int logLevelFilterSelected = spdlog::level::info;
             if (ImGui::BeginCombo("##LogLevelCombo", spdlog::level::to_string_view(static_cast<spdlog::level::level_enum>(logLevelFilterSelected)).begin()))
             {
@@ -1882,6 +1887,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::EndTabBar();
     }
     ImGui::Unindent();
+    ImGui::PopFont();
 
     ImGui::EndGroup();
 
@@ -1908,6 +1914,11 @@ float NAV::gui::NodeEditorApplication::defaultFontRatio()
 float NAV::gui::NodeEditorApplication::windowFontRatio()
 {
     return windowFontSize.at(isUsingBigWindowFont() ? 1 : 0) / windowFontSize[0];
+}
+
+float NAV::gui::NodeEditorApplication::panelFontRatio()
+{
+    return panelFontSize.at(isUsingBigPanelFont() ? 1 : 0) / panelFontSize[0];
 }
 
 float NAV::gui::NodeEditorApplication::monoFontRatio()

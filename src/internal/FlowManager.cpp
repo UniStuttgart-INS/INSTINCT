@@ -26,6 +26,7 @@ namespace ed = ax::NodeEditor;
 
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/gui/windows/NodeEditorStyleEditor.hpp"
 #include "util/Plot/Colormap.hpp"
 #include "util/Logger/CommonLog.hpp"
 
@@ -106,7 +107,22 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
 
     j["fonts"]["useBigDefaultFont"] = gui::NodeEditorApplication::isUsingBigDefaultFont();
     j["fonts"]["useBigWindowFont"] = gui::NodeEditorApplication::isUsingBigWindowFont();
+    j["fonts"]["useBigPanelFont"] = gui::NodeEditorApplication::isUsingBigPanelFont();
     j["fonts"]["useBigMonoFont"] = gui::NodeEditorApplication::isUsingBigMonoFont();
+    j["leftPane"]["hide"] = gui::NodeEditorApplication::hideLeftPane;
+    j["leftPane"]["leftWidth"] = gui::NodeEditorApplication::leftPaneWidth;
+    j["leftPane"]["rightWidth"] = gui::NodeEditorApplication::rightPaneWidth;
+    j["bottomViewHeight"] = gui::NodeEditorApplication::bottomViewHeight;
+    j["hideFPS"] = gui::NodeEditorApplication::hideFPS;
+    j["lightMode"] = gui::windows::nodeEditorLightMode;
+    j["gridLinesEnabled"] = ed::GetStyle().Colors[ed::StyleColor_Grid].w;
+    j["transparentWindows"] = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w;
+
+    // if (ImGui::Checkbox("Light mode", &nodeEditorLightMode))
+    // {
+    //     ApplyDarkLightMode(NodeEditorApplication::m_colors);
+    //     flow::ApplyChanges();
+    // }
 
     j["colormaps"] = ColormapsFlow;
     j["commonLog"] = CommonLog::save();
@@ -140,6 +156,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
         nm::DeleteAllNodes();
 
+        if (!j.contains("commonLog")) { CommonLog::restore(json{}); }
         LoadJson(j);
 
 #ifdef TESTING
@@ -241,22 +258,44 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     {
         ColormapsFlow.clear();
     }
-    CommonLog::restore(j.contains("commonLog") ? j.at("commonLog") : json{});
+    if (j.contains("commonLog")) { CommonLog::restore(j.at("commonLog")); }
 
-    if (!ConfigManager::Get<bool>("nogui") && j.contains("fonts"))
+    if (!ConfigManager::Get<bool>("nogui"))
     {
-        if (j.at("fonts").contains("useBigDefaultFont"))
+        if (j.contains("fonts"))
         {
-            gui::NodeEditorApplication::swapDefaultFont(j.at("fonts").at("useBigDefaultFont").get<bool>());
+            if (j.at("fonts").contains("useBigDefaultFont"))
+            {
+                gui::NodeEditorApplication::swapDefaultFont(j.at("fonts").at("useBigDefaultFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigWindowFont"))
+            {
+                gui::NodeEditorApplication::swapWindowFont(j.at("fonts").at("useBigWindowFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigPanelFont"))
+            {
+                gui::NodeEditorApplication::swapPanelFont(j.at("fonts").at("useBigPanelFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigMonoFont"))
+            {
+                gui::NodeEditorApplication::swapMonoFont(j.at("fonts").at("useBigMonoFont").get<bool>());
+            }
         }
-        if (j.at("fonts").contains("useBigWindowFont"))
+        if (j.contains("leftPane"))
         {
-            gui::NodeEditorApplication::swapWindowFont(j.at("fonts").at("useBigWindowFont").get<bool>());
+            j.at("leftPane").at("hide").get_to(gui::NodeEditorApplication::hideLeftPane);
+            j.at("leftPane").at("leftWidth").get_to(gui::NodeEditorApplication::leftPaneWidth);
+            j.at("leftPane").at("rightWidth").get_to(gui::NodeEditorApplication::rightPaneWidth);
         }
-        if (j.at("fonts").contains("useBigMonoFont"))
+        if (j.contains("bottomViewHeight")) { j.at("bottomViewHeight").get_to(gui::NodeEditorApplication::bottomViewHeight); }
+        if (j.contains("hideFPS")) { j.at("hideFPS").get_to(gui::NodeEditorApplication::hideFPS); }
+        if (j.contains("lightMode"))
         {
-            gui::NodeEditorApplication::swapMonoFont(j.at("fonts").at("useBigMonoFont").get<bool>());
+            j.at("lightMode").get_to(gui::windows::nodeEditorLightMode);
+            gui::windows::ApplyDarkLightMode(gui::NodeEditorApplication::m_colors);
         }
+        if (j.contains("gridLinesEnabled")) { j.at("gridLinesEnabled").get_to(ed::GetStyle().Colors[ed::StyleColor_Grid].w); }
+        if (j.contains("transparentWindows")) { j.at("transparentWindows").get_to(ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w); }
     }
 
     if (j.contains("nodes"))

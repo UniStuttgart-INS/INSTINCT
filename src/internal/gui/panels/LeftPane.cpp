@@ -132,11 +132,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 circleCol = IM_COL32(255, 0, 0, 255);
             }
-            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
-                                                        5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
+            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::panelFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                        5.0F * NodeEditorApplication::panelFontRatio(), circleCol);
 
             bool isSelected = std::ranges::find(selectedNodes, node->id) != selectedNodes.end();
-            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
+            if (NodeEditorApplication::panelFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::panelFontRatio() - 1.F) * 15.F); }
             if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
@@ -161,7 +161,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
-            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
+            if (NodeEditorApplication::panelFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::panelFontRatio() - 1.F) * 15.F); }
 
             // auto id = fmt::format("({})", size_t(node->id));
             // auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);

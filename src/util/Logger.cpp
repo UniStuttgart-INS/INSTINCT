@@ -12,6 +12,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "Logger/dist_filter_sink.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/Version.hpp"
 
@@ -184,13 +185,11 @@ const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& Logger::GetRingBufferS
 
 void Logger::writeSeparator() noexcept
 {
-    LOG_INFO("===========================================================================================");
+    LOG_INFO("========================================================================");
 }
 
 void Logger::writeHeader() noexcept
 {
-    writeSeparator();
-
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
     [[maybe_unused]] tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)
