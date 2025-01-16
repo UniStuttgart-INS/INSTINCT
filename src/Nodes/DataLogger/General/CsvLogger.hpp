@@ -61,10 +61,11 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;
 
-    /// @brief Called when a link is to be deleted
+    /// @brief Called when a new link is to be established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(OutputPin& startPin, InputPin& endPin) override;
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
   private:
     /// @brief Initialize the node
@@ -87,6 +88,9 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
+
+    /// Type last connected
+    std::string _lastConnectedType;
 
     /// Flag whether the header was written already
     bool _headerWritten = false;

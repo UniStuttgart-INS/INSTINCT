@@ -132,6 +132,7 @@ void NAV::PosVelAttFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["pinType"] = outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier;
 
     return j;
 }
@@ -143,6 +144,10 @@ void NAV::PosVelAttFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("pinType"))
+    {
+        j.at("pinType").get_to(outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier);
     }
 }
 

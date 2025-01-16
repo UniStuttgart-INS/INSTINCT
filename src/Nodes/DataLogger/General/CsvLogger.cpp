@@ -186,6 +186,7 @@ void NAV::CsvLogger::guiConfig()
     return {
         { "FileWriter", FileWriter::save() },
         { "header", _headerLogging },
+        { "lastConnectedType", _lastConnectedType },
         { "headerLoggingRegex", _headerLoggingRegex },
         { "headerLoggingDefault", _headerLoggingDefault },
         { "headerLoggingSortGui", _headerLoggingSortGui },
@@ -198,6 +199,7 @@ void NAV::CsvLogger::restore(json const& j)
 
     if (j.contains("FileWriter")) { FileWriter::restore(j.at("FileWriter")); }
     if (j.contains("header")) { j.at("header").get_to(_headerLogging); }
+    if (j.contains("lastConnectedType")) { j.at("lastConnectedType").get_to(_lastConnectedType); }
     if (j.contains("headerLoggingRegex")) { j.at("headerLoggingRegex").get_to(_headerLoggingRegex); }
     if (j.contains("headerLoggingDefault")) { j.at("headerLoggingDefault").get_to(_headerLoggingDefault); }
 }
@@ -207,11 +209,18 @@ void NAV::CsvLogger::flush()
     _filestream.flush();
 }
 
-void NAV::CsvLogger::onDeleteLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
+bool NAV::CsvLogger::onCreateLink([[maybe_unused]] OutputPin& startPin, [[maybe_unused]] InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-    _headerLogging.clear();
+    if (_lastConnectedType != startPin.dataIdentifier.front())
+    {
+        LOG_DEBUG("{}: [{} ==> {}] Dropping headers because last type [{}] and new type [{}]", nameId(), size_t(startPin.id), size_t(endPin.id), _lastConnectedType, startPin.dataIdentifier.front());
+        _headerLogging.clear();
+    }
+    _lastConnectedType = startPin.dataIdentifier.front();
+
+    return true;
 }
 
 bool NAV::CsvLogger::initialize()
