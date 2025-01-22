@@ -225,9 +225,7 @@ class ErrorModel : public Node
     /// Possible units to specify a position bias with
     enum class PositionBiasUnits : uint8_t
     {
-        meter,     ///< NED [m m m]
-        rad_rad_m, ///< LatLonAlt [rad, rad, m]
-        deg_deg_m, ///< LatLonAlt [deg, deg, m]
+        meter, ///< NED [m m m]
     };
     /// Selected unit for the position bias in the GUI
     PositionBiasUnits _positionBiasUnit = PositionBiasUnits::meter;
@@ -260,12 +258,8 @@ class ErrorModel : public Node
     /// Possible units to specify a position noise with
     enum class PositionNoiseUnits : uint8_t
     {
-        meter,        ///< NED [m m m] (Standard deviation)
-        rad_rad_m,    ///< LatLonAlt [rad, rad, m] (Standard deviation)
-        deg_deg_m,    ///< LatLonAlt [deg, deg, m] (Standard deviation)
-        meter2,       ///< NED [m^2 m^2 m^2] (Variance)
-        rad2_rad2_m2, ///< LatLonAlt [rad^2, rad^2, m^2] (Variance)
-        deg2_deg2_m2, ///< LatLonAlt [deg^2, deg^2, m^2] (Variance)
+        meter,  ///< NED [m m m] (Standard deviation)
+        meter2, ///< NED [m^2 m^2 m^2] (Variance)
     };
 
     /// Selected unit for the position noise in the GUI

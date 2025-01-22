@@ -105,7 +105,7 @@ class PosVel : public Pos
             if (auto stDev = e_velocityStdev()) { return stDev->get().x(); }
             break;
         case Pos::GetStaticDescriptorCount() + 8: // Y velocity ECEF StDev [m/s]
-            if (auto stDev = e_velocityStdev()) { return stDev->get().z(); }
+            if (auto stDev = e_velocityStdev()) { return stDev->get().y(); }
             break;
         case Pos::GetStaticDescriptorCount() + 9: // Z velocity ECEF StDev [m/s]
             if (auto stDev = e_velocityStdev()) { return stDev->get().z(); }

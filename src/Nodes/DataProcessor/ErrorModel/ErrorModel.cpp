@@ -178,7 +178,7 @@ void NAV::ErrorModel::guiConfig()
             else if (_inputType == InputType::PosVelAtt)
             {
                 inputVector3WithUnit(fmt::format("Position Bias ({})", _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt").c_str(),
-                                     _positionBias, _positionBiasUnit, "m, m, m\0rad, rad, m\0deg, deg, m\0\0", "%.2g");
+                                     _positionBias, _positionBiasUnit, "m, m, m\0\0", "%.2g");
                 inputVector3WithUnit("Velocity Bias (NED)", _velocityBias, _velocityBiasUnit, "m/s\0\0", "%.2g");
                 inputVector3WithUnit("RollPitchYaw Bias", _attitudeBias, _attitudeBiasUnit, "rad\0deg\0\0", "%.2g");
             }
@@ -199,12 +199,10 @@ void NAV::ErrorModel::guiConfig()
             else if (_inputType == InputType::PosVelAtt)
             {
                 noiseGuiInput(fmt::format("Position Noise ({})", _positionNoiseUnit == PositionNoiseUnits::meter
-                                                                         || _positionNoiseUnit == PositionNoiseUnits::rad_rad_m
-                                                                         || _positionNoiseUnit == PositionNoiseUnits::deg_deg_m
                                                                      ? "Standard deviation"
                                                                      : "Variance")
                                   .c_str(),
-                              _positionNoise, _positionNoiseUnit, "m, m, m\0rad, rad, m\0deg, deg, m\0m^2, m^2, m^2\0rad^2, rad^2, m^2\0deg^2, deg^2, m^2\0\0",
+                              _positionNoise, _positionNoiseUnit, "m, m, m\0m^2, m^2, m^2\0\0",
                               "%.2g", _positionRng);
                 noiseGuiInput(fmt::format("Velocity Noise ({})", _velocityNoiseUnit == VelocityNoiseUnits::m_s ? "Standard deviation"
                                                                                                                : "Variance")
@@ -841,12 +839,6 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
         }
         break;
     }
-    case PositionBiasUnits::rad_rad_m:
-        lla_positionBias = _positionBias;
-        break;
-    case PositionBiasUnits::deg_deg_m:
-        lla_positionBias = Eigen::Vector3d{ deg2rad(_positionBias(0)), deg2rad(_positionBias(1)), _positionBias(2) };
-        break;
     }
     LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
 
@@ -877,6 +869,8 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
 
     // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
     Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
+    Eigen::Vector3d NED_pos_variance = Eigen::Vector3d::Zero();
+    Eigen::Vector3d NED_velocity_variance = Eigen::Vector3d::Zero();
     switch (_positionNoiseUnit)
     {
     case PositionNoiseUnits::meter:
@@ -886,14 +880,9 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
         {
             lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         }
+        NED_pos_variance = _positionNoise.cwiseAbs2();
         break;
     }
-    case PositionNoiseUnits::rad_rad_m:
-        lla_positionNoiseStd = _positionNoise;
-        break;
-    case PositionNoiseUnits::deg_deg_m:
-        lla_positionNoiseStd = deg2rad(_positionNoise);
-        break;
     case PositionNoiseUnits::meter2:
     {
         Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
@@ -901,14 +890,9 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
         {
             lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         }
+        NED_pos_variance = _positionNoise;
         break;
     }
-    case PositionNoiseUnits::rad2_rad2_m2:
-        lla_positionNoiseStd = _positionNoise.cwiseSqrt();
-        break;
-    case PositionNoiseUnits::deg2_deg2_m2:
-        lla_positionNoiseStd = deg2rad(_positionNoise.cwiseSqrt());
-        break;
     }
     LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
 
@@ -918,9 +902,11 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
     {
     case VelocityNoiseUnits::m_s:
         n_velocityNoiseStd = _velocityNoise;
+        NED_velocity_variance = _velocityNoise.cwiseAbs2();
         break;
     case VelocityNoiseUnits::m2_s2:
         n_velocityNoiseStd = _velocityNoise.cwiseSqrt();
+        NED_velocity_variance = _velocityNoise;
         break;
     }
     LOG_DATA("{}: n_velocityNoiseStd = {} [m/s]", nameId(), n_velocityNoiseStd.transpose());
@@ -946,21 +932,24 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
 
     // #########################################################################################################################################
 
-    posVelAtt->setState_n(posVelAtt->lla_position()
-                              + lla_positionBias
-                              + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
-                                                 _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
-                                                 _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
-                          posVelAtt->n_velocity()
-                              + n_velocityBias
-                              + Eigen::Vector3d{ _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(0)),
-                                                 _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(1)),
-                                                 _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(2)) },
-                          trafo::n_Quat_b(posVelAtt->rollPitchYaw()
-                                          + attitudeBias
-                                          + Eigen::Vector3d{ _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(0)),
-                                                             _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(1)),
-                                                             _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(2)) }));
+    posVelAtt->setStateAndStdDev_n(posVelAtt->lla_position()
+                                       + lla_positionBias
+                                       + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
+                                                          _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
+                                                          _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
+
+                                   NED_pos_variance.asDiagonal().toDenseMatrix(),
+                                   posVelAtt->n_velocity()
+                                       + n_velocityBias
+                                       + Eigen::Vector3d{ _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(0)),
+                                                          _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(1)),
+                                                          _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(2)) },
+                                   NED_velocity_variance.asDiagonal().toDenseMatrix(),
+                                   trafo::n_Quat_b(posVelAtt->rollPitchYaw()
+                                                   + attitudeBias
+                                                   + Eigen::Vector3d{ _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(0)),
+                                                                      _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(1)),
+                                                                      _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(2)) }));
 
     return posVelAtt;
 }
