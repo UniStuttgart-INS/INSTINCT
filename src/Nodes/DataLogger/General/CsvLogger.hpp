@@ -75,14 +75,12 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     void deinitialize() override;
 
     /// @brief Writes the header
-    /// @param[in] obs Observation containing data
-    void writeHeader(const std::shared_ptr<const NodeData>& obs);
+    void writeHeader();
 
     /// @brief Rewrites the data file with a new size
-    /// @param oldSize Old dynamic size
-    /// @param newSize New dynamic size
-    /// @param obs Observation containing data
-    void rewriteData(size_t oldSize, size_t newSize, const std::shared_ptr<const NodeData>& obs);
+    /// @param[in] oldSize Old dynamic size
+    /// @param[in] newSize New dynamic size
+    void rewriteData(size_t oldSize, size_t newSize);
 
     /// @brief Write Observation to the file
     /// @param[in] queue Queue with all the received data messages
@@ -100,6 +98,8 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
 
     /// Header which should be logged
     std::vector<std::pair<std::string, bool>> _headerLogging;
+    /// Amount of headers which are logged
+    size_t _headerLoggingCount = 0;
     /// Regex to search for when selecting
     std::string _headerLoggingRegex;
     /// Default for new headers

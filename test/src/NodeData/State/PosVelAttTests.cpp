@@ -152,8 +152,8 @@ TEST_CASE("[PosVelAtt] State setStateAndStdDev_n", "[PosVelAtt]")
                               n_velocity, n_velocityCovarianceMatrix,
                               trafo::n_Quat_b(0.0, 0.0, 0.0));
 
-    REQUIRE(state.e_positionStdev().value().get() == Eigen::Vector3d(3, 2, 1));
-    REQUIRE(state.e_velocityStdev().value().get() == Eigen::Vector3d(3, 2, 1));
+    REQUIRE_THAT(state.e_positionStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
+    REQUIRE_THAT(state.e_velocityStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
 }
 
 } // namespace NAV::TESTS::PosVelAttTests

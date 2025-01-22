@@ -247,46 +247,42 @@ void NAV::CsvLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::CsvLogger::writeHeader(const std::shared_ptr<const NodeData>& obs)
+void NAV::CsvLogger::writeHeader()
 {
     _filestream << "Time [s],GpsCycle,GpsWeek,GpsToW [s]";
 
-    for (const auto& desc : obs->staticDataDescriptors())
-    {
-        if (auto iter = std::ranges::find_if(_headerLogging, [&](const std::pair<std::string, bool>& header) {
-                return desc == header.first;
-            });
-            iter != _headerLogging.end() && !iter->second)
-        {
-            continue;
-        }
+#if LOG_LEVEL <= LOG_LEVEL_TRACE
+    std::string headers = "Time [s],GpsCycle,GpsWeek,GpsToW [s]";
+#endif
 
-        _filestream << "," << desc;
-    }
-    for (const auto& desc : _dynamicHeader)
+    _headerLoggingCount = 0;
+    for (const auto& [desc, enabled] : _headerLogging)
     {
-        if (auto iter = std::ranges::find_if(_headerLogging, [&](const std::pair<std::string, bool>& header) {
-                return desc == header.first;
-            });
-            iter != _headerLogging.end() && !iter->second)
-        {
-            continue;
-        }
+        if (!enabled) { continue; }
+        _headerLoggingCount++;
 
+#if LOG_LEVEL <= LOG_LEVEL_TRACE
+        headers += "," + desc;
+#endif
         _filestream << "," << desc;
     }
     _filestream << std::endl; // NOLINT(performance-avoid-endl)
 
+#if LOG_LEVEL <= LOG_LEVEL_TRACE
+    LOG_TRACE("{}: Header written:\n{}", nameId(), headers);
+#endif
+
     _headerWritten = true;
 }
 
-void NAV::CsvLogger::rewriteData(size_t oldSize, size_t newSize, const std::shared_ptr<const NodeData>& obs)
+void NAV::CsvLogger::rewriteData(size_t oldSize, size_t newSize)
 {
+    LOG_TRACE("{}: Rewriting header, because {} new elements", nameId(), newSize - oldSize);
     FileWriter::deinitialize();
     auto tmpFilePath = getFilepath().concat("_temp");
     std::filesystem::rename(getFilepath(), tmpFilePath);
     FileWriter::initialize();
-    writeHeader(obs);
+    writeHeader();
 
     std::ifstream tmpFilestream(tmpFilePath, std::ios_base::in | std::ios_base::binary);
     if (tmpFilestream.good())
@@ -327,6 +323,7 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
     {
         if (std::ranges::none_of(_dynamicHeader, [&](const auto& header) { return header == desc; }))
         {
+            LOG_DATA("{}: Adding new dynamic header: {}", nameId(), desc);
             _dynamicHeader.push_back(desc);
             if (auto iter = std::ranges::find_if(_headerLogging, [&](const std::pair<std::string, bool>& header) {
                     return desc == header.first;
@@ -339,11 +336,11 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
         }
     }
 
-    if (!_headerWritten) { writeHeader(obs); }
+    if (!_headerWritten) { writeHeader(); }
     else if (auto newHeaderLength = static_cast<size_t>(std::ranges::count_if(_headerLogging, [](const auto& header) { return header.second; }));
              oldHeaderLength != newHeaderLength)
     {
-        rewriteData(oldHeaderLength, newHeaderLength, obs);
+        rewriteData(oldHeaderLength, newHeaderLength);
     }
 
     constexpr int gpsCyclePrecision = 3;
@@ -371,6 +368,7 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
     }
     _filestream << std::setprecision(valuePrecision);
 
+    size_t dataLogged = 0;
     const auto staticDataDescriptors = obs->staticDataDescriptors();
     for (size_t i = 0; i < obs->staticDescriptorCount(); ++i)
     {
@@ -382,6 +380,7 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
         {
             continue;
         }
+        dataLogged++;
         _filestream << ',';
         if (auto val = obs->getValueAt(i)) { _filestream << *val; }
     }
@@ -395,8 +394,13 @@ void NAV::CsvLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_
         {
             continue;
         }
+        dataLogged++;
         _filestream << ',';
         if (auto val = obs->getDynamicDataAt(desc)) { _filestream << *val; }
+    }
+    for (size_t i = dataLogged; i < _headerLoggingCount; i++)
+    {
+        _filestream << ',';
     }
 
     _filestream << '\n';
