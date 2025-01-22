@@ -136,4 +136,24 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     }
 }
 
+TEST_CASE("[PosVelAtt] State setStateAndStdDev_n", "[PosVelAtt]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector3d lla_position{ deg2rad(0.0), deg2rad(0.0), 0.0 };
+    Eigen::Matrix3d n_positionCovarianceMatrix = Eigen::Matrix3d::Zero();
+    n_positionCovarianceMatrix.diagonal() << 1, 4, 9;
+    Eigen::Vector3d n_velocity = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d n_velocityCovarianceMatrix = Eigen::Matrix3d::Zero();
+    n_velocityCovarianceMatrix.diagonal() << 1, 4, 9;
+
+    PosVelAtt state;
+    state.setStateAndStdDev_n(lla_position, n_positionCovarianceMatrix,
+                              n_velocity, n_velocityCovarianceMatrix,
+                              trafo::n_Quat_b(0.0, 0.0, 0.0));
+
+    REQUIRE(state.e_positionStdev().value().get() == Eigen::Vector3d(3, 2, 1));
+    REQUIRE(state.e_velocityStdev().value().get() == Eigen::Vector3d(3, 2, 1));
+}
+
 } // namespace NAV::TESTS::PosVelAttTests
