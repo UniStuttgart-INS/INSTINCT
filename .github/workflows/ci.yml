@@ -85,7 +85,7 @@ jobs:
       - name: Setup Linux
         run: |
           sudo apt install -y libglfw3-dev libglfw3
-          sudo apt install -y flex bison graphviz dia mscgen pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
+          sudo apt install -y flex bison graphviz dia mscgen texlive-base
       - name: Create default conan profile
         run: |
           conan profile detect --force

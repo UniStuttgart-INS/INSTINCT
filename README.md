@@ -102,64 +102,88 @@ Allowed options:
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
 #### ArchLinux
-```shell
-# Needed
-sudo pacman -S --noconfirm --needed base-devel cmake clang glfw-x11
-yay -S --noconfirm --needed conan # AUR package
-conan profile detect --force
-
-# Documentation
-sudo pacman -S --noconfirm --needed doxygen pdf2svg texlive-most ghostscript
-
-# Optional
-sudo pacman -S --noconfirm --needed ccache cppcheck
-
-# Profiling (optional)
-sudo pacman -S --noconfirm --needed valgrind kcachegrind
-```
+- Building
+  ```shell
+  sudo pacman -S --noconfirm --needed base-devel cmake clang glfw-x11
+  yay -S --noconfirm --needed conan # AUR package
+  conan profile detect --force
+  ```
+- Documentation
+  ```shell
+  sudo pacman -S --noconfirm --needed doxygen texlive-basic
+  ```
+- Optional
+  - Compiler cache
+    ```shell
+    sudo pacman -S --noconfirm --needed ccache
+    ```
+  - Profiling
+    ```shell
+    sudo pacman -S --noconfirm --needed valgrind kcachegrind
+    ```
 
 #### Ubuntu 24.04
-```shell
-# Needed
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y build-essential clang clang-tidy clang-format cmake pipx libglfw3-dev libglfw3
-pipx install conan
-conan profile detect --force
-
-# Documentation (Ubuntu has too old doxygen version)
-sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
-sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.12.0.src.tar.gz -O - | tar -xz
-cd doxygen-1.12.0 && mkdir build && cd build
-cmake -G "Unix Makefiles" .. && make && sudo make install
-
-# Optional
-sudo apt install ccache cppcheck
-
-# Profiling (optional)
-sudo apt install valgrind kcachegrind
-```
+- Building
+  ```shell
+  sudo apt update
+  sudo apt upgrade -y
+  sudo apt install -y build-essential clang clang-format cmake pipx libglfw3-dev libglfw3
+  pipx ensurepath
+  # Path will be updated after reboot
+  pipx install conan
+  conan profile detect --force
+  ```
+- Documentation
+  - TexLive for citations
+    ```shell
+    sudo apt install -y texlive-base
+    ```
+  - Ubuntu has too old doxygen version
+    ```shell
+    sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
+    wget -c https://www.doxygen.nl/files/doxygen-1.12.0.src.tar.gz -O - | tar -xz
+    cd doxygen-1.12.0 && mkdir build && cd build
+    cmake -G "Unix Makefiles" .. && make && sudo make install
+    ```
+- Optional
+  - Static analyzer (Ubuntu 24.04 comes with `clang-tidy-18`, but version 19 is needed)
+    ```shell
+    sudo apt install -y clang-tidy-19
+    ln -s /usr/bin/clang-tidy-19 ~/.local/bin/clang-tidy
+    # Make sure that '~/.local/bin' is in your path in front of '/usr/bin'
+    # Otherwise you need to link it in the system
+    # sudo ln -s /usr/bin/clang-tidy-19 /usr/bin/clang-tidy
+    ```
+  - Compiler cache
+    ```shell
+    sudo apt install ccache
+    ```
+  - Profiling
+    ```shell
+    sudo apt install valgrind kcachegrind
+    ```
 
 #### MacOS
-```shell
-# Basic
-xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-brew update
+- Building
+  ```shell
+  xcode-select --install
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# Needed
-brew install cmake llvm conan glfw
-ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
-ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
-
-# Documentation
-brew install doxygen pdf2svg
-# Also latex is needed to compile the formulas
-
-# Optional
-brew install ccache cppcheck
-```
+  # Install brew first
+  brew update
+  brew install cmake llvm conan glfw
+  ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
+  ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+  ```
+- Documentation
+  ```shell
+  brew install doxygen texlive
+  ```
+- Optional
+  - Compiler cache
+    ```shell
+    brew install ccache
+    ```
 
 #### Windows 11
 
@@ -168,7 +192,8 @@ brew install ccache cppcheck
   - We recommend using Ubuntu inside WSL and following the Ubuntu instructions above.
 - For executing, INSTINCT can be compiled with `MSVC` directly on Windows
   - Use the `Build Tools for Visual Studio 2022` ([download](https://visualstudio.microsoft.com/downloads/))
-  - Install both the C++ Toolchain and Cmake through the Build Tools
+    - Install both the C++ Toolchain and Cmake through the Build Tools
+  - Install the conan package manager ([download](https://conan.io/))
   - Use the Developer Powershell to invoke commands and also to start VS Code
   - Windows specifies the build type at compile time, not during cmake generation. Therefore the toolchain file has a different path. See above
 
@@ -250,7 +275,6 @@ Recommended changes to the User's ```keybindings.json```
     * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
     * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
     * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) Clang-based C++ "linter" tool
-    * [cppcheck](http://cppcheck.sourceforge.net/) A tool for static C/C++ code analysis
 * Libraries (Install yourself and change cmake link targets or let them automatically be installed by Conan):
     * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [fmt](https://github.com/fmtlib/fmt) A modern formatting library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)

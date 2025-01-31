@@ -32,10 +32,8 @@
               gcc13
               gcc13Stdenv
               doxygen
-              texlive.combined.scheme-full
+              texliveSmall
               graphviz
-              ghostscript
-              pdf2svg
 
               ccache
               ccacheStdenv

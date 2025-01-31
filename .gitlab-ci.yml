@@ -112,27 +112,10 @@ check-image:
     - conan --version
     - conan profile show
     - doxygen --version
-    - cppcheck --version
+    - bibtex --version
     - gcovr --version
     - gcov --version
     - xml_grep --version
-    - dvips --version
-    - gs --version
-    - latex --version
-    - command -v pdf2svg
-
-check-image-24.10:
-  extends: check-image
-  image: ins-cpp:24.10
-  script:
-    - uname -a
-    - cat /etc/issue
-    - g++ --version
-    - clang++ --version
-    - clang-tidy --version
-    - cmake --version
-    - conan --version
-    - conan profile show
 
 check-raspberry:
   stage: prepare
@@ -166,8 +149,7 @@ check-windows:
 
 clang-tidy:
   stage: checks
-  needs: ["check-image-24.10"]
-  image: ins-cpp:24.10
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -181,8 +163,7 @@ clang-tidy:
 
 clang-tidy:tests:
   stage: checks
-  needs: ["check-image-24.10"]
-  image: ins-cpp:24.10
+  needs: ["check-image"]
   extends:
     - .linux
     - .clang
@@ -565,7 +546,7 @@ pages:
     - apt update
     - apt upgrade -y
     - apt install -y build-essential clang clang-tidy cmake pipx ccache cppcheck libglfw3-dev libglfw3 libtbb-dev libatlas-base-dev libsuitesparse-dev
-    - export PATH="$PATH:/root/.local/bin"
+    - export PATH="/root/.local/bin:$PATH"
     - pipx install conan
     - conan profile detect --force
     - g++ --version
