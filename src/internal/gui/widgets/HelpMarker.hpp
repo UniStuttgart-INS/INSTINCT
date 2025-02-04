@@ -22,9 +22,11 @@ void HelpMarker(const char* desc, const char* symbol = "(?)");
 
 /// @brief Begins a Text Help Marker, e.g. '(?)', with custom content
 /// @param[in] symbol Symbol to display
-bool BeginHelpMarker(const char* symbol = "(?)");
+/// @param[in] textWrapLength Length to wrap symbols after (set to 0.0F to disable)
+bool BeginHelpMarker(const char* symbol = "(?)", float textWrapLength = 35.0F);
 
 /// @brief Ends a Text Help Marker with custom content
-void EndHelpMarker();
+/// @param[in] wrapText Wether text was wrapped
+void EndHelpMarker(bool wrapText = true);
 
 } // namespace NAV::gui::widgets

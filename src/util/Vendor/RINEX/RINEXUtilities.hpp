@@ -30,7 +30,7 @@ namespace vendor::RINEX
 {
 
 /// @brief Observation types of the 'SYS / # / OBS TYPES' header
-enum class ObsType
+enum class ObsType : uint8_t
 {
     Error, ///< Error Type
     C,     ///< Code / Pseudorange
@@ -68,7 +68,7 @@ struct ObsHeader
     std::string markerNumber;          ///< Number of antenna marker [A20] (Optional)
 
     /// Available marker types
-    enum class MarkerTypes
+    enum class MarkerTypes : uint8_t
     {
         GEODETIC,      ///< Earth-fixed, high-precision monument
         NON_GEODETIC,  ///< Earth-fixed, low-precision monument
@@ -166,7 +166,8 @@ struct ObsHeader
 
     /// @brief Generates the epoch line
     /// @param[in] epochTime Time of the GNSS epoch
-    [[nodiscard]] std::string epochRecordLine(const InsTime& epochTime) const;
+    /// @param[in] nSatellites Number of satellites
+    [[nodiscard]] std::string epochRecordLine(const InsTime& epochTime, size_t nSatellites) const;
 };
 
 /// @brief Converts the provided struct into a json object

@@ -27,6 +27,7 @@
 #include "internal/ConfigManager.hpp"
 #include "internal/FlowManager.hpp"
 
+#include "util/ImPlot.hpp"
 #include "util/Logger.hpp"
 #include "util/Json.hpp"
 
@@ -46,42 +47,14 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
         return;
     }
 
-    auto loadImPlotStyleFromConfigFile = [](const std::string& path) {
-        std::filesystem::path filepath = flow::GetConfigPath();
-        if (std::filesystem::path inputPath{ path };
-            inputPath.is_relative())
-        {
-            filepath /= inputPath;
-        }
-        else
-        {
-            filepath = inputPath;
-        }
-        std::ifstream filestream(filepath);
-
-        if (!filestream.good())
-        {
-            LOG_ERROR("The ImPlot style config file could not be loaded: {}", filepath.string());
-        }
-        else
-        {
-            json j;
-            filestream >> j;
-
-            if (j.contains("implot") && j.at("implot").contains("style"))
-            {
-                j.at("implot").at("style").get_to(ImPlot::GetStyle());
-                LOG_INFO("Loaded ImPlot style from file {}", path);
-            }
-        }
-    };
-
     static std::string path = ConfigManager::Get<std::string>("implot-config");
 
+    ImGui::TextUnformatted("Plot style: ");
+    ImGui::SameLine();
     if (widgets::FileDialogLoad(path, "ImPlot config file", ".json", { ".json" }, flow::GetConfigPath(), 0, "ImPlotStyleEditor"))
     {
         LOG_DEBUG("ImPlot config file changed to: {}", path);
-        loadImPlotStyleFromConfigFile(path);
+        loadImPlotStyleFromConfigFile(path.c_str(), ImPlot::GetStyle());
     }
     ImGui::SameLine();
     if (ImGui::Button("Save##ImPlotStyleToFile"))
@@ -118,7 +91,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
     ImGui::SameLine();
     if (ImGui::Checkbox("Prefere flow file over global settings", &prefereFlowOverGlobal))
     {
-        loadImPlotStyleFromConfigFile(prefereFlowOverGlobal ? flow::GetCurrentFilename() : path);
+        loadImPlotStyleFromConfigFile(prefereFlowOverGlobal ? flow::GetCurrentFilename().c_str() : path.c_str(), ImPlot::GetStyle());
         flow::ApplyChanges();
     }
 
@@ -340,7 +313,7 @@ void NAV::gui::windows::ShowImPlotStyleEditor(bool* show /* = nullptr*/)
                 ImGui::Text("Plot Padding");
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                if (ImGui::SliderFloat2("PlotPadding", reinterpret_cast<float*>(&style.PlotPadding), 0.0F, 20.0F, "%.0F"))
+                if (ImGui::SliderFloat2("PlotPadding", reinterpret_cast<float*>(&style.PlotPadding), 0.0F, 30.0F, "%.0F"))
                 {
                     if (saveConfigInFlow)
                     {

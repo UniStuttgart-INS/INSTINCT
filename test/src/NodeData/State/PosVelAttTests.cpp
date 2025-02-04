@@ -36,7 +36,7 @@ TEST_CASE("[PosVelAtt] Position Functions", "[PosVelAtt]")
     state.setPosition_e(e_position);
 
     CHECK(state.e_position() == e_position);
-    CHECK(state.lla_position() == Eigen::Vector3d{ state.latitude(), state.longitude(), state.altitude() });
+    CHECK(state.lla_position() == Eigen::Vector3d(state.latitude(), state.longitude(), state.altitude()));
     CHECK_THAT(state.latitude() - lla_position(0), Catch::Matchers::WithinAbs(0, 9e-9));
     CHECK_THAT(state.longitude() - lla_position(1), Catch::Matchers::WithinAbs(0, 6e-9));
     CHECK_THAT(state.altitude() - lla_position(2), Catch::Matchers::WithinAbs(0, 0.3));
@@ -118,7 +118,7 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     PosVelAtt state;
-    state.setPosition_lla({ deg2rad(48.78081), deg2rad(9.172012), 254 });
+    state.setPosition_lla(Eigen::Vector3d{ deg2rad(48.78081), deg2rad(9.172012), 254 });
 
     double delta = deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -134,6 +134,26 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
             }
         }
     }
+}
+
+TEST_CASE("[PosVelAtt] State setStateAndStdDev_n", "[PosVelAtt]")
+{
+    auto logger = initializeTestLogger();
+
+    Eigen::Vector3d lla_position{ deg2rad(0.0), deg2rad(0.0), 0.0 };
+    Eigen::Matrix3d n_positionCovarianceMatrix = Eigen::Matrix3d::Zero();
+    n_positionCovarianceMatrix.diagonal() << 1, 4, 9;
+    Eigen::Vector3d n_velocity = Eigen::Vector3d::Zero();
+    Eigen::Matrix3d n_velocityCovarianceMatrix = Eigen::Matrix3d::Zero();
+    n_velocityCovarianceMatrix.diagonal() << 1, 4, 9;
+
+    PosVelAtt state;
+    state.setStateAndStdDev_n(lla_position, n_positionCovarianceMatrix,
+                              n_velocity, n_velocityCovarianceMatrix,
+                              trafo::n_Quat_b(0.0, 0.0, 0.0));
+
+    REQUIRE_THAT(state.e_positionStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
+    REQUIRE_THAT(state.e_velocityStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
 }
 
 } // namespace NAV::TESTS::PosVelAttTests

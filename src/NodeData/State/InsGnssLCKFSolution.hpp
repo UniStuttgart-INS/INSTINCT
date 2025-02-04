@@ -15,6 +15,7 @@
 
 #include "util/Eigen.hpp"
 #include "PosVelAtt.hpp"
+#include <cstdint>
 
 #include "Navigation/Transformations/Units.hpp"
 
@@ -30,6 +31,10 @@ class InsGnssLCKFSolution : public PosVelAtt
     {
         return "InsGnssLCKFSolution";
     }
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
@@ -73,7 +78,7 @@ class InsGnssLCKFSolution : public PosVelAtt
     }
 
     /// @brief Get the number of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 70; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount() + 24; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -84,121 +89,74 @@ class InsGnssLCKFSolution : public PosVelAtt
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
-
+        if (idx < PosVelAtt::GetStaticDescriptorCount()) { return PosVelAtt::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Latitude [deg]
-        case 1:  // Longitude [deg]
-        case 2:  // Altitude [m]
-        case 3:  // North/South [m]
-        case 4:  // East/West [m]
-        case 5:  // X-ECEF [m]
-        case 6:  // Y-ECEF [m]
-        case 7:  // Z-ECEF [m]
-        case 8:  // X-ECEF StDev [m]
-        case 9:  // Y-ECEF StDev [m]
-        case 10: // Z-ECEF StDev [m]
-        case 11: // XY-ECEF StDev [m]
-        case 12: // XZ-ECEF StDev [m]
-        case 13: // YZ-ECEF StDev [m]
-        case 14: // North StDev [m]
-        case 15: // East StDev [m]
-        case 16: // Down StDev [m]
-        case 17: // NE StDev [m]
-        case 18: // ND StDev [m]
-        case 19: // ED StDev [m]
-        case 20: // Velocity norm [m/s]
-        case 21: // X velocity ECEF [m/s]
-        case 22: // Y velocity ECEF [m/s]
-        case 23: // Z velocity ECEF [m/s]
-        case 24: // North velocity [m/s]
-        case 25: // East velocity [m/s]
-        case 26: // Down velocity [m/s]
-        case 27: // X velocity ECEF StDev [m/s]
-        case 28: // Y velocity ECEF StDev [m/s]
-        case 29: // Z velocity ECEF StDev [m/s]
-        case 30: // XY velocity StDev [m]
-        case 31: // XZ velocity StDev [m]
-        case 32: // YZ velocity StDev [m]
-        case 33: // North velocity StDev [m/s]
-        case 34: // East velocity StDev [m/s]
-        case 35: // Down velocity StDev [m/s]
-        case 36: // NE velocity StDev [m]
-        case 37: // ND velocity StDev [m]
-        case 38: // ED velocity StDev [m]
-        case 39: // Roll [deg]
-        case 40: // Pitch [deg]
-        case 41: // Yaw [deg]
-        case 42: // Quaternion::w
-        case 43: // Quaternion::x
-        case 44: // Quaternion::y
-        case 45: // Quaternion::z
-            return PosVelAtt::getValueAt(idx);
-        case 46: // KF State Roll error [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 0: // KF State Roll error [deg]
             if (frame == Frame::NED) { return rad2deg(attitudeError(0)); }
             break;
-        case 47: // KF State Pitch error [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 1: // KF State Pitch error [deg]
             if (frame == Frame::NED) { return rad2deg(attitudeError(1)); }
             break;
-        case 48: // KF State Yaw error [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 2: // KF State Yaw error [deg]
             if (frame == Frame::NED) { return rad2deg(attitudeError(2)); }
             break;
-        case 49: // KF State Position North error [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 3: // KF State Position North error [deg]
             if (frame == Frame::NED) { return rad2deg(positionError(0)); }
             break;
-        case 50: // KF State Position East error [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 4: // KF State Position East error [deg]
             if (frame == Frame::NED) { return rad2deg(positionError(1)); }
             break;
-        case 51: // KF State Position Down error [m]
+        case PosVelAtt::GetStaticDescriptorCount() + 5: // KF State Position Down error [m]
             if (frame == Frame::NED) { return positionError(2); }
             break;
-        case 52: // KF State Velocity North error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 6: // KF State Velocity North error [m/s]
             if (frame == Frame::NED) { return velocityError(0); }
             break;
-        case 53: // KF State Velocity East error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 7: // KF State Velocity East error [m/s]
             if (frame == Frame::NED) { return velocityError(1); }
             break;
-        case 54: // KF State Velocity Down error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 8: // KF State Velocity Down error [m/s]
             if (frame == Frame::NED) { return velocityError(2); }
             break;
-        case 55: // KF State Alpha_eb [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 9: // KF State Alpha_eb [deg]
             if (frame == Frame::ECEF) { return rad2deg(attitudeError(0)); }
             break;
-        case 56: // KF State Beta_eb [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 10: // KF State Beta_eb [deg]
             if (frame == Frame::ECEF) { return rad2deg(attitudeError(1)); }
             break;
-        case 57: // KF State Gamma_eb [deg]
+        case PosVelAtt::GetStaticDescriptorCount() + 11: // KF State Gamma_eb [deg]
             if (frame == Frame::ECEF) { return rad2deg(attitudeError(2)); }
             break;
-        case 58: // KF State Position ECEF X error [m]
+        case PosVelAtt::GetStaticDescriptorCount() + 12: // KF State Position ECEF X error [m]
             if (frame == Frame::ECEF) { return positionError(0); }
             break;
-        case 59: // KF State Position ECEF Y error [m]
+        case PosVelAtt::GetStaticDescriptorCount() + 13: // KF State Position ECEF Y error [m]
             if (frame == Frame::ECEF) { return positionError(1); }
             break;
-        case 60: // KF State Position ECEF Z error [m]
+        case PosVelAtt::GetStaticDescriptorCount() + 14: // KF State Position ECEF Z error [m]
             if (frame == Frame::ECEF) { return positionError(2); }
             break;
-        case 61: // KF State Velocity ECEF X error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 15: // KF State Velocity ECEF X error [m/s]
             if (frame == Frame::ECEF) { return velocityError(0); }
             break;
-        case 62: // KF State Velocity ECEF Y error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 16: // KF State Velocity ECEF Y error [m/s]
             if (frame == Frame::ECEF) { return velocityError(1); }
             break;
-        case 63: // KF State Velocity ECEF Z error [m/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 17: // KF State Velocity ECEF Z error [m/s]
             if (frame == Frame::ECEF) { return velocityError(2); }
             break;
-        case 64: // Accelerometer bias b_X [m/s^2]
+        case PosVelAtt::GetStaticDescriptorCount() + 18: // Accelerometer bias b_X [m/s^2]
             return b_biasAccel(0);
-        case 65: // Accelerometer bias b_Y [m/s^2]
+        case PosVelAtt::GetStaticDescriptorCount() + 19: // Accelerometer bias b_Y [m/s^2]
             return b_biasAccel(1);
-        case 66: // Accelerometer bias b_Z [m/s^2]
+        case PosVelAtt::GetStaticDescriptorCount() + 20: // Accelerometer bias b_Z [m/s^2]
             return b_biasAccel(2);
-        case 67: // Gyroscope bias b_X [rad/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 21: // Gyroscope bias b_X [rad/s]
             return b_biasGyro(0);
-        case 68: // Gyroscope bias b_Y [rad/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 22: // Gyroscope bias b_Y [rad/s]
             return b_biasGyro(1);
-        case 69: // Gyroscope bias b_Z [rad/s]
+        case PosVelAtt::GetStaticDescriptorCount() + 23: // Gyroscope bias b_Z [rad/s]
             return b_biasGyro(2);
         default:
             return std::nullopt;
@@ -207,7 +165,7 @@ class InsGnssLCKFSolution : public PosVelAtt
     }
 
     /// @brief Available Frames
-    enum class Frame : int
+    enum class Frame : uint8_t
     {
         ECEF, ///< Earth-Centered Earth-Fixed frame
         NED,  ///< Local North-East-Down frame

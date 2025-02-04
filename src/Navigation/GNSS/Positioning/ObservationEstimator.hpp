@@ -13,15 +13,24 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cmath>
 #include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include <imgui.h>
 #include <application.h>
 #include <imgui_stdlib.h>
+#include "Navigation/GNSS/Core/Frequency.hpp"
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/GNSS/Positioning/AntexReader.hpp"
+#include "Navigation/Transformations/Antenna.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
@@ -32,7 +41,9 @@
 #include "Navigation/GNSS/Positioning/Receiver.hpp"
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 
+#include "util/Container/UncertainValue.hpp"
 #include "util/Json.hpp"
+#include <Eigen/src/Core/MatrixBase.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 
@@ -46,10 +57,16 @@ class ObservationEstimator
     /// @brief Constructor
     /// @param[in] receiverCount Number of receivers
     explicit ObservationEstimator(size_t receiverCount)
-        : _antenna(receiverCount) {}
+        : _receiverCount(receiverCount)
+    {
+        for (size_t i = 0; i < receiverCount; i++)
+        {
+            _antenna.emplace(i, Antenna{});
+        }
+    }
 
     /// @brief How the observation gets used. Influenced the measurement variance
-    enum ObservationDifference
+    enum ObservationDifference : uint8_t
     {
         NoDifference,     ///< Estimation is not differenced
         SingleDifference, ///< Single Difference
@@ -59,204 +76,526 @@ class ObservationEstimator
     /// @brief Calculates the observation estimates
     /// @param[in, out] observations List of GNSS observation data used for the calculation of this epoch
     /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
-    /// @param[in] receivers List of receivers
+    /// @param[in] receiver Receiver
     /// @param[in] nameId Name and Id of the node used for log messages only
     /// @param[in] obsDiff Observation Difference type to estimate
     template<typename ReceiverType>
     void calcObservationEstimates(Observations& observations,
-                                  const std::array<Receiver<ReceiverType>, ReceiverType::ReceiverType_COUNT>& receivers,
-                                  const IonosphericCorrections& ionosphericCorrections,
+                                  const Receiver<ReceiverType>& receiver,
+                                  const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
                                   [[maybe_unused]] const std::string& nameId,
-                                  ObservationDifference obsDiff)
+                                  ObservationDifference obsDiff) const
     {
-        LOG_DATA("{}: Calculating observation estimates:", nameId);
-
+        LOG_DATA("{}: Calculating all observation estimates:", nameId);
         for (auto& [satSigId, observation] : observations.signals)
         {
-            const Frequency freq = satSigId.freq();
-            const SatelliteSystem satSys = freq.getSatSys();
+            calcObservationEstimate(satSigId, observation, receiver, ionosphericCorrections, nameId, obsDiff);
+        }
+    }
 
-            for (size_t r = 0; r < observation.recvObs.size(); r++)
+    /// @brief Calculates the observation estimate for the given signal
+    /// @param[in] satSigId Satellite signal identifier
+    /// @param[in, out] observation GNSS observation data used for the calculation of this epoch
+    /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
+    /// @param[in] receiver Receiver
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @param[in] obsDiff Observation Difference type to estimate
+    template<typename ReceiverType>
+    void calcObservationEstimate(const SatSigId& satSigId,
+                                 Observations::SignalObservation& observation,
+                                 const Receiver<ReceiverType>& receiver,
+                                 const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
+                                 [[maybe_unused]] const std::string& nameId,
+                                 ObservationDifference obsDiff) const
+    {
+        LOG_DATA("{}: Calculating observation estimates for [{}]", nameId, satSigId);
+        const Frequency freq = satSigId.freq();
+        const SatelliteSystem satSys = freq.getSatSys();
+
+        auto& recvObs = observation.recvObs.at(receiver.type);
+
+        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq,
+                                                        receiver.type,
+                                                        receiver.e_posMarker,
+                                                        receiver.gnssObs, nameId);
+        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
+
+        double elevation = recvObs->satElevation(e_recvPosAPC, lla_recvPosAPC);
+        double azimuth = recvObs->satAzimuth(e_recvPosAPC, lla_recvPosAPC);
+        Eigen::Vector3d e_pLOS = recvObs->e_pLOS(e_recvPosAPC);
+
+        // Receiver-Satellite Range [m]
+        double rho_r_s = (recvObs->e_satPos() - e_recvPosAPC).norm();
+        recvObs->terms.rho_r_s = rho_r_s;
+        // Troposphere
+        auto tropo_r_s = calcTroposphericDelayAndMapping(receiver.gnssObs->insTime, lla_recvPosAPC,
+                                                         elevation, azimuth, _troposphereModels, nameId);
+        recvObs->terms.tropoZenithDelay = tropo_r_s;
+        // Estimated troposphere propagation error [m]
+        double dpsr_T_r_s = tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
+        recvObs->terms.dpsr_T_r_s = dpsr_T_r_s;
+        // Estimated ionosphere propagation error [m]
+        double dpsr_I_r_s = calcIonosphericDelay(static_cast<double>(receiver.gnssObs->insTime.toGPSweekTow().tow),
+                                                 freq, observation.freqNum(), lla_recvPosAPC, elevation, azimuth,
+                                                 _ionosphereModel, ionosphericCorrections.get());
+        recvObs->terms.dpsr_I_r_s = dpsr_I_r_s;
+        // Sagnac correction [m]
+        double dpsr_ie_r_s = calcSagnacCorrection(e_recvPosAPC, recvObs->e_satPos());
+        recvObs->terms.dpsr_ie_r_s = dpsr_ie_r_s;
+
+        // Earth's gravitational field causes relativistic signal delay due to space-time curvature (Shapiro effect) [s]
+        // double posNorm = recvObs->e_satPos().norm() + e_recvPosAPC.norm();
+        // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
+        //                                                                        : 0.0;
+
+        double cn0 = recvObs->gnssObsData().CN0.value_or(1.0);
+
+        double pcv = calcPCV(freq, receiver.gnssObs->insTime, elevation, std::nullopt, receiver.type, receiver.gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
+        for (auto& [obsType, obsData] : recvObs->obs)
+        {
+            LOG_DATA("{}:   [{}][{:11}][{:5}] Observation estimate", nameId, satSigId, obsType, receiver.type);
+            switch (obsType)
             {
-                auto& recvObs = observation.recvObs.at(r);
-                [[maybe_unused]] auto recv = static_cast<ReceiverType>(r);
-                const Receiver<ReceiverType>& receiver = receivers.at(r);
-                const Antenna& antenna = _antenna.at(r);
+            case GnssObs::Pseudorange:
+                obsData.estimate = rho_r_s
+                                   + dpsr_ie_r_s
+                                   + dpsr_T_r_s
+                                   + dpsr_I_r_s
+                                   + InsConst::C
+                                         * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
+                                            // + dt_rel_stc
+                                            + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0))
+                                   + pcv;
+                obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, elevation, cn0);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
+                if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, receiver.type, dpsr_T_r_s); }
+                if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, receiver.type, dpsr_I_r_s); }
+                if (*receiver.recvClk.biasFor(satSys) != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, receiver.type, InsConst::C * *receiver.recvClk.biasFor(satSys)); }
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, receiver.type, InsConst::C * recvObs->satClock().bias);
+                // LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Shapiro effect", nameId, satSigId, obsType, receiver.type, InsConst::C * dt_rel_stc);
+                if (receiver.interFrequencyBias.contains(freq)) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-frequency bias", nameId, satSigId, obsType, receiver.type, InsConst::C * receiver.interFrequencyBias.at(freq).value); }
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Pseudorange estimate", nameId, satSigId, obsType, receiver.type, obsData.estimate);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Pseudorange measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement - obsData.estimate);
+                break;
+            case GnssObs::Carrier:
+                obsData.estimate = rho_r_s
+                                   + dpsr_ie_r_s
+                                   + dpsr_T_r_s
+                                   - dpsr_I_r_s
+                                   + InsConst::C
+                                         * (*receiver.recvClk.biasFor(satSys) - recvObs->satClock().bias
+                                            // + dt_rel_stc
+                                            )
+                                   + pcv;
+                obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, elevation, cn0);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, receiver.type, rho_r_s);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, receiver.type, dpsr_ie_r_s);
+                if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, receiver.type, dpsr_T_r_s); }
+                if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, receiver.type, dpsr_I_r_s); }
+                if (*receiver.recvClk.biasFor(satSys) != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, receiver.type, InsConst::C * *receiver.recvClk.biasFor(satSys)); }
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, receiver.type, InsConst::C * recvObs->satClock().bias);
+                // LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Shapiro effect", nameId, satSigId, obsType, receiver.type, InsConst::C * dt_rel_stc);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Carrier-phase estimate", nameId, satSigId, obsType, receiver.type, obsData.estimate);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Carrier-phase measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement - obsData.estimate);
+                break;
+            case GnssObs::Doppler:
+                obsData.estimate = e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel)
+                                   - calcSagnacRateCorrection(e_recvPosAPC, recvObs->e_satPos(), receiver.e_vel, recvObs->e_satVel())
+                                   + InsConst::C
+                                         * (*receiver.recvClk.driftFor(satSys)
+                                            - recvObs->satClock().drift);
+                obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), elevation, cn0);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] ", nameId, satSigId, obsType, receiver.type, e_pLOS.dot(recvObs->e_satVel() - receiver.e_vel));
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Sagnac rate correction", nameId, satSigId, obsType, receiver.type, calcSagnacRateCorrection(e_recvPosAPC, recvObs->e_satPos(), receiver.e_vel, recvObs->e_satVel()));
+                if (*receiver.recvClk.driftFor(satSys) != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Receiver clock drift", nameId, satSigId, obsType, receiver.type, InsConst::C * *receiver.recvClk.driftFor(satSys)); }
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Satellite clock drift", nameId, satSigId, obsType, receiver.type, InsConst::C * recvObs->satClock().drift);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m/s] Doppler estimate", nameId, satSigId, obsType, receiver.type, obsData.estimate);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] Doppler measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement);
+                LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m/s] Difference to measurement", nameId, satSigId, obsType, receiver.type, obsData.measurement - obsData.estimate);
+                break;
+            case GnssObs::ObservationType_COUNT:
+                break;
+            }
+            LOG_DATA("{}:   [{}][{:11}][{:5}] Observation error variance", nameId, satSigId, obsType, receiver.type);
+            LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4g} [{}] Measurement error variance", nameId, satSigId, obsType, receiver.type, obsData.measVar,
+                     obsType == GnssObs::Doppler ? "m^2/s^2" : "m^2");
 
-                Eigen::Vector3d hen_delta(0.0, 0.0, antenna.hen_delta(0));
-                Eigen::Vector3d e_recvPosAPC;
-                Eigen::Vector3d lla_recvPosAPC;
-                if (antenna.enabled)
+            if (obsDiff == NoDifference)
+            {
+                if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
                 {
-                    std::string antennaType;
-                    if (antenna.autoDetermine && receiver.gnssObs->receiverInfo)
-                    {
-                        antennaType = receiver.gnssObs->receiverInfo->get().antennaType;
-                    }
-                    else if (!antenna.autoDetermine)
-                    {
-                        antennaType = antenna.name;
-                    }
-                    e_recvPosAPC = receiver.e_posAntennaPhaseCenter(freq, antennaType, nameId);
-                    lla_recvPosAPC = receiver.lla_posAntennaPhaseCenter(freq, antennaType, nameId);
+                    obsData.measVar += observation.navData()->calcSatellitePositionVariance()
+                                       + ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())
+                                       + tropoErrorVar(dpsr_T_r_s, elevation);
+                    LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Satellite position variance", nameId, satSigId, obsType, receiver.type, observation.navData()->calcSatellitePositionVariance());
+                    if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Ionosphere variance", nameId, satSigId, obsType, receiver.type, ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())); }
+                    if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Troposphere variance", nameId, satSigId, obsType, receiver.type, tropoErrorVar(dpsr_T_r_s, elevation)); }
                 }
-                else
+                if (obsType == GnssObs::Pseudorange)
                 {
-                    e_recvPosAPC = receiver.e_posARP();
-                    lla_recvPosAPC = receiver.lla_posARP();
-                }
-                e_recvPosAPC += trafo::e_Quat_n(receiver.lla_posMarker(0), receiver.lla_posMarker(1)) * hen_delta;
-                lla_recvPosAPC.z() += hen_delta.z();
-
-                // Receiver-Satellite Range [m]
-                double rho_r_s = (recvObs.e_satPos() - e_recvPosAPC).norm();
-                recvObs.terms.rho_r_s = rho_r_s;
-                // Troposphere
-                auto tropo_r_s = calcTroposphericDelayAndMapping(receiver.gnssObs->insTime, lla_recvPosAPC,
-                                                                 recvObs.satElevation(), recvObs.satAzimuth(), _troposphereModels);
-                recvObs.terms.tropoZenithDelay = tropo_r_s;
-                // Estimated troposphere propagation error [m]
-                double dpsr_T_r_s = tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
-                recvObs.terms.dpsr_T_r_s = dpsr_T_r_s;
-                // Estimated ionosphere propagation error [m]
-                double dpsr_I_r_s = calcIonosphericDelay(static_cast<double>(receiver.gnssObs->insTime.toGPSweekTow().tow),
-                                                         freq, observation.freqNum(), lla_recvPosAPC, recvObs.satElevation(), recvObs.satAzimuth(),
-                                                         _ionosphereModel, &ionosphericCorrections);
-                recvObs.terms.dpsr_I_r_s = dpsr_I_r_s;
-                // Sagnac correction [m]
-                double dpsr_ie_r_s = calcSagnacCorrection(e_recvPosAPC, recvObs.e_satPos());
-                recvObs.terms.dpsr_ie_r_s = dpsr_ie_r_s;
-
-                // Earth's gravitational field causes relativistic signal delay due to space-time curvature (Shapiro effect) [s]
-                // double posNorm = recvObs.e_satPos().norm() + e_recvPosAPC.norm();
-                // double dt_rel_stc = e_recvPosAPC.norm() > InsConst<>::WGS84::a / 2.0 ? 2.0 * InsConst<>::WGS84::MU / std::pow(InsConst<>::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
-                //                                                                        : 0.0;
-
-                double cn0 = recvObs.gnssObsData().CN0.value_or(1.0);
-
-                for (auto& [obsType, obsData] : recvObs.obs)
-                {
-                    LOG_DATA("{}:   [{}][{:11}][{:5}] Observation estimate", nameId, satSigId, obsType, recv);
-                    switch (obsType)
-                    {
-                    case GnssObs::Pseudorange:
-                        obsData.estimate = rho_r_s
-                                           + dpsr_ie_r_s
-                                           + dpsr_T_r_s
-                                           + dpsr_I_r_s
-                                           + InsConst<>::C
-                                                 * (receiver.recvClk.bias.value * (obsDiff != DoubleDifference)
-                                                    - recvObs.satClock().bias * (obsDiff == NoDifference)
-                                                    + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value
-                                                    // + dt_rel_stc
-                                                    + (receiver.interFrequencyBias.contains(freq) ? receiver.interFrequencyBias.at(freq).value : 0.0));
-                        obsData.measVar = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, recv, rho_r_s);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, recv, dpsr_ie_r_s);
-                        if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, recv, dpsr_T_r_s); }
-                        if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, recv, dpsr_I_r_s); }
-                        if (obsDiff != DoubleDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.bias.value); }
-                        if (obsDiff == NoDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * recvObs.satClock().bias); }
-                        if (receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-system clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value); }
-                        // LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Shapiro effect", nameId, satSigId, obsType, recv, InsConst<>::C * dt_rel_stc);
-                        if (receiver.interFrequencyBias.contains(freq)) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-frequency bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.interFrequencyBias.at(freq).value); }
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Pseudorange estimate", nameId, satSigId, obsType, recv, obsData.estimate);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
-                        break;
-                    case GnssObs::Carrier:
-                        obsData.estimate = rho_r_s
-                                           + dpsr_ie_r_s
-                                           + dpsr_T_r_s
-                                           - dpsr_I_r_s
-                                           + InsConst<>::C
-                                                 * (receiver.recvClk.bias.value * (obsDiff != DoubleDifference)
-                                                    - recvObs.satClock().bias * (obsDiff == NoDifference)
-                                                    + receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value
-                                                    // + dt_rel_stc
-                                                 );
-                        obsData.measVar = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m] Geometrical range", nameId, satSigId, obsType, recv, rho_r_s);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Sagnac correction", nameId, satSigId, obsType, recv, dpsr_ie_r_s);
-                        if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Tropospheric delay", nameId, satSigId, obsType, recv, dpsr_T_r_s); }
-                        if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Ionospheric delay", nameId, satSigId, obsType, recv, dpsr_I_r_s); }
-                        if (obsDiff != DoubleDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Receiver clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.bias.value); }
-                        if (obsDiff == NoDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m] Satellite clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * recvObs.satClock().bias); }
-                        if (receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Inter-system clock bias", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).value); }
-                        // LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m] Shapiro effect", nameId, satSigId, obsType, recv, InsConst<>::C * dt_rel_stc);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m] Carrier-phase estimate", nameId, satSigId, obsType, recv, obsData.estimate);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
-                        break;
-                    case GnssObs::Doppler:
-                        obsData.estimate = recvObs.e_pLOS().dot(recvObs.e_satVel() - receiver.e_vel)
-                                           - calcSagnacRateCorrection(e_recvPosAPC, recvObs.e_satPos(), receiver.e_vel, recvObs.e_satVel())
-                                           + InsConst<>::C
-                                                 * (receiver.recvClk.drift.value * (obsDiff != DoubleDifference)
-                                                    - recvObs.satClock().drift * (obsDiff == NoDifference)
-                                                    + receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value * (obsDiff == NoDifference));
-                        obsData.measVar = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, observation.freqNum(), recvObs.satElevation(), cn0);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4f} [m/s] ", nameId, satSigId, obsType, recv, recvObs.e_pLOS().dot(recvObs.e_satVel() - receiver.e_vel));
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Sagnac rate correction", nameId, satSigId, obsType, recv, calcSagnacRateCorrection(e_recvPosAPC, recvObs.e_satPos(), receiver.e_vel, recvObs.e_satVel()));
-                        if (obsDiff != DoubleDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Receiver clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.drift.value); }
-                        if (obsDiff == NoDifference) { LOG_DATA("{}:   [{}][{:11}][{:5}]   - {:.4f} [m/s] Satellite clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * recvObs.satClock().drift); }
-                        if (receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m/s] Inter-system clock drift", nameId, satSigId, obsType, recv, InsConst<>::C * receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).value); }
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4f} [m/s] Doppler estimate", nameId, satSigId, obsType, recv, obsData.estimate);
-                        LOG_DATA("{}:   [{}][{:11}][{:5}]       {:.4e} [m/s] Difference to measurement", nameId, satSigId, obsType, recv, obsData.measurement - obsData.estimate);
-                        break;
-                    case GnssObs::ObservationType_COUNT:
-                        break;
-                    }
-                    LOG_DATA("{}:   [{}][{:11}][{:5}] Observation error variance", nameId, satSigId, obsType, recv);
-                    LOG_DATA("{}:   [{}][{:11}][{:5}]     {:.4g} [{}] Measurement error variance", nameId, satSigId, obsType, recv, obsData.measVar,
-                             obsType == GnssObs::Doppler ? "m^2/s^2" : "m^2");
-
-                    if (obsDiff == NoDifference)
-                    {
-                        if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
-                        {
-                            obsData.measVar += observation.navData()->calcSatellitePositionVariance()
-                                               + ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())
-                                               + tropoErrorVar(dpsr_T_r_s, recvObs.satElevation());
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Satellite position variance", nameId, satSigId, obsType, recv, observation.navData()->calcSatellitePositionVariance());
-                            if (dpsr_I_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Ionosphere variance", nameId, satSigId, obsType, recv, ionoErrorVar(dpsr_I_r_s, freq, observation.freqNum())); }
-                            if (dpsr_T_r_s != 0.0) { LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Troposphere variance", nameId, satSigId, obsType, recv, tropoErrorVar(dpsr_T_r_s, recvObs.satElevation())); }
-                        }
-                        if (obsType == GnssObs::Pseudorange)
-                        {
-                            obsData.measVar += _gnssMeasurementErrorModel.codeBiasErrorVar();
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Code bias variance", nameId, satSigId, obsType, recv, _gnssMeasurementErrorModel.codeBiasErrorVar());
-
-                            if (receiver.interFrequencyBias.contains(freq))
-                            {
-                                obsData.measVar += std::pow(receiver.interFrequencyBias.at(freq).stdDev, 2);
-                                LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Inter-frequency bias variance", nameId, satSigId, obsType, recv,
-                                         std::pow(InsConst<>::C * receiver.interFrequencyBias.at(freq).stdDev, 2));
-                            }
-                        }
-                    }
-                    if (obsDiff != DoubleDifference)
-                    {
-                        if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
-                        {
-                            double recvClockVariance = std::pow(InsConst<>::C, 2)
-                                                       * (std::pow(receiver.recvClk.bias.stdDev, 2)
-                                                          + std::pow(receiver.recvClk.sysTimeDiffBias.at(satSys.toEnumeration()).stdDev, 2));
-                            obsData.measVar += recvClockVariance;
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Receiver clock bias variance", nameId, satSigId, obsType, recv, recvClockVariance);
-                        }
-                        else if (obsType == GnssObs::Doppler)
-                        {
-                            double recvClockVariance = std::pow(InsConst<>::C, 2)
-                                                       * (std::pow(receiver.recvClk.drift.stdDev, 2)
-                                                          + std::pow(receiver.recvClk.sysTimeDiffDrift.at(satSys.toEnumeration()).stdDev, 2));
-                            obsData.measVar += recvClockVariance;
-                            LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2/s^2] Receiver clock drift variance", nameId, satSigId, obsType, recv, recvClockVariance);
-                        }
-                    }
-                    LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4g} [{}] Observation error variance", nameId, satSigId, obsType, recv, obsData.measVar,
-                             obsType == GnssObs::Doppler ? "m^2/s^2" : "m^2");
+                    obsData.measVar += _gnssMeasurementErrorModel.codeBiasErrorVar();
+                    LOG_DATA("{}:   [{}][{:11}][{:5}]   + {:.4f} [m^2] Code bias variance", nameId, satSigId, obsType, receiver.type, _gnssMeasurementErrorModel.codeBiasErrorVar());
                 }
             }
+            LOG_DATA("{}:   [{}][{:11}][{:5}]   = {:.4g} [{}] Observation error variance", nameId, satSigId, obsType, receiver.type, obsData.measVar,
+                     obsType == GnssObs::Doppler ? "m^2/s^2" : "m^2");
         }
+    }
+
+    /// Satellite Info used for estimate calculation
+    struct SatelliteInfo
+    {
+        /// @brief Constructor
+        /// @param[in] e_satPos Satellite position in ECEF coordinates [m]
+        /// @param[in] e_satVel Satellite velocity in ECEF frame [m/s]
+        /// @param[in] satClockBias Satellite clock bias [s]
+        /// @param[in] satClockDrift Satellite clock drift [s/s]
+        SatelliteInfo(Eigen::Vector3d e_satPos, Eigen::Vector3d e_satVel, double satClockBias, double satClockDrift)
+            : e_satPos(std::move(e_satPos)), e_satVel(std::move(e_satVel)), satClockBias(satClockBias), satClockDrift(satClockDrift) {}
+
+        Eigen::Vector3d e_satPos; ///< Satellite position in ECEF coordinates [m]
+        Eigen::Vector3d e_satVel; ///< Satellite velocity in ECEF frame [m/s]
+        double satClockBias{};    ///< Satellite clock bias [s]
+        double satClockDrift{};   ///< Satellite clock drift [s/s]
+    };
+
+    /// @brief Calculates the pseudorange estimate
+    /// @param[in] freq Signal frequency
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] recvClockBias Receiver clock bias [s]
+    /// @param[in] interFreqBias Receiver inter-frequency bias [s]
+    /// @param[in] dpsr_T_r_s Estimated troposphere propagation error [m]
+    /// @param[in] dpsr_I_r_s Estimated ionosphere propagation error [m]
+    /// @param[in] satInfo Satellite Information (pos, vel, clock)
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return The estimate [m] and the position line-of-sight unit vector (used for the Jacobian)
+    template<typename Derived>
+    auto calcPseudorangeEstimate(Frequency freq,
+                                 size_t receiverType,
+                                 const Eigen::MatrixBase<Derived>& e_recvPosMarker,
+                                 auto recvClockBias,
+                                 auto interFreqBias,
+                                 auto dpsr_T_r_s,
+                                 auto dpsr_I_r_s,
+                                 const std::shared_ptr<const SatelliteInfo>& satInfo,
+                                 const std::shared_ptr<const GnssObs>& gnssObs,
+                                 [[maybe_unused]] const std::string& nameId) const
+    {
+        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
+        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
+
+        Eigen::Vector3d e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, satInfo->e_satPos);
+        Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recvPosAPC(0), lla_recvPosAPC(1)) * e_pLOS;
+        double elevation = calcSatElevation(n_lineOfSightUnitVector);
+        // double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
+
+        // Receiver-Satellite Range [m]
+        auto rho_r_s = (satInfo->e_satPos - e_recvPosAPC).norm();
+
+        // Sagnac correction [m]
+        auto dpsr_ie_r_s = calcSagnacCorrection(e_recvPosAPC, satInfo->e_satPos);
+
+        // Earth's gravitational field causes relativistic signal delay due to space-time curvature (Shapiro effect) [s]
+        // double posNorm = e_satPos.norm() + e_recvPosAPC.norm();
+        // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
+        //                                                                        : 0.0;
+
+        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
+        return rho_r_s
+               + dpsr_ie_r_s
+               + dpsr_T_r_s
+               + dpsr_I_r_s
+               + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */ + interFreqBias)
+               + pcv;
+    }
+
+    /// @brief Calculates the carrier-phase estimate
+    /// @param[in] freq Signal frequency
+    /// @param[in] freqNum Frequency number. Only used for GLONASS G1 and G2
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] recvClockBias Receiver clock bias [s]
+    /// @param[in] satInfo Satellite Information (pos, vel, clock)
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return The estimate [m] and the position line-of-sight unit vector (used for the Jacobian)
+    template<typename Derived>
+    std::pair<double, Eigen::Vector3d>
+        calcCarrierEstimate(Frequency freq,
+                            int8_t freqNum,
+                            size_t receiverType,
+                            const Eigen::MatrixBase<Derived>& e_recvPosMarker,
+                            double recvClockBias,
+                            const std::shared_ptr<const SatelliteInfo>& satInfo,
+                            const std::shared_ptr<const GnssObs>& gnssObs,
+                            const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
+                            [[maybe_unused]] const std::string& nameId) const
+    {
+        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
+        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
+
+        Eigen::Vector3d e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, satInfo->e_satPos);
+        Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recvPosAPC(0), lla_recvPosAPC(1)) * e_pLOS;
+        double elevation = calcSatElevation(n_lineOfSightUnitVector);
+        double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
+
+        // Receiver-Satellite Range [m]
+        double rho_r_s = (satInfo->e_satPos - e_recvPosAPC).norm();
+        // Estimated troposphere propagation error [m]
+        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth, nameId);
+        // Estimated ionosphere propagation error [m]
+        double dpsr_I_r_s = calculateIonosphericDelay(freq, freqNum, lla_recvPosAPC, gnssObs, ionosphericCorrections, elevation, azimuth);
+        // Sagnac correction [m]
+        double dpsr_ie_r_s = calcSagnacCorrection(e_recvPosAPC, satInfo->e_satPos);
+
+        // Earth's gravitational field causes relativistic signal delay due to space-time curvature (Shapiro effect) [s]
+        // double posNorm = e_satPos.norm() + e_recvPosAPC.norm();
+        // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
+        //                                                                        : 0.0;
+
+        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+
+        double estimate = rho_r_s
+                          + dpsr_ie_r_s
+                          + dpsr_T_r_s
+                          - dpsr_I_r_s
+                          + InsConst::C * (recvClockBias - satInfo->satClockBias /* + dt_rel_stc */)
+                          + pcv;
+
+        return { estimate, e_pLOS };
+    }
+
+    /// @brief Calculates the doppler estimate
+    /// @param[in] freq Signal frequency
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] e_recvVel Receiver velocity in ECEF frame [m/s]
+    /// @param[in] recvClockDrift Receiver clock drift [s/s]
+    /// @param[in] satInfo Satellite Information (pos, vel, clock)
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return The estimate [m/s] and the position line-of-sight unit vector (used for the Jacobian)
+    template<typename DerivedPos, typename DerivedVel>
+    auto calcDopplerEstimate(Frequency freq,
+                             size_t receiverType,
+                             const Eigen::MatrixBase<DerivedPos>& e_recvPosMarker,
+                             const Eigen::MatrixBase<DerivedVel>& e_recvVel,
+                             auto recvClockDrift,
+                             const std::shared_ptr<const SatelliteInfo>& satInfo,
+                             const std::shared_ptr<const GnssObs>& gnssObs,
+                             [[maybe_unused]] const std::string& nameId) const
+    {
+        auto e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
+
+        auto e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, satInfo->e_satPos);
+
+        return e_pLOS.dot(satInfo->e_satVel - e_recvVel)
+               - calcSagnacRateCorrection(e_recvPosAPC, satInfo->e_satPos, e_recvVel, satInfo->e_satVel)
+               + InsConst::C * (recvClockDrift - satInfo->satClockDrift);
+    }
+
+    /// @brief Calculates the observation variance
+    /// @param[in] freq Signal Frequency
+    /// @param[in] freqNum Frequency number. Only used for GLONASS G1 and G2
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] obsType Observation type to calculate the variance for
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] e_satPos Satellite position in ECEF coordinates [m]
+    /// @param[in] cn0 Carrier-to-Noise density [dBHz]
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] navData Navigation data including this satellite
+    /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @param[in] obsDiff Observation Difference type to estimate
+    /// @return Observation variance in [m] (pseudorange, carrier) or [m/s] (doppler)
+    double calcObservationVariance(Frequency freq,
+                                   int8_t freqNum,
+                                   size_t receiverType,
+                                   GnssObs::ObservationType obsType,
+                                   const Eigen::Vector3d& e_recvPosMarker,
+                                   const Eigen::Vector3d& e_satPos,
+                                   double cn0,
+                                   const std::shared_ptr<const GnssObs>& gnssObs,
+                                   const std::shared_ptr<const SatNavData>& navData,
+                                   const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
+                                   [[maybe_unused]] const std::string& nameId,
+                                   ObservationDifference obsDiff) const
+    {
+        const SatelliteSystem satSys = freq.getSatSys();
+
+        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
+        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
+
+        Eigen::Vector3d e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, e_satPos);
+        Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recvPosAPC(0), lla_recvPosAPC(1)) * e_pLOS;
+        double elevation = calcSatElevation(n_lineOfSightUnitVector);
+        double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
+
+        // Estimated troposphere propagation error [m]
+        double dpsr_T_r_s = calculateTroposphericDelay(lla_recvPosAPC, gnssObs, elevation, azimuth, nameId);
+        // Estimated ionosphere propagation error [m]
+        double dpsr_I_r_s = calculateIonosphericDelay(freq, freqNum, lla_recvPosAPC, gnssObs, ionosphericCorrections, elevation, azimuth);
+
+        double variance = 0.0;
+
+        switch (obsType)
+        {
+        case GnssObs::Pseudorange:
+            variance = _gnssMeasurementErrorModel.psrMeasErrorVar(satSys, elevation, cn0);
+            break;
+        case GnssObs::Carrier:
+            variance = _gnssMeasurementErrorModel.carrierMeasErrorVar(satSys, elevation, cn0);
+            break;
+        case GnssObs::Doppler:
+            variance = _gnssMeasurementErrorModel.psrRateMeasErrorVar(freq, freqNum, elevation, cn0);
+            break;
+        case GnssObs::ObservationType_COUNT:
+            break;
+        }
+
+        if (obsDiff == NoDifference)
+        {
+            if (obsType == GnssObs::Pseudorange || obsType == GnssObs::Carrier)
+            {
+                variance += navData->calcSatellitePositionVariance()
+                            + ionoErrorVar(dpsr_I_r_s, freq, freqNum)
+                            + tropoErrorVar(dpsr_T_r_s, elevation);
+            }
+            if (obsType == GnssObs::Pseudorange)
+            {
+                variance += _gnssMeasurementErrorModel.codeBiasErrorVar();
+            }
+        }
+
+        return variance;
+    }
+
+    /// @brief Calculates the antenna phase center position for the marker
+    /// @param[in] freq Signal frequency
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    template<typename Derived>
+    [[nodiscard]] Eigen::Vector3<typename Derived::Scalar> e_calcRecvPosAPC(const Frequency& freq,
+                                                                            size_t receiverType,
+                                                                            const Eigen::MatrixBase<Derived>& e_recvPosMarker,
+                                                                            const std::shared_ptr<const GnssObs>& gnssObs,
+                                                                            [[maybe_unused]] const std::string& nameId) const
+    {
+        const Antenna& antenna = _antenna.at(receiverType);
+
+        auto e_recvPosAPC = trafo::e_posMarker2ARP(e_recvPosMarker,
+                                                   gnssObs,
+                                                   antenna.hen_delta);
+        if (antenna.correctPCO)
+        {
+            std::string antennaType;
+            if (antenna.autoDetermine && gnssObs->receiverInfo)
+            {
+                antennaType = gnssObs->receiverInfo->get().antennaType;
+            }
+            else if (!antenna.autoDetermine)
+            {
+                antennaType = antenna.name;
+            }
+            e_recvPosAPC = trafo::e_posARP2APC(e_recvPosAPC, gnssObs, freq, antennaType, nameId);
+        }
+
+        return e_recvPosAPC;
+    }
+
+    /// @brief Calculates the phase center variation
+    /// @param[in] freq Signal frequency
+    /// @param[in] insTime Time to lookup the PCV pattern
+    /// @param[in] elevation Elevation angle in [rad]
+    /// @param[in] azimuth Azimuth in [rad] or nullopt to use the azimuth independent (NOAZI)
+    /// @param[in] receiverType Receiver type to select the correct antenna
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return The PCV value in [m]
+    [[nodiscard]] double calcPCV(const Frequency& freq,
+                                 const InsTime& insTime,
+                                 double elevation,
+                                 std::optional<double> azimuth,
+                                 size_t receiverType,
+                                 const std::shared_ptr<const GnssObs>& gnssObs,
+                                 [[maybe_unused]] const std::string& nameId) const
+    {
+        if (std::isnan(elevation)
+            || (azimuth.has_value() && std::isnan(*azimuth))) { return 0.0; }
+        const Antenna& antenna = _antenna.at(receiverType);
+        if (antenna.correctPCV)
+        {
+            std::string antennaType;
+            if (antenna.autoDetermine && gnssObs->receiverInfo)
+            {
+                antennaType = gnssObs->receiverInfo->get().antennaType;
+            }
+            else if (!antenna.autoDetermine)
+            {
+                antennaType = antenna.name;
+            }
+            return AntexReader::Get().getAntennaPhaseCenterVariation(antennaType,
+                                                                     Frequency_(freq),
+                                                                     insTime,
+                                                                     elevation,
+                                                                     azimuth,
+                                                                     nameId)
+                .value_or(0.0);
+        }
+
+        return 0.0;
+    }
+
+    /// @brief Calculate the ionospheric delay with the model selected in the GUI
+    /// @param[in] freq Frequency of the signal
+    /// @param[in] freqNum Frequency number. Only used for GLONASS G1 and G2
+    /// @param[in] lla_recvPosAPC Receiver antenna phase center position in LLA coordinates [rad, rad, m]
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] ionosphericCorrections Ionospheric correction parameters collected from the Nav data
+    /// @param[in] elevation Satellite elevation [rad]
+    /// @param[in] azimuth Satellite azimuth [rad]
+    /// @return Estimated ionosphere propagation error [m]
+    double calculateIonosphericDelay(const Frequency& freq,
+                                     int8_t freqNum,
+                                     const Eigen::Vector3d& lla_recvPosAPC,
+                                     const std::shared_ptr<const GnssObs>& gnssObs,
+                                     const std::shared_ptr<const IonosphericCorrections>& ionosphericCorrections,
+                                     double elevation,
+                                     double azimuth) const
+    {
+        return calcIonosphericDelay(static_cast<double>(gnssObs->insTime.toGPSweekTow().tow),
+                                    freq, freqNum, lla_recvPosAPC,
+                                    elevation, azimuth,
+                                    _ionosphereModel, ionosphericCorrections.get());
+    }
+
+    /// @brief Calculate the tropospheric delay with the model selected in the GUI
+    /// @param[in] lla_recvPosAPC Receiver antenna phase center position in LLA coordinates [rad, rad, m]
+    /// @param[in] gnssObs GNSS observation
+    /// @param[in] elevation Satellite elevation [rad]
+    /// @param[in] azimuth Satellite azimuth [rad]
+    /// @param[in] nameId Name and Id of the node used for log messages only
+    /// @return Estimated troposphere propagation error [m]
+    double calculateTroposphericDelay(const Eigen::Vector3d& lla_recvPosAPC,
+                                      const std::shared_ptr<const GnssObs>& gnssObs,
+                                      double elevation,
+                                      double azimuth,
+                                      [[maybe_unused]] const std::string& nameId) const
+    {
+        auto tropo_r_s = calcTroposphericDelayAndMapping(gnssObs->insTime, lla_recvPosAPC,
+                                                         elevation, azimuth, _troposphereModels, nameId);
+
+        return tropo_r_s.ZHD * tropo_r_s.zhdMappingFactor + tropo_r_s.ZWD * tropo_r_s.zwdMappingFactor;
     }
 
     /// @brief Shows the GUI input to select the options
@@ -296,28 +635,35 @@ class ObservationEstimator
 
         if (ImGui::TreeNode(fmt::format("Antenna settings##{}", id).c_str()))
         {
-            for (size_t i = 0; i < ReceiverType::ReceiverType_COUNT; ++i)
+            for (size_t i = 0; i < _receiverCount; ++i)
             {
-                if (ReceiverType::ReceiverType_COUNT > 1)
+                if (_receiverCount > 1)
                 {
                     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
                     if (!ImGui::TreeNode(fmt::format("{}", static_cast<ReceiverType>(i)).c_str())) { continue; }
                 }
 
-                if (ImGui::Checkbox(fmt::format("Correct Phase-center offset##antenna {} {}", id, i).c_str(), &_antenna.at(i).enabled))
+                if (ImGui::Checkbox(fmt::format("Correct Phase-center offset##antenna {} {}", id, i).c_str(), &_antenna.at(i).correctPCO))
                 {
-                    LOG_DEBUG("{}: Antenna {} enabled: {}", id, i, _antenna.at(i).enabled);
+                    LOG_DEBUG("{}: Antenna {} correctPCO: {}", id, i, _antenna.at(i).correctPCO);
                     changed = true;
                 }
                 ImGui::SameLine();
-                if (!_antenna.at(i).enabled) { ImGui::BeginDisabled(); }
+                if (ImGui::Checkbox(fmt::format("Correct Phase-center variation##antenna {} {}", id, i).c_str(), &_antenna.at(i).correctPCV))
+                {
+                    LOG_DEBUG("{}: Antenna {} correctPCV: {}", id, i, _antenna.at(i).correctPCV);
+                    changed = true;
+                }
+
+                if (!_antenna.at(i).correctPCO && !_antenna.at(i).correctPCV) { ImGui::BeginDisabled(); }
                 if (ImGui::Checkbox(fmt::format("Auto determine##antenna {} {}", id, i).c_str(), &_antenna.at(i).autoDetermine))
                 {
                     LOG_DEBUG("{}: Antenna {} auto: {}", id, i, _antenna.at(i).autoDetermine);
                     changed = true;
                 }
+                ImGui::SameLine();
                 if (_antenna.at(i).autoDetermine) { ImGui::BeginDisabled(); }
-                ImGui::SetNextItemWidth(itemWidth - (1.0F + static_cast<float>(ReceiverType::ReceiverType_COUNT > 1)) * ImGui::GetStyle().IndentSpacing);
+                ImGui::SetNextItemWidth(itemWidth - (1.0F + static_cast<float>(_receiverCount > 1)) * ImGui::GetStyle().IndentSpacing);
 
                 if (ImGui::BeginCombo(fmt::format("Type##Combo {} {}", id, i).c_str(), _antenna.at(i).name.c_str()))
                 {
@@ -340,11 +686,11 @@ class ObservationEstimator
                     ImGui::EndCombo();
                 }
                 if (_antenna.at(i).autoDetermine) { ImGui::EndDisabled(); }
-                if (!_antenna.at(i).enabled) { ImGui::EndDisabled(); }
+                if (!_antenna.at(i).correctPCO && !_antenna.at(i).correctPCV) { ImGui::EndDisabled(); }
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("Used for lookup in ANTEX file.");
 
-                ImGui::SetNextItemWidth(itemWidth - (1.0F + static_cast<float>(ReceiverType::ReceiverType_COUNT > 1)) * ImGui::GetStyle().IndentSpacing);
+                ImGui::SetNextItemWidth(itemWidth - (1.0F + static_cast<float>(_receiverCount > 1)) * ImGui::GetStyle().IndentSpacing);
                 if (ImGui::InputDouble3(fmt::format("Delta H/E/N [m]##{} {}", id, i).c_str(), _antenna.at(i).hen_delta.data(), "%.3f"))
                 {
                     LOG_DEBUG("{}: Antenna {} delta: {}", id, i, _antenna.at(i).hen_delta.transpose());
@@ -354,7 +700,7 @@ class ObservationEstimator
                 gui::widgets::HelpMarker("- Antenna height: Height of the antenna reference point (ARP) above the marker\n"
                                          "- Horizontal eccentricity of ARP relative to the marker (east/north)");
 
-                if (ReceiverType::ReceiverType_COUNT > 1) { ImGui::TreePop(); }
+                if (_receiverCount > 1) { ImGui::TreePop(); }
             }
             ImGui::TreePop();
         }
@@ -362,21 +708,31 @@ class ObservationEstimator
         return changed;
     }
 
+    /// @brief Get the Ionosphere Model selected
+    [[nodiscard]] const IonosphereModel& getIonosphereModel() const { return _ionosphereModel; }
+    /// @brief Get the Troposphere Model selection
+    [[nodiscard]] const TroposphereModelSelection& getTroposphereModels() const { return _troposphereModels; }
+    /// @brief Get the GNSS measurement error model
+    [[nodiscard]] const GnssMeasurementErrorModel& getGnssMeasurementErrorModel() const { return _gnssMeasurementErrorModel; }
+
   private:
     IonosphereModel _ionosphereModel = IonosphereModel::Klobuchar; ///< Ionosphere Model used for the calculation
     TroposphereModelSelection _troposphereModels;                  ///< Troposphere Models used for the calculation
     GnssMeasurementErrorModel _gnssMeasurementErrorModel;          ///< GNSS measurement error model to use
 
+    size_t _receiverCount; ///< Number of receivers (used for GUI)
+
     /// Antenna information
     struct Antenna
     {
-        bool enabled = true;       ///< Enabled
-        bool autoDetermine = true; ///< Try determine antenna type from e.g. RINEX file
-        std::string name;          ///< Type of the antenna for the Antex lookup
-        Eigen::Vector3d hen_delta; ///< Delta values of marker to antenna base
+        bool correctPCO = true;                              ///< Correct phase center offset
+        bool correctPCV = true;                              ///< Correct phase center variation
+        bool autoDetermine = true;                           ///< Try determine antenna type from e.g. RINEX file
+        std::string name;                                    ///< Type of the antenna for the Antex lookup
+        Eigen::Vector3d hen_delta = Eigen::Vector3d::Zero(); ///< Delta values of marker to antenna base
     };
 
-    std::vector<Antenna> _antenna; ///< User antenna selection
+    std::unordered_map<size_t, Antenna> _antenna; ///< User antenna selection. Key is receiver type
 
     /// @brief Converts the provided object into json
     /// @param[out] j Json object which gets filled with the info
@@ -384,7 +740,8 @@ class ObservationEstimator
     friend void to_json(json& j, const ObservationEstimator::Antenna& obj)
     {
         j = json{
-            { "enabled", obj.enabled },
+            { "correctPCO", obj.correctPCO },
+            { "correctPCV", obj.correctPCV },
             { "autoDetermine", obj.autoDetermine },
             { "name", obj.name },
             { "hen_delta", obj.hen_delta },
@@ -395,7 +752,8 @@ class ObservationEstimator
     /// @param[out] obj Object to fill from the json
     friend void from_json(const json& j, ObservationEstimator::Antenna& obj)
     {
-        if (j.contains("enabled")) { j.at("enabled").get_to(obj.enabled); }
+        if (j.contains("correctPCO")) { j.at("correctPCO").get_to(obj.correctPCO); }
+        if (j.contains("correctPCV")) { j.at("correctPCV").get_to(obj.correctPCV); }
         if (j.contains("autoDetermine")) { j.at("autoDetermine").get_to(obj.autoDetermine); }
         if (j.contains("name")) { j.at("name").get_to(obj.name); }
         if (j.contains("hen_delta")) { j.at("hen_delta").get_to(obj.hen_delta); }

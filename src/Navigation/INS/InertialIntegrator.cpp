@@ -169,8 +169,7 @@ std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolution(const InsTim
 }
 
 std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionDelta(const InsTime& obsTime, const double& dt,
-                                                                         Eigen::Vector3d p_deltaVelocity, Eigen::Vector3d p_deltaTheta,
-                                                                         Eigen::Vector3d p_acceleration, Eigen::Vector3d p_angularRate,
+                                                                         const Eigen::Vector3d& p_deltaVelocity, const Eigen::Vector3d& p_deltaTheta,
                                                                          const ImuPos& imuPos)
 {
     if (!hasInitialPosition() || obsTime < _states.back().insTime) { return nullptr; }
@@ -178,17 +177,19 @@ std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionDelta(const I
 
     double dTimeLastState = static_cast<double>((obsTime - _states.back().insTime).count());
 
-    if (dt < dTimeLastState)
-    {
-        // TODO: Scale deltaVel and dTheta
-        p_deltaVelocity *= 1.0;
-        p_deltaTheta *= 1.0;
-    }
+    Eigen::Vector3d p_acceleration = Eigen::Vector3d::Zero();
+    Eigen::Vector3d p_angularRate = Eigen::Vector3d::Zero();
 
-    if (!_measurements.empty())
+    if (dt > 0.0) // dt given by sensor (should never be 0 or negative, but check here just in case)
     {
-        p_acceleration = 2.0 * p_deltaVelocity / dTimeLastState - _measurements.back().p_acceleration;
-        p_angularRate = 2.0 * p_deltaTheta / dTimeLastState - _measurements.back().p_angularRate;
+        p_acceleration = p_deltaVelocity / dt;
+        p_angularRate = p_deltaTheta / dt;
+    }
+    else if (std::abs(dTimeLastState) > 0.0) // Time difference between messages (differs from dt if message lost)
+    {
+        // Negative values of dTimeLastState should not happen, but algorithm can work with it to propagate backwards
+        p_acceleration = p_deltaVelocity / dTimeLastState;
+        p_angularRate = p_deltaTheta / dTimeLastState;
     }
 
     _measurements.push_back(Measurement{ .dt = dTimeLastState,
@@ -202,8 +203,9 @@ std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionDelta(const I
 
 std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionFromMeasurementBuffer(const ImuPos& imuPos)
 {
-    LOG_DATA("New measurement: dt = {:.5f}, p_accel [{}], p_angRate [{}]", _measurements.back().dt,
-             _measurements.back().p_acceleration.transpose(), _measurements.back().p_angularRate.transpose());
+    LOG_DATA("New measurement: dt = {:.5f}, p_accel [{}], p_angRate [{}], p_biasAccel [{}], p_biasAngRate [{}]", _measurements.back().dt,
+             _measurements.back().p_acceleration.transpose(), _measurements.back().p_angularRate.transpose(),
+             _measurements.back().p_biasAcceleration.transpose(), _measurements.back().p_biasAngularRate.transpose());
 
     if (std::abs(_measurements.back().dt) < 1e-8) // e.g. Initial state at 0.0s, first measurement at 0.0s --> Send out initial state
     {
@@ -247,6 +249,8 @@ std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionFromMeasureme
 
         LOG_DATA("[{:.1f}] p_accel__t0 [{:+.10f} {:+.10f} {:+.10f}]; p_accel__t1 [{:+.10f} {:+.10f} {:+.10f}]",
                  dt, b_accel__t0.x(), b_accel__t0.y(), b_accel__t0.z(), b_accel__t1.x(), b_accel__t1.y(), b_accel__t1.z());
+        LOG_DATA("[{:.1f}] p_gyro__t0 [{:+.10f} {:+.10f} {:+.10f}]; p_gyro__t1 [{:+.10f} {:+.10f} {:+.10f}]",
+                 dt, b_gyro__t0.x(), b_gyro__t0.y(), b_gyro__t0.z(), b_gyro__t1.x(), b_gyro__t1.y(), b_gyro__t1.z());
 
         if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepRungeKutta1)
         {
@@ -408,8 +412,10 @@ bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, fl
     bool changed = false;
 
     ImGui::SetNextItemWidth(width * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::Combo(fmt::format("Integration Frame##{}", label).c_str(), reinterpret_cast<int*>(&integrator._integrationFrame), "ECEF\0NED\0\0"))
+    if (auto integrationFrame = static_cast<int>(integrator._integrationFrame);
+        ImGui::Combo(fmt::format("Integration Frame##{}", label).c_str(), &integrationFrame, "ECEF\0NED\0\0"))
     {
+        integrator._integrationFrame = static_cast<decltype(integrator._integrationFrame)>(integrationFrame);
         LOG_DEBUG("Integration Frame changed to {}", integrator._integrationFrame == InertialIntegrator::IntegrationFrame::NED ? "NED" : "ECEF");
         changed = true;
     }

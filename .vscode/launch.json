@@ -16,6 +16,7 @@
                 "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--flush-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",
                 // ================ To debug flow tests ================
                 // "--flow-path=test/flow",
@@ -72,6 +73,7 @@
                 "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--flush-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning",
                 // ================ To debug flow tests ================
                 // "--flow-path=test/flow",
@@ -144,6 +146,7 @@
                 "--global-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--console-log-level=trace", // trace/debug/info/warning/error/critical/off
                 "--file-log-level=trace", // trace/debug/info/warning/error/critical/off
+                // "--flush-log-level=trace", // trace/debug/info/warning/error/critical/off
                 // "--log-filter=SinglePointPositioning.cpp",
             ],
             "stopAtEntry": false,

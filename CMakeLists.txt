@@ -51,7 +51,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/")
 
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_20)
+target_compile_features(project_options INTERFACE cxx_std_23)
 
 # Basic settings
 include(cmake/StandardProjectSettings.cmake)
@@ -119,6 +119,7 @@ find_package(Eigen3 REQUIRED)
 find_package(Catch2 3 REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(unordered_dense CONFIG REQUIRED)
+find_package(muparser REQUIRED)
 
 option(ENABLE_GPERFTOOLS "Enable use of Google Performance Tools (gperftools) profiler" OFF)
 if(ENABLE_GPERFTOOLS)
@@ -193,12 +194,18 @@ target_compile_definitions(application PUBLIC "_CONSOLE")
 set_target_properties(application PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
+# -------------------------------------------------- STB ------------------------------------------------- */
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/stb")
+
 # ----------------------------------------------- VectorNav ---------------------------------------------- */
 
 add_subdirectory(lib/vnproglib/cpp libvncxx)
 include_directories(SYSTEM lib/vnproglib/cpp/include)
 set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
+
+# ----------------------------------------------- libssh ------------------------------------------------- */
+find_package(libssh REQUIRED)
 
 # ------------------------------------------------ Navio2 ------------------------------------------------ */
 
@@ -254,6 +261,10 @@ set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
 
 include_directories(SYSTEM lib/gcem/include)
 
+# ------------------------------------------------ MavLink ----------------------------------------------- */
+
+include_directories(SYSTEM lib/mavlink)
+
 # ######################################################################################################################
 # Installed Packages
 # ######################################################################################################################
@@ -263,16 +274,18 @@ find_package(Threads REQUIRED)
 # ######################################################################################################################
 
 # Specify output path for executable files
-if(NOT MSVC OR NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Debug)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
-else()
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/build/bin/Release) # it always takes the DEBUG path (MSVC...)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/build/bin/Release)
-endif()
-
 set(INSTINCT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/build/bin)
+
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${INSTINCT_BINARY_DIR}")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${INSTINCT_BINARY_DIR}/Debug")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${INSTINCT_BINARY_DIR}/Release")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${INSTINCT_BINARY_DIR}")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG "${INSTINCT_BINARY_DIR}/Debug")
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${INSTINCT_BINARY_DIR}/Release")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${INSTINCT_BINARY_DIR}")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${INSTINCT_BINARY_DIR}/Debug")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${INSTINCT_BINARY_DIR}/Release")
 
 add_subdirectory(src)
 

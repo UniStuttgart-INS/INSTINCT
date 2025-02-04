@@ -99,8 +99,10 @@ void NAV::VectorNavBinaryConverter::guiConfig()
     }
     else if (_outputType == OutputType::PosVelAtt)
     {
-        if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
+        if (auto posVelSource = static_cast<int>(_posVelSource);
+            ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), &posVelSource, "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
         {
+            _posVelSource = static_cast<decltype(_posVelSource)>(posVelSource);
             LOG_DEBUG("{}: _posVelSource changed to {}", nameId(), fmt::underlying(_posVelSource));
             flow::ApplyChanges();
         }
@@ -210,7 +212,7 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
     }
 }
 
-std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
+std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
@@ -289,7 +291,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
         {
             imuObs->dtime = vnObs->imuOutputs->deltaTime;
-            imuObs->dtheta = vnObs->imuOutputs->deltaTheta.cast<double>();
+            imuObs->dtheta = deg2rad(vnObs->imuOutputs->deltaTheta.cast<double>());
             dThetaFound = true;
         }
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
@@ -309,7 +311,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
     return nullptr;
 }
 
-std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) // NOLINT(readability-convert-member-functions-to-static)
+std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto imuObs = std::make_shared<ImuObs>(vnObs->imuPos);
 

@@ -123,7 +123,7 @@ class PosVelAttInitializer : public Node
     uint64_t _startTime = 0;
 
     /// Initialization source for attitude
-    enum class AttitudeMode
+    enum class AttitudeMode : uint8_t
     {
         BOTH,  ///< Use IMU and GNSS Observations for attitude initialization
         IMU,   ///< Use IMU Observations for attitude initialization
@@ -152,7 +152,7 @@ class PosVelAttInitializer : public Node
                                                     std::numeric_limits<double>::infinity() };
 
     /// Override options for Position
-    enum class VelocityOverride
+    enum class VelocityOverride : uint8_t
     {
         OFF,   ///< Do not override the values
         ECEF,  ///< Override with ECEF values

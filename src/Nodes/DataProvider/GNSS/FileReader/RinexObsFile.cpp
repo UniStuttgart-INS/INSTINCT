@@ -11,6 +11,7 @@
 #include "util/Eigen.hpp"
 
 #include "internal/NodeManager.hpp"
+#include "util/Logger.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -59,8 +60,8 @@ std::string RinexObsFile::category()
 
 void RinexObsFile::guiConfig()
 {
-    if (auto res = FileReader::guiConfig(R"(Rinex Obs (.obs .rnx .*O){.obs,.rnx,(.+[.]\d\d?O)},.*)",
-                                         { ".obs", ".rnx", "(.+[.]\\d\\d?O)" }, size_t(id), nameId()))
+    if (auto res = FileReader::guiConfig(R"(Rinex Obs (.obs .rnx .*o){.obs,.rnx,(.+[.]\d\d?[oO])},.*)",
+                                         { ".obs", ".rnx", "(.+[.]\\d\\d?[oO])" }, size_t(id), nameId()))
     {
         LOG_DEBUG("{}: Path changed to {}", nameId(), _path);
         flow::ApplyChanges();
@@ -74,7 +75,7 @@ void RinexObsFile::guiConfig()
         }
     }
     ImGui::Text("Supported versions: ");
-    std::for_each(_supportedVersions.cbegin(), _supportedVersions.cend(), [](double x) {
+    std::ranges::for_each(_supportedVersions, [](double x) {
         ImGui::SameLine();
         ImGui::Text("%0.2f", x);
     });
@@ -143,7 +144,7 @@ FileReader::FileType RinexObsFile::determineFileType()
 {
     auto extHeaderLabel = [](std::string line) {
         // Remove any trailing non text characters
-        line.erase(std::find_if(line.begin(), line.end(), [](int ch) { return std::iscntrl(ch); }), line.end());
+        line.erase(std::ranges::find_if(line, [](int ch) { return std::iscntrl(ch); }), line.end());
 
         return str::trim_copy(std::string_view(line).substr(60, 20));
     };
@@ -378,7 +379,9 @@ void RinexObsFile::readHeader()
 
                 NAV::vendor::RINEX::ObsType type = NAV::vendor::RINEX::obsTypeFromChar(line.at(i));
                 Frequency freq = NAV::vendor::RINEX::getFrequencyFromBand(satSys, line.at(i + 1) - '0');
-                Code code = Code::fromFreqAttr(freq, line.at(i + 2));
+                auto attribute = line.at(i + 2);
+                if (freq == B01 && attribute == 'I') { freq = B02; }
+                Code code = Code::fromFreqAttr(freq, attribute);
 
                 _obsDescription[satSys].push_back(NAV::vendor::RINEX::ObservationDescription{ .type = type, .code = code });
 
@@ -478,7 +481,7 @@ void RinexObsFile::readHeader()
         }
         else
         {
-            LOG_ERROR("{}: Unknown header label '{}' in line '{}'", nameId(), headerLabel, line);
+            LOG_WARN("{}: Unknown header label '{}' in line '{}'", nameId(), headerLabel, line);
         }
     }
 
@@ -527,6 +530,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // 0: OK | 1: power failure between previous and current epoch | > 1 : Special event
     int epochFlag = -1;
+    size_t nSatellites = 0;
     while (epochFlag != 0 && !eof() && getline(line)) // Read lines till epoch record with valid epoch flag
     {
         str::trim(line);
@@ -537,12 +541,13 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
         }
         if (line.at(0) == '>') // EPOCH record - Record identifier: > - Format: A1,
         {
-            auto year = std::stoi(line.substr(2, 4));   // Format: 1X,I4,
-            auto month = std::stoi(line.substr(7, 2));  // Format: 1X,I2.2,
-            auto day = std::stoi(line.substr(10, 2));   // Format: 1X,I2.2,
-            auto hour = std::stoi(line.substr(13, 2));  // Format: 1X,I2.2,
-            auto min = std::stoi(line.substr(16, 2));   // Format: 1X,I2.2,
-            auto sec = std::stold(line.substr(18, 11)); // Format: F11.7,
+            auto year = std::stoi(line.substr(2, 4));         // Format: 1X,I4,
+            auto month = std::stoi(line.substr(7, 2));        // Format: 1X,I2.2,
+            auto day = std::stoi(line.substr(10, 2));         // Format: 1X,I2.2,
+            auto hour = std::stoi(line.substr(13, 2));        // Format: 1X,I2.2,
+            auto min = std::stoi(line.substr(16, 2));         // Format: 1X,I2.2,
+            auto sec = std::stold(line.substr(18, 11));       // Format: F11.7,2X,I1,
+            nSatellites = std::stoul(line.substr(29 + 3, 3)); // Format: I3,6X,F15.12
 
             [[maybe_unused]] double recClkOffset = 0.0;
             try
@@ -564,11 +569,8 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
             epochFlag = std::stoi(line.substr(31, 1)); // Format: 2X,I1,
 
-            [[maybe_unused]] auto numSats = std::stoi(line.substr(32, 3)); // Format: I3,
-                                                                           // Reserved - Format 6X,
-
             LOG_DATA("{}: {}, epochFlag {}, numSats {}, recClkOffset {}", nameId(),
-                     epochTime.toYMDHMS(), epochFlag, numSats, recClkOffset);
+                     epochTime.toYMDHMS(), epochFlag, nSatellites, recClkOffset);
         }
     }
     if (epochTime.empty())
@@ -581,6 +583,7 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
 
     // TODO: while loop till eof() or epochFlag == 0 (in case some other flags in the file)
 
+    size_t satCnt = 0;
     while (!eof() && peek() != '>' && getline(line)) // Read observation records till line with '>'
     {
         if (line.empty())
@@ -722,6 +725,11 @@ std::shared_ptr<const NodeData> RinexObsFile::pollData()
                 LOG_DATA("{}: A data record at epoch {} (plus leap seconds) contains Pseudorange, but is missing raw signal strength(carrier to noise ratio).", nameId(), epochTime.toYMDHMS());
             }
         }
+        satCnt++;
+    }
+    if (satCnt != nSatellites)
+    {
+        LOG_WARN("{}: [{}] {} satellites read, but epoch header specified {} satellites", nameId(), gnssObs->insTime.toYMDHMS(GPST), satCnt, nSatellites);
     }
 
     gnssObs->receiverInfo = _receiverInfo;
@@ -735,7 +743,7 @@ void RinexObsFile::eraseLessPreciseCodes(const std::shared_ptr<NAV::GnssObs>& gn
     auto eraseLessPrecise = [&](const Code& third, const Code& second, const Code& prime) {
         auto eraseSatDataWithCode = [&](const Code& code) {
             LOG_DATA("{}: Searching for {}-{}", nameId(), code, satNum);
-            auto iter = std::find_if(gnssObs->data.begin(), gnssObs->data.end(), [code, satNum](const GnssObs::ObservationData& idData) {
+            auto iter = std::ranges::find_if(gnssObs->data, [code, satNum](const GnssObs::ObservationData& idData) {
                 return idData.satSigId == SatSigId{ code, satNum };
             });
             if (iter != gnssObs->data.end())

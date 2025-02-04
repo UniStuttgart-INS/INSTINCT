@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GPSEphemeris.hpp"
 
@@ -38,7 +40,7 @@ const GnssNavInfo gnssNavInfo_bako3540_22n = {
         { .satSys = GPS, .alphaBeta = IonosphericCorrections::Beta, .data = { 1.4336e+05, -2.1299e+05, 0.0000e+00, 2.6214e+05 } },
     } },
     .timeSysCorr = {
-        { { GPST, UTC }, { 2.793967723846e-09, 2.664535259100e-15 } },
+        { { GPST, UTC }, { .a0 = 2.793967723846e-09, .a1 = 2.664535259100e-15 } },
     },
     .m_satellites = {
         { { GPS, 1 }, Satellite{

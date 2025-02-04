@@ -39,10 +39,10 @@ enum Frequency_ : uint64_t
     R04       = 0x0000'0000'0008'0000, ///< GLONASS, "G1a" (1600.995 MHZ).
     R06       = 0x0000'0000'0010'0000, ///< GLONASS, "G2a" (1248.06 MHz).
     B01       = 0x0000'0000'0100'0000, ///< Beidou B1 (1575.42 MHz).
-    B02       = 0x0000'0000'0200'0000, ///< Beidou B1-2 (1561.098 MHz).
+    B02       = 0x0000'0000'0200'0000, ///< Beidou B1-2 (B1I) (1561.098 MHz).
     B05       = 0x0000'0000'0400'0000, ///< Beidou B2a (1176.45 MHz).
     B06       = 0x0000'0000'0800'0000, ///< Beidou B3 (1268.52 MHz).
-    B07       = 0x0000'0000'1000'0000, ///< Beidou B2b (1207.14 MHz).
+    B07       = 0x0000'0000'1000'0000, ///< Beidou B2b (B2I) (1207.14 MHz).
     B08       = 0x0000'0000'2000'0000, ///< Beidou B2 (B2a + B2b) (1191.795MHz).
     J01       = 0x0000'0001'0000'0000, ///< QZSS L1 (1575.42 MHz).
     J02       = 0x0000'0002'0000'0000, ///< QZSS L2 (1227.6 MHz).
@@ -59,7 +59,7 @@ class Frequency
 {
   public:
     /// @brief Satellite System enumeration with continuous range. Not usable as a mask
-    enum Enum : size_t
+    enum Enum : uint8_t
     {
         Enum_G01,   ///< GPS L1 (1575.42 MHz).
         Enum_G02,   ///< GPS L2 (1227.6 MHz).
@@ -197,6 +197,22 @@ class Frequency
 
     /// @brief Returns a continuous enumeration of the object
     [[nodiscard]] Enum toEnumeration() const;
+
+    /// @brief Get a vector representation of the specified Frequency
+    /// @param[in] freq Frequency to get the vector for
+    static std::vector<Frequency> ToVector(Frequency freq);
+
+    /// @brief Get a vector representation of the specified Frequency
+    [[nodiscard]] std::vector<Frequency> toVector() const;
+
+    /// @brief Checks wether the given frequency is the first in the filter (per system)
+    /// @param[in] freq Single Frequency
+    /// @param[in] filter Filter of multiple frequencies
+    static bool IsFirstFrequency(const Frequency& freq, const Frequency& filter);
+
+    /// @brief Checks wether the frequency is the first in the filter (per system)
+    /// @param[in] filter Filter of multiple frequencies
+    [[nodiscard]] bool isFirstFrequency(const Frequency& filter) const;
 
   private:
     /// @brief Internal value
@@ -632,7 +648,7 @@ struct fmt::formatter<NAV::Frequency> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Frequency& freq, FormatContext& ctx)
+    auto format(const NAV::Frequency& freq, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(freq), ctx);
     }

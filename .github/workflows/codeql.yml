@@ -16,7 +16,7 @@ on:
     # branches: [ "main", "develop" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main", "develop" ]
+    # branches: [ "main", "develop" ]
   schedule:
     - cron: '38 0 * * 5'
 
@@ -29,7 +29,7 @@ env:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       actions: read
       contents: read
@@ -42,23 +42,20 @@ jobs:
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
         compiler:
-          - gcc
+          - gcc-11
         build_type:
           - Debug
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
-
     - name: Setup Cache
       uses: ./.github/actions/setup_cache
       with:
         compiler: ${{ matrix.compiler }}
         build_type: ${{ matrix.build_type }}
-        doxygen: "OFF"
-
     - name: Setup Cpp
       uses: aminya/setup-cpp@v1
       with:
@@ -66,43 +63,29 @@ jobs:
         vcvarsall: ${{ contains(matrix.os, 'windows' )}}
         cmake: true
         brew: true
-        conan: true
-        ccache: true
-        gcovr: true
-
+        conan: "2.6.0"
+        gcovr: "7.2"
     - name: Setup Linux
       run: |
         sudo apt install -y libglfw3-dev libglfw3
-
-    - name: Cleanup Conan system packages (they are not properly cached)
+    - name: Create default Conan profile
       run: |
-        conan remove -f '*/system'
-
+        conan profile detect --force
     - name: Installing conan dependencies
       run: |
-        conan install . --build=missing -s build_type=${{matrix.build_type}}
+        conan install . --build=missing -s build_type=${{matrix.build_type}} -s compiler.cppstd=17
     - name: Configure CMake
       run: |
         cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ matrix.build_type == 'Debug' }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
-
-        # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-        # queries: security-extended,security-and-quality
-
     - name: Build
       run: |
         cmake --build ./build --config ${{matrix.build_type}}
-
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
         config-file: ./.github/codeql/codeql-config.yml

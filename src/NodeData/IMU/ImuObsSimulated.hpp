@@ -33,6 +33,10 @@ class ImuObsSimulated final : public ImuObsWDelta
         return "ImuObsSimulated";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -62,7 +66,7 @@ class ImuObsSimulated final : public ImuObsWDelta
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 30; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return ImuObsWDelta::GetStaticDescriptorCount() + 12; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -76,54 +80,89 @@ class ImuObsSimulated final : public ImuObsWDelta
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObsWDelta::GetStaticDescriptorCount()) { return ImuObsWDelta::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Time since startup [ns]
-        case 1:  // Accel X [m/s^2]
-        case 2:  // Accel Y [m/s^2]
-        case 3:  // Accel Z [m/s^2]
-        case 4:  // Gyro X [rad/s]
-        case 5:  // Gyro Y [rad/s]
-        case 6:  // Gyro Z [rad/s]
-        case 7:  // Mag X [Gauss]
-        case 8:  // Mag Y [Gauss]
-        case 9:  // Mag Z [Gauss]
-        case 10: // Temperature [°C]
-        case 11: // dTime [s]
-        case 12: // dTheta X [deg]
-        case 13: // dTheta Y [deg]
-        case 14: // dTheta Z [deg]
-        case 15: // dVelocity X [m/s]
-        case 16: // dVelocity Y [m/s]
-        case 17: // dVelocity Z [m/s]
-            return ImuObsWDelta::getValueAt(idx);
-        case 18: // AccelDynamicsN [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 0: // AccelDynamicsN [m/s^2]
             return n_accelDynamics.x();
-        case 19: // AccelDynamicsE [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 1: // AccelDynamicsE [m/s^2]
             return n_accelDynamics.y();
-        case 20: // AccelDynamicsD [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 2: // AccelDynamicsD [m/s^2]
             return n_accelDynamics.z();
-        case 21: // AngularRateN (ω_nb_n) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 3: // AngularRateN (ω_nb_n) [rad/s]
             return n_angularRateDynamics.x();
-        case 22: // AngularRateE (ω_nb_n) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 4: // AngularRateE (ω_nb_n) [rad/s]
             return n_angularRateDynamics.y();
-        case 23: // AngularRateD (ω_nb_n) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 5: // AngularRateD (ω_nb_n) [rad/s]
             return n_angularRateDynamics.z();
-        case 24: // AccelDynamicsX ECEF [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 6: // AccelDynamicsX ECEF [m/s^2]
             return e_accelDynamics.x();
-        case 25: // AccelDynamicsY ECEF [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 7: // AccelDynamicsY ECEF [m/s^2]
             return e_accelDynamics.y();
-        case 26: // AccelDynamicsZ ECEF [m/s^2]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 8: // AccelDynamicsZ ECEF [m/s^2]
             return e_accelDynamics.z();
-        case 27: // AngularRateX ECEF (ω_nb_e) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 9: // AngularRateX ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.x();
-        case 28: // AngularRateY ECEF (ω_nb_e) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 10: // AngularRateY ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.y();
-        case 29: // AngularRateZ ECEF (ω_nb_e) [rad/s]
+        case ImuObsWDelta::GetStaticDescriptorCount() + 11: // AngularRateZ ECEF (ω_nb_e) [rad/s]
             return e_angularRateDynamics.z();
         default:
             return std::nullopt;
         }
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObsWDelta::GetStaticDescriptorCount()) { return ImuObsWDelta::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case ImuObsWDelta::GetStaticDescriptorCount() + 0: // AccelDynamicsN [m/s^2]
+            n_accelDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 1: // AccelDynamicsE [m/s^2]
+            n_accelDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 2: // AccelDynamicsD [m/s^2]
+            n_accelDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 3: // AngularRateN (ω_nb_n) [rad/s]
+            n_angularRateDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 4: // AngularRateE (ω_nb_n) [rad/s]
+            n_angularRateDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 5: // AngularRateD (ω_nb_n) [rad/s]
+            n_angularRateDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 6: // AccelDynamicsX ECEF [m/s^2]
+            e_accelDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 7: // AccelDynamicsY ECEF [m/s^2]
+            e_accelDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 8: // AccelDynamicsZ ECEF [m/s^2]
+            e_accelDynamics.z() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 9: // AngularRateX ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.x() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 10: // AngularRateY ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.y() = value;
+            break;
+        case ImuObsWDelta::GetStaticDescriptorCount() + 11: // AngularRateZ ECEF (ω_nb_e) [rad/s]
+            e_angularRateDynamics.z() = value;
+            break;
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /// The acceleration derived from the trajectory in [m/s^2], given in the NED frame.

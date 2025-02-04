@@ -21,8 +21,8 @@ namespace nm = NAV::NodeManager;
 #include "data/SpirentAsciiSatelliteData.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -31,7 +31,9 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::EphemerisTests
 {
@@ -138,16 +140,35 @@ void testNavFile(DataSource dataSource, const std::string& navDataPath, const st
                 LOG_TRACE("    reference: {} ", line);
 
                 double psr = std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_P_Range_Group_A) + grp : size_t(SkydelSatData_PSR)]);
-                LOG_TRACE("    psr {} [m]", psr);
+                LOG_TRACE("    psr{} {} [m]",
+                          dataSource == Skydel
+                              ? ""
+                              : (grp == 0
+                                     ? "_A"
+                                     : (grp == 1
+                                            ? "_B"
+                                            : (grp == 2
+                                                   ? "_C"
+                                                   : (grp == 3
+                                                          ? "_D"
+                                                          : (grp == 4
+                                                                 ? "_E"
+                                                                 : (grp == 5
+                                                                        ? "_F"
+                                                                        : "_A")))))),
+                          psr);
 
                 auto satClk = satNav->calcClockCorrections(recvTime, psr, satSigId.freq());
-                LOG_TRACE("    clkBias           {}", satClk.bias);
                 if (dataSource == Skydel)
                 {
                     double clkCorrection_ref = std::stod(v[SkydelSatData_Clock_Correction]);
-                    LOG_TRACE("    clkCorrection_ref {}", clkCorrection_ref);
-                    LOG_TRACE("    clkBias - ref {:e}", satClk.bias - clkCorrection_ref);
-                    REQUIRE_THAT(satClk.bias - clkCorrection_ref, Catch::Matchers::WithinAbs(0.0, margin.clock));
+                    if (std::abs(satClk.bias - clkCorrection_ref) > margin.clock)
+                    {
+                        LOG_TRACE("    clkBias           {}", satClk.bias);
+                        LOG_TRACE("    clkCorrection_ref {}", clkCorrection_ref);
+                        LOG_TRACE("    clkBias - ref {:e}", satClk.bias - clkCorrection_ref);
+                    }
+                    CHECK_THAT(satClk.bias - clkCorrection_ref, Catch::Matchers::WithinAbs(0.0, margin.clock));
                 }
 
                 auto pos = satNav->calcSatellitePos(satClk.transmitTime);
@@ -157,18 +178,21 @@ void testNavFile(DataSource dataSource, const std::string& navDataPath, const st
                     auto dt = static_cast<double>((recvTime - satClk.transmitTime).count());
 
                     // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
-                    data = Eigen::AngleAxisd(InsConst<>::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
+                    data = Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * data;
                 };
 
                 Eigen::Vector3d e_refPos(std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_X) : size_t(SkydelSatData_ECEF_X)]),
                                          std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Y) : size_t(SkydelSatData_ECEF_Y)]),
                                          std::stod(v[dataSource == Spirent ? size_t(SpirentAsciiSatelliteData_Sat_Pos_Z) : size_t(SkydelSatData_ECEF_Z)]));
                 if (dataSource == Spirent) { rotateDataFrame(e_refPos); }
-                LOG_TRACE("    e_refPos {}", e_refPos.transpose());
-                LOG_TRACE("    pos      {}", pos.e_pos.transpose());
-                LOG_TRACE("      pos - e_refPos   = {}", (pos.e_pos - e_refPos).transpose());
-                LOG_TRACE("    | pos - e_refPos | = {:e}", (pos.e_pos - e_refPos).norm());
-                REQUIRE_THAT((pos.e_pos - e_refPos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
+                if ((pos.e_pos - e_refPos).norm() > margin.pos)
+                {
+                    LOG_TRACE("    e_refPos {}", e_refPos.transpose());
+                    LOG_TRACE("    pos      {}", pos.e_pos.transpose());
+                    LOG_TRACE("      pos - e_refPos   = {}", (pos.e_pos - e_refPos).transpose());
+                    LOG_TRACE("    | pos - e_refPos | = {:e}", (pos.e_pos - e_refPos).norm());
+                }
+                CHECK_THAT((pos.e_pos - e_refPos).norm(), Catch::Matchers::WithinAbs(0.0, margin.pos));
 
                 if (dataSource == Spirent)
                 {
@@ -179,11 +203,14 @@ void testNavFile(DataSource dataSource, const std::string& navDataPath, const st
                                              std::stod(v[SpirentAsciiSatelliteData_Sat_Vel_Y]),
                                              std::stod(v[SpirentAsciiSatelliteData_Sat_Vel_Z]));
                     rotateDataFrame(e_refVel);
-                    LOG_TRACE("    vel      {}", posVel.e_vel.transpose());
-                    LOG_TRACE("    e_refVel {}", e_refVel.transpose());
-                    LOG_TRACE("      vel - e_refVel   = {}", (posVel.e_vel - e_refVel).transpose());
-                    LOG_TRACE("    | vel - e_refVel | = {:e}", (posVel.e_vel - e_refVel).norm());
-                    REQUIRE_THAT((posVel.e_vel - e_refVel).norm(), Catch::Matchers::WithinAbs(0.0, margin.vel));
+                    if ((posVel.e_vel - e_refVel).norm() > margin.vel)
+                    {
+                        LOG_TRACE("    vel      {}", posVel.e_vel.transpose());
+                        LOG_TRACE("    e_refVel {}", e_refVel.transpose());
+                        LOG_TRACE("      vel - e_refVel   = {}", (posVel.e_vel - e_refVel).transpose());
+                        LOG_TRACE("    | vel - e_refVel | = {:e}", (posVel.e_vel - e_refVel).norm());
+                    }
+                    CHECK_THAT((posVel.e_vel - e_refVel).norm(), Catch::Matchers::WithinAbs(0.0, margin.vel));
 
                     auto posVelAccel = satNav->calcSatellitePosVelAccel(satClk.transmitTime);
                     REQUIRE(posVel.e_pos == posVelAccel.e_pos);
@@ -193,11 +220,14 @@ void testNavFile(DataSource dataSource, const std::string& navDataPath, const st
                                              std::stod(v[SpirentAsciiSatelliteData_Sat_Acc_Y]),
                                              std::stod(v[SpirentAsciiSatelliteData_Sat_Acc_Z]));
                     rotateDataFrame(e_refAcc);
-                    LOG_TRACE("    acc      {}", posVelAccel.e_accel.transpose());
-                    LOG_TRACE("    e_refAcc {}", e_refAcc.transpose());
-                    LOG_TRACE("      acc - e_refAcc   = {}", (posVelAccel.e_accel - e_refAcc).transpose());
-                    LOG_TRACE("    | acc - e_refAcc | = {:e}", (posVelAccel.e_accel - e_refAcc).norm());
-                    REQUIRE_THAT((posVelAccel.e_accel - e_refAcc).norm(), Catch::Matchers::WithinAbs(0.0, margin.accel));
+                    if ((posVelAccel.e_accel - e_refAcc).norm() > margin.accel)
+                    {
+                        LOG_TRACE("    acc      {}", posVelAccel.e_accel.transpose());
+                        LOG_TRACE("    e_refAcc {}", e_refAcc.transpose());
+                        LOG_TRACE("      acc - e_refAcc   = {}", (posVelAccel.e_accel - e_refAcc).transpose());
+                        LOG_TRACE("    | acc - e_refAcc | = {:e}", (posVelAccel.e_accel - e_refAcc).norm());
+                    }
+                    CHECK_THAT((posVelAccel.e_accel - e_refAcc).norm(), Catch::Matchers::WithinAbs(0.0, margin.accel));
                 }
                 somethingChecked = true;
             }

@@ -114,7 +114,7 @@ extern std::vector<Colormap> ColormapsGlobal;
 extern std::vector<Colormap> ColormapsFlow;
 
 /// @brief Type of the Colormap mask
-enum class ColormapMaskType : int
+enum class ColormapMaskType : uint8_t
 {
     None,   ///< Do not use a colormap mask
     Global, ///< Use the global colormap

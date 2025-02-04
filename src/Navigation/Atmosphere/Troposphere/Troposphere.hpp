@@ -16,6 +16,7 @@
 
 #include <array>
 #include <Eigen/Core>
+#include <fmt/format.h>
 
 #include "ZenithDelay.hpp"
 #include "Navigation/Time/InsTime.hpp"
@@ -30,13 +31,13 @@ namespace NAV
 /// @brief Atmospheric model selection for temperature, pressure and water vapor
 struct AtmosphereModels
 {
-    PressureModel pressureModel = PressureModel::ISA;          ///< Pressure model
-    TemperatureModel temperatureModel = TemperatureModel::ISA; ///< Temperature model
-    WaterVaporModel waterVaporModel = WaterVaporModel::ISA;    ///< WaterVapor model
+    PressureModel pressureModel = PressureModel::ISA;           ///< Pressure model
+    TemperatureModel temperatureModel{ TemperatureModel::ISA }; ///< Temperature model
+    WaterVaporModel waterVaporModel = WaterVaporModel::ISA;     ///< WaterVapor model
 };
 
 /// Available Troposphere delay models
-enum class TroposphereModel : int
+enum class TroposphereModel : uint8_t
 {
     None,         ///< Troposphere Model turned off
     Saastamoinen, ///< Saastamoinen model
@@ -46,11 +47,12 @@ enum class TroposphereModel : int
 };
 
 /// Available Mapping Functions
-enum class MappingFunction : int
+enum class MappingFunction : uint8_t
 {
     None,     ///< Mapping Function turned off (= 1)
     Cosecant, ///< Cosecant of elevation
     GMF,      ///< Global Mapping Function (GMF)
+    NMF,      ///< Niell Mapping Function (NMF)
     VMF_GPT2, ///< Vienna Mapping Function based on the GPT2 grid
     VMF_GPT3, ///< Vienna Mapping Function based on the GPT3 grid
     COUNT,    ///< Amount of items in the enum
@@ -65,9 +67,9 @@ struct TroposphereModelSelection
     std::pair<TroposphereModel, AtmosphereModels> zwdModel = std::make_pair(TroposphereModel::Saastamoinen, AtmosphereModels{});
 
     /// Mapping function ZHD, atmosphere models
-    std::pair<MappingFunction, AtmosphereModels> zhdMappingFunction = std::make_pair(MappingFunction::Cosecant, AtmosphereModels{});
+    std::pair<MappingFunction, AtmosphereModels> zhdMappingFunction = std::make_pair(MappingFunction::GMF, AtmosphereModels{});
     /// Mapping function ZWD, atmosphere models
-    std::pair<MappingFunction, AtmosphereModels> zwdMappingFunction = std::make_pair(MappingFunction::Cosecant, AtmosphereModels{});
+    std::pair<MappingFunction, AtmosphereModels> zwdMappingFunction = std::make_pair(MappingFunction::GMF, AtmosphereModels{});
 };
 
 /// @brief Converts the enum to a string
@@ -92,9 +94,10 @@ bool ComboTroposphereModel(const char* label, TroposphereModelSelection& troposp
 /// @param[in] elevation Satellite elevation [rad]
 /// @param[in] azimuth Satellite azimuth [rad]
 /// @param[in] troposphereModels Models to use for each calculation
+/// @param[in] nameId Name and Id of the node used for log messages only
 /// @return ZHD, ZWD and mapping factors for ZHD and ZWD
 ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen::Vector3d& lla_pos, double elevation, double azimuth,
-                                            const TroposphereModelSelection& troposphereModels);
+                                            const TroposphereModelSelection& troposphereModels, const std::string& nameId);
 
 /// @brief Calculates the tropospheric error variance
 /// @param[in] dpsr_T Tropospheric propagation error [m]
@@ -121,3 +124,37 @@ void to_json(json& j, const TroposphereModelSelection& obj);
 void from_json(const json& j, TroposphereModelSelection& obj);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::TroposphereModel> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::TroposphereModel& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::MappingFunction> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::MappingFunction& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};
+
+#endif

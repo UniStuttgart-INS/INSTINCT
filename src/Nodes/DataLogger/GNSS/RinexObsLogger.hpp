@@ -16,6 +16,7 @@
 #include <set>
 
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/DynamicInputPins.hpp"
 
 #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
 
@@ -71,6 +72,14 @@ class RinexObsLogger : public Node, public FileWriter
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
+
     /// @brief Update the file header and eventually rewrite the file
     /// @param[in] oldTimeSys Old time system before this epoch
     void updateFileHeader(TimeSystem oldTimeSys);
@@ -85,6 +94,10 @@ class RinexObsLogger : public Node, public FileWriter
 
     /// Header information
     vendor::RINEX::ObsHeader _header;
+
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 0, this, pinAddCallback, pinDeleteCallback };
 };
 
 } // namespace NAV

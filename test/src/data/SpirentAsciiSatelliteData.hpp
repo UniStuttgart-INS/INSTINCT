@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <functional>
 #include <vector>
@@ -26,7 +27,7 @@ namespace NAV::TESTS
 {
 
 /// @brief Spirent ASCII satellite data parameters file description
-enum SpirentAsciiSatelliteData_ : size_t
+enum SpirentAsciiSatelliteData_ : uint8_t
 {
     SpirentAsciiSatelliteData_Time_ms,               ///< Time_ms
     SpirentAsciiSatelliteData_Channel,               ///< Channel
@@ -109,10 +110,10 @@ struct SpirentAsciiSatelliteData
 
         // The Spirent reference frame is rotated by the signal transmit time
         auto rotateDataFrame = [&v](const Eigen::Vector3d& e_satPos) -> Eigen::Vector3d {
-            auto dt = std::stod(v[SpirentAsciiSatelliteData_Range]) / InsConst<>::C;
+            auto dt = std::stod(v[SpirentAsciiSatelliteData_Range]) / InsConst::C;
 
             // see \cite SpringerHandbookGNSS2017 Springer Handbook GNSS ch. 21.2, eq. 21.18, p. 610
-            return Eigen::AngleAxisd(InsConst<>::omega_ie * dt, Eigen::Vector3d::UnitZ()) * e_satPos;
+            return Eigen::AngleAxisd(InsConst::omega_ie * dt, Eigen::Vector3d::UnitZ()) * e_satPos;
         };
 
         satId = SatId{ satSys, satNum };
@@ -138,13 +139,13 @@ struct SpirentAsciiSatelliteData
         P_Range_Group_E = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_E]);
         P_Range_Group_F = std::stod(v[SpirentAsciiSatelliteData_P_Range_Group_F]);
         P_R_rate = std::stod(v[SpirentAsciiSatelliteData_P_R_rate]);
-        Iono_delay_Group_A = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_A]) * InsConst<>::C;
-        Iono_delay_Group_B = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_B]) * InsConst<>::C;
-        Iono_delay_Group_C = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_C]) * InsConst<>::C;
-        Iono_delay_Group_D = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_D]) * InsConst<>::C;
-        Iono_delay_Group_E = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_E]) * InsConst<>::C;
-        Iono_delay_Group_F = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_F]) * InsConst<>::C;
-        Tropo_delay = std::stod(v[SpirentAsciiSatelliteData_Tropo_delay]) * InsConst<>::C;
+        Iono_delay_Group_A = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_A]) * InsConst::C;
+        Iono_delay_Group_B = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_B]) * InsConst::C;
+        Iono_delay_Group_C = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_C]) * InsConst::C;
+        Iono_delay_Group_D = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_D]) * InsConst::C;
+        Iono_delay_Group_E = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_E]) * InsConst::C;
+        Iono_delay_Group_F = std::stod(v[SpirentAsciiSatelliteData_Iono_delay_Group_F]) * InsConst::C;
+        Tropo_delay = std::stod(v[SpirentAsciiSatelliteData_Tropo_delay]) * InsConst::C;
         P_R_Error = std::stod(v[SpirentAsciiSatelliteData_P_R_Error]);
         Signal_dB_Group_A = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_A]);
         Signal_dB_Group_B = std::stod(v[SpirentAsciiSatelliteData_Signal_dB_Group_B]);
@@ -180,12 +181,14 @@ struct SpirentAsciiSatelliteData
         case G01:
         case E01:
         case R01:
+        case B02:
         case J01:
         case I09:
         case S01:
             return 0; // Group A (L1/E1/S/B1I)
         case G02:
         case R02:
+        case B07:
         case J02:
             return 1; // Group B (L2/E6/B2I)
         case G05:
@@ -195,11 +198,12 @@ struct SpirentAsciiSatelliteData
         case I05:
         case S05:
             return 2; // Group C (L5/E5/B2A/C1)
+        case B01:
         case J06:
             return 3; // Group D (L6/B1C/C2)
         case B06:
             return 4; // Group E (B3I/C3)
-        case B07:
+        case B08:
             return 5; // Group F (B2b)
 
         case Freq_None:
@@ -209,9 +213,6 @@ struct SpirentAsciiSatelliteData
         case E06:
         case E07:
         case E08:
-        case B01:
-        case B02:
-        case B08:
             break;
         }
 
@@ -444,7 +445,7 @@ struct SpirentSatDataFile
     /// @return The data or none if not found
     [[nodiscard]] std::optional<std::reference_wrapper<const SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId) const
     {
-        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+        auto iter = std::ranges::find_if(refData, [&](const SpirentAsciiSatelliteData& spirentSatData) {
             return spirentSatData.recvTime == recvTime
                    && spirentSatData.satId == satId;
         });
@@ -461,7 +462,7 @@ struct SpirentSatDataFile
     /// @return The data or none if not found
     std::optional<std::reference_wrapper<SpirentAsciiSatelliteData>> get(InsTime recvTime, SatId satId)
     {
-        auto iter = std::find_if(refData.begin(), refData.end(), [&](const SpirentAsciiSatelliteData& spirentSatData) {
+        auto iter = std::ranges::find_if(refData, [&](const SpirentAsciiSatelliteData& spirentSatData) {
             return spirentSatData.recvTime == recvTime
                    && spirentSatData.satId == satId;
         });

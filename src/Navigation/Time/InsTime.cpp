@@ -63,41 +63,32 @@ InsTime_YDoySod::operator std::string() const
 
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime)
 {
-    return os << insTime.toYMDHMS() << " (" << insTime.toGPSweekTow() << ")";
+    return os << fmt::format("{}", insTime);
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_MJD& mjd)
 {
-    return os << "day=" << mjd.mjd_day << ", frac=" << std::setprecision(20) << mjd.mjd_frac;
+    return os << fmt::format("{}", mjd);
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_JD& jd)
 {
-    return os << "day=" << jd.jd_day << ", frac=" << std::setprecision(20) << jd.jd_frac;
+    return os << fmt::format("{}", jd);
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_GPSweekTow& gpsWeekTow)
 {
-    return os << "cycle=" << gpsWeekTow.gpsCycle
-              << ", week=" << gpsWeekTow.gpsWeek
-              << ", tow=" << std::setprecision(20) << gpsWeekTow.tow;
+    return os << fmt::format("{}", gpsWeekTow);
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_YMDHMS& ymdhms)
 {
-    return os << ymdhms.year << "-"
-              << ymdhms.month << "-"
-              << ymdhms.day << " "
-              << ymdhms.hour << ":"
-              << ymdhms.min << ":"
-              << std::setprecision(5) << ymdhms.sec;
+    return os << fmt::format("{}", ymdhms);
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_YDoySod& yDoySod)
 {
-    return os << "year=" << yDoySod.year
-              << ", doy=" << yDoySod.doy
-              << ", sod=" << std::setprecision(20) << yDoySod.sod;
+    return os << fmt::format("{}", yDoySod);
 }
 
 void to_json(json& j, const InsTime& insTime)

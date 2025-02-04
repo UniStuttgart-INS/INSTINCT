@@ -59,6 +59,11 @@ void NAV::MatrixLogger::guiConfig()
         flow::ApplyChanges();
         doDeinitialize();
     }
+
+    if (CommonLog::ShowOriginInput(nameId().c_str()))
+    {
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::MatrixLogger::save() const

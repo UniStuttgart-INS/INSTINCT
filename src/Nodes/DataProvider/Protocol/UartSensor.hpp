@@ -26,7 +26,7 @@ class UartSensor
 {
   public:
     /// Available Baudrates
-    enum Baudrate
+    enum Baudrate : uint32_t
     {
         BAUDRATE_FASTEST = 0,     ///< Fastest possible Baudrate will be automatically chosen
         BAUDRATE_9600 = 9600,     ///< Baudrate with   9600 symbols per second [Baud]

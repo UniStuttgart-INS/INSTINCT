@@ -79,6 +79,20 @@ void RegisterNodeTypes();
 /// @brief Register all available NodeData types for the program
 void RegisterNodeDataTypes();
 
+/// @brief Returns a vector of data descriptors for the pin data identifiers
+/// @param dataIdentifier List of data identifiers
+/// @return List of data descriptors
+std::vector<std::string> GetStaticDataDescriptors(const std::vector<std::string>& dataIdentifier);
+
+/// @brief Wether the specified Node Data Type can have dynamic data
+/// @param[in] type The Child Node Data Type
+bool TypeHasDynamicData(const std::string& type);
+
+/// @brief Creates a copy of the data
+/// @param nodeData Node data to copy
+/// @return Copied data
+std::shared_ptr<NodeData> CopyNodeData(const std::shared_ptr<const NodeData>& nodeData);
+
 } // namespace NodeRegistry
 
 } // namespace NAV

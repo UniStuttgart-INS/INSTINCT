@@ -32,8 +32,8 @@ namespace nm = NAV::NodeManager;
 #include "util/Container/CartesianProduct.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -43,13 +43,17 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "util/Logger/CommonLog.hpp"
 
 namespace NAV::TESTS::LooselyCoupledKFTests
+{
+namespace
 {
 
 void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, size_t MESSAGE_COUNT_GNSS_FIX, size_t MESSAGE_COUNT_IMU, size_t MESSAGE_COUNT_IMU_FIX)
@@ -190,6 +194,8 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
     },
                           settings);
 }
+
+} // namespace
 
 TEST_CASE("[LooselyCoupledKF][flow] Test flow with IMU data arriving before GNSS data", "[LooselyCoupledKF][flow]")
 {

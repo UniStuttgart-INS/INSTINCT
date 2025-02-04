@@ -8,124 +8,46 @@
 
 #include "Frequency.hpp"
 
-#include "util/Assert.h"
+#include <algorithm>
 #include <cmath>
 #include <imgui.h>
 #include <imgui_internal.h>
+
+#include "util/Assert.h"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
 
 Frequency Frequency::fromString(const std::string& typeString)
 {
-    if (typeString == "B1")
-    {
-        return B01;
-    }
-    if (typeString == "B2")
-    {
-        return B08;
-    }
-    if (typeString == "B3")
-    {
-        return B06;
-    }
-    if (typeString == "B1-2")
-    {
-        return B02;
-    }
-    if (typeString == "B2a")
-    {
-        return B05;
-    }
-    if (typeString == "B2b")
-    {
-        return B07;
-    }
-    if (typeString == "E1")
-    {
-        return E01;
-    }
-    if (typeString == "E5a")
-    {
-        return E05;
-    }
-    if (typeString == "E6")
-    {
-        return E06;
-    }
-    if (typeString == "E5b")
-    {
-        return E07;
-    }
-    if (typeString == "E5")
-    {
-        return E08;
-    }
-    if (typeString == "L1")
-    {
-        return G01;
-    }
-    if (typeString == "L2")
-    {
-        return G02;
-    }
-    if (typeString == "L5")
-    {
-        return G05;
-    }
-    if (typeString == "I5")
-    {
-        return I05;
-    }
-    if (typeString == "IS")
-    {
-        return I09;
-    }
-    if (typeString == "Q1")
-    {
-        return J01;
-    }
-    if (typeString == "Q2")
-    {
-        return J02;
-    }
-    if (typeString == "Q5")
-    {
-        return J05;
-    }
-    if (typeString == "Q6" || typeString == "QLEX")
-    {
-        return J06;
-    }
-    if (typeString == "G1")
-    {
-        return R01;
-    }
-    if (typeString == "G2")
-    {
-        return R02;
-    }
-    if (typeString == "G3")
-    {
-        return R03;
-    }
-    if (typeString == "G1a")
-    {
-        return R04;
-    }
-    if (typeString == "G2a")
-    {
-        return R06;
-    }
-    if (typeString == "S1")
-    {
-        return S01;
-    }
-    if (typeString == "S5")
-    {
-        return S05;
-    }
+    if (typeString == "B1" || typeString == "B01" || typeString == "C01") { return B01; }
+    if (typeString == "B2" || typeString == "B08" || typeString == "C08") { return B08; }
+    if (typeString == "B3" || typeString == "B06" || typeString == "C06") { return B06; }
+    if (typeString == "B1-2" || typeString == "B02" || typeString == "C02") { return B02; }
+    if (typeString == "B2a" || typeString == "B05" || typeString == "C05") { return B05; }
+    if (typeString == "B2b" || typeString == "B07" || typeString == "C07") { return B07; }
+    if (typeString == "E1" || typeString == "E01") { return E01; }
+    if (typeString == "E5a" || typeString == "E05") { return E05; }
+    if (typeString == "E6" || typeString == "E06") { return E06; }
+    if (typeString == "E5b" || typeString == "E07") { return E07; }
+    if (typeString == "E5" || typeString == "E08") { return E08; }
+    if (typeString == "L1" || typeString == "G01") { return G01; }
+    if (typeString == "L2" || typeString == "G02") { return G02; }
+    if (typeString == "L5" || typeString == "G05") { return G05; }
+    if (typeString == "I5" || typeString == "I05") { return I05; }
+    if (typeString == "IS" || typeString == "I09") { return I09; }
+    if (typeString == "Q1" || typeString == "J01") { return J01; }
+    if (typeString == "Q2" || typeString == "J02") { return J02; }
+    if (typeString == "Q5" || typeString == "J05") { return J05; }
+    if (typeString == "Q6" || typeString == "QLEX" || typeString == "J06") { return J06; }
+    if (typeString == "G1" || typeString == "R01") { return R01; }
+    if (typeString == "G2" || typeString == "R02") { return R02; }
+    if (typeString == "G3" || typeString == "R03") { return R03; }
+    if (typeString == "G1a" || typeString == "R04") { return R04; }
+    if (typeString == "G2a" || typeString == "R06") { return R06; }
+    if (typeString == "S1" || typeString == "S01") { return S01; }
+    if (typeString == "S5" || typeString == "S05") { return S05; }
 
     return Freq_None;
 }
@@ -540,6 +462,38 @@ Frequency::Enum Frequency::toEnumeration() const
     return ToEnumeration(*this);
 }
 
+std::vector<Frequency> Frequency::ToVector(Frequency freq)
+{
+    std::vector<Frequency> v;
+    for (const Frequency& f : GetAll())
+    {
+        if (f.value & freq.value) { v.push_back(f); }
+    }
+    return v;
+}
+
+std::vector<Frequency> Frequency::toVector() const
+{
+    return ToVector(value);
+}
+
+bool Frequency::IsFirstFrequency(const Frequency& freq, const Frequency& filter)
+{
+    return freq.isFirstFrequency(filter);
+}
+
+bool Frequency::isFirstFrequency(const Frequency& filter) const
+{
+    Frequency_ f = filter & getSatSys();
+    f = Frequency_(f ^ value);
+
+    if (f == Freq_None) { return true; }
+
+    auto frequencies = Frequency(f).toVector();
+    return std::ranges::all_of(frequencies,
+                               [&](const Frequency& freq) { return value < Frequency_(freq); });
+}
+
 void to_json(json& j, const Frequency& data)
 {
     j = std::string(data);
@@ -573,7 +527,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
                         continue;
                     }
                     ImGui::TableSetColumnIndex(c);
-                    if (c >= 3)
+                    if (c >= 5)
                     {
                         ImGui::BeginDisabled();
                     }
@@ -595,7 +549,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
                             valueChanged = true;
                         }
                     }
-                    if (c >= 3)
+                    if (c >= 5)
                     {
                         ImGui::EndDisabled();
                     }

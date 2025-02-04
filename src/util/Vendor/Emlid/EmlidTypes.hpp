@@ -23,14 +23,14 @@
 namespace NAV::vendor::emlid
 {
 /// @brief Error detection modes available
-enum ErrorDetectionMode
+enum ErrorDetectionMode : uint8_t
 {
     ERRORDETECTIONMODE_NONE,     ///< No error detection is used
     ERRORDETECTIONMODE_CHECKSUM, ///< 16-bit checksum is used
 };
 
 /// @brief The available ERB Message IDs
-enum ErbMessageID
+enum ErbMessageID : uint8_t
 {
     ERB_MessageId_NONE = 0x00, ///< No Message Class specified
     ERB_MessageId_VER = 0x01,  ///< Version of protocol

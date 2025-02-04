@@ -7,24 +7,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "PinIcon.hpp"
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
-namespace PinIcon = NAV::gui::widgets::PinIcon;
-
-void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::Type type, bool filled, ImU32 color, ImU32 innerColor);
-
-void NAV::gui::widgets::PinIcon::Draw(const ImVec2& size, Type type, bool filled, const ImVec4& color /* = ImVec4(1, 1, 1, 1)*/, const ImVec4& innerColor /* = ImVec4(0, 0, 0, 0)*/)
+namespace NAV::gui::widgets::PinIcon
 {
-    if (ImGui::IsRectVisible(size))
-    {
-        auto cursorPos = ImGui::GetCursorScreenPos();
-        auto* drawList = ImGui::GetWindowDrawList();
-        DrawIcon(drawList, cursorPos, cursorPos + size, type, filled, ImColor(color), ImColor(innerColor));
-    }
-
-    ImGui::Dummy(size);
-}
+namespace
+{
 
 void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::Type type, bool filled, ImU32 color, ImU32 innerColor)
 {
@@ -257,4 +245,19 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
                 color);
         }
     }
+}
+
+} // namespace
+} // namespace NAV::gui::widgets::PinIcon
+
+void NAV::gui::widgets::PinIcon::Draw(const ImVec2& size, Type type, bool filled, const ImVec4& color /* = ImVec4(1, 1, 1, 1)*/, const ImVec4& innerColor /* = ImVec4(0, 0, 0, 0)*/)
+{
+    if (ImGui::IsRectVisible(size))
+    {
+        auto cursorPos = ImGui::GetCursorScreenPos();
+        auto* drawList = ImGui::GetWindowDrawList();
+        DrawIcon(drawList, cursorPos, cursorPos + size, type, filled, ImColor(color), ImColor(innerColor));
+    }
+
+    ImGui::Dummy(size);
 }

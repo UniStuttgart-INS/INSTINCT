@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GLONASSEphemeris.hpp"
 
@@ -35,7 +37,7 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22g = {
     .satelliteSystems = { GLO },
     .ionosphericCorrections = {},
     .timeSysCorr = {
-        { { GLNT, UTC }, { 0.139698386192e-08, 0.0 } },
+        { { GLNT, UTC }, { .a0 = 0.139698386192e-08, .a1 = 0.0 } },
     },
     .m_satellites = {
         { { GLO, 24 }, Satellite{

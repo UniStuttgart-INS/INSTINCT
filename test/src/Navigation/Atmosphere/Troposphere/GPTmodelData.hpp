@@ -20,6 +20,8 @@
 
 namespace NAV::TESTS::GPTmodels
 {
+// NOLINTBEGIN
+
 /// GPT2/3_Series: defining station coordinates and epochs for calculation
 const Eigen::Vector3d GRAZ{ 47.0671 * M_PI / 180.0, 15.4935 * M_PI / 180.0, 538.30 };
 
@@ -708,5 +710,7 @@ const Eigen::Matrix<double, 19, 36> GPT3ref_Ge_w = [] {
 
     return tmp;
 }();
+
+// NOLINTEND
 
 } // namespace NAV::TESTS::GPTmodels

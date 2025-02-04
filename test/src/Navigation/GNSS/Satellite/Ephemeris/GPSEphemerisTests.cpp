@@ -21,6 +21,7 @@ namespace NAV::TESTS::EphemerisTests
 TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris]")
 {
     // G01 - Taken from real data
+    // NOLINTBEGIN
     GPSEphemeris eph(2023, 1, 8, 12, 0, 0, 2.270475961268e-04, -4.774847184308e-12, 0.000000000000e+00,
                      1.800000000000e+01, 4.412500000000e+01, 4.154815921903e-09, 9.534843171347e-02,
                      2.287328243256e-06, 1.217866723891e-02, 9.965151548386e-07, 5.153653379440e+03,
@@ -29,6 +30,7 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
                      1.185763677531e-10, 1.000000000000e+00, 2.244000000000e+03, 0.000000000000e+00,
                      2.000000000000e+00, 0.000000000000e+00, 4.656612873077e-09, 1.800000000000e+01,
                      3.601800000000e+04, 4.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |
@@ -247,6 +249,65 @@ TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent-SimGEN_static_duration-
     Margin marginL5{ .clock = 0, .pos = 1.1e-4, .vel = 8.4e-4, .accel = 8.1e-1 };
 
     std::string path = "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-none_tropo-none/sat_data_V1A1.csv";
+    std::vector<std::tuple<SatSigId, std::string, Margin>> files = {
+        { SatSigId(Code::G1C, 1), path, marginL1 },
+        { SatSigId(Code::G1C, 3), path, marginL1 },
+        { SatSigId(Code::G1C, 6), path, marginL1 },
+        { SatSigId(Code::G1C, 7), path, marginL1 },
+        { SatSigId(Code::G1C, 8), path, marginL1 },
+        { SatSigId(Code::G1C, 9), path, marginL1 },
+        { SatSigId(Code::G1C, 11), path, marginL1 },
+        { SatSigId(Code::G1C, 13), path, marginL1 },
+        { SatSigId(Code::G1C, 14), path, marginL1 },
+        { SatSigId(Code::G1C, 17), path, marginL1 },
+        { SatSigId(Code::G1C, 19), path, marginL1 },
+        { SatSigId(Code::G1C, 20), path, marginL1 },
+        { SatSigId(Code::G1C, 21), path, marginL1 },
+        { SatSigId(Code::G1C, 24), path, marginL1 },
+        { SatSigId(Code::G1C, 30), path, marginL1 },
+        { SatSigId(Code::G2C, 1), path, marginL2 },
+        { SatSigId(Code::G2C, 3), path, marginL2 },
+        { SatSigId(Code::G2C, 6), path, marginL2 },
+        { SatSigId(Code::G2C, 7), path, marginL2 },
+        { SatSigId(Code::G2C, 8), path, marginL2 },
+        { SatSigId(Code::G2C, 9), path, marginL2 },
+        { SatSigId(Code::G2C, 11), path, marginL2 },
+        { SatSigId(Code::G2C, 13), path, marginL2 },
+        { SatSigId(Code::G2C, 14), path, marginL2 },
+        { SatSigId(Code::G2C, 17), path, marginL2 },
+        { SatSigId(Code::G2C, 19), path, marginL2 },
+        { SatSigId(Code::G2C, 20), path, marginL2 },
+        { SatSigId(Code::G2C, 21), path, marginL2 },
+        { SatSigId(Code::G2C, 24), path, marginL2 },
+        { SatSigId(Code::G2C, 30), path, marginL2 },
+        { SatSigId(Code::G5X, 1), path, marginL5 },
+        { SatSigId(Code::G5X, 3), path, marginL5 },
+        { SatSigId(Code::G5X, 6), path, marginL5 },
+        { SatSigId(Code::G5X, 7), path, marginL5 },
+        { SatSigId(Code::G5X, 8), path, marginL5 },
+        { SatSigId(Code::G5X, 9), path, marginL5 },
+        { SatSigId(Code::G5X, 11), path, marginL5 },
+        { SatSigId(Code::G5X, 13), path, marginL5 },
+        { SatSigId(Code::G5X, 14), path, marginL5 },
+        { SatSigId(Code::G5X, 17), path, marginL5 },
+        { SatSigId(Code::G5X, 19), path, marginL5 },
+        { SatSigId(Code::G5X, 20), path, marginL5 },
+        { SatSigId(Code::G5X, 21), path, marginL5 },
+        { SatSigId(Code::G5X, 24), path, marginL5 },
+        { SatSigId(Code::G5X, 30), path, marginL5 },
+    };
+
+    testNavFile(Spirent, "GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Spirent_RINEX_GN.23N", files);
+}
+
+TEST_CASE("[Ephemeris] GPS Ephemeris calc orbit (Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast)", "[Ephemeris][flow]")
+{
+    // Margins determined by running the test and adapting
+    Margin marginL1{ .clock = 0, .pos = 9.1e-5, .vel = 8.4e-4, .accel = 8.1e-1 };
+    Margin marginL2{ .clock = 0, .pos = 2.4e-4, .vel = 8.4e-4, .accel = 8.1e-1 };
+    Margin marginL5{ .clock = 0, .pos = 2.9e-4, .vel = 8.4e-4, .accel = 8.1e-1 };
+
+    std::string path = "test/data/GNSS/Spirent-SimGEN_static_duration-4h_rate-5min_sys-GERCQI/Iono-Klob_tropo-Saast/sat_data_V1A1.csv";
     std::vector<std::tuple<SatSigId, std::string, Margin>> files = {
         { SatSigId(Code::G1C, 1), path, marginL1 },
         { SatSigId(Code::G1C, 3), path, marginL1 },

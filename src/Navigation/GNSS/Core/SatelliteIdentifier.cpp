@@ -9,11 +9,52 @@
 #include "SatelliteIdentifier.hpp"
 
 #include <imgui.h>
+#include <unordered_set>
+#include <algorithm>
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/BDSEphemeris.hpp"
+#include "Navigation/GNSS/Satellite/Ephemeris/QZSSEphemeris.hpp"
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
 namespace NAV
 {
+
+bool SatId::isGeo() const
+{
+    if (satSys == QZSS)
+    {
+        if (satNum == 3) { return true; }
+    }
+    else if (satSys == BDS)
+    {
+        if (satNum <= 5 || (satNum >= 59 && satNum <= 63)) { return true; }
+    }
+    else if (satSys == IRNSS)
+    {
+        if (std::unordered_set<uint16_t> sats = { 3, 6, 7 };
+            sats.contains(satNum)) { return true; }
+    }
+    return false;
+}
+
+bool lessCompareSatSigId(const std::string& lhs, const std::string& rhs)
+{
+    auto lhsSatSys = SatelliteSystem::fromChar(lhs.substr(0, 1).at(0));
+    auto rhsSatSys = SatelliteSystem::fromChar(rhs.substr(0, 1).at(0));
+    if (lhsSatSys == rhsSatSys)
+    {
+        auto lhsSatNum = std::stoi(lhs.substr(lhs.size() - 2, 2));
+        auto rhsSatNum = std::stoi(rhs.substr(rhs.size() - 2, 2));
+        if (lhsSatNum == rhsSatNum)
+        {
+            // Code, e.g. G1C-02
+            return lhs.substr(1, 2) < rhs.substr(1, 2);
+        }
+        return lhsSatNum < rhsSatNum;
+    }
+    return lhsSatSys < rhsSatSys;
+}
 
 void to_json(json& j, const SatId& data)
 {
@@ -75,16 +116,24 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
                 for (const auto& num : satSystem.getSatellites())
                 {
                     SatId satId{ satSystem, num };
-                    auto iter = std::find(satellites.begin(), satellites.end(), satId);
+                    auto iter = std::ranges::find(satellites, satId);
                     bool isExcluded = iter != satellites.end();
-                    if (!SatelliteSystem_(satSystem & filterSys)) { ImGui::BeginDisabled(); }
+                    if (!SatelliteSystem_(satSystem & filterSys) || satId.isGeo()) { ImGui::BeginDisabled(); }
 
-                    if (ImGui::Checkbox(fmt::format("{}##{} {}", num, satSys, label).c_str(), &isExcluded))
+                    auto satInfo = satSystem.getSatelliteInfo(num);
+
+                    if (ImGui::Checkbox(fmt::format("{}{}##{} {}",
+                                                    num,
+                                                    satInfo ? fmt::format(" ({})", *satInfo) : "",
+                                                    satSys,
+                                                    label)
+                                            .c_str(),
+                                        &isExcluded))
                     {
                         if (isExcluded)
                         {
                             satellites.push_back(satId);
-                            std::sort(satellites.begin(), satellites.end());
+                            std::sort(satellites.begin(), satellites.end()); // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::sort is not supported yet
                         }
                         else
                         {
@@ -92,7 +141,7 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
                         }
                         valueChanged = true;
                     }
-                    if (!SatelliteSystem_(satSystem & filterSys)) { ImGui::EndDisabled(); }
+                    if (!SatelliteSystem_(satSystem & filterSys) || satId.isGeo()) { ImGui::EndDisabled(); }
                 }
             }
 

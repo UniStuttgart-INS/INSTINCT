@@ -12,6 +12,7 @@
 /// @date 2024-02-08
 
 #include <catch2/catch_test_macros.hpp>
+#include <algorithm>
 
 #include "FlowTester.hpp"
 #include "Logger.hpp"
@@ -23,8 +24,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/GNSS/GnssObsComparisons.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -34,9 +35,13 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::UbloxGnssObsConverterTests
+{
+namespace
 {
 
 void compareObservations(std::deque<std::shared_ptr<const NAV::GnssObs>>& data1, std::deque<std::shared_ptr<const NAV::GnssObs>>& data2)
@@ -58,6 +63,8 @@ void compareObservations(std::deque<std::shared_ptr<const NAV::GnssObs>>& data1,
     data1.pop_front();
     data2.pop_front();
 }
+
+} // namespace
 
 TEST_CASE("[UbloxGnssObsConverterTests][flow] Spirent_ublox-F9P_static_duration-15min_sys-GPS-GAL_iono-Klobuchar_tropo-Saastamoinen.ubx", "[UbloxGnssObsConverterTests][flow]")
 {
@@ -108,8 +115,8 @@ TEST_CASE("[UbloxGnssObsConverterTests][flow] Spirent_ublox-F9P_static_duration-
         for (auto& obsData : gnssObs->data)
         {
             if (lastObs == nullptr) { break; }
-            auto last = std::find_if(lastObs->data.begin(), lastObs->data.end(),
-                                     [&obsData = obsData](const auto& data) { return obsData.satSigId == data.satSigId; });
+            auto last = std::ranges::find_if(lastObs->data,
+                                             [&obsData = obsData](const auto& data) { return obsData.satSigId == data.satSigId; });
             if (last == lastObs->data.end()) { continue; }
 
             // Signal [G1C-13] at epoch [2023-1-8 9:55:33.004] has the LLI flag set to [0] by Rtklib

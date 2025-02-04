@@ -14,6 +14,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <vector>
 
 #include <application.h>
@@ -33,6 +34,10 @@ namespace gui
 /// @brief Application class providing all relevant GUI callbacks
 class NodeEditorApplication : public Application
 {
+  private:
+    constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
+    constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
+
   public:
     /// @brief Default constructor
     NodeEditorApplication() = delete;
@@ -99,62 +104,67 @@ class NodeEditorApplication : public Application
     /// @brief Pointer to the texture for the INS logo
     static inline std::array<ImTextureID, 2> m_InsLogo{ nullptr, nullptr };
 
+    /// @brief Pointer to the texture for the save button
+    static inline ImTextureID m_SaveButtonImage = nullptr;
+
     /// @brief Pointer to the texture for the rose figure (ImuSimulator node)
     static inline ImTextureID m_RoseFigure = nullptr;
 
     /// @brief Default style of the ImPlot library to compare changes against
     static inline ImPlotStyle imPlotReferenceStyle;
 
-    inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
-    inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
-    inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
-    constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
+    static inline bool hideLeftPane = false;                                 ///< Hide left pane
+    static inline bool hideFPS = false;                                      ///< Hide FPS counter
+    inline static float leftPaneWidth = 350.0F;                              ///< Width of the left pane
+    inline static float rightPaneWidth = 850.0F;                             ///< Width of the right pane
+    inline static float menuBarHeight = 20;                                  ///< Height of the menu bar on top
+    constexpr static float SPLITTER_THICKNESS = 4.0F;                        ///< Thickness of the splitter between left and right pane
+    inline static float bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT; ///< Height of the log viewer
 
     /// Ratio to multiply for default GUI elements
     static float defaultFontRatio();
     /// Ratio to multiply for GUI window elements
     static float windowFontRatio();
+    /// Ratio to multiply for GUI editor elements
+    static float panelFontRatio();
     /// Ratio to multiply for log output GUI elements
     static float monoFontRatio();
     /// Ratio to multiply for node header elements
     static float headerFontRatio();
 
-  private:
-    constexpr static float BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT = 23.0F;    ///< Minimal height of the bottom view if it is collapsed
-    constexpr static float BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT = 200.0F; ///< Minimal height of the bottom view if it is not collapsed
-
-    /// @brief Tabs displayed in the bottom view
-    enum class BottomViewTabItem
-    {
-        None,      ///< The cross item is selected
-        LogOutput, ///< The log output item is selected
-    };
-
-    BottomViewTabItem bottomViewSelectedTab = BottomViewTabItem::None;       ///< Selected Tab item in the bottom view
-    inline static float bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT; ///< Height of the log viewer
-
-    /// @brief Pointer to the texture for the node headers
-    ImTextureID m_HeaderBackground = nullptr;
-
     /// Available color settings
-    enum Colors : size_t
+    enum Colors : uint8_t
     {
         COLOR_GROUP_HEADER_TEXT,  ///< Color of the group header text
         COLOR_GROUP_HEADER_BG,    ///< Color of the group header background
         COLOR_GROUP_OUTER_BORDER, ///< Color of the group outer border
     };
+
     /// Color settings
-    std::vector<ImVec4> m_colors = {
+    static inline std::vector<ImVec4> m_colors = {
         { 1.0, 1.0, 1.0, 1.0 },  // GROUP_HEADER_TEXT
         { 1.0, 1.0, 1.0, 0.25 }, // GROUP_HEADER_BG
         { 1.0, 1.0, 1.0, 0.25 }, // GROUP_OUTER_BORDER
     };
     /// Color names
-    std::vector<const char*> m_colorsNames = {
+    static inline std::vector<const char*> m_colorsNames = {
         "GroupHeaderText",  // GROUP_HEADER_TEXT
         "GroupHeaderBg",    // GROUP_HEADER_BG
         "GroupOuterBorder", // GROUP_OUTER_BORDER
     };
+
+  private:
+    /// @brief Tabs displayed in the bottom view
+    enum class BottomViewTabItem : uint8_t
+    {
+        None,      ///< The cross item is selected
+        LogOutput, ///< The log output item is selected
+    };
+
+    BottomViewTabItem bottomViewSelectedTab = BottomViewTabItem::None; ///< Selected Tab item in the bottom view
+
+    /// @brief Pointer to the texture for the node headers
+    ImTextureID m_HeaderBackground = nullptr;
 
     /// @brief Global action to execute
     GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable

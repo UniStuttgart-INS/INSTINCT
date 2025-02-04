@@ -28,7 +28,7 @@ namespace gui::widgets
 struct TimeEditFormat
 {
     /// Format to edit the time in
-    enum class Format
+    enum class Format : uint8_t
     {
         YMDHMS,     ///< YearMonthDayHourMinuteSecond (UTC)
         GPSWeekToW, ///< GPS Week and TimeOfWeek

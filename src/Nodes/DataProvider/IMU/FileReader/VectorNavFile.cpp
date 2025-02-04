@@ -267,7 +267,7 @@ void NAV::VectorNavFile::readHeader()
         std::string line;
         getline(line);
         // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
+        line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
         std::stringstream lineStream(line);
         std::string cell;
@@ -279,7 +279,7 @@ void NAV::VectorNavFile::readHeader()
             if (column++ > (_hasTimeColumn ? 3 : 2))
             {
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
 
                 std::string group = cell.substr(0, cell.find("::")); // Extract the group (Time::TimeUTC::year -> 'Time')
 
@@ -409,7 +409,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
         std::string line;
         getline(line);
         // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+        line.erase(line.begin(), std::ranges::find_if(line, [](int ch) { return std::isgraph(ch); }));
 
         if (line.empty())
         {
@@ -425,7 +425,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData()
             if (std::string cell; std::getline(lineStream, cell, ','))
             {
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+                cell.erase(std::ranges::find_if(cell, [](int ch) { return std::iscntrl(ch); }), cell.end());
 
                 if (!cell.empty())
                 {

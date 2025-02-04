@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "util/StringUtil.hpp"
@@ -23,7 +24,7 @@
 namespace NAV::TESTS
 {
 /// @brief Skydel raw logging file description
-enum SkydelSatData : size_t
+enum SkydelSatData : uint8_t
 {
     SkydelSatData_Elapsed_Time,                   ///< Elapsed Time (ms)                                       | The elapsed time of the simulation in milliseconds.
     SkydelSatData_ECEF_X,                         ///< ECEF X (m)                                              | ECEF coordinates (meters) of the origin of the transmitted signal (satellite’s antenna phase center plus errors).

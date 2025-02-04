@@ -36,21 +36,21 @@ struct ImuOutputs
     /// The IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is
     /// compensated by the static calibration (individual factory calibration stored in flash), and the user
     /// compensation, however it is not compensated by the onboard Hard/Soft Iron estimator.
-    Eigen::Vector3f uncompMag{};
+    Eigen::Vector3f uncompMag;
 
     /// @brief Uncompensated acceleration measurement.
     ///
     /// The IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is
     /// compensated by the static calibration (individual factory calibration stored in flash), however it is not
     /// compensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter.
-    Eigen::Vector3f uncompAccel{};
+    Eigen::Vector3f uncompAccel;
 
     /// @brief Uncompensated angular rate measurement.
     ///
     /// The IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated
     /// by the static calibration (individual factory calibration stored in flash), however it is not compensated by any
     /// dynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters.
-    Eigen::Vector3f uncompGyro{};
+    Eigen::Vector3f uncompGyro;
 
     /// @brief Temperature measurement.
     ///
@@ -86,7 +86,7 @@ struct ImuOutputs
     /// 10 Hz, reducing bandwidth and computational complexity), while still maintaining the same numeric
     /// precision as if you had performed the integration at the full IMU measurement rate of 800Hz. Time is given
     /// in seconds. Delta angles are given in degrees.
-    Eigen::Vector3f deltaTheta{};
+    Eigen::Vector3f deltaTheta;
 
     /// @brief Delta velocity.
     ///
@@ -95,28 +95,28 @@ struct ImuOutputs
     /// performed onboard the sensor at the IMU sampling rate (nominally 800Hz). The integration for the delta
     /// velocities are reset each time the values are either polled or sent out due to a scheduled asynchronous ASCII
     /// or binary output. Delta velocity is given in meters per second.
-    Eigen::Vector3f deltaV{};
+    Eigen::Vector3f deltaV;
 
     /// @brief Compensated magnetic measurement.
     ///
     /// The IMU compensated magnetic field measured units of Gauss, and given in the body frame. This
     /// measurement is compensated by the static calibration (individual factory calibration stored in flash), the user
     /// compensation, and the dynamic calibration from the onboard Hard/Soft Iron estimator.
-    Eigen::Vector3f mag{};
+    Eigen::Vector3f mag;
 
     /// @brief Compensated acceleration measurement.
     ///
     /// The compensated acceleration measured in units of m/s^2, and given in the body frame. This measurement
     /// is compensated by the static calibration (individual factory calibration stored in flash), the user
     /// compensation, and the dynamic bias compensation from the onboard INS Kalman filter.
-    Eigen::Vector3f accel{};
+    Eigen::Vector3f accel;
 
     /// @brief Compensated angular rate measurement.
     ///
     /// The compensated angular rate measured in units of rad/s, and given in the body frame. This measurement
     /// is compensated by the static calibration (individual factor calibration stored in flash), the user compensation,
     /// and the dynamic bias compensation from the onboard INS Kalman filter.
-    Eigen::Vector3f angularRate{};
+    Eigen::Vector3f angularRate;
 };
 
 } // namespace NAV::vendor::vectornav

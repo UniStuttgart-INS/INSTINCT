@@ -21,29 +21,23 @@
 
 #include "NodeRegistry.hpp"
 
+namespace NAV::NodeManager
+{
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
+namespace
+{
 std::vector<NAV::Node*> m_nodes;
 size_t m_NextId = 1;
 
-/* -------------------------------------------------------------------------------------------------------- */
-/*                                       Private Function Declarations                                      */
-/* -------------------------------------------------------------------------------------------------------- */
-
-namespace NAV::NodeManager
-{
-size_t GetNextId();
-
-} // namespace NAV::NodeManager
+} // namespace
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                               Public Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
-namespace NAV::NodeManager
-{
 #if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 bool showFlowWhenInvokingCallbacks = true;
 bool showFlowWhenNotifyingValueChange = true;
@@ -120,9 +114,7 @@ bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
 {
     LOG_TRACE("called for node with id {}", size_t(nodeId));
 
-    auto it = std::find_if(m_nodes.begin(),
-                           m_nodes.end(),
-                           [nodeId](const auto& node) { return node->id == nodeId; });
+    auto it = std::ranges::find_if(m_nodes, [nodeId](const auto& node) { return node->id == nodeId; });
     if (it != m_nodes.end())
     {
         Node* node = *it;
@@ -251,10 +243,18 @@ bool NAV::NodeManager::DeleteInputPin(NAV::InputPin& pin)
     return true;
 }
 
-size_t NAV::NodeManager::GetNextId()
+namespace NAV::NodeManager
+{
+namespace
+{
+
+size_t GetNextId()
 {
     return m_NextId++;
 }
+
+} // namespace
+} // namespace NAV::NodeManager
 
 ax::NodeEditor::NodeId NAV::NodeManager::GetNextNodeId()
 {
@@ -386,11 +386,15 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 
 #ifdef TESTING
 
+namespace
+{
 std::vector<std::pair<ax::NodeEditor::PinId, NAV::InputPin::WatcherCallback>> watcherPinList;
 std::vector<std::pair<ax::NodeEditor::LinkId, NAV::InputPin::WatcherCallback>> watcherLinkList;
 
 std::function<void()> preInitCallback = nullptr;
 std::function<void()> cleanupCallback = nullptr;
+
+} // namespace
 
 void NAV::NodeManager::RegisterWatcherCallbackToInputPin(ax::NodeEditor::PinId id, const InputPin::WatcherCallback& callback)
 {

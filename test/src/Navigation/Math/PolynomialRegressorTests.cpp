@@ -849,7 +849,7 @@ TEST_CASE("[PolynomialRegressor] Strategy comparison (large dataset)", "[Polynom
     polynomialReg[3].setStrategy(PolynomialRegressor<>::Strategy::BDCSVD);
     polynomialReg[4].setStrategy(PolynomialRegressor<>::Strategy::COD);
 
-    for (size_t i = 0; i < data.size(); ++i)
+    for (size_t i = 0; i < data.size(); ++i) // NOLINT(modernize-loop-convert)
     {
         const auto& d = data.at(i);
         std::vector<Polynomial<double>> polynomials;
@@ -1007,7 +1007,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert all at once)", "[Pol
         }
         for (auto& t : avgTimes) { t /= static_cast<double>(ITERATIONS); }
 
-        [[maybe_unused]] double fastest = *std::min_element(avgTimes.begin(), avgTimes.end());
+        [[maybe_unused]] double fastest = *std::ranges::min_element(avgTimes);
 
         [[maybe_unused]] size_t a = 0;
         LOG_INFO("Calculating polynomial {} order for {} data points (avg over {} iterations)", polynomialDegree, points, ITERATIONS);
@@ -1145,7 +1145,7 @@ TEST_CASE("[PolynomialRegressor] Strategy Benchmark (insert sequentially)", "[Po
         }
         for (auto& t : avgTimes) { t /= static_cast<double>(ITERATIONS); }
 
-        [[maybe_unused]] double fastest = *std::min_element(avgTimes.begin(), avgTimes.end());
+        [[maybe_unused]] double fastest = *std::ranges::min_element(avgTimes);
 
         [[maybe_unused]] size_t a = 0;
         LOG_INFO("Calculating polynomial {} order for {} data points (avg over {} iterations)", polynomialDegree, points, ITERATIONS);

@@ -19,6 +19,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "Navigation/INS/Units.hpp"
 
 #include "util/Random/RandomNumberGenerator.hpp"
 
@@ -70,7 +71,7 @@ class ErrorModel : public Node
     constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
 
     /// Input type
-    enum class InputType
+    enum class InputType : uint8_t
     {
         None,         ///< None
         ImuObs,       ///< ImuObs
@@ -102,11 +103,27 @@ class ErrorModel : public Node
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] imuObs Copied data to modify and send out again
-    [[nodiscard]] std::shared_ptr<ImuObs> receiveImuObs(const std::shared_ptr<ImuObs>& imuObs);
+    /// @param[in] accelerometerBias_p Accelerometer Bias in platform frame coordinates [m/s^2]
+    /// @param[in] gyroscopeBias_p Gyroscope Bias in platform frame coordinates [rad/s]
+    /// @param[in] accelerometerNoiseStd Accelerometer Noise standard deviation in platform frame coordinates [m/s^2]
+    /// @param[in] gyroscopeNoiseStd Gyroscope Noise standard deviation in platform frame coordinates [rad/s]
+    std::shared_ptr<ImuObs> receiveImuObs(const std::shared_ptr<ImuObs>& imuObs,
+                                          const Eigen::Vector3d& accelerometerBias_p,
+                                          const Eigen::Vector3d& gyroscopeBias_p,
+                                          const Eigen::Vector3d& accelerometerNoiseStd,
+                                          const Eigen::Vector3d& gyroscopeNoiseStd);
 
     /// @brief Callback when receiving an ImuObsWDelta
     /// @param[in] imuObs Copied data to modify and send out again
-    [[nodiscard]] std::shared_ptr<ImuObsWDelta> receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs);
+    /// @param[in] accelerometerBias_p Accelerometer Bias in platform frame coordinates [m/s^2]
+    /// @param[in] gyroscopeBias_p Gyroscope Bias in platform frame coordinates [rad/s]
+    /// @param[in] accelerometerNoiseStd Accelerometer Noise standard deviation in platform frame coordinates [m/s^2]
+    /// @param[in] gyroscopeNoiseStd Gyroscope Noise standard deviation in platform frame coordinates [rad/s]
+    [[nodiscard]] std::shared_ptr<ImuObsWDelta> receiveImuObsWDelta(const std::shared_ptr<ImuObsWDelta>& imuObs,
+                                                                    const Eigen::Vector3d& accelerometerBias_p,
+                                                                    const Eigen::Vector3d& gyroscopeBias_p,
+                                                                    const Eigen::Vector3d& accelerometerNoiseStd,
+                                                                    const Eigen::Vector3d& gyroscopeNoiseStd);
 
     /// @brief Callback when receiving an ImuObs
     /// @param[in] posVelAtt Copied data to modify and send out again
@@ -118,147 +135,86 @@ class ErrorModel : public Node
 
     /// Last observation time
     InsTime _lastObservationTime;
-    /// Frequency of the messages [Hz]
-    double _messageFrequency{};
+    /// Time interval of the messages [s]
+    double _dt = 0.0;
 
     // #########################################################################################################################################
     //                                                                 ImuObs
     // #########################################################################################################################################
     //
     /// 3D array which allow to accumulate RW noise for accelerometer
-    Eigen::Vector3d RandomWalkAccelerometer = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _randomWalkAccelerometer = Eigen::Vector3d::Zero();
 
     /// 3D array which allow to accumulate RW noise for gyro
-    Eigen::Vector3d RandomWalkGyroscope = Eigen::Vector3d::Zero();
-
-    /// 3D array which allow to accumulate RW noise for gyro
-    Eigen::Vector3d IntegratedRandomWalkGyro = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _randomWalkGyroscope = Eigen::Vector3d::Zero();
 
     /// 3D array which allow to accumulate IRW veloctiy noise for accelerometer
-    Eigen::Vector3d IntegratedRandomWalkAccelerometer_velocity = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _integratedRandomWalkAccelerometer_velocity = Eigen::Vector3d::Zero();
 
     /// 3D array which allow to accumulate IRW for accelerometer
-    Eigen::Vector3d IntegratedRandomWalkAccelerometer = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _integratedRandomWalkAccelerometer = Eigen::Vector3d::Zero();
 
     /// 3D array which allow to accumulate IRW veloctiy noise for gyro
-    Eigen::Vector3d IntegratedRandomWalkGyroscope_velocity = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _integratedRandomWalkGyroscope_velocity = Eigen::Vector3d::Zero();
 
     /// 3D array which allow to accumulate IRW for gyro
-    Eigen::Vector3d IntegratedRandomWalkGyroscope = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _integratedRandomWalkGyroscope = Eigen::Vector3d::Zero();
 
     // --------------------------------------------------------------- Offset ------------------------------------------------------------------
 
-    /// Possible units to specify an accelerometer bias with
-    enum class ImuAccelerometerBiasUnits
-    {
-        m_s2, ///< [m/s^2]
-    };
     /// Selected unit for the accelerometer bias in the GUI
-    ImuAccelerometerBiasUnits _imuAccelerometerBiasUnit = ImuAccelerometerBiasUnits::m_s2;
+    Units::ImuAccelerometerUnits _imuAccelerometerBiasUnit = Units::ImuAccelerometerUnits::m_s2;
     /// Bias of the accelerometer in platform coordinates (Unit as selected)
     Eigen::Vector3d _imuAccelerometerBias_p = Eigen::Vector3d::Zero();
 
-    /// Possible units to specify an gyroscope bias with
-    enum class ImuGyroscopeBiasUnits
-    {
-        rad_s, ///< [rad/s]
-        deg_s, ///< [deg/s]
-    };
     /// Selected unit for the gyroscope bias in the GUI
-    ImuGyroscopeBiasUnits _imuGyroscopeBiasUnit = ImuGyroscopeBiasUnits::rad_s;
+    Units::ImuGyroscopeUnits _imuGyroscopeBiasUnit = Units::ImuGyroscopeUnits::rad_s;
     /// Bias of the gyroscope in platform coordinates (Unit as selected)
     Eigen::Vector3d _imuGyroscopeBias_p = Eigen::Vector3d::Zero();
 
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
-    /// Possible units to specify an accelerometer noise with
-    enum class ImuAccelerometerNoiseUnits
-    {
-        m_s2,  ///< [m/s^2] (Standard deviation)
-        m2_s4, ///< [m^2/s^4] (Variance)
-    };
     /// Selected unit for the accelerometer noise in the GUI
-    ImuAccelerometerNoiseUnits _imuAccelerometerNoiseUnit = ImuAccelerometerNoiseUnits::m_s2;
+    Units::ImuAccelerometerNoiseUnits _imuAccelerometerNoiseUnit = Units::ImuAccelerometerNoiseUnits::m_s2_sqrts;
     /// Noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer noise
     RandomNumberGenerator _imuAccelerometerRng;
 
-    /// Possible units to specify an gyroscope noise with
-    enum class ImuGyroscopeNoiseUnits
-    {
-        rad_s,   ///< [rad/s] (Standard deviation)
-        deg_s,   ///< [deg/s] (Standard deviation)
-        rad2_s2, ///< [rad^2/s^2] (Variance)
-        deg2_s2, ///< [deg^2/s^2] (Variance)
-    };
     /// Selected unit for the gyroscope noise in the GUI
-    ImuGyroscopeNoiseUnits _imuGyroscopeNoiseUnit = ImuGyroscopeNoiseUnits::rad_s;
+    Units::ImuGyroscopeNoiseUnits _imuGyroscopeNoiseUnit = Units::ImuGyroscopeNoiseUnits::rad_s_sqrts;
     /// Noise of the gyroscope (Unit as selected)
     Eigen::Vector3d _imuGyroscopeNoise = Eigen::Vector3d::Zero();
     /// Random number generator for the gyroscope noise
     RandomNumberGenerator _imuGyroscopeRng;
 
-    /// Possible units to specify an accelerometer RW
-    enum class ImuAccelerometerRWUnits
-    {
-        m_s2_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
-        m_s2_sqrth, ///< [m^2/s^2/sqrt(h)] (Standard deviation)
-    };
-    /// Possible units to specify an gyro RW
-    enum class ImuGyroscopeRWUnits
-    {
-        rad_s_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
-        rad_s_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
-        deg_s_sqrts, ///< [deg/s/sqrt(s)] (Standard deviation)
-        deg_s_sqrth, ///< [deg/s/sqrt(h)] (Standard deviation)
-    };
-
-    /// Possible units to specify an accelerometer IRW
-    enum class ImuAccelerometerIRWUnits
-    {
-        m_s3_sqrts, ///< [m/s^2/sqrt(s)] (Standard deviation)
-        m_s3_sqrth, ///< [m^2/s^2/sqrt(h)] (Standard deviation)
-    };
-    /// Possible units to specify an gyro RW
-    enum class ImuGyroscopeIRWUnits
-    {
-        rad_s2_sqrts, ///< [rad/s/sqrt(s)] (Standard deviation)
-        rad_s2_sqrth, ///< [rad/s/sqrt(h)] (Standard deviation)
-        deg_s2_sqrts, ///< [deg/s/sqrt(s)] (Standard deviation)
-        deg_s2_sqrth, ///< [deg/s/sqrt(h)] (Standard deviation)
-    };
-
     /// Selected unit for the accelerometer RW noise in the GUI
-    ImuAccelerometerRWUnits _imuAccelerometerRWUnit = ImuAccelerometerRWUnits::m_s2_sqrts;
+    Units::ImuAccelerometerNoiseUnits _imuAccelerometerRWUnit = Units::ImuAccelerometerNoiseUnits::m_s2_sqrts;
     /// RW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer RW noise
     RandomNumberGenerator _imuAccelerometerRWRng;
 
     /// Selected unit for the accelerometer RW noise in the GUI
-    ImuGyroscopeRWUnits _imuGyroscopeRWUnit = ImuGyroscopeRWUnits::rad_s_sqrts;
+    Units::ImuGyroscopeNoiseUnits _imuGyroscopeRWUnit = Units::ImuGyroscopeNoiseUnits::rad_s_sqrts;
     /// RW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuGyroscopeRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer RW noise
     RandomNumberGenerator _imuGyroscopeRWRng;
 
     /// Selected unit for the accelerometer IRW noise in the GUI
-    ImuAccelerometerIRWUnits _imuAccelerometerIRWUnit = ImuAccelerometerIRWUnits::m_s3_sqrts;
+    Units::ImuAccelerometerIRWUnits _imuAccelerometerIRWUnit = Units::ImuAccelerometerIRWUnits::m_s3_sqrts;
     /// IRW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuAccelerometerIRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer IRW noise
     RandomNumberGenerator _imuAccelerometerIRWRng;
 
     /// Selected unit for the accelerometer IRW noise in the GUI
-    ImuGyroscopeIRWUnits _imuGyroscopeIRWUnit = ImuGyroscopeIRWUnits::rad_s2_sqrts;
+    Units::ImuGyroscopeIRWUnits _imuGyroscopeIRWUnit = Units::ImuGyroscopeIRWUnits::rad_s2_sqrts;
     /// RW noise of the accelerometer (Unit as selected)
     Eigen::Vector3d _imuGyroscopeIRW = Eigen::Vector3d::Zero();
     /// Random number generator for the accelerometer RW noise
     RandomNumberGenerator _imuGyroscopeIRWRng;
-
-    /// How many measurements are averaged for the deltaVel and deltaTheta values
-    double _imuObsWDeltaAverageWindow = 10;
 
     // #########################################################################################################################################
     //                                                                PosVelAtt
@@ -267,11 +223,9 @@ class ErrorModel : public Node
     // --------------------------------------------------------------- Offset ------------------------------------------------------------------
 
     /// Possible units to specify a position bias with
-    enum class PositionBiasUnits
+    enum class PositionBiasUnits : uint8_t
     {
-        meter,     ///< NED [m m m]
-        rad_rad_m, ///< LatLonAlt [rad, rad, m]
-        deg_deg_m, ///< LatLonAlt [deg, deg, m]
+        meter, ///< NED [m m m]
     };
     /// Selected unit for the position bias in the GUI
     PositionBiasUnits _positionBiasUnit = PositionBiasUnits::meter;
@@ -279,7 +233,7 @@ class ErrorModel : public Node
     Eigen::Vector3d _positionBias = Eigen::Vector3d::Zero();
 
     /// Possible units to specify an velocity bias with
-    enum class VelocityBiasUnits
+    enum class VelocityBiasUnits : uint8_t
     {
         m_s, ///< [m/s]
     };
@@ -289,7 +243,7 @@ class ErrorModel : public Node
     Eigen::Vector3d _velocityBias = Eigen::Vector3d::Zero();
 
     /// Possible units to specify a attitude bias with
-    enum class AttitudeBiasUnits
+    enum class AttitudeBiasUnits : uint8_t
     {
         rad, ///< [rad]
         deg, ///< [deg]
@@ -302,14 +256,10 @@ class ErrorModel : public Node
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
     /// Possible units to specify a position noise with
-    enum class PositionNoiseUnits
+    enum class PositionNoiseUnits : uint8_t
     {
-        meter,        ///< NED [m m m] (Standard deviation)
-        rad_rad_m,    ///< LatLonAlt [rad, rad, m] (Standard deviation)
-        deg_deg_m,    ///< LatLonAlt [deg, deg, m] (Standard deviation)
-        meter2,       ///< NED [m^2 m^2 m^2] (Variance)
-        rad2_rad2_m2, ///< LatLonAlt [rad^2, rad^2, m^2] (Variance)
-        deg2_deg2_m2, ///< LatLonAlt [deg^2, deg^2, m^2] (Variance)
+        meter,  ///< NED [m m m] (Standard deviation)
+        meter2, ///< NED [m^2 m^2 m^2] (Variance)
     };
 
     /// Selected unit for the position noise in the GUI
@@ -319,7 +269,7 @@ class ErrorModel : public Node
     /// Random number generator for the position noise
     RandomNumberGenerator _positionRng;
     /// Possible units to specify an velocity noise with
-    enum class VelocityNoiseUnits
+    enum class VelocityNoiseUnits : uint8_t
     {
         m_s,   ///< [m/s] (Standard deviation)
         m2_s2, ///< [m^2/s^2] (Variance)
@@ -332,7 +282,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _velocityRng;
 
     /// Possible units to specify a attitude noise with
-    enum class AttitudeNoiseUnits
+    enum class AttitudeNoiseUnits : uint8_t
     {
         rad,  ///< [rad] (Standard deviation)
         deg,  ///< [deg] (Standard deviation)
@@ -353,7 +303,7 @@ class ErrorModel : public Node
     // ---------------------------------------------------------------- Noise ------------------------------------------------------------------
 
     /// Possible units to specify a pseudorange noise with
-    enum class PseudorangeNoiseUnits
+    enum class PseudorangeNoiseUnits : uint8_t
     {
         meter, ///< [m] (Standard deviation)
     };
@@ -365,7 +315,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _pseudorangeRng;
 
     /// Possible units to specify a carrier-phase noise with
-    enum class CarrierPhaseNoiseUnits
+    enum class CarrierPhaseNoiseUnits : uint8_t
     {
         meter, ///< [m] (Standard deviation)
     };
@@ -377,7 +327,7 @@ class ErrorModel : public Node
     RandomNumberGenerator _carrierPhaseRng;
 
     /// Possible units to specify a range-rate noise with
-    enum class DopplerNoiseUnits
+    enum class DopplerNoiseUnits : uint8_t
     {
         m_s, ///< [m/s] (Standard deviation)
     };
@@ -400,7 +350,7 @@ class ErrorModel : public Node
     // ------------------------------------------------------------- Cycle-slip ----------------------------------------------------------------
 
     /// Possible units to specify the cycle-slip rate with
-    enum class CycleSlipFrequencyUnits
+    enum class CycleSlipFrequencyUnits : uint8_t
     {
         per_day,    ///< [1/d]
         per_hour,   ///< [1/h]
@@ -416,7 +366,7 @@ class ErrorModel : public Node
     InsTime _cycleSlipWindowStartTime;
 
     /// Possible units to specify the cycle-slip detection probability with
-    enum class CycleSlipDetectionProbabilityUnits
+    enum class CycleSlipDetectionProbabilityUnits : uint8_t
     {
         percent, ///< [%]
     };

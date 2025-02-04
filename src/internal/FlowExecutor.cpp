@@ -37,10 +37,15 @@ namespace nm = NAV::NodeManager;
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
 
+namespace NAV::FlowExecutor
+{
+namespace
+{
+
 std::mutex _mutex;
 std::condition_variable _cv;
 
-enum class State
+enum class State : uint8_t
 {
     Idle,
     Starting,
@@ -57,8 +62,7 @@ std::chrono::time_point<std::chrono::steady_clock> _startTime;
 /*                                       Private Function Declarations                                      */
 /* -------------------------------------------------------------------------------------------------------- */
 
-namespace NAV::FlowExecutor
-{
+} // namespace
 
 /// @brief Main task of the thread
 void execute();
@@ -208,7 +212,7 @@ void NAV::FlowExecutor::execute()
             {
                 if (auto* callback = std::get_if<OutputPin::PeekPollDataFunc>(&outputPin.data);
                     !outputPin.noMoreDataAvailable && callback != nullptr && *callback != nullptr
-                    && std::any_of(outputPin.links.begin(), outputPin.links.end(), [](const OutputPin::OutgoingLink& link) {
+                    && std::ranges::any_of(outputPin.links, [](const OutputPin::OutgoingLink& link) {
                            return link.connectedNode->isInitialized();
                        }))
                 {

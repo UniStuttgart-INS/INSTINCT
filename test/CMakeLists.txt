@@ -43,6 +43,7 @@ target_link_libraries(
           Eigen3::Eigen
           nlohmann_json::nlohmann_json
           unordered_dense::unordered_dense
+          muparser::muparser
           Threads::Threads
           imgui
           imgui_node_editor
@@ -50,7 +51,10 @@ target_link_libraries(
           implot
           application
           libvncxx
+          ssh
           libUartSensor)
+
+target_compile_definitions(tests PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
 
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)

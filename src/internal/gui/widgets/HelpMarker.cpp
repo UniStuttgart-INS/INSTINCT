@@ -25,21 +25,24 @@ void NAV::gui::widgets::HelpMarker(const char* desc, const char* symbol) // NOLI
     }
 }
 
-bool NAV::gui::widgets::BeginHelpMarker(const char* symbol)
+bool NAV::gui::widgets::BeginHelpMarker(const char* symbol, float textWrapLength)
 {
     ImGui::TextDisabled("%s", symbol);
 
     if (ImGui::IsItemHovered())
     {
         ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0F);
+        if (textWrapLength > 0.0F)
+        {
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0F);
+        }
         return true;
     }
     return false;
 }
 
-void NAV::gui::widgets::EndHelpMarker()
+void NAV::gui::widgets::EndHelpMarker(bool wrapText)
 {
-    ImGui::PopTextWrapPos();
+    if (wrapText) { ImGui::PopTextWrapPos(); }
     ImGui::EndTooltip();
 }

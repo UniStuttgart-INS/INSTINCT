@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <array>
 #include <limits>
@@ -831,10 +832,10 @@ class InsTime
         InsTime_JD jd = toJD();
         jd.jd_frac = jd.jd_frac + 0.5L;
         jd.jd_frac += static_cast<long double>(differenceToUTC(timesys)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
-        while (jd.jd_frac >= 1.0L)
+        if (jd.jd_frac >= 1.0L)
         {
-            jd.jd_day += 1;
-            jd.jd_frac -= 1.0L;
+            jd.jd_day += static_cast<int32_t>(jd.jd_frac);
+            jd.jd_frac -= gcem::floor(jd.jd_frac);
         }
         // transform JD to YMDHMS
         double a = 32044.0 + jd.jd_day;
@@ -885,6 +886,7 @@ class InsTime
     }
 
     /// @brief Converts this time object into a UNIX timestamp in [s]
+    /// @attention Do not pass `long double` to the LOG_... functions, it can loop indefinitely
     [[nodiscard]] constexpr long double toUnixTime() const
     {
         return static_cast<long double>((_mjd.mjd_day - InsTimeUtil::DIFF_TO_1_1_1970_MJD) * InsTimeUtil::SECONDS_PER_DAY)
@@ -945,7 +947,7 @@ class InsTime
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
-        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+        return static_cast<uint16_t>(std::ranges::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD, mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
 
     /// @brief Checks if the current time is a leap year
@@ -1082,10 +1084,10 @@ class InsTime
         case GST: // = GALILEO Time (~ GPS) (UTC = GST - 18) is synchronized with TAI with a nominal offset below 50 ns
             return this->leapGps2UTC();
         case QZSST:
-            return 0; // TODO: Implement QZSST<->UTC time difference
+            return this->leapGps2UTC(); // TODO citation for synchronization accuracy
         case IRNSST:
-            return 0; // TODO: Implement IRNSST<->UTC time difference
-        case BDT:     // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
+            return this->leapGps2UTC(); // TODO citation for synchronization accuracy
+        case BDT:                       // = BeiDou Time (UTC) is synchronized with UTC within 100 ns<
             return this->leapGps2UTC() - 14;
         case UTC:
         case TimeSys_None:
@@ -1096,7 +1098,7 @@ class InsTime
 
   private:
     /// @brief Modified Julien Date of this InsTime object
-    InsTime_MJD _mjd{};
+    InsTime_MJD _mjd;
 };
 
 /// @brief Stream insertion operator overload
@@ -1161,23 +1163,93 @@ struct hash<NAV::InsTime>
 
 #ifndef DOXYGEN_IGNORE
 
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime_MJD> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime_MJD> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] mjd Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime_MJD& mjd, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "day={}, frac={}", mjd.mjd_day, static_cast<double>(mjd.mjd_frac));
+    }
+};
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime_JD> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime_JD> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] jd Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime_JD& jd, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "day={}, frac={}", jd.jd_day, static_cast<double>(jd.jd_frac));
+    }
+};
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime_GPSweekTow> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime_GPSweekTow> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] gpsWeekTow Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime_GPSweekTow& gpsWeekTow, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "cycle={}, week={}, tow={}",
+                              gpsWeekTow.gpsCycle, gpsWeekTow.gpsWeek, static_cast<double>(gpsWeekTow.tow));
+    }
+};
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime_YMDHMS> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime_YMDHMS> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] ymdhms Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime_YMDHMS& ymdhms, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "{}-{}-{} {}:{}:{:.6g}",
+                              ymdhms.year, ymdhms.month, ymdhms.day,
+                              ymdhms.hour, ymdhms.min, static_cast<double>(ymdhms.sec));
+    }
+};
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime_YDoySod> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime_YDoySod> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] yDoySod Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime_YDoySod& yDoySod, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "year={}, doy={}, sod={:.6g}",
+                              yDoySod.year, yDoySod.doy, static_cast<double>(yDoySod.sod));
+    }
+};
+/// @brief Formatter
 template<>
-struct fmt::formatter<NAV::InsTime> : ostream_formatter
-{};
+struct fmt::formatter<NAV::InsTime> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format this structs
+    /// @param[in] insTime Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::InsTime& insTime, FormatContext& ctx) const
+    {
+        return fmt::format_to(ctx.out(), "{} ({})", insTime.toYMDHMS(), insTime.toGPSweekTow());
+    }
+};
 
 #endif

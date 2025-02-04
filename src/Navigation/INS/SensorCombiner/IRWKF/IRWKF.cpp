@@ -450,15 +450,11 @@ NAV::KalmanFilter NAV::IRWKF::initializeKalmanFilterAuto(const size_t& nInputPin
         for (int axisIndex = 0; axisIndex < 3; axisIndex++)
         {
             // Acceleration variance
-            if (initErrorCovariances[stateIndex + 1](axisIndex) < initErrorCovariances[2](axisIndex))
-            {
-                initErrorCovariances[stateIndex + 1](axisIndex) = initErrorCovariances[2](axisIndex);
-            }
+            initErrorCovariances[stateIndex + 1](axisIndex) = std::max(initErrorCovariances[stateIndex + 1](axisIndex),
+                                                                       initErrorCovariances[2](axisIndex));
             // Angular rate variance
-            if (initErrorCovariances[stateIndex](axisIndex) < initErrorCovariances[0](axisIndex))
-            {
-                initErrorCovariances[stateIndex](axisIndex) = initErrorCovariances[0](axisIndex);
-            }
+            initErrorCovariances[stateIndex](axisIndex) = std::max(initErrorCovariances[stateIndex](axisIndex),
+                                                                   initErrorCovariances[0](axisIndex));
         }
     }
 
@@ -548,7 +544,9 @@ Eigen::Vector3d NAV::IRWKF::mean(const std::vector<std::vector<double>>& sensorT
 
     for (size_t axisIndex = 0; axisIndex < 3; axisIndex++)
     {
-        meanVector(static_cast<int>(axisIndex)) = std::accumulate(sensorType[axisIndex + containerPos].begin(), sensorType[axisIndex + containerPos].end(), 0.) / static_cast<double>(sensorType[axisIndex + containerPos].size());
+        meanVector(static_cast<int>(axisIndex)) = std::accumulate(sensorType[axisIndex + containerPos].begin(), // NOLINT(boost-use-ranges,modernize-use-ranges) // There is no ranges::accumulate
+                                                                  sensorType[axisIndex + containerPos].end(), 0.)
+                                                  / static_cast<double>(sensorType[axisIndex + containerPos].size());
     }
 
     return meanVector;
@@ -571,7 +569,7 @@ Eigen::Vector3d NAV::IRWKF::variance(const std::vector<std::vector<double>>& sen
             absolSquared[msgIndex] = std::pow(std::abs(sensorType[axisIndex + containerPos][msgIndex] - means(static_cast<int>(axisIndex))), 2);
         }
 
-        varianceVector(static_cast<int>(axisIndex)) = (1. / (static_cast<double>(N) - 1.)) * std::accumulate(absolSquared.begin(), absolSquared.end(), 0.);
+        varianceVector(static_cast<int>(axisIndex)) = (1. / (static_cast<double>(N) - 1.)) * std::accumulate(absolSquared.begin(), absolSquared.end(), 0.); // NOLINT(boost-use-ranges,modernize-use-ranges) // There is no ranges::accumulate
     }
 
     return varianceVector;

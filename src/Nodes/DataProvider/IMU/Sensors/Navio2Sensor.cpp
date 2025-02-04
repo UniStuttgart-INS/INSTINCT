@@ -58,8 +58,10 @@ std::string NAV::Navio2Sensor::category()
 
 void NAV::Navio2Sensor::guiConfig()
 {
-    if (ImGui::Combo("IMU", reinterpret_cast<int*>(&_imuType), "MPU9250\0LSM9DS1\0\0"))
+    if (auto imuType = static_cast<int>(_imuType);
+        ImGui::Combo("IMU", &imuType, "MPU9250\0LSM9DS1\0\0"))
     {
+        _imuType = static_cast<decltype(_imuType)>(imuType);
         LOG_DEBUG("{}: IMU changed to {}", nameId(), _imuType ? "LSM9DS1" : "MPU9250");
         flow::ApplyChanges();
         doDeinitialize();

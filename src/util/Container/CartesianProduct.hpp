@@ -39,7 +39,7 @@ namespace tuple_algos
 template<class Tuple, class F, std::size_t... I>
 F for_each_impl(Tuple&& t, F&& f, std::index_sequence<I...> /* seq */)
 {
-    return (void)std::initializer_list<int>{ (std::forward<F>(f)(std::get<I>(std::forward<Tuple>(t))), 0)... }, f;
+    return (void)std::initializer_list<int>{ (std::forward<F>(f)(std::get<I>(std::forward<Tuple>(t))), 0)... }, f; // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
 }
 
 /// @brief For-each algorithm for tuples
@@ -61,7 +61,7 @@ template<class Tuple, class F, std::size_t... Is>
 auto transform_impl(Tuple&& t, F&& f, std::index_sequence<Is...> /* seq */)
     -> decltype(std::make_tuple(std::forward<F>(f)(std::get<Is>(std::forward<Tuple>(t)))...))
 {
-    return std::make_tuple(std::forward<F>(f)(std::get<Is>(std::forward<Tuple>(t)))...);
+    return std::make_tuple(std::forward<F>(f)(std::get<Is>(std::forward<Tuple>(t)))...); // NOLINT(bugprone-use-after-move,hicpp-invalid-access-moved)
 }
 
 // Alternative implementation, which however does not compile with msvc
@@ -233,7 +233,7 @@ void cartesian_product_idx(Function function, std::array<SubList, N> list)
         std::iota(indices.at(i).begin(), indices.at(i).end(), 0);
     }
 
-    std::apply([function](auto... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, indices);
+    std::apply([function](const auto&... xs) { cartesian_product(function, std::forward<decltype(xs)>(xs)...); }, indices);
 }
 
 } // namespace NAV

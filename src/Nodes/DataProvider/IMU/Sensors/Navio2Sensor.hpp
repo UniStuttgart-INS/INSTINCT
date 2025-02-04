@@ -74,7 +74,7 @@ class Navio2Sensor : public Imu
     void deinitialize() override;
 
     /// Enumeration of IMUs on the Navio2
-    enum ImuType : int
+    enum ImuType : uint8_t
     {
         /// MPU9250
         MPU,

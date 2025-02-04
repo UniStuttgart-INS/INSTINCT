@@ -30,8 +30,8 @@ namespace nm = NAV::NodeManager;
 #include "MultiImuFileTestsData.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -40,10 +40,20 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/FileReader/MultiImuFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::MultiImuFileTests
 {
+namespace
+{
+
+long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)
+{
+    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator);
+}
+
 void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t messageCounterData, size_t pinIdx)
 {
     // --------------------------------------------- Sensor ID -----------------------------------------------
@@ -72,10 +82,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::ImuObs>& obs, size_t
     REQUIRE_THAT(obs->p_angularRate(2) - deg2rad(IMU_REFERENCE_DATA.at(messageCounterData).at(GyroZ)) * SCALEFACTOR_GYRO, Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 }
 
-long double timestamp(double gpsSecond, double timeNumerator, double timeDenominator)
-{
-    return static_cast<long double>(gpsSecond + timeNumerator / timeDenominator);
-}
+} // namespace
 
 TEST_CASE("[MultiImuFile][flow] Read 'data/DataProvider/IMU/2023-08-09_Multi-IMU_commaDelim.txt' and compare content with hardcoded values", "[MultiImuFile][flow]")
 {

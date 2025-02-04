@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 #include <string>
 
@@ -28,6 +29,10 @@ class DynamicData : public NodeData
     /// @return The data type
     [[nodiscard]] static std::string type() { return "DynamicData"; }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -38,9 +43,9 @@ class DynamicData : public NodeData
     /// Data struct
     struct Data
     {
-        std::string description;         ///< Description
-        double value;                    ///< Value
-        std::vector<std::string> events; ///< List of events
+        std::string description;                                                      ///< Description
+        double value;                                                                 ///< Value
+        std::vector<std::pair<std::string, std::shared_ptr<const NodeData>>> rawData; ///< List of raw data (used in this dynamic data)
     };
 
     /// @brief Data storage
@@ -83,6 +88,17 @@ class DynamicData : public NodeData
         }
         return dynData;
     }
+
+    /// @brief Shows a GUI tooltip to look into details of the observation
+    /// @param[in] detailView Flag to show the detailed view
+    /// @param[in] firstOpen Flag whether the tooltip is opened once
+    /// @param[in] displayName Data identifier, can be used in dynamic data to identify the correct data
+    /// @param[in] id Unique identifier
+    /// @param[in] rootWindow Pointer to the root window opening the tooltip
+    void guiTooltip(bool detailView, bool firstOpen, const char* displayName, const char* id, int* rootWindow) const override;
+
+    /// @brief Return whether this data has a tooltip
+    [[nodiscard]] bool hasTooltip() const override { return true; }
 };
 
 } // namespace NAV

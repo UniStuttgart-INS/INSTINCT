@@ -20,16 +20,17 @@
 
 namespace NAV::TESTS::GMF
 {
-
-const Eigen::Vector3d ref_pos_GRAZ{ deg2rad(47.0671), deg2rad(15.4935), 538.30 };
-const double ref_elevation = deg2rad(5);
-
 struct GmfSeriesData
 {
     double mjd;  ///< MJD for which the values were computed
     double gmfh; ///< gmfh, hydrostatic mapping function
     double gmfw; ///< gmfw, wet mapping function
 };
+
+// NOLINTBEGIN
+
+const Eigen::Vector3d ref_pos_GRAZ{ deg2rad(47.0671), deg2rad(15.4935), 538.30 };
+const double ref_elevation = deg2rad(5);
 
 constexpr std::array<GmfSeriesData, 41> ref_GmfSeriesData = { {
     { 58849.00, 10.1636, 10.8001 },
@@ -146,5 +147,7 @@ const Eigen::Matrix<double, 19, 36> ref_GmfwGridData = [] {
         10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666, 10.8666;
     return tmp;
 }();
+
+// NOLINTEND
 
 } // namespace NAV::TESTS::GMF

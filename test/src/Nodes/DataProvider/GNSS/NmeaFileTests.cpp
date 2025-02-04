@@ -13,6 +13,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <CatchMatchers.hpp>
+#include <cstdint>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -31,7 +32,7 @@ namespace nm = NAV::NodeManager;
 namespace NAV::TESTS::NMEAFileTests
 {
 
-enum NmeaRef : size_t
+enum NmeaRef : uint8_t
 {
     NMEA_Year,
     NMEA_Month,
@@ -50,6 +51,9 @@ constexpr std::array<std::array<double, 9>, 3> NMEA_REFERENCE_DATA = { {
     { 2022, 11, 3, 14, 05, 18.000, 0.851383885268465, 0.160074500200709, 327.812 },
 } };
 
+namespace
+{
+
 void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messageCounterNMEA)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -62,7 +66,7 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
 
     REQUIRE(obs->insTime.toYMDHMS().hour == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Hour)));
     REQUIRE(obs->insTime.toYMDHMS().min == static_cast<int32_t>(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Minute)));
-    LOG_DATA("{}", obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second)));
     REQUIRE_THAT(obs->insTime.toYMDHMS().sec - NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Second), Catch::Matchers::WithinAbs(0.0, 9e-12));
 
     REQUIRE_THAT(obs->latitude(), Catch::Matchers::WithinAbs(NMEA_REFERENCE_DATA.at(messageCounterNMEA).at(NMEA_Latitude_rad), EPSILON));
@@ -73,6 +77,8 @@ void compareNMEAData(const std::shared_ptr<const NAV::PosVel>& obs, size_t messa
     REQUIRE(std::isnan(obs->e_velocity()[1]));
     REQUIRE(std::isnan(obs->e_velocity()[2]));
 }
+
+} // namespace
 
 TEST_CASE("[NMEAFile][flow] Read 'test.nmea'", "[NMEAFile][flow]")
 {

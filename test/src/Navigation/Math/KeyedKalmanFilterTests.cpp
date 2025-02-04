@@ -20,7 +20,7 @@
 
 namespace StateKey
 {
-enum States
+enum States : uint8_t
 {
     PosX,
     PosY,

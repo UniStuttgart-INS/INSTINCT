@@ -15,22 +15,6 @@
 
 #include <iostream>
 
-std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::SppStates& obj)
-{
-    return os << fmt::format("{}", obj);
-}
-std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::InterSysBias& obj)
-{
-    return os << fmt::format("{}", obj);
-}
-std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::InterSysDrift& obj)
-{
-    return os << fmt::format("{}", obj);
-}
-std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::InterFreqBias& obj)
-{
-    return os << fmt::format("{}", obj);
-}
 std::ostream& operator<<(std::ostream& os, const NAV::SPP::Meas::Psr& obj)
 {
     return os << fmt::format("{}", obj);
@@ -39,7 +23,7 @@ std::ostream& operator<<(std::ostream& os, const NAV::SPP::Meas::Doppler& obj)
 {
     return os << fmt::format("{}", obj);
 }
-std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::StateKeyTypes& obj)
+std::ostream& operator<<(std::ostream& os, const NAV::SPP::States::StateKeyType& obj)
 {
     return os << fmt::format("{}", obj);
 }

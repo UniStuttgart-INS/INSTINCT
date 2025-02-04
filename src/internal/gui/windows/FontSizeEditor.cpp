@@ -9,6 +9,7 @@
 #include "FontSizeEditor.hpp"
 
 #include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/FlowManager.hpp"
 #include <imgui.h>
 
 void NAV::gui::windows::ShowFontSizeEditor(bool* show /* = nullptr*/)
@@ -23,24 +24,35 @@ void NAV::gui::windows::ShowFontSizeEditor(bool* show /* = nullptr*/)
     if (ImGui::Checkbox("Use big default font", &useBigDefaultFont))
     {
         gui::NodeEditorApplication::swapDefaultFont(useBigDefaultFont);
+        flow::ApplyChanges();
     }
 
     bool useBigWindowFont = gui::NodeEditorApplication::isUsingBigWindowFont();
     if (ImGui::Checkbox("Use big window font", &useBigWindowFont))
     {
         gui::NodeEditorApplication::swapWindowFont(useBigWindowFont);
+        flow::ApplyChanges();
+    }
+
+    bool useBigPanelFont = gui::NodeEditorApplication::isUsingBigPanelFont();
+    if (ImGui::Checkbox("Use big panel font", &useBigPanelFont))
+    {
+        gui::NodeEditorApplication::swapPanelFont(useBigPanelFont);
+        flow::ApplyChanges();
     }
 
     bool useBigMonoFont = gui::NodeEditorApplication::isUsingBigMonoFont();
     if (ImGui::Checkbox("Use big mono font", &useBigMonoFont))
     {
         gui::NodeEditorApplication::swapMonoFont(useBigMonoFont);
+        flow::ApplyChanges();
     }
 
     // bool useBigHeaderFont = gui::NodeEditorApplication::isUsingBigHeaderFont();
     // if (ImGui::Checkbox("Use big header font", &useBigHeaderFont))
     // {
     //     gui::NodeEditorApplication::swapHeaderFont(useBigHeaderFont);
+    //     flow::ApplyChanges();
     // }
 
     ImGui::End();

@@ -18,6 +18,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "util/Json.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
@@ -150,7 +151,7 @@ void NAV::Node::releaseInputValue(size_t portIndex)
         std::scoped_lock<std::mutex> lk(outputPin->dataAccessMutex);
         if (outputPin->dataAccessCounter > 0)
         {
-            auto outgoingLink = std::find_if(outputPin->links.begin(), outputPin->links.end(), [&](const OutputPin::OutgoingLink& link) {
+            auto outgoingLink = std::ranges::find_if(outputPin->links, [&](const OutputPin::OutgoingLink& link) {
                 return link.connectedPinId == inputPins.at(portIndex).id;
             });
             if (outgoingLink != outputPin->links.end() && outgoingLink->dataChangeNotification)
@@ -194,7 +195,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                 }
 
                 targetPin->queue.push_back(data);
-                LOG_DATA("{}: Waking up worker of node '{}'. New data on pin '{}'", nameId(), link.connectedNode->nameId(), targetPin->name);
+                LOG_DATA("{}: Waking up worker of node {}. New data on pin '{}'", nameId(), size_t(link.connectedNode->id), targetPin->name);
                 link.connectedNode->wakeWorker();
             }
         }
@@ -585,7 +586,7 @@ void NAV::Node::workerThread(Node* node)
                 }
 
                 // Check input pin for data and trigger callbacks
-                if (std::any_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                if (std::ranges::any_of(node->inputPins, [](const InputPin& inputPin) {
                         return inputPin.isPinLinked();
                     }))
                 {
@@ -798,7 +799,7 @@ void NAV::Node::workerThread(Node* node)
             // Check if node finished
             if (node->_mode == Mode::POST_PROCESSING)
             {
-                if (std::all_of(node->inputPins.begin(), node->inputPins.end(), [](const InputPin& inputPin) {
+                if (std::ranges::all_of(node->inputPins, [](const InputPin& inputPin) {
                         return inputPin.type != Pin::Type::Flow || !inputPin.isPinLinked() || inputPin.link.connectedNode->isDisabled()
                                || !inputPin.link.getConnectedPin()->blocksConnectedNodeFromFinishing
                                || (inputPin.queue.empty() && inputPin.link.getConnectedPin()->noMoreDataAvailable);
@@ -982,7 +983,7 @@ void NAV::to_json(json& j, const Node& node)
 {
     ImVec2 realSize = ed::GetNodeSize(node.id);
     realSize.x -= 16;
-    realSize.y -= 38;
+    realSize.y -= 38.0F;
     j = json{
         { "id", size_t(node.id) },
         { "type", node.type() },
@@ -1009,6 +1010,10 @@ void NAV::from_json(const json& j, Node& node)
     if (j.contains("size"))
     {
         j.at("size").get_to(node._size);
+        if (node.kind == Node::Kind::GroupBox && gui::NodeEditorApplication::isUsingBigDefaultFont())
+        {
+            node._size.y -= 20;
+        }
     }
     if (j.contains("enabled"))
     {

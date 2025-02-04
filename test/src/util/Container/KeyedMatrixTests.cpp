@@ -531,7 +531,7 @@ TEST_CASE("[KeyedMatrix] Constructors dynamic sized", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    enum Keys
+    enum Keys : uint8_t
     {
         ONE,
         TWO,
@@ -571,7 +571,7 @@ TEST_CASE("[KeyedMatrix] rowKeys & colKeys", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    enum Keys
+    enum Keys : uint8_t
     {
         ONE,
         TWO,
@@ -587,7 +587,7 @@ TEST_CASE("[KeyedMatrix] hasRow(s) & hasCol(s)", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    enum Keys
+    enum Keys : uint8_t
     {
         ONE,
         TWO,
@@ -627,7 +627,7 @@ TEST_CASE("[KeyedMatrix] replaceRow & replaceCol", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    enum Keys
+    enum Keys : uint8_t
     {
         ONE,
         TWO,
@@ -669,7 +669,7 @@ TEST_CASE("[KeyedMatrix] operator(rowKey(s), colKey(s))", "[KeyedMatrix]")
         4, 5, 6,
         7, 8, 9;
     {
-        enum Keys
+        enum Keys : uint8_t
         {
             ONE,
             TWO,
@@ -862,7 +862,7 @@ TEST_CASE("[KeyedMatrix] removeRows & removeCols", "[KeyedMatrix]")
         9, 10, 11, 12,
         13, 14, 15, 16;
 
-    enum Keys
+    enum Keys : uint8_t
     {
         ONE,
         TWO,
@@ -1163,7 +1163,7 @@ TEST_CASE("[KeyedMatrix] Access with alias", "[KeyedMatrix]")
 {
     auto logger = initializeTestLogger();
 
-    enum Keys
+    enum Keys : uint8_t
     {
         Px,
         Py,
@@ -1290,7 +1290,7 @@ TEST_CASE("[KeyedRowVector] All functions", "[KeyedRowVector]")
 
 namespace keym
 {
-enum Keys
+enum Keys : uint8_t
 {
     Position,
     Velocity,

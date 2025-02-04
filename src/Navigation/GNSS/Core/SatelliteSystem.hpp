@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <fmt/format.h>
@@ -42,7 +43,7 @@ enum SatelliteSystem_ : uint64_t
 struct SatelliteSystem
 {
     /// @brief Satellite System enumeration with continuous range. Not usable as a mask
-    enum Enum : size_t
+    enum Enum : uint8_t
     {
         Enum_GPS,   ///< Global Positioning System
         Enum_GAL,   ///< Galileo
@@ -128,6 +129,17 @@ struct SatelliteSystem
 
     /// @brief Get a list of satellites in the constellation
     [[nodiscard]] std::vector<uint16_t> getSatellites() const;
+
+    /// @brief Get additional information about the satellite if available
+    /// @param[in] satSys Satellite System
+    /// @param[in] satNum Satellite Number
+    /// @return Optional String of additional information
+    static std::optional<std::string> GetSatelliteInfo(SatelliteSystem satSys, uint16_t satNum);
+
+    /// @brief Get additional information about the satellite if available
+    /// @param[in] satNum Satellite Number
+    /// @return Optional String of additional information
+    [[nodiscard]] std::optional<std::string> getSatelliteInfo(uint16_t satNum) const;
 
     /// @brief Get the continuous enumeration of the specified Satellite System
     /// @param[in] satSys Satellite System to get the continuous enumeration for
@@ -428,7 +440,7 @@ struct fmt::formatter<NAV::SatelliteSystem> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::SatelliteSystem& satSys, FormatContext& ctx)
+    auto format(const NAV::SatelliteSystem& satSys, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(satSys), ctx);
     }

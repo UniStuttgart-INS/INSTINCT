@@ -8,7 +8,6 @@
 
 #include "SkydelNetworkStream.hpp"
 
-#include <boost/asio.hpp>
 #include <thread>
 #include <string>
 #include <vector>

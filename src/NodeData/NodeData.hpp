@@ -19,6 +19,7 @@
 
 #include "Navigation/Time/InsTime.hpp"
 #include "util/Assert.h"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -42,6 +43,10 @@ class NodeData
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type() { return "NodeData"; }
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] virtual std::string getType() const { return type(); };
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
@@ -70,6 +75,14 @@ class NodeData
     /// @return Value if in the observation
     [[nodiscard]] virtual std::optional<double> getValueAt(size_t /* idx */) const { return std::nullopt; }
 
+    /// @brief Set the value at the index
+    /// @return True if the value was updated
+    [[nodiscard]] virtual bool setValueAt(size_t /* idx */, double /* value */)
+    {
+        LOG_CRITICAL("This function should never be called. Did you forget to override it?");
+        return false;
+    }
+
     /// @brief Get the value at the index or NaN if not in the observation
     /// @param idx Index corresponding to data descriptor order
     /// @return Value or NaN if not in the observation
@@ -82,8 +95,29 @@ class NodeData
     /// @return Value if in the observation
     [[nodiscard]] virtual std::optional<double> getDynamicDataAt(const std::string& /* descriptor */) const { return std::nullopt; }
 
+    /// @brief Set the value for the descriptor
+    /// @return True if the value was updated
+    [[nodiscard]] virtual bool setDynamicDataAt(const std::string& /* descriptor */, double /* value */)
+    {
+        LOG_CRITICAL("This function should never be called. Did you forget to override it?");
+        return false;
+    }
+
     /// @brief Returns a vector of data descriptors and values for the dynamic data
     [[nodiscard]] virtual std::vector<std::pair<std::string, double>> getDynamicData() const { return {}; }
+
+    /// @brief Shows a GUI tooltip to look into details of the observation
+    /// @param[in] detailView Flag to show the detailed view
+    /// @param[in] firstOpen Flag whether the tooltip is opened once
+    /// @param[in] displayName Data identifier, can be used in dynamic data to identify the correct data
+    /// @param[in] id Unique identifier
+    /// @param[in] rootWindow Pointer to the root window opening the tooltip
+    virtual void guiTooltip([[maybe_unused]] bool detailView, [[maybe_unused]] bool firstOpen,
+                            [[maybe_unused]] const char* displayName, [[maybe_unused]] const char* id,
+                            [[maybe_unused]] int* rootWindow) const {}
+
+    /// @brief Return whether this data has a tooltip
+    [[nodiscard]] virtual bool hasTooltip() const { return false; }
 
     /// Time at which the message was received
     InsTime insTime;

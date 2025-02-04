@@ -21,13 +21,13 @@ namespace
 {
 /// Flag for interrupt check
 volatile sig_atomic_t usr_interrupt = 0;
-} // namespace
 
 void handler(int /* */)
 {
     LOG_DEBUG("Signal caught");
     usr_interrupt = 1;
 }
+} // namespace
 
 void NAV::Sleep::waitForSignal(bool showText)
 {

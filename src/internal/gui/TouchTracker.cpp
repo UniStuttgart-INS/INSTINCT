@@ -10,6 +10,9 @@
 
 #include <map>
 
+namespace NAV::gui
+{
+
 /// @brief Comparison operator for node Ids
 struct NodeIdLess
 {
@@ -23,8 +26,13 @@ struct NodeIdLess
     }
 };
 
+namespace
+{
 const float m_TouchTime = 1.0F;
 std::map<ax::NodeEditor::NodeId, float, NodeIdLess> m_NodeTouchTime;
+
+} // namespace
+} // namespace NAV::gui
 
 /// @brief  Trigger a touch event on the specified node
 /// @param[in] id Id of the node to trigger the event on

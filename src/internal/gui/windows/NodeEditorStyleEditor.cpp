@@ -8,9 +8,18 @@
 
 #include "NodeEditorStyleEditor.hpp"
 
+#include <imgui.h>
 #include <imgui_node_editor.h>
+#include "internal/gui/NodeEditorApplication.hpp"
 
 namespace ed = ax::NodeEditor;
+
+namespace NAV::gui::windows
+{
+
+bool nodeEditorLightMode = false;
+
+} // namespace NAV::gui::windows
 
 void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4>& colors, const std::vector<const char*>& colorNames)
 {
@@ -62,6 +71,8 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4
     ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0F);
     ImGui::TextUnformatted("Filter Colors");
     ImGui::Spring();
+    if (ImGui::Checkbox("Light mode", &nodeEditorLightMode)) { ApplyDarkLightMode(colors); }
+    ImGui::Spring(0);
     ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
     ImGui::Spring(0);
     ImGui::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_DisplayHSV);
@@ -98,4 +109,37 @@ void NAV::gui::windows::ShowNodeEditorStyleEditor(bool* show, std::vector<ImVec4
     ImGui::PopItemWidth();
 
     ImGui::End();
+}
+
+void NAV::gui::windows::ApplyDarkLightMode(std::vector<ImVec4>& colors)
+{
+    auto& editorStyle = ed::GetStyle();
+    if (nodeEditorLightMode)
+    {
+        editorStyle.Colors[ed::StyleColor_Bg] = ImColor(255, 255, 255, 255);
+        editorStyle.Colors[ed::StyleColor_Grid] = ImColor(120, 120, 120, 40);
+        editorStyle.Colors[ed::StyleColor_GroupBg] = ImColor(130, 130, 130, 160);
+
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_TEXT] = ImColor(0, 0, 0, 255);
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_BG] = ImColor(115, 115, 115, 0);
+        colors[NodeEditorApplication::COLOR_GROUP_OUTER_BORDER] = ImColor(255, 255, 255, 64);
+
+        ImGui::StyleColorsLight();
+        ImGui::GetStyle().Colors[ImGuiCol_WindowBg] = ImColor(255, 255, 255, 255);
+        ImGui::GetStyle().Colors[ImGuiCol_FrameBg] = ImColor(240, 240, 240, 255);
+    }
+    else
+    {
+        ed::Style defaultStyle{};
+        for (int i = 0; i < ed::StyleColor_Count; i++)
+        {
+            editorStyle.Colors[i] = defaultStyle.Colors[i]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+        }
+
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_TEXT] = ImColor(1.0F, 1.0F, 1.0F, 1.0F);
+        colors[NodeEditorApplication::COLOR_GROUP_HEADER_BG] = ImColor(1.0F, 1.0F, 1.0F, 0.25F);
+        colors[NodeEditorApplication::COLOR_GROUP_OUTER_BORDER] = ImColor(1.0F, 1.0F, 1.0F, 0.25F);
+
+        ImGui::StyleColorsDark();
+    }
 }

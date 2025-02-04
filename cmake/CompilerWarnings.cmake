@@ -66,6 +66,8 @@ function(set_project_warnings project_name)
       -Wno-comment # don't warn on misleading multi-line comments (comments which line ends with \ go into next line. Doxygen equations do all the time)
       -Wno-restrict # warns on built-in memcpy when adding a string to a const char*
       -Wno-cpp # suppress useless warnings
+      -Wno-array-bounds # connected to https://github.com/nlohmann/json/issues/3808
+      -Wno-stringop-overflow # unordered_dense triggering since verion 4.4.0
   )
 
   # Clang only warnings

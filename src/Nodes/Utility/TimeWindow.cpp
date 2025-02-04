@@ -197,5 +197,11 @@ void NAV::TimeWindow::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
         {
             invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, obs);
         }
+        else if (obs->insTime > _startEndTime[1])
+        {
+            inputPins.at(INPUT_PORT_INDEX_FLOW).queueBlocked = true;
+            inputPins.at(INPUT_PORT_INDEX_FLOW).queue.clear();
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).noMoreDataAvailable = true;
+        }
     }
 }

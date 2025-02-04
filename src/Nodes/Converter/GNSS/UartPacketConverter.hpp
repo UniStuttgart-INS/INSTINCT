@@ -9,18 +9,13 @@
 /// @file UartPacketConverter.hpp
 /// @brief Decrypts Uart packets
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author R. Lintz (r-lintz@gmx.de) (master thesis)
 /// @date 2022-06-13
 
 #pragma once
 
+#include <cstdint>
 #include "internal/Node/Node.hpp"
-
-#include "NodeData/General/UartPacket.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/EmlidObs.hpp"
-
-#include <array>
-#include <memory>
 
 namespace NAV
 {
@@ -64,16 +59,33 @@ class UartPacketConverter : public Node
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;  ///< @brief Flow
     constexpr static size_t INPUT_PORT_INDEX_UART_PACKET = 0; ///< @brief Flow (UartPacket)
+    constexpr static size_t INPUT_PORT_INDEX_SYNC_IN = 1;     ///< @brief Flow (SyncIn)
 
     /// Enum specifying the type of the output message
-    enum OutputType
+    enum OutputType : uint8_t
     {
         OutputType_UbloxObs, ///< Extract UbloxObs data
         OutputType_EmlidObs, ///< Extract EmlidObs data
+        OutputType_WiFiObs,  ///< Extract WiFiObs data
     };
 
     /// The selected output type in the GUI
     OutputType _outputType = OutputType_UbloxObs;
+
+    /// Show the SyncIn Pin
+    bool _syncInPin = false;
+
+    /// Last received syncInCnt
+    int64_t _lastSyncInCnt = 0;
+
+    /// Last received syncOutCnt
+    int64_t _lastSyncOutCnt = 0;
+
+    /// Corrected SyncOut counter in case of a reset (initiator)
+    int64_t _syncOutCntCorr = 0;
+
+    /// Corrected SyncIn counter in case of a reset (target)
+    int64_t _syncInCntCorr = 0;
 
     /// @brief Initialize the node
     bool initialize() override;

@@ -26,8 +26,8 @@ namespace nm = NAV::NodeManager;
 #include "Logger.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -37,9 +37,13 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataLogger/GNSS/RinexObsLogger.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::RinexObsLoggerTests
+{
+namespace
 {
 
 void compareObservations(std::deque<std::shared_ptr<const NAV::GnssObs>>& data1, std::deque<std::shared_ptr<const NAV::GnssObs>>& data2)
@@ -147,6 +151,8 @@ void testFile(const std::string& path, const std::vector<std::string>& expectedH
     }
     REQUIRE(headerCount == expectedHeader.size());
 }
+
+} // namespace
 
 TEST_CASE("[RinexObsLoggerTests][flow] DataLogger/GNSS/RinexObsLogger-1.obs", "[RinexObsLoggerTests][flow]")
 {

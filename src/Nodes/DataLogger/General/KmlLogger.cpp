@@ -8,6 +8,9 @@
 
 #include "KmlLogger.hpp"
 
+#include <imgui.h>
+#include <implot_internal.h>
+
 #include "Navigation/Transformations/Units.hpp"
 #include "Navigation/Geoid/EGM96.hpp"
 #include "NodeData/NodeData.hpp"
@@ -97,21 +100,15 @@ void NAV::KmlLogger::restore(json const& j)
 
 void NAV::KmlLogger::flush()
 {
+    // See https://developers.google.com/kml/documentation/kml_tut#paths
     LOG_DEBUG("{}: Received all data. Writing file now...", nameId());
     _filestream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                   "<kml xmlns=\"http://earth.google.com/kml/2.1\">\n"
+                   "<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"
                    "<Document>\n"
                    "<Style id=\"P0\">\n"
                    "  <IconStyle>\n"
                    "    <color>ffffffff</color>\n"
                    "    <scale>0.3</scale>\n"
-                   "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
-                   "  </IconStyle>\n"
-                   "</Style>\n"
-                   "<Style id=\"P1\">\n"
-                   "  <IconStyle>\n"
-                   "    <color>ff008800</color>\n"
-                   "    <scale>0.2</scale>\n"
                    "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
                    "  </IconStyle>\n"
                    "</Style>\n"
@@ -121,28 +118,29 @@ void NAV::KmlLogger::flush()
                    "    <scale>0.2</scale>\n"
                    "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
                    "  </IconStyle>\n"
-                   "</Style>\n"
-                   "<Style id=\"P3\">\n"
-                   "  <IconStyle>\n"
-                   "    <color>ff0000ff</color>\n"
-                   "    <scale>0.2</scale>\n"
-                   "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
-                   "  </IconStyle>\n"
-                   "</Style>\n"
-                   "<Style id=\"P4\">\n"
-                   "  <IconStyle>\n"
-                   "    <color>ff00ffff</color>\n"
-                   "    <scale>0.2</scale>\n"
-                   "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
-                   "  </IconStyle>\n"
-                   "</Style>\n"
-                   "<Style id=\"P5\">\n"
-                   "  <IconStyle>\n"
-                   "    <color>ffff00ff</color>\n"
-                   "    <scale>0.2</scale>\n"
-                   "    <Icon><href>http://maps.google.com/mapfiles/kml/pal2/icon18.png</href></Icon>\n"
-                   "  </IconStyle>\n"
                    "</Style>\n";
+
+    ImPlotContext& gp = *ImPlot::GetCurrentContext();
+    int cmap = gp.Style.Colormap; // Current selected colormap
+    int nColors = gp.ColormapData.GetKeyCount(cmap);
+
+    for (size_t i = 0; i < _positionData.size(); i++)
+    {
+        int cidx = static_cast<int>(i) % nColors;
+        ImColor color(gp.ColormapData.GetKeyColor(cmap, cidx));
+        _filestream << "<Style id=\"line" << i << "\">\n"
+                    << "  <LineStyle>\n"
+                       "    <color>" // ff00aaff
+                    << fmt::format("{:02x}{:02x}{:02x}{:02x}",
+                                   static_cast<int>(color.Value.w * 255.0F),
+                                   static_cast<int>(color.Value.z * 255.0F),
+                                   static_cast<int>(color.Value.y * 255.0F),
+                                   static_cast<int>(color.Value.x * 255.0F))
+                    << "</color>\n"
+                       "    <width>1</width>\n"
+                       "  </LineStyle>\n"
+                       "</Style>\n";
+    }
 
     for (size_t i = 0; i < _positionData.size(); i++)
     {
@@ -153,14 +151,9 @@ void NAV::KmlLogger::flush()
         {
             _filestream << "<Placemark>\n"
                         << "<name>" << inputPins.at(i).name << " Track</name>\n"
-                        << "<Style>\n"
-                           "<LineStyle>\n"
-                           "<color>ff00ffff</color>\n"
-                           "</LineStyle>\n"
-                           "</Style>";
-
-            _filestream << "<LineString>\n"
-                           "<altitudeMode>absolute</altitudeMode>\n"
+                        << "<styleUrl>#line" << i << "</styleUrl>\n"
+                        << "<LineString>\n"
+                        << "<altitudeMode>absolute</altitudeMode>\n"
                            "<coordinates>\n";
             for (const auto& lla : posData)
             {
@@ -177,7 +170,8 @@ void NAV::KmlLogger::flush()
             if (posData.size() > 1)
             {
                 _filestream << "<Folder>\n"
-                            << "<name>" << inputPins.at(i).name << " Position</name>\n";
+                            << "<name>" << inputPins.at(i).name << " Position</name>\n"
+                            << "<visibility>0</visibility>";
             }
             for (const auto& lla : posData)
             {
@@ -259,7 +253,7 @@ void NAV::KmlLogger::pinDeleteCallback(Node* node, size_t pinIdx)
 void NAV::KmlLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     auto obs = std::static_pointer_cast<const Pos>(queue.extract_front());
-    LOG_INFO("{}: [{}] Received data {}", nameId(), obs->insTime.toYMDHMS(GPST), egm96_compute_altitude_offset(obs->latitude(), obs->longitude()));
+    LOG_DATA("{}: [{}] Received data {}", nameId(), obs->insTime.toYMDHMS(GPST), egm96_compute_altitude_offset(obs->latitude(), obs->longitude()));
 
     _positionData.at(pinIdx).emplace_back(rad2deg(obs->latitude()),
                                           rad2deg(obs->longitude()),

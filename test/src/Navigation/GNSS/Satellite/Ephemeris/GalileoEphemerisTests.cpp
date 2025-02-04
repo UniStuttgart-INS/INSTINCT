@@ -16,6 +16,7 @@ namespace NAV::TESTS::EphemerisTests
 TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris]")
 {
     // E24 - Taken from real data
+    // NOLINTBEGIN
     GalileoEphemeris eph(2023, 1, 8, 12, 0, 0, -1.046533754561e-03, -2.094679985021e-11, 0.000000000000e+00,
                          7.200000000000e+01, -1.225000000000e+01, 3.048698419098e-09, 8.358485318292e-01,
                          -5.848705768585e-07, 7.337066344917e-04, 8.532777428627e-06, 5.440620456696e+03,
@@ -24,6 +25,7 @@ TEST_CASE("[Ephemeris] GAL Ephemeris calc orbit (BRDC_20230080000)", "[Ephemeris
                          -7.236015694813e-10, 5.160000000000e+02, 2.244000000000e+03, 0.000000000000e+00,
                          3.120000000000e+00, 0.000000000000e+00, -3.259629011154e-09, -4.190951585770e-09,
                          4.386400000000e+04, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00);
+    // NOLINTEND
 
     // https://igs.org/products/
     // | Broadcast         | Accuracy     |

@@ -24,8 +24,8 @@
 #include "util/Eigen.hpp"
 #include "util/Container/Unordered_map.hpp"
 
-#pragma GCC diagnostic push
-#if !defined(__clang__) && defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wvirtual-move-assign" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
@@ -84,14 +84,14 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param keys Row keys to check for
     bool hasRows(const std::vector<RowKeyType>& keys) const
     {
-        return std::all_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
+        return std::ranges::all_of(keys, [&](const RowKeyType& key) { return hasRow(key); });
     }
 
     /// @brief Checks if the matrix has any key
     /// @param keys Row keys to check for
     bool hasAnyRows(const std::vector<RowKeyType>& keys) const
     {
-        return std::any_of(keys.begin(), keys.end(), [&](const RowKeyType& key) { return hasRow(key); });
+        return std::ranges::any_of(keys, [&](const RowKeyType& key) { return hasRow(key); });
     }
 
     /// @brief Replace the old with the new key
@@ -99,7 +99,7 @@ class KeyedMatrixRowsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param[in] newKey New key to use instead
     void replaceRowKey(const RowKeyType& oldKey, const RowKeyType& newKey)
     {
-        auto iter = std::find(rowKeysVector.begin(), rowKeysVector.end(), oldKey);
+        auto iter = std::ranges::find(rowKeysVector, oldKey);
         INS_ASSERT_USER_ERROR(iter != rowKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
 
         *iter = newKey;
@@ -176,7 +176,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMa
         std::vector<int> indices;
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = this->rowIndices.find(rowKey);
             INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
             if (iter != this->rowIndices.end())
             {
@@ -187,7 +187,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMa
 
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = this->rowIndices.find(rowKey);
             if (iter != this->rowIndices.end())
             {
                 std::erase_if(this->rowKeysVector, [&](const auto& item) { return item == rowKey; });
@@ -228,14 +228,14 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param keys Col keys to check for
     bool hasCols(const std::vector<ColKeyType>& keys) const
     {
-        return std::all_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+        return std::ranges::all_of(keys, [&](const ColKeyType& key) { return hasCol(key); });
     }
 
     /// @brief Checks if the matrix has any keys
     /// @param keys Col keys to check for
     bool hasAnyCols(const std::vector<ColKeyType>& keys) const
     {
-        return std::any_of(keys.begin(), keys.end(), [&](const ColKeyType& key) { return hasCol(key); });
+        return std::ranges::any_of(keys, [&](const ColKeyType& key) { return hasCol(key); });
     }
 
     /// @brief Replace the old with the new key
@@ -243,7 +243,7 @@ class KeyedMatrixColsBase : virtual public KeyedMatrixStorage<Scalar, Rows, Cols
     /// @param[in] newKey New key to use instead
     void replaceColKey(const ColKeyType& oldKey, const ColKeyType& newKey)
     {
-        auto iter = std::find(colKeysVector.begin(), colKeysVector.end(), oldKey);
+        auto iter = std::ranges::find(colKeysVector, oldKey);
         INS_ASSERT_USER_ERROR(iter != colKeysVector.end(), "You cannot replace keys, which are not in the vector/matrix.");
 
         *iter = newKey;
@@ -320,7 +320,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
         std::vector<int> indices;
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = this->colIndices.find(colKey);
             INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
             if (iter != this->colIndices.end())
             {
@@ -331,7 +331,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
 
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = this->colIndices.find(colKey);
             if (iter != this->colIndices.end())
             {
                 std::erase_if(this->colKeysVector, [&](const auto& item) { return item == colKey; });
@@ -2203,7 +2203,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         std::vector<int> rowIndices;
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = this->rowIndices.find(rowKey);
             INS_ASSERT_USER_ERROR(iter != this->rowIndices.end(), "You tried removing a row key, which did not exist.");
             if (iter != this->rowIndices.end())
             {
@@ -2213,7 +2213,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         std::vector<int> colIndices;
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = this->colIndices.find(colKey);
             INS_ASSERT_USER_ERROR(iter != this->colIndices.end(), "You tried removing a col key, which did not exist.");
             if (iter != this->colIndices.end())
             {
@@ -2225,7 +2225,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
 
         for (const auto& rowKey : rowKeys)
         {
-            auto iter = std::find_if(this->rowIndices.begin(), this->rowIndices.end(), [&](const auto& item) { return item.first == rowKey; });
+            auto iter = this->rowIndices.find(rowKey);
             if (iter != this->rowIndices.end())
             {
                 std::erase_if(this->rowKeysVector, [&](const auto& item) { return item == rowKey; });
@@ -2240,7 +2240,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
         }
         for (const auto& colKey : colKeys)
         {
-            auto iter = std::find_if(this->colIndices.begin(), this->colIndices.end(), [&](const auto& item) { return item.first == colKey; });
+            auto iter = this->colIndices.find(colKey);
             if (iter != this->colIndices.end())
             {
                 std::erase_if(this->colKeysVector, [&](const auto& item) { return item == colKey; });
@@ -2314,6 +2314,16 @@ using KeyedMatrix3d = KeyedMatrix<double, RowKeyType, ColKeyType, 3, 3>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename RowKeyType, typename ColKeyType = RowKeyType>
 using KeyedMatrix4d = KeyedMatrix<double, RowKeyType, ColKeyType, 4, 4>;
+/// @brief Static 5x5 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix5d = KeyedMatrix<double, RowKeyType, ColKeyType, 5, 5>;
+/// @brief Static 6x6 squared size KeyedMatrix with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename RowKeyType, typename ColKeyType = RowKeyType>
+using KeyedMatrix6d = KeyedMatrix<double, RowKeyType, ColKeyType, 6, 6>;
 
 /// @brief Dynamic size KeyedVector
 /// @tparam Scalar Numeric type, e.g. float, double, int or std::complex<float>.
@@ -2336,6 +2346,14 @@ using KeyedVector3d = KeyedVector<double, RowKeyType, 3>;
 /// @tparam RowKeyType Type of the key used for row lookup
 template<typename RowKeyType>
 using KeyedVector4d = KeyedVector<double, RowKeyType, 4>;
+/// @brief Static 5 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector5d = KeyedVector<double, RowKeyType, 5>;
+/// @brief Static 6 row KeyedVector with double types
+/// @tparam RowKeyType Type of the key used for row lookup
+template<typename RowKeyType>
+using KeyedVector6d = KeyedVector<double, RowKeyType, 6>;
 
 /// @brief Dynamic size KeyedRowVector
 /// @tparam ColKeyType Type of the key used for col lookup
@@ -2357,14 +2375,24 @@ using KeyedRowVector3d = KeyedRowVector<double, ColKeyType, 3>;
 /// @tparam ColKeyType Type of the key used for col lookup
 template<typename ColKeyType>
 using KeyedRowVector4d = KeyedRowVector<double, ColKeyType, 4>;
+/// @brief Static 5 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector5d = KeyedRowVector<double, ColKeyType, 5>;
+/// @brief Static 6 col KeyedRowVector with double types
+/// @tparam ColKeyType Type of the key used for col lookup
+template<typename ColKeyType>
+using KeyedRowVector6d = KeyedRowVector<double, ColKeyType, 6>;
 
 } // namespace NAV
 
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #ifndef DOXYGEN_IGNORE
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedMatrix
 template<typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols>
 struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>> : fmt::formatter<std::string>
 {
@@ -2372,7 +2400,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
     /// @param[in] mat Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, format_context& ctx)
+    auto format(const NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Cols>& mat, format_context& ctx) const
     {
         std::string result;
         auto rows = static_cast<size_t>(mat.rows());
@@ -2448,7 +2476,7 @@ struct fmt::formatter<NAV::KeyedMatrix<Scalar, RowKeyType, ColKeyType, Rows, Col
     }
 };
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedVector
 template<typename Scalar, typename RowKeyType, int Rows>
 struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatter<std::string>
 {
@@ -2456,7 +2484,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatt
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, format_context& ctx)
+    auto format(const NAV::KeyedVector<Scalar, RowKeyType, Rows>& vec, format_context& ctx) const
     {
         std::string result;
         auto rows = static_cast<size_t>(vec.rows());
@@ -2503,7 +2531,7 @@ struct fmt::formatter<NAV::KeyedVector<Scalar, RowKeyType, Rows>> : fmt::formatt
     }
 };
 
-/// @brief Formatter for Frequency
+/// @brief Formatter for KeyedRowVector
 template<typename Scalar, typename ColKeyType, int Cols>
 struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::formatter<std::string>
 {
@@ -2511,7 +2539,7 @@ struct fmt::formatter<NAV::KeyedRowVector<Scalar, ColKeyType, Cols>> : fmt::form
     /// @param[in] vec Struct to format
     /// @param[in, out] ctx Format context
     /// @return Output iterator
-    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, format_context& ctx)
+    auto format(const NAV::KeyedRowVector<Scalar, ColKeyType, Cols>& vec, format_context& ctx) const
     {
         std::string result;
         auto cols = static_cast<size_t>(vec.cols());

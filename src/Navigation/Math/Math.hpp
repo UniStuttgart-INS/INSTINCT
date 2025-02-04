@@ -14,7 +14,9 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstdint>
+#include <optional>
 #include <type_traits>
 #include <Eigen/Core>
 #include <gcem.hpp>
@@ -34,8 +36,7 @@ uint64_t factorial(uint64_t n);
 /// @param[in] value Value to round
 /// @param[in] digits Amount of digits
 /// @return The rounded value
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 constexpr T round(const T& value, size_t digits)
 {
     auto factor = std::pow(10, digits);
@@ -46,8 +47,7 @@ constexpr T round(const T& value, size_t digits)
 /// @param[in] value Value to round
 /// @param[in] digits Amount of digits
 /// @return The rounded value
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 constexpr T roundSignificantDigits(T value, size_t digits)
 {
     if (value == 0.0) { return 0.0; }
@@ -69,9 +69,7 @@ constexpr T roundSignificantDigits(T value, size_t digits)
 /// @tparam In Input data type (needs to be bigger than the amount of Bits)
 /// @param[in] in Number as two's complement, with the sign bit (+ or -) occupying the MSB
 /// @return Output type
-template<typename Out, size_t Bits, typename In,
-         typename = std::enable_if_t<std::is_integral_v<Out>>,
-         typename = std::enable_if_t<std::is_integral_v<In>>>
+template<std::integral Out, size_t Bits, std::integral In>
 constexpr Out interpretAs(In in)
 {
     static_assert(Bits < sizeof(In) * 8);
@@ -120,16 +118,14 @@ Eigen::Matrix<typename Derived::Scalar, 3, 3> skewSymmetricMatrixSquared(const E
 }
 
 /// @brief Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 T sec(const T& x)
 {
     return 1.0 / std::cos(x);
 }
 
 /// @brief Calculates the cosecant of a value (csc(x) = sec(pi/2 - x) = 1 / sin(x))
-template<typename T,
-         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+template<std::floating_point T>
 T csc(const T& x)
 {
     return 1.0 / std::sin(x);
@@ -151,8 +147,8 @@ int sgn(const T& val)
 /// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC5
 /// @attention Consider using NAV::math::LtDLdecomp_choleskyFact() because it is faster by up to a factor 10
 template<typename Derived>
-std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
-          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+std::optional<std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
+                        Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>>
     LtDLdecomp_outerProduct(const Eigen::MatrixBase<Derived>& Qmatrix)
 {
     using Eigen::seq;
@@ -176,6 +172,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
     for (Eigen::Index i = n - 1; i >= 0; i--)
     {
         D(i) = Q(i, i);
+        if (Q(i, i) <= 0.0) { return {}; }
         L(i, seq(0, i)) = Q(i, seq(0, i)) / std::sqrt(Q(i, i));
 
         for (Eigen::Index j = 0; j <= i - 1; j++)
@@ -185,7 +182,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
         L(i, seq(0, i)) /= L(i, i);
     }
 
-    return { L, D };
+    return std::make_pair(L, D);
 }
 
 /// @brief Find (L^T D L)-decomposition of Q-matrix via a backward Cholesky factorization in a bordering method formulation
@@ -194,8 +191,8 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
 /// @return D - Vector with entries of the diagonal matrix
 /// @note See \cite deJonge1996 de Jonge 1996, Algorithm FMFAC6
 template<typename Derived>
-std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
-          Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>
+std::optional<std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>,
+                        Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>>>
     LtDLdecomp_choleskyFact(const Eigen::MatrixBase<Derived>& Q)
 {
     using Eigen::seq;
@@ -215,11 +212,9 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
             L(i, j) = (L(i, j) - L(seq(i + 1, n - 1), j).dot(L(seq(i + 1, n - 1), i))) / L(i, i);
         }
         double t = L(j, j) - L(seq(j + 1, n - 1), j).dot(L(seq(j + 1, n - 1), j));
+        if (t <= 0.0) { return {}; }
         double c = t / L(j, j);
-        if (c < cmin)
-        {
-            cmin = c;
-        }
+        cmin = std::min(c, cmin);
         L(j, j) = std::sqrt(t);
     }
     for (Eigen::Index i = 0; i < n; i++)
@@ -229,7 +224,7 @@ std::pair<Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, De
         L(i, i) = 1;
     }
 
-    return { L, D };
+    return std::make_pair(L, D);
 }
 
 /// @brief Calculates the squared norm of the vector and matrix
@@ -303,6 +298,55 @@ template<typename Derived>
 typename Derived::PlainObject lerp(const Eigen::MatrixBase<Derived>& a, const Eigen::MatrixBase<Derived>& b, const typename Derived::Scalar& t)
 {
     return a + t * (b - a);
+}
+
+/// Lerp Search Result
+struct LerpSearchResult
+{
+    size_t l; ///< Lower bound index
+    size_t u; ///< Upper bound index (l + 1)
+    double t; ///< [0, 1] for Interpolation, otherwise Extrapolation
+};
+
+/// @brief Searches the value in the data container
+/// @param[in] data Data container
+/// @param[in] value Value to search
+LerpSearchResult lerpSearch(const auto& data, const auto& value)
+{
+    auto i = static_cast<size_t>(std::distance(data.begin(), std::upper_bound(data.begin(), data.end(), value)));
+    if (i > 0) { i--; }
+    if (i == data.size() - 1) { i--; }
+    const auto& lb = data.at(i);
+    const auto& ub = data.at(i + 1);
+    double t = (value - lb) / (ub - lb);
+
+    return { .l = i, .u = i + 1, .t = t };
+}
+
+/// @brief Bilinear interpolation
+/// @param[in] tx Distance in x component to interpolate [0, 1]
+/// @param[in] ty Distance in y component to interpolate [0, 1]
+/// @param[in] c00 Value for tx = ty = 0
+/// @param[in] c10 Value for tx = 1 and ty = 0
+/// @param[in] c01 Value for tx = 0 and ty = 1
+/// @param[in] c11 Value for tx = ty = 1
+///
+/// c01 ------ c11
+///  |          |
+///  |          |
+///  |          |
+/// c00 ------ c10
+///
+/// @note See https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/interpolation/bilinear-filtering.html
+auto bilinearInterpolation(const double& tx, const double& ty,
+                           const auto& c00, const auto& c10,
+                           const auto& c01, const auto& c11)
+{
+    auto a = c00 * (1 - tx) + c10 * tx;
+    auto b = c01 * (1 - tx) + c11 * tx;
+    return a * (1 - ty) + b * ty;
+    // Alternative implementation:
+    // return (1 - tx) * (1 - ty) * c00 + tx * (1 - ty) * c10 + (1 - tx) * ty * c01 + tx * ty * c11;
 }
 
 /// @brief Calculates the incomplete elliptical integral of the second kind

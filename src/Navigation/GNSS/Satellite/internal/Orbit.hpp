@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "Navigation/Time/InsTime.hpp"
 #include "util/Eigen.hpp"
 
@@ -70,7 +71,7 @@ class Orbit
 
   protected:
     /// @brief Calculation flags
-    enum Calc
+    enum Calc : uint8_t
     {
         Calc_None = 0b000,         ///< None
         Calc_Position = 0b001,     ///< Position calculation flag

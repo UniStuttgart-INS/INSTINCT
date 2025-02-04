@@ -41,6 +41,10 @@ class KvhObs final : public ImuObs
         return "KvhObs";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -58,7 +62,7 @@ class KvhObs final : public ImuObs
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 22; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return ImuObs::GetStaticDescriptorCount() + 2; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -72,32 +76,12 @@ class KvhObs final : public ImuObs
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObs::GetStaticDescriptorCount()) { return ImuObs::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Time since startup [ns]
-        case 1:  // Mag uncomp X [Gauss]
-        case 2:  // Mag uncomp Y [Gauss]
-        case 3:  // Mag uncomp Z [Gauss]
-        case 4:  // Accel uncomp X [m/s^2]
-        case 5:  // Accel uncomp Y [m/s^2]
-        case 6:  // Accel uncomp Z [m/s^2]
-        case 7:  // Gyro uncomp X [rad/s]
-        case 8:  // Gyro uncomp Y [rad/s]
-        case 9:  // Gyro uncomp Z [rad/s]
-        case 10: // Mag Comp X [Gauss]
-        case 11: // Mag Comp Y [Gauss]
-        case 12: // Mag Comp Z [Gauss]
-        case 13: // Accel Comp X [m/s^2]
-        case 14: // Accel Comp Y [m/s^2]
-        case 15: // Accel Comp Z [m/s^2]
-        case 16: // Gyro Comp X [rad/s]
-        case 17: // Gyro Comp Y [rad/s]
-        case 18: // Gyro Comp Z [rad/s]
-        case 19: // Temperature [°C]
-            return ImuObs::getValueAt(idx);
-        case 20: // Status [bits]
+        case ImuObs::GetStaticDescriptorCount() + 0: // Status [bits]
             return static_cast<double>(status.to_ulong());
-        case 21: // Sequence Number [-]
+        case ImuObs::GetStaticDescriptorCount() + 1: // Sequence Number [-]
             if (sequenceNumber < 128) { return sequenceNumber; }
             break;
         default:
@@ -120,7 +104,7 @@ class KvhObs final : public ImuObs
     ///  5  | Accelerometer Y status | 1 = Valid data, 0 = Invalid data
     ///  6  | Accelerometer Z status | 1 = Valid data, 0 = Invalid data
     ///  7  | Reserved               | Always 0
-    std::bitset<8> status{};
+    std::bitset<8> status;
 
     /// Increments for each message and resets to 0 after 127
     uint8_t sequenceNumber = UINT8_MAX;

@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GalileoEphemeris.hpp"
 
@@ -37,11 +39,12 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
         { .satSys = GAL, .alphaBeta = IonosphericCorrections::Alpha, .data = { 0.9600e+02, 0.2891e+00, 0.1132e-01 } },
     } },
     .timeSysCorr = {
-        { { GST, UTC }, { -0.1862645149e-08, 0.888178420e-15 } },
-        { { GST, GPST }, { 0.1600710675e-08, 0.355271368e-14 } },
+        { { GST, UTC }, { .a0 = -0.1862645149e-08, .a1 = 0.888178420e-15 } },
+        { { GST, GPST }, { .a0 = 0.1600710675e-08, .a1 = 0.355271368e-14 } },
     },
     .m_satellites = {
         { { GAL, 12 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GalileoEphemeris>(2022, 8, 11, 11, 10, 0, -0.109432556201e-03, -0.200373051484e-10, 0.000000000000e+00, //
                                                                   0.300000000000e+01, 0.152093750000e+03, 0.296619498250e-08, 0.594633784838e+00,       //
@@ -60,8 +63,10 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
                                                                   0.312000000000e+01, 0.000000000000e+00, -0.102445483208e-07, -0.100117176771e-07,     //
                                                                   0.390175000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),      //
                            },
+                           // NOLINTEND
                        } },
         { { GAL, 25 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GalileoEphemeris>(2022, 8, 11, 11, 0, 0, -0.584173365496e-03, -0.126476606965e-11, 0.000000000000e+00, //
                                                                   0.200000000000e+01, -0.361562500000e+02, 0.322799160166e-08, -0.274072844385e+01,    //
@@ -72,6 +77,7 @@ const GnssNavInfo gnssNavInfo_Allo223mA_22l = {
                                                                   0.312000000000e+01, 0.000000000000e+00, 0.372529029846e-08, 0.419095158577e-08,      //
                                                                   0.385885000000e+06, 0.000000000000e+00, 0.000000000000e+00, 0.000000000000e+00),     //
                            },
+                           // NOLINTEND
                        } },
     },
 };

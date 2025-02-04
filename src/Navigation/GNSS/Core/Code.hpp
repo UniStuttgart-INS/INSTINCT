@@ -14,6 +14,7 @@
 #pragma once
 
 #include <bitset>
+#include <cstdint>
 #include <fmt/format.h>
 
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
@@ -88,7 +89,7 @@ class Code
 {
   public:
     /// @brief Enumeration of all Codes
-    enum Enum
+    enum Enum : uint8_t
     {
         None, ///< None
 
@@ -207,7 +208,7 @@ class Code
         S5X, ///< SBAS L5 - Combined
     };
     /// @brief Helper variables
-    enum
+    enum : uint8_t
     {
         _GPS_START = G1C,   ///< GPS start index in the Enum
         _GPS_END = G5X,     ///< GPS end index in the Enum
@@ -589,7 +590,7 @@ class Code
 
   private:
     /// Code bitset
-    Set value{};
+    Set value;
 };
 
 // #########################################################################################################################################
@@ -700,7 +701,7 @@ struct fmt::formatter<NAV::Code> : fmt::formatter<std::string>
     /// @param[in, out] ctx Format context
     /// @return Output iterator
     template<typename FormatContext>
-    auto format(const NAV::Code& code, FormatContext& ctx)
+    auto format(const NAV::Code& code, FormatContext& ctx) const
     {
         return fmt::formatter<std::string>::format(std::string(code), ctx);
     }

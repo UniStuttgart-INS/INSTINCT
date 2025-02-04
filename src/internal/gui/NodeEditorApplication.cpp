@@ -12,7 +12,6 @@
 #include <imgui_node_editor_internal.h>
 namespace ed = ax::NodeEditor;
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 
@@ -38,7 +37,6 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/TextAnsiColored.hpp"
 
 #include "internal/gui/windows/Global.hpp"
-#include "internal/gui/windows/ImPlotStyleEditor.hpp"
 
 #include "internal/Node/Pin.hpp"
 #include "internal/Node/Node.hpp"
@@ -64,7 +62,15 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/CMakeRC.hpp"
 
+namespace NAV::gui
+{
+namespace
+{
+
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
+
+} // namespace
+} // namespace NAV::gui
 
 void NAV::gui::NodeEditorApplication::OnStart()
 {
@@ -281,6 +287,30 @@ void NAV::gui::NodeEditorApplication::OnStart()
         m_InsLogo.at(1) = LoadTexture("resources/images/INS_logo_rectangular_black_small.png");
     }
 
+    if (fs.is_file("resources/images/ic_save_white_24dp.png"))
+    {
+        auto fd = fs.open("resources/images/ic_save_white_24dp.png");
+
+        LOG_DEBUG("Generating Texture for Save icon ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_SaveButtonImage = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                        static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_SaveButtonImage = LoadTexture("resources/images/ic_save_white_24dp.png");
+    }
+
     if (fs.is_file("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg"))
     {
         auto fd = fs.open("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
@@ -329,6 +359,7 @@ void NAV::gui::NodeEditorApplication::OnStop()
     releaseTexture(m_InstinctLogo.at(0));
     releaseTexture(m_InstinctLogo.at(1));
     releaseTexture(m_HeaderBackground);
+    releaseTexture(m_SaveButtonImage);
     releaseTexture(m_RoseFigure);
 
     if (m_Editor)
@@ -809,8 +840,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         gui::checkShortcuts(globalAction);
     }
 
+    ImGui::PushFont(PanelFont());
     gui::menus::ShowMainMenuBar(globalAction);
     menuBarHeight = ImGui::GetCursorPosY();
+    ImGui::PopFont();
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -820,11 +853,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
+    bool leftPaneActive = false;
+    if (!hideLeftPane)
+    {
+        gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 25.0F, 50.0F);
 
-    bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
+        ImGui::PushFont(PanelFont());
+        leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
+        ImGui::PopFont();
 
-    ImGui::SameLine(0.0F, 12.0F);
+        ImGui::SameLine(0.0F, 12.0F);
+    }
 
     // ToolTips have to be shown outside of the NodeEditor Context, so save the Tooltip and push it afterwards
     std::string tooltipText;
@@ -838,7 +877,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (bottomViewSelectedTab != BottomViewTabItem::None)
     {
-        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + 28.5F;
+        float blueprintHeight = ImGui::GetContentRegionAvail().y - bottomViewHeight + (isUsingBigPanelFont() ? 48.5F : 28.5F);
         ImGui::PushStyleColor(ImGuiCol_Separator, IM_COL32_BLACK_TRANS);
         gui::widgets::Splitter("Log Splitter", false, 6.0F, &blueprintHeight, &bottomViewHeight, 400.0F, BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT);
         ImGui::PopStyleColor();
@@ -1191,7 +1230,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         }
                         else if (startPin->type == Pin::Type::Delegate
                                  && (startPin->parentNode == nullptr
-                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
+                                     || std::ranges::find(endPin->dataIdentifier, startPin->parentNode->type()) == endPin->dataIdentifier.end()))
                         {
                             if (startPin->parentNode != nullptr)
                             {
@@ -1727,6 +1766,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ed::End();
 
+    ImGui::PushFont(PanelFont());
     ImGui::Indent(SPLITTER_THICKNESS);
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::BeginTabBar("BottomViewTabBar"))
@@ -1739,7 +1779,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (ImGui::BeginTabItem("▼"))
         {
             bottomViewSelectedTab = BottomViewTabItem::None;
-            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT * defaultFontRatio();
+            bottomViewHeight = BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT * panelFontRatio();
             ImGui::EndTabItem();
         }
         else
@@ -1776,7 +1816,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::OpenPopup("Options");
             }
             ImGui::SameLine();
-            ImGui::SetNextItemWidth(100.0F * defaultFontRatio());
+            ImGui::SetNextItemWidth(100.0F * panelFontRatio());
             static int logLevelFilterSelected = spdlog::level::info;
             if (ImGui::BeginCombo("##LogLevelCombo", spdlog::level::to_string_view(static_cast<spdlog::level::level_enum>(logLevelFilterSelected)).begin()))
             {
@@ -1847,6 +1887,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::EndTabBar();
     }
     ImGui::Unindent();
+    ImGui::PopFont();
 
     ImGui::EndGroup();
 
@@ -1873,6 +1914,11 @@ float NAV::gui::NodeEditorApplication::defaultFontRatio()
 float NAV::gui::NodeEditorApplication::windowFontRatio()
 {
     return windowFontSize.at(isUsingBigWindowFont() ? 1 : 0) / windowFontSize[0];
+}
+
+float NAV::gui::NodeEditorApplication::panelFontRatio()
+{
+    return panelFontSize.at(isUsingBigPanelFont() ? 1 : 0) / panelFontSize[0];
 }
 
 float NAV::gui::NodeEditorApplication::monoFontRatio()

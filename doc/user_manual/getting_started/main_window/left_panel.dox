@@ -29,10 +29,8 @@ The Panel consists of
 Button that allows for zooming and centering the Workspace to all content equally.
 
 \section left_panel_flow_visualization Flow visualization
-Three checkboxes that allow for
-- Show Callback Flow: Displays dots along flow connections the the Flow is running
-- Show Notify Flow: Displays dots for other Pin types (see \ref demo_node)
-- Show Queue size on pins: Displays the size queued on a Pin (F,P,0-...)
+
+This section was moved into the debug menu.
 
 \image html leftPanelFlow.png width="1000"
 

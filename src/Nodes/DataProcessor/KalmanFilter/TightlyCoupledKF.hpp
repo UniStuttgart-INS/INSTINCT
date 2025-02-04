@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "internal/Node/Node.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Core/Code.hpp"
@@ -148,7 +149,7 @@ class TightlyCoupledKF : public Node
     InsTime _externalInitTime;
 
     /// Estimated receiver clock parameters
-    ReceiverClock _recvClk;
+    ReceiverClock _recvClk{ std::vector<SatelliteSystem>{ GPS } };
 
     /// Frequencies used for calculation (GUI filter)
     Frequency _filterFreq = G01;
@@ -166,10 +167,10 @@ class TightlyCoupledKF : public Node
     TroposphereModelSelection _troposphereModels;
 
     /// @brief All Inter-system clock error keys
-    std::vector<SPP::States::StateKeyTypes> _interSysErrs{};
+    std::vector<SPP::States::StateKeyType> _interSysErrs;
     /// @brief All Inter-system clock drift keys
     /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-    std::vector<SPP::States::StateKeyTypes> _interSysDrifts{};
+    std::vector<SPP::States::StateKeyType> _interSysDrifts;
 
     /// Time of last epoch
     InsTime _lastEpochTime; // TODO: Remove?
@@ -197,7 +198,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
-    enum class StdevAccelNoiseUnits
+    enum class StdevAccelNoiseUnits : uint8_t
     {
         mg_sqrtHz,   ///< [mg / √(Hz)]
         m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
@@ -212,7 +213,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
-    enum class StdevGyroNoiseUnits
+    enum class StdevGyroNoiseUnits : uint8_t
     {
         deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
         rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
@@ -227,7 +228,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevAccelBiasUnits
+    enum class StdevAccelBiasUnits : uint8_t
     {
         microg, ///< [µg]
         m_s2,   ///< [m / s^2]
@@ -245,7 +246,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevGyroBiasUnits
+    enum class StdevGyroBiasUnits : uint8_t
     {
         deg_h, ///< [°/h]
         rad_s, ///< [1/s]
@@ -263,7 +264,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the receiver clock phase drift
-    enum class StdevClockPhaseUnits
+    enum class StdevClockPhaseUnits : uint8_t
     {
         m_sqrtHz, ///< [m / √(Hz)]
     };
@@ -277,7 +278,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Standard deviation of the receiver clock frequency drift
-    enum class StdevClockFreqUnits
+    enum class StdevClockFreqUnits : uint8_t
     {
         m_s_sqrtHz, ///< [m / s / √(Hz)]
     };
@@ -292,7 +293,7 @@ class TightlyCoupledKF : public Node
 
     // TODO: Replace with GNSS Measurement Error Model (see SPP node)
     // /// Possible Units for the Standard deviation of the pseudorange measurement
-    // enum class GnssMeasurementUncertaintyPseudorangeUnit
+    // enum class GnssMeasurementUncertaintyPseudorangeUnit : uint8_t
     // {
     //     meter2, ///< Variance [m²]
     //     meter,  ///< Standard deviation [m]
@@ -306,7 +307,7 @@ class TightlyCoupledKF : public Node
     // // ###########################################################################################################
 
     // /// Possible Units for the Standard deviation of the pseudorange-rate measurement
-    // enum class GnssMeasurementUncertaintyPseudorangeRateUnit
+    // enum class GnssMeasurementUncertaintyPseudorangeRateUnit : uint8_t
     // {
     //     m2_s2, ///< Variance [m²/s²]
     //     m_s,   ///< Standard deviation [m/s]
@@ -320,7 +321,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// @brief Available Random processes
-    enum class RandomProcess
+    enum class RandomProcess : uint8_t
     {
         // WhiteNoise,     ///< White noise
         // RandomConstant, ///< Random constant
@@ -340,7 +341,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the receiver clock phase drift (standard deviation σ or Variance σ²)
-    enum class InitCovarianceClockPhaseUnit
+    enum class InitCovarianceClockPhaseUnit : uint8_t
     {
         m2, ///< Variance [m²]
         s2, ///< Variance [s²]
@@ -356,7 +357,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the receiver clock frequency drift (standard deviation σ or Variance σ²)
-    enum class InitCovarianceClockFreqUnit
+    enum class InitCovarianceClockFreqUnit : uint8_t
     {
         m2_s2, ///< Variance [m²/s²]
         m_s,   ///< Standard deviation [m/s]
@@ -370,7 +371,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
-    enum class InitCovariancePositionUnit
+    enum class InitCovariancePositionUnit : uint8_t
     {
         rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
         rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
@@ -386,7 +387,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the velocity (standard deviation σ or Variance σ²)
-    enum class InitCovarianceVelocityUnit
+    enum class InitCovarianceVelocityUnit : uint8_t
     {
         m2_s2, ///< Variance [m^2/s^2]
         m_s,   ///< Standard deviation [m/s]
@@ -400,7 +401,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the attitude angles (standard deviation σ or Variance σ²)
-    enum class InitCovarianceAttitudeAnglesUnit
+    enum class InitCovarianceAttitudeAnglesUnit : uint8_t
     {
         rad2, ///< Variance [rad^2]
         deg2, ///< Variance [deg^2]
@@ -416,7 +417,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the accelerometer biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasAccelUnit
+    enum class InitCovarianceBiasAccelUnit : uint8_t
     {
         m2_s4, ///< Variance [m^2/s^4]
         m_s2,  ///< Standard deviation [m/s^2]
@@ -430,7 +431,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial covariance for the gyroscope biases (standard deviation σ or Variance σ²)
-    enum class InitCovarianceBiasGyroUnit
+    enum class InitCovarianceBiasGyroUnit : uint8_t
     {
         rad2_s2, ///< Variance [rad²/s²]
         deg2_s2, ///< Variance [deg²/s²]
@@ -446,7 +447,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// GUI option for the Phi calculation algorithm
-    enum class PhiCalculationAlgorithm
+    enum class PhiCalculationAlgorithm : uint8_t
     {
         Exponential, ///< Van-Loan
         Taylor,      ///< Taylor
@@ -458,7 +459,7 @@ class TightlyCoupledKF : public Node
     int _phiCalculationTaylorOrder = 2;
 
     /// GUI option for the Q calculation algorithm
-    enum class QCalculationAlgorithm
+    enum class QCalculationAlgorithm : uint8_t
     {
         VanLoan, ///< Van-Loan
         Taylor1, ///< Taylor
@@ -469,7 +470,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial accelerometer biases
-    enum class InitBiasAccelUnit
+    enum class InitBiasAccelUnit : uint8_t
     {
         m_s2, ///< acceleration [m/s^2]
     };
@@ -482,7 +483,7 @@ class TightlyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the initial gyroscope biases
-    enum class InitBiasGyroUnit
+    enum class InitBiasGyroUnit : uint8_t
     {
         rad_s, ///< angular rate [rad/s]
         deg_s, ///< angular rate [deg/s]

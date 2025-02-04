@@ -32,6 +32,8 @@ extern bool showImPlotStyleEditor;
 extern bool showFontSizeEditor;
 /// @brief Flag whether the Colormap editor window should be displayed
 extern bool showColormapEditor;
+/// @brief Flag whether the Screenshotter window should be displayed
+extern bool showScreenshotter;
 
 /// @brief Called every frame to render global windows
 /// @param[in, out] colors Colors of the GUI

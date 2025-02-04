@@ -129,6 +129,8 @@ void Application::RecreateFontAtlas()
 
     m_WindowFont = m_DefaultFont;
     m_WindowFontSmall = m_DefaultFontSmall;
+    m_PanelFont = m_DefaultFont;
+    m_PanelFontSmall = m_DefaultFontSmall;
 
     config.MergeMode = false;
     strcpy(config.Name, "Inconsolata Mono");
@@ -147,6 +149,7 @@ void Application::RecreateFontAtlas()
     io.Fonts->AddFontFromMemoryCompressedTTF(FreeMono_compressed_data, FreeMono_compressed_size, defaultFontSize[1], &config, icons_ranges_FreeMono);
 
     m_WindowFontBig = m_DefaultFontBig;
+    m_PanelFontBig = m_DefaultFontBig;
 
     config.MergeMode = false;
     strcpy(config.Name, "Inconsolata Mono Big");
@@ -251,6 +254,11 @@ ImFont* Application::WindowFont()
     return m_WindowFont;
 }
 
+ImFont* Application::PanelFont()
+{
+    return m_PanelFont;
+}
+
 ImFont* Application::MonoFont()
 {
     return m_MonoFont;
@@ -270,6 +278,10 @@ void Application::swapWindowFont(bool big)
 {
     m_WindowFont = big ? m_WindowFontBig : m_WindowFontSmall;
 }
+void Application::swapPanelFont(bool big)
+{
+    m_PanelFont = big ? m_PanelFontBig : m_PanelFontSmall;
+}
 void Application::swapMonoFont(bool big)
 {
     m_MonoFont = big ? m_MonoFontBig : m_MonoFontSmall;
@@ -281,6 +293,7 @@ void Application::swapHeaderFont(bool big)
 
 bool Application::isUsingBigDefaultFont() { return m_DefaultFont == m_DefaultFontBig; }
 bool Application::isUsingBigWindowFont() { return m_WindowFont == m_WindowFontBig; }
+bool Application::isUsingBigPanelFont() { return m_PanelFont == m_PanelFontBig; }
 bool Application::isUsingBigMonoFont() { return m_MonoFont == m_MonoFontBig; }
 bool Application::isUsingBigHeaderFont() { return m_HeaderFont == m_HeaderFontBig; }
 

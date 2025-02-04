@@ -38,8 +38,8 @@ namespace nm = NAV::NodeManager;
 #include "data/SpirentAsciiSatelliteData.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -50,7 +50,9 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::SinglePointPositioningTests
 {
@@ -130,13 +132,19 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
         REQUIRE(hDist < 6e-4); // Determined by running the test and adapting
         REQUIRE(vDist < 2e-3); // Determined by running the test and adapting
 
+        LOG_DEBUG("    Satellites (# {}):", sppSol->satData.size());
+        for ([[maybe_unused]] const auto& data : sppSol->satData)
+        {
+            LOG_DEBUG("      {} ({}°)", data.first, rad2deg(data.second.satElevation));
+        }
+
         std::set<SatSigId> signalsCompared;
         std::set<SatId> satellitesCompared;
         for (auto& ref : sppReference)
         {
             if (ref.counter == ref.refData.size())
             {
-                auto iter = std::find_if(sppSol->satData.begin(), sppSol->satData.end(), [&ref](const auto& satData) { return satData.first == ref.satSigId.toSatId(); });
+                auto iter = std::ranges::find_if(sppSol->satData, [&ref](const auto& satData) { return satData.first == ref.satSigId.toSatId(); });
                 REQUIRE(iter == sppSol->satData.end());
                 continue;
             }
@@ -145,14 +153,16 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Skydel data (GPS L1 C/A - no 
 
             if (sppSol->insTime == refData.recvTime)
             {
-                auto iter = std::find_if(sppSol->satData.begin(), sppSol->satData.end(), [&ref](const auto& satData) { return satData.first == ref.satSigId.toSatId(); });
+                auto iter = std::ranges::find_if(sppSol->satData, [&ref](const auto& satData) {
+                    return satData.first == ref.satSigId.toSatId();
+                });
                 REQUIRE(iter != sppSol->satData.end()); // This means something was calculated for the satellite
                 ref.counter++;
                 signalsCompared.insert(ref.satSigId);
                 satellitesCompared.insert(ref.satSigId.toSatId());
 
                 LOG_DEBUG("Checking {} line {}/{}. Elapsed time: {:.0f} ms", ref.satSigId, ref.counter, ref.refData.size(), refData.Elapsed_Time);
-                const auto& satData = std::find_if(sppSol->satData.begin(), sppSol->satData.end(), [&ref](const auto& data) {
+                const auto& satData = std::ranges::find_if(sppSol->satData, [&ref](const auto& data) {
                                           return data.first == ref.satSigId.toSatId();
                                       })->second;
 
@@ -250,6 +260,12 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
         REQUIRE(hDist < 7.2e-4); // Determined by running the test and adapting
         REQUIRE(vDist < 1.2e-3); // Determined by running the test and adapting
 
+        LOG_DEBUG("    Satellites (# {}):", sppSol->satData.size());
+        for ([[maybe_unused]] const auto& data : sppSol->satData)
+        {
+            LOG_DEBUG("      {} ({}°)", data.first, rad2deg(data.second.satElevation));
+        }
+
         for (const auto& [satId, sppSatData] : sppSol->satData)
         {
             auto ref = spirentSatelliteData.get(sppSol->insTime, satId);
@@ -273,7 +289,7 @@ TEST_CASE("[SinglePointPositioning][flow] SPP with Spirent data (GPS L1 C/A - no
     {
         if ((satData.satId.satSys & filterFreq.getSatSys()) != SatSys_None)
         {
-            LOG_DEBUG("[{}][{}] Checking if ref data was used", satData.recvTime.toYMDHMS(GPST), satData.satId);
+            LOG_DEBUG("[{}][{}] Checking if ref data was used: {}", satData.recvTime.toYMDHMS(GPST), satData.satId, satData.checked);
             REQUIRE(satData.checked);
         }
     }

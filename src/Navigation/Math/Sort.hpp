@@ -30,9 +30,8 @@ template<typename T, typename Compare>
 std::vector<size_t> sort_permutation(const std::vector<T>& vec, Compare compare)
 {
     std::vector<size_t> p(vec.size());
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-              [&](size_t i, size_t j) { return compare(vec[i], vec[j]); });
+    std::iota(p.begin(), p.end(), 0); // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::iota is C++23 and not supported yet
+    std::ranges::sort(p, [&](size_t i, size_t j) { return compare(vec[i], vec[j]); });
     return p;
 }
 
@@ -45,9 +44,8 @@ template<typename Derived, typename Compare>
 std::vector<size_t> sort_permutation(const Eigen::MatrixBase<Derived>& vec, Compare compare)
 {
     std::vector<size_t> p(static_cast<size_t>(vec.rows()));
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-              [&](size_t i, size_t j) { return compare(vec(static_cast<Eigen::Index>(i)), vec(static_cast<Eigen::Index>(j))); });
+    std::iota(p.begin(), p.end(), 0); // NOLINT(boost-use-ranges,modernize-use-ranges) // ranges::iota is C++23 and not supported yet
+    std::ranges::sort(p, [&](size_t i, size_t j) { return compare(vec(static_cast<Eigen::Index>(i)), vec(static_cast<Eigen::Index>(j))); });
     return p;
 }
 

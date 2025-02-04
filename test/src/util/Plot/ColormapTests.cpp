@@ -18,10 +18,11 @@
 #include <fmt/format.h>
 #include "util/Plot/Colormap.hpp"
 
-constexpr bool operator==(const ImColor& lhs, const ImColor& rhs)
+constexpr bool operator==(const ImColor& lhs, const ImColor& rhs) // NOLINT(misc-use-internal-linkage)
 {
     return lhs.Value.x == rhs.Value.x && lhs.Value.y == rhs.Value.y && lhs.Value.z == rhs.Value.z && lhs.Value.w == rhs.Value.w;
 }
+
 namespace Catch
 {
 template<>

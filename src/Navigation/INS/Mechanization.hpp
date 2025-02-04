@@ -22,7 +22,7 @@ namespace NAV
 {
 
 /// @brief Values needed to calculate the PosVelAttDerivative for the local-navigation frame
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 struct PosVelAttDerivativeConstants
 {
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
@@ -36,7 +36,7 @@ struct PosVelAttDerivativeConstants
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 void to_json(json& j, const PosVelAttDerivativeConstants<Scalar>& data)
 {
     j = json{
@@ -50,7 +50,7 @@ void to_json(json& j, const PosVelAttDerivativeConstants<Scalar>& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 void from_json(const json& j, PosVelAttDerivativeConstants<Scalar>& data)
 {
     if (j.contains("gravitationModel")) { j.at("gravitationModel").get_to(data.gravitationModel); }

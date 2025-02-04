@@ -25,6 +25,7 @@
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/VanLoan.hpp"
+#include "util/Logger.hpp"
 
 namespace NAV
 {
@@ -240,6 +241,25 @@ class KeyedKalmanFilter
         K = KeyedMatrixX<Scalar, StateKeyType, MeasKeyType>(Eigen::MatrixX<Scalar>::Zero(n, m), stateKeys, measKeys);
     }
 
+    /// @brief Add a measurement to the filter
+    /// @param measKey Measurement key
+    void addMeasurement(const MeasKeyType& measKey) { addMeasurements({ measKey }); }
+
+    /// @brief Add measurements to the filter
+    /// @param measKeys Measurement keys
+    void addMeasurements(const std::vector<MeasKeyType>& measKeys)
+    {
+        INS_ASSERT_USER_ERROR(!z.hasAnyRows(measKeys), "A measurement keys you are trying to add was already in the Kalman filter.");
+        std::unordered_set<MeasKeyType> measurementSet = { measKeys.begin(), measKeys.end() };
+        INS_ASSERT_USER_ERROR(measurementSet.size() == measKeys.size(), "Each measurement key must be unique");
+
+        z.addRows(measKeys);
+        H.addRows(measKeys);
+        R.addRowsCols(measKeys, measKeys);
+        S.addRowsCols(measKeys, measKeys);
+        K.addCols(measKeys);
+    }
+
     /// @brief Remove a measurement from the filter
     /// @param measKey Measurement key
     void removeMeasurement(const MeasKeyType& measKey) { removeMeasurements({ measKey }); }
@@ -394,7 +414,7 @@ class KeyedKalmanFilter
 
         if (ret.triggered)
         {
-            LOG_DEBUG("{}: NIS test triggered because: NIS = {:.3f} > {:.3f} = r2", nameId, ret.NIS, ret.r2);
+            LOG_TRACE("{}: NIS test triggered because: NIS = {:.3f} > {:.3f} = r2", nameId, ret.NIS, ret.r2);
         }
         else
         {

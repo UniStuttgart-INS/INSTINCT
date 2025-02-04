@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <cstdio>
 #include <cassert>
 #include <cmath>
@@ -37,7 +38,7 @@ class CubicSpline
     struct BoundaryCondition
     {
         /// @brief Boundary type
-        enum BoundaryType
+        enum BoundaryType : uint8_t
         {
             FirstDerivative = 1,  ///< First derivative has to match a certain value
             SecondDerivative = 2, ///< Second derivative has to match a certain value

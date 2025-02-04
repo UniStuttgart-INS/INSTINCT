@@ -166,7 +166,7 @@ class Node
     };
 
     /// @brief Possible states of the node
-    enum class State
+    enum class State : uint8_t
     {
         Disabled,       ///< Node is disabled and won't be initialized
         Deinitialized,  ///< Node is deinitialized (red)
@@ -180,7 +180,7 @@ class Node
     };
 
     /// @brief Different Modes the Node can work in
-    enum class Mode
+    enum class Mode : uint8_t
     {
         REAL_TIME,       ///< Node running in real-time mode
         POST_PROCESSING, ///< Node running in post-processing mode

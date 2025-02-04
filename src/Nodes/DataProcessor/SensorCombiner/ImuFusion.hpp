@@ -104,7 +104,7 @@ class ImuFusion : public Imu
                                                                            const Eigen::MatrixXd& P);
 
     /// @brief Previous observation (for timestamp)
-    InsTime _lastFiltObs{};
+    InsTime _lastFiltObs;
 
     /// @brief Calculates the initial measurement noise matrix R
     /// @param[in] R Measurement noise uncertainty matrix for sensor at 'pinIndex'
@@ -183,17 +183,17 @@ class ImuFusion : public Imu
     PinDataBsplineKF _pinDataBsplineKF;
 
     /// @brief Temporary vector for the initial coefficients for angular rate
-    Eigen::Vector3d _initCoeffsAngRateTemp{};
+    Eigen::Vector3d _initCoeffsAngRateTemp;
     /// @brief Temporary vector for the initial coefficients for acceleration
-    Eigen::Vector3d _initCoeffsAccelTemp{};
+    Eigen::Vector3d _initCoeffsAccelTemp;
     /// @brief Temporary vector for the initial coefficients' initial covariance for the angular rate
-    Eigen::Vector3d _initCovarianceCoeffsAngRateTemp{};
+    Eigen::Vector3d _initCovarianceCoeffsAngRateTemp;
     /// @brief Temporary vector for the initial coefficients' initial covariance for the acceleration
-    Eigen::Vector3d _initCovarianceCoeffsAccelTemp{};
+    Eigen::Vector3d _initCovarianceCoeffsAccelTemp;
     /// @brief Temporary vector for the initial coefficients' process noise for the angular rate
-    Eigen::Vector3d _procNoiseCoeffsAngRateTemp{};
+    Eigen::Vector3d _procNoiseCoeffsAngRateTemp;
     /// @brief Temporary vector for the initial coefficients' process noise for the acceleration
-    Eigen::Vector3d _procNoiseCoeffsAccelTemp{};
+    Eigen::Vector3d _procNoiseCoeffsAccelTemp;
 
     /// @brief Container for the bias covariances
     std::vector<Eigen::Vector3d> _biasCovariances;
@@ -210,10 +210,10 @@ class ImuFusion : public Imu
 
     // ----------------------------------------------- Time --------------------------------------------------
     /// @brief Saves the timestamp of the measurement before in [s]
-    InsTime _latestTimestamp{};
+    InsTime _latestTimestamp;
 
     /// @brief Saves the first timestamp in [s]
-    InsTime _firstTimestamp{};
+    InsTime _firstTimestamp;
 
     /// @brief Time since startup in [s]
     double _timeSinceStartup{};
@@ -232,7 +232,7 @@ class ImuFusion : public Imu
     bool _imuPosSet = false;
 
     /// Possible KF-types for the IMU fusion
-    enum class ImuFusionType
+    enum class ImuFusionType : uint8_t
     {
         IRWKF,   ///< IRW Kalman filter
         Bspline, ///< B-spline Kalman filter

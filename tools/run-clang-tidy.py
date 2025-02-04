@@ -103,6 +103,7 @@ def get_tidy_invocation(f, clang_tidy_binary, checks, tmpdir, build_path,
         start.append('-quiet')
     if config:
         start.append('-config=' + config)
+    start.append('-allow-no-checks')
     start.append(f)
     return start
 

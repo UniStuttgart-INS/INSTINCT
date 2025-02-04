@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GalileoEphemeris.hpp"
 
@@ -38,15 +40,16 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
             { .satSys = GAL, .alphaBeta = IonosphericCorrections::Alpha, .data = { 2.8500e+01, 7.8125e-03, 1.116943359375E-02, 0.0000e+00 } },
         } },
     .timeSysCorr = {
-        { { GST, UTC }, { -9.313225746155E-10, 0.000000000000E+00 } },
-        { { GST, GPST }, { 3.696186468005E-09, -1.332267629550E-15 } },
-        { { GST, UTC }, { -9.313225746155E-10, 0.000000000000E+00 } },
-        { { GST, UTC }, { -9.313225746155E-10, 0.000000000000E+00 } },
-        { { GST, UTC }, { -9.313225746155E-10, 0.000000000000E+00 } },
+        { { GST, UTC }, { .a0 = -9.313225746155E-10, .a1 = 0.000000000000E+00 } },
+        { { GST, GPST }, { .a0 = 3.696186468005E-09, .a1 = -1.332267629550E-15 } },
+        { { GST, UTC }, { .a0 = -9.313225746155E-10, .a1 = 0.000000000000E+00 } },
+        { { GST, UTC }, { .a0 = -9.313225746155E-10, .a1 = 0.000000000000E+00 } },
+        { { GST, UTC }, { .a0 = -9.313225746155E-10, .a1 = 0.000000000000E+00 } },
     },
     // TODO: FNAV messages getting ignored
     .m_satellites = {
         { { GAL, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 22, 40, 0, 6.366008892655e-05, 1.733724275255e-12, 0.000000000000e+00, //
                                                                  7.200000000000e+01, 1.047812500000e+02, 2.312596328920e-09, -7.626860954287e-01,   //
@@ -82,8 +85,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
                                                                                                                                                     //                                                          4.285400000000E+05),                                                               //
 
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 3 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 22, 50, 0, -1.744942856021e-04, -4.149569576839e-12, 0.000000000000e+00, //
                                                                  7.300000000000e+01, 1.693750000000e+01, 3.498717164185e-09, -2.962133938551e+00,     //
@@ -102,8 +107,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
                               //                                                          3.120000000000E+00, 0.000000000000E+00, 6.984919309616E-10, 0.000000000000E+00,      //
                               //                                                          4.285400000000E+05),                                                                 //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 5 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 19, 50, 0, -4.773719119839E-04, 3.325340003357E-12, 0.000000000000E+00, //
                                                                  5.500000000000E+01, 1.737500000000E+01, 3.473001807323E-09, -2.883763240223E+00,    //
@@ -114,8 +121,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
                                                                  3.120000000000E+00, 0.000000000000E+00, 1.396983861923E-09, 0.000000000000E+00,     //
                                                                  4.177400000000E+05),                                                                //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 8 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GalileoEphemeris>(2019, 6, 6, 23, 50, 0, 6.343927700073E-03, -6.096456672822E-12, 0.000000000000E+00, //
                                                                  7.900000000000E+01, 1.828125000000E+01, 3.415499412117E-09, 3.122061360124E+00,     //
@@ -142,8 +151,10 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
                                                                  3.120000000000E+00, 0.000000000000E+00, -5.820766091347E-09, -6.519258022308E-09,   //
                                                                  4.326650000000E+05),                                                                //
                           },
+                          // NOLINTEND
                       } },
         { { GAL, 30 }, Satellite{
+                           // NOLINTBEGIN
                            .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                                std::make_shared<GalileoEphemeris>(2019, 6, 6, 23, 50, 0, 4.810841754079E-03, -3.055333763768E-11, 0.000000000000E+00, //
                                                                   7.900000000000E+01, 1.070000000000E+02, 2.360455465302E-09, -1.272739138579E+00,    //
@@ -154,6 +165,7 @@ const GnssNavInfo gnssNavInfo_INS_1581_19L = {
                                                                   3.120000000000E+00, 0.000000000000E+00, -2.328306436539E-10, 0.000000000000E+00,    //
                                                                   4.321400000000E+05),                                                                //
                            },
+                           // NOLINTEND
                        } },
     },
 };

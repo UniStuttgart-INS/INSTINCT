@@ -25,7 +25,10 @@ namespace ed = ax::NodeEditor;
 #include "internal/FlowExecutor.hpp"
 
 #include "internal/gui/windows/ImPlotStyleEditor.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
+#include "internal/gui/windows/NodeEditorStyleEditor.hpp"
 #include "util/Plot/Colormap.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 #include <fstream>
 #include <set>
@@ -35,17 +38,27 @@ namespace ed = ax::NodeEditor;
 
 #include <iostream>
 
+namespace NAV::flow
+{
+namespace
+{
+
 bool unsavedChanges = false;
-bool NAV::flow::saveLastActions = true;
 
 constexpr int loadingFramesToWait = 2;
-int NAV::flow::loadingFrameCount = 0;
 
 std::string currentFilename;
 std::filesystem::path programRootPath;
 
 // The current number for the rotated parent folder
 size_t currentRotatedParentFolderNumber;
+
+} // namespace
+
+bool saveLastActions = true;
+int loadingFrameCount = 0;
+
+} // namespace NAV::flow
 
 void NAV::flow::SaveFlow(GlobalActions& globalAction)
 {
@@ -92,7 +105,27 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
         j["implot"]["prefereFlowOverGlobal"] = gui::windows::prefereFlowOverGlobal;
     }
 
+    j["fonts"]["useBigDefaultFont"] = gui::NodeEditorApplication::isUsingBigDefaultFont();
+    j["fonts"]["useBigWindowFont"] = gui::NodeEditorApplication::isUsingBigWindowFont();
+    j["fonts"]["useBigPanelFont"] = gui::NodeEditorApplication::isUsingBigPanelFont();
+    j["fonts"]["useBigMonoFont"] = gui::NodeEditorApplication::isUsingBigMonoFont();
+    j["leftPane"]["hide"] = gui::NodeEditorApplication::hideLeftPane;
+    j["leftPane"]["leftWidth"] = gui::NodeEditorApplication::leftPaneWidth;
+    j["leftPane"]["rightWidth"] = gui::NodeEditorApplication::rightPaneWidth;
+    j["bottomViewHeight"] = gui::NodeEditorApplication::bottomViewHeight;
+    j["hideFPS"] = gui::NodeEditorApplication::hideFPS;
+    j["lightMode"] = gui::windows::nodeEditorLightMode;
+    j["gridLinesEnabled"] = ed::GetStyle().Colors[ed::StyleColor_Grid].w;
+    j["transparentWindows"] = ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w;
+
+    // if (ImGui::Checkbox("Light mode", &nodeEditorLightMode))
+    // {
+    //     ApplyDarkLightMode(NodeEditorApplication::m_colors);
+    //     flow::ApplyChanges();
+    // }
+
     j["colormaps"] = ColormapsFlow;
+    j["commonLog"] = CommonLog::save();
 
     filestream << std::setw(4) << j << std::endl; // NOLINT(performance-avoid-endl)
 
@@ -123,6 +156,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
         nm::DeleteAllNodes();
 
+        if (!j.contains("commonLog")) { CommonLog::restore(json{}); }
         LoadJson(j);
 
 #ifdef TESTING
@@ -223,6 +257,45 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
     else
     {
         ColormapsFlow.clear();
+    }
+    if (j.contains("commonLog")) { CommonLog::restore(j.at("commonLog")); }
+
+    if (!ConfigManager::Get<bool>("nogui"))
+    {
+        if (j.contains("fonts"))
+        {
+            if (j.at("fonts").contains("useBigDefaultFont"))
+            {
+                gui::NodeEditorApplication::swapDefaultFont(j.at("fonts").at("useBigDefaultFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigWindowFont"))
+            {
+                gui::NodeEditorApplication::swapWindowFont(j.at("fonts").at("useBigWindowFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigPanelFont"))
+            {
+                gui::NodeEditorApplication::swapPanelFont(j.at("fonts").at("useBigPanelFont").get<bool>());
+            }
+            if (j.at("fonts").contains("useBigMonoFont"))
+            {
+                gui::NodeEditorApplication::swapMonoFont(j.at("fonts").at("useBigMonoFont").get<bool>());
+            }
+        }
+        if (j.contains("leftPane"))
+        {
+            j.at("leftPane").at("hide").get_to(gui::NodeEditorApplication::hideLeftPane);
+            j.at("leftPane").at("leftWidth").get_to(gui::NodeEditorApplication::leftPaneWidth);
+            j.at("leftPane").at("rightWidth").get_to(gui::NodeEditorApplication::rightPaneWidth);
+        }
+        if (j.contains("bottomViewHeight")) { j.at("bottomViewHeight").get_to(gui::NodeEditorApplication::bottomViewHeight); }
+        if (j.contains("hideFPS")) { j.at("hideFPS").get_to(gui::NodeEditorApplication::hideFPS); }
+        if (j.contains("lightMode"))
+        {
+            j.at("lightMode").get_to(gui::windows::nodeEditorLightMode);
+            gui::windows::ApplyDarkLightMode(gui::NodeEditorApplication::m_colors);
+        }
+        if (j.contains("gridLinesEnabled")) { j.at("gridLinesEnabled").get_to(ed::GetStyle().Colors[ed::StyleColor_Grid].w); }
+        if (j.contains("transparentWindows")) { j.at("transparentWindows").get_to(ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w); }
     }
 
     if (j.contains("nodes"))

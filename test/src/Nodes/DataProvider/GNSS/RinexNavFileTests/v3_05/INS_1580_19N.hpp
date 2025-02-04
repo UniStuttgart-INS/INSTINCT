@@ -14,8 +14,8 @@
 #pragma once
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -24,7 +24,9 @@
 #include "NodeData/GNSS/GnssNavInfo.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #include "Navigation/GNSS/Satellite/Ephemeris/GPSEphemeris.hpp"
 
@@ -38,10 +40,11 @@ const GnssNavInfo gnssNavInfo_INS_1580_19N = {
         { .satSys = GPS, .alphaBeta = IonosphericCorrections::Beta, .data = { 8.6016e+04, 9.8304e+04, -6.5536e+04, -5.2429e+05 } },
     } },
     .timeSysCorr = {
-        { { GPST, UTC }, { -3.7252902985e-09, -7.105427358e-15 } },
+        { { GPST, UTC }, { .a0 = -3.7252902985e-09, .a1 = -7.105427358e-15 } },
     },
     .m_satellites = {
         { { GPS, 1 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -3.462424501777e-05, -9.436007530894e-12, 0.000000000000e+00, //
                                                              4.100000000000e+01, -1.273437500000e+02, 4.150530029093e-09, 2.600635796634e+00,    //
@@ -60,8 +63,10 @@ const GnssNavInfo gnssNavInfo_INS_1580_19N = {
                                                              2.000000000000e+00, 0.000000000000e+00, 5.587935447693e-09, 5.100000000000e+01,     //
                                                              4.248180000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
         { { GPS, 2 }, Satellite{
+                          // NOLINTBEGIN
                           .m_navigationData /* std::vector<std::shared_ptr<SatNavData>> */ = {
                               std::make_shared<GPSEphemeris>(2019, 6, 6, 22, 0, 0, -2.312315627933e-04, -8.981260180008e-12, 0.000000000000e+00, //
                                                              6.600000000000e+01, -1.488750000000e+02, 4.714482091388e-09, 2.879261055706e+00,    //
@@ -72,6 +77,7 @@ const GnssNavInfo gnssNavInfo_INS_1580_19N = {
                                                              2.000000000000e+00, 0.000000000000e+00, -2.048909664154e-08, 6.600000000000e+01,    //
                                                              4.240260000000e+05, 4.000000000000e+00),                                            //
                           },
+                          // NOLINTEND
                       } },
     },
 };

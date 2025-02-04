@@ -15,6 +15,9 @@
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
+namespace
+{
+
 void TrafoHelperMarker(const Eigen::Quaterniond& q)
 {
     if (NAV::gui::widgets::BeginHelpMarker())
@@ -42,6 +45,8 @@ void TrafoHelperMarker(const Eigen::Quaterniond& q)
         NAV::gui::widgets::EndHelpMarker();
     }
 }
+
+} // namespace
 
 NAV::Imu::Imu(std::string name)
     : Node(std::move(name)) {}
@@ -83,30 +88,12 @@ void NAV::Imu::guiConfig()
         if (ImGui::InputFloat3(fmt::format("Rotation Accel [deg]##{}", size_t(id)).c_str(), imuRotAccel.data()))
         {
             // (-180:180] x (-90:90] x (-180:180]
-            if (imuRotAccel.at(0) < -179.9999F)
-            {
-                imuRotAccel.at(0) = -179.9999F;
-            }
-            if (imuRotAccel.at(0) > 180)
-            {
-                imuRotAccel.at(0) = 180;
-            }
-            if (imuRotAccel.at(1) < -89.9999F)
-            {
-                imuRotAccel.at(1) = -89.9999F;
-            }
-            if (imuRotAccel.at(1) > 90)
-            {
-                imuRotAccel.at(1) = 90;
-            }
-            if (imuRotAccel.at(2) < -179.9999F)
-            {
-                imuRotAccel.at(2) = -179.9999F;
-            }
-            if (imuRotAccel.at(2) > 180)
-            {
-                imuRotAccel.at(2) = 180;
-            }
+            imuRotAccel.at(0) = std::max(imuRotAccel.at(0), -179.9999F);
+            imuRotAccel.at(0) = std::min(imuRotAccel.at(0), 180.0F);
+            imuRotAccel.at(1) = std::max(imuRotAccel.at(1), -89.9999F);
+            imuRotAccel.at(1) = std::min(imuRotAccel.at(1), 90.0F);
+            imuRotAccel.at(2) = std::max(imuRotAccel.at(2), -179.9999F);
+            imuRotAccel.at(2) = std::min(imuRotAccel.at(2), 180.0F);
 
             flow::ApplyChanges();
             _imuPos._b_quatAccel_p = trafo::b_Quat_p(deg2rad(imuRotAccel.at(0)), deg2rad(imuRotAccel.at(1)), deg2rad(imuRotAccel.at(2)));
@@ -119,30 +106,12 @@ void NAV::Imu::guiConfig()
         if (ImGui::InputFloat3(fmt::format("Rotation Gyro [deg]##{}", size_t(id)).c_str(), imuRotGyro.data()))
         {
             // (-180:180] x (-90:90] x (-180:180]
-            if (imuRotGyro.at(0) < -179.9999F)
-            {
-                imuRotGyro.at(0) = -179.9999F;
-            }
-            if (imuRotGyro.at(0) > 180)
-            {
-                imuRotGyro.at(0) = 180;
-            }
-            if (imuRotGyro.at(1) < -89.9999F)
-            {
-                imuRotGyro.at(1) = -89.9999F;
-            }
-            if (imuRotGyro.at(1) > 90)
-            {
-                imuRotGyro.at(1) = 90;
-            }
-            if (imuRotGyro.at(2) < -179.9999F)
-            {
-                imuRotGyro.at(2) = -179.9999F;
-            }
-            if (imuRotGyro.at(2) > 180)
-            {
-                imuRotGyro.at(2) = 180;
-            }
+            imuRotGyro.at(0) = std::max(imuRotGyro.at(0), -179.9999F);
+            imuRotGyro.at(0) = std::min(imuRotGyro.at(0), 180.0F);
+            imuRotGyro.at(1) = std::max(imuRotGyro.at(1), -89.9999F);
+            imuRotGyro.at(1) = std::min(imuRotGyro.at(1), 90.0F);
+            imuRotGyro.at(2) = std::max(imuRotGyro.at(2), -179.9999F);
+            imuRotGyro.at(2) = std::min(imuRotGyro.at(2), 180.0F);
 
             flow::ApplyChanges();
             _imuPos._b_quatGyro_p = trafo::b_Quat_p(deg2rad(imuRotGyro.at(0)), deg2rad(imuRotGyro.at(1)), deg2rad(imuRotGyro.at(2)));
@@ -155,30 +124,12 @@ void NAV::Imu::guiConfig()
         if (ImGui::InputFloat3(fmt::format("Rotation Mag [deg]##{}", size_t(id)).c_str(), imuRotMag.data()))
         {
             // (-180:180] x (-90:90] x (-180:180]
-            if (imuRotMag.at(0) < -179.9999F)
-            {
-                imuRotMag.at(0) = -179.9999F;
-            }
-            if (imuRotMag.at(0) > 180)
-            {
-                imuRotMag.at(0) = 180;
-            }
-            if (imuRotMag.at(1) < -89.9999F)
-            {
-                imuRotMag.at(1) = -89.9999F;
-            }
-            if (imuRotMag.at(1) > 90)
-            {
-                imuRotMag.at(1) = 90;
-            }
-            if (imuRotMag.at(2) < -179.9999F)
-            {
-                imuRotMag.at(2) = -179.9999F;
-            }
-            if (imuRotMag.at(2) > 180)
-            {
-                imuRotMag.at(2) = 180;
-            }
+            imuRotMag.at(0) = std::max(imuRotMag.at(0), -179.9999F);
+            imuRotMag.at(0) = std::min(imuRotMag.at(0), 180.0F);
+            imuRotMag.at(1) = std::max(imuRotMag.at(1), -89.9999F);
+            imuRotMag.at(1) = std::min(imuRotMag.at(1), 90.0F);
+            imuRotMag.at(2) = std::max(imuRotMag.at(2), -179.9999F);
+            imuRotMag.at(2) = std::min(imuRotMag.at(2), 180.0F);
 
             flow::ApplyChanges();
             _imuPos._b_quatMag_p = trafo::b_Quat_p(deg2rad(imuRotMag.at(0)), deg2rad(imuRotMag.at(1)), deg2rad(imuRotMag.at(2)));

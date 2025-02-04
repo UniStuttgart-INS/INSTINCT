@@ -39,7 +39,7 @@ NAV::RinexObsLogger::RinexObsLogger()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 643, 728 };
 
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
+    _dynamicInputPins.addPin(this);
 }
 
 NAV::RinexObsLogger::~RinexObsLogger()
@@ -64,6 +64,11 @@ std::string NAV::RinexObsLogger::category()
 
 void NAV::RinexObsLogger::guiConfig()
 {
+    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, {}))
+    {
+        flow::ApplyChanges();
+    }
+
     constexpr float COL1_WIDTH = 470.0F;
 
     const auto now = std::chrono::system_clock::now();
@@ -311,6 +316,7 @@ void NAV::RinexObsLogger::guiConfig()
     LOG_TRACE("{}: called", nameId());
 
     return {
+        { "dynamicInputPins", _dynamicInputPins },
         { "FileWriter", FileWriter::save() },
         { "HeaderInfo", _header },
     };
@@ -320,6 +326,7 @@ void NAV::RinexObsLogger::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("dynamicInputPins")) { NAV::gui::widgets::from_json(j.at("dynamicInputPins"), _dynamicInputPins, this); }
     if (j.contains("FileWriter")) { FileWriter::restore(j.at("FileWriter")); }
     if (j.contains("HeaderInfo")) { j.at("HeaderInfo").get_to(_header); }
 }
@@ -396,6 +403,16 @@ void NAV::RinexObsLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
+void NAV::RinexObsLogger::pinAddCallback(Node* node)
+{
+    nm::CreateInputPin(node, GnssObs::type().c_str(), Pin::Type::Flow, { GnssObs::type() }, &RinexObsLogger::writeObservation);
+}
+
+void NAV::RinexObsLogger::pinDeleteCallback(Node* node, size_t pinIdx)
+{
+    nm::DeleteInputPin(node->inputPins.at(pinIdx));
+}
+
 void NAV::RinexObsLogger::updateFileHeader(TimeSystem oldTimeSys)
 {
     LOG_TRACE("{}: called", nameId());
@@ -431,16 +448,16 @@ void NAV::RinexObsLogger::updateFileHeader(TimeSystem oldTimeSys)
                     break;
                 }
 
-                LOG_DATA("{}: Read epoch [{}][{}][{}][{}][{}][{}]", nameId(), line.substr(2, 4), line.substr(7, 2), line.substr(10, 2),
-                         line.substr(13, 2), line.substr(16, 2), line.substr(18, 11));
+                LOG_DATA("{}: Read epoch [{}][{}][{}][{}][{}][{}] [{}]", nameId(), line.substr(2, 4), line.substr(7, 2), line.substr(10, 2),
+                         line.substr(13, 2), line.substr(16, 2), line.substr(18, 11), line.substr(29 + 3, 3));
                 auto epochTime = InsTime{ static_cast<uint16_t>(std::stoi(line.substr(2, 4))),  // year  [1X,I4]
                                           static_cast<uint16_t>(std::stoi(line.substr(7, 2))),  // month [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(10, 2))), // day   [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(13, 2))), // hour  [1X,I2.2]
                                           static_cast<uint16_t>(std::stoi(line.substr(16, 2))), // min   [1X,I2.2]
-                                          std::stold(line.substr(18, 11)),                      // sec   [F11.7]
+                                          std::stold(line.substr(18, 11)),                      // sec   [F11.7,2X,I1,]
                                           oldTimeSys };
-                fsTmp << _header.epochRecordLine(epochTime);
+                fsTmp << _header.epochRecordLine(epochTime, std::stoul(line.substr(29 + 3, 3))); // Num satellites I3,6X,F15.12
             }
             else if (dataRecords)
             {
@@ -485,7 +502,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
         updateFileHeader(oldTimeSys);
     }
 
-    _filestream << _header.epochRecordLine(obs->insTime);
+    _filestream << _header.epochRecordLine(obs->insTime, satellites.size());
 
     for (const auto& satId : satellites)
     {
@@ -496,7 +513,7 @@ void NAV::RinexObsLogger::writeObservation(NAV::InputPin::NodeDataQueue& queue, 
         {
             const auto& obsDesc = obsDescriptions.at(i);
 
-            auto signal = std::find_if(obs->data.begin(), obs->data.end(), [&obsDesc, &satId](const auto& sig) {
+            auto signal = std::ranges::find_if(obs->data, [&obsDesc, &satId](const auto& sig) {
                 return sig.satSigId == SatSigId{ obsDesc.code, satId.satNum };
             });
 

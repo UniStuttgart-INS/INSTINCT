@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
@@ -34,6 +35,10 @@ class Pos : public NodeData
     {
         return "Pos";
     }
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
@@ -144,6 +149,66 @@ class Pos : public NodeData
         return std::nullopt;
     }
 
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        switch (idx)
+        {
+        case 0: // Latitude [deg]
+            _lla_position(0) = deg2rad(value);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 1: // Longitude [deg]
+            _lla_position(1) = deg2rad(value);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 2: // Altitude [m]
+            _lla_position(2) = value;
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 3: // North/South [m]
+            _e_position += e_Quat_n() * Eigen::Vector3d(value, 0.0, 0.0);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 4: // East/West [m]
+            _e_position += e_Quat_n() * Eigen::Vector3d(0.0, value, 0.0);
+            _e_position = trafo::lla2ecef_WGS84(_lla_position);
+            break;
+        case 5: // X-ECEF [m]
+            _e_position(0) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 6: // Y-ECEF [m]
+            _e_position(1) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 7: // Z-ECEF [m]
+            _e_position(2) = value;
+            _lla_position = trafo::ecef2lla_WGS84(_e_position);
+            break;
+        case 8:  // X-ECEF StDev [m]
+        case 9:  // Y-ECEF StDev [m]
+        case 10: // Z-ECEF StDev [m]
+        case 11: // XY-ECEF StDev [m]
+        case 12: // XZ-ECEF StDev [m]
+        case 13: // YZ-ECEF StDev [m]
+        case 14: // North StDev [m]
+        case 15: // East StDev [m]
+        case 16: // Down StDev [m]
+        case 17: // NE StDev [m]
+        case 18: // ND StDev [m]
+        case 19: // ED StDev [m]
+        default:
+            return false;
+        }
+
+        return true;
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                           Rotation Quaternions                                           */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -173,7 +238,7 @@ class Pos : public NodeData
         States() = delete;
 
         /// @brief State Keys
-        enum StateKeys
+        enum StateKeys : uint8_t
         {
             PosX,         ///< Position ECEF_X [m]
             PosY,         ///< Position ECEF_Y [m]
@@ -217,7 +282,8 @@ class Pos : public NodeData
 
     /// @brief Set the Position in  coordinates
     /// @param[in] e_position New Position in ECEF coordinates
-    void setPosition_e(const Eigen::Vector3d& e_position)
+    template<typename Derived>
+    void setPosition_e(const Eigen::MatrixBase<Derived>& e_position)
     {
         _e_position = e_position;
         _lla_position = trafo::ecef2lla_WGS84(e_position);
@@ -225,7 +291,8 @@ class Pos : public NodeData
 
     /// @brief Set the Position lla object
     /// @param[in] lla_position New Position in LatLonAlt coordinates
-    void setPosition_lla(const Eigen::Vector3d& lla_position)
+    template<typename Derived>
+    void setPosition_lla(const Eigen::MatrixBase<Derived>& lla_position)
     {
         _e_position = trafo::lla2ecef_WGS84(lla_position);
         _lla_position = lla_position;
@@ -233,8 +300,9 @@ class Pos : public NodeData
 
     /// @brief Set the Position in ECEF coordinates and its standard deviation
     /// @param[in] e_position New Position in ECEF coordinates [m]
-    /// @param[in] e_positionCovarianceMatrix Standard deviation of Position in ECEF coordinates [m]
-    void setPositionAndStdDev_e(const Eigen::Vector3d& e_position, const Eigen::Matrix3d& e_positionCovarianceMatrix)
+    /// @param[in] e_positionCovarianceMatrix Covariance matrix of position in ECEF coordinates [m]
+    template<typename Derived, typename Derived2>
+    void setPositionAndStdDev_e(const Eigen::MatrixBase<Derived>& e_position, const Eigen::MatrixBase<Derived2>& e_positionCovarianceMatrix)
     {
         setPosition_e(e_position);
         _e_positionStdev = e_positionCovarianceMatrix.diagonal().cwiseSqrt();
@@ -243,8 +311,9 @@ class Pos : public NodeData
 
     /// @brief Set the Position in LLA coordinates and its standard deviation
     /// @param[in] lla_position New Position in LatLonAlt coordinates
-    /// @param[in] n_positionCovarianceMatrix Standard deviation of Position in NED coordinates [m]
-    void setPositionAndStdDev_lla(const Eigen::Vector3d& lla_position, const Eigen::Matrix3d& n_positionCovarianceMatrix)
+    /// @param[in] n_positionCovarianceMatrix Covariance matrix of Position in NED coordinates [m]
+    template<typename Derived, typename Derived2>
+    void setPositionAndStdDev_lla(const Eigen::MatrixBase<Derived>& lla_position, const Eigen::MatrixBase<Derived2>& n_positionCovarianceMatrix)
     {
         setPosition_lla(lla_position);
         _n_positionStdev = n_positionCovarianceMatrix.diagonal().cwiseSqrt();

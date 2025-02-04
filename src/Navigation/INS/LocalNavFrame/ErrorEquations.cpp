@@ -45,10 +45,10 @@ Eigen::Matrix3d n_F_dpsi_dr(double latitude, double height, const Eigen::Vector3
     // Math: \mathbf{F}_{13}^n = \begin{bmatrix} \omega_{ie}\sin{\phi} & 0 & \frac{v_E}{(R_E + h)^2} \\ 0 & 0 & -\frac{v_N}{(R_N + h)^2} \\ \omega_{ie}\cos{\phi} + \frac{v_E}{(R_E + h)\cos^2{\phi}} & 0 & -\frac{v_E\tan{\phi}}{(R_E + h)^2} \end{bmatrix}
     Eigen::Matrix3d n_F_13 = Eigen::Matrix3d::Zero(3, 3);
 
-    n_F_13(0, 0) = InsConst<>::omega_ie * std::sin(latitude);
+    n_F_13(0, 0) = InsConst::omega_ie * std::sin(latitude);
     n_F_13(0, 2) = v_E / std::pow(R_E + height, 2.0);
     n_F_13(1, 2) = -v_N / std::pow(R_N + height, 2.0);
-    n_F_13(2, 0) = InsConst<>::omega_ie * std::cos(latitude)
+    n_F_13(2, 0) = InsConst::omega_ie * std::cos(latitude)
                    + v_E / ((R_E + height) * std::pow(std::cos(latitude), 2));
     n_F_13(2, 2) = -v_E * std::tan(latitude) / std::pow(R_E + height, 2.0);
 
@@ -88,16 +88,16 @@ Eigen::Matrix3d n_F_dv_dv(const Eigen::Vector3d& n_velocity, double latitude, do
 
     n_F_22(0, 0) = v_D / (R_N + height);
     n_F_22(0, 1) = -2.0 * v_E * std::tan(latitude) / (R_E + height)
-                   - 2.0 * InsConst<>::omega_ie * std::sin(latitude);
+                   - 2.0 * InsConst::omega_ie * std::sin(latitude);
     n_F_22(0, 2) = v_N / (R_N + height);
     n_F_22(1, 0) = v_E * std::tan(latitude) / (R_E + height)
-                   + 2.0 * InsConst<>::omega_ie * std::sin(latitude);
+                   + 2.0 * InsConst::omega_ie * std::sin(latitude);
     n_F_22(1, 1) = (v_N * std::tan(latitude) + v_D) / (R_E + height);
     n_F_22(1, 2) = v_E / (R_E + height)
-                   + 2.0 * InsConst<>::omega_ie * std::cos(latitude);
+                   + 2.0 * InsConst::omega_ie * std::cos(latitude);
     n_F_22(2, 0) = -2.0 * v_N / (R_N + height);
     n_F_22(2, 1) = -2.0 * v_E / (R_E + height)
-                   - 2.0 * InsConst<>::omega_ie * std::cos(latitude);
+                   - 2.0 * InsConst::omega_ie * std::cos(latitude);
 
     return n_F_22;
 }
@@ -112,18 +112,18 @@ Eigen::Matrix3d n_F_dv_dr(const Eigen::Vector3d& n_velocity, double latitude, do
     const double& v_D = n_velocity(2);
 
     n_F_23(0, 0) = -std::pow(v_E, 2) / ((R_E + height) * std::pow(std::cos(latitude), 2.0))
-                   - 2.0 * v_E * InsConst<>::omega_ie * std::cos(latitude);
+                   - 2.0 * v_E * InsConst::omega_ie * std::cos(latitude);
 
     n_F_23(0, 2) = std::pow(v_E, 2) * std::tan(latitude) / std::pow(R_E + height, 2.0)
                    - (v_N * v_D) / std::pow(R_N + height, 2.0);
 
     n_F_23(1, 0) = v_N * v_E / ((R_E + height) * std::pow(std::cos(latitude), 2.0))
-                   + 2.0 * v_N * InsConst<>::omega_ie * std::cos(latitude)
-                   - 2.0 * v_D * InsConst<>::omega_ie * std::sin(latitude);
+                   + 2.0 * v_N * InsConst::omega_ie * std::cos(latitude)
+                   - 2.0 * v_D * InsConst::omega_ie * std::sin(latitude);
 
     n_F_23(1, 2) = -(v_N * v_E * std::tan(latitude) + v_E * v_D) / std::pow(R_E + height, 2.0);
 
-    n_F_23(2, 0) = 2.0 * v_E * InsConst<>::omega_ie * std::sin(latitude);
+    n_F_23(2, 0) = 2.0 * v_E * InsConst::omega_ie * std::sin(latitude);
 
     n_F_23(2, 2) = std::pow(v_E, 2) / std::pow(R_E + height, 2.0)
                    + std::pow(v_N, 2) / std::pow(R_N + height, 2.0)

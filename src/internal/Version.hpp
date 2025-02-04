@@ -18,7 +18,7 @@
 /// Major Version of the Project (maximum 2 digits)
 constexpr unsigned int PROJECT_VER_MAJOR = 0;
 /// Minor Version of the Project (maximum 2 digits)
-constexpr unsigned int PROJECT_VER_MINOR = 2;
+constexpr unsigned int PROJECT_VER_MINOR = 3;
 /// Patch Version of the Project (maximum 2 digits)
 constexpr unsigned int PROJECT_VER_PATCH = 0;
 /// Project Version Integer

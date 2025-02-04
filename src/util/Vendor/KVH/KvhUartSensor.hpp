@@ -111,7 +111,7 @@ class KvhUartSensor
     bool _asciiEndChar1Found{ false }; ///< Flag if the first ascii end character was found
 
     /// @brief Possible states in the header building process
-    enum TagState
+    enum TagState : uint8_t
     {
         SM_H1,   ///< H1
         SM_H2,   ///< H2
@@ -124,7 +124,7 @@ class KvhUartSensor
     TagState _eState = SM_IDLE;
 
     /// @brief Possible Header Types
-    enum HeaderType
+    enum HeaderType : uint8_t
     {
         FMT_A,       ///< Use header A
         FMT_B,       ///< Use header B

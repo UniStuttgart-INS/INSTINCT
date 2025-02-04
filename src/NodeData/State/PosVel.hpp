@@ -29,6 +29,10 @@ class PosVel : public Pos
         return "PosVel";
     }
 
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
+
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
@@ -66,7 +70,7 @@ class PosVel : public Pos
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 39; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return Pos::GetStaticDescriptorCount() + 19; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -80,83 +84,120 @@ class PosVel : public Pos
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < Pos::GetStaticDescriptorCount()) { return Pos::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Latitude [deg]
-        case 1:  // Longitude [deg]
-        case 2:  // Altitude [m]
-        case 3:  // North/South [m]
-        case 4:  // East/West [m]
-        case 5:  // X-ECEF [m]
-        case 6:  // Y-ECEF [m]
-        case 7:  // Z-ECEF [m]
-        case 8:  // X-ECEF StDev [m]
-        case 9:  // Y-ECEF StDev [m]
-        case 10: // Z-ECEF StDev [m]
-        case 11: // XY-ECEF StDev [m]
-        case 12: // XZ-ECEF StDev [m]
-        case 13: // YZ-ECEF StDev [m]
-        case 14: // North StDev [m]
-        case 15: // East StDev [m]
-        case 16: // Down StDev [m]
-        case 17: // NE StDev [m]
-        case 18: // ND StDev [m]
-        case 19: // ED StDev [m]
-            return Pos::getValueAt(idx);
-        case 20: // Velocity norm [m/s]
+        case Pos::GetStaticDescriptorCount() + 0: // Velocity norm [m/s]
             return e_velocity().norm();
-        case 21: // X velocity ECEF [m/s]
+        case Pos::GetStaticDescriptorCount() + 1: // X velocity ECEF [m/s]
             return e_velocity().x();
-        case 22: // Y velocity ECEF [m/s]
+        case Pos::GetStaticDescriptorCount() + 2: // Y velocity ECEF [m/s]
             return e_velocity().y();
-        case 23: // Z velocity ECEF [m/s]
+        case Pos::GetStaticDescriptorCount() + 3: // Z velocity ECEF [m/s]
             return e_velocity().z();
-        case 24: // North velocity [m/s]
+        case Pos::GetStaticDescriptorCount() + 4: // North velocity [m/s]
             return n_velocity().x();
-        case 25: // East velocity [m/s]
+        case Pos::GetStaticDescriptorCount() + 5: // East velocity [m/s]
             return n_velocity().y();
-        case 26: // Down velocity [m/s]
+        case Pos::GetStaticDescriptorCount() + 6: // Down velocity [m/s]
             return n_velocity().z();
-        case 27: // X velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 7: // X velocity ECEF StDev [m/s]
             if (auto stDev = e_velocityStdev()) { return stDev->get().x(); }
             break;
-        case 28: // Y velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 8: // Y velocity ECEF StDev [m/s]
+            if (auto stDev = e_velocityStdev()) { return stDev->get().y(); }
+            break;
+        case Pos::GetStaticDescriptorCount() + 9: // Z velocity ECEF StDev [m/s]
             if (auto stDev = e_velocityStdev()) { return stDev->get().z(); }
             break;
-        case 29: // Z velocity ECEF StDev [m/s]
-            if (auto stDev = e_velocityStdev()) { return stDev->get().z(); }
-            break;
-        case 30: // XY velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 10: // XY velocity StDev [m]
             if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelX, States::VelY); }
             break;
-        case 31: // XZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 11: // XZ velocity StDev [m]
             if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelX, States::VelZ); }
             break;
-        case 32: // YZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 12: // YZ velocity StDev [m]
             if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelY, States::VelZ); }
             break;
-        case 33: // North velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 13: // North velocity StDev [m/s]
             if (auto stDev = n_velocityStdev()) { return stDev->get().x(); }
             break;
-        case 34: // East velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 14: // East velocity StDev [m/s]
             if (auto stDev = n_velocityStdev()) { return stDev->get().y(); }
             break;
-        case 35: // Down velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 15: // Down velocity StDev [m/s]
             if (auto stDev = n_velocityStdev()) { return stDev->get().z(); }
             break;
-        case 36: // NE velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 16: // NE velocity StDev [m]
             if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelX, States::VelY); }
             break;
-        case 37: // ND velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 17: // ND velocity StDev [m]
             if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelX, States::VelZ); }
             break;
-        case 38: // ED velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 18: // ED velocity StDev [m]
             if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelY, States::VelZ); }
             break;
         default:
             return std::nullopt;
         }
         return std::nullopt;
+    }
+
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < Pos::GetStaticDescriptorCount()) { return Pos::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case Pos::GetStaticDescriptorCount() + 0: // Velocity norm [m/s]
+            _e_velocity = value * _e_velocity.normalized();
+            _n_velocity = value * _n_velocity.normalized();
+            break;
+        case Pos::GetStaticDescriptorCount() + 1: // X velocity ECEF [m/s]
+            _e_velocity(0) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 2: // Y velocity ECEF [m/s]
+            _e_velocity(1) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 3: // Z velocity ECEF [m/s]
+            _e_velocity(2) = value;
+            _n_velocity = n_Quat_e() * _e_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 4: // North velocity [m/s]
+            _n_velocity(0) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 5: // East velocity [m/s]
+            _n_velocity(1) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 6: // Down velocity [m/s]
+            _n_velocity(2) = value;
+            _e_velocity = e_Quat_n() * _n_velocity;
+            break;
+        case Pos::GetStaticDescriptorCount() + 7:  // X velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 8:  // Y velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 9:  // Z velocity ECEF StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 10: // XY velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 11: // XZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 12: // YZ velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 13: // North velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 14: // East velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 15: // Down velocity StDev [m/s]
+        case Pos::GetStaticDescriptorCount() + 16: // NE velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 17: // ND velocity StDev [m]
+        case Pos::GetStaticDescriptorCount() + 18: // ED velocity StDev [m]
+        default:
+            return false;
+        }
+
+        return true;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -170,7 +211,7 @@ class PosVel : public Pos
         States() = delete;
 
         /// @brief State Keys
-        enum StateKeys
+        enum StateKeys : uint8_t
         {
             PosX,         ///< Position ECEF_X [m]
             PosY,         ///< Position ECEF_Y [m]
@@ -213,7 +254,8 @@ class PosVel : public Pos
 
     /// @brief Set the Velocity in the earth frame
     /// @param[in] e_velocity The new velocity in the earth frame
-    void setVelocity_e(const Eigen::Vector3d& e_velocity)
+    template<typename Derived>
+    void setVelocity_e(const Eigen::MatrixBase<Derived>& e_velocity)
     {
         _e_velocity = e_velocity;
         _n_velocity = n_Quat_e() * e_velocity;
@@ -221,7 +263,8 @@ class PosVel : public Pos
 
     /// @brief Set the Velocity in the NED frame
     /// @param[in] n_velocity The new velocity in the NED frame
-    void setVelocity_n(const Eigen::Vector3d& n_velocity)
+    template<typename Derived>
+    void setVelocity_n(const Eigen::MatrixBase<Derived>& n_velocity)
     {
         _e_velocity = e_Quat_n() * n_velocity;
         _n_velocity = n_velocity;
@@ -230,7 +273,8 @@ class PosVel : public Pos
     /// @brief Set the Velocity in ECEF coordinates and its standard deviation
     /// @param[in] e_velocity New Velocity in ECEF coordinates [m/s]
     /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
-    void setVelocityAndStdDev_e(const Eigen::Vector3d& e_velocity, const Eigen::Matrix3d& e_velocityCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setVelocityAndStdDev_e(const Eigen::MatrixBase<Derived>& e_velocity, const Eigen::MatrixBase<Derived2>& e_velocityCovarianceMatrix)
     {
         setVelocity_e(e_velocity);
         _e_velocityStdev = e_velocityCovarianceMatrix.diagonal().cwiseSqrt();
@@ -240,7 +284,8 @@ class PosVel : public Pos
     /// @brief Set the Velocity in NED coordinates and its standard deviation
     /// @param[in] n_velocity New Velocity in NED coordinates [m/s]
     /// @param[in] n_velocityCovarianceMatrix Covariance matrix of Velocity in navigation coordinates [m/s]
-    void setVelocityAndStdDev_n(const Eigen::Vector3d& n_velocity, const Eigen::Matrix3d& n_velocityCovarianceMatrix)
+    template<typename Derived, typename Derived2>
+    void setVelocityAndStdDev_n(const Eigen::MatrixBase<Derived>& n_velocity, const Eigen::MatrixBase<Derived2>& n_velocityCovarianceMatrix)
     {
         setVelocity_n(n_velocity);
         _n_velocityStdev = n_velocityCovarianceMatrix.diagonal().cwiseSqrt();

@@ -120,8 +120,8 @@ TEST_CASE("[Math] Catch Matcher significant digits container", "[Math]")
 
     std::vector<double> vec1;
     std::vector<double> vec2;
-    std::copy(arr1.begin(), arr1.end(), std::back_inserter(vec1));
-    std::copy(arr2.begin(), arr2.end(), std::back_inserter(vec2));
+    std::ranges::copy(arr1, std::back_inserter(vec1));
+    std::ranges::copy(arr2, std::back_inserter(vec2));
     LOG_DEBUG("Vector:\n{}\n    ==\n{}", joinToString(vec1, ", ", ":.5e"), joinToString(vec2, ", ", ":.5e"));
     REQUIRE_THAT(vec1, Catch::Matchers::EqualsSigDigitsContainer(vec2, 4));
 }

@@ -9,8 +9,6 @@
 #include "LeftPane.hpp"
 
 #include <imgui_node_editor.h>
-
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
 #include "internal/NodeManager.hpp"
@@ -63,21 +61,6 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         }
         ImGui::Spring();
         ImGui::EndHorizontal();
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        // TODO: The flow animations currently crash under windows
-        ImGui::BeginDisabled();
-#endif
-
-        ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
-        if (NodeEditorApplication::defaultFontRatio() == 1.F) { ImGui::SameLine(); }
-        ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
-
-        ImGui::Checkbox("Show Queue size on pins", &NodeEditorApplication::_showQueueSizeOnPins);
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
-        ImGui::EndDisabled();
-#endif
     }
 
     std::vector<ed::NodeId> selectedNodes;
@@ -113,44 +96,47 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                     IM_COL32(255, 0, 0, 255 - static_cast<int>(255 * progress)), 4.0F);
             }
 
-            if (node->kind != Node::Kind::GroupBox)
+            if (node->kind == Node::Kind::GroupBox)
             {
-                // Circle to show init status
-                ImU32 circleCol = 0;
-                if (node->isDisabled())
-                {
-                    circleCol = IM_COL32(192, 192, 192, 255);
-                }
-                else if (node->getState() == Node::State::DoInitialize)
-                {
-                    circleCol = IM_COL32(144, 202, 238, 255);
-                }
-                else if (node->getState() == Node::State::Initializing)
-                {
-                    circleCol = IM_COL32(143, 188, 143, 255);
-                }
-                else if (node->getState() == Node::State::DoDeinitialize)
-                {
-                    circleCol = IM_COL32(255, 222, 122, 255);
-                }
-                else if (node->getState() == Node::State::Deinitializing)
-                {
-                    circleCol = IM_COL32(240, 128, 128, 255);
-                }
-                else if (node->getState() == Node::State::Initialized)
-                {
-                    circleCol = IM_COL32(0, 255, 0, 255);
-                }
-                else // if (!node->getState() == Node::State::Deinitialized)
-                {
-                    circleCol = IM_COL32(255, 0, 0, 255);
-                }
-                ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::defaultFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
-                                                            5.0F * NodeEditorApplication::defaultFontRatio(), circleCol);
+                ImGui::PopID();
+                continue;
             }
 
-            bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
-            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
+            // Circle to show init status
+            ImU32 circleCol = 0;
+            if (node->isDisabled())
+            {
+                circleCol = IM_COL32(192, 192, 192, 255);
+            }
+            else if (node->getState() == Node::State::DoInitialize)
+            {
+                circleCol = IM_COL32(144, 202, 238, 255);
+            }
+            else if (node->getState() == Node::State::Initializing)
+            {
+                circleCol = IM_COL32(143, 188, 143, 255);
+            }
+            else if (node->getState() == Node::State::DoDeinitialize)
+            {
+                circleCol = IM_COL32(255, 222, 122, 255);
+            }
+            else if (node->getState() == Node::State::Deinitializing)
+            {
+                circleCol = IM_COL32(240, 128, 128, 255);
+            }
+            else if (node->getState() == Node::State::Initialized)
+            {
+                circleCol = IM_COL32(0, 255, 0, 255);
+            }
+            else // if (!node->getState() == Node::State::Deinitialized)
+            {
+                circleCol = IM_COL32(255, 0, 0, 255);
+            }
+            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8 + (NodeEditorApplication::panelFontRatio() - 1.F) * 5.F, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                        5.0F * NodeEditorApplication::panelFontRatio(), circleCol);
+
+            bool isSelected = std::ranges::find(selectedNodes, node->id) != selectedNodes.end();
+            if (NodeEditorApplication::panelFontRatio() != 1.F) { ImGui::Indent((NodeEditorApplication::panelFontRatio() - 1.F) * 15.F); }
             if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
@@ -175,14 +161,14 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             {
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
-            if (NodeEditorApplication::defaultFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::defaultFontRatio() - 1.F) * 15.F); }
+            if (NodeEditorApplication::panelFontRatio() != 1.F) { ImGui::Unindent((NodeEditorApplication::panelFontRatio() - 1.F) * 15.F); }
 
-            auto id = fmt::format("({})", size_t(node->id));
-            auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
-            auto iconPanelPos = start + ImVec2(std::max(paneWidth, 150.F) - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
-            ImGui::GetWindowDrawList()->AddText(
-                ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
-                colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
+            // auto id = fmt::format("({})", size_t(node->id));
+            // auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
+            // auto iconPanelPos = start + ImVec2(std::max(paneWidth, 150.F) - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
+            // ImGui::GetWindowDrawList()->AddText(
+            //     ImVec2(iconPanelPos.x - textSize.x - ImGui::GetStyle().ItemInnerSpacing.x, start.y),
+            //     colSum > 2.0F ? IM_COL32(0, 0, 0, 255) : IM_COL32(255, 255, 255, 255), id.c_str(), nullptr);
 
             ImGui::PopID();
         }

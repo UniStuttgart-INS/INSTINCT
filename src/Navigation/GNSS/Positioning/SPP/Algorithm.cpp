@@ -12,8 +12,14 @@
 /// @date 2023-12-20
 
 #include "Algorithm.hpp"
+#include <algorithm>
+#include <spdlog/common.h>
+#include <spdlog/spdlog.h>
 
+#include "Navigation/GNSS/Core/Frequency.hpp"
+#include "Navigation/GNSS/Positioning/Observation.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
+#include "util/Logger.hpp"
 #include <fmt/format.h>
 
 #include "internal/gui/widgets/EnumCombo.hpp"
@@ -56,9 +62,9 @@ bool Algorithm::ShowGuiWidgets(const char* id, float itemWidth, float unitWidth)
 
 void Algorithm::reset()
 {
-    for (auto& receiver : _receiver) { receiver = Receiver(receiver.type); }
+    _receiver = Receiver(Rover, _obsFilter.getSystemFilter().toVector());
     _obsFilter.reset();
-    _kalmanFilter.reset();
+    _kalmanFilter.reset(_obsFilter.getSystemFilter().toVector());
     _lastUpdate.reset();
 }
 
@@ -66,59 +72,72 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                                                         const std::vector<const GnssNavInfo*>& gnssNavInfos,
                                                         const std::string& nameId)
 {
-    _receiver[Rover].gnssObs = gnssObs;
+    _receiver.gnssObs = gnssObs;
 
     if (gnssNavInfos.empty())
     {
-        LOG_ERROR("{}: [{}] SPP cannot calculate position because no navigation data provided.", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
+        LOG_ERROR("{}: [{}] SPP cannot calculate position because no navigation data provided.", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
         return nullptr;
     }
-    LOG_DATA("{}: [{}] Calculating SPP", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}] Calculating SPP", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
 
     // Collection of all connected Ionospheric Corrections
-    IonosphericCorrections ionosphericCorrections(gnssNavInfos);
+    auto ionosphericCorrections = std::make_shared<const IonosphericCorrections>(gnssNavInfos);
 
-    double dt = _lastUpdate.empty() ? 0.0 : static_cast<double>((_receiver[Rover].gnssObs->insTime - _lastUpdate).count());
+    double dt = _lastUpdate.empty() ? 0.0 : static_cast<double>((_receiver.gnssObs->insTime - _lastUpdate).count());
     LOG_DATA("{}: dt = {}s", nameId, dt);
-    _lastUpdate = _receiver[Rover].gnssObs->insTime;
+    _lastUpdate = _receiver.gnssObs->insTime;
 
     auto sppSol = std::make_shared<SppSolution>();
-    sppSol->insTime = _receiver[Rover].gnssObs->insTime;
+    sppSol->insTime = _receiver.gnssObs->insTime;
 
     if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
     {
-        _kalmanFilter.predict(dt, _receiver[Rover].lla_posMarker, nameId);
+        _kalmanFilter.predict(dt, _receiver.lla_posMarker, nameId);
         assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
     }
 
     constexpr size_t N_ITER_MAX_LSQ = 10;
     size_t nIter = _estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized() ? 1 : N_ITER_MAX_LSQ;
-    Eigen::Vector3d e_oldPos = _receiver[Rover].e_posMarker;
+    Eigen::Vector3d e_oldPos = _receiver.e_posMarker;
+    bool accuracyAchieved = false;
+
+    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> H;
+
     for (size_t iteration = 0; iteration < nIter; iteration++)
     {
-        LOG_DATA("{}: [{}] iteration {}/{}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), iteration + 1, nIter);
-        LOG_DATA("{}: [{}]   e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
-        LOG_DATA("{}: [{}]   e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
-        LOG_DATA("{}: [{}] lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
-        LOG_DATA("{}: [{}]   clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
-        LOG_DATA("{}: [{}]   clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
-        for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); i++)
+        LOG_DATA("{}: [{}] iteration {}/{}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, nIter);
+        LOG_DATA("{}: [{}]   e_pos    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_posMarker.transpose());
+        LOG_DATA("{}: [{}]   e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
+        LOG_DATA("{}: [{}] lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
+        for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
         {
-            LOG_DATA("{}: [{}]   ISBBias  [{:5}] = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffBias.at(i).value);
+            LOG_DATA("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), satSys);
+            LOG_DATA("{}: [{}]   clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
+            LOG_DATA("{}: [{}]   clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys), *_receiver.recvClk.driftStdDevFor(satSys));
         }
-        for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffDrift.size(); i++)
+        for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
         {
-            LOG_DATA("{}: [{}]   ISBDrift [{:5}] = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value);
+            LOG_DATA("{}: [{}]   IFBBias [{:3}] = {} [s] (StdDev = {})", nameId,
+                     _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value, freq.second.stdDev);
         }
 
-        auto observations = _obsFilter.selectObservationsForCalculation(_receiver, gnssNavInfos, nameId, e_oldPos.isZero());
+        bool firstEpoch = e_oldPos.isZero();
+        Observations observations;
+        _obsFilter.selectObservationsForCalculation(Rover,
+                                                    _receiver.e_posMarker,
+                                                    _receiver.lla_posMarker,
+                                                    _receiver.gnssObs,
+                                                    gnssNavInfos,
+                                                    observations,
+                                                    nullptr,
+                                                    nameId,
+                                                    firstEpoch);
         if (observations.signals.empty())
         {
-            LOG_ERROR("{}: [{}] SPP cannot calculate position because no valid observations. Try changing filter settings or reposition your antenna.",
-                      nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
+            LOG_TRACE("{}: [{}] SPP cannot calculate position because no valid observations. Try changing filter settings or reposition your antenna.",
+                      nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
             return nullptr;
         }
 
@@ -131,16 +150,22 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         LOG_DATA("{}: nSatellites = {}", nameId, sppSol->nSatellites);
         LOG_DATA("{}: nMeasPsr    = {}", nameId, sppSol->nMeasPsr);
         LOG_DATA("{}: nMeasDopp   = {}", nameId, sppSol->nMeasDopp);
+        for (const auto& satSys : observations.systems)
+        {
+            [[maybe_unused]] auto satCount = std::ranges::count_if(observations.satellites, [&](const SatId& satId) {
+                return satId.satSys == satSys;
+            });
+
+            LOG_DATA("{}: nSat {:5}  = {}", nameId, satSys, satCount);
+        }
 
         if (size_t nPsrMeas = observations.nObservablesUniqueSatellite[GnssObs::Pseudorange];
             (_estimatorType != EstimatorType::KalmanFilter || !_kalmanFilter.isInitialized()) && nPsrMeas <= nParams)
         {
-            LOG_ERROR("{}: [{}] SPP cannot calculate position because only {} satellites with pseudorange observations ({} needed). Try changing filter settings or reposition your antenna.",
-                      nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), nPsrMeas, nParams + 1);
+            LOG_TRACE("{}: [{}] SPP cannot calculate position because only {} satellites with pseudorange observations ({} needed). Try changing filter settings or reposition your antenna.",
+                      nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), nPsrMeas, nParams + 1);
             return nullptr;
         }
-
-        updateInterSystemTimeDifferences(observations.systems, observations.nObservables[GnssObs::Doppler], nameId);
 
         updateInterFrequencyBiases(observations, nameId);
 
@@ -151,7 +176,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
         sppSol->nParam = stateKeys.size();
 
-        auto H = calcMatrixH(stateKeys, measKeys, observations, nameId);
+        H = calcMatrixH(stateKeys, measKeys, observations, nameId);
         auto R = calcMatrixR(measKeys, observations, nameId);
         auto dz = calcMeasInnovation(measKeys, observations, nameId);
 
@@ -171,15 +196,15 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                 std::string msg = fmt::format("Potential clock jump detected. Adjusting KF clock error covariance.\n"
                                               "Too large innovations: {}",
                                               highInnovation.substr(0, highInnovation.length() - 2));
-                LOG_WARN("{}: [{}] {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), msg);
-                _kalmanFilter.setClockBiasErrorCovariance(1e6);
+                LOG_WARN("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), msg);
+                _kalmanFilter.setClockBiasErrorCovariance(1e1);
                 sppSol->addEvent(msg);
             }
         }
 
         if (_estimatorType != EstimatorType::KalmanFilter || !_kalmanFilter.isInitialized())
         {
-            KeyedLeastSquaresResult<double, States::StateKeyTypes> lsq;
+            KeyedLeastSquaresResult<double, States::StateKeyType> lsq;
             if (_estimatorType == EstimatorType::LeastSquares)
             {
                 lsq = solveLinearLeastSquaresUncertainties(H, dz);
@@ -196,34 +221,34 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             assignLeastSquaresResult(lsq.solution, lsq.variance, e_oldPos,
                                      nParams, observations.nObservablesUniqueSatellite[GnssObs::Doppler], dt, nameId);
 
-            bool accuracyAchieved = lsq.solution(all).norm() < 1e-4;
-            if (accuracyAchieved) { LOG_DATA("{}: [{}] Accuracy achieved on iteration {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), iteration + 1); }
-            else { LOG_DATA("{}: [{}] Bad accuracy on iteration {}: {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), iteration + 1, lsq.solution(all).norm()); }
+            accuracyAchieved = lsq.solution(all).norm() < 1e-4;
+            if (accuracyAchieved) { LOG_DATA("{}: [{}] Accuracy achieved on iteration {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1); }
+            else { LOG_DATA("{}: [{}] Bad accuracy on iteration {}: {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), iteration + 1, lsq.solution(all).norm()); }
+            if (iteration == nIter - 1) { return nullptr; }
             if (accuracyAchieved || iteration == nIter - 1)
             {
                 if (_estimatorType == EstimatorType::KalmanFilter && !_kalmanFilter.isInitialized()
                     && sppSol->nMeasPsr > nParams // Variance can only be calculated if more measurements than parameters
                     && (!_obsFilter.isObsTypeUsed(GnssObs::Doppler) || sppSol->nMeasDopp > nParams))
                 {
-                    LOG_TRACE("{}: [{}] Initializing KF with LSQ solution", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
-                    KeyedVectorXd<States::StateKeyTypes> x(Eigen::VectorXd::Zero(lsq.solution.rows()), lsq.solution.rowKeys());
-                    x.segment<3>(States::Pos) = _receiver[Rover].e_posMarker;
-                    if (x.hasAnyRows(States::Vel)) { x.segment<3>(States::Vel) = _receiver[Rover].e_vel; }
-                    x(States::RecvClkErr) = _receiver[Rover].recvClk.bias.value * InsConst<>::C;
-                    if (x.hasRow(States::RecvClkDrift)) { x(States::RecvClkDrift) = _receiver[Rover].recvClk.drift.value * InsConst<>::C; }
+                    LOG_TRACE("{}: [{}] Initializing KF with LSQ solution", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
+                    KeyedVectorXd<States::StateKeyType> x(Eigen::VectorXd::Zero(lsq.solution.rows()), lsq.solution.rowKeys());
+                    x.segment<3>(PosKey) = _receiver.e_posMarker;
+                    if (x.hasAnyRows(VelKey)) { x.segment<3>(VelKey) = _receiver.e_vel; }
+                    for (size_t i = 0; i < _receiver.recvClk.satelliteSystems.size(); i++)
+                    {
+                        auto satSys = _receiver.recvClk.satelliteSystems.at(i);
+                        x(Keys::RecvClkBias{ satSys }) = _receiver.recvClk.bias.at(i) * InsConst::C;
+                        if (x.hasRow(Keys::RecvClkDrift{ satSys }))
+                        {
+                            x(Keys::RecvClkDrift{ satSys }) = _receiver.recvClk.drift.at(i) * InsConst::C;
+                        }
+                    }
                     for (const auto& state : x.rowKeys())
                     {
-                        if (const auto* bias = std::get_if<States::InterSysBias>(&state))
+                        if (const auto* bias = std::get_if<Keys::InterFreqBias>(&state))
                         {
-                            x(*bias) = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value * InsConst<>::C;
-                        }
-                        else if (const auto* drift = std::get_if<States::InterSysDrift>(&state))
-                        {
-                            x(*drift) = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value * InsConst<>::C;
-                        }
-                        else if (const auto* bias = std::get_if<States::InterFreqBias>(&state))
-                        {
-                            x(*bias) = _receiver[Rover].interFrequencyBias.at(bias->freq).value * InsConst<>::C;
+                            x(*bias) = _receiver.interFrequencyBias.at(bias->freq).value * InsConst::C;
                         }
                     }
 
@@ -231,28 +256,30 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     LOG_DATA("{}: x =\n{}", nameId, _kalmanFilter.getState().transposed());
                     LOG_DATA("{}: P =\n{}", nameId, _kalmanFilter.getErrorCovarianceMatrix());
                 }
-                sppSol->setPositionAndStdDev_e(_receiver[Rover].e_posMarker, lsq.variance.block<3>(States::Pos, States::Pos));
-                if (canCalculateVelocity(observations.nObservables[GnssObs::Doppler]))
+                sppSol->setPositionAndStdDev_e(_receiver.e_posMarker, lsq.variance.block<3>(PosKey, PosKey));
+                if (lsq.variance.hasRows(VelKey))
                 {
-                    sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, lsq.variance.block<3>(States::Vel, States::Vel));
-                    sppSol->setPosVelCovarianceMatrix_e(lsq.variance(States::PosVel, States::PosVel));
+                    sppSol->setVelocityAndStdDev_e(_receiver.e_vel, lsq.variance.block<3>(VelKey, VelKey));
+                    sppSol->setPosVelCovarianceMatrix_e(lsq.variance(PosVelKey, PosVelKey));
                 }
                 else
                 {
-                    sppSol->setPosCovarianceMatrix_e(lsq.variance(States::Pos, States::Pos));
+                    sppSol->setPosCovarianceMatrix_e(lsq.variance(PosKey, PosKey));
                 }
 
                 sppSol->satData.reserve(observations.satellites.size());
                 for (const auto& [satSigId, signalObs] : observations.signals)
                 {
-                    if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
-                                     [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                    if (std::ranges::find_if(sppSol->satData,
+                                             [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
                         == sppSol->satData.end())
                     {
-                        sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
-                                                                                               .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                        sppSol->satData.emplace_back(satSigId.toSatId(),
+                                                     SppSolution::SatData{ .satElevation = signalObs.recvObs.at(Rover)->satElevation(_receiver.e_posMarker, _receiver.lla_posMarker),
+                                                                           .satAzimuth = signalObs.recvObs.at(Rover)->satAzimuth(_receiver.e_posMarker, _receiver.lla_posMarker) });
                     }
                 }
+
                 break;
             }
         }
@@ -260,83 +287,81 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
         {
             _kalmanFilter.update(measKeys, H, R, dz, nameId);
 
-            if (double posDiff = (_kalmanFilter.getState()(States::Pos) - _receiver[Rover].e_posMarker).norm();
+            if (double posDiff = (_kalmanFilter.getState()(PosKey) - _receiver.e_posMarker).norm();
                 posDiff > 100)
             {
                 std::string msg = fmt::format("Potential clock jump detected. Reinitializing KF with WLSQ.\nPosition difference to previous epoch {:.1f}m", posDiff);
-                LOG_WARN("{}: [{}] {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), msg);
+                LOG_WARN("{}: [{}] {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), msg);
                 sppSol->addEvent(msg);
-                _kalmanFilter.deinitialize();
-                nIter = N_ITER_MAX_LSQ + 1;
-                continue;
+                // _kalmanFilter.deinitialize();
+                // nIter = N_ITER_MAX_LSQ + 1;
+                // continue;
             }
 
             assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
-            sppSol->setPositionAndStdDev_e(_receiver[Rover].e_posMarker, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Pos, States::Pos));
-            sppSol->setVelocityAndStdDev_e(_receiver[Rover].e_vel, _kalmanFilter.getErrorCovarianceMatrix().block<3>(States::Vel, States::Vel));
-            sppSol->setPosVelCovarianceMatrix_e(_kalmanFilter.getErrorCovarianceMatrix()(States::PosVel, States::PosVel));
+            sppSol->setPositionAndStdDev_e(_receiver.e_posMarker, _kalmanFilter.getErrorCovarianceMatrix().block<3>(PosKey, PosKey));
+            sppSol->setVelocityAndStdDev_e(_receiver.e_vel, _kalmanFilter.getErrorCovarianceMatrix().block<3>(VelKey, VelKey));
+            sppSol->setPosVelCovarianceMatrix_e(_kalmanFilter.getErrorCovarianceMatrix()(PosVelKey, PosVelKey));
 
             sppSol->satData.reserve(observations.satellites.size());
             for (const auto& [satSigId, signalObs] : observations.signals)
             {
-                if (std::find_if(sppSol->satData.begin(), sppSol->satData.end(),
-                                 [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
+                if (std::ranges::find_if(sppSol->satData,
+                                         [&satSigId = satSigId](const auto& satIdData) { return satIdData.first == satSigId.toSatId(); })
                     == sppSol->satData.end())
                 {
-                    sppSol->satData.emplace_back(satSigId.toSatId(), SppSolution::SatData{ .satElevation = signalObs.recvObs[Rover].satElevation(),
-                                                                                           .satAzimuth = signalObs.recvObs[Rover].satAzimuth() });
+                    sppSol->satData.emplace_back(satSigId.toSatId(),
+                                                 SppSolution::SatData{ .satElevation = signalObs.recvObs.at(Rover)->satElevation(_receiver.e_posMarker, _receiver.lla_posMarker),
+                                                                       .satAzimuth = signalObs.recvObs.at(Rover)->satAzimuth(_receiver.e_posMarker, _receiver.lla_posMarker) });
                 }
             }
         }
     }
+    // use H matrix to calculate DOPs
+    computeDOPs(sppSol, H, nameId);
 
-    sppSol->recvClk = _receiver[Rover].recvClk;
-    sppSol->interFrequencyBias = _receiver[Rover].interFrequencyBias;
+    sppSol->recvClk = _receiver.recvClk;
+    sppSol->interFrequencyBias = _receiver.interFrequencyBias;
 
 #if LOG_LEVEL <= LOG_LEVEL_DATA
-    if (sppSol->e_position() != _receiver[Rover].e_posMarker)
+    if (sppSol->e_position() != _receiver.e_posMarker)
     {
-        LOG_DATA("{}: [{}] Receiver:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 _receiver[Rover].e_posMarker(0), _receiver[Rover].e_posMarker(1), _receiver[Rover].e_posMarker(2));
-        LOG_DATA("{}: [{}] Receiver: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                 rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
+        LOG_DATA("{}: [{}] Receiver:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 _receiver.e_posMarker(0), _receiver.e_posMarker(1), _receiver.e_posMarker(2));
+        LOG_DATA("{}: [{}] Receiver: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
     }
-    if (sppSol->e_velocity() != _receiver[Rover].e_vel)
+    if (sppSol->e_velocity() != _receiver.e_vel)
     {
-        LOG_DATA("{}: [{}] Receiver:   e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
+        LOG_DATA("{}: [{}] Receiver:   e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
     }
-    if (sppSol->recvClk.bias.value != _receiver[Rover].recvClk.bias.value)
+    for (const auto& satSys : _receiver.recvClk.satelliteSystems)
     {
-        LOG_DATA("{}: [{}] Receiver:   clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
-    }
-    if (sppSol->recvClk.drift.value != _receiver[Rover].recvClk.drift.value)
-    {
-        LOG_DATA("{}: [{}] Receiver:   clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
+        if (*sppSol->recvClk.biasFor(satSys) != *_receiver.recvClk.biasFor(satSys))
+        {
+            LOG_DATA("{}: [{}] Receiver:   clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
+        }
+        if (*sppSol->recvClk.driftFor(satSys) != *_receiver.recvClk.driftFor(satSys))
+        {
+            LOG_DATA("{}: [{}] Receiver:   clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys));
+        }
     }
 #endif
 
     LOG_DATA("{}: [{}] Solution:   e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, sppSol->insTime.toYMDHMS(GPST),
              sppSol->e_position()(0), sppSol->e_position()(1), sppSol->e_position()(2));
-    LOG_DATA("{}: [{}] Solution:   e_vel    = {}", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->e_velocity().transpose());
     LOG_DATA("{}: [{}] Solution: lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, sppSol->insTime.toYMDHMS(GPST),
              rad2deg(sppSol->latitude()), rad2deg(sppSol->longitude()), sppSol->altitude());
-    LOG_DATA("{}: [{}] Solution:   clkBias  = {} s", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->recvClk.bias.value);
-    LOG_DATA("{}: [{}] Solution:   clkDrift = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->recvClk.drift.value);
-    for (size_t i = 0; i < sppSol->recvClk.sysTimeDiffBias.size(); i++)
+    LOG_DATA("{}: [{}] Solution:   e_vel    = {}", nameId, sppSol->insTime.toYMDHMS(GPST), sppSol->e_velocity().transpose());
+    for (size_t i = 0; i < sppSol->recvClk.satelliteSystems.size(); i++) // NOLINT
     {
-        if (sppSol->recvClk.sysTimeDiffBias.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}] Solution:   ISBBias  [{:5}] = {} s", nameId, sppSol->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), sppSol->recvClk.sysTimeDiffBias.at(i).value);
-        }
+        LOG_DATA("{}: [{}] Solution:   clkBias  [{:5}] = {} s", nameId, sppSol->insTime.toYMDHMS(GPST),
+                 sppSol->recvClk.satelliteSystems.at(i), sppSol->recvClk.bias.at(i));
     }
-    for (size_t i = 0; i < sppSol->recvClk.sysTimeDiffDrift.size(); i++)
+    for (size_t i = 0; i < sppSol->recvClk.satelliteSystems.size(); i++) // NOLINT
     {
-        if (sppSol->recvClk.sysTimeDiffDrift.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}] Solution:   ISBDrift [{:5}] = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), sppSol->recvClk.sysTimeDiffDrift.at(i).value);
-        }
+        LOG_DATA("{}: [{}] Solution:   clkDrift [{:5}] = {} s/s", nameId, sppSol->insTime.toYMDHMS(GPST),
+                 sppSol->recvClk.satelliteSystems.at(i), sppSol->recvClk.drift.at(i));
     }
     for ([[maybe_unused]] const auto& freq : sppSol->interFrequencyBias)
     {
@@ -348,7 +373,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
 
 bool Algorithm::canCalculateVelocity(size_t nDoppMeas) const
 {
-    if (_estimatorType == EstimatorType::KalmanFilter) { return true; }
+    if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized()) { return true; }
 
     return _obsFilter.isObsTypeUsed(GnssObs::Doppler) && nDoppMeas >= 4;
 }
@@ -364,107 +389,33 @@ bool Algorithm::canEstimateInterFrequencyBias() const
     return false;
 }
 
-void Algorithm::updateInterSystemTimeDifferences(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas, const std::string& nameId)
-{
-    SatelliteSystem oldRefSys = _receiver[Rover].recvClk.referenceTimeSatelliteSystem;
-    if (_receiver[Rover].recvClk.referenceTimeSatelliteSystem == SatSys_None)
-    {
-        _receiver[Rover].recvClk.referenceTimeSatelliteSystem = *usedSatSystems.begin();
-    }
-
-    if (_estimatorType == EstimatorType::KalmanFilter)
-    {
-        _receiver[Rover].recvClk.referenceTimeSatelliteSystem = _kalmanFilter.updateInterSystemTimeDifferences(usedSatSystems,
-                                                                                                               oldRefSys,
-                                                                                                               *usedSatSystems.begin(),
-                                                                                                               nameId);
-        if (oldRefSys != _receiver[Rover].recvClk.referenceTimeSatelliteSystem)
-        {
-            for (const auto& state : _kalmanFilter.getStateKeys())
-            {
-                if (const auto* bias = std::get_if<States::InterSysBias>(&state))
-                {
-                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).value = _kalmanFilter.getState()(*bias) / InsConst<>::C;
-                    _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*bias, *bias)) / InsConst<>::C;
-                }
-                else if (const auto* drift = std::get_if<States::InterSysDrift>(&state))
-                {
-                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).value = _kalmanFilter.getState()(*drift) / InsConst<>::C;
-                    _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration()).stdDev = std::sqrt(_kalmanFilter.getErrorCovarianceMatrix()(*drift, *drift)) / InsConst<>::C;
-                }
-            }
-        }
-    }
-    else if (oldRefSys != *usedSatSystems.begin())
-    {
-        _receiver[Rover].recvClk.referenceTimeSatelliteSystem = *usedSatSystems.begin();
-        auto refSatSysEnum = _receiver[Rover].recvClk.referenceTimeSatelliteSystem.toEnumeration();
-
-        for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); ++i)
-        {
-            if (refSatSysEnum == i) { continue; }
-
-            auto& sysBias = _receiver[Rover].recvClk.sysTimeDiffBias.at(i);
-            LOG_DATA("{}: [{}] Bias  [{:5}] {:.3g} - {:.3g} = {:.3g}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)),
-                     sysBias.value, _receiver[Rover].recvClk.sysTimeDiffBias.at(refSatSysEnum).value,
-                     sysBias.value - _receiver[Rover].recvClk.sysTimeDiffBias.at(refSatSysEnum).value);
-            sysBias.value -= _receiver[Rover].recvClk.sysTimeDiffBias.at(refSatSysEnum).value;
-            sysBias.stdDev += _receiver[Rover].recvClk.sysTimeDiffBias.at(refSatSysEnum).stdDev;
-        }
-        if (canCalculateVelocity(nDoppMeas))
-        {
-            for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffDrift.size(); ++i)
-            {
-                if (refSatSysEnum == i) { continue; }
-
-                auto& sysDrift = _receiver[Rover].recvClk.sysTimeDiffDrift.at(i);
-                LOG_DATA("{}: [{}] Drift [{:5}] {:.3g} - {:.3g} = {:.3g}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                         SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)),
-                         sysDrift.value, _receiver[Rover].recvClk.sysTimeDiffDrift.at(refSatSysEnum).value,
-                         sysDrift.value - _receiver[Rover].recvClk.sysTimeDiffDrift.at(refSatSysEnum).value);
-                sysDrift.value -= _receiver[Rover].recvClk.sysTimeDiffDrift.at(refSatSysEnum).value;
-                sysDrift.stdDev += _receiver[Rover].recvClk.sysTimeDiffDrift.at(refSatSysEnum).stdDev;
-            }
-        }
-    }
-
-    if (oldRefSys != _receiver[Rover].recvClk.referenceTimeSatelliteSystem)
-    {
-        LOG_TRACE("{}: [{}] Using [{}] as new reference system for inter system clock biases", nameId,
-                  _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.referenceTimeSatelliteSystem);
-    }
-}
-
 void Algorithm::updateInterFrequencyBiases(const Observations& observations, [[maybe_unused]] const std::string& nameId)
 {
     if (_estimateInterFreqBiases)
     {
-        auto isFirstFrequency = [&](const Frequency& freq, const Frequency& filter) -> bool {
-            Frequency_ f = filter & freq.getSatSys();
-            f = Frequency_(f ^ Frequency_(freq));
-            LOG_DATA("{}: Freq {} is {} in filter {}", nameId, freq, (f == Freq_None || Frequency_(freq) < f) ? "first" : "not first", filter);
-
-            return f == Freq_None || Frequency_(freq) < f;
-        };
-
         std::set<Frequency> observedFrequencies;
-        for (const auto& obs : observations.signals) { observedFrequencies.insert(obs.first.freq()); }
+        Frequency allObservedFrequencies;
+        for (const auto& obs : observations.signals)
+        {
+            observedFrequencies.insert(obs.first.freq());
+            allObservedFrequencies |= obs.first.freq();
+        }
+        LOG_DATA("{}: Observed frequencies {}", nameId, fmt::join(observedFrequencies, ", "));
 
         for (const auto& freq : observedFrequencies)
         {
-            if (!isFirstFrequency(freq, _obsFilter.getFrequencyFilter()) && !_receiver[Rover].interFrequencyBias.contains(freq))
+            if (!freq.isFirstFrequency(allObservedFrequencies) && !_receiver.interFrequencyBias.contains(freq))
             {
                 LOG_TRACE("{}: Estimating Inter-Frequency bias for {}", nameId, freq);
-                _receiver[Rover].interFrequencyBias.emplace(freq, UncertainValue<double>{});
+                _receiver.interFrequencyBias.emplace(freq, UncertainValue<double>{});
                 _kalmanFilter.addInterFrequencyBias(freq);
             }
         }
     }
 }
 
-std::vector<States::StateKeyTypes> Algorithm::determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas,
-                                                                 [[maybe_unused]] const std::string& nameId) const
+std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<SatelliteSystem>& usedSatSystems, size_t nDoppMeas,
+                                                                [[maybe_unused]] const std::string& nameId) const
 {
     if (_estimatorType == EstimatorType::KalmanFilter && _kalmanFilter.isInitialized())
     {
@@ -472,31 +423,23 @@ std::vector<States::StateKeyTypes> Algorithm::determineStateKeys(const std::set<
         return _kalmanFilter.getStateKeys();
     }
 
-    std::vector<States::StateKeyTypes> stateKeys = States::Pos;
+    std::vector<States::StateKeyType> stateKeys = PosKey;
     stateKeys.reserve(stateKeys.size() + 1
-                      + canCalculateVelocity(nDoppMeas) * (States::Vel.size() + 1)
-                      + (usedSatSystems.size() - 1) * (1 + canCalculateVelocity(nDoppMeas)));
+                      + canCalculateVelocity(nDoppMeas) * (VelKey.size() + 1)
+                      + usedSatSystems.size() * (1 + canCalculateVelocity(nDoppMeas)));
     if (canCalculateVelocity(nDoppMeas))
     {
-        std::copy(States::Vel.cbegin(), States::Vel.cend(), std::back_inserter(stateKeys));
-    }
-    stateKeys.emplace_back(States::RecvClkErr);
-    if (canCalculateVelocity(nDoppMeas))
-    {
-        stateKeys.emplace_back(States::RecvClkDrift);
+        std::ranges::copy(VelKey, std::back_inserter(stateKeys));
     }
 
     for (const auto& satSys : usedSatSystems)
     {
-        if (satSys != _receiver[Rover].recvClk.referenceTimeSatelliteSystem)
-        {
-            stateKeys.emplace_back(States::InterSysBias{ satSys });
-            if (canCalculateVelocity(nDoppMeas)) { stateKeys.emplace_back(States::InterSysDrift{ satSys }); }
-        }
+        stateKeys.emplace_back(Keys::RecvClkBias{ satSys });
+        if (canCalculateVelocity(nDoppMeas)) { stateKeys.emplace_back(Keys::RecvClkDrift{ satSys }); }
     }
-    for (const auto& freq : _receiver[Rover].interFrequencyBias)
+    for (const auto& freq : _receiver.interFrequencyBias)
     {
-        stateKeys.emplace_back(States::InterFreqBias{ freq.first });
+        stateKeys.emplace_back(Keys::InterFreqBias{ freq.first });
     }
 
     LOG_DATA("{}: stateKeys = [{}]", nameId, joinToString(stateKeys));
@@ -512,7 +455,7 @@ std::vector<Meas::MeasKeyTypes> Algorithm::determineMeasKeys(const Observations&
     {
         for (const auto& signalObs : observations.signals)
         {
-            if (signalObs.second.recvObs.at(Rover).obs.contains(GnssObs::Pseudorange))
+            if (signalObs.second.recvObs.at(Rover)->obs.contains(GnssObs::Pseudorange))
             {
                 measKeys.emplace_back(Meas::Psr{ signalObs.first });
             }
@@ -522,7 +465,7 @@ std::vector<Meas::MeasKeyTypes> Algorithm::determineMeasKeys(const Observations&
     {
         for (const auto& signalObs : observations.signals)
         {
-            if (signalObs.second.recvObs.at(Rover).obs.contains(GnssObs::Doppler))
+            if (signalObs.second.recvObs.at(Rover)->obs.contains(GnssObs::Doppler))
             {
                 measKeys.emplace_back(Meas::Doppler{ signalObs.first });
             }
@@ -533,44 +476,36 @@ std::vector<Meas::MeasKeyTypes> Algorithm::determineMeasKeys(const Observations&
     return measKeys;
 }
 
-KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> Algorithm::calcMatrixH(const std::vector<States::StateKeyTypes>& stateKeys,
-                                                                                const std::vector<Meas::MeasKeyTypes>& measKeys,
-                                                                                const Observations& observations,
-                                                                                const std::string& nameId) const
+KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> Algorithm::calcMatrixH(const std::vector<States::StateKeyType>& stateKeys,
+                                                                               const std::vector<Meas::MeasKeyTypes>& measKeys,
+                                                                               const Observations& observations,
+                                                                               const std::string& nameId) const
 {
-    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyTypes> H(Eigen::MatrixXd::Zero(static_cast<int>(measKeys.size()),
-                                                                                     static_cast<int>(stateKeys.size())),
-                                                               measKeys, stateKeys);
+    KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType> H(Eigen::MatrixXd::Zero(static_cast<int>(measKeys.size()),
+                                                                                    static_cast<int>(stateKeys.size())),
+                                                              measKeys, stateKeys);
 
     for (const auto& [satSigId, signalObs] : observations.signals)
     {
         auto satId = satSigId.toSatId();
 
         const auto& roverObs = signalObs.recvObs.at(Rover);
-        for (const auto& [obsType, obsData] : roverObs.obs)
+        for (const auto& [obsType, obsData] : roverObs->obs)
         {
             switch (obsType)
             {
             case GnssObs::Pseudorange:
-                H.block<3>(Meas::Psr{ satSigId }, States::Pos) = -roverObs.e_pLOS().transpose();
-                H(Meas::Psr{ satSigId }, States::RecvClkErr) = 1;
-                if (satId.satSys != _receiver[Rover].recvClk.referenceTimeSatelliteSystem)
+                H.block<3>(Meas::Psr{ satSigId }, PosKey) = -roverObs->e_pLOS(_receiver.e_posMarker).transpose();
+                H(Meas::Psr{ satSigId }, Keys::RecvClkBias{ satId.satSys }) = 1;
+                if (_receiver.interFrequencyBias.contains(satSigId.freq()))
                 {
-                    H(Meas::Psr{ satSigId }, States::InterSysBias{ satId.satSys }) = 1;
-                }
-                if (_receiver[Rover].interFrequencyBias.contains(satSigId.freq()))
-                {
-                    H(Meas::Psr{ satSigId }, States::InterFreqBias{ satSigId.freq() }) = 1;
+                    H(Meas::Psr{ satSigId }, Keys::InterFreqBias{ satSigId.freq() }) = 1;
                 }
                 break;
             case GnssObs::Doppler:
-                H.block<3>(Meas::Doppler{ satSigId }, States::Pos) = -roverObs.e_vLOS().transpose();
-                H.block<3>(Meas::Doppler{ satSigId }, States::Vel) = -roverObs.e_pLOS().transpose();
-                H(Meas::Doppler{ satSigId }, States::RecvClkDrift) = 1;
-                if (satId.satSys != _receiver[Rover].recvClk.referenceTimeSatelliteSystem)
-                {
-                    H(Meas::Doppler{ satSigId }, States::InterSysDrift{ satId.satSys }) = 1;
-                }
+                H.block<3>(Meas::Doppler{ satSigId }, PosKey) = -roverObs->e_vLOS(_receiver.e_posMarker, _receiver.e_vel).transpose();
+                H.block<3>(Meas::Doppler{ satSigId }, VelKey) = -roverObs->e_pLOS(_receiver.e_posMarker).transpose();
+                H(Meas::Doppler{ satSigId }, Keys::RecvClkDrift{ satId.satSys }) = 1;
                 break;
             case GnssObs::Carrier:
             case GnssObs::ObservationType_COUNT:
@@ -595,7 +530,7 @@ KeyedMatrixXd<Meas::MeasKeyTypes, Meas::MeasKeyTypes> Algorithm::calcMatrixR(con
 
     for (const auto& [satSigId, signalObs] : observations.signals)
     {
-        for (const auto& [obsType, obsData] : signalObs.recvObs.at(Rover).obs)
+        for (const auto& [obsType, obsData] : signalObs.recvObs.at(Rover)->obs)
         {
             switch (obsType)
             {
@@ -626,7 +561,7 @@ KeyedVectorXd<Meas::MeasKeyTypes> Algorithm::calcMeasInnovation(const std::vecto
 
     for (const auto& [satSigId, signalObs] : observations.signals)
     {
-        for (const auto& [obsType, obsData] : signalObs.recvObs.at(Rover).obs)
+        for (const auto& [obsType, obsData] : signalObs.recvObs.at(Rover)->obs)
         {
             switch (obsType)
             {
@@ -644,52 +579,73 @@ KeyedVectorXd<Meas::MeasKeyTypes> Algorithm::calcMeasInnovation(const std::vecto
         }
     }
 
-    LOG_DATA("{}: dz =\n{}", nameId, dz.transposed());
+    LOG_DATA("{}: dz =\n{}", nameId, dz);
 
     return dz;
 }
 
-void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTypes>& state,
-                                         const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
+void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyType>& state,
+                                         const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                          const Eigen::Vector3d& e_oldPos,
                                          size_t nParams, size_t nUniqueDopplerMeas, double dt,
                                          [[maybe_unused]] const std::string& nameId)
 {
-    _receiver[Rover].e_posMarker += state.segment<3>(States::Pos);
-    _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
-    _receiver[Rover].recvClk.bias.value += state(States::RecvClkErr) / InsConst<>::C;
-    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
+    _receiver.e_posMarker += state.segment<3>(PosKey);
+    _receiver.lla_posMarker = trafo::ecef2lla_WGS84(_receiver.e_posMarker);
     for (const auto& s : state.rowKeys())
     {
-        if (const auto* bias = std::get_if<States::InterSysBias>(&s))
+        if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
         {
-            auto& sysTimeDiff = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration());
-            sysTimeDiff.value += state(*bias) / InsConst<>::C;
-            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
-            LOG_DATA("{}: Setting ISB Bias  [{}] = {}", nameId, bias->satSys, sysTimeDiff.value);
+            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
+            _receiver.recvClk.bias.at(idx) += state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                _receiver.recvClk.biasStdDev.at(idx) = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, _receiver.recvClk.biasStdDev.at(idx) * InsConst::C);
+            }
+            else
+            {
+                _receiver.recvClk.biasStdDev.at(idx) = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting Clk Bias  [{}] = {} [s] (StdDev = {})", nameId, bias->satSys, _receiver.recvClk.bias.at(idx), _receiver.recvClk.biasStdDev.at(idx));
         }
-        else if (const auto* bias = std::get_if<States::InterFreqBias>(&s))
+        else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
         {
-            auto& freqDiff = _receiver[Rover].interFrequencyBias.at(bias->freq);
-            freqDiff.value += state(*bias) / InsConst<>::C;
-            freqDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
-            LOG_DATA("{}: Setting IFB Bias  [{}] = {}", nameId, bias->freq, freqDiff.value);
+            auto& freqDiff = _receiver.interFrequencyBias.at(bias->freq);
+            freqDiff.value += state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                freqDiff.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, freqDiff.stdDev * InsConst::C);
+            }
+            else
+            {
+                freqDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting IFB Bias  [{}] = {} [s] (StdDev = {})", nameId, bias->freq, freqDiff.value, freqDiff.stdDev);
         }
     }
 
     if (nUniqueDopplerMeas >= nParams)
     {
-        _receiver[Rover].e_vel += state.segment<3>(States::Vel);
-        _receiver[Rover].recvClk.drift.value += state(States::RecvClkDrift) / InsConst<>::C;
-        _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst<>::C;
+        _receiver.e_vel += state.segment<3>(VelKey);
         for (const auto& s : state.rowKeys())
         {
-            if (const auto* drift = std::get_if<States::InterSysDrift>(&s))
+            if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
             {
-                auto& sysTimeDrift = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration());
-                sysTimeDrift.value += state(*drift) / InsConst<>::C;
-                sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst<>::C;
-                LOG_DATA("{}: Setting ISB Drift [{}] = {}", nameId, drift->satSys, sysTimeDrift.value);
+                size_t idx = _receiver.recvClk.getIdx(drift->satSys).value();
+                _receiver.recvClk.drift.at(idx) += state(*drift) / InsConst::C;
+                if (variance(*drift, *drift) < 0)
+                {
+                    _receiver.recvClk.driftStdDev.at(idx) = 1000 / InsConst::C;
+                    LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev.at(idx) * InsConst::C);
+                }
+                else
+                {
+                    _receiver.recvClk.driftStdDev.at(idx) = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+                }
+                LOG_DATA("{}: Setting Clk Drift [{}] = {} [s/s] (StdDev = {})", nameId, drift->satSys,
+                         _receiver.recvClk.drift.at(idx), _receiver.recvClk.driftStdDev.at(idx));
             }
         }
     }
@@ -700,111 +656,129 @@ void Algorithm::assignLeastSquaresResult(const KeyedVectorXd<States::StateKeyTyp
             if (_obsFilter.isObsTypeUsed(GnssObs::Doppler))
             {
                 LOG_TRACE("{}: [{}] SPP has only {} satellites with doppler observations ({} needed). Calculating velocity as position difference.",
-                          nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), nUniqueDopplerMeas, nParams);
+                          nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), nUniqueDopplerMeas, nParams);
             }
-            LOG_DATA("{}: [{}] e_oldPos = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), e_oldPos.transpose());
-            LOG_DATA("{}: [{}] e_newPos = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
-            LOG_DATA("{}: [{}] dt = {}s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), dt);
-            _receiver[Rover].e_vel = (_receiver[Rover].e_posMarker - e_oldPos) / dt;
-            LOG_DATA("{}: [{}] e_vel = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
+            LOG_DATA("{}: [{}] e_oldPos = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), e_oldPos.transpose());
+            LOG_DATA("{}: [{}] e_newPos = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_posMarker.transpose());
+            LOG_DATA("{}: [{}] dt = {}s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), dt);
+            _receiver.e_vel = (_receiver.e_posMarker - e_oldPos) / dt;
+            LOG_DATA("{}: [{}] e_vel = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
         }
     }
 
-    LOG_DATA("{}: [{}] Assigning solution to _receiver[Rover]", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
-    LOG_DATA("{}: [{}]     e_pos    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_posMarker.transpose());
-    LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
-    LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
-    LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
-    LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
-    for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); i++)
+    LOG_DATA("{}: [{}] Assigning solution to _receiver", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}]     e_pos    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_posMarker.transpose());
+    LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
+    LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+             rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
+    for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
     {
-        if (_receiver[Rover].recvClk.sysTimeDiffBias.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}]     ISBBias  [{:5}] = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffBias.at(i).value);
-        }
-    }
-    for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffDrift.size(); i++)
-    {
-        if (_receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}]     ISBDrift [{:5}] = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value);
-        }
+        LOG_DATA("{}: [{}]     clkBias  = {} [s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 *_receiver.recvClk.biasFor(satSys), *_receiver.recvClk.biasStdDevFor(satSys));
+        LOG_DATA("{}: [{}]     clkDrift = {} [s/s] (StdDev = {})", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+                 *_receiver.recvClk.driftFor(satSys), *_receiver.recvClk.driftStdDevFor(satSys));
     }
 
-    for ([[maybe_unused]] const auto& freq : _receiver[Rover].interFrequencyBias)
+    for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
     {
-        LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
+        LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} [s] (StdDev = {})", nameId,
+                 _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value, freq.second.stdDev);
     }
 }
 
-void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyTypes>& state,
-                                         const KeyedMatrixXd<States::StateKeyTypes, States::StateKeyTypes>& variance,
+void Algorithm::assignKalmanFilterResult(const KeyedVectorXd<States::StateKeyType>& state,
+                                         const KeyedMatrixXd<States::StateKeyType, States::StateKeyType>& variance,
                                          [[maybe_unused]] const std::string& nameId)
 {
-    _receiver[Rover].e_posMarker = state(States::Pos);
-    _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
-    _receiver[Rover].e_vel = state(States::Vel);
-    _receiver[Rover].recvClk.bias.value = state(States::RecvClkErr) / InsConst<>::C;
-    _receiver[Rover].recvClk.bias.stdDev = std::sqrt(variance(States::RecvClkErr, States::RecvClkErr)) / InsConst<>::C;
+    _receiver.e_posMarker = state(PosKey);
+    _receiver.lla_posMarker = trafo::ecef2lla_WGS84(_receiver.e_posMarker);
+    _receiver.e_vel = state(VelKey);
     for (const auto& s : state.rowKeys())
     {
-        if (const auto* bias = std::get_if<States::InterSysBias>(&s))
+        if (const auto* bias = std::get_if<Keys::RecvClkBias>(&s))
         {
-            auto& sysTimeDiff = _receiver[Rover].recvClk.sysTimeDiffBias.at(bias->satSys.toEnumeration());
-            sysTimeDiff.value = state(*bias) / InsConst<>::C;
-            sysTimeDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
+            size_t idx = _receiver.recvClk.getIdx(bias->satSys).value();
+            _receiver.recvClk.bias.at(idx) = state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                _receiver.recvClk.biasStdDev.at(idx) = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m]", nameId, *bias, _receiver.recvClk.biasStdDev.at(idx) * InsConst::C);
+            }
+            else
+            {
+                _receiver.recvClk.biasStdDev.at(idx) = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting Clock Bias  [{}] = {}", nameId, bias->satSys, _receiver.recvClk.bias.at(idx));
         }
-        else if (const auto* bias = std::get_if<States::InterFreqBias>(&s))
+        else if (const auto* drift = std::get_if<Keys::RecvClkDrift>(&s))
         {
-            auto& freqDiff = _receiver[Rover].interFrequencyBias.at(bias->freq);
-            freqDiff.value = state(*bias) / InsConst<>::C;
-            freqDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst<>::C;
+            size_t idx = _receiver.recvClk.getIdx(drift->satSys).value();
+            _receiver.recvClk.drift.at(idx) = state(*drift) / InsConst::C;
+            if (variance(*drift, *drift) < 0)
+            {
+                _receiver.recvClk.driftStdDev.at(idx) = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *drift, _receiver.recvClk.driftStdDev.at(idx) * InsConst::C);
+            }
+            else
+            {
+                _receiver.recvClk.driftStdDev.at(idx) = std::sqrt(variance(*drift, *drift)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting Clock Drift [{}] = {}", nameId, drift->satSys, _receiver.recvClk.drift.at(idx));
         }
-    }
-    _receiver[Rover].recvClk.drift.value = state(States::RecvClkDrift) / InsConst<>::C;
-    _receiver[Rover].recvClk.drift.stdDev = std::sqrt(variance(States::RecvClkDrift, States::RecvClkDrift)) / InsConst<>::C;
-    for (const auto& s : state.rowKeys())
-    {
-        if (const auto* drift = std::get_if<States::InterSysDrift>(&s))
+        else if (const auto* bias = std::get_if<Keys::InterFreqBias>(&s))
         {
-            auto& sysTimeDrift = _receiver[Rover].recvClk.sysTimeDiffDrift.at(drift->satSys.toEnumeration());
-            sysTimeDrift.value = state(*drift) / InsConst<>::C;
-            sysTimeDrift.stdDev = std::sqrt(variance(*drift, *drift)) / InsConst<>::C;
+            auto& freqDiff = _receiver.interFrequencyBias.at(bias->freq);
+            freqDiff.value = state(*bias) / InsConst::C;
+            if (variance(*bias, *bias) < 0)
+            {
+                freqDiff.stdDev = 1000 / InsConst::C;
+                LOG_WARN("{}: Negative variance for {}. Defauting to {:.0f} [m/s]", nameId, *bias, freqDiff.stdDev * InsConst::C);
+            }
+            else
+            {
+                freqDiff.stdDev = std::sqrt(variance(*bias, *bias)) / InsConst::C;
+            }
+            LOG_DATA("{}: Setting Inter-Freq Bias [{}] = {}", nameId, bias->freq, freqDiff.value);
         }
     }
 
-    LOG_DATA("{}: [{}] Assigning solution to _receiver[Rover]", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST));
-    LOG_DATA("{}: [{}]     e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             _receiver[Rover].e_posMarker(0), _receiver[Rover].e_posMarker(1), _receiver[Rover].e_posMarker(2));
-    LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].e_vel.transpose());
-    LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-             rad2deg(_receiver[Rover].lla_posMarker.x()), rad2deg(_receiver[Rover].lla_posMarker.y()), _receiver[Rover].lla_posMarker.z());
-    LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.bias.value);
-    LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), _receiver[Rover].recvClk.drift.value);
+    LOG_DATA("{}: [{}] Assigning solution to _receiver", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}]     e_pos    = {:.6f}m, {:.6f}m, {:.6f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+             _receiver.e_posMarker(0), _receiver.e_posMarker(1), _receiver.e_posMarker(2));
+    LOG_DATA("{}: [{}]     e_vel    = {}", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), _receiver.e_vel.transpose());
+    LOG_DATA("{}: [{}]   lla_pos    = {:.6f}°, {:.6f}°, {:.3f}m", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST),
+             rad2deg(_receiver.lla_posMarker.x()), rad2deg(_receiver.lla_posMarker.y()), _receiver.lla_posMarker.z());
+    for ([[maybe_unused]] const auto& satSys : _receiver.recvClk.satelliteSystems)
+    {
+        LOG_DATA("{}: [{}]     clkBias  = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.biasFor(satSys));
+        LOG_DATA("{}: [{}]     clkDrift = {} s/s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), *_receiver.recvClk.driftFor(satSys));
+    }
 
-    for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffBias.size(); i++)
+    for ([[maybe_unused]] const auto& freq : _receiver.interFrequencyBias)
     {
-        if (_receiver[Rover].recvClk.sysTimeDiffBias.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}]     ISBBias  [{:5}] = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffBias.at(i).value);
-        }
+        LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} s", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
     }
-    for (size_t i = 0; i < _receiver[Rover].recvClk.sysTimeDiffDrift.size(); i++)
+}
+
+void Algorithm::computeDOPs(const std::shared_ptr<SppSolution>& sppSol,
+                            const KeyedMatrixXd<Meas::MeasKeyTypes, States::StateKeyType>& H,
+                            [[maybe_unused]] const std::string& nameId)
+{
+    KeyedMatrixXd<States::StateKeyType, States::StateKeyType> N(H(all, all).transpose() * H(all, all), H.colKeys());
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(N(all, all));
+    if (lu_decomp.rank() == H.cols())
     {
-        if (_receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value != 0.0)
-        {
-            LOG_DATA("{}: [{}]     ISBDrift [{:5}] = {} s/s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST),
-                     SatelliteSystem::fromEnum(static_cast<SatelliteSystem::Enum>(i)), _receiver[Rover].recvClk.sysTimeDiffDrift.at(i).value);
-        }
+        auto Q = N.inverse();
+        Eigen::Matrix3d Qpp = Q(PosKey, PosKey);
+        Eigen::Matrix3d Qlocal = sppSol->n_Quat_e() * Qpp * sppSol->e_Quat_n();
+        sppSol->HDOP = std::sqrt(Qlocal(0, 0) + Qlocal(1, 1));
+        sppSol->VDOP = std::sqrt(Qlocal(2, 2));
+        sppSol->PDOP = std::sqrt(Qpp.trace());
     }
-    for ([[maybe_unused]] const auto& freq : _receiver[Rover].interFrequencyBias)
-    {
-        LOG_DATA("{}: [{}]     IFBBias [{:3}] = {} s", nameId, _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value);
-    }
+
+    LOG_DATA("{}: HDOP   = {}", nameId, sppSol->HDOP);
+    LOG_DATA("{}: VDOP   = {}", nameId, sppSol->VDOP);
+    LOG_DATA("{}: PDOP   = {}", nameId, sppSol->PDOP);
 }
 
 /// @brief Converts the provided object into json

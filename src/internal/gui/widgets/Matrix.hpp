@@ -14,13 +14,14 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <cstdint>
 #include <imgui.h>
 
 /// @brief Flags for MatrixView GUI elements @ref GuiMatrixViewFlags_
 using GuiMatrixViewFlags = int;
 
 /// @brief Flags to select the MatrixView behaviour
-enum GuiMatrixViewFlags_
+enum GuiMatrixViewFlags_ : uint8_t
 {
     GuiMatrixViewFlags_None = 0,                                                                ///< None
     GuiMatrixViewFlags_RowHeader = 1 << 0,                                                      ///< Print the Row Header
@@ -30,8 +31,10 @@ enum GuiMatrixViewFlags_
 
 namespace NAV::gui::widgets
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
 
 /// @brief Shows GUI elements to display the coefficients of a matrix
 /// @tparam _Scalar Data Type of the matrix
@@ -80,7 +83,9 @@ void MatrixView(const char* label, const Eigen::Matrix<_Scalar, _Rows, _Cols>* m
         ImGui::EndTable();
     }
 }
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) || defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 /// @brief Shows GUI elements to modify the coefficients of a matrix with
 /// @tparam _Scalar Data Type of the matrix

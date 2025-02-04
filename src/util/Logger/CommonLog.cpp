@@ -8,6 +8,8 @@
 
 #include "CommonLog.hpp"
 
+#include <imgui.h>
+
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
@@ -15,6 +17,23 @@
 
 namespace NAV
 {
+
+json CommonLog::save()
+{
+    json j;
+    j["useGuiInputs"] = _useGuiInputs;
+    if (_originPosition) { j["originPosition"] = *_originPosition; }
+
+    return j;
+}
+
+void CommonLog::restore(const json& j)
+{
+    if (j.contains("useGuiInputs")) { j.at("useGuiInputs").get_to(_useGuiInputs); }
+    else { _useGuiInputs = false; }
+    if (j.contains("originPosition")) { _originPosition = j.at("originPosition").get<gui::widgets::PositionWithFrame>(); }
+    else { _originPosition.reset(); }
+}
 
 CommonLog::CommonLog()
 {
@@ -32,16 +51,19 @@ CommonLog::~CommonLog()
 void CommonLog::initialize() const
 {
     std::scoped_lock lk(_mutex);
+    if (_useGuiInputs) { return; }
     _wantsInit.at(_index) = true;
 
-    if (std::all_of(_wantsInit.begin(), _wantsInit.end(), [](bool val) { return val; }))
+    if (std::ranges::all_of(_wantsInit, [](bool val) { return val; }))
     {
         LOG_DEBUG("Resetting common log variables.");
         _startTime.reset();
-        _originLatitude = std::nan("");
-        _originLongitude = std::nan("");
+        if (!_useGuiInputs)
+        {
+            _originPosition.reset();
+        }
 
-        std::fill(_wantsInit.begin(), _wantsInit.end(), false);
+        std::ranges::fill(_wantsInit, false);
     }
 }
 
@@ -60,29 +82,49 @@ CommonLog::LocalPosition CommonLog::calcLocalPosition(const Eigen::Vector3d& lla
 {
     {
         std::scoped_lock lk(_mutex);
-        if (std::isnan(_originLatitude))
+        if (!_originPosition.has_value())
         {
-            _originLatitude = lla_position.x();
-            LOG_DEBUG("Common log setting latitude of origin to {} [deg].", rad2deg(_originLatitude));
-        }
-        if (std::isnan(_originLongitude))
-        {
-            _originLongitude = lla_position.y();
-            LOG_DEBUG("Common log setting longitude of origin to {} [deg].", rad2deg(_originLongitude));
+            _originPosition = gui::widgets::PositionWithFrame();
+            _originPosition->e_position = trafo::lla2ecef_WGS84(lla_position);
+            LOG_DEBUG("Common log setting position of origin to {}, {}, {} [deg, deg, m]",
+                      rad2deg(lla_position.x()), rad2deg(lla_position.y()), lla_position.z());
         }
     }
 
     // North/South deviation [m]
     double northSouth = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                                 _originLatitude, lla_position.y())
-                        * (lla_position.x() > _originLatitude ? 1 : -1);
+                                                 _originPosition->latitude(), lla_position.y())
+                        * (lla_position.x() > _originPosition->latitude() ? 1 : -1);
 
     // East/West deviation [m]
     double eastWest = calcGeographicalDistance(lla_position.x(), lla_position.y(),
-                                               lla_position.x(), _originLongitude)
-                      * (lla_position.y() > _originLongitude ? 1 : -1);
+                                               lla_position.x(), _originPosition->longitude())
+                      * (lla_position.y() > _originPosition->longitude() ? 1 : -1);
 
     return { .northSouth = northSouth, .eastWest = eastWest };
+}
+
+bool CommonLog::ShowOriginInput(const char* id)
+{
+    bool changed = false;
+    if (ImGui::Checkbox(fmt::format("Override position origin (for all common logging)##{}", id).c_str(), &_useGuiInputs))
+    {
+        LOG_DEBUG("{}: useGuiInputs changed to {}", id, _useGuiInputs);
+        changed = true;
+    }
+    if (_useGuiInputs)
+    {
+        if (!_originPosition) { _originPosition = gui::widgets::PositionWithFrame(); }
+        ImGui::Indent();
+        std::scoped_lock lk(_mutex);
+        if (gui::widgets::PositionInput(fmt::format("Origin##{}", id).c_str(), _originPosition.value(), gui::widgets::PositionInputLayout::SINGLE_ROW))
+        {
+            changed = true;
+        }
+        ImGui::Unindent();
+    }
+
+    return changed;
 }
 
 } // namespace NAV

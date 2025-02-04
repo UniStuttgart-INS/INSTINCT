@@ -68,7 +68,7 @@ class GnssAnalyzer : public Node
     struct Combination
     {
         /// Possible units to calculate the combination in
-        enum class Unit
+        enum class Unit : uint8_t
         {
             Meters, ///< Meters
             Cycles, ///< Cycles
@@ -81,7 +81,7 @@ class GnssAnalyzer : public Node
         struct Term
         {
             /// @brief Observation types
-            enum class ObservationType
+            enum class ObservationType : uint8_t
             {
                 Pseudorange, ///< Pseudorange
                 Carrier,     ///< Carrier-Phase

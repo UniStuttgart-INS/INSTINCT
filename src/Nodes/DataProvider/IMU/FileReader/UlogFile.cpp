@@ -236,7 +236,7 @@ void NAV::UlogFile::readHeader()
 
                 while (std::getline(lineStream, cell, ';'))
                 {
-                    DataField data_field{ cell.substr(0, cell.find(' ')), cell.substr(cell.find(' ') + 1) };
+                    DataField data_field{ .type = cell.substr(0, cell.find(' ')), .name = cell.substr(cell.find(' ') + 1) };
                     msgDataFields.push_back(data_field);
                 }
 
@@ -341,7 +341,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
             LOG_DATA("{}: messageAddLog.msg_name: {}", nameId(), messageAddLog.msg_name);
 
             /// Combines (sensor-)message name with an ID that indicates a possible multiple of a sensor
-            _subscribedMessages.insert_or_assign(messageAddLog.msg_id, SubscriptionData{ messageAddLog.multi_id, messageAddLog.msg_name });
+            _subscribedMessages.insert_or_assign(messageAddLog.msg_id, SubscriptionData{ .multi_id = messageAddLog.multi_id, .message_name = messageAddLog.msg_name });
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'R')
         {
@@ -443,9 +443,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                          _subscribedMessages.at(messageData.msg_id).message_name);
 
                 _epochData.insert(std::make_pair(sensorAccel.timestamp,
-                                                 MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                  _subscribedMessages.at(messageData.msg_id).message_name,
-                                                                  sensorAccel }));
+                                                 MeasurementData{ .multi_id = _subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                  .message_name = _subscribedMessages.at(messageData.msg_id).message_name,
+                                                                  .data = sensorAccel }));
             }
             else if (_subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
             {
@@ -514,9 +514,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                          _subscribedMessages.at(messageData.msg_id).message_name);
 
                 _epochData.insert(std::make_pair(sensorGyro.timestamp,
-                                                 MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                  _subscribedMessages.at(messageData.msg_id).message_name,
-                                                                  sensorGyro }));
+                                                 MeasurementData{ .multi_id = _subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                  .message_name = _subscribedMessages.at(messageData.msg_id).message_name,
+                                                                  .data = sensorGyro }));
             }
             else if (_subscribedMessages.at(messageData.msg_id).message_name == "sensor_mag")
             {
@@ -595,9 +595,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                          _subscribedMessages.at(messageData.msg_id).message_name);
 
                 _epochData.insert(std::make_pair(sensorMag.timestamp,
-                                                 MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                  _subscribedMessages.at(messageData.msg_id).message_name,
-                                                                  sensorMag }));
+                                                 MeasurementData{ .multi_id = _subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                  .message_name = _subscribedMessages.at(messageData.msg_id).message_name,
+                                                                  .data = sensorMag }));
             }
             else if (_subscribedMessages.at(messageData.msg_id).message_name == "vehicle_gps_position")
             {
@@ -770,7 +770,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                 if (lastGnssTime.timeSinceStartup)
                 {
                     [[maybe_unused]] auto newGnssTime = InsTime(1970, 1, 1, 0, 0, vehicleGpsPosition.time_utc_usec * 1e-6L);
-                    LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), (newGnssTime - lastGnssTime.gnssTime).count());
+                    LOG_DATA("{}: Updating GnssTime from {} to {} (Diff {} sec)", nameId(), lastGnssTime.gnssTime.toYMDHMS(), newGnssTime.toYMDHMS(), static_cast<double>((newGnssTime - lastGnssTime.gnssTime).count()));
                     LOG_DATA("{}: Updating tStartup from {} to {} (Diff {} sec)", nameId(), lastGnssTime.timeSinceStartup, vehicleGpsPosition.timestamp, (vehicleGpsPosition.timestamp - lastGnssTime.timeSinceStartup) * 1e-6L);
                 }
 
@@ -779,7 +779,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
 
                 while (true) // Delete all old VehicleGpsPosition entries
                 {
-                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                    auto iter = std::ranges::find_if(_epochData, [](const std::pair<uint64_t, MeasurementData>& v) {
                         return std::holds_alternative<UlogFile::VehicleGpsPosition>(v.second.data);
                     });
                     if (iter == _epochData.end())
@@ -794,9 +794,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                          _subscribedMessages.at(messageData.msg_id).message_name);
 
                 _epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
-                                                 MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                  _subscribedMessages.at(messageData.msg_id).message_name,
-                                                                  vehicleGpsPosition }));
+                                                 MeasurementData{ .multi_id = _subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                  .message_name = _subscribedMessages.at(messageData.msg_id).message_name,
+                                                                  .data = vehicleGpsPosition }));
             }
             else if (_subscribedMessages.at(messageData.msg_id).message_name == "vehicle_attitude")
             {
@@ -842,7 +842,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
 
                 while (true) // Delete all old VehicleAttitude entries
                 {
-                    auto iter = std::find_if(_epochData.begin(), _epochData.end(), [](const std::pair<uint64_t, MeasurementData>& v) {
+                    auto iter = std::ranges::find_if(_epochData, [](const std::pair<uint64_t, MeasurementData>& v) {
                         return std::holds_alternative<UlogFile::VehicleAttitude>(v.second.data);
                     });
                     if (iter == _epochData.end())
@@ -857,9 +857,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
                          _subscribedMessages.at(messageData.msg_id).message_name);
 
                 _epochData.insert(std::make_pair(vehicleAttitude.timestamp,
-                                                 MeasurementData{ _subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                  _subscribedMessages.at(messageData.msg_id).message_name,
-                                                                  vehicleAttitude }));
+                                                 MeasurementData{ .multi_id = _subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                  .message_name = _subscribedMessages.at(messageData.msg_id).message_name,
+                                                                  .data = vehicleAttitude }));
             }
             else if (_subscribedMessages.at(messageData.msg_id).message_name == "vehicle_control_mode")
             {

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ImuObs.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV
 {
@@ -32,6 +33,10 @@ class ImuObsWDelta : public ImuObs
     {
         return "ImuObsWDelta";
     }
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] std::string getType() const override { return type(); }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
@@ -55,7 +60,7 @@ class ImuObsWDelta : public ImuObs
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 18; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return ImuObs::GetStaticDescriptorCount() + 7; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -69,33 +74,22 @@ class ImuObsWDelta : public ImuObs
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObs::GetStaticDescriptorCount()) { return ImuObs::getValueAt(idx); }
         switch (idx)
         {
-        case 0:  // Time since startup [ns]
-        case 1:  // Accel X [m/s^2]
-        case 2:  // Accel Y [m/s^2]
-        case 3:  // Accel Z [m/s^2]
-        case 4:  // Gyro X [rad/s]
-        case 5:  // Gyro Y [rad/s]
-        case 6:  // Gyro Z [rad/s]
-        case 7:  // Mag X [Gauss]
-        case 8:  // Mag Y [Gauss]
-        case 9:  // Mag Z [Gauss]
-        case 10: // Temperature [°C]
-            return ImuObs::getValueAt(idx);
-        case 11: // dTime [s]
+        case ImuObs::GetStaticDescriptorCount() + 0: // dTime [s]
             return dtime;
-        case 12: // dTheta X [deg]
-            return dtheta.x();
-        case 13: // dTheta Y [deg]
-            return dtheta.y();
-        case 14: // dTheta Z [deg]
-            return dtheta.z();
-        case 15: // dVelocity X [m/s]
+        case ImuObs::GetStaticDescriptorCount() + 1: // dTheta X [deg]
+            return rad2deg(dtheta.x());
+        case ImuObs::GetStaticDescriptorCount() + 2: // dTheta Y [deg]
+            return rad2deg(dtheta.y());
+        case ImuObs::GetStaticDescriptorCount() + 3: // dTheta Z [deg]
+            return rad2deg(dtheta.z());
+        case ImuObs::GetStaticDescriptorCount() + 4: // dVelocity X [m/s]
             return dvel.x();
-        case 16: // dVelocity Y [m/s]
+        case ImuObs::GetStaticDescriptorCount() + 5: // dVelocity Y [m/s]
             return dvel.y();
-        case 17: // dVelocity Z [m/s]
+        case ImuObs::GetStaticDescriptorCount() + 6: // dVelocity Z [m/s]
             return dvel.z();
         default:
             return std::nullopt;
@@ -103,9 +97,47 @@ class ImuObsWDelta : public ImuObs
         return std::nullopt;
     }
 
+    /// @brief Set the value at the index
+    /// @param idx Index corresponding to data descriptor order
+    /// @param value Value to set
+    /// @return True if the value was updated
+    [[nodiscard]] bool setValueAt(size_t idx, double value) override
+    {
+        INS_ASSERT(idx < GetStaticDescriptorCount());
+        if (idx < ImuObs::GetStaticDescriptorCount()) { return ImuObs::setValueAt(idx, value); }
+        switch (idx)
+        {
+        case ImuObs::GetStaticDescriptorCount() + 0: // dTime [s]
+            dtime = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 1: // dTheta X [deg]
+            dtheta.x() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 2: // dTheta Y [deg]
+            dtheta.y() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 3: // dTheta Z [deg]
+            dtheta.z() = deg2rad(value);
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 4: // dVelocity X [m/s]
+            dvel.x() = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 5: // dVelocity Y [m/s]
+            dvel.y() = value;
+            break;
+        case ImuObs::GetStaticDescriptorCount() + 6: // dVelocity Z [m/s]
+            dvel.z() = value;
+            break;
+        default:
+            return false;
+        }
+
+        return true;
+    }
+
     /// The time interval that the delta angle and velocities are integrated over in [seconds].
     double dtime = 0.0;
-    /// The delta rotation angles in [degree] incurred due to rotation, by the local platform reference frame,
+    /// The delta rotation angles in [rad] incurred due to rotation, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
     Eigen::Vector3d dtheta;
     /// The delta velocity in [m/s] incurred due to motion, by the local platform reference frame,

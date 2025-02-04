@@ -23,6 +23,7 @@
 
 #include "util/Json.hpp"
 #include "util/Plot/Colormap.hpp"
+#include "internal/gui/windows/Screenshotter.hpp"
 
 namespace bpo = boost::program_options;
 
@@ -57,6 +58,7 @@ void NAV::ConfigManager::initialize()
             ("global-log-level",  bpo::value<std::string>()->default_value("trace"),                "Global log level of all sinks (possible values: trace/debug/info/warning/error/critical/off" )
             ("console-log-level", bpo::value<std::string>()->default_value("info"),                 "Log level on the console      (possible values: trace/debug/info/warning/error/critical/off" )
             ("file-log-level",    bpo::value<std::string>()->default_value("debug"),                "Log level to the log file     (possible values: trace/debug/info/warning/error/critical/off" )
+            ("flush-log-level",    bpo::value<std::string>()->default_value("info"),               "Log level to flush on         (possible values: trace/debug/info/warning/error/critical/off" )
             ("log-filter",        bpo::value<std::string>(),                                        "Filter/Regex for log messages"                                                               )
         ;
         // clang-format on
@@ -112,7 +114,7 @@ void NAV::ConfigManager::CheckOptions(const int argc, [[maybe_unused]] const cha
 {
     LOG_DEBUG("{} arguments were provided over the command line", argc);
 
-    for (const char* logger : { "global-log-level", "console-log-level", "file-log-level" })
+    for (const char* logger : { "global-log-level", "console-log-level", "file-log-level", "flush-log-level" })
     {
         if (vm[logger].as<std::string>() != "trace"
             && vm[logger].as<std::string>() != "debug"
@@ -180,6 +182,10 @@ void NAV::ConfigManager::SaveGlobalSettings()
     // Save also global settings
     std::ofstream filestream(flow::GetConfigPath() / "globals.json");
     json j;
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+    j["plotScreenshotImPlotStyleFile"] = gui::windows::plotScreenshotImPlotStyleFile;
+    j["copyScreenshotsToClipboard"] = gui::windows::copyScreenshotsToClipboard;
+#endif
     j["colormaps"] = ColormapsGlobal;
 
     ImPlotContext& gp = *ImPlot::GetCurrentContext();
@@ -217,6 +223,16 @@ void NAV::ConfigManager::LoadGlobalSettings()
     {
         j.at("colormaps").get_to(ColormapsGlobal);
     }
+#ifdef IMGUI_IMPL_OPENGL_LOADER_GL3W
+    if (j.contains("plotScreenshotImPlotStyleFile"))
+    {
+        j.at("plotScreenshotImPlotStyleFile").get_to(gui::windows::plotScreenshotImPlotStyleFile);
+    }
+    if (j.contains("copyScreenshotsToClipboard"))
+    {
+        j.at("copyScreenshotsToClipboard").get_to(gui::windows::copyScreenshotsToClipboard);
+    }
+#endif
     if (j.contains("ImPlotColormaps"))
     {
         for (size_t i = 0; i < j["ImPlotColormaps"].size(); ++i)

@@ -40,7 +40,6 @@
 
 #pragma once
 
-#include <cmath>
 #include "util/Eigen.hpp"
 #include "util/Logger.hpp"
 
@@ -59,7 +58,7 @@ namespace internal
 /// @return The ECEF coordinates in [m]
 /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications. pp. 23
 template<typename Derived>
-Eigen::Vector3<typename Derived::Scalar> lla2ecef(const Eigen::MatrixBase<Derived>& lla_position, typename Derived::Scalar a, typename Derived::Scalar e_squared)
+Eigen::Vector3<typename Derived::Scalar> lla2ecef(const Eigen::MatrixBase<Derived>& lla_position, double a, double e_squared)
 {
     const auto& latitude = lla_position(0);  // 𝜙 Geodetic latitude
     const auto& longitude = lla_position(1); // λ Geodetic longitude
@@ -84,45 +83,52 @@ Eigen::Vector3<typename Derived::Scalar> lla2ecef(const Eigen::MatrixBase<Derive
 /// @note See See S. Gleason (2009) - GNSS Applications and Methods: Software example 'Chapter6_GNSS_INS_1/wgsxyz2lla.m' (J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.)
 template<typename Derived>
 Eigen::Vector3<typename Derived::Scalar> ecef2lla(const Eigen::MatrixBase<Derived>& e_position,
-                                                  typename Derived::Scalar a, typename Derived::Scalar b, typename Derived::Scalar e_squared)
+                                                  double a, double b, double e_squared)
 {
-    if (e_position.isZero()) { return { 0, 0, -a }; }
+    if (e_position.isZero())
+    {
+        return {
+            typename Derived::Scalar(0.0),
+            typename Derived::Scalar(0.0),
+            typename Derived::Scalar(-a)
+        };
+    }
 
-    auto x = e_position(0);
-    auto y = e_position(1);
-    auto z = e_position(2);
+    const auto& x = e_position(0);
+    const auto& y = e_position(1);
+    const auto& z = e_position(2);
 
     // Calculate longitude
 
-    auto lon = std::atan2(y, x);
+    auto lon = atan2(y, x);
 
     // Start computing intermediate variables needed to compute altitude
 
     auto p = e_position.head(2).norm();
-    auto E = std::sqrt(a * a - b * b);
-    auto F = 54 * std::pow(b * z, 2);
-    auto G = p * p + (1 - e_squared) * z * z - e_squared * E * E;
-    auto c = e_squared * e_squared * F * p * p / std::pow(G, 3);
-    auto s = std::pow(1 + c + std::sqrt(c * c + 2 * c), 1.0 / 3.0);
-    auto P = (F / (3 * G * G)) / std::pow(s + (1.0 / s) + 1, 2);
-    auto Q = std::sqrt(1 + 2 * e_squared * e_squared * P);
-    auto k_1 = -P * e_squared * p / (1 + Q);
-    auto k_2 = 0.5 * a * a * (1 + 1 / Q);
-    auto k_3 = -P * (1 - e_squared) * z * z / (Q * (1 + Q));
+    auto E = sqrt(a * a - b * b);
+    auto F = 54.0 * pow(b * z, 2.0);
+    auto G = p * p + (1.0 - e_squared) * z * z - e_squared * E * E;
+    auto c = e_squared * e_squared * F * p * p / pow(G, 3.0);
+    auto s = pow(1.0 + c + sqrt(c * c + 2.0 * c), 1.0 / 3.0);
+    auto P = (F / (3.0 * G * G)) / pow(s + (1.0 / s) + 1.0, 2.0);
+    auto Q = sqrt(1.0 + 2.0 * e_squared * e_squared * P);
+    auto k_1 = -P * e_squared * p / (1.0 + Q);
+    auto k_2 = 0.5 * a * a * (1.0 + 1.0 / Q);
+    auto k_3 = -P * (1.0 - e_squared) * z * z / (Q * (1.0 + Q));
     auto k_4 = -0.5 * P * p * p;
-    auto r_0 = k_1 + std::sqrt(k_2 + k_3 + k_4);
+    auto r_0 = k_1 + sqrt(k_2 + k_3 + k_4);
     auto k_5 = (p - e_squared * r_0);
-    auto U = std::sqrt(k_5 * k_5 + z * z);
-    auto V = std::sqrt(k_5 * k_5 + (1 - e_squared) * z * z);
+    auto U = sqrt(k_5 * k_5 + z * z);
+    auto V = sqrt(k_5 * k_5 + (1.0 - e_squared) * z * z);
 
-    auto alt = U * (1 - (b * b / (a * V)));
+    auto alt = U * (1.0 - (b * b / (a * V)));
 
     // Compute additional values required for computing latitude
 
     auto z_0 = (b * b * z) / (a * V);
-    auto e_p = (a / b) * std::sqrt(e_squared);
+    auto e_p = (a / b) * sqrt(e_squared);
 
-    auto lat = std::atan((z + z_0 * (e_p * e_p)) / p);
+    auto lat = atan((z + z_0 * (e_p * e_p)) / p);
 
     return { lat, lon, alt };
 }
@@ -154,8 +160,8 @@ template<typename Derived>
 /// @param[in] time Time (t - t0)
 /// @param[in] omega_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-[[nodiscard]] Eigen::Quaternion<Scalar> e_Quat_i(Scalar time, Scalar omega_ie = InsConst<Scalar>::omega_ie)
+template<typename Scalar>
+[[nodiscard]] Eigen::Quaternion<Scalar> e_Quat_i(Scalar time, Scalar omega_ie = InsConst::omega_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxis<Scalar> zAngle(-omega_ie * time, Eigen::Vector3<Scalar>::UnitZ());
@@ -167,8 +173,8 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @param[in] time Time (t - t0)
 /// @param[in] omega_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-[[nodiscard]] Eigen::Quaternion<Scalar> i_Quat_e(Scalar time, Scalar omega_ie = InsConst<Scalar>::omega_ie)
+template<typename Scalar>
+[[nodiscard]] Eigen::Quaternion<Scalar> i_Quat_e(Scalar time, Scalar omega_ie = InsConst::omega_ie)
 {
     return e_Quat_i(time, omega_ie).conjugate();
 }
@@ -177,7 +183,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> e_Quat_n(Scalar latitude, Scalar longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -192,7 +198,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> n_Quat_e(Scalar latitude, Scalar longitude)
 {
     return e_Quat_n(latitude, longitude).conjugate();
@@ -203,7 +209,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_n(Scalar roll, Scalar pitch, Scalar yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -229,7 +235,7 @@ template<typename Derived>
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> n_Quat_b(Scalar roll, Scalar pitch, Scalar yaw)
 {
     return b_Quat_n(roll, pitch, yaw).conjugate();
@@ -249,7 +255,7 @@ template<typename Derived>
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_p(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -265,7 +271,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<typename Scalar>
 [[nodiscard]] Eigen::Quaternion<Scalar> p_Quat_b(Scalar mountingAngleX, Scalar mountingAngleY, Scalar mountingAngleZ)
 {
     return b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
@@ -277,7 +283,7 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 template<typename Derived>
 [[nodiscard]] Eigen::Vector3<typename Derived::Scalar> lla2ecef_WGS84(const Eigen::MatrixBase<Derived>& lla_position)
 {
-    return internal::lla2ecef(lla_position, InsConst<typename Derived::Scalar>::WGS84::a, InsConst<typename Derived::Scalar>::WGS84::e_squared);
+    return internal::lla2ecef(lla_position, InsConst::WGS84::a, InsConst::WGS84::e_squared);
 }
 
 /// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates using GRS90
@@ -286,7 +292,7 @@ template<typename Derived>
 template<typename Derived>
 [[nodiscard]] Eigen::Vector3<typename Derived::Scalar> lla2ecef_GRS80(const Eigen::MatrixBase<Derived>& lla_position)
 {
-    return internal::lla2ecef(lla_position, InsConst<typename Derived::Scalar>::GRS80::a, InsConst<typename Derived::Scalar>::GRS80::e_squared);
+    return internal::lla2ecef(lla_position, InsConst::GRS80::a, InsConst::GRS80::e_squared);
 }
 
 /// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and altitude using WGS84
@@ -296,9 +302,9 @@ template<typename Derived>
 [[nodiscard]] Eigen::Vector3<typename Derived::Scalar> ecef2lla_WGS84(const Eigen::MatrixBase<Derived>& e_position)
 {
     return internal::ecef2lla(e_position,
-                              InsConst<typename Derived::Scalar>::WGS84::a,
-                              InsConst<typename Derived::Scalar>::WGS84::b,
-                              InsConst<typename Derived::Scalar>::WGS84::e_squared);
+                              InsConst::WGS84::a,
+                              InsConst::WGS84::b,
+                              InsConst::WGS84::e_squared);
 }
 
 /// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and altitude using GRS90
@@ -308,9 +314,9 @@ template<typename Derived>
 [[nodiscard]] Eigen::Vector3<typename Derived::Scalar> ecef2lla_GRS80(const Eigen::MatrixBase<Derived>& e_position)
 {
     return internal::ecef2lla(e_position,
-                              InsConst<typename Derived::Scalar>::GRS80::a,
-                              InsConst<typename Derived::Scalar>::GRS80::b,
-                              InsConst<typename Derived::Scalar>::GRS80::e_squared);
+                              InsConst::GRS80::a,
+                              InsConst::GRS80::b,
+                              InsConst::GRS80::e_squared);
 }
 
 /// @brief Converts ECEF coordinates into local NED coordinates

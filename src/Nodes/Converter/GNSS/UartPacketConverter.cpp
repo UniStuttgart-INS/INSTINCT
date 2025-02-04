@@ -8,7 +8,7 @@
 
 #include "UartPacketConverter.hpp"
 
-#include <cmath>
+#include <memory>
 
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
@@ -19,13 +19,21 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Vendor/Ublox/UbloxUtilities.hpp"
 #include "util/Vendor/Emlid/EmlidUtilities.hpp"
+#include "util/Vendor/Espressif/EspressifUtilities.hpp"
+
+#include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+
+#include "NodeData/General/UartPacket.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/WiFi/WiFiObs.hpp"
 
 NAV::UartPacketConverter::UartPacketConverter()
     : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 340, 65 };
+    _guiConfigDefaultWindowSize = { 340, 93 };
 
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() });
 
@@ -54,9 +62,24 @@ std::string NAV::UartPacketConverter::category()
 
 void NAV::UartPacketConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "UbloxObs\0EmlidObs\0\0"))
+    if (auto outputType = static_cast<int>(_outputType);
+        ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), &outputType, "UbloxObs\0EmlidObs\0WiFiObs\0\0"))
     {
-        LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType == OutputType_UbloxObs ? "UbloxObs" : "EmlidObs");
+        _outputType = static_cast<decltype(_outputType)>(outputType);
+        std::string outputTypeString;
+        switch (_outputType)
+        {
+        case OutputType_UbloxObs:
+            outputTypeString = "UbloxObs";
+            break;
+        case OutputType_EmlidObs:
+            outputTypeString = "EmlidObs";
+            break;
+        default:
+            outputTypeString = "WiFiObs";
+        }
+
+        LOG_DEBUG("{}: Output Type changed to {}", nameId(), outputTypeString);
 
         if (_outputType == OutputType_UbloxObs)
         {
@@ -68,6 +91,11 @@ void NAV::UartPacketConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
         }
+        else if (_outputType == OutputType_WiFiObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::WiFiObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::WiFiObs::type();
+        }
 
         for (auto& link : outputPins.front().links)
         {
@@ -76,8 +104,29 @@ void NAV::UartPacketConverter::guiConfig()
                 outputPins.front().recreateLink(*connectedPin);
             }
         }
-
         flow::ApplyChanges();
+    }
+
+    if (_outputType == OutputType_WiFiObs)
+    {
+        if (ImGui::Checkbox(fmt::format("Show SyncIn Pin##{}", size_t(id)).c_str(), &_syncInPin))
+        {
+            LOG_DEBUG("{}: syncInPin changed to {}", nameId(), _syncInPin);
+            flow::ApplyChanges();
+            if (_syncInPin && (inputPins.size() <= 1))
+            {
+                nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+            }
+            else if (!_syncInPin)
+            {
+                nm::DeleteInputPin(inputPins.at(INPUT_PORT_INDEX_SYNC_IN));
+            }
+        }
+        // Remove the extra flow::ApplyChanges() statement here
+    }
+    else if (inputPins.size() > 1)
+    {
+        nm::DeleteInputPin(inputPins.at(INPUT_PORT_INDEX_SYNC_IN));
     }
 }
 
@@ -88,6 +137,7 @@ void NAV::UartPacketConverter::guiConfig()
     json j;
 
     j["outputType"] = _outputType;
+    j["syncInPin"] = _syncInPin;
 
     return j;
 }
@@ -112,6 +162,19 @@ void NAV::UartPacketConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::EmlidObs::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::EmlidObs::type();
             }
+            else if (_outputType == OutputType_WiFiObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::WiFiObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::WiFiObs::type();
+            }
+        }
+    }
+    if (j.contains("syncInPin") && _outputType == OutputType_WiFiObs)
+    {
+        j.at("syncInPin").get_to(_syncInPin);
+        if (_syncInPin && inputPins.size() <= 1)
+        {
+            nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
         }
     }
 }
@@ -128,12 +191,49 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
     auto uartPacket = std::static_pointer_cast<const UartPacket>(queue.extract_front());
 
     std::shared_ptr<NodeData> convertedData = nullptr;
-
     if (_outputType == OutputType_UbloxObs)
     {
         auto obs = std::make_shared<UbloxObs>();
         auto packet = uartPacket->raw;
         if (!vendor::ublox::decryptUbloxObs(obs, packet, nameId())) { return; };
+        convertedData = obs;
+    }
+    else if (_outputType == OutputType_WiFiObs)
+    {
+        auto obs = std::make_shared<WiFiObs>();
+        auto packet = uartPacket->raw;
+
+        vendor::espressif::decryptWiFiObs(obs, packet, nameId());
+        if (_syncInPin && inputPins.at(1).isPinLinked())
+        {
+            auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(0);
+            if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
+            {
+                _syncOutCntCorr = 0;
+                _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+            }
+            else if (_lastSyncOutCnt > timeSyncMaster->v->syncOutCnt) // reset of the master
+            {
+                _syncInCntCorr = 0;
+                _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+            }
+            else if (_lastSyncOutCnt == 0 && timeSyncMaster->v->syncOutCnt > 1) // slave counter started later
+            {
+                _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+            }
+            else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
+            {
+                _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+            }
+            _lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
+            _lastSyncInCnt = obs->timeOutputs.syncInCnt;
+            int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->v->syncOutCnt - _syncOutCntCorr;
+            obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
+                           + std::chrono::seconds(syncCntDiff);
+            // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
+            //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+            //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
+        }
         convertedData = obs;
     }
     else /* if (_outputType == OutputType_EmlidObs) */

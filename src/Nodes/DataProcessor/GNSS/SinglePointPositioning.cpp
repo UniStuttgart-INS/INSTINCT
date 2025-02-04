@@ -7,8 +7,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "SinglePointPositioning.hpp"
+#include <imgui.h>
 
+#include "Navigation/GNSS/Positioning/SPP/Algorithm.hpp"
+#include "NodeData/State/PosVel.hpp"
 #include "internal/NodeManager.hpp"
+#include <fmt/core.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
@@ -87,7 +91,7 @@ void NAV::SinglePointPositioning::guiConfig()
         return false;
     };
 
-    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, { { "# Sat", nSatColumnContent } }))
+    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this, { { .header = "# Sat", .content = nSatColumnContent } }))
     {
         flow::ApplyChanges();
     }
@@ -111,7 +115,7 @@ void NAV::SinglePointPositioning::guiConfig()
 
     return {
         { "dynamicInputPins", _dynamicInputPins },
-        { "algorithm", _algorithm }
+        { "algorithm", _algorithm },
     };
 }
 
@@ -171,7 +175,7 @@ void NAV::SinglePointPositioning::recvGnssObs(NAV::InputPin::NodeDataQueue& queu
     if (gnssNavInfos.empty()) { return; }
 
     auto gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
-    LOG_DATA("{}: Calculating SPP for [{}]", nameId(), gnssObs->insTime);
+    LOG_DATA("{}: [{}] Calculating SPP", nameId(), gnssObs->insTime.toYMDHMS(GPST));
 
     if (auto sppSol = _algorithm.calcSppSolution(gnssObs, gnssNavInfos, nameId()))
     {

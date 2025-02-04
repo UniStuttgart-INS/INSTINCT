@@ -12,6 +12,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "Logger/dist_filter_sink.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "internal/ConfigManager.hpp"
 #include "internal/Version.hpp"
 
@@ -46,11 +47,11 @@
 #define C_WHITE "\033[1;37m"
 
 // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
-const char* logPatternTrace = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] [%!()] %v";
-const char* logPatternTraceColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] [" C_ORANGE "%!()" C_NO "] %v";
-const char* logPatternDebug = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] %v";
-const char* logPatternDebugColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] %v";
-const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
+[[maybe_unused]] constexpr const char* logPatternTrace = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] [%!()] %v";
+[[maybe_unused]] constexpr const char* logPatternTraceColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] [" C_ORANGE "%!()" C_NO "] %v";
+[[maybe_unused]] constexpr const char* logPatternDebug = "[%H:%M:%S.%e] [%^%L%$] [%s:%-3#] %v";
+[[maybe_unused]] constexpr const char* logPatternDebugColor = "[%H:%M:%S.%e] [%^%L%$] [" C_CYAN "%s:%-3#" C_NO "] %v";
+[[maybe_unused]] constexpr const char* logPatternInfo = "[%H:%M:%S.%e] [%^%L%$] %v";
 
 Logger::Logger(const std::string& logpath)
 {
@@ -135,12 +136,13 @@ Logger::Logger(const std::string& logpath)
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("global-log-level", "trace")));
     // Minimum level which automatically triggers a flush
-    spdlog::flush_on(spdlog::level::trace);
+    spdlog::flush_on(spdlog::level::from_str(NAV::ConfigManager::Get<std::string>("flush-log-level", "info")));
+    LOG_TRACE("Setting log flush-on to: {}", NAV::ConfigManager::Get<std::string>("flush-log-level", "info"));
 
     writeHeader();
     if (NAV::ConfigManager::HasKey("log-filter"))
     {
-        LOG_DEBUG("Setting log filter to: {}", NAV::ConfigManager::Get<std::string>("log-filter"));
+        LOG_TRACE("Setting log filter to: {}", NAV::ConfigManager::Get<std::string>("log-filter"));
     }
 }
 
@@ -183,13 +185,11 @@ const std::shared_ptr<spdlog::sinks::ringbuffer_sink_mt>& Logger::GetRingBufferS
 
 void Logger::writeSeparator() noexcept
 {
-    LOG_INFO("===========================================================================================");
+    LOG_INFO("========================================================================");
 }
 
 void Logger::writeHeader() noexcept
 {
-    writeSeparator();
-
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
     [[maybe_unused]] tm* t = std::localtime(&now_c); // NOLINT(concurrency-mt-unsafe)

@@ -676,9 +676,16 @@ class ScrollingBuffer
                 {
                     _data.resize(targetSize + _Padding);
 
-                    std::copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
-                                       std::next(_data.begin(), static_cast<int64_t>(_maxSize)),
-                                       std::next(_data.begin(), static_cast<int64_t>(targetSize + _Padding)));
+                    auto copy_backward = [](auto first, auto last, auto d_last) { // Needed, as MacOS with C++23 does not support std::copy_backward
+                        while (first != last)
+                        {
+                            *(--d_last) = *(--last);
+                        }
+                    };
+
+                    copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
+                                  std::next(_data.begin(), static_cast<int64_t>(_maxSize)),
+                                  std::next(_data.begin(), static_cast<int64_t>(targetSize + _Padding)));
 
                     auto diff = targetSize + _Padding - _maxSize;
                     if (_dataStart >= _dataEnd)

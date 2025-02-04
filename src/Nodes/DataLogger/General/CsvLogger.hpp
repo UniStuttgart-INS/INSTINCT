@@ -61,6 +61,12 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @brief Function called by the flow executer after finishing to flush out remaining data
     void flush() override;
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
+
   private:
     /// @brief Initialize the node
     bool initialize() override;
@@ -68,13 +74,38 @@ class CsvLogger : public Node, public FileWriter, public CommonLog
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Writes the header
+    void writeHeader();
+
+    /// @brief Rewrites the data file with a new size
+    /// @param[in] oldSize Old dynamic size
+    /// @param[in] newSize New dynamic size
+    void rewriteData(size_t oldSize, size_t newSize);
+
     /// @brief Write Observation to the file
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void writeObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
+    /// Type last connected
+    std::string _lastConnectedType;
+
     /// Flag whether the header was written already
     bool _headerWritten = false;
+
+    /// Dynamic Header
+    std::vector<std::string> _dynamicHeader;
+
+    /// Header which should be logged
+    std::vector<std::pair<std::string, bool>> _headerLogging;
+    /// Amount of headers which are logged
+    size_t _headerLoggingCount = 0;
+    /// Regex to search for when selecting
+    std::string _headerLoggingRegex;
+    /// Default for new headers
+    bool _headerLoggingDefault = true;
+    /// Sort headers in the GUI
+    bool _headerLoggingSortGui = false;
 };
 
 } // namespace NAV

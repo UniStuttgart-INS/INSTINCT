@@ -13,6 +13,9 @@
 #include "internal/AppLogic.hpp"
 #include "internal/ConfigManager.hpp"
 
+namespace
+{
+
 int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {
     // Config Manager object
@@ -46,6 +49,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         return EXIT_FAILURE;
     }
 }
+} // namespace
 
 #if defined(_WIN32) && !defined(_CONSOLE)
     #include <windows.h>

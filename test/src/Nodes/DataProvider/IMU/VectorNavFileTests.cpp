@@ -31,8 +31,8 @@ namespace nm = NAV::NodeManager;
 #include "VectorNavFileTestsData.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -41,9 +41,13 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::VectorNavFileTests
+{
+namespace
 {
 auto extractBit(auto& group, auto value)
 {
@@ -52,9 +56,12 @@ auto extractBit(auto& group, auto value)
     return ret;
 }
 
+} // namespace
+
 namespace FixedSize
 {
-
+namespace
+{
 void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -62,7 +69,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
 
     REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsCycle)));
     REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsWeek)));
-    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow)));
     REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - IMU_REFERENCE_DATA.at(messageCounterImuData).at(ImuRef_GpsTow), Catch::Matchers::WithinAbs(0.0L, 5e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
@@ -180,6 +187,7 @@ void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutpu
     // ---------------------------------------------- GpsGroup 2 -------------------------------------------------
     REQUIRE(obs->gnss2Outputs == nullptr);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
@@ -239,6 +247,8 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-imu.vnb' a
     REQUIRE(messageCounter == IMU_REFERENCE_DATA.size());
 }
 
+namespace
+{
 void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -504,6 +514,7 @@ void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutp
 
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {
@@ -568,6 +579,8 @@ TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/FixedSize/vn310-gnss.vnb' 
 namespace DynamicSize
 {
 
+namespace
+{
 void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
@@ -576,7 +589,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
     REQUIRE(obs->insTime.toGPSweekTow().gpsCycle == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsCycle)));
     REQUIRE(obs->insTime.toGPSweekTow().gpsWeek == static_cast<int32_t>(REFERENCE_DATA.at(messageCounterData).at(Ref_GpsWeek)));
 
-    LOG_DATA("{}", obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow));
+    LOG_DATA("{}", static_cast<double>(obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow)));
     REQUIRE_THAT(obs->insTime.toGPSweekTow().tow - REFERENCE_DATA.at(messageCounterData).at(Ref_GpsTow), Catch::Matchers::WithinAbs(0.0L, 9e-7L));
 
     // ----------------------------------------------- TimeGroup -------------------------------------------------
@@ -841,6 +854,7 @@ void compareDynamicSizeObservation(const std::shared_ptr<const NAV::VectorNavBin
 
     REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 }
+} // namespace
 
 TEST_CASE("[VectorNavFile][flow] Read 'data/VectorNav/DynamicSize/vn310-gnss.csv' and compare content with hardcoded values", "[VectorNavFile][flow]")
 {

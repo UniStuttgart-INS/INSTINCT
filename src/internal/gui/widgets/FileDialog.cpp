@@ -73,7 +73,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
 {
     bool changed = false;
     // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (ImGui::InputText(fmt::format("Filepath##{}", id).c_str(), &path))
     {
         LOG_DEBUG("{}: Filepath changed to {}", nameId, path);
         changed = true;
@@ -84,7 +84,7 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     }
     ImGui::SameLine();
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
-    if (ImGui::Button(buttonText))
+    if (ImGui::Button(fmt::format("{}##{}", buttonText, id).c_str()))
     {
         ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, vName, vFilters, (startPath / ".").string());
         for (const auto& ext : extensions)

@@ -34,27 +34,27 @@ namespace vn
 {
 namespace math
 {
-void to_json(json& j, const vn::math::vec3f& vec)
+static void to_json(json& j, const vn::math::vec3f& vec) // NOLINT(misc-use-anonymous-namespace)
 {
     j = vec.c;
 }
-void from_json(const json& j, vn::math::vec3f& vec)
+static void from_json(const json& j, vn::math::vec3f& vec) // NOLINT(misc-use-anonymous-namespace)
 {
     j.get_to(vec.c);
 }
-void to_json(json& j, const vn::math::vec3d& vec)
+static void to_json(json& j, const vn::math::vec3d& vec) // NOLINT(misc-use-anonymous-namespace)
 {
     j = vec.c;
 }
-void from_json(const json& j, vn::math::vec3d& vec)
+static void from_json(const json& j, vn::math::vec3d& vec) // NOLINT(misc-use-anonymous-namespace)
 {
     j.get_to(vec.c);
 }
-void to_json(json& j, const vn::math::mat3f& mat)
+static void to_json(json& j, const vn::math::mat3f& mat) // NOLINT(misc-use-anonymous-namespace)
 {
     j = mat.e;
 }
-void from_json(const json& j, vn::math::mat3f& mat)
+static void from_json(const json& j, vn::math::mat3f& mat) // NOLINT(misc-use-anonymous-namespace)
 {
     j.get_to(mat.e);
 }
@@ -66,7 +66,7 @@ namespace sensors
 //                                               SYSTEM MODULE
 // ###########################################################################################################
 
-void to_json(json& j, const SynchronizationControlRegister& synchronizationControlRegister)
+static void to_json(json& j, const SynchronizationControlRegister& synchronizationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "syncInMode", synchronizationControlRegister.syncInMode },
@@ -78,7 +78,7 @@ void to_json(json& j, const SynchronizationControlRegister& synchronizationContr
         { "syncOutPulseWidth", synchronizationControlRegister.syncOutPulseWidth },
     };
 }
-void from_json(const json& j, SynchronizationControlRegister& synchronizationControlRegister)
+static void from_json(const json& j, SynchronizationControlRegister& synchronizationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("syncInMode"))
     {
@@ -110,7 +110,7 @@ void from_json(const json& j, SynchronizationControlRegister& synchronizationCon
     }
 }
 
-void to_json(json& j, const CommunicationProtocolControlRegister& communicationProtocolControlRegister)
+static void to_json(json& j, const CommunicationProtocolControlRegister& communicationProtocolControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "serialCount", communicationProtocolControlRegister.serialCount },
@@ -122,7 +122,7 @@ void to_json(json& j, const CommunicationProtocolControlRegister& communicationP
         { "errorMode", communicationProtocolControlRegister.errorMode },
     };
 }
-void from_json(const json& j, CommunicationProtocolControlRegister& communicationProtocolControlRegister)
+static void from_json(const json& j, CommunicationProtocolControlRegister& communicationProtocolControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("serialCount"))
     {
@@ -154,7 +154,7 @@ void from_json(const json& j, CommunicationProtocolControlRegister& communicatio
     }
 }
 
-void to_json(json& j, const BinaryOutputRegister& binaryOutputRegister)
+static void to_json(json& j, const BinaryOutputRegister& binaryOutputRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "asyncMode", binaryOutputRegister.asyncMode },
@@ -168,7 +168,7 @@ void to_json(json& j, const BinaryOutputRegister& binaryOutputRegister)
         { "gps2Field", binaryOutputRegister.gps2Field },
     };
 }
-void from_json(const json& j, BinaryOutputRegister& binaryOutputRegister)
+static void from_json(const json& j, BinaryOutputRegister& binaryOutputRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("asyncMode"))
     {
@@ -212,7 +212,7 @@ void from_json(const json& j, BinaryOutputRegister& binaryOutputRegister)
 //                                               IMU SUBSYSTEM
 // ###########################################################################################################
 
-void to_json(json& j, const ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister)
+static void to_json(json& j, const ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "magWindowSize", imuFilteringConfigurationRegister.magWindowSize },
@@ -227,7 +227,7 @@ void to_json(json& j, const ImuFilteringConfigurationRegister& imuFilteringConfi
         { "presFilterMode", imuFilteringConfigurationRegister.presFilterMode },
     };
 }
-void from_json(const json& j, ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister)
+static void from_json(const json& j, ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("magWindowSize"))
     {
@@ -271,7 +271,7 @@ void from_json(const json& j, ImuFilteringConfigurationRegister& imuFilteringCon
     }
 }
 
-void to_json(json& j, const DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister)
+static void to_json(json& j, const DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "integrationFrame", deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame },
@@ -280,7 +280,7 @@ void to_json(json& j, const DeltaThetaAndDeltaVelocityConfigurationRegister& del
         { "earthRateCorrection", deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection },
     };
 }
-void from_json(const json& j, DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister)
+static void from_json(const json& j, DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("integrationFrame"))
     {
@@ -304,7 +304,7 @@ void from_json(const json& j, DeltaThetaAndDeltaVelocityConfigurationRegister& d
 //                                              GNSS SUBSYSTEM
 // ###########################################################################################################
 
-void to_json(json& j, const GpsConfigurationRegister& gpsConfigurationRegister)
+static void to_json(json& j, const GpsConfigurationRegister& gpsConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "mode", gpsConfigurationRegister.mode },
@@ -313,7 +313,7 @@ void to_json(json& j, const GpsConfigurationRegister& gpsConfigurationRegister)
         { "antPow", gpsConfigurationRegister.antPow },
     };
 }
-void from_json(const json& j, GpsConfigurationRegister& gpsConfigurationRegister)
+static void from_json(const json& j, GpsConfigurationRegister& gpsConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("mode"))
     {
@@ -333,14 +333,14 @@ void from_json(const json& j, GpsConfigurationRegister& gpsConfigurationRegister
     }
 }
 
-void to_json(json& j, const GpsCompassBaselineRegister& gpsCompassBaselineRegister)
+static void to_json(json& j, const GpsCompassBaselineRegister& gpsCompassBaselineRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "position", gpsCompassBaselineRegister.position },
         { "uncertainty", gpsCompassBaselineRegister.uncertainty },
     };
 }
-void from_json(const json& j, GpsCompassBaselineRegister& gpsCompassBaselineRegister)
+static void from_json(const json& j, GpsCompassBaselineRegister& gpsCompassBaselineRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("position"))
     {
@@ -356,7 +356,7 @@ void from_json(const json& j, GpsCompassBaselineRegister& gpsCompassBaselineRegi
 //                                            ATTITUDE SUBSYSTEM
 // ###########################################################################################################
 
-void to_json(json& j, const VpeBasicControlRegister& vpeBasicControlRegister)
+static void to_json(json& j, const VpeBasicControlRegister& vpeBasicControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "enable", vpeBasicControlRegister.enable },
@@ -365,7 +365,7 @@ void to_json(json& j, const VpeBasicControlRegister& vpeBasicControlRegister)
         { "tuningMode", vpeBasicControlRegister.tuningMode },
     };
 }
-void from_json(const json& j, VpeBasicControlRegister& vpeBasicControlRegister)
+static void from_json(const json& j, VpeBasicControlRegister& vpeBasicControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("enable"))
     {
@@ -385,7 +385,7 @@ void from_json(const json& j, VpeBasicControlRegister& vpeBasicControlRegister)
     }
 }
 
-void to_json(json& j, const VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister)
+static void to_json(json& j, const VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "baseTuning", vpeMagnetometerBasicTuningRegister.baseTuning },
@@ -393,7 +393,7 @@ void to_json(json& j, const VpeMagnetometerBasicTuningRegister& vpeMagnetometerB
         { "adaptiveFiltering", vpeMagnetometerBasicTuningRegister.adaptiveFiltering },
     };
 }
-void from_json(const json& j, VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister)
+static void from_json(const json& j, VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("baseTuning"))
     {
@@ -409,7 +409,7 @@ void from_json(const json& j, VpeMagnetometerBasicTuningRegister& vpeMagnetomete
     }
 }
 
-void to_json(json& j, const VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister)
+static void to_json(json& j, const VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "baseTuning", vpeAccelerometerBasicTuningRegister.baseTuning },
@@ -417,7 +417,7 @@ void to_json(json& j, const VpeAccelerometerBasicTuningRegister& vpeAcceleromete
         { "adaptiveFiltering", vpeAccelerometerBasicTuningRegister.adaptiveFiltering },
     };
 }
-void from_json(const json& j, VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister)
+static void from_json(const json& j, VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("baseTuning"))
     {
@@ -433,7 +433,7 @@ void from_json(const json& j, VpeAccelerometerBasicTuningRegister& vpeAccelerome
     }
 }
 
-void to_json(json& j, const VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister)
+static void to_json(json& j, const VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "angularWalkVariance", vpeGyroBasicTuningRegister.angularWalkVariance },
@@ -441,7 +441,7 @@ void to_json(json& j, const VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegist
         { "adaptiveTuning", vpeGyroBasicTuningRegister.adaptiveTuning },
     };
 }
-void from_json(const json& j, VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister)
+static void from_json(const json& j, VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("angularWalkVariance"))
     {
@@ -461,7 +461,7 @@ void from_json(const json& j, VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegi
 //                                               INS SUBSYSTEM
 // ###########################################################################################################
 
-void to_json(json& j, const InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300)
+static void to_json(json& j, const InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "scenario", insBasicConfigurationRegisterVn300.scenario },
@@ -469,7 +469,7 @@ void to_json(json& j, const InsBasicConfigurationRegisterVn300& insBasicConfigur
         { "estBaseline", insBasicConfigurationRegisterVn300.estBaseline },
     };
 }
-void from_json(const json& j, InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300)
+static void from_json(const json& j, InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("scenario"))
     {
@@ -485,7 +485,7 @@ void from_json(const json& j, InsBasicConfigurationRegisterVn300& insBasicConfig
     }
 }
 
-void to_json(json& j, const StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister)
+static void to_json(json& j, const StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "gyroBias", startupFilterBiasEstimateRegister.gyroBias },
@@ -493,7 +493,7 @@ void to_json(json& j, const StartupFilterBiasEstimateRegister& startupFilterBias
         { "pressureBias", startupFilterBiasEstimateRegister.pressureBias },
     };
 }
-void from_json(const json& j, StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister)
+static void from_json(const json& j, StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("gyroBias"))
     {
@@ -513,7 +513,7 @@ void from_json(const json& j, StartupFilterBiasEstimateRegister& startupFilterBi
 //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
 // ###########################################################################################################
 
-void to_json(json& j, const MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister)
+static void to_json(json& j, const MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "hsiMode", magnetometerCalibrationControlRegister.hsiMode },
@@ -521,7 +521,7 @@ void to_json(json& j, const MagnetometerCalibrationControlRegister& magnetometer
         { "convergeRate", magnetometerCalibrationControlRegister.convergeRate },
     };
 }
-void from_json(const json& j, MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister)
+static void from_json(const json& j, MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("hsiMode"))
     {
@@ -541,14 +541,14 @@ void from_json(const json& j, MagnetometerCalibrationControlRegister& magnetomet
 //                                      WORLD MAGNETIC & GRAVITY MODULE
 // ###########################################################################################################
 
-void to_json(json& j, const MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister)
+static void to_json(json& j, const MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "magRef", magneticAndGravityReferenceVectorsRegister.magRef },
         { "accRef", magneticAndGravityReferenceVectorsRegister.accRef },
     };
 }
-void from_json(const json& j, MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister)
+static void from_json(const json& j, MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("magRef"))
     {
@@ -560,7 +560,7 @@ void from_json(const json& j, MagneticAndGravityReferenceVectorsRegister& magnet
     }
 }
 
-void to_json(json& j, const ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister)
+static void to_json(json& j, const ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "useMagModel", referenceVectorConfigurationRegister.useMagModel },
@@ -570,7 +570,7 @@ void to_json(json& j, const ReferenceVectorConfigurationRegister& referenceVecto
         { "position", referenceVectorConfigurationRegister.position },
     };
 }
-void from_json(const json& j, ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister)
+static void from_json(const json& j, ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("useMagModel"))
     {
@@ -598,7 +598,7 @@ void from_json(const json& j, ReferenceVectorConfigurationRegister& referenceVec
 //                                              VELOCITY AIDING
 // ###########################################################################################################
 
-void to_json(json& j, const VelocityCompensationControlRegister& velocityCompensationControlRegister)
+static void to_json(json& j, const VelocityCompensationControlRegister& velocityCompensationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         { "mode", velocityCompensationControlRegister.mode },
@@ -606,7 +606,7 @@ void to_json(json& j, const VelocityCompensationControlRegister& velocityCompens
         { "rateTuning", velocityCompensationControlRegister.rateTuning },
     };
 }
-void from_json(const json& j, VelocityCompensationControlRegister& velocityCompensationControlRegister)
+static void from_json(const json& j, VelocityCompensationControlRegister& velocityCompensationControlRegister) // NOLINT(misc-use-anonymous-namespace)
 {
     if (j.contains("mode"))
     {
@@ -681,6 +681,8 @@ void NAV::VectorNavSensor::coupleImuFilterRates(NAV::VectorNavSensor* sensor, vn
         }
     }
 };
+
+// NOLINTBEGIN
 
 // const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::_binaryGroupCommon = { {
 //     { /*  0 */ "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP,
@@ -873,7 +875,6 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
                  ImGui::EndTable();
              } },
       [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& bor, uint32_t /* binaryField */) { return !(bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
-                                                                                                                              && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                                                                                                                               && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
@@ -993,27 +994,69 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     { /*  5 */ "PosLla", vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA,
       []() { ImGui::TextUnformatted("GNSS position (latitude, longitude, altitude)\n\nThe current GNSS position measurement given as the geodetic latitude, longitude and altitude above the\nellipsoid. The units are in [deg, deg, m] respectively."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  6 */ "PosEcef", vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF,
       []() { ImGui::TextUnformatted("GNSS position (ECEF)\n\nThe current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  7 */ "VelNed", vn::protocol::uart::GpsGroup::GPSGROUP_VELNED,
       []() { ImGui::TextUnformatted("GNSS velocity (NED)\n\nThe current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  8 */ "VelEcef", vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF,
       []() { ImGui::TextUnformatted("GNSS velocity (ECEF)\n\nThe current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /*  9 */ "PosU", vn::protocol::uart::GpsGroup::GPSGROUP_POSU,
       []() { ImGui::TextUnformatted("GNSS position uncertainty (NED)\n\nThe current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /* 10 */ "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU,
       []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
-      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
+      [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) {
+          (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+              && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO);
+          bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+      } },
     { /* 11 */ "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU,
       []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); },
       [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; },
@@ -1604,6 +1647,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
       [](VectorNavSensor* /* sensor */, vn::sensors::BinaryOutputRegister& bor, uint32_t& binaryField) { (static_cast<vn::protocol::uart::InsGroup>(binaryField) & vn::protocol::uart::InsGroup::INSGROUP_VELU) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW); } },
 } };
 
+// NOLINTEND
+
 NAV::VectorNavSensor::VectorNavSensor()
     : Imu(typeStatic())
 {
@@ -1664,8 +1709,10 @@ std::string NAV::VectorNavSensor::category()
 
 void NAV::VectorNavSensor::guiConfig()
 {
-    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&_sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
+    if (auto sensorModel = static_cast<int>(_sensorModel);
+        ImGui::Combo("Sensor", &sensorModel, "VN-100 / VN-110\0VN-310\0\0"))
     {
+        _sensorModel = static_cast<decltype(_sensorModel)>(sensorModel);
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), fmt::underlying(_sensorModel));
         flow::ApplyChanges();
         doDeinitialize();
@@ -2340,10 +2387,7 @@ void NAV::VectorNavSensor::guiConfig()
             int syncOutPulseWidth = static_cast<int>(_synchronizationControlRegister.syncOutPulseWidth);
             if (ImGui::InputInt(fmt::format("SyncOut Pulse Width##{}", size_t(id)).c_str(), &syncOutPulseWidth))
             {
-                if (syncOutPulseWidth < 0)
-                {
-                    syncOutPulseWidth = 0;
-                }
+                syncOutPulseWidth = std::max(syncOutPulseWidth, 0);
                 _synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), _synchronizationControlRegister.syncOutPulseWidth);
                 flow::ApplyChanges();
@@ -2883,11 +2927,13 @@ void NAV::VectorNavSensor::guiConfig()
                 const char* frequencyText = _binaryOutputSelectedFrequency.at(b) < _dividerFrequency.first.size()
                                                 ? _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)).c_str()
                                                 : "Unknown";
-                if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
-                                     reinterpret_cast<int*>(&_binaryOutputSelectedFrequency.at(b)),
+                if (auto freq = static_cast<int>(_binaryOutputSelectedFrequency.at(b));
+                    ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
+                                     &freq,
                                      0, static_cast<int>(_dividerFrequency.second.size()) - 1,
                                      frequencyText))
                 {
+                    _binaryOutputSelectedFrequency.at(b) = static_cast<size_t>(freq);
                     _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
                     if (_coupleImuRateOutput)
@@ -3187,11 +3233,13 @@ void NAV::VectorNavSensor::guiConfig()
             }
         }
 
-        if (ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), reinterpret_cast<int*>(&_binaryOutputRegisterMerge), "None\0"
-                                                                                                                           "1 <-> 2\0"
-                                                                                                                           "1 <-> 3\0"
-                                                                                                                           "2 <-> 3\0\0"))
+        if (auto binaryOutputRegisterMerge = static_cast<int>(_binaryOutputRegisterMerge);
+            ImGui::Combo(fmt::format("Merge Binary outputs").c_str(), &binaryOutputRegisterMerge, "None\0"
+                                                                                                  "1 <-> 2\0"
+                                                                                                  "1 <-> 3\0"
+                                                                                                  "2 <-> 3\0\0"))
         {
+            _binaryOutputRegisterMerge = static_cast<decltype(_binaryOutputRegisterMerge)>(binaryOutputRegisterMerge);
             flow::ApplyChanges();
             switch (_binaryOutputRegisterMerge)
             {
@@ -3289,30 +3337,13 @@ void NAV::VectorNavSensor::guiConfig()
             if (ImGui::InputFloat3(fmt::format("##rotationAngles{}", size_t(id)).c_str(), imuRot.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                if (imuRot.at(0) < -179.9999F)
-                {
-                    imuRot.at(0) = -179.9999F;
-                }
-                if (imuRot.at(0) > 180)
-                {
-                    imuRot.at(0) = 180;
-                }
-                if (imuRot.at(1) < -89.9999F)
-                {
-                    imuRot.at(1) = -89.9999F;
-                }
-                if (imuRot.at(1) > 90)
-                {
-                    imuRot.at(1) = 90;
-                }
-                if (imuRot.at(2) < -179.9999F)
-                {
-                    imuRot.at(2) = -179.9999F;
-                }
-                if (imuRot.at(2) > 180)
-                {
-                    imuRot.at(2) = 180;
-                }
+                imuRot.at(0) = std::max(imuRot.at(0), -179.9999F);
+                imuRot.at(0) = std::min(imuRot.at(0), 180.0F);
+                imuRot.at(1) = std::max(imuRot.at(1), -89.9999F);
+                imuRot.at(1) = std::min(imuRot.at(1), 90.0F);
+                imuRot.at(2) = std::max(imuRot.at(2), -179.9999F);
+                imuRot.at(2) = std::min(imuRot.at(2), 180.0F);
+
                 Eigen::Matrix3f dcmf = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
                 _referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
                                                                 dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
@@ -5585,7 +5616,7 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("asyncDataOutputFrequency"))
     {
         j.at("asyncDataOutputFrequency").get_to(_asyncDataOutputFrequency);
-        _asyncDataOutputFrequencySelected = static_cast<int>(std::find(_possibleAsyncDataOutputFrequency.begin(), _possibleAsyncDataOutputFrequency.end(), static_cast<int>(_asyncDataOutputFrequency))
+        _asyncDataOutputFrequencySelected = static_cast<int>(std::ranges::find(_possibleAsyncDataOutputFrequency, static_cast<int>(_asyncDataOutputFrequency))
                                                              - _possibleAsyncDataOutputFrequency.begin());
     }
     if (j.contains("asciiOutputBufferSize"))
@@ -5762,8 +5793,8 @@ void NAV::VectorNavSensor::restore(json const& j)
 
 bool NAV::VectorNavSensor::resetNode()
 {
-    std::for_each(_lastMessageTime.begin(), _lastMessageTime.end(), [](InsTime& insTime) { insTime.reset(); });
-    std::for_each(_lastMessageTimeSinceStartup.begin(), _lastMessageTimeSinceStartup.end(), [](uint64_t& value) { value = 0; });
+    std::ranges::for_each(_lastMessageTime, [](InsTime& insTime) { insTime.reset(); });
+    std::ranges::for_each(_lastMessageTimeSinceStartup, [](uint64_t& value) { value = 0; });
     _gnssTimeCounter = {};
 
     _timeSyncOut.ppsTime.reset();
@@ -5825,7 +5856,7 @@ bool NAV::VectorNavSensor::initialize()
             if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
                 !foundSensors.empty())
             {
-                for (auto [port, baudrate] : foundSensors)
+                for (const auto& [port, baudrate] : foundSensors)
                 {
                     _vs.connect(port, baudrate);
                     std::string modelNumber = _vs.readModelNumber();
@@ -5908,7 +5939,7 @@ bool NAV::VectorNavSensor::initialize()
     if (targetBaudrate != connectedBaudrate)
     {
         auto suppBaud = vn::sensors::VnSensor::supportedBaudrates();
-        if (std::find(suppBaud.begin(), suppBaud.end(), targetBaudrate) != suppBaud.end())
+        if (std::ranges::find(suppBaud, targetBaudrate) != suppBaud.end())
         {
             _vs.changeBaudRate(targetBaudrate);
             LOG_DEBUG("{}: Baudrate changed to {}", nameId(), static_cast<size_t>(targetBaudrate));
@@ -7415,7 +7446,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         if (obs->insTime - vnSensor->_lastMessageTime.at(b) >= std::chrono::duration<double>(1.5 * (vnSensor->_binaryOutputRegister.at(b).rateDivisor / IMU_DEFAULT_FREQUENCY)))
                         {
                             LOG_WARN("{}: Potentially lost a message. dt = {:.4} s, expect {} s. (Previous message at [{}], current message [{}])", vnSensor->nameId(),
-                                     (obs->insTime - vnSensor->_lastMessageTime.at(b)).count(),
+                                     static_cast<double>((obs->insTime - vnSensor->_lastMessageTime.at(b)).count()),
                                      1. / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor,
                                      vnSensor->_lastMessageTime.at(b), obs->insTime);
                         }

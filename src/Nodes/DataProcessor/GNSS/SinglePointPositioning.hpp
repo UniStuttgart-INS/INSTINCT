@@ -91,21 +91,6 @@ class SinglePointPositioning : public Node
     /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
     gui::widgets::DynamicInputPins _dynamicInputPins{ INPUT_PORT_INDEX_GNSS_NAV_INFO, this, pinAddCallback, pinDeleteCallback };
 
-    // /// Estimator type
-    // GNSS::Positioning::SPP::EstimatorType _estimatorType = GNSS::Positioning::SPP::EstimatorType::WEIGHTED_LEAST_SQUARES;
-
-    // /// @brief SPP Kalman filter
-    // GNSS::Positioning::SPP::SppKalmanFilter _kalmanFilter;
-
-    // /// State estimated by the algorithm
-    // GNSS::Positioning::SPP::State _state;
-
-    // /// @brief All Inter-system clock error keys
-    // std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysErrs{};
-    // /// @brief All Inter-system clock drift keys
-    // /// @note Groves2013 does not estimate inter-system drifts, but we do for all models.
-    // std::vector<GNSS::Positioning::SPP::States::StateKeyTypes> _interSysDrifts{};
-
     /// @brief Receive Function for the Gnss Observations
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on

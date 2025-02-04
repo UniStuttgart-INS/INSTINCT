@@ -305,37 +305,37 @@ TEST_CASE("[UbloxUtilities] checksumNMEA", "[UbloxUtilities]")
 
     std::string text = "$GPZDA,141644.00,22,03,2002,00,00*67\r\n";
     std::vector<uint8_t> data;
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x67);
 
     text = "$GNGGA,093318.00,4846.84211,N,00910.29515,E,2,12,0.56,279.0,M,47.6,M,,0000*4A\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x4A);
 
     text = "$GNTXT,01,01,02,u-blox AG - www.u-blox.com*4E\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x4E);
 
     text = "$GNTXT,01,01,02,EXT CORE 3.01 (1ec93f)*67\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x67);
 
     text = "$GNTXT,01,01,02,MOD=NEO-M8U-0*7C\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x7C);
 
     text = "$GNTXT,01,01,02,GNSS OTP=GPS;GLO*37\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x37);
 
     text = "$GNTXT,01,01,02,PF=82*72\r\n";
     data.clear();
-    std::copy(text.begin(), text.end(), std::back_inserter(data));
+    std::ranges::copy(text, std::back_inserter(data));
     REQUIRE(ub::checksumNMEA(data) == 0x72);
 }
 

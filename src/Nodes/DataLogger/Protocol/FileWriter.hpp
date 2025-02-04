@@ -27,7 +27,7 @@ class FileWriter
 {
   public:
     /// File Type
-    enum class FileType
+    enum class FileType : uint8_t
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data

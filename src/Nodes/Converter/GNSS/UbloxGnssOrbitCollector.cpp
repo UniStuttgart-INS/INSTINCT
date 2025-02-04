@@ -99,7 +99,7 @@ NAV::UbloxGnssOrbitCollector::EphemerisBuilder& NAV::UbloxGnssOrbitCollector::ge
         _lastAccessedBuilder[satId] = IOD;
     }
 
-    auto iter = std::find_if(_ephemerisBuilder.begin(), _ephemerisBuilder.end(), [&](const auto& builder) {
+    auto iter = std::ranges::find_if(_ephemerisBuilder, [&](const auto& builder) {
         return builder.satId == satId && builder.navData->refTime == insTime;
     });
     if (iter == _ephemerisBuilder.end())
@@ -149,7 +149,7 @@ std::optional<std::reference_wrapper<NAV::UbloxGnssOrbitCollector::EphemerisBuil
     LOG_DEBUG("{}: Searching for [{}] at Issue of Data [{}]", nameId(), satId, IOD);
     _lastAccessedBuilder[satId] = IOD;
 
-    auto iter = std::find_if(_ephemerisBuilder.begin(), _ephemerisBuilder.end(), [&](const auto& builder) {
+    auto iter = std::ranges::find_if(_ephemerisBuilder, [&](const auto& builder) {
         if (builder.satId == satId)
         {
             if (builder.navData->type == SatNavData::GPSEphemeris)

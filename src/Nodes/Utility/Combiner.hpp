@@ -13,9 +13,13 @@
 
 #pragma once
 
+#include <limits>
+#include <memory>
 #include <unordered_set>
 #include <map>
 
+#include "Navigation/Time/InsTime.hpp"
+#include "NodeData/NodeData.hpp"
 #include "internal/Node/Node.hpp"
 #include "internal/gui/widgets/DynamicInputPins.hpp"
 
@@ -106,8 +110,8 @@ class Combiner : public Node, public CommonLog
             size_t pinIndex = 0;                                         ///< Pin Index
             std::variant<size_t, std::string> dataSelection = size_t(0); ///< Data Index or Data identifier
 
-            PolynomialRegressor<double> polyReg{ 1, 2 };           ///< Polynomial Regressor to interpolate data
-            ScrollingBuffer<std::vector<std::string>> events{ 2 }; ///< Last events to add if we send
+            PolynomialRegressor<double> polyReg{ 1, 2 };                   ///< Polynomial Regressor to interpolate data
+            ScrollingBuffer<std::shared_ptr<const NodeData>> rawData{ 2 }; ///< Last raw data to add if we send
 
             /// @brief Get a string description of the combination
             /// @param node Combiner node pointer
@@ -166,6 +170,10 @@ class Combiner : public Node, public CommonLog
     /// Pin data
     struct PinData
     {
+        /// Time of the last observation processed
+        InsTime lastTime;
+        /// Min time between messages
+        double minTimeStep = std::numeric_limits<double>::infinity();
         /// Extra data descriptors for dynamic data
         std::vector<std::string> dynDataDescriptors;
     };
@@ -173,13 +181,25 @@ class Combiner : public Node, public CommonLog
     /// Data per pin
     std::vector<PinData> _pinData;
 
+    /// Reference pin
+    size_t _refPinIdx = 0;
+
+    /// Output missing combinations with NaN instead of removing
+    bool _outputMissingAsNaN = false;
+
+    bool _noOutputIfTimeDiffLarge = true;         ///< Wether to not output a term if the interpolation time point is too far away
+    double _maxTimeDiffMultiplierFrequency = 2.1; ///< Multiply frequency with this to get maximum allowed time difference to interpolate to
+
+    bool _noOutputIfTimeStepLarge = true;         ///< Wether to not output a term if the time step to interpolate in between is large
+    double _maxTimeStepMultiplierFrequency = 5.0; ///< Multiply frequency with this to get maximum allowed time step of incoming observations
+
     /// Send request information
     struct SendRequest
     {
-        size_t combIndex = 0;                   ///< Combination Index
-        std::unordered_set<size_t> termIndices; ///< Term indices, which are already calculated
-        double result = 0.0;                    ///< Calculation result
-        std::vector<std::string> events;        ///< List of events of all terms contributing to the result
+        size_t combIndex = 0;                                                         ///< Combination Index
+        std::unordered_set<size_t> termIndices;                                       ///< Term indices, which are already calculated
+        double result = 0.0;                                                          ///< Calculation result
+        std::vector<std::pair<std::string, std::shared_ptr<const NodeData>>> rawData; ///< List of the raw data of all terms contributing to the result
     };
 
     /// Chronological list of send request
@@ -206,10 +226,6 @@ class Combiner : public Node, public CommonLog
     /// @brief Returns a list of descriptors for the pin
     /// @param pinIndex Pin Index to look for the descriptor
     [[nodiscard]] std::vector<std::string> getDataDescriptors(size_t pinIndex) const;
-
-    /// @brief Checks if there are more pins with data for the same epoch
-    /// @param insTime Time to check for
-    [[nodiscard]] bool isLastObsThisEpoch(const InsTime& insTime) const;
 
     /// @brief Receive Data Function
     /// @param[in] queue Queue with all the received data messages

@@ -15,6 +15,7 @@
 #include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include "Navigation/GNSS/Functions.hpp"
 
@@ -81,6 +82,7 @@ double GnssMeasurementErrorModel::satSysErrorFactorVariance(const SatelliteSyste
 
 double GnssMeasurementErrorModel::weightingFunction(Model model, double elevation, double cn0) const
 {
+    if (std::isnan(elevation)) { return 1.0; }
     elevation = std::max(elevation, deg2rad(0.1));
     switch (model)
     {
@@ -94,8 +96,6 @@ double GnssMeasurementErrorModel::weightingFunction(Model model, double elevatio
     case Model::RTKLIB:
         elevation = std::max(elevation, deg2rad(5.0));
         return std::sqrt(std::pow(_modelParametersRtklib.a, 2) + std::pow(_modelParametersRtklib.b / std::sin(elevation), 2));
-    case Model::SINE_TYPE:
-        return std::sqrt(_modelParametersSineType.a + _modelParametersSineType.b / elevation);
     case Model::SINE_SQRT:
         return std::sqrt(std::pow(_modelParametersSineSqrt.a, 2) + std::pow(_modelParametersSineSqrt.b, 2) / std::pow(std::sin(elevation), 2));
     case Model::EXPONENTIAL:
@@ -119,8 +119,8 @@ void GnssMeasurementErrorModel::updateStdDevCurvePlot(Model model)
 
 bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
 {
-    constexpr float UNIT_WIDTH = 100.0F;
-    constexpr float BUTTON_WIDTH = 25.0F;
+    const float UNIT_WIDTH = 100.0F * gui::NodeEditorApplication::windowFontRatio();
+    const float BUTTON_WIDTH = 25.0F * gui::NodeEditorApplication::windowFontRatio();
 
     ImGui::SetNextItemWidth(width - BUTTON_WIDTH - 2 * ImGui::GetStyle().ItemInnerSpacing.x);
     bool changed = gui::widgets::EnumCombo(fmt::format("##GNSS Measurement Error Model EnumCombo {}", id).c_str(), _model);
@@ -133,24 +133,24 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
     ImGui::TextUnformatted("Weighting Function");
 
     int combo_current_item = 0;
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                 &_carrierStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                 &_codeStdDev, &combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Carrier-Phase StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
+                                                 &_carrierStdDev, combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Code/Pseudorange StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
+                                                 &_codeStdDev, combo_current_item, "m\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
 
-    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##", id).c_str(), width, UNIT_WIDTH,
-                                                 &_dopplerStdDev, &combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
+    changed |= gui::widgets::InputDoubleWithUnit(fmt::format("Doppler StdDev σ₀##{}", id).c_str(), width, UNIT_WIDTH,
+                                                 &_dopplerStdDev, combo_current_item, "Hz\0\0", 0.0, 0.0, "%.3g", ImGuiInputTextFlags_CharsScientific);
     ImGui::SameLine();
     ImGui::Text("= %.2g m/s (G1)", std::abs(doppler2rangeRate(_dopplerStdDev, G01, -128)));
 
     if (ImGui::BeginPopup(fmt::format("{} GnssMeasurementError Popup", id).c_str()))
     {
-        constexpr float PLOT_WIDTH = 500.0F;
-        constexpr float PLOT_HEIGHT = 450.0F;
-        constexpr float TABLE_WIDTH = 440.0F;
-        constexpr float ITEM_WIDTH = 160.0F;
+        const float PLOT_WIDTH = 500.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float PLOT_HEIGHT = 450.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float TABLE_WIDTH = 440.0F * gui::NodeEditorApplication::windowFontRatio();
+        const float ITEM_WIDTH = 160.0F * gui::NodeEditorApplication::windowFontRatio();
 
-        constexpr float WINDOW_HEIGHT = PLOT_HEIGHT + 30.0F;
+        const float WINDOW_HEIGHT = PLOT_HEIGHT + 30.0F * gui::NodeEditorApplication::windowFontRatio();
 
         if (ImGui::BeginChild("left pane", ImVec2(PLOT_WIDTH, WINDOW_HEIGHT), false, ImGuiWindowFlags_NoScrollbar))
         {
@@ -167,7 +167,7 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
                 }
                 ImPlot::EndPlot();
             }
-            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 40.0F);
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - 40.0F * gui::NodeEditorApplication::windowFontRatio());
             if (ImGui::SliderDouble(fmt::format("c/n₀##{}", id).c_str(), &_plotCN0, 0.0, 60.0, "%.2f dB-Hz"))
             {
                 updateStdDevCurvePlot(Model::SINE_CN0);
@@ -249,24 +249,6 @@ bool GnssMeasurementErrorModel::ShowGuiWidgets(const char* id, float width)
                 if (ImGui::DragDouble(fmt::format("b##{} - {}", fmt::underlying(Model::RTKLIB), id).c_str(), &_modelParametersRtklib.b, 0.1F, 0.0, std::numeric_limits<double>::max(), "%.2f"))
                 {
                     updateStdDevCurvePlot(Model::RTKLIB);
-                    changed = true;
-                }
-            }
-            ImGui::TableNextColumn();
-            ImGui::SetNextItemOpen(true, ImGuiCond_Always);
-            if (ImGui::CollapsingHeader(fmt::format("{}##{}", to_string(Model::SINE_TYPE), id).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-            {
-                ImGui::TextUnformatted("wf = √(a + b/e)");
-                ImGui::SetNextItemWidth(ITEM_WIDTH);
-                if (ImGui::DragDouble(fmt::format("a##{} - {}", fmt::underlying(Model::SINE_TYPE), id).c_str(), &_modelParametersSineType.a, 0.1F, 0.0, std::numeric_limits<double>::max(), "%.2f"))
-                {
-                    updateStdDevCurvePlot(Model::SINE_TYPE);
-                    changed = true;
-                }
-                ImGui::SetNextItemWidth(ITEM_WIDTH);
-                if (ImGui::DragDouble(fmt::format("b##{} - {}", fmt::underlying(Model::SINE_TYPE), id).c_str(), &_modelParametersSineType.b, 0.1F, 0.0, std::numeric_limits<double>::max(), "%.2f"))
-                {
-                    updateStdDevCurvePlot(Model::SINE_TYPE);
                     changed = true;
                 }
             }
@@ -357,8 +339,6 @@ const char* to_string(GnssMeasurementErrorModel::Model model)
         return "Sine + CN0";
     case GnssMeasurementErrorModel::Model::RTKLIB:
         return "RTKLIB";
-    case GnssMeasurementErrorModel::Model::SINE_TYPE:
-        return "Sine-Type";
     case GnssMeasurementErrorModel::Model::SINE_SQRT:
         return "Sine-Sqrt";
     case GnssMeasurementErrorModel::Model::EXPONENTIAL:
@@ -383,7 +363,6 @@ void to_json(json& j, const GnssMeasurementErrorModel& obj)
         { "modelParametersSineOffset", obj._modelParametersSineOffset },
         { "modelParametersSineCN0", obj._modelParametersSineCN0 },
         { "modelParametersRtklib", obj._modelParametersRtklib },
-        { "modelParametersSineType", obj._modelParametersSineType },
         { "modelParametersSineSqrt", obj._modelParametersSineSqrt },
         { "modelParametersExponential", obj._modelParametersExponential },
         { "modelParametersCosineType", obj._modelParametersCosineType },
@@ -401,7 +380,6 @@ void from_json(const json& j, GnssMeasurementErrorModel& obj)
     if (j.contains("modelParametersSineOffset")) { j.at("modelParametersSineOffset").get_to(obj._modelParametersSineOffset); }
     if (j.contains("modelParametersSineCN0")) { j.at("modelParametersSineCN0").get_to(obj._modelParametersSineCN0); }
     if (j.contains("modelParametersRtklib")) { j.at("modelParametersRtklib").get_to(obj._modelParametersRtklib); }
-    if (j.contains("modelParametersSineType")) { j.at("modelParametersSineType").get_to(obj._modelParametersSineType); }
     if (j.contains("modelParametersSineSqrt")) { j.at("modelParametersSineSqrt").get_to(obj._modelParametersSineSqrt); }
     if (j.contains("modelParametersExponential")) { j.at("modelParametersExponential").get_to(obj._modelParametersExponential); }
     if (j.contains("modelParametersCosineType")) { j.at("modelParametersCosineType").get_to(obj._modelParametersCosineType); }
@@ -454,19 +432,6 @@ void to_json(json& j, const GnssMeasurementErrorModel::ModelParametersRtklib& ob
     };
 }
 void from_json(const json& j, GnssMeasurementErrorModel::ModelParametersRtklib& obj)
-{
-    if (j.contains("a")) { j.at("a").get_to(obj.a); }
-    if (j.contains("b")) { j.at("b").get_to(obj.b); }
-}
-
-void to_json(json& j, const GnssMeasurementErrorModel::ModelParametersSineType& obj)
-{
-    j = json{
-        { "a", obj.a },
-        { "b", obj.b },
-    };
-}
-void from_json(const json& j, GnssMeasurementErrorModel::ModelParametersSineType& obj)
 {
     if (j.contains("a")) { j.at("a").get_to(obj.a); }
     if (j.contains("b")) { j.at("b").get_to(obj.b); }

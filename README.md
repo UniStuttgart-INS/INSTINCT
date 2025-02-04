@@ -1,5 +1,10 @@
 # INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
+[![ci](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml/badge.svg)](https://github.com/UniStuttgart-INS/INSTINCT/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/UniStuttgart-INS/INSTINCT/graph/badge.svg?token=TB87OFDQ01)](https://codecov.io/gh/UniStuttgart-INS/INSTINCT)
+[![documentation](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
+
 Flow-Based Navigation Software of the Institut of Navigation (INS) of the University of Stuttgart, Germany.
 
 ![overview](resources/images/titleimage.png)
@@ -16,8 +21,7 @@ If no GUI is required, the application can be run in ```--nogui``` mode and a `.
 
 ### Read the documentation
 
-Read the docs on
-[![](https://img.shields.io/badge/view-documentation-blue)](https://unistuttgart-ins.github.io/INSTINCT/)
+Read the docs on https://unistuttgart-ins.github.io/INSTINCT/
 
 ### Working with the Repository
 
@@ -37,7 +41,7 @@ Read the docs on
 
 ##### Build & run the main program
 ```shell
-conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
 # Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 cmake --build build/Release --parallel8
@@ -46,7 +50,7 @@ cmake --build build/Release --parallel8
 
 ##### Build & run the tests
 ```shell
-conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
 # Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=TRACE
 cmake --build build/Release --parallel8
@@ -56,7 +60,7 @@ ctest --output-on-failure
 
 ##### Build the documentation
 ```shell
-conan install . --build=missing -s build_type=Release -s compiler.cppstd=20
+conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
 # Windows needs the argument -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake"
 cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
 cmake --build build/Release --target doc
@@ -98,69 +102,100 @@ Allowed options:
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
 #### ArchLinux
-```shell
-# Needed
-sudo pacman -S --noconfirm --needed base-devel cmake clang glfw-x11
-yay -S --noconfirm --needed conan # AUR package
-conan profile detect --force
+- Building
+  ```shell
+  sudo pacman -S --noconfirm --needed base-devel cmake clang glfw-x11
+  yay -S --noconfirm --needed conan # AUR package
+  conan profile detect --force
+  ```
+- Documentation
+  ```shell
+  sudo pacman -S --noconfirm --needed doxygen texlive-basic
+  ```
+- Optional
+  - Compiler cache
+    ```shell
+    sudo pacman -S --noconfirm --needed ccache
+    ```
+  - Profiling
+    ```shell
+    sudo pacman -S --noconfirm --needed valgrind kcachegrind
+    ```
 
-# Documentation
-sudo pacman -S --noconfirm --needed doxygen pdf2svg texlive-most ghostscript
-
-# Optional
-sudo pacman -S --noconfirm --needed ccache cppcheck
-
-# Profiling (optional)
-sudo pacman -S --noconfirm --needed valgrind kcachegrind
-```
-
-#### Ubuntu 22.04
-```shell
-# Needed
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y build-essential clang clang-tidy clang-format cmake python3-pip libglfw3-dev libglfw3
-pip3 install conan --user
-conan profile detect --force
-
-# Documentation (Ubuntu 22.04 has too old doxygen version)
-sudo apt install -y pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
-sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
-wget -c https://www.doxygen.nl/files/doxygen-1.10.0.src.tar.gz -O - | tar -xz
-cd doxygen-1.10.0 && mkdir build && cd build
-cmake -G "Unix Makefiles" .. && make && sudo make install
-
-# Optional
-sudo apt install ccache cppcheck
-
-# Profiling (optional)
-sudo apt install valgrind kcachegrind
-```
+#### Ubuntu 24.04
+- Building
+  ```shell
+  sudo apt update
+  sudo apt upgrade -y
+  sudo apt install -y build-essential clang clang-format cmake pipx libglfw3-dev libglfw3
+  pipx ensurepath
+  # Path will be updated after reboot
+  pipx install conan
+  conan profile detect --force
+  ```
+- Documentation
+  - TexLive for citations
+    ```shell
+    sudo apt install -y texlive-base
+    ```
+  - Ubuntu has too old doxygen version
+    ```shell
+    sudo apt install -y flex bison graphviz mscgen dia # Build dependencies
+    wget -c https://www.doxygen.nl/files/doxygen-1.12.0.src.tar.gz -O - | tar -xz
+    cd doxygen-1.12.0 && mkdir build && cd build
+    cmake -G "Unix Makefiles" .. && make && sudo make install
+    ```
+- Optional
+  - Static analyzer (Ubuntu 24.04 comes with `clang-tidy-18`, but version 19 is needed)
+    ```shell
+    sudo apt install -y clang-tidy-19
+    ln -s /usr/bin/clang-tidy-19 ~/.local/bin/clang-tidy
+    # Make sure that '~/.local/bin' is in your path in front of '/usr/bin'
+    # Otherwise you need to link it in the system
+    # sudo ln -s /usr/bin/clang-tidy-19 /usr/bin/clang-tidy
+    ```
+  - Compiler cache
+    ```shell
+    sudo apt install ccache
+    ```
+  - Profiling
+    ```shell
+    sudo apt install valgrind kcachegrind
+    ```
 
 #### MacOS
-```shell
-# Basic
-xcode-select --install
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-brew update
+- Building
+  ```shell
+  xcode-select --install
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# Needed
-brew install cmake llvm conan glfw
-ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
-ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
-
-# Documentation
-brew install doxygen pdf2svg
-# Also latex is needed to compile the formulas
-
-# Optional
-brew install ccache cppcheck
-```
+  # Install brew first
+  brew update
+  brew install cmake llvm conan glfw
+  ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
+  ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+  ```
+- Documentation
+  ```shell
+  brew install doxygen texlive
+  ```
+- Optional
+  - Compiler cache
+    ```shell
+    brew install ccache
+    ```
 
 #### Windows 11
 
-- For development Windows Subsystem for Linux is recommended. Follow the Ubuntu instructions
-- For executing, INSTINCT can be compiled with MSVC
+- For development Linux is **recommended**. You can try Windows Subsystem for Linux `WSL`.
+  - Follow the [VS Code WSL instructions](https://code.visualstudio.com/docs/remote/wsl)
+  - We recommend using Ubuntu inside WSL and following the Ubuntu instructions above.
+- For executing, INSTINCT can be compiled with `MSVC` directly on Windows
+  - Use the `Build Tools for Visual Studio 2022` ([download](https://visualstudio.microsoft.com/downloads/))
+    - Install both the C++ Toolchain and Cmake through the Build Tools
+  - Install the conan package manager ([download](https://conan.io/))
+  - Use the Developer Powershell to invoke commands and also to start VS Code
+  - Windows specifies the build type at compile time, not during cmake generation. Therefore the toolchain file has a different path. See above
 
 ### VSCode Configuration
 
@@ -240,14 +275,16 @@ Recommended changes to the User's ```keybindings.json```
     * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
     * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
     * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) Clang-based C++ "linter" tool
-    * [cppcheck](http://cppcheck.sourceforge.net/) A tool for static C/C++ code analysis
 * Libraries (Install yourself and change cmake link targets or let them automatically be installed by Conan):
     * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [fmt](https://github.com/fmtlib/fmt) A modern formatting library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
     * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-green.svg)](https://opensource.org/licenses/MPL-2.0)
     * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD [![License](https://img.shields.io/badge/License-Boost%201.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
-    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator. [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [unordered_dense](https://github.com/martinus/unordered_dense) A fast & densely stored hashmap and hashset [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+    * [muparser](https://github.com/beltoforion/muparser) Fast math parser library for C/C++ [![License](https://img.shields.io/badge/License-BSD_2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
+    * [libssh](https://github.com/canonical/libssh) Fulitplatform C library implementing the SSHv2 and SSHv1 protocol [![License](https://img.shields.io/badge/License-LGPL_2.1-blue.svg)](https://opensource.org/license/lgpl-2-1)
     * [gcem](https://github.com/kthohr/gcem) GCE-Math (Generalized Constant Expression Math) is a templated C++ library enabling compile-time computation of mathematical functions. [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
     * [vnproglib](https://www.vectornav.com/resources/programming-libraries/vectornav-programming-library) VectorNav programming library [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
     * [Navio2](https://github.com/emlid/Navio2) Collection of drivers and examples for Navio 2 - autopilot shield for Raspberry Pi. [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -259,10 +296,10 @@ Recommended changes to the User's ```keybindings.json```
 
 ## Authors
 
-* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-* [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Thomas Topp, M.Sc.](mailto:topp@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Marcel Maier, M.Sc.](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 * [Prof. Dr. Thomas Hobiger](mailto:thomas.hobiger@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
-* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
+* [Rui Wang, M.Sc.](mailto:rui.wang@ins.uni-stuttgart.de?subject=[INSTINCT]%20)
 
 ## License
 

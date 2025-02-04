@@ -1,5 +1,10 @@
 {
     "colormaps": [],
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigWindowFont": false
+    },
     "links": {
         "link-101": {
             "endPinId": 95,
@@ -2855,7 +2860,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.0
@@ -2882,7 +2887,7 @@
                     "seed": 5245393079493500393,
                     "useSeed": true
                 },
-                "imuAccelerometerIRWUnit": 0,
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.02
@@ -2894,7 +2899,7 @@
                         "0": 0.02
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -2910,12 +2915,12 @@
                     "seed": 599094909927446163,
                     "useSeed": true
                 },
-                "imuAccelerometerRWUnit": 0,
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 2991758872178057396,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.0
@@ -2942,7 +2947,7 @@
                     "seed": 4612967799013828427,
                     "useSeed": true
                 },
-                "imuGyroscopeIRWUnit": 0,
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.02
@@ -2954,7 +2959,7 @@
                         "0": 0.02
                     }
                 },
-                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -2970,7 +2975,7 @@
                     "seed": 1064917147911031734,
                     "useSeed": true
                 },
-                "imuGyroscopeRWUnit": 0,
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 6612612014885880588,
                     "useSeed": true
@@ -3125,7 +3130,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.0
@@ -3152,7 +3157,7 @@
                     "seed": 3623964894793483190,
                     "useSeed": true
                 },
-                "imuAccelerometerIRWUnit": 0,
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.03
@@ -3164,7 +3169,7 @@
                         "0": 0.03
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -3180,12 +3185,12 @@
                     "seed": 7152783064593867816,
                     "useSeed": true
                 },
-                "imuAccelerometerRWUnit": 0,
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 1781041542917901809,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.0
@@ -3212,7 +3217,7 @@
                     "seed": 3488103033144580499,
                     "useSeed": true
                 },
-                "imuGyroscopeIRWUnit": 0,
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.03
@@ -3224,7 +3229,7 @@
                         "0": 0.03
                     }
                 },
-                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -3240,7 +3245,7 @@
                     "seed": 2538402337775822986,
                     "useSeed": true
                 },
-                "imuGyroscopeRWUnit": 0,
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 1066594869782810031,
                     "useSeed": true
@@ -3386,7 +3391,7 @@
                     }
                 },
                 "initJerkAngAcc": true,
-                "kfInitialized": true,
+                "kfInitialized": false,
                 "nInputPins": 4,
                 "numStates": 30,
                 "pinData": [
@@ -3486,7 +3491,7 @@
                                 "0": 0.01
                             }
                         },
-                        "measurementUncertaintyAngularRateUnit": 1,
+                        "measurementUncertaintyAngularRateUnit": 3,
                         "varBiasAccelerationNoise": {
                             "0": {
                                 "0": 0.1
@@ -3608,7 +3613,7 @@
                                 "0": 0.01
                             }
                         },
-                        "measurementUncertaintyAngularRateUnit": 1,
+                        "measurementUncertaintyAngularRateUnit": 3,
                         "varBiasAccelerationNoise": {
                             "0": {
                                 "0": 1e-05
@@ -3730,7 +3735,7 @@
                                 "0": 0.01
                             }
                         },
-                        "measurementUncertaintyAngularRateUnit": 1,
+                        "measurementUncertaintyAngularRateUnit": 3,
                         "varBiasAccelerationNoise": {
                             "0": {
                                 "0": 1e-05
@@ -3852,7 +3857,7 @@
                                 "0": 0.01
                             }
                         },
-                        "measurementUncertaintyAngularRateUnit": 1,
+                        "measurementUncertaintyAngularRateUnit": 3,
                         "varBiasAccelerationNoise": {
                             "0": {
                                 "0": 1e-05
@@ -4145,7 +4150,7 @@
                             "0": 0.001
                         }
                     },
-                    "varAngularAccNoiseUnit": 1,
+                    "varAngularAccNoiseUnit": 3,
                     "varJerkNoise": {
                         "0": {
                             "0": 0.001
@@ -4294,7 +4299,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.0
@@ -4321,7 +4326,7 @@
                     "seed": 2090524596801892929,
                     "useSeed": true
                 },
-                "imuAccelerometerIRWUnit": 0,
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.01
@@ -4333,7 +4338,7 @@
                         "0": 0.01
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -4349,12 +4354,12 @@
                     "seed": 5018982082551820267,
                     "useSeed": true
                 },
-                "imuAccelerometerRWUnit": 0,
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 4854436596437896784,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.0
@@ -4381,7 +4386,7 @@
                     "seed": 4792937649059761281,
                     "useSeed": true
                 },
-                "imuGyroscopeIRWUnit": 0,
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.01
@@ -4393,7 +4398,7 @@
                         "0": 0.01
                     }
                 },
-                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -4409,7 +4414,7 @@
                     "seed": 5239767098494045290,
                     "useSeed": true
                 },
-                "imuGyroscopeRWUnit": 0,
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 2156477401873728386,
                     "useSeed": true
@@ -4564,7 +4569,7 @@
                 },
                 "filterCode": "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110011111111001111111",
                 "filterFreq": 1,
-                "imuAccelerometerBiasUnit": 0,
+                "imuAccelerometerBiasUnit": "m/s^2",
                 "imuAccelerometerBias_p": {
                     "0": {
                         "0": 0.0
@@ -4591,7 +4596,7 @@
                     "seed": 1837325328886534211,
                     "useSeed": true
                 },
-                "imuAccelerometerIRWUnit": 0,
+                "imuAccelerometerIRWUnit": "m/s^3/√(s)",
                 "imuAccelerometerNoise": {
                     "0": {
                         "0": 0.04
@@ -4603,7 +4608,7 @@
                         "0": 0.04
                     }
                 },
-                "imuAccelerometerNoiseUnit": 0,
+                "imuAccelerometerNoiseUnit": "m/s^2/√(s)",
                 "imuAccelerometerRW": {
                     "0": {
                         "0": 0.0
@@ -4619,12 +4624,12 @@
                     "seed": 12959444967113625,
                     "useSeed": true
                 },
-                "imuAccelerometerRWUnit": 0,
+                "imuAccelerometerRWUnit": "m/s^2/√(s)",
                 "imuAccelerometerRng": {
                     "seed": 2062338801936840224,
                     "useSeed": true
                 },
-                "imuGyroscopeBiasUnit": 0,
+                "imuGyroscopeBiasUnit": "rad/s",
                 "imuGyroscopeBias_p": {
                     "0": {
                         "0": 0.0
@@ -4651,7 +4656,7 @@
                     "seed": 1551438165040422729,
                     "useSeed": true
                 },
-                "imuGyroscopeIRWUnit": 0,
+                "imuGyroscopeIRWUnit": "rad/s^2/√(s)",
                 "imuGyroscopeNoise": {
                     "0": {
                         "0": 0.04
@@ -4663,7 +4668,7 @@
                         "0": 0.04
                     }
                 },
-                "imuGyroscopeNoiseUnit": 0,
+                "imuGyroscopeNoiseUnit": "rad/s/√(s)",
                 "imuGyroscopeRW": {
                     "0": {
                         "0": 0.0
@@ -4679,7 +4684,7 @@
                     "seed": 6694881617869512037,
                     "useSeed": true
                 },
-                "imuGyroscopeRWUnit": 0,
+                "imuGyroscopeRWUnit": "rad/s/√(s)",
                 "imuGyroscopeRng": {
                     "seed": 2959605910079145024,
                     "useSeed": true

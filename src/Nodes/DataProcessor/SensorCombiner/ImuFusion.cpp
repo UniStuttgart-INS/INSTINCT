@@ -37,7 +37,7 @@ namespace NAV
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinData& data)
+static void to_json(json& j, const PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -68,7 +68,7 @@ void to_json(json& j, const PinData& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinData& data)
+static void from_json(const json& j, PinData& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
     if (j.contains("initAngularRateBias"))
@@ -158,7 +158,7 @@ void from_json(const json& j, PinData& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinDataIRWKF& data)
+static void to_json(json& j, const PinDataIRWKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -185,7 +185,7 @@ void to_json(json& j, const PinDataIRWKF& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinDataIRWKF& data)
+static void from_json(const json& j, PinDataIRWKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
     if (j.contains("initAngularRate"))
@@ -260,7 +260,7 @@ void from_json(const json& j, PinDataIRWKF& data)
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-void to_json(json& j, const PinDataBsplineKF& data)
+static void to_json(json& j, const PinDataBsplineKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     j = json{
         // ---------------------------------------- Initialization -------------------------------------------
@@ -283,7 +283,7 @@ void to_json(json& j, const PinDataBsplineKF& data)
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-void from_json(const json& j, PinDataBsplineKF& data)
+static void from_json(const json& j, PinDataBsplineKF& data) // NOLINT(misc-use-anonymous-namespace)
 {
     // ------------------------------------------ Initialization ---------------------------------------------
 
@@ -339,6 +339,7 @@ void from_json(const json& j, PinDataBsplineKF& data)
         j.at("varCoeffsAccelUnit").get_to(data.varCoeffsAccelUnit);
     }
 }
+
 } // namespace NAV
 
 NAV::ImuFusion::ImuFusion()
@@ -554,8 +555,8 @@ void NAV::ImuFusion::guiConfig()
             if (_imuFusionType == ImuFusionType::IRWKF)
             {
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initAngularRate.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initAngularRateUnit), "deg/s\0"
-                                                                                                                                                                                 "rad/s\0\0",
+                                                       configWidth, unitWidth, _pinDataIRWKF.initAngularRate.data(), _pinDataIRWKF.initAngularRateUnit, "deg/s\0"
+                                                                                                                                                        "rad/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initAngularRate changed to {}", nameId(), _pinDataIRWKF.initAngularRate);
@@ -564,7 +565,7 @@ void NAV::ImuFusion::guiConfig()
                 }
 
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initAcceleration.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initAccelerationUnit), "m/s²\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
+                                                       configWidth, unitWidth, _pinDataIRWKF.initAcceleration.data(), _pinDataIRWKF.initAccelerationUnit, "m/s²\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initAcceleration changed to {}", nameId(), _pinDataIRWKF.initAcceleration);
                     LOG_DATA("{}: initAccelerationUnit changed to {}", nameId(), fmt::underlying(_pinDataIRWKF.initAccelerationUnit));
@@ -572,8 +573,8 @@ void NAV::ImuFusion::guiConfig()
                 }
 
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular Acceleration##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initAngularAcc.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initAngularAccUnit), "deg/s²\0"
-                                                                                                                                                                               "rad/s^2\0\0",
+                                                       configWidth, unitWidth, _pinDataIRWKF.initAngularAcc.data(), _pinDataIRWKF.initAngularAccUnit, "deg/s²\0"
+                                                                                                                                                      "rad/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initAngularAcc changed to {}", nameId(), _pinDataIRWKF.initAngularAcc);
@@ -582,7 +583,7 @@ void NAV::ImuFusion::guiConfig()
                 }
 
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("Jerk##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initJerk.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initJerkUnit), "m/s³\0\0",
+                                                       configWidth, unitWidth, _pinDataIRWKF.initJerk.data(), _pinDataIRWKF.initJerkUnit, "m/s³\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initJerk changed to {}", nameId(), _pinDataIRWKF.initJerk);
@@ -593,15 +594,15 @@ void NAV::ImuFusion::guiConfig()
             else // (_imuFusionType == ImuFusionType::Bspline)
             {
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("B-spline coefficients for the angular rate##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _initCoeffsAngRateTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.initCoeffsAngularRateUnit), "deg/s\0"
-                                                                                                                                                                                    "rad/s\0\0",
+                                                       configWidth, unitWidth, _initCoeffsAngRateTemp.data(), _pinDataBsplineKF.initCoeffsAngularRateUnit, "deg/s\0"
+                                                                                                                                                           "rad/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCoeffsAngularRateUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.initCoeffsAngularRateUnit));
                     flow::ApplyChanges();
                 }
                 if (gui::widgets::InputDouble3WithUnit(fmt::format("B-spline coefficients for the acceleration##{}", size_t(id)).c_str(),
-                                                       configWidth, unitWidth, _initCoeffsAccelTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.initCoeffsAccelUnit), "m/s²\0\0",
+                                                       configWidth, unitWidth, _initCoeffsAccelTemp.data(), _pinDataBsplineKF.initCoeffsAccelUnit, "m/s²\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCoeffsAccelUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.initCoeffsAccelUnit));
@@ -617,14 +618,14 @@ void NAV::ImuFusion::guiConfig()
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias of sensor {}##{}", 2, size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _pinData[1].initAngularRateBias.data(), reinterpret_cast<int*>(&_pinData[1].initAngularRateBiasUnit), "deg/s\0rad/s\0\0",
+                                                   configWidth, unitWidth, _pinData[1].initAngularRateBias.data(), _pinData[1].initAngularRateBiasUnit, "deg/s\0rad/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 flow::ApplyChanges();
             }
 
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias of sensor {}##{}", 2, size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _pinData[1].initAccelerationBias.data(), reinterpret_cast<int*>(&_pinData[1].initAccelerationBiasUnit), "m/s^2\0\0",
+                                                   configWidth, unitWidth, _pinData[1].initAccelerationBias.data(), _pinData[1].initAccelerationBiasUnit, "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 flow::ApplyChanges();
@@ -634,14 +635,14 @@ void NAV::ImuFusion::guiConfig()
                 for (size_t pinIndex = 2; pinIndex < _nInputPins; ++pinIndex)
                 {
                     if (gui::widgets::InputDouble3WithUnit(fmt::format("Angular rate bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
-                                                           configWidth, unitWidth, _pinData[pinIndex].initAngularRateBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAngularRateBiasUnit), "deg/s\0rad/s\0\0",
+                                                           configWidth, unitWidth, _pinData[pinIndex].initAngularRateBias.data(), _pinData[pinIndex].initAngularRateBiasUnit, "deg/s\0rad/s\0\0",
                                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
                     {
                         flow::ApplyChanges();
                     }
 
                     if (gui::widgets::InputDouble3WithUnit(fmt::format("Acceleration bias of sensor {}##{}", pinIndex + 1, size_t(id)).c_str(),
-                                                           configWidth, unitWidth, _pinData[pinIndex].initAccelerationBias.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initAccelerationBiasUnit), "m/s^2\0\0",
+                                                           configWidth, unitWidth, _pinData[pinIndex].initAccelerationBias.data(), _pinData[pinIndex].initAccelerationBiasUnit, "m/s^2\0\0",
                                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
                     {
                         flow::ApplyChanges();
@@ -665,10 +666,10 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinData[0].initCovarianceAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceAngularRateUnit), "(rad/s)²\0"
-                                                                                                                                                                                                 "rad/s\0"
-                                                                                                                                                                                                 "(deg/s)²\0"
-                                                                                                                                                                                                 "deg/s\0\0",
+                                                       configWidth, unitWidth, _pinData[0].initCovarianceAngularRate.data(), _pinData[0].initCovarianceAngularRateUnit, "(rad/s)²\0"
+                                                                                                                                                                        "rad/s\0"
+                                                                                                                                                                        "(deg/s)²\0"
+                                                                                                                                                                        "deg/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceAngularRate changed to {}", nameId(), _pinData[0].initCovarianceAngularRate);
@@ -683,10 +684,10 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initCovarianceAngularAcc.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initCovarianceAngularAccUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                                                                   "rad/s^2\0"
-                                                                                                                                                                                                   "(deg^2)/(s^4)\0"
-                                                                                                                                                                                                   "deg/s^2\0\0",
+                                                       configWidth, unitWidth, _pinDataIRWKF.initCovarianceAngularAcc.data(), _pinDataIRWKF.initCovarianceAngularAccUnit, "(rad^2)/(s^4)\0"
+                                                                                                                                                                          "rad/s^2\0"
+                                                                                                                                                                          "(deg^2)/(s^4)\0"
+                                                                                                                                                                          "deg/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceAngularAcc changed to {}", nameId(), _pinDataIRWKF.initCovarianceAngularAcc);
@@ -700,8 +701,8 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinData[0].initCovarianceAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].initCovarianceAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                   "m/s^2\0\0",
+                                                       configWidth, unitWidth, _pinData[0].initCovarianceAcceleration.data(), _pinData[0].initCovarianceAccelerationUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                          "m/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceAcceleration changed to {}", nameId(), _pinData[0].initCovarianceAcceleration);
@@ -715,8 +716,8 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinDataIRWKF.initCovarianceJerk.data(), reinterpret_cast<int*>(&_pinDataIRWKF.initCovarianceJerkUnit), "(m^2)/(s^6)\0"
-                                                                                                                                                                                       "m/s^3\0\0",
+                                                       configWidth, unitWidth, _pinDataIRWKF.initCovarianceJerk.data(), _pinDataIRWKF.initCovarianceJerkUnit, "(m^2)/(s^6)\0"
+                                                                                                                                                              "m/s^3\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceJerk changed to {}", nameId(), _pinDataIRWKF.initCovarianceJerk);
@@ -733,10 +734,10 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _initCovarianceCoeffsAngRateTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.initCovarianceCoeffsAngRateUnit), "(rad/s)²\0"
-                                                                                                                                                                                                    "rad/s\0"
-                                                                                                                                                                                                    "(deg/s)²\0"
-                                                                                                                                                                                                    "deg/s\0\0",
+                                                       configWidth, unitWidth, _initCovarianceCoeffsAngRateTemp.data(), _pinDataBsplineKF.initCovarianceCoeffsAngRateUnit, "(rad/s)²\0"
+                                                                                                                                                                           "rad/s\0"
+                                                                                                                                                                           "(deg/s)²\0"
+                                                                                                                                                                           "deg/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceCoeffsAngRateUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.initCovarianceCoeffsAngRateUnit));
@@ -748,8 +749,8 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _initCovarianceCoeffsAccelTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.initCovarianceCoeffsAccelUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                "m/s^2\0\0",
+                                                       configWidth, unitWidth, _initCovarianceCoeffsAccelTemp.data(), _pinDataBsplineKF.initCovarianceCoeffsAccelUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                       "m/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: initCovarianceCoeffsAccelUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.initCovarianceCoeffsAccelUnit));
@@ -771,10 +772,10 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _pinData[1].initCovarianceBiasAngRate.data(), reinterpret_cast<int*>(&_pinData[1].initCovarianceBiasAngRateUnit), "(rad^2)/(s^2)\0"
-                                                                                                                                                                                             "rad/s\0"
-                                                                                                                                                                                             "(deg^2)/(s^2)\0"
-                                                                                                                                                                                             "deg/s\0\0",
+                                                   configWidth, unitWidth, _pinData[1].initCovarianceBiasAngRate.data(), _pinData[1].initCovarianceBiasAngRateUnit, "(rad^2)/(s^2)\0"
+                                                                                                                                                                    "rad/s\0"
+                                                                                                                                                                    "(deg^2)/(s^2)\0"
+                                                                                                                                                                    "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceBiasAngRate changed to {}", nameId(), _pinData[1].initCovarianceBiasAngRate);
@@ -788,8 +789,8 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _pinData[1].initCovarianceBiasAcc.data(), reinterpret_cast<int*>(&_pinData[1].initCovarianceBiasAccUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                     "m/s^2\0\0",
+                                                   configWidth, unitWidth, _pinData[1].initCovarianceBiasAcc.data(), _pinData[1].initCovarianceBiasAccUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                            "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: initCovarianceBiasAcc changed to {}", nameId(), _pinData[1].initCovarianceBiasAcc);
@@ -807,10 +808,10 @@ void NAV::ImuFusion::guiConfig()
                                                                            : "Standard deviation σ",
                                                                        size_t(id))
                                                                .c_str(),
-                                                           configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAngRate.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initCovarianceBiasAngRateUnit), "(rad^2)/(s^2)\0"
-                                                                                                                                                                                                                   "rad/s\0"
-                                                                                                                                                                                                                   "(deg^2)/(s^2)\0"
-                                                                                                                                                                                                                   "deg/s\0\0",
+                                                           configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAngRate.data(), _pinData[pinIndex].initCovarianceBiasAngRateUnit, "(rad^2)/(s^2)\0"
+                                                                                                                                                                                          "rad/s\0"
+                                                                                                                                                                                          "(deg^2)/(s^2)\0"
+                                                                                                                                                                                          "deg/s\0\0",
                                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
                     {
                         LOG_DATA("{}: initCovarianceBiasAngRate changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAngRate);
@@ -824,8 +825,8 @@ void NAV::ImuFusion::guiConfig()
                                                                            : "Standard deviation σ",
                                                                        size_t(id))
                                                                .c_str(),
-                                                           configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAcc.data(), reinterpret_cast<int*>(&_pinData[pinIndex].initCovarianceBiasAccUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                           "m/s^2\0\0",
+                                                           configWidth, unitWidth, _pinData[pinIndex].initCovarianceBiasAcc.data(), _pinData[pinIndex].initCovarianceBiasAccUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                                  "m/s^2\0\0",
                                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
                     {
                         LOG_DATA("{}: initCovarianceBiasAcc changed to {}", nameId(), _pinData[pinIndex].initCovarianceBiasAcc);
@@ -861,10 +862,10 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _pinDataIRWKF.varAngularAccNoise.data(), reinterpret_cast<int*>(&_pinDataIRWKF.varAngularAccNoiseUnit), "(rad^2)/(s^4)\0"
-                                                                                                                                                                                   "rad/s^2\0"
-                                                                                                                                                                                   "(deg^2)/(s^4)\0"
-                                                                                                                                                                                   "deg/s^2\0\0",
+                                                   configWidth, unitWidth, _pinDataIRWKF.varAngularAccNoise.data(), _pinDataIRWKF.varAngularAccNoiseUnit, "(rad^2)/(s^4)\0"
+                                                                                                                                                          "rad/s^2\0"
+                                                                                                                                                          "(deg^2)/(s^4)\0"
+                                                                                                                                                          "deg/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varAngularAccNoise changed to {}", nameId(), _pinDataIRWKF.varAngularAccNoise.transpose());
@@ -878,8 +879,8 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _pinDataIRWKF.varJerkNoise.data(), reinterpret_cast<int*>(&_pinDataIRWKF.varJerkNoiseUnit), "(m^2)/(s^6)\0"
-                                                                                                                                                                       "m/s^3\0\0",
+                                                   configWidth, unitWidth, _pinDataIRWKF.varJerkNoise.data(), _pinDataIRWKF.varJerkNoiseUnit, "(m^2)/(s^6)\0"
+                                                                                                                                              "m/s^3\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varJerkNoise changed to {}", nameId(), _pinDataIRWKF.varJerkNoise.transpose());
@@ -896,10 +897,10 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _procNoiseCoeffsAngRateTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.varCoeffsAngRateUnit), "(rad^2)/(s^2)\0"
-                                                                                                                                                                                "rad/s\0"
-                                                                                                                                                                                "(deg^2)/(s^2)\0"
-                                                                                                                                                                                "deg/s\0\0",
+                                                   configWidth, unitWidth, _procNoiseCoeffsAngRateTemp.data(), _pinDataBsplineKF.varCoeffsAngRateUnit, "(rad^2)/(s^2)\0"
+                                                                                                                                                       "rad/s\0"
+                                                                                                                                                       "(deg^2)/(s^2)\0"
+                                                                                                                                                       "deg/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varCoeffsAngRateUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.varCoeffsAngRateUnit));
@@ -911,8 +912,8 @@ void NAV::ImuFusion::guiConfig()
                                                                    : "Standard deviation σ",
                                                                size_t(id))
                                                        .c_str(),
-                                                   configWidth, unitWidth, _procNoiseCoeffsAccelTemp.data(), reinterpret_cast<int*>(&_pinDataBsplineKF.varCoeffsAccelUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                            "m/s^2\0\0",
+                                                   configWidth, unitWidth, _procNoiseCoeffsAccelTemp.data(), _pinDataBsplineKF.varCoeffsAccelUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                   "m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DATA("{}: varCoeffsAccelUnit changed to {}", nameId(), fmt::underlying(_pinDataBsplineKF.varCoeffsAccelUnit));
@@ -934,10 +935,10 @@ void NAV::ImuFusion::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                               configWidth, unitWidth, _pinData[1].varBiasAngRateNoise.data(), reinterpret_cast<int*>(&_pinData[1].varBiasAngRateNoiseUnit), "(rad/s)^2\0"
-                                                                                                                                                                             "rad/s\0"
-                                                                                                                                                                             "(deg/s)^2\0"
-                                                                                                                                                                             "deg/s\0\0",
+                                               configWidth, unitWidth, _pinData[1].varBiasAngRateNoise.data(), _pinData[1].varBiasAngRateNoiseUnit, "(rad/s)^2\0"
+                                                                                                                                                    "rad/s\0"
+                                                                                                                                                    "(deg/s)^2\0"
+                                                                                                                                                    "deg/s\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: varBiasAngRateNoise changed to {}", nameId(), _pinData[1].varBiasAngRateNoise.transpose());
@@ -951,8 +952,8 @@ void NAV::ImuFusion::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                               configWidth, unitWidth, _pinData[1].varBiasAccelerationNoise.data(), reinterpret_cast<int*>(&_pinData[1].varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                       "m/s^2\0\0",
+                                               configWidth, unitWidth, _pinData[1].varBiasAccelerationNoise.data(), _pinData[1].varBiasAccelerationNoiseUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                              "m/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: varBiasAccelerationNoise changed to {}", nameId(), _pinData[1].varBiasAccelerationNoise.transpose());
@@ -970,10 +971,10 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                       configWidth, unitWidth, _pinData[pinIndex].varBiasAngRateNoise.data(), reinterpret_cast<int*>(&_pinData[pinIndex].varBiasAngRateNoiseUnit), "(rad/s)^2\0"
-                                                                                                                                                                                                   "rad/s\0"
-                                                                                                                                                                                                   "(deg/s)^2\0"
-                                                                                                                                                                                                   "deg/s\0\0",
+                                                       configWidth, unitWidth, _pinData[pinIndex].varBiasAngRateNoise.data(), _pinData[pinIndex].varBiasAngRateNoiseUnit, "(rad/s)^2\0"
+                                                                                                                                                                          "rad/s\0"
+                                                                                                                                                                          "(deg/s)^2\0"
+                                                                                                                                                                          "deg/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: varBiasAngRateNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAngRateNoise.transpose());
@@ -987,8 +988,8 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(), // FIXME: adapt config window number of sensors (if pin 3 is deleted, keep 1,2,4 instead of re-counting to 1,2,3)
-                                                       configWidth, unitWidth, _pinData[pinIndex].varBiasAccelerationNoise.data(), reinterpret_cast<int*>(&_pinData[pinIndex].varBiasAccelerationNoiseUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                             "m/s^2\0\0",
+                                                       configWidth, unitWidth, _pinData[pinIndex].varBiasAccelerationNoise.data(), _pinData[pinIndex].varBiasAccelerationNoiseUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                                    "m/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: varBiasAccelerationNoise changed to {}", nameId(), _pinData[pinIndex].varBiasAccelerationNoise.transpose());
@@ -1014,10 +1015,10 @@ void NAV::ImuFusion::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _pinData[0].measurementUncertaintyAngularRate.data(), reinterpret_cast<int*>(&_pinData[0].measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
-                                                                                                                                                                                                         "rad/s\0"
-                                                                                                                                                                                                         "(deg/s)^2\0"
-                                                                                                                                                                                                         "deg/s\0\0",
+                                               configWidth, unitWidth, _pinData[0].measurementUncertaintyAngularRate.data(), _pinData[0].measurementUncertaintyAngularRateUnit, "(rad/s)^2\0"
+                                                                                                                                                                                "rad/s\0"
+                                                                                                                                                                                "(deg/s)^2\0"
+                                                                                                                                                                                "deg/s\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: stdevAngularAcc changed to {}", nameId(), _pinData[0].measurementUncertaintyAngularRate.transpose());
@@ -1031,8 +1032,8 @@ void NAV::ImuFusion::guiConfig()
                                                                : "Standard deviation σ",
                                                            size_t(id))
                                                    .c_str(),
-                                               configWidth, unitWidth, _pinData[0].measurementUncertaintyAcceleration.data(), reinterpret_cast<int*>(&_pinData[0].measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                           "m/s^2\0\0",
+                                               configWidth, unitWidth, _pinData[0].measurementUncertaintyAcceleration.data(), _pinData[0].measurementUncertaintyAccelerationUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                                  "m/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DATA("{}: stdevJerk changed to {}", nameId(), _pinData[0].measurementUncertaintyAcceleration.transpose());
@@ -1050,10 +1051,10 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAngularRate.data(), reinterpret_cast<int*>(&_pinData[pinIndex].measurementUncertaintyAngularRateUnit), "(rad/s)^2\0"
-                                                                                                                                                                                                                               "rad/s\0"
-                                                                                                                                                                                                                               "(deg/s)^2\0"
-                                                                                                                                                                                                                               "deg/s\0\0",
+                                                       configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAngularRate.data(), _pinData[pinIndex].measurementUncertaintyAngularRateUnit, "(rad/s)^2\0"
+                                                                                                                                                                                                      "rad/s\0"
+                                                                                                                                                                                                      "(deg/s)^2\0"
+                                                                                                                                                                                                      "deg/s\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: stdevAngularAcc changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAngularRate.transpose());
@@ -1067,8 +1068,8 @@ void NAV::ImuFusion::guiConfig()
                                                                        : "Standard deviation σ",
                                                                    size_t(id))
                                                            .c_str(),
-                                                       configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAcceleration.data(), reinterpret_cast<int*>(&_pinData[pinIndex].measurementUncertaintyAccelerationUnit), "(m^2)/(s^4)\0"
-                                                                                                                                                                                                                                 "m/s^2\0\0",
+                                                       configWidth, unitWidth, _pinData[pinIndex].measurementUncertaintyAcceleration.data(), _pinData[pinIndex].measurementUncertaintyAccelerationUnit, "(m^2)/(s^4)\0"
+                                                                                                                                                                                                        "m/s^2\0\0",
                                                        "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
                     LOG_DATA("{}: stdevJerk changed to {}", nameId(), _pinData[pinIndex].measurementUncertaintyAcceleration.transpose());
@@ -1554,7 +1555,7 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
     // Detect jumps back in time
     if (imuObsFiltered->insTime < _lastFiltObs)
     {
-        LOG_ERROR("{}: imuObsFiltered->insTime < _lastFiltObs --> {}", nameId(), (imuObsFiltered->insTime - _lastFiltObs).count());
+        LOG_ERROR("{}: imuObsFiltered->insTime < _lastFiltObs --> {}", nameId(), static_cast<double>((imuObsFiltered->insTime - _lastFiltObs).count()));
     }
     _lastFiltObs = imuObsFiltered->insTime;
 

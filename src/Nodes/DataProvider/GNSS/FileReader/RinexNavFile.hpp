@@ -80,8 +80,7 @@ class RinexNavFile : public Node, public FileReader
     void executeHeaderParser(double version);
 
     /// @brief Aborts RINEX file reading and deinitializes node
-    /// @return True if deinitialization successful
-    inline auto abortReading()
+    void abortReading()
     {
         LOG_ERROR("{}: The file '{}' is corrupt in line {}.", nameId(), _path, getCurrentLineNumber());
         _gnssNavInfo.reset();
@@ -127,7 +126,7 @@ class RinexNavFile : public Node, public FileReader
     static inline const std::set<double> _supportedVersions = { 4.00, 3.05, 3.04, 3.03, 3.02, 2.11, 2.10, 2.01 };
 
     /// @brief RINEX navigation message types enumeration with continuous range
-    enum class NavMsgType
+    enum class NavMsgType : uint8_t
     {
         EPH,    ///< Ephemeris
         STO,    ///< System Time Offset
@@ -139,7 +138,7 @@ class RinexNavFile : public Node, public FileReader
     /// @brief Converts RINEX navigation message string to enum type
     /// @param[in] type string
     /// @return navMsgType enum
-    static inline NavMsgType getNavMsgType(const std::string& type)
+    static NavMsgType getNavMsgType(const std::string& type)
     {
         NavMsgType navMsgType = NavMsgType::UNKNOWN;
         if (type == "EPH")
@@ -166,6 +165,9 @@ class RinexNavFile : public Node, public FileReader
 
     /// @brief Version of the RINEX file
     double _version = 0.0;
+
+    /// Only warn once
+    bool _sbasNotSupportedWarned = false;
 };
 
 } // namespace NAV

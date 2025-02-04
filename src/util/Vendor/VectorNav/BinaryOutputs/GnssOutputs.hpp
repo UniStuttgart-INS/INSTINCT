@@ -63,27 +63,27 @@ struct GnssOutputs
     ///
     /// The current GNSS position measurement given as the geodetic latitude, longitude and altitude above the
     /// ellipsoid. The units are in [deg, deg, m] respectively.
-    Eigen::Vector3d posLla{};
+    Eigen::Vector3d posLla;
 
     /// @brief GNSS position (ECEF)
     ///
     /// The current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters.
-    Eigen::Vector3d posEcef{};
+    Eigen::Vector3d posEcef;
 
     /// @brief GNSS velocity (NED)
     ///
     /// The current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s.
-    Eigen::Vector3f velNed{};
+    Eigen::Vector3f velNed;
 
     /// @brief GNSS velocity (ECEF)
     ///
     /// The current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s.
-    Eigen::Vector3f velEcef{};
+    Eigen::Vector3f velEcef;
 
     /// @brief GNSS position uncertainty (NED)
     ///
     /// The current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma).
-    Eigen::Vector3f posU{};
+    Eigen::Vector3f posU;
 
     /// @brief GNSS velocity uncertainty
     ///

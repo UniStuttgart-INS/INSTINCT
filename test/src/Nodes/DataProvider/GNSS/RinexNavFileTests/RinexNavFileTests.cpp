@@ -47,8 +47,8 @@ namespace nm = NAV::NodeManager;
 #include "v4_00/INS_1581_19P.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
-#pragma GCC diagnostic push
 #if defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wkeyword-macro"
     #pragma GCC diagnostic ignored "-Wmacro-redefined"
 #endif
@@ -57,9 +57,14 @@ namespace nm = NAV::NodeManager;
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
 #undef protected
 #undef private
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace NAV::TESTS::RinexNavFileTests
+{
+
+namespace
 {
 
 void testRinexNavFileFlow(const std::string& path, const GnssNavInfo& gnssNavInfoRef)
@@ -88,6 +93,8 @@ void testRinexNavFileFlow(const std::string& path, const GnssNavInfo& gnssNavInf
 
     REQUIRE(testFlow("test/flow/Nodes/DataProvider/GNSS/RinexNavFile.flow"));
 }
+
+} // namespace
 
 // ###########################################################################################################
 //                                                   v2.01

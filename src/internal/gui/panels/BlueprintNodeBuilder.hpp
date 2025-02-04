@@ -58,7 +58,7 @@ class BlueprintNodeBuilder
 
   private:
     /// @brief Stages in the build process
-    enum class Stage
+    enum class Stage : uint8_t
     {
         Invalid, ///< Invalid stage
         Begin,   ///< Beginning of node construction

@@ -27,7 +27,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
     std::vector<SatSigId> resetThisEpoch;
 
     auto searchCycleSlipAlreadyFound = [&cycleSlips](const SatSigId& satSigId) {
-        return std::find_if(cycleSlips.begin(), cycleSlips.end(), [&](const Result& cycleSlip) {
+        return std::ranges::find_if(cycleSlips, [&](const Result& cycleSlip) {
             if (const auto* s = std::get_if<CycleSlipLossOfLockIndicator>(&cycleSlip)) { return s->signal == satSigId; }
             if (const auto* s = std::get_if<CycleSlipSingleFrequency>(&cycleSlip)) { return s->signal == satSigId; }
             return false;
@@ -64,7 +64,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
                     LOG_DATA("{}:   [{}] LLI check passed", nameId, SatSigId(signal.code, obs.satId.satNum));
                 }
             }
-            auto lambda = InsConst<double>::C / satSigId.freq().getFrequency(obs.freqNum);
+            auto lambda = InsConst::C / satSigId.freq().getFrequency(obs.freqNum);
 
             auto result = _singleFrequencyDetector.checkForCycleSlip(satSigId, insTime,
                                                                      signal.measurement.value * lambda,
@@ -95,7 +95,7 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
         if (obs.signals.size() >= 2)
         {
             // Signal with largest frequency, e.g. L1
-            auto signal1 = std::max_element(obs.signals.begin(), obs.signals.end(), [&obs](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
+            auto signal1 = std::ranges::max_element(obs.signals, [&obs](const SatelliteObservation::Signal& s1, const SatelliteObservation::Signal& s2) {
                 return s1.code.getFrequency().getFrequency(obs.freqNum) < s2.code.getFrequency().getFrequency(obs.freqNum);
             });
             // Signal with lower frequency, e.g. L2/L5
@@ -107,8 +107,8 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
                 auto satSigId2 = SatSigId(signal2.code, obs.satId.satNum);
 
                 auto key = DualFrequencyCombination{ .satId = obs.satId, .sig1 = signal1->code, .sig2 = signal2.code };
-                auto lambda1 = InsConst<double>::C / satSigId1.freq().getFrequency(obs.freqNum);
-                auto lambda2 = InsConst<double>::C / satSigId2.freq().getFrequency(obs.freqNum);
+                auto lambda1 = InsConst::C / satSigId1.freq().getFrequency(obs.freqNum);
+                auto lambda2 = InsConst::C / satSigId2.freq().getFrequency(obs.freqNum);
 
                 auto result = _dualFrequencyDetector.checkForCycleSlip(key, insTime,
                                                                        signal1->measurement.value * lambda1 - signal2.measurement.value * lambda2,
@@ -180,11 +180,11 @@ std::vector<CycleSlipDetector::Result> CycleSlipDetector::checkForCycleSlip(InsT
         for (const auto& signal : obs.signals)
         {
             auto satSigId = SatSigId(signal.code, obs.satId.satNum);
-            auto iter = std::find(resetThisEpoch.begin(), resetThisEpoch.end(), satSigId);
+            auto iter = std::ranges::find(resetThisEpoch, satSigId);
             if (iter != resetThisEpoch.end())
             {
                 resetSignal(satSigId);
-                auto lambda = InsConst<double>::C / satSigId.freq().getFrequency(obs.freqNum);
+                auto lambda = InsConst::C / satSigId.freq().getFrequency(obs.freqNum);
                 _singleFrequencyDetector.addMeasurement(satSigId, insTime, signal.measurement.value * lambda);
             }
         }

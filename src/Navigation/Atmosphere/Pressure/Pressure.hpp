@@ -13,11 +13,14 @@
 
 #pragma once
 
+#include <cstdint>
+#include <fmt/format.h>
+
 namespace NAV
 {
 
 /// Available pressure Models
-enum class PressureModel : int
+enum class PressureModel : uint8_t
 {
     None,    ///< No pressure model
     ConstNN, ///< Constant value at zero altitude
@@ -44,3 +47,22 @@ bool ComboPressureModel(const char* label, PressureModel& pressureModel);
 [[nodiscard]] double calcTotalPressure(double altitudeMSL, PressureModel pressureModel);
 
 } // namespace NAV
+
+#ifndef DOXYGEN_IGNORE
+
+/// @brief Formatter
+template<>
+struct fmt::formatter<NAV::PressureModel> : fmt::formatter<std::string>
+{
+    /// @brief Defines how to format structs
+    /// @param[in] data Struct to format
+    /// @param[in, out] ctx Format context
+    /// @return Output iterator
+    template<typename FormatContext>
+    auto format(const NAV::PressureModel& data, FormatContext& ctx) const
+    {
+        return fmt::formatter<std::string>::format(NAV::to_string(data), ctx);
+    }
+};
+
+#endif

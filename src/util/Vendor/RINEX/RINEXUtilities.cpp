@@ -39,12 +39,12 @@ void ObsHeader::reset()
 bool ObsHeader::addObsType(const Code& code, ObsType type)
 {
     auto& obsDescriptions = systemObsTypes[code.getFrequency().getSatSys()];
-    if (std::find_if(obsDescriptions.begin(), obsDescriptions.end(), [&code, &type](const auto& obsDesc) {
+    if (std::ranges::find_if(obsDescriptions, [&code, &type](const auto& obsDesc) {
             return obsDesc.code == code && obsDesc.type == type;
         })
         == obsDescriptions.end())
     {
-        obsDescriptions.push_back(ObservationDescription{ type, code });
+        obsDescriptions.push_back(ObservationDescription{ .type = type, .code = code });
         return true;
     }
     return false;
@@ -294,7 +294,7 @@ std::string ObsHeader::headerLineEndOfHeader()
     return fmt::format("{X:60}{label:<20}\n", "X"_a = "", "label"_a = "END OF HEADER");
 }
 
-std::string ObsHeader::epochRecordLine(const InsTime& epochTime) const
+std::string ObsHeader::epochRecordLine(const InsTime& epochTime, size_t nSatellites) const
 {
     auto timeYMDHMS = epochTime.toYMDHMS(timeSys, 7);
     return fmt::format("> {y:4d} {m:2d} {d:2d} {h:2d} {min:2d}{sec:11.7f}  0{numSat:3d}{X:6}{X:15}\n", "X"_a = "",
@@ -304,7 +304,7 @@ std::string ObsHeader::epochRecordLine(const InsTime& epochTime) const
                        "h"_a = timeYMDHMS.hour,
                        "min"_a = timeYMDHMS.min,
                        "sec"_a = static_cast<double>(timeYMDHMS.sec),
-                       "numSat"_a = satellites.size());
+                       "numSat"_a = nSatellites);
 }
 
 void to_json(json& j, const ObsHeader& obj)

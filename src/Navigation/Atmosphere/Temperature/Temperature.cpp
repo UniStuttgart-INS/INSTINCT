@@ -9,6 +9,8 @@
 #include "Temperature.hpp"
 
 #include "internal/gui/widgets/EnumCombo.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 #include "util/Logger.hpp"
 #include "util/Assert.h"
 
@@ -17,49 +19,85 @@
 namespace NAV
 {
 
-const char* to_string(TemperatureModel temperatureModel)
+bool ComboTemperatureModel(const char* label, TemperatureModel& temperatureModel)
+{
+    bool changed = false;
+    changed |= gui::widgets::EnumCombo(label, temperatureModel._model);
+    if (temperatureModel._model == TemperatureModel::Model::Const)
+    {
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(62.0F * gui::NodeEditorApplication::windowFontRatio());
+        changed |= ImGui::InputDoubleL(fmt::format("##TemperatureModel constTemp {}", label).c_str(), &temperatureModel._constantTemperature,
+                                       0.0, std::numeric_limits<double>::max(), 0.0, 0.0, "%.1f K");
+        ImGui::SameLine();
+        ImGui::Text("%.1f°C", temperatureModel._constantTemperature - 273.15);
+    }
+    return changed;
+}
+
+double TemperatureModel::calcAbsoluteTemperature(double altitudeMSL) const
+{
+    switch (_model)
+    {
+    case TemperatureModel::Model::Const:
+        return _constantTemperature;
+    case TemperatureModel::Model::ISA:
+        return calcAbsoluteTemperatureStAtm(altitudeMSL);
+    case TemperatureModel::Model::GPT2:
+    case TemperatureModel::Model::GPT3:
+        LOG_CRITICAL("GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
+        break;
+    case TemperatureModel::Model::None:
+    case TemperatureModel::Model::COUNT:
+        break;
+    }
+
+    return 0.0;
+}
+
+const char* to_string(const TemperatureModel& temperatureModel)
+{
+    return to_string(temperatureModel._model);
+}
+
+const char* to_string(TemperatureModel::Model temperatureModel)
 {
     switch (temperatureModel)
     {
-    case TemperatureModel::None:
+    case TemperatureModel::Model::None:
         return "None";
-    case TemperatureModel::ConstNN:
-        return "Const T0";
-    case TemperatureModel::ISA:
+    case TemperatureModel::Model::Const:
+        return "Const";
+    case TemperatureModel::Model::ISA:
         return "ISA";
-    case TemperatureModel::GPT2:
+    case TemperatureModel::Model::GPT2:
         return "GPT2";
-    case TemperatureModel::GPT3:
+    case TemperatureModel::Model::GPT3:
         return "GPT3";
-    case TemperatureModel::COUNT:
+    case TemperatureModel::Model::COUNT:
         break;
     }
     return "";
 }
 
-bool ComboTemperatureModel(const char* label, TemperatureModel& temperatureModel)
+void to_json(json& j, const TemperatureModel& obj)
 {
-    return gui::widgets::EnumCombo(label, temperatureModel);
+    j = json{
+        { "model", to_string(obj._model) },
+        { "constantTemperature", obj._constantTemperature },
+    };
 }
 
-double calcAbsoluteTemperature(double altitudeMSL, TemperatureModel temperatureModel)
+void from_json(const json& j, TemperatureModel& obj)
 {
-    switch (temperatureModel)
-    {
-    case TemperatureModel::ConstNN:
-        return calcAbsoluteTemperatureStAtm(0);
-    case TemperatureModel::ISA:
-        return calcAbsoluteTemperatureStAtm(altitudeMSL);
-    case TemperatureModel::GPT2:
-    case TemperatureModel::GPT3:
-        LOG_CRITICAL("GPT2/GPT3 Model needs to be called separately because of parameter lookup.");
-        break;
-    case TemperatureModel::None:
-    case TemperatureModel::COUNT:
-        break;
-    }
+    auto model = j.at("model").get<std::string>();
+    if (model == "None") { obj._model = TemperatureModel::Model::None; }
+    else if (model == "Const") { obj._model = TemperatureModel::Model::Const; }
+    else if (model == "ISA") { obj._model = TemperatureModel::Model::ISA; }
+    else if (model == "GPT2") { obj._model = TemperatureModel::Model::GPT2; }
+    else if (model == "GPT3") { obj._model = TemperatureModel::Model::GPT3; }
 
-    return 0.0;
+    j.at("constantTemperature").get_to(obj._constantTemperature);
 }
 
 } // namespace NAV

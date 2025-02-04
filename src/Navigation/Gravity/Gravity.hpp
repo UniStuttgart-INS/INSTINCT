@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <Eigen/Dense>
 #include <Eigen/Core>
 
@@ -26,7 +27,7 @@
 namespace NAV
 {
 /// Available Gravitation Models
-enum class GravitationModel : int
+enum class GravitationModel : uint8_t
 {
     None,         ///< Gravity Model turned off
     WGS84,        ///< World Geodetic System 1984
@@ -53,20 +54,20 @@ bool ComboGravitationModel(const char* label, GravitationModel& gravitationModel
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_SomiglianaAltitude(const Scalar& latitude, const Scalar& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
     auto g_0 = 9.7803253359 * (1.0 + 1.931853e-3 * std::pow(std::sin(latitude), 2))
-               / std::sqrt(1.0 - InsConst<Scalar>::WGS84::e_squared * std::pow(std::sin(latitude), 2));
+               / std::sqrt(1.0 - InsConst::WGS84::e_squared * std::pow(std::sin(latitude), 2));
 
     // Altitude compensation (Matlab example from Chapter 6_GNSS_INS_1 - glocal.m)
     auto k = 1
-             - (2 * altitude / InsConst<Scalar>::WGS84::a)
-                   * (1 + InsConst<Scalar>::WGS84::f
-                      + (std::pow(InsConst<Scalar>::omega_ie * InsConst<Scalar>::WGS84::a, 2))
-                            * (InsConst<Scalar>::WGS84::b / InsConst<Scalar>::WGS84::MU))
-             + 3 * std::pow(altitude / InsConst<Scalar>::WGS84::a, 2);
+             - (2 * altitude / InsConst::WGS84::a)
+                   * (1 + InsConst::WGS84::f
+                      + (std::pow(InsConst::omega_ie * InsConst::WGS84::a, 2))
+                            * (InsConst::WGS84::b / InsConst::WGS84::MU))
+             + 3 * std::pow(altitude / InsConst::WGS84::a, 2);
 
     return { 0.0, 0.0, k * g_0 };
 }
@@ -78,18 +79,18 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Skydel API plug-in 'skydel_plugin/source/library/inertial_math/Sources/source/gravity.cpp'
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84_Skydel(const Scalar& latitude, const Scalar& altitude)
 {
     // geocentric latitude determination from geographic latitude
-    auto latitudeGeocentric = std::atan((std::pow(InsConst<Scalar>::WGS84::b, 2.0) / std::pow(InsConst<Scalar>::WGS84::a, 2.0)) * std::tan(latitude));
+    auto latitudeGeocentric = std::atan((std::pow(InsConst::WGS84::b, 2.0) / std::pow(InsConst::WGS84::a, 2.0)) * std::tan(latitude));
     // effective radius determination, i.e. earth radius on WGS84 spheroid plus local altitude --> possible error!! altitude in lla should be added rather than subtracted!
-    auto radiusSpheroid = InsConst<Scalar>::WGS84::a * (1.0 - InsConst<Scalar>::WGS84::f * std::pow(std::sin(latitudeGeocentric), 2.0)) - altitude;
+    auto radiusSpheroid = InsConst::WGS84::a * (1.0 - InsConst::WGS84::f * std::pow(std::sin(latitudeGeocentric), 2.0)) - altitude;
 
     // Derivation of gravity, i.e. gravitational potential derived after effective radius
-    auto gravitationMagnitude = InsConst<Scalar>::WGS84::MU * std::pow(radiusSpheroid, -2.0)
-                                - 3 * InsConst<Scalar>::WGS84::MU * InsConst<Scalar>::WGS84::J2 * std::pow(InsConst<Scalar>::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
-                                - std::pow(InsConst<Scalar>::omega_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+    auto gravitationMagnitude = InsConst::WGS84::MU * std::pow(radiusSpheroid, -2.0)
+                                - 3 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
+                                - std::pow(InsConst::omega_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     return { 0, 0, gravitationMagnitude };
 }
@@ -101,18 +102,18 @@ template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<S
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See 'INS-Projects/INSTINCT/SpecificLiterature/GravityPotentialWGS84' in NC folder (eq. (3) derived after 'r')
-template<typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+template<std::floating_point Scalar>
 [[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84(const Scalar& latitude, const Scalar& altitude)
 {
     // Geocentric latitude determination from geographic latitude
-    auto latitudeGeocentric = std::atan((std::pow(InsConst<Scalar>::WGS84::b, 2.0) / std::pow(InsConst<Scalar>::WGS84::a, 2.0)) * std::tan(latitude));
+    auto latitudeGeocentric = std::atan((std::pow(InsConst::WGS84::b, 2.0) / std::pow(InsConst::WGS84::a, 2.0)) * std::tan(latitude));
     // Radius of spheroid determination
-    auto radiusSpheroid = InsConst<Scalar>::WGS84::a * (1.0 - InsConst<Scalar>::WGS84::f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
+    auto radiusSpheroid = InsConst::WGS84::a * (1.0 - InsConst::WGS84::f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
 
     // Magnitude of the gravity, i.e. without orientation
-    auto gravitationMagnitude = InsConst<Scalar>::WGS84::MU * std::pow(radiusSpheroid, -2.0)
-                                - 3 * InsConst<Scalar>::WGS84::MU * InsConst<Scalar>::WGS84::J2 * std::pow(InsConst<Scalar>::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
-                                - std::pow(InsConst<Scalar>::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+    auto gravitationMagnitude = InsConst::WGS84::MU * std::pow(radiusSpheroid, -2.0)
+                                - 3 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
+                                - std::pow(InsConst::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     return { 0, 0, gravitationMagnitude };
 }
@@ -174,15 +175,15 @@ template<typename Derived>
             auto md = static_cast<double>(m);
 
             // Gravity vector from differentiation of the gravity potential in spherical coordinates (see 'GUT User Guide' eq. 7.4.2)
-            n_gravitation(0) += std::pow((InsConst<typename Derived::Scalar>::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
-            n_gravitation(1) += std::pow((InsConst<typename Derived::Scalar>::WGS84::a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
-            n_gravitation(2) += (nd + 1.0) * std::pow((InsConst<typename Derived::Scalar>::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
+            n_gravitation(0) += std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
+            n_gravitation(1) += std::pow((InsConst::WGS84::a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
+            n_gravitation(2) += (nd + 1.0) * std::pow((InsConst::WGS84::a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
         }
     }
 
-    return { -InsConst<typename Derived::Scalar>::WGS84::MU / (radius * radius) * n_gravitation(0),
-             (1.0 / std::sin(elevation)) * (-InsConst<typename Derived::Scalar>::WGS84::MU / (radius * radius)) * n_gravitation(1),
-             InsConst<typename Derived::Scalar>::WGS84::MU / (radius * radius) * (1.0 + n_gravitation(2)) };
+    return { -InsConst::WGS84::MU / (radius * radius) * n_gravitation(0),
+             (1.0 / std::sin(elevation)) * (-InsConst::WGS84::MU / (radius * radius)) * n_gravitation(1),
+             InsConst::WGS84::MU / (radius * radius) * (1.0 + n_gravitation(2)) };
 }
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth)

@@ -26,6 +26,13 @@ using json = nlohmann::json; ///< json namespace
 
 namespace Eigen
 {
+using Array5d = Array<double, 5, 1>;   ///< Double 5x1 Eigen::Array
+using Array6d = Array<double, 6, 1>;   ///< Double 6x1 Eigen::Array
+using Vector5d = Matrix<double, 5, 1>; ///< Double 5x1 Eigen::Vector
+using Vector6d = Matrix<double, 6, 1>; ///< Double 6x1 Eigen::Vector
+using Matrix5d = Matrix<double, 5, 5>; ///< Double 5x5 Eigen::Matrix
+using Matrix6d = Matrix<double, 6, 6>; ///< Double 6x6 Eigen::Matrix
+
 using Array3ld = Array<long double, 3, 1>; ///< Long double 3x1 Eigen::Array
 
 using Vector3ld = Matrix<long double, 3, 1>; ///< Long double 3x1 Eigen::Vector
@@ -135,7 +142,7 @@ void removeRows(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& rowIn
     rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
     for (int i = 0; i < matrix.rows(); i++)
     {
-        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        if (std::ranges::find(rowIndices, i) == rowIndices.end())
         {
             rowIndicesToKeep.push_back(i);
         }
@@ -171,7 +178,7 @@ void removeCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>& colIn
     colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
     for (int i = 0; i < matrix.cols(); i++)
     {
-        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        if (std::ranges::find(colIndices, i) == colIndices.end())
         {
             colIndicesToKeep.push_back(i);
         }
@@ -216,7 +223,7 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
     rowIndicesToKeep.reserve(static_cast<size_t>(matrix.rows()) - rowIndices.size());
     for (int i = 0; i < matrix.rows(); i++)
     {
-        if (std::find(rowIndices.begin(), rowIndices.end(), i) == rowIndices.end())
+        if (std::ranges::find(rowIndices, i) == rowIndices.end())
         {
             rowIndicesToKeep.push_back(i);
         }
@@ -226,7 +233,7 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
     colIndicesToKeep.reserve(static_cast<size_t>(matrix.cols()) - colIndices.size());
     for (int i = 0; i < matrix.cols(); i++)
     {
-        if (std::find(colIndices.begin(), colIndices.end(), i) == colIndices.end())
+        if (std::ranges::find(colIndices, i) == colIndices.end())
         {
             colIndicesToKeep.push_back(i);
         }

@@ -27,8 +27,8 @@ namespace NAV
 namespace ButcherTableau
 {
 
-#pragma GCC diagnostic push
-#if !defined(__clang__)
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // NOLINT(clang-diagnostic-unknown-warning-option)
 #endif
 
@@ -40,11 +40,10 @@ namespace ButcherTableau
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Z, typename Scalar, size_t s, std::array<std::array<Scalar, s + 1>, s + 1> butcherTableau,
-         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-inline Y RungeKuttaExplicit(const Y& y_n, const std::array<Z, s> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n)
+template<typename Y, typename Z, std::floating_point Scalar, size_t s, std::array<std::array<Scalar, s + 1>, s + 1> butcherTableau>
+inline Y RungeKuttaExplicit(const Y& y_n, const std::array<Z, s>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n)
 {
-    static_assert(gcem::abs(static_cast<Scalar>(1.0) - std::accumulate(butcherTableau[s].begin(), butcherTableau[s].end(), static_cast<Scalar>(0.0))) < 1e-8,
+    static_assert(gcem::abs(static_cast<Scalar>(1.0) - std::accumulate(butcherTableau[s].begin(), butcherTableau[s].end(), static_cast<Scalar>(0.0))) < 1e-8, // NOLINT(boost-use-ranges,modernize-use-ranges) // There is no ranges::accumulate
                   "The sum of the last row in the Butcher tableau has to be 1");
     for (size_t r = 0; r <= s; ++r)
     {
@@ -103,7 +102,9 @@ inline Y RungeKuttaExplicit(const Y& y_n, const std::array<Z, s> z, const Scalar
     return y_n + h * sum_b;
 }
 
-#pragma GCC diagnostic pop
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 /// @brief Butcher tableau for Runge-Kutta 1st order (explicit) / (Forward) Euler method
 template<typename Scalar>
@@ -170,8 +171,8 @@ constexpr std::array<std::array<Scalar, 5>, 5> RK4 = { { { 0.0, /*|*/ },
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta1(const Y& y_n, const std::array<Z, 1> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta1(const Y& y_n, const std::array<Z, 1>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 1, ButcherTableau::RK1<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
@@ -199,8 +200,8 @@ Y RungeKutta1(const Y& y_n, const std::array<Z, 1> z, const Scalar& h, const aut
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta2(const Y& y_n, const std::array<Z, 2> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta2(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 2, ButcherTableau::RK2<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
@@ -228,8 +229,8 @@ Y RungeKutta2(const Y& y_n, const std::array<Z, 2> z, const Scalar& h, const aut
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y Heun2(const Y& y_n, const std::array<Z, 2> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y Heun2(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 2, ButcherTableau::Heun2<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
@@ -259,8 +260,8 @@ Y Heun2(const Y& y_n, const std::array<Z, 2> z, const Scalar& h, const auto& f, 
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta3(const Y& y_n, const std::array<Z, 3> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta3(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 3, ButcherTableau::RK3<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
@@ -290,8 +291,8 @@ Y RungeKutta3(const Y& y_n, const std::array<Z, 3> z, const Scalar& h, const aut
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y Heun3(const Y& y_n, const std::array<Z, 3> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y Heun3(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 3, ButcherTableau::Heun3<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
@@ -323,8 +324,8 @@ Y Heun3(const Y& y_n, const std::array<Z, 3> z, const Scalar& h, const auto& f, 
 /// @param[in] f Time derivative function
 /// @param[in] constParam Constant parameters passed to each time derivative function call
 /// @param[in] t_n Time t_n
-template<typename Y, typename Z, typename Scalar, typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta4(const Y& y_n, const std::array<Z, 4> z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta4(const Y& y_n, const std::array<Z, 4>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 4, ButcherTableau::RK4<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
