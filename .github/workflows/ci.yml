@@ -218,23 +218,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: documentation
+          path: public/
       - name: Download coverage report
         uses: actions/download-artifact@v4
         with:
           name: coverage-report
-      - name: Move documentation to GitHub pages folder
-        if: ${{ github.ref == 'refs/heads/fix-ci' }}
-        run: |
-          ls -la ./
-          ls -la ./public
-          # mv ./build/doc/html ./public
-      # - name: Move coverage report to GitHub pages folder
-      #   if: ${{ github.ref == 'refs/heads/fix-ci' }}
-      #   run: |
-      #     mkdir -p ./public
-      #     mv ./build/coverage ./public/coverage
-      # - name: Deploy
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./public
+          path: public/coverage/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
