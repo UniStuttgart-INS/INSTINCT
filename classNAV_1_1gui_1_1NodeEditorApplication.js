@@ -1,5 +1,14 @@
 var classNAV_1_1gui_1_1NodeEditorApplication =
 [
+    [ "BottomViewTabItem", "classNAV_1_1gui_1_1NodeEditorApplication.html#a64a771741070e6f37080264f37174104", [
+      [ "None", "classNAV_1_1gui_1_1NodeEditorApplication.html#a64a771741070e6f37080264f37174104a6adf97f83acf6453d4a6a4b1070f3754", null ],
+      [ "LogOutput", "classNAV_1_1gui_1_1NodeEditorApplication.html#a64a771741070e6f37080264f37174104a85ed6eb5e1325951879b8a78faa2ba96", null ]
+    ] ],
+    [ "Colors", "classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7c", [
+      [ "COLOR_GROUP_HEADER_TEXT", "classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7cac68c1876119aa549cfb96af76813f0b9", null ],
+      [ "COLOR_GROUP_HEADER_BG", "classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7ca9b4f526ce74400cd836aca9fe9825c4f", null ],
+      [ "COLOR_GROUP_OUTER_BORDER", "classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7ca47e0846aabb1d8f74675eba861b8482f", null ]
+    ] ],
     [ "NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html#aacd4d0ad6460e622fadf19a91d08c124", null ],
     [ "~NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html#acedd1f558988f7959dad542526cf0095", null ],
     [ "NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html#a82a71e94c6ed0644465cbe4635335a42", null ],
@@ -13,6 +22,7 @@ var classNAV_1_1gui_1_1NodeEditorApplication =
     [ "OnStop", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8fa3255f76ce1c5c23606cfe5c9785ce", null ],
     [ "operator=", "classNAV_1_1gui_1_1NodeEditorApplication.html#a28972c051fb0a1e5dbb3fa4c4ccbf7f4", null ],
     [ "operator=", "classNAV_1_1gui_1_1NodeEditorApplication.html#ad8ecb7b22ae6307d2891fcb22597c31e", null ],
+    [ "panelFontRatio", "classNAV_1_1gui_1_1NodeEditorApplication.html#ab61204292f6e9b43e51a5b6049cb9ee4", null ],
     [ "ShowClearNodesRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#ab323197536ad5b4f82f8b6f226c634a0", null ],
     [ "ShowLoadRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8b2afcd6377078d8d60c5e6a13d5cc1d", null ],
     [ "ShowQuitRequested", "classNAV_1_1gui_1_1NodeEditorApplication.html#a8e7784c3d13e564ef8fba9b0e9abf295", null ],
@@ -22,12 +32,23 @@ var classNAV_1_1gui_1_1NodeEditorApplication =
     [ "windowFontRatio", "classNAV_1_1gui_1_1NodeEditorApplication.html#a39ca449393815b88e4a95a3dccb4ad15", null ],
     [ "windows::ShowFontSizeEditor", "classNAV_1_1gui_1_1NodeEditorApplication.html#a86bf1839a77fdafa8a7a4bc1c0973b48", null ],
     [ "_showQueueSizeOnPins", "classNAV_1_1gui_1_1NodeEditorApplication.html#a888821a51fb66ce685b2f195208104d2", null ],
+    [ "BOTTOM_VIEW_COLLAPSED_MIN_HEIGHT", "classNAV_1_1gui_1_1NodeEditorApplication.html#ac48f4fef68ed6be51b01d0724de645a5", null ],
+    [ "BOTTOM_VIEW_UNCOLLAPSED_MIN_HEIGHT", "classNAV_1_1gui_1_1NodeEditorApplication.html#adea04bf1e3524c7c2a03fce0da672f80", null ],
+    [ "bottomViewHeight", "classNAV_1_1gui_1_1NodeEditorApplication.html#a0d592103a1486c3e4ace14df75c403a6", null ],
+    [ "bottomViewSelectedTab", "classNAV_1_1gui_1_1NodeEditorApplication.html#aedf7d450aee434d86f831d3ec6ac87c5", null ],
     [ "frameCountNavigate", "classNAV_1_1gui_1_1NodeEditorApplication.html#ae894355927e1602b958aa740757d8746", null ],
+    [ "globalAction", "classNAV_1_1gui_1_1NodeEditorApplication.html#a4162e7a05d56721b8ec9231d65ce0823", null ],
+    [ "hideFPS", "classNAV_1_1gui_1_1NodeEditorApplication.html#ae1875ef7b3e1a2c1fd3a79b3300b7871", null ],
+    [ "hideLeftPane", "classNAV_1_1gui_1_1NodeEditorApplication.html#a609b3d112116981c29f71e936e64a415", null ],
     [ "imPlotReferenceStyle", "classNAV_1_1gui_1_1NodeEditorApplication.html#a0b2f1970d4b57aca4888ae89cde5d1d0", null ],
     [ "leftPaneWidth", "classNAV_1_1gui_1_1NodeEditorApplication.html#a1f43b417c8a67d6b4d72fccb8205311f", null ],
+    [ "m_colors", "classNAV_1_1gui_1_1NodeEditorApplication.html#a58c065ec119446ea71f6a8617337931c", null ],
+    [ "m_colorsNames", "classNAV_1_1gui_1_1NodeEditorApplication.html#ab593f77843b82e2ce3631bf5d0683ebd", null ],
+    [ "m_HeaderBackground", "classNAV_1_1gui_1_1NodeEditorApplication.html#a923b95b2cec128214144dbc1dd5250a2", null ],
     [ "m_InsLogo", "classNAV_1_1gui_1_1NodeEditorApplication.html#a6bc42ce560399c542f54219c07870ccd", null ],
     [ "m_InstinctLogo", "classNAV_1_1gui_1_1NodeEditorApplication.html#a1e5e8e2b5ef4a45b6b5152a3e597b386", null ],
     [ "m_RoseFigure", "classNAV_1_1gui_1_1NodeEditorApplication.html#a65b0c959685acdec9b01d360b5d31d34", null ],
+    [ "m_SaveButtonImage", "classNAV_1_1gui_1_1NodeEditorApplication.html#adfb3a87957f55fd2c1aea81a0b9bccd9", null ],
     [ "menuBarHeight", "classNAV_1_1gui_1_1NodeEditorApplication.html#af5ce1ea722dd0229b040571de9201483", null ],
     [ "rightPaneWidth", "classNAV_1_1gui_1_1NodeEditorApplication.html#ac17050a079c0cfe7e5c68896592c7123", null ],
     [ "SPLITTER_THICKNESS", "classNAV_1_1gui_1_1NodeEditorApplication.html#a214349b3769e4115e44ab37b1df3afb1", null ]

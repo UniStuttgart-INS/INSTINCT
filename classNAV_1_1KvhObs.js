@@ -4,6 +4,7 @@ var classNAV_1_1KvhObs =
     [ "KvhObs", "classNAV_1_1KvhObs.html#afef361beb0309f6898b780dd22554260", null ],
     [ "GetStaticDataDescriptors", "classNAV_1_1KvhObs.html#a5e08bfde1cc8a38c3661be79f1bcb55a", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1KvhObs.html#a5cbcbd640a564651c84ea554c16912a7", null ],
+    [ "getType", "classNAV_1_1KvhObs.html#a16ce39a3db101ad742c75bafc1219658", null ],
     [ "getValueAt", "classNAV_1_1KvhObs.html#afb6dec396e07c9a8fa8a018af5da6dfe", null ],
     [ "parentTypes", "classNAV_1_1KvhObs.html#a0bb1c9c0efa7e578f9b59e05f04d92d4", null ],
     [ "staticDataDescriptors", "classNAV_1_1KvhObs.html#a94c5c8c4278860db5d82d7f3093881d6", null ],

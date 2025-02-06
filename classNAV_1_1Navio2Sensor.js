@@ -1,16 +1,38 @@
 var classNAV_1_1Navio2Sensor =
 [
+    [ "ImuType", "classNAV_1_1Navio2Sensor.html#a68ca3d58596700a430d34865adc1bfa0", [
+      [ "MPU", "classNAV_1_1Navio2Sensor.html#a68ca3d58596700a430d34865adc1bfa0a84048eba9348ab79af5fd17e04c49929", null ],
+      [ "LSM", "classNAV_1_1Navio2Sensor.html#a68ca3d58596700a430d34865adc1bfa0a020dba91aec8db64e3015d9e5f41fc40", null ]
+    ] ],
     [ "Navio2Sensor", "classNAV_1_1Navio2Sensor.html#a58dfba7d479ea2d435826c84cf564326", null ],
     [ "~Navio2Sensor", "classNAV_1_1Navio2Sensor.html#a7ca7548fa8b02209e9b8f071b3a3b020", null ],
     [ "Navio2Sensor", "classNAV_1_1Navio2Sensor.html#ad90d474e2176f678e14170c84293ff2e", null ],
     [ "Navio2Sensor", "classNAV_1_1Navio2Sensor.html#aa577e9ac45d93d2e9a1118d92e1ea6f0", null ],
     [ "category", "classNAV_1_1Navio2Sensor.html#a382bf9a585bf8404a185f7999deae68f", null ],
+    [ "deinitialize", "classNAV_1_1Navio2Sensor.html#ae0a661e5fb02977533cb9e41d7115df1", null ],
     [ "guiConfig", "classNAV_1_1Navio2Sensor.html#a6254aceea1a533d2ac4f021a03f2a432", null ],
+    [ "initialize", "classNAV_1_1Navio2Sensor.html#a0f8acb50bf9419049cb8952911a3b85a", null ],
     [ "operator=", "classNAV_1_1Navio2Sensor.html#ad32bc08e81be2fd718011642e3d0d198", null ],
     [ "operator=", "classNAV_1_1Navio2Sensor.html#ac843a81834130569508c9b8de9aeb183", null ],
+    [ "readImuThread", "classNAV_1_1Navio2Sensor.html#a0bee01ca1c2e5d47eac066e021068763", null ],
     [ "resetNode", "classNAV_1_1Navio2Sensor.html#a62d3c6fcdfb94b66a191b92e8bc78018", null ],
     [ "restore", "classNAV_1_1Navio2Sensor.html#a9025fdc1423e418f013e82cb4f8b7f4a", null ],
     [ "save", "classNAV_1_1Navio2Sensor.html#a67bf7e2dc7ec49ca6c74e630be2b9f4b", null ],
     [ "type", "classNAV_1_1Navio2Sensor.html#a1d9c5f61b35760a279e1f4fba39e66e0", null ],
-    [ "typeStatic", "classNAV_1_1Navio2Sensor.html#a1c4657e5e22676d07d7f0e9ea60549d2", null ]
+    [ "typeStatic", "classNAV_1_1Navio2Sensor.html#a1c4657e5e22676d07d7f0e9ea60549d2", null ],
+    [ "_ax", "classNAV_1_1Navio2Sensor.html#a607a2a73fbcae61b307bc60f7549a6ec", null ],
+    [ "_ay", "classNAV_1_1Navio2Sensor.html#a162e099a623d6fab6d78604b79b4252c", null ],
+    [ "_az", "classNAV_1_1Navio2Sensor.html#a1ab189d0cddfa85876c6d0a2ed6ec347", null ],
+    [ "_gx", "classNAV_1_1Navio2Sensor.html#ae5b27e0fea5e053e945c46c06519d67d", null ],
+    [ "_gy", "classNAV_1_1Navio2Sensor.html#aa6cb8fa1e568ca114f340dad1bb6837e", null ],
+    [ "_gz", "classNAV_1_1Navio2Sensor.html#aaf9fad7278d4949fb1de8d0cd0712623", null ],
+    [ "_imuType", "classNAV_1_1Navio2Sensor.html#ac8afefb408eb83f70fec2530b6c4026b", null ],
+    [ "_mx", "classNAV_1_1Navio2Sensor.html#a7bbcaba9775054368111f35777a595c7", null ],
+    [ "_my", "classNAV_1_1Navio2Sensor.html#a937314cf8f04adad61c62284394b9dec", null ],
+    [ "_mz", "classNAV_1_1Navio2Sensor.html#af0cf533108b8e110f0eec7c48a97e3d2", null ],
+    [ "_outputFrequency", "classNAV_1_1Navio2Sensor.html#a9a2cc6b4beb1077893db40a6a5646486", null ],
+    [ "_sensor", "classNAV_1_1Navio2Sensor.html#ae3753dc044296b7bb07ad2dc539936c3", null ],
+    [ "_startTime", "classNAV_1_1Navio2Sensor.html#ab05b1b1d17eceb30a4cbfd0abeaa3f5e", null ],
+    [ "_timer", "classNAV_1_1Navio2Sensor.html#a0601a83ce023e2de1ea5a46cc020240a", null ],
+    [ "OUTPUT_PORT_INDEX_IMU_OBS", "classNAV_1_1Navio2Sensor.html#a8251e2f3d7ec1e51e1b3b71bc13c92bd", null ]
 ];

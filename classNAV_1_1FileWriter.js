@@ -1,9 +1,9 @@
 var classNAV_1_1FileWriter =
 [
-    [ "FileType", "classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623", [
-      [ "NONE", "classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623ab50339a10e1de285ac99d4c3990b8693", null ],
-      [ "BINARY", "classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623a98ad0e8750ae10ad556ed7a62affb452", null ],
-      [ "ASCII", "classNAV_1_1FileWriter.html#a39fe4e126e5c5669e123167b3e6cf623ad2cd8253361a9c732d21ca1d336599cc", null ]
+    [ "FileType", "classNAV_1_1FileWriter.html#a0faae0292e0eb4366c6d6b828e179529", [
+      [ "NONE", "classNAV_1_1FileWriter.html#a0faae0292e0eb4366c6d6b828e179529ab50339a10e1de285ac99d4c3990b8693", null ],
+      [ "BINARY", "classNAV_1_1FileWriter.html#a0faae0292e0eb4366c6d6b828e179529a98ad0e8750ae10ad556ed7a62affb452", null ],
+      [ "ASCII", "classNAV_1_1FileWriter.html#a0faae0292e0eb4366c6d6b828e179529ad2cd8253361a9c732d21ca1d336599cc", null ]
     ] ],
     [ "~FileWriter", "classNAV_1_1FileWriter.html#a7e85130aefbf5c93108e14d69fbfddda", null ],
     [ "FileWriter", "classNAV_1_1FileWriter.html#a186489048d29692bb502c25ce1e7b92c", null ],

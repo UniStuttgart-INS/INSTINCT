@@ -10,7 +10,13 @@ var classNAV_1_1CommonLog =
     [ "initialize", "classNAV_1_1CommonLog.html#aac5be9f9fcd88cf882f9c0ab2f393def", null ],
     [ "operator=", "classNAV_1_1CommonLog.html#ace940ce81332f413e5e662cd9dcb2112", null ],
     [ "operator=", "classNAV_1_1CommonLog.html#a0c32a8ee46c5e7566a938a190f9320c3", null ],
-    [ "_originLatitude", "classNAV_1_1CommonLog.html#af6c1e2d275fa7b9cca9e9027064b3581", null ],
-    [ "_originLongitude", "classNAV_1_1CommonLog.html#a9028927bb4d23636b15ea3fcb3e46818", null ],
-    [ "_startTime", "classNAV_1_1CommonLog.html#ad83a57391312dbc16ae986986be748dc", null ]
+    [ "restore", "classNAV_1_1CommonLog.html#aed4540debeb46409804f1c85768931fa", null ],
+    [ "save", "classNAV_1_1CommonLog.html#ad611839c1337f28044dafc4dc0983735", null ],
+    [ "ShowOriginInput", "classNAV_1_1CommonLog.html#a3e7f507dc707addf1b25cb9f67abdc09", null ],
+    [ "_index", "classNAV_1_1CommonLog.html#a6e69edb3e50ee421b57c5a2fbc980653", null ],
+    [ "_mutex", "classNAV_1_1CommonLog.html#a4c16ddf7aa55337809095c4f8a13814c", null ],
+    [ "_originPosition", "classNAV_1_1CommonLog.html#abda0b41e9952014beb39d2741aecfd7c", null ],
+    [ "_startTime", "classNAV_1_1CommonLog.html#ad83a57391312dbc16ae986986be748dc", null ],
+    [ "_useGuiInputs", "classNAV_1_1CommonLog.html#ac20a9476b71e2b8d4fb7fa3111e9a3e9", null ],
+    [ "_wantsInit", "classNAV_1_1CommonLog.html#ae59c8ba3d641a9a73dd70c8d39e63145", null ]
 ];

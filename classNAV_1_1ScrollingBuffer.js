@@ -28,6 +28,7 @@ var classNAV_1_1ScrollingBuffer =
     [ "full", "classNAV_1_1ScrollingBuffer.html#a4ec7b2eeb9f884be0ec8dc3552f4fdd0", null ],
     [ "getRawString", "classNAV_1_1ScrollingBuffer.html#aadc1411da3c9f3ee23b39ef9549036a4", null ],
     [ "isInfiniteBuffer", "classNAV_1_1ScrollingBuffer.html#a0426c38283c5b64258b53f4694895580", null ],
+    [ "isScrolled", "classNAV_1_1ScrollingBuffer.html#a7d29dc647bf2089aba41da2c92574b12", null ],
     [ "max", "classNAV_1_1ScrollingBuffer.html#adc1ff82e7151f31aee96b02b76fc3146", null ],
     [ "min", "classNAV_1_1ScrollingBuffer.html#aac4646d0f7b8009ec1a8533bc1646961", null ],
     [ "offset", "classNAV_1_1ScrollingBuffer.html#a3587dda9ec09602e66d1469f5f83ca9d", null ],
@@ -40,5 +41,10 @@ var classNAV_1_1ScrollingBuffer =
     [ "reserve", "classNAV_1_1ScrollingBuffer.html#a1a8014770783e626c0f3902f7ecee0ec", null ],
     [ "resize", "classNAV_1_1ScrollingBuffer.html#aca36b0063943c1c6a8cdac606b4cf721", null ],
     [ "size", "classNAV_1_1ScrollingBuffer.html#a7992c79c5438d81b71ede384b6c88d07", null ],
-    [ "operator<<", "classNAV_1_1ScrollingBuffer.html#aa03752f9895afb2a254bcba69460cdba", null ]
+    [ "operator<<", "classNAV_1_1ScrollingBuffer.html#aa03752f9895afb2a254bcba69460cdba", null ],
+    [ "_data", "classNAV_1_1ScrollingBuffer.html#a489d08e12880426914b38da11d62ebf9", null ],
+    [ "_dataEnd", "classNAV_1_1ScrollingBuffer.html#a4d32b18ea1cf848bcd1cd4941002dee8", null ],
+    [ "_dataStart", "classNAV_1_1ScrollingBuffer.html#ac384ac53cf0bcf76f6a5e4a86fa72d9b", null ],
+    [ "_infiniteBuffer", "classNAV_1_1ScrollingBuffer.html#a81ad2feca744059646c3a645cdd85771", null ],
+    [ "_maxSize", "classNAV_1_1ScrollingBuffer.html#a08d554057fdc73a1e35eecfaa02390fb", null ]
 ];

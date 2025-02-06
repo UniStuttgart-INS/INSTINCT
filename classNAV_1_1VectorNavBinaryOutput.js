@@ -3,6 +3,7 @@ var classNAV_1_1VectorNavBinaryOutput =
     [ "VectorNavBinaryOutput", "classNAV_1_1VectorNavBinaryOutput.html#a2f248b8acf9a8ccacc4a4a1bd66611db", null ],
     [ "GetStaticDataDescriptors", "classNAV_1_1VectorNavBinaryOutput.html#a4902921223609b05d1343e07494d3911", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1VectorNavBinaryOutput.html#a3c4323364b794cb30a89c3701c3134d3", null ],
+    [ "getType", "classNAV_1_1VectorNavBinaryOutput.html#a2d62dd0537ab206603d10dbaf66b4d12", null ],
     [ "getValueAt", "classNAV_1_1VectorNavBinaryOutput.html#a0df832292edb8d862ecb4571814c4ef4", null ],
     [ "parentTypes", "classNAV_1_1VectorNavBinaryOutput.html#a6214b2a48d53c07bd2b4c5ac740164dd", null ],
     [ "staticDataDescriptors", "classNAV_1_1VectorNavBinaryOutput.html#abc8359e085a75332d43d5600e3b88306", null ],

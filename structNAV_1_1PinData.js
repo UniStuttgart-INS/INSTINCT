@@ -1,21 +1,21 @@
 var structNAV_1_1PinData =
 [
-    [ "AccelerationUnit", "structNAV_1_1PinData.html#a56ce4be7ff3f1f10204953aa62f1b52c", [
-      [ "m_s2", "structNAV_1_1PinData.html#a56ce4be7ff3f1f10204953aa62f1b52cafa18cace4f96e322f9edf03df970a2cb", null ]
+    [ "AccelerationUnit", "structNAV_1_1PinData.html#ade755a0cc542ae8032c762e6499f4be7", [
+      [ "m_s2", "structNAV_1_1PinData.html#ade755a0cc542ae8032c762e6499f4be7afa18cace4f96e322f9edf03df970a2cb", null ]
     ] ],
-    [ "AccelerationVarianceUnit", "structNAV_1_1PinData.html#abe833eea3a45d64cba72cf3f0ed15ee1", [
-      [ "m2_s4", "structNAV_1_1PinData.html#abe833eea3a45d64cba72cf3f0ed15ee1af2938a1fb19880d113240ce0d7acfd60", null ],
-      [ "m_s2", "structNAV_1_1PinData.html#abe833eea3a45d64cba72cf3f0ed15ee1afa18cace4f96e322f9edf03df970a2cb", null ]
+    [ "AccelerationVarianceUnit", "structNAV_1_1PinData.html#a2cda07d74211c060258852acdd475f42", [
+      [ "m2_s4", "structNAV_1_1PinData.html#a2cda07d74211c060258852acdd475f42af2938a1fb19880d113240ce0d7acfd60", null ],
+      [ "m_s2", "structNAV_1_1PinData.html#a2cda07d74211c060258852acdd475f42afa18cace4f96e322f9edf03df970a2cb", null ]
     ] ],
-    [ "AngRateUnit", "structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4", [
-      [ "deg_s", "structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4a26b1fed50e629c912150cc2d1dd0dff8", null ],
-      [ "rad_s", "structNAV_1_1PinData.html#ad4a15f5247655ee370a8ba61c61701c4a5048ae192d391e12c3401c38f2ffc497", null ]
+    [ "AngRateUnit", "structNAV_1_1PinData.html#af31cc76e3d9549b0a55074ebaabaa454", [
+      [ "deg_s", "structNAV_1_1PinData.html#af31cc76e3d9549b0a55074ebaabaa454a26b1fed50e629c912150cc2d1dd0dff8", null ],
+      [ "rad_s", "structNAV_1_1PinData.html#af31cc76e3d9549b0a55074ebaabaa454a5048ae192d391e12c3401c38f2ffc497", null ]
     ] ],
-    [ "AngRateVarianceUnit", "structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116f", [
-      [ "rad2_s2", "structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa0a2b17a8bff7d8f903ffda8c0f306543", null ],
-      [ "rad_s", "structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa5048ae192d391e12c3401c38f2ffc497", null ],
-      [ "deg2_s2", "structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa19f2e4cdac8d4221cafd70d8f6a59861", null ],
-      [ "deg_s", "structNAV_1_1PinData.html#a7eb72e039960ff5e31a138427b9c116fa26b1fed50e629c912150cc2d1dd0dff8", null ]
+    [ "AngRateVarianceUnit", "structNAV_1_1PinData.html#a952318af7e547509ec15a7cf568bd41f", [
+      [ "rad2_s2", "structNAV_1_1PinData.html#a952318af7e547509ec15a7cf568bd41fa0a2b17a8bff7d8f903ffda8c0f306543", null ],
+      [ "rad_s", "structNAV_1_1PinData.html#a952318af7e547509ec15a7cf568bd41fa5048ae192d391e12c3401c38f2ffc497", null ],
+      [ "deg2_s2", "structNAV_1_1PinData.html#a952318af7e547509ec15a7cf568bd41fa19f2e4cdac8d4221cafd70d8f6a59861", null ],
+      [ "deg_s", "structNAV_1_1PinData.html#a952318af7e547509ec15a7cf568bd41fa26b1fed50e629c912150cc2d1dd0dff8", null ]
     ] ],
     [ "initAccelerationBias", "structNAV_1_1PinData.html#a9efc8475f7993b89b3b45d4588cd2ede", null ],
     [ "initAccelerationBiasUnit", "structNAV_1_1PinData.html#a86e23a3571de3e5c5966d2daa806b959", null ],

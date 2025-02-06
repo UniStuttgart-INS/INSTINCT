@@ -11,5 +11,7 @@ var classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator =
     [ "operator++", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#ab80193d5682b93949eb0863b1348ae73", null ],
     [ "operator->", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#aaaee6479782131ab7b51c3f7c1ae86d1", null ],
     [ "operator!=", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#a63d7d930f13e70728eff0bb576f4ff2b", null ],
-    [ "operator==", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#a62286d03ff19d952377f31e88d6150fe", null ]
+    [ "operator==", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#a62286d03ff19d952377f31e88d6150fe", null ],
+    [ "buffer", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#a79257cca13de5390a362d5865f91f829", null ],
+    [ "index", "classNAV_1_1ScrollingBuffer_1_1ConstReverseIterator.html#a4320d4b3d9cb569d48ce4167c021dd20", null ]
 ];

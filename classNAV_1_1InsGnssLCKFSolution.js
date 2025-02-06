@@ -1,11 +1,12 @@
 var classNAV_1_1InsGnssLCKFSolution =
 [
-    [ "Frame", "classNAV_1_1InsGnssLCKFSolution.html#aa078f7c16abe78fb4ad7751f3a09a7ca", [
-      [ "ECEF", "classNAV_1_1InsGnssLCKFSolution.html#aa078f7c16abe78fb4ad7751f3a09a7caae9f56677a676cd46515c806cba38fffa", null ],
-      [ "NED", "classNAV_1_1InsGnssLCKFSolution.html#aa078f7c16abe78fb4ad7751f3a09a7caacd3459b28418fa8fa75ffaba4f3e7c74", null ]
+    [ "Frame", "classNAV_1_1InsGnssLCKFSolution.html#a41304470615f9217087660cd4acd90d9", [
+      [ "ECEF", "classNAV_1_1InsGnssLCKFSolution.html#a41304470615f9217087660cd4acd90d9ae9f56677a676cd46515c806cba38fffa", null ],
+      [ "NED", "classNAV_1_1InsGnssLCKFSolution.html#a41304470615f9217087660cd4acd90d9acd3459b28418fa8fa75ffaba4f3e7c74", null ]
     ] ],
     [ "GetStaticDataDescriptors", "classNAV_1_1InsGnssLCKFSolution.html#a0b0381cd6d60b14d9f5a1fdbdfc8f8aa", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1InsGnssLCKFSolution.html#ae9f1f1e5a010b161e174c0e1d57e5d4f", null ],
+    [ "getType", "classNAV_1_1InsGnssLCKFSolution.html#ae56b1357c6c2c84bb69452312b0525db", null ],
     [ "getValueAt", "classNAV_1_1InsGnssLCKFSolution.html#aee0b0af66dc6eb7a2e3bef3b54f1c364", null ],
     [ "parentTypes", "classNAV_1_1InsGnssLCKFSolution.html#af0692bbad8ffaed4415a550527a73d48", null ],
     [ "staticDataDescriptors", "classNAV_1_1InsGnssLCKFSolution.html#ae6e4b818452db8b052e92d2dba3c3d2d", null ],

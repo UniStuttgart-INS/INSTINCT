@@ -10,6 +10,7 @@ var dir_b7878ad5ecbf2506f4125b9d34c97e45 =
     [ "CallbackTimer.hpp", "CallbackTimer_8hpp.html", "CallbackTimer_8hpp" ],
     [ "Eigen.hpp", "Eigen_8hpp.html", "Eigen_8hpp" ],
     [ "ImGui.hpp", "ImGui_8hpp.html", "ImGui_8hpp" ],
+    [ "ImPlot.hpp", "ImPlot_8hpp.html", "ImPlot_8hpp" ],
     [ "Json.hpp", "Json_8hpp.html", "Json_8hpp" ],
     [ "Logger.hpp", "Logger_8hpp.html", "Logger_8hpp" ],
     [ "StringUtil.hpp", "StringUtil_8hpp.html", "StringUtil_8hpp" ]

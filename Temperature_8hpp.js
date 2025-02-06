@@ -1,14 +1,12 @@
 var Temperature_8hpp =
 [
-    [ "TemperatureModel", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80c", [
-      [ "None", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80ca6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "ConstNN", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80ca1b93f3324a58a4e71ac511e5cc85c6c3", null ],
-      [ "ISA", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80ca64f288ef838ec6e8bd8a3a8833c54047", null ],
-      [ "GPT2", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80caa09388a7c034c082e91b292222d13c36", null ],
-      [ "GPT3", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80caa611d1b6beee75c8ef1a5258fe160eba", null ],
-      [ "COUNT", "Temperature_8hpp.html#a5db7671d793d38b0024135b106b2a80ca4905ac9d6a22bdfc1ae096094ce6248d", null ]
-    ] ],
-    [ "calcAbsoluteTemperature", "Temperature_8hpp.html#a2e8fb96b1005cab661f54c3c80a20b83", null ],
+    [ "NAV::TemperatureModel", "classNAV_1_1TemperatureModel.html", "classNAV_1_1TemperatureModel" ],
     [ "ComboTemperatureModel", "Temperature_8hpp.html#ab768cceabbbfb62cc9f325f1be227667", null ],
-    [ "to_string", "Temperature_8hpp.html#a75ce12f4f5540808110848edf1ff6db2", null ]
+    [ "from_json", "Temperature_8hpp.html#ae82f8b38a3547ced2faeadc961fd3b22", null ],
+    [ "operator==", "Temperature_8hpp.html#a332d879bcbad3eedf9a1a0d420ac732e", null ],
+    [ "operator==", "Temperature_8hpp.html#a6af0b4a90e49ecd667a60e373cde9982", null ],
+    [ "operator==", "Temperature_8hpp.html#a8b3ddbfdbfc5f205d3700d00481216b2", null ],
+    [ "to_json", "Temperature_8hpp.html#a6a21e56b837e9cf39b34ee4bddb90668", null ],
+    [ "to_string", "Temperature_8hpp.html#a53920b1a0dfe51d8bdec74f8582e9138", null ],
+    [ "to_string", "Temperature_8hpp.html#affb897211c21b306cf5f1bd90131b761", null ]
 ];

@@ -7,10 +7,10 @@ var classNAV_1_1CycleSlipDetector =
     [ "SatelliteObservation", "structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html", "structNAV_1_1CycleSlipDetector_1_1SatelliteObservation" ],
     [ "Result", "classNAV_1_1CycleSlipDetector.html#a1d2d858fe5255024fbc260e7578eae04", null ],
     [ "Strategy", "classNAV_1_1CycleSlipDetector.html#ae84115ae3dfae2bc0ddd305033a1793f", null ],
-    [ "Detector", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64a", [
-      [ "LLI", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aa1efc409e30263ae9a61e5f1756914978", null ],
-      [ "SingleFrequency", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aad5589033925c0e4d3b4aca6b31da66fa", null ],
-      [ "DualFrequency", "classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aafc1f61fef9d75268bbd1ad4793b205e8", null ]
+    [ "Detector", "classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4d", [
+      [ "LLI", "classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4da1efc409e30263ae9a61e5f1756914978", null ],
+      [ "SingleFrequency", "classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4dad5589033925c0e4d3b4aca6b31da66fa", null ],
+      [ "DualFrequency", "classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4dafc1f61fef9d75268bbd1ad4793b205e8", null ]
     ] ],
     [ "checkForCycleSlip", "classNAV_1_1CycleSlipDetector.html#a4aa6b51311d63e2285a8cc0e1fca7b31", null ],
     [ "getFitStrategy", "classNAV_1_1CycleSlipDetector.html#a58d1aebaa04755f8f910033de6972d75", null ],
@@ -25,7 +25,12 @@ var classNAV_1_1CycleSlipDetector =
     [ "setPolynomialDegree", "classNAV_1_1CycleSlipDetector.html#acf61f2278abd018d045ef06921b3af9c", null ],
     [ "setThreshold", "classNAV_1_1CycleSlipDetector.html#a515c1bb19f0dff1ea2c38e7ca1b06f35", null ],
     [ "setWindowSize", "classNAV_1_1CycleSlipDetector.html#a4a2c0afd945bbf5a0db278076d7ce75e", null ],
-    [ "CycleSlipDetectorGui", "classNAV_1_1CycleSlipDetector.html#a3831257d220e31c76533735b1382c7fe", null ],
+    [ "CycleSlipDetectorGui", "classNAV_1_1CycleSlipDetector.html#a7f08189b8c878b584727876feb9da751", null ],
     [ "from_json", "classNAV_1_1CycleSlipDetector.html#ad890d29c0180c76d01ea15ce9e8c207d", null ],
-    [ "to_json", "classNAV_1_1CycleSlipDetector.html#a7d53a5895eb09f628835f0ad91d0ec11", null ]
+    [ "to_json", "classNAV_1_1CycleSlipDetector.html#a7d53a5895eb09f628835f0ad91d0ec11", null ],
+    [ "_dualFrequencyDetector", "classNAV_1_1CycleSlipDetector.html#ad4d851fa8540207ebb656eb17e1b5cc7", null ],
+    [ "_dualFrequencyThresholdPercentage", "classNAV_1_1CycleSlipDetector.html#a334fd83575465c726770e132be0a1910", null ],
+    [ "_enableLLICheck", "classNAV_1_1CycleSlipDetector.html#a375f98503d3168e097469b3c339bcc1e", null ],
+    [ "_singleFrequencyDetector", "classNAV_1_1CycleSlipDetector.html#a521b27821933051643865afaf76a5f6c", null ],
+    [ "_singleFrequencyThresholdPercentage", "classNAV_1_1CycleSlipDetector.html#aca850f5aa5e909a341c9fd8c31c2db29", null ]
 ];

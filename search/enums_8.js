@@ -1,5 +1,28 @@
 var searchData=
 [
-  ['jerkunit_0',['JerkUnit',['../structNAV_1_1PinDataIRWKF.html#a58551a7905909de16ae30f1c561987ef',1,'NAV::PinDataIRWKF']]],
-  ['jerkvarianceunit_1',['JerkVarianceUnit',['../structNAV_1_1PinDataIRWKF.html#ae8a92fc4b7c8495349e9f1d20367a42b',1,'NAV::PinDataIRWKF']]]
+  ['imuaccelerometerirwunits_0',['ImuAccelerometerIRWUnits',['../INS_2Units_8hpp.html#a5c42d6480f47b43bead2e6e8b42cfc8f',1,'NAV::Units']]],
+  ['imuaccelerometernoiseunits_1',['ImuAccelerometerNoiseUnits',['../INS_2Units_8hpp.html#a713a85cadfc672ad20539dbef82c87c4',1,'NAV::Units']]],
+  ['imuaccelerometerunits_2',['ImuAccelerometerUnits',['../INS_2Units_8hpp.html#af74af1b337818bd5008a2965be3601b9',1,'NAV::Units']]],
+  ['imufusiontype_3',['ImuFusionType',['../classNAV_1_1ImuFusion.html#adb43db72fb31b582432351d460eaf174',1,'NAV::ImuFusion']]],
+  ['imugyroscopeirwunits_4',['ImuGyroscopeIRWUnits',['../INS_2Units_8hpp.html#ad4e9c5ec1e0753404cc9b6be706bd453',1,'NAV::Units']]],
+  ['imugyroscopenoiseunits_5',['ImuGyroscopeNoiseUnits',['../INS_2Units_8hpp.html#af255d79f071b1411733f72a6096dfea4',1,'NAV::Units']]],
+  ['imugyroscopeunits_6',['ImuGyroscopeUnits',['../INS_2Units_8hpp.html#a3b1e680fad89a841a59d9e837e390722',1,'NAV::Units']]],
+  ['imutype_7',['ImuType',['../classNAV_1_1Navio2Sensor.html#a68ca3d58596700a430d34865adc1bfa0',1,'NAV::Navio2Sensor']]],
+  ['initbiasaccelunit_8',['InitBiasAccelUnit',['../classNAV_1_1LooselyCoupledKF.html#a9ba5716059f614ac9489639aa6a14291',1,'NAV::LooselyCoupledKF::InitBiasAccelUnit'],['../classNAV_1_1TightlyCoupledKF.html#af8bcec22d48f03c203d8dbee627510cd',1,'NAV::TightlyCoupledKF::InitBiasAccelUnit']]],
+  ['initbiasgyrounit_9',['InitBiasGyroUnit',['../classNAV_1_1LooselyCoupledKF.html#a2980750f7f947f530b1daaf94d387cc2',1,'NAV::LooselyCoupledKF::InitBiasGyroUnit'],['../classNAV_1_1TightlyCoupledKF.html#a9f60edbe1be3aa3822a767d6354c9cbe',1,'NAV::TightlyCoupledKF::InitBiasGyroUnit']]],
+  ['initcovarianceattitudeanglesunit_10',['InitCovarianceAttitudeAnglesUnit',['../classNAV_1_1LooselyCoupledKF.html#a153125c3b511a31ee92d2752f90a48c5',1,'NAV::LooselyCoupledKF::InitCovarianceAttitudeAnglesUnit'],['../classNAV_1_1TightlyCoupledKF.html#a9b5eff0c5a862105a51bb8b79607eed6',1,'NAV::TightlyCoupledKF::InitCovarianceAttitudeAnglesUnit']]],
+  ['initcovariancebiasaccelunit_11',['InitCovarianceBiasAccelUnit',['../classNAV_1_1LooselyCoupledKF.html#aa40b71f16a32b766c0996b7fe233d7ea',1,'NAV::LooselyCoupledKF::InitCovarianceBiasAccelUnit'],['../classNAV_1_1TightlyCoupledKF.html#ad6e236b2921614d9c8ad76fbfa60d3d7',1,'NAV::TightlyCoupledKF::InitCovarianceBiasAccelUnit']]],
+  ['initcovariancebiasgyrounit_12',['InitCovarianceBiasGyroUnit',['../classNAV_1_1LooselyCoupledKF.html#a8aa3d3ea53a80b7a11f2d10ace673068',1,'NAV::LooselyCoupledKF::InitCovarianceBiasGyroUnit'],['../classNAV_1_1TightlyCoupledKF.html#a194a97105432e7b20d40b839db5059e2',1,'NAV::TightlyCoupledKF::InitCovarianceBiasGyroUnit']]],
+  ['initcovariancebiasunit_13',['InitCovarianceBiasUnit',['../classNAV_1_1WiFiPositioning.html#aa43d2bf7e77bafa4a9ed5a42ebed46cb',1,'NAV::WiFiPositioning']]],
+  ['initcovarianceclockdriftunits_14',['InitCovarianceClockDriftUnits',['../classNAV_1_1SPP_1_1KalmanFilter.html#ae455213340200bf5345d1ca9a4f739a7',1,'NAV::SPP::KalmanFilter']]],
+  ['initcovarianceclockfrequnit_15',['InitCovarianceClockFreqUnit',['../classNAV_1_1TightlyCoupledKF.html#a22cef213f13ce2572c8b8932a44698f3',1,'NAV::TightlyCoupledKF']]],
+  ['initcovarianceclockphaseunit_16',['InitCovarianceClockPhaseUnit',['../classNAV_1_1TightlyCoupledKF.html#a6e3cd24cdde06700f602052822c2ad8c',1,'NAV::TightlyCoupledKF']]],
+  ['initcovariancepositionunit_17',['InitCovariancePositionUnit',['../classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1',1,'NAV::LooselyCoupledKF::InitCovariancePositionUnit'],['../classNAV_1_1TightlyCoupledKF.html#ad0a8be8c0f79699434b5d4a3db9a1884',1,'NAV::TightlyCoupledKF::InitCovariancePositionUnit'],['../classNAV_1_1WiFiPositioning.html#a294389c85fabbf0b0dcf1d1a461f8e75',1,'NAV::WiFiPositioning::InitCovariancePositionUnit']]],
+  ['initcovariancevelocityunit_18',['InitCovarianceVelocityUnit',['../classNAV_1_1LooselyCoupledKF.html#a03faca10834ec6f37e854aa0b9815035',1,'NAV::LooselyCoupledKF::InitCovarianceVelocityUnit'],['../classNAV_1_1TightlyCoupledKF.html#ad61d3e29c0b7dd561dd04490d5ae989f',1,'NAV::TightlyCoupledKF::InitCovarianceVelocityUnit'],['../classNAV_1_1WiFiPositioning.html#a2f033e76a58962953857a30c1ca7d7e4',1,'NAV::WiFiPositioning::InitCovarianceVelocityUnit']]],
+  ['initcovariancevelocityunits_19',['InitCovarianceVelocityUnits',['../classNAV_1_1SPP_1_1KalmanFilter.html#a4a87f1dbb113aedebbee532db74d7afd',1,'NAV::SPP::KalmanFilter']]],
+  ['inputtype_20',['InputType',['../classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16',1,'NAV::ErrorModel']]],
+  ['inputwithunitchange_21',['InputWithUnitChange',['../InputWithUnit_8hpp.html#a7fdfdfd674facfdd41ef278150e92640',1,'NAV::gui::widgets']]],
+  ['integrationalgorithm_22',['IntegrationAlgorithm',['../classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52',1,'NAV::InertialIntegrator']]],
+  ['integrationframe_23',['IntegrationFrame',['../classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1',1,'NAV::InertialIntegrator']]],
+  ['ionospheremodel_24',['IonosphereModel',['../Ionosphere_8hpp.html#a3c6a3f17c27803840eecce1fb73f21e2',1,'NAV']]]
 ];

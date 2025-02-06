@@ -5,12 +5,21 @@ var classNAV_1_1VectorNavFile =
     [ "VectorNavFile", "classNAV_1_1VectorNavFile.html#ab3b145dd7cbb1b11a6ea74752b2086ff", null ],
     [ "VectorNavFile", "classNAV_1_1VectorNavFile.html#abebf4c57ffb51d48a9fce4e4a0da2ad3", null ],
     [ "category", "classNAV_1_1VectorNavFile.html#ae54ff1fb8ea59f9b50ec9f80e7ffacff", null ],
+    [ "deinitialize", "classNAV_1_1VectorNavFile.html#a8a4eee7d8df60008dde763408b86af65", null ],
+    [ "determineFileType", "classNAV_1_1VectorNavFile.html#ae3ec14f34bcf7131f963bb69a254779f", null ],
     [ "guiConfig", "classNAV_1_1VectorNavFile.html#aa75dc937611d5e333966efcbe7fcc462", null ],
+    [ "initialize", "classNAV_1_1VectorNavFile.html#a71ecca32d8262ad166c590820ad6c7ae", null ],
     [ "operator=", "classNAV_1_1VectorNavFile.html#a6cf0c91710c68e771bbe37d7a33011c8", null ],
     [ "operator=", "classNAV_1_1VectorNavFile.html#a9176f3f035c76f0f7b6216a93c9fff1f", null ],
+    [ "pollData", "classNAV_1_1VectorNavFile.html#a9414281c1118496040e69fa094050fd3", null ],
+    [ "readHeader", "classNAV_1_1VectorNavFile.html#a87c8cfe45210e3c52b6c83afabe80605", null ],
     [ "resetNode", "classNAV_1_1VectorNavFile.html#a34affb83662a6c972cc7310dc5512649", null ],
     [ "restore", "classNAV_1_1VectorNavFile.html#afa1192bb4dd88d3cb849314ae1eee4cf", null ],
     [ "save", "classNAV_1_1VectorNavFile.html#a734fe2c38c33dbca37049cdfcfb70c43", null ],
     [ "type", "classNAV_1_1VectorNavFile.html#ae36ac70da1df694db04b528cd9907bb5", null ],
-    [ "typeStatic", "classNAV_1_1VectorNavFile.html#a833b74ea9bb640eb5b01589780f6a597", null ]
+    [ "typeStatic", "classNAV_1_1VectorNavFile.html#a833b74ea9bb640eb5b01589780f6a597", null ],
+    [ "_binaryOutputRegister", "classNAV_1_1VectorNavFile.html#a70c6610ad29f99d10106d1bc4b8a4648", null ],
+    [ "_hasTimeColumn", "classNAV_1_1VectorNavFile.html#a45e3d2afdca140cd6005dbc51206f670", null ],
+    [ "_messageCount", "classNAV_1_1VectorNavFile.html#ad0bbaad16a22c8b1cd53899ef77766c5", null ],
+    [ "OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT", "classNAV_1_1VectorNavFile.html#a18cfbe7eae002adceec120e224aa797f", null ]
 ];

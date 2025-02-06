@@ -1,11 +1,10 @@
 var PositionInput_8hpp =
 [
     [ "NAV::gui::widgets::PositionWithFrame", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame" ],
-    [ "json", "PositionInput_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
-    [ "PositionInputLayout", "PositionInput_8hpp.html#a45afb163a067aa307b1bdad2b8c9fe07", [
-      [ "SINGLE_COLUMN", "PositionInput_8hpp.html#a45afb163a067aa307b1bdad2b8c9fe07acbb24398cb03b86e767dd14627d0c417", null ],
-      [ "SINGLE_ROW", "PositionInput_8hpp.html#a45afb163a067aa307b1bdad2b8c9fe07a378d8ad48c04d2dd8b158b07d1543994", null ],
-      [ "TWO_ROWS", "PositionInput_8hpp.html#a45afb163a067aa307b1bdad2b8c9fe07a5277f7f71b5941de6d7595a67954d2d3", null ]
+    [ "PositionInputLayout", "PositionInput_8hpp.html#aedb5afcf1d581ab4dea20f617d593817", [
+      [ "SINGLE_COLUMN", "PositionInput_8hpp.html#aedb5afcf1d581ab4dea20f617d593817acbb24398cb03b86e767dd14627d0c417", null ],
+      [ "SINGLE_ROW", "PositionInput_8hpp.html#aedb5afcf1d581ab4dea20f617d593817a378d8ad48c04d2dd8b158b07d1543994", null ],
+      [ "TWO_ROWS", "PositionInput_8hpp.html#aedb5afcf1d581ab4dea20f617d593817a5277f7f71b5941de6d7595a67954d2d3", null ]
     ] ],
     [ "from_json", "PositionInput_8hpp.html#a9eac89733281f37c065bc1d91e7ff1f2", null ],
     [ "from_json", "PositionInput_8hpp.html#a9b7b2511fc58d1f6ec9b5c5abf5e5b4a", null ],

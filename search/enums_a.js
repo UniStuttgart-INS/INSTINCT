@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['linetype_0',['LineType',['../structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a27134cc2e67fbc7b0c3dbe7e0ca57fb9',1,'NAV::Plot::PlotInfo::PlotItem::Style']]]
+  ['kfmeas_0',['KFMeas',['../classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26',1,'NAV::LooselyCoupledKF']]],
+  ['kfstates_1',['KFStates',['../classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7',1,'NAV::LooselyCoupledKF']]]
 ];

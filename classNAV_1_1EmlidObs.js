@@ -1,5 +1,6 @@
 var classNAV_1_1EmlidObs =
 [
+    [ "getType", "classNAV_1_1EmlidObs.html#a815e6cc0a16b9e98382210343efb3cfb", null ],
     [ "parentTypes", "classNAV_1_1EmlidObs.html#aa22a4deb119353ad428cc66f9899a8eb", null ],
     [ "type", "classNAV_1_1EmlidObs.html#aa6779d170145aa5ec51ed1c18428279c", null ],
     [ "data", "classNAV_1_1EmlidObs.html#acebebc9cd755b4704d8f8bf09719e71e", null ],

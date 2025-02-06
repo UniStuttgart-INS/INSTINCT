@@ -5,11 +5,21 @@ var classNAV_1_1CsvFile =
     [ "CsvFile", "classNAV_1_1CsvFile.html#a2dbc5d8c8d6c473d7ebb14a029d97a2e", null ],
     [ "CsvFile", "classNAV_1_1CsvFile.html#a682176ce10abb084f5574d6cda4d7c34", null ],
     [ "category", "classNAV_1_1CsvFile.html#aac36fe32cd20838470bee51948232e73", null ],
+    [ "deinitialize", "classNAV_1_1CsvFile.html#a53199040e0ef88e14db2fc960584398e", null ],
+    [ "determineFileType", "classNAV_1_1CsvFile.html#a1b5cd7df5bdd7c7654d95e73bfffd1fd", null ],
     [ "guiConfig", "classNAV_1_1CsvFile.html#a1a913ea8207320d3dfc4caac799bdf6d", null ],
+    [ "initialize", "classNAV_1_1CsvFile.html#a3b66630c97daa5e4ad07750f100ea15d", null ],
     [ "operator=", "classNAV_1_1CsvFile.html#a8aa23ee2ad1a4ffa6252035f8927892f", null ],
     [ "operator=", "classNAV_1_1CsvFile.html#a20b18631d87323eb7a869ffa196c26f6", null ],
+    [ "readHeader", "classNAV_1_1CsvFile.html#a868fc83a52e3d3955281686060723220", null ],
+    [ "resetNode", "classNAV_1_1CsvFile.html#aedeed8c53013f424b00ec88e0a3192ba", null ],
     [ "restore", "classNAV_1_1CsvFile.html#abc22c44b335e3a65086ea8ac5a37dd14", null ],
     [ "save", "classNAV_1_1CsvFile.html#aeecf6a5d3c4cb411764c807d19d43600", null ],
     [ "type", "classNAV_1_1CsvFile.html#aa4780c90bb5709d5df60835728b4b64f", null ],
-    [ "typeStatic", "classNAV_1_1CsvFile.html#a46166f1052a05ed5877965137cdd6cce", null ]
+    [ "typeStatic", "classNAV_1_1CsvFile.html#a46166f1052a05ed5877965137cdd6cce", null ],
+    [ "_comment", "classNAV_1_1CsvFile.html#a81d0478b1ba563d604d8ef4b70ca043c", null ],
+    [ "_data", "classNAV_1_1CsvFile.html#adde5a7bce97055efc235920bb7ddc476", null ],
+    [ "_delimiter", "classNAV_1_1CsvFile.html#acb28b5720ed4bb5b674490e64deea2c3", null ],
+    [ "_hasHeaderLine", "classNAV_1_1CsvFile.html#ae4497e032c1e50edc1c0a024aa92186d", null ],
+    [ "_skipLines", "classNAV_1_1CsvFile.html#a4c70bb21f2f9cf600764cb7db6bb518d", null ]
 ];

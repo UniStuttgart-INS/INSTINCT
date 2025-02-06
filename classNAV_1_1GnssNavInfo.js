@@ -14,6 +14,7 @@ var classNAV_1_1GnssNavInfo =
     [ "searchNavigationData", "classNAV_1_1GnssNavInfo.html#ad606ad7006040a86f231ed5bae8dd416", null ],
     [ "type", "classNAV_1_1GnssNavInfo.html#a9eb816330885abc673f3e940c4a2c7d4", null ],
     [ "ionosphericCorrections", "classNAV_1_1GnssNavInfo.html#af3c86436c13c6c94ca6915226357815a", null ],
+    [ "m_satellites", "classNAV_1_1GnssNavInfo.html#aeba810946c8545856889fa32bdf1ab54", null ],
     [ "satelliteSystems", "classNAV_1_1GnssNavInfo.html#afa35f8287ddcc5a2ff6a113aea055136", null ],
     [ "timeSysCorr", "classNAV_1_1GnssNavInfo.html#aafda102355fc740e5bec4e1f4f2abd7c", null ]
 ];

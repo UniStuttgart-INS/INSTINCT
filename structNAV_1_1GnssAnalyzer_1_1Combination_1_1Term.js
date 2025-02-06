@@ -1,8 +1,8 @@
 var structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term =
 [
-    [ "ObservationType", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#afc4dde6d8be35372ef6a573ba75cf00a", [
-      [ "Pseudorange", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#afc4dde6d8be35372ef6a573ba75cf00aaabb902cefc90b9d44c35f7731bbc6eac", null ],
-      [ "Carrier", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#afc4dde6d8be35372ef6a573ba75cf00aa914419aa32f04011357d3b604a86d7eb", null ]
+    [ "ObservationType", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a15b3b98d94864f9d70ec8a3f3e63d782", [
+      [ "Pseudorange", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a15b3b98d94864f9d70ec8a3f3e63d782aabb902cefc90b9d44c35f7731bbc6eac", null ],
+      [ "Carrier", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a15b3b98d94864f9d70ec8a3f3e63d782a914419aa32f04011357d3b604a86d7eb", null ]
     ] ],
     [ "freqNum", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a0caa30ba40cc26c1062e898f2827b7af", null ],
     [ "obsType", "structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#a633d1dde41d2d84278f8237ab98cb152", null ],

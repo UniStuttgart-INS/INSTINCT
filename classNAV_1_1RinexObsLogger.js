@@ -5,12 +5,21 @@ var classNAV_1_1RinexObsLogger =
     [ "RinexObsLogger", "classNAV_1_1RinexObsLogger.html#a280667b95092fcf5b4a4cd4c9df2d5f6", null ],
     [ "RinexObsLogger", "classNAV_1_1RinexObsLogger.html#a1e7ab474a1dd5ba079ba69b19b4f84b2", null ],
     [ "category", "classNAV_1_1RinexObsLogger.html#a8e3a5f10b513ebeeb670460a33af57bc", null ],
+    [ "deinitialize", "classNAV_1_1RinexObsLogger.html#a51c4ef7dd192bd1cdad955cc87299f8d", null ],
     [ "flush", "classNAV_1_1RinexObsLogger.html#a9e0af787540762f03196c9d6a8523e0f", null ],
     [ "guiConfig", "classNAV_1_1RinexObsLogger.html#a8c5a78da546580e1580445586a6439ae", null ],
+    [ "initialize", "classNAV_1_1RinexObsLogger.html#a80ed48cf584e8774bc575a9a65c472e9", null ],
     [ "operator=", "classNAV_1_1RinexObsLogger.html#a92158ca72d176282bdebe963a61d4e64", null ],
     [ "operator=", "classNAV_1_1RinexObsLogger.html#a390b7d23ff11dc708c5eb3d8268acc4e", null ],
+    [ "pinAddCallback", "classNAV_1_1RinexObsLogger.html#ad7262ec2306b329909c736baa314b78b", null ],
+    [ "pinDeleteCallback", "classNAV_1_1RinexObsLogger.html#ac0927449193b2a32618f43e7c89ab128", null ],
     [ "restore", "classNAV_1_1RinexObsLogger.html#af87ec8957077ab4994e03c9b4078e7b9", null ],
     [ "save", "classNAV_1_1RinexObsLogger.html#aaddd352905e60f895c62e9fcacaa20c8", null ],
     [ "type", "classNAV_1_1RinexObsLogger.html#a74e4f003b0f31d050477c503bc195d34", null ],
-    [ "typeStatic", "classNAV_1_1RinexObsLogger.html#a9f69a93db1d7683c17c4b390f0152fc5", null ]
+    [ "typeStatic", "classNAV_1_1RinexObsLogger.html#a9f69a93db1d7683c17c4b390f0152fc5", null ],
+    [ "updateFileHeader", "classNAV_1_1RinexObsLogger.html#a6227a305020b6924b42825f3491821d5", null ],
+    [ "writeObservation", "classNAV_1_1RinexObsLogger.html#a7c963db2600010375114b1c9890bf989", null ],
+    [ "_dynamicInputPins", "classNAV_1_1RinexObsLogger.html#a2e50b62ae19e77c92bd06b94afc178f8", null ],
+    [ "_header", "classNAV_1_1RinexObsLogger.html#a4e68fa04d18f4b2d7f05e7d004735398", null ],
+    [ "_supportedVersions", "classNAV_1_1RinexObsLogger.html#acbbc159e652e4c5ec434f9ebee3c5d83", null ]
 ];

@@ -43,5 +43,6 @@ var classNAV_1_1InsTime =
     [ "toYMDHMS", "classNAV_1_1InsTime.html#a849f11a9974ee7e96932c6a282f7d319", null ],
     [ "operator+", "classNAV_1_1InsTime.html#ab2001eaaa07698add6eb8143fa671c88", null ],
     [ "operator-", "classNAV_1_1InsTime.html#a5ec38783b45bcdf9e332f11270c211df", null ],
-    [ "operator-", "classNAV_1_1InsTime.html#a76bdacac4959050178b01ed485e11037", null ]
+    [ "operator-", "classNAV_1_1InsTime.html#a76bdacac4959050178b01ed485e11037", null ],
+    [ "_mjd", "classNAV_1_1InsTime.html#a55163395d9aacabfd644910e5ee49a53", null ]
 ];

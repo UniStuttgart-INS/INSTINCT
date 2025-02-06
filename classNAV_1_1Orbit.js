@@ -3,11 +3,11 @@ var classNAV_1_1Orbit =
     [ "Pos", "structNAV_1_1Orbit_1_1Pos.html", "structNAV_1_1Orbit_1_1Pos" ],
     [ "PosVel", "structNAV_1_1Orbit_1_1PosVel.html", "structNAV_1_1Orbit_1_1PosVel" ],
     [ "PosVelAccel", "structNAV_1_1Orbit_1_1PosVelAccel.html", "structNAV_1_1Orbit_1_1PosVelAccel" ],
-    [ "Calc", "classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bc", [
-      [ "Calc_None", "classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bca387a50c671af89b296e729290050469f", null ],
-      [ "Calc_Position", "classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bca2c1282c16f01821a38d3ad9ecd6b3abf", null ],
-      [ "Calc_Velocity", "classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bcac07450702f037f30552227ead1f502c1", null ],
-      [ "Calc_Acceleration", "classNAV_1_1Orbit.html#a65836420203346ce754e2ff2dfce70bcaf0ccf5271ebc04a73fb2d854c4cb92fe", null ]
+    [ "Calc", "classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585e", [
+      [ "Calc_None", "classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585ea387a50c671af89b296e729290050469f", null ],
+      [ "Calc_Position", "classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585ea2c1282c16f01821a38d3ad9ecd6b3abf", null ],
+      [ "Calc_Velocity", "classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585eac07450702f037f30552227ead1f502c1", null ],
+      [ "Calc_Acceleration", "classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585eaf0ccf5271ebc04a73fb2d854c4cb92fe", null ]
     ] ],
     [ "Orbit", "classNAV_1_1Orbit.html#ac6a36c998c4b22f51ecf0b4756e8fd3a", null ],
     [ "~Orbit", "classNAV_1_1Orbit.html#a9ca64728a2d857c899e6318e455d1aba", null ],

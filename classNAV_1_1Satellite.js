@@ -8,5 +8,6 @@ var classNAV_1_1Satellite =
     [ "calcSatellitePosVelAccel", "classNAV_1_1Satellite.html#a283c591730ef27559be5ff5d21f98815", null ],
     [ "getNavigationData", "classNAV_1_1Satellite.html#a4b516aed2368eff98acf5c7b20d618cc", null ],
     [ "isHealthy", "classNAV_1_1Satellite.html#ad5a531ac27f597c4542fa5a557668264", null ],
-    [ "searchNavigationData", "classNAV_1_1Satellite.html#af2e0b4f7a0abe8c0a364d30f2469d499", null ]
+    [ "searchNavigationData", "classNAV_1_1Satellite.html#af2e0b4f7a0abe8c0a364d30f2469d499", null ],
+    [ "m_navigationData", "classNAV_1_1Satellite.html#ae61f71c59efc3be2a8c39fbb918621df", null ]
 ];

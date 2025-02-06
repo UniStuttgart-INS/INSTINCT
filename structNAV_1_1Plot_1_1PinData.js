@@ -1,12 +1,12 @@
 var structNAV_1_1Plot_1_1PinData =
 [
     [ "PlotData", "structNAV_1_1Plot_1_1PinData_1_1PlotData.html", "structNAV_1_1Plot_1_1PinData_1_1PlotData" ],
-    [ "PinType", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2", [
-      [ "Flow", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2af1a76f66cca677c6e628d9ca58a6c8fc", null ],
-      [ "Bool", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2ac26f15e86e3de4c398a8273272aba034", null ],
-      [ "Int", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2a1686a6c336b71b36d77354cea19a8b52", null ],
-      [ "Float", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2a22ae0e2b89e5e3d477f988cc36d3272b", null ],
-      [ "Matrix", "structNAV_1_1Plot_1_1PinData.html#af5cb5f6b25b78422acbafb3ea9cccbf2af53df0293e169f562bc1d9a20e1d2589", null ]
+    [ "PinType", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61", [
+      [ "Flow", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61af1a76f66cca677c6e628d9ca58a6c8fc", null ],
+      [ "Bool", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61ac26f15e86e3de4c398a8273272aba034", null ],
+      [ "Int", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61a1686a6c336b71b36d77354cea19a8b52", null ],
+      [ "Float", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61a22ae0e2b89e5e3d477f988cc36d3272b", null ],
+      [ "Matrix", "structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61af53df0293e169f562bc1d9a20e1d2589", null ]
     ] ],
     [ "PinData", "structNAV_1_1Plot_1_1PinData.html#a51f397182b2feae9900e39ca7f129fbb", null ],
     [ "~PinData", "structNAV_1_1Plot_1_1PinData.html#a0481b2dca71b2cf36565a5ea62d5db80", null ],
@@ -21,6 +21,7 @@ var structNAV_1_1Plot_1_1PinData =
     [ "mutex", "structNAV_1_1Plot_1_1PinData.html#a00d7414500208419f545718677dcc142", null ],
     [ "pinType", "structNAV_1_1Plot_1_1PinData.html#a6bae1d6ae1a3c727acf1ba8d8b28167f", null ],
     [ "plotData", "structNAV_1_1Plot_1_1PinData.html#acfda3453189dddde1f685920dba59a8a", null ],
+    [ "rawNodeData", "structNAV_1_1Plot_1_1PinData.html#a61419594156187a77b47ef1d6f10bb69", null ],
     [ "size", "structNAV_1_1Plot_1_1PinData.html#a585d7a62d3d0f7f8a8e4573f93368f61", null ],
     [ "stride", "structNAV_1_1Plot_1_1PinData.html#a61bf8a07eebc17c29894ad52a8c6841b", null ]
 ];

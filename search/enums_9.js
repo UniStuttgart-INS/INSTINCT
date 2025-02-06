@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['kfmeas_0',['KFMeas',['../classNAV_1_1LooselyCoupledKF.html#a4cf420ce1b22dbb64b708e005af6a891',1,'NAV::LooselyCoupledKF']]],
-  ['kfstates_1',['KFStates',['../classNAV_1_1LooselyCoupledKF.html#ac67a841d697a47f9e0c2526b25b22493',1,'NAV::LooselyCoupledKF']]]
+  ['jerkunit_0',['JerkUnit',['../structNAV_1_1PinDataIRWKF.html#a8ace04c3f446faf54f94e959f8070db1',1,'NAV::PinDataIRWKF']]],
+  ['jerkvarianceunit_1',['JerkVarianceUnit',['../structNAV_1_1PinDataIRWKF.html#a8900a66ba88896c23c8d729c7f0ff573',1,'NAV::PinDataIRWKF']]]
 ];

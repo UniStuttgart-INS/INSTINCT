@@ -1,11 +1,11 @@
 var GNSS_2Functions_8hpp =
 [
-    [ "calcSagnacCorrection", "GNSS_2Functions_8hpp.html#af00a98e35c3686d8a642181ed05ef1dd", null ],
-    [ "calcSagnacRateCorrection", "GNSS_2Functions_8hpp.html#a1389a590a53402ebe42835936492714f", null ],
-    [ "calcSatAzimuth", "GNSS_2Functions_8hpp.html#a55380fa94da065087282dd4d911e2b83", null ],
-    [ "calcSatElevation", "GNSS_2Functions_8hpp.html#a654f1c36ad7657420faa39e69f41111a", null ],
+    [ "calcSagnacCorrection", "GNSS_2Functions_8hpp.html#a502350bf508bb54f28f63d8801021124", null ],
+    [ "calcSagnacRateCorrection", "GNSS_2Functions_8hpp.html#a9e3edcb99fd4bc8649705fb2d139fd85", null ],
+    [ "calcSatAzimuth", "GNSS_2Functions_8hpp.html#ab5dd4ea949d0c9e10ddf81b44f2d5087", null ],
+    [ "calcSatElevation", "GNSS_2Functions_8hpp.html#a340978bb119a6707226d3bbff9c16eac", null ],
     [ "doppler2rangeRate", "GNSS_2Functions_8hpp.html#ae93a83dcecd4166ab406cc0a6ad5d1fa", null ],
-    [ "e_calcLineOfSightUnitVector", "GNSS_2Functions_8hpp.html#a1d57aed32486978b3461ad39940d798d", null ],
+    [ "e_calcLineOfSightUnitVector", "GNSS_2Functions_8hpp.html#afd47cd4222b0cd8a1d96d05f0b07f072", null ],
     [ "galSisaIdx2Val", "GNSS_2Functions_8hpp.html#a0666bab7d9afd1b58895c2f22e312299", null ],
     [ "galSisaVal2Idx", "GNSS_2Functions_8hpp.html#a76f2418126f43272f93590cee31a9cc1", null ],
     [ "gpsUraIdx2Val", "GNSS_2Functions_8hpp.html#a2ba9ce832bb774ccdb7bf5b0ce666c05", null ],

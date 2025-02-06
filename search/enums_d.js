@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['observationdifference_0',['ObservationDifference',['../classNAV_1_1ObservationEstimator.html#a77c391cc52ff42498ba86239f54df25a',1,'NAV::ObservationEstimator']]],
-  ['observationtype_1',['ObservationType',['../classNAV_1_1GnssObs.html#a23a37f1e6e5cf629278bf5d28e5502c7',1,'NAV::GnssObs::ObservationType'],['../structNAV_1_1GnssAnalyzer_1_1Combination_1_1Term.html#afc4dde6d8be35372ef6a573ba75cf00a',1,'NAV::GnssAnalyzer::Combination::Term::ObservationType']]],
-  ['obstype_2',['ObsType',['../RINEXUtilities_8hpp.html#abe9eb1497056e79316848a08e68050ac',1,'NAV::vendor::RINEX']]],
-  ['outputtype_3',['OutputType',['../classNAV_1_1VectorNavBinaryConverter.html#a46a6a12748296b2797a3bbbf1e5fb785',1,'NAV::VectorNavBinaryConverter']]]
+  ['navmsgtype_0',['NavMsgType',['../classNAV_1_1RinexNavFile.html#a676075b95f7e4ad69764dfaa0eaee669',1,'NAV::RinexNavFile']]],
+  ['nmeamessageclass_1',['NmeaMessageClass',['../UbloxTypes_8hpp.html#a02a2ae8cdbdfd5c6de76656f6ade8ffe',1,'NAV::vendor::ublox']]],
+  ['nmeapubxmessages_2',['NmeaPubxMessages',['../UbloxTypes_8hpp.html#ae2650e303c55c143d9cb3a77dd4e5524',1,'NAV::vendor::ublox']]],
+  ['nmeastandardmessages_3',['NmeaStandardMessages',['../UbloxTypes_8hpp.html#ad80ab68b8f8977b3f5ded1990a981647',1,'NAV::vendor::ublox']]],
+  ['nmeatalkerid_4',['NmeaTalkerID',['../UbloxTypes_8hpp.html#afa6ee1a410fdb8415401043defdcd55a',1,'NAV::vendor::ublox']]],
+  ['nmeatype_5',['NmeaType',['../classNAV_1_1MultiImuFile.html#ac7e69efa027da791d11e0e8dbc77b530',1,'NAV::MultiImuFile']]]
 ];

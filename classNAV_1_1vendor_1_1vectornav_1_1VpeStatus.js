@@ -12,5 +12,6 @@ var classNAV_1_1vendor_1_1vectornav_1_1VpeStatus =
     [ "magDisturbance", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a104977c57f08ee326850e73026a89ac9", null ],
     [ "magSaturation", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#ace70c91fc3c390768806b4d7b63fd127", null ],
     [ "operator=", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a2d271a982a529090d32934fd3029f07a", null ],
-    [ "status", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a371a35ee470b8ecf95d0d2ce5aabded7", null ]
+    [ "status", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a371a35ee470b8ecf95d0d2ce5aabded7", null ],
+    [ "_status", "classNAV_1_1vendor_1_1vectornav_1_1VpeStatus.html#a0a815466315ee5e2e9eb2f1d1019d287", null ]
 ];

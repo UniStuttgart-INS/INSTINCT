@@ -2,6 +2,7 @@ var classNAV_1_1RtklibPosObs =
 [
     [ "GetStaticDataDescriptors", "classNAV_1_1RtklibPosObs.html#a6a6813cbc690bebcca6f045dcfc00d04", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1RtklibPosObs.html#a66d85042e08fd72182ed2a438f35ba0c", null ],
+    [ "getType", "classNAV_1_1RtklibPosObs.html#a4eacc1ae431a3a0691a7502129de349c", null ],
     [ "getValueAt", "classNAV_1_1RtklibPosObs.html#af4a7e40f97c0b54e6fdd66212a1fb32a", null ],
     [ "parentTypes", "classNAV_1_1RtklibPosObs.html#adbc0a342935c0f9154d189357c3e47b1", null ],
     [ "staticDataDescriptors", "classNAV_1_1RtklibPosObs.html#aedc9de04a44ba0a5206470c576ccc502", null ],

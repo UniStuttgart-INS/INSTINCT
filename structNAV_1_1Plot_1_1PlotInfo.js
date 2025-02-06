@@ -14,6 +14,7 @@ var structNAV_1_1Plot_1_1PlotInfo =
     [ "selectedXdata", "structNAV_1_1Plot_1_1PlotInfo.html#adfab10b29e86c18103aa725c7317e302", null ],
     [ "size", "structNAV_1_1Plot_1_1PlotInfo.html#a0041765a230d86b3627c814bd86162e8", null ],
     [ "title", "structNAV_1_1Plot_1_1PlotInfo.html#ae35193e0cd6a9c4df8a36161770eb6ea", null ],
+    [ "tooltips", "structNAV_1_1Plot_1_1PlotInfo.html#a97da24812e82e9f8fadc99c8c5822406", null ],
     [ "visible", "structNAV_1_1Plot_1_1PlotInfo.html#a00468bb0bb25d88ee8c360c19bca040a", null ],
     [ "xAxisFlags", "structNAV_1_1Plot_1_1PlotInfo.html#a64880e9f1fbefd93a2624ccf68bc14ed", null ],
     [ "xAxisLabel", "structNAV_1_1Plot_1_1PlotInfo.html#aa58d550678f3b2d7d7edefa2ffa5dc3b", null ],

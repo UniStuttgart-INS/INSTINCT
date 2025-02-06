@@ -5,11 +5,21 @@ var classNAV_1_1SinglePointPositioning =
     [ "SinglePointPositioning", "classNAV_1_1SinglePointPositioning.html#a8eb917be798e3d9c0f3be8e44cd8664a", null ],
     [ "SinglePointPositioning", "classNAV_1_1SinglePointPositioning.html#a42735b8f66ff6417733bfcb7632c6a37", null ],
     [ "category", "classNAV_1_1SinglePointPositioning.html#a6a23eab9c384096834901bdddf94c8dc", null ],
+    [ "deinitialize", "classNAV_1_1SinglePointPositioning.html#a8c645648e24a0184d697d8afb15c112f", null ],
     [ "guiConfig", "classNAV_1_1SinglePointPositioning.html#af6aca8f23ae3ebdc7085d8fa7d4072bd", null ],
+    [ "initialize", "classNAV_1_1SinglePointPositioning.html#adc75a8bd5edb87659a1d9a943410a7a5", null ],
     [ "operator=", "classNAV_1_1SinglePointPositioning.html#a611fc2340b90356298ae8564e7a20577", null ],
     [ "operator=", "classNAV_1_1SinglePointPositioning.html#addbd068bcbd0d9467748207d1c0c4961", null ],
+    [ "pinAddCallback", "classNAV_1_1SinglePointPositioning.html#accaaa74d97001f2f8e4e0733a240bfb8", null ],
+    [ "pinDeleteCallback", "classNAV_1_1SinglePointPositioning.html#afd636409708af39e7d1301e9c7352e46", null ],
+    [ "recvGnssObs", "classNAV_1_1SinglePointPositioning.html#a2529c8db46fd283675381a95e2d95cc1", null ],
     [ "restore", "classNAV_1_1SinglePointPositioning.html#ab07d8b637947f4509d89dd766312467f", null ],
     [ "save", "classNAV_1_1SinglePointPositioning.html#adfffe73cbe346e7f22d271d1813171d6", null ],
     [ "type", "classNAV_1_1SinglePointPositioning.html#a1ad5ef74f9fe2f993287ce7388ced2ab", null ],
-    [ "typeStatic", "classNAV_1_1SinglePointPositioning.html#ac35513e8a8c9a97f9678f216707f3d17", null ]
+    [ "typeStatic", "classNAV_1_1SinglePointPositioning.html#ac35513e8a8c9a97f9678f216707f3d17", null ],
+    [ "_algorithm", "classNAV_1_1SinglePointPositioning.html#aba86189e9031e70d8121496bb96829a1", null ],
+    [ "_dynamicInputPins", "classNAV_1_1SinglePointPositioning.html#a9f8141e869ce1069f743edb5fb5b7d9a", null ],
+    [ "INPUT_PORT_INDEX_GNSS_NAV_INFO", "classNAV_1_1SinglePointPositioning.html#ae3693eb24269d187a5c6fb587c6af6a9", null ],
+    [ "INPUT_PORT_INDEX_GNSS_OBS", "classNAV_1_1SinglePointPositioning.html#af62be279795f02c564b2352a1baddbe9", null ],
+    [ "OUTPUT_PORT_INDEX_SPPSOL", "classNAV_1_1SinglePointPositioning.html#a2d8bcfd4acfa27c9f909b7c1afa1637a", null ]
 ];

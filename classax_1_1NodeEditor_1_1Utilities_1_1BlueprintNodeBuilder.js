@@ -1,13 +1,39 @@
 var classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder =
 [
+    [ "Stage", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1", [
+      [ "Invalid", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1a4bbb8f967da6d1a610596d7257179c2b", null ],
+      [ "Begin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1a1a06729125544cab7cee73195fc044f0", null ],
+      [ "Header", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1abf50d5e661106d0abe925af3c2e6f7e7", null ],
+      [ "Content", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1af15c1cae7882448b3fb0404682e17e61", null ],
+      [ "Input", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1a324118a6721dd6b8a9b9f4e327df2bf5", null ],
+      [ "Output", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1a29c2c02a361c9d7028472e5d92cd4a54", null ],
+      [ "Middle", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1ab1ca34f82e83c52b010f86955f264e05", null ],
+      [ "End", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a94c6ebc80369f13f1cce817e71e92ca1a87557f11575c0ad78e4e28abedc13b6e", null ]
+    ] ],
     [ "BlueprintNodeBuilder", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aa35fd27274cda61cc190a904501a8f61", null ],
     [ "Begin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a508f20901239ce8db2912d0316bd3a47", null ],
     [ "End", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a3a1c98f6aa9101d00a91b92193543e46", null ],
     [ "EndHeader", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a7dba338a1e866257ca71a9a8ec14a11f", null ],
     [ "EndInput", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a6f464282aa653545a672a8a68f84cde4", null ],
     [ "EndOutput", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#ac32dff1c18150b0db2fd54036c14bfb7", null ],
+    [ "EndPin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a0519215515586f7a8a97cd2c78f2efab", null ],
     [ "Header", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aeb9a0ad965437943fba1440ccd973f88", null ],
     [ "Input", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a6856b82bc6d800ecf8cfcb3d36cb7aa8", null ],
     [ "Middle", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a59e9bed810806239a4bf4480040694b7", null ],
-    [ "Output", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a4fd52e4a04625062f6dd7de1a093a1e6", null ]
+    [ "Output", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a4fd52e4a04625062f6dd7de1a093a1e6", null ],
+    [ "Pin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a9b8a2fb169ac2925a8195c2c84bfc60f", null ],
+    [ "SetStage", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a4c4875f4ed0428c23730fbb02a6a3c1c", null ],
+    [ "ContentMax", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aee5770869dd37e2913d4272086e907d8", null ],
+    [ "ContentMin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a9969ba4029cf9a28bf9d5f9703e58a8a", null ],
+    [ "CurrentNodeId", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a230f252913cec22f130b06f0552bdfcf", null ],
+    [ "CurrentStage", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a79e639211f1913f44a5b96d07cf4955c", null ],
+    [ "HasHeader", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aaacb7b593ddbc3ffa53c7389636d10de", null ],
+    [ "HeaderColor", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#ad33f15c040d41d53159b86f9f4166f93", null ],
+    [ "HeaderMax", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a63fa8a4a58f26c208c62b13ddee4f637", null ],
+    [ "HeaderMin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#ad0f6986cf3fe622178ca4dcb87ca1c8c", null ],
+    [ "HeaderTextureHeight", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#aa20053d78df2c09ef154aafabe09e865", null ],
+    [ "HeaderTextureId", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a2f89dbe6b1548e4dd606745e4dbe3fe0", null ],
+    [ "HeaderTextureWidth", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a630fa6ede8dfc5f4ca43fb922b253eeb", null ],
+    [ "NodeMax", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a2498bb47e924a5a08fee6ef3cf894afc", null ],
+    [ "NodeMin", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html#a91b3318c1db634ca78b449b31b0edfd6", null ]
 ];

@@ -4,5 +4,6 @@ var dir_60d6ed1bb84d1602884bb9f8ede99c18 =
     [ "GNSS", "dir_fb27e4651bc2aee695b6eb7035c62052.html", "dir_fb27e4651bc2aee695b6eb7035c62052" ],
     [ "IMU", "dir_ec0ca0363908da728560a3759d0e599d.html", "dir_ec0ca0363908da728560a3759d0e599d" ],
     [ "State", "dir_1ef229b7163ad216b8be0e9206fb3637.html", "dir_1ef229b7163ad216b8be0e9206fb3637" ],
+    [ "WiFi", "dir_1406b2b70df1b8dd2f9d628791041539.html", "dir_1406b2b70df1b8dd2f9d628791041539" ],
     [ "NodeData.hpp", "NodeData_8hpp.html", "NodeData_8hpp" ]
 ];

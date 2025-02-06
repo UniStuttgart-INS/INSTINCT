@@ -6,6 +6,7 @@ var classNAV_1_1GPSEphemeris =
     [ "GPSEphemeris", "classNAV_1_1GPSEphemeris.html#abb62c87dcb770afdc33fec85176518be", null ],
     [ "GPSEphemeris", "classNAV_1_1GPSEphemeris.html#a3f126ee414ef24b4e51c41a134cc281b", null ],
     [ "calcClockCorrections", "classNAV_1_1GPSEphemeris.html#a59d860832e41104a12977e8a265b0897", null ],
+    [ "calcSatelliteData", "classNAV_1_1GPSEphemeris.html#aa4f46ae2be3ddb3014d2c24ad90beec8", null ],
     [ "calcSatellitePositionVariance", "classNAV_1_1GPSEphemeris.html#a99a162955052e1793c6714bcd36653d1", null ],
     [ "isHealthy", "classNAV_1_1GPSEphemeris.html#a0bd6d5a66b3740b1b3f45c3a9b22b877", null ],
     [ "operator=", "classNAV_1_1GPSEphemeris.html#adcba808b92ccfca23dbefd30011c3b48", null ],

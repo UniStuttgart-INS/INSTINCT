@@ -1,13 +1,13 @@
 var classNAV_1_1SatNavData =
 [
-    [ "Type", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6f", [
-      [ "GPSEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fac78f9efd11826eaea97f2ecf607350fc", null ],
-      [ "GalileoEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa8e2927af85453cf7150c9d9ffd446a8e", null ],
-      [ "GLONASSEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa9112eebe3cbac5110edd7a99232401d6", null ],
-      [ "BeiDouEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fad0bd48c6f6d8b857cd0e3bbd3ae9bbcd", null ],
-      [ "QZSSEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa04e912b18afae3d1a6bd6e9bd4e2527b", null ],
-      [ "IRNSSEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa1a6abcf50ba687f169466cabe7a1a7ef", null ],
-      [ "SBASEphemeris", "classNAV_1_1SatNavData.html#a8df84a20fa1c90edf3c88f47facabf6fa291fee3fe6b807084bedfa4e091fb16b", null ]
+    [ "Type", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341", [
+      [ "GPSEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341ac78f9efd11826eaea97f2ecf607350fc", null ],
+      [ "GalileoEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341a8e2927af85453cf7150c9d9ffd446a8e", null ],
+      [ "GLONASSEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341a9112eebe3cbac5110edd7a99232401d6", null ],
+      [ "BeiDouEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341ad0bd48c6f6d8b857cd0e3bbd3ae9bbcd", null ],
+      [ "QZSSEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341a04e912b18afae3d1a6bd6e9bd4e2527b", null ],
+      [ "IRNSSEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341a1a6abcf50ba687f169466cabe7a1a7ef", null ],
+      [ "SBASEphemeris", "classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341a291fee3fe6b807084bedfa4e091fb16b", null ]
     ] ],
     [ "SatNavData", "classNAV_1_1SatNavData.html#a13887c487c4dd00dc7178413be342a1f", null ],
     [ "~SatNavData", "classNAV_1_1SatNavData.html#a821732705b9d502826c4d423ed91d4bf", null ],

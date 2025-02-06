@@ -15,6 +15,7 @@ var classNAV_1_1Pin =
     [ "dataIdentifier", "classNAV_1_1Pin.html#a7798827c1ce1047caa6a9e0b7d7df2fe", null ],
     [ "id", "classNAV_1_1Pin.html#a7463ec952829a93c672f37b38f9451af", null ],
     [ "kind", "classNAV_1_1Pin.html#ae871e8d9f5c066bbc5c5389af43ec9fb", null ],
+    [ "m_PinIconSize", "classNAV_1_1Pin.html#a64d3ae1b68d6256a74aad4826cdb1fa0", null ],
     [ "name", "classNAV_1_1Pin.html#a3712500dcc13207c821726378398aea2", null ],
     [ "parentNode", "classNAV_1_1Pin.html#a0ca56da66c88fa588399fdc7e6a63b80", null ],
     [ "type", "classNAV_1_1Pin.html#a79b38dd0427dd55e6ada031030b4264b", null ]

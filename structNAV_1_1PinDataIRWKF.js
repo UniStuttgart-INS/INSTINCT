@@ -1,21 +1,21 @@
 var structNAV_1_1PinDataIRWKF =
 [
-    [ "AngularAccUnit", "structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152", [
-      [ "deg_s2", "structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152a3d64dbcd47d25b5437aaf41c06c0093f", null ],
-      [ "rad_s2", "structNAV_1_1PinDataIRWKF.html#a502d20498de1d5c4a3e54726fe3e8152ad6ac8036a0bd18efad0ac6ac1725bd30", null ]
+    [ "AngularAccUnit", "structNAV_1_1PinDataIRWKF.html#ab6f08d6477b3e6c278eefaa4998693f2", [
+      [ "deg_s2", "structNAV_1_1PinDataIRWKF.html#ab6f08d6477b3e6c278eefaa4998693f2a3d64dbcd47d25b5437aaf41c06c0093f", null ],
+      [ "rad_s2", "structNAV_1_1PinDataIRWKF.html#ab6f08d6477b3e6c278eefaa4998693f2ad6ac8036a0bd18efad0ac6ac1725bd30", null ]
     ] ],
-    [ "AngularAccVarianceUnit", "structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4e", [
-      [ "rad2_s4", "structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4eacd6bc0c13dd4371f902ae8d998e6a2f8", null ],
-      [ "rad_s2", "structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ead6ac8036a0bd18efad0ac6ac1725bd30", null ],
-      [ "deg2_s4", "structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ea6ad4607fbedaea18398b7305722ba314", null ],
-      [ "deg_s2", "structNAV_1_1PinDataIRWKF.html#a6ce201ed418d67c485b10a64c94b3d4ea3d64dbcd47d25b5437aaf41c06c0093f", null ]
+    [ "AngularAccVarianceUnit", "structNAV_1_1PinDataIRWKF.html#af5a1947d139be5ae724b311e970b596b", [
+      [ "rad2_s4", "structNAV_1_1PinDataIRWKF.html#af5a1947d139be5ae724b311e970b596bacd6bc0c13dd4371f902ae8d998e6a2f8", null ],
+      [ "rad_s2", "structNAV_1_1PinDataIRWKF.html#af5a1947d139be5ae724b311e970b596bad6ac8036a0bd18efad0ac6ac1725bd30", null ],
+      [ "deg2_s4", "structNAV_1_1PinDataIRWKF.html#af5a1947d139be5ae724b311e970b596ba6ad4607fbedaea18398b7305722ba314", null ],
+      [ "deg_s2", "structNAV_1_1PinDataIRWKF.html#af5a1947d139be5ae724b311e970b596ba3d64dbcd47d25b5437aaf41c06c0093f", null ]
     ] ],
-    [ "JerkUnit", "structNAV_1_1PinDataIRWKF.html#a58551a7905909de16ae30f1c561987ef", [
-      [ "m_s3", "structNAV_1_1PinDataIRWKF.html#a58551a7905909de16ae30f1c561987efabff1fd282550217f9215d54245807a37", null ]
+    [ "JerkUnit", "structNAV_1_1PinDataIRWKF.html#a8ace04c3f446faf54f94e959f8070db1", [
+      [ "m_s3", "structNAV_1_1PinDataIRWKF.html#a8ace04c3f446faf54f94e959f8070db1abff1fd282550217f9215d54245807a37", null ]
     ] ],
-    [ "JerkVarianceUnit", "structNAV_1_1PinDataIRWKF.html#ae8a92fc4b7c8495349e9f1d20367a42b", [
-      [ "m2_s6", "structNAV_1_1PinDataIRWKF.html#ae8a92fc4b7c8495349e9f1d20367a42baac45267bc5959d2fcf955da7ce6a3c84", null ],
-      [ "m_s3", "structNAV_1_1PinDataIRWKF.html#ae8a92fc4b7c8495349e9f1d20367a42babff1fd282550217f9215d54245807a37", null ]
+    [ "JerkVarianceUnit", "structNAV_1_1PinDataIRWKF.html#a8900a66ba88896c23c8d729c7f0ff573", [
+      [ "m2_s6", "structNAV_1_1PinDataIRWKF.html#a8900a66ba88896c23c8d729c7f0ff573aac45267bc5959d2fcf955da7ce6a3c84", null ],
+      [ "m_s3", "structNAV_1_1PinDataIRWKF.html#a8900a66ba88896c23c8d729c7f0ff573abff1fd282550217f9215d54245807a37", null ]
     ] ],
     [ "initAcceleration", "structNAV_1_1PinDataIRWKF.html#a2b99bba8bcdac3879da731c459a24e6f", null ],
     [ "initAccelerationUnit", "structNAV_1_1PinDataIRWKF.html#a18e7db57dc1b99fb5bdfea4312e56326", null ],

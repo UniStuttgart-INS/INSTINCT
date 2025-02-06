@@ -62,5 +62,7 @@ var classNAV_1_1TsDeque =
     [ "resize", "classNAV_1_1TsDeque.html#a4515d81a5c7f996d3526f8469b70346e", null ],
     [ "shrink_to_fit", "classNAV_1_1TsDeque.html#a6262cc399ed9641264ea8f7cd7877ae6", null ],
     [ "size", "classNAV_1_1TsDeque.html#a6fe145d9a286457bea3825b0ce34d722", null ],
-    [ "swap", "classNAV_1_1TsDeque.html#a6b04a5077600e9355e35e5b40f025241", null ]
+    [ "swap", "classNAV_1_1TsDeque.html#a6b04a5077600e9355e35e5b40f025241", null ],
+    [ "_mutex", "classNAV_1_1TsDeque.html#a0df79cbb657049bdcc8bdef5fa96a6d8", null ],
+    [ "_queue", "classNAV_1_1TsDeque.html#ab78fecbd59fe420301e458f97435446a", null ]
 ];

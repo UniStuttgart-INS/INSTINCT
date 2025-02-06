@@ -1,10 +1,11 @@
 var classNAV_1_1BDSEphemeris =
 [
-    [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html#a609d269e526f8b458ffd1af63861a962", null ],
+    [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html#af9c0922d57cb5edb1415fe129bc235ae", null ],
     [ "~BDSEphemeris", "classNAV_1_1BDSEphemeris.html#aeb8f3e8dc1fcf12cda50da35d959ce62", null ],
     [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html#af798077d8d02e7d5ca990c689499644f", null ],
     [ "BDSEphemeris", "classNAV_1_1BDSEphemeris.html#ab02ee84411c0d279a04033977fb2f324", null ],
     [ "calcClockCorrections", "classNAV_1_1BDSEphemeris.html#a5ad1083f1738a4fa7b9e107c9d043070", null ],
+    [ "calcSatelliteData", "classNAV_1_1BDSEphemeris.html#ac1043aa76cce005634a3573f89a681e9", null ],
     [ "calcSatellitePositionVariance", "classNAV_1_1BDSEphemeris.html#a4b242fbdec52a3b3e2302feae4152af2", null ],
     [ "isHealthy", "classNAV_1_1BDSEphemeris.html#adaf2043ac04caa069011e03bf43f1a2d", null ],
     [ "operator=", "classNAV_1_1BDSEphemeris.html#a39508dfec8726fc35c14d5989a736925", null ],
@@ -27,6 +28,7 @@ var classNAV_1_1BDSEphemeris =
     [ "Omega_0", "classNAV_1_1BDSEphemeris.html#aac1355a6f95ed97c75e76747d742bffa", null ],
     [ "Omega_dot", "classNAV_1_1BDSEphemeris.html#a763ae397b409237028db92b8bd2b630f", null ],
     [ "satH1", "classNAV_1_1BDSEphemeris.html#a4995c53ce4605da801569b1c0cfb5bd9", null ],
+    [ "satNum", "classNAV_1_1BDSEphemeris.html#a540c6bad1fc8f08ac7d4de25a349d752", null ],
     [ "sqrt_A", "classNAV_1_1BDSEphemeris.html#a8222af6956f3f82bebecf0dafdbe84c2", null ],
     [ "svAccuracy", "classNAV_1_1BDSEphemeris.html#a4476c621dc4d7e77ab7f76bfda1304bb", null ],
     [ "T_GD1", "classNAV_1_1BDSEphemeris.html#a420cab6b2777d92e5066d9f188dad5bc", null ],

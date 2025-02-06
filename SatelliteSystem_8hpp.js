@@ -3,7 +3,6 @@ var SatelliteSystem_8hpp =
     [ "std::hash< NAV::SatelliteSystem >", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4.html", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem_01_4" ],
     [ "std::hash< NAV::SatelliteSystem_ >", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem___01_4.html", "structstd_1_1hash_3_01NAV_1_1SatelliteSystem___01_4" ],
     [ "NAV::SatelliteSystem", "structNAV_1_1SatelliteSystem.html", "structNAV_1_1SatelliteSystem" ],
-    [ "json", "SatelliteSystem_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "SatelliteSystem_", "SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411e", [
       [ "SatSys_None", "SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411eab06dd492e88ad3540de021f3dd48a037", null ],
       [ "GPS", "SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411ea092931b9f0e5d5415e39d9da7cc1b702", null ],

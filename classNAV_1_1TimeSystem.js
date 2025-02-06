@@ -1,15 +1,15 @@
 var classNAV_1_1TimeSystem =
 [
-    [ "TimeSystemEnum", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2", [
-      [ "TimeSys_None", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2ab4e6df89beccebe6b2612be1e520928a", null ],
-      [ "UTC", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a9234324ddf6b4176b57d803a925b7961", null ],
-      [ "GPST", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a957a58c61ed32b501b67fbe1ef0031b1", null ],
-      [ "GLNT", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2adcd7e1607ce2020ee42611e4aa0b6afa", null ],
-      [ "GST", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a65faccc4f5d12243a687cfe2338ab83d", null ],
-      [ "BDT", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2ad87492e57553dd834ebe968ab2cc8107", null ],
-      [ "QZSST", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2af1fb46a09410b77db84a479241dfa2d4", null ],
-      [ "IRNSST", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a05e19ee3e8c7a2f587173957a81f0852", null ],
-      [ "COUNT", "classNAV_1_1TimeSystem.html#a980e1c5a12b195ad0845c5502609cdd2a4905ac9d6a22bdfc1ae096094ce6248d", null ]
+    [ "TimeSystemEnum", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081", [
+      [ "TimeSys_None", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081ab4e6df89beccebe6b2612be1e520928a", null ],
+      [ "UTC", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081a9234324ddf6b4176b57d803a925b7961", null ],
+      [ "GPST", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081a957a58c61ed32b501b67fbe1ef0031b1", null ],
+      [ "GLNT", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081adcd7e1607ce2020ee42611e4aa0b6afa", null ],
+      [ "GST", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081a65faccc4f5d12243a687cfe2338ab83d", null ],
+      [ "BDT", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081ad87492e57553dd834ebe968ab2cc8107", null ],
+      [ "QZSST", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081af1fb46a09410b77db84a479241dfa2d4", null ],
+      [ "IRNSST", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081a05e19ee3e8c7a2f587173957a81f0852", null ],
+      [ "COUNT", "classNAV_1_1TimeSystem.html#a1f58694e11a43f4dcfc2431bcb158081a4905ac9d6a22bdfc1ae096094ce6248d", null ]
     ] ],
     [ "TimeSystem", "classNAV_1_1TimeSystem.html#aa82badc673444b2e9802643dd5abdf57", null ],
     [ "TimeSystem", "classNAV_1_1TimeSystem.html#ab38cc67287d687841c044b1da522ff2d", null ],
@@ -23,5 +23,6 @@ var classNAV_1_1TimeSystem =
     [ "operator TimeSystem_", "classNAV_1_1TimeSystem.html#a9309ee144d5a6875bbc81273ce322383", null ],
     [ "operator=", "classNAV_1_1TimeSystem.html#aff2d5338a188577eac312a5830d2bf07", null ],
     [ "toString", "classNAV_1_1TimeSystem.html#a96fd102b6ca54cb0f89d25a0d2883588", null ],
-    [ "operator==", "classNAV_1_1TimeSystem.html#a3a0c2514b49a7986ed012ca98f3b26b9", null ]
+    [ "operator==", "classNAV_1_1TimeSystem.html#a3a0c2514b49a7986ed012ca98f3b26b9", null ],
+    [ "value", "classNAV_1_1TimeSystem.html#a61a52c6ee8ba025c81b2b6c4dd69e46f", null ]
 ];

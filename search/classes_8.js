@@ -28,9 +28,11 @@ var searchData=
   ['instime_5fmjd_25',['InsTime_MJD',['../structNAV_1_1InsTime__MJD.html',1,'NAV']]],
   ['instime_5fydoysod_26',['InsTime_YDoySod',['../structNAV_1_1InsTime__YDoySod.html',1,'NAV']]],
   ['instime_5fymdhms_27',['InsTime_YMDHMS',['../structNAV_1_1InsTime__YMDHMS.html',1,'NAV']]],
-  ['interfreqbias_28',['InterFreqBias',['../structNAV_1_1SPP_1_1States_1_1InterFreqBias.html',1,'NAV::SPP::States']]],
-  ['intersysbias_29',['InterSysBias',['../structNAV_1_1SPP_1_1States_1_1InterSysBias.html',1,'NAV::SPP::States']]],
-  ['intersysdrift_30',['InterSysDrift',['../structNAV_1_1SPP_1_1States_1_1InterSysDrift.html',1,'NAV::SPP::States']]],
+  ['interfreqbias_28',['InterFreqBias',['../structNAV_1_1Keys_1_1InterFreqBias.html',1,'NAV::Keys']]],
+  ['interfrequencybiasmodel_29',['InterFrequencyBiasModel',['../classNAV_1_1InterFrequencyBiasModel.html',1,'NAV']]],
+  ['interfrequencybiasmodel_3c_20spp_3a_3astates_3a_3astatekeytype_20_3e_30',['InterFrequencyBiasModel&lt; SPP::States::StateKeyType &gt;',['../classNAV_1_1InterFrequencyBiasModel.html',1,'NAV']]],
   ['ionosphericcorrections_31',['IonosphericCorrections',['../classNAV_1_1IonosphericCorrections.html',1,'NAV']]],
-  ['iterator_32',['Iterator',['../classNAV_1_1ScrollingBuffer_1_1Iterator.html',1,'NAV::ScrollingBuffer']]]
+  ['irnss_32',['IRNSS',['../classNAV_1_1InsConst_1_1IRNSS.html',1,'NAV::InsConst']]],
+  ['irnssephemeris_33',['IRNSSEphemeris',['../classNAV_1_1IRNSSEphemeris.html',1,'NAV']]],
+  ['iterator_34',['Iterator',['../classNAV_1_1ScrollingBuffer_1_1Iterator.html',1,'NAV::ScrollingBuffer']]]
 ];

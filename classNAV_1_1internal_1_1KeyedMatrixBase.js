@@ -21,6 +21,7 @@ var classNAV_1_1internal_1_1KeyedMatrixBase =
     [ "block", "classNAV_1_1internal_1_1KeyedMatrixBase.html#ae7479195cd6d490cc7a15845b69788d8", null ],
     [ "block", "classNAV_1_1internal_1_1KeyedMatrixBase.html#a7e6ca4e15240a2083b6dc32a210414b1", null ],
     [ "block", "classNAV_1_1internal_1_1KeyedMatrixBase.html#a7ed7121519b2edd976ca709f8a275e0f", null ],
+    [ "checkContinuousBlock", "classNAV_1_1internal_1_1KeyedMatrixBase.html#a82d4bbda3807c5f9b478bf8886c0381b", null ],
     [ "col", "classNAV_1_1internal_1_1KeyedMatrixBase.html#af560f0e51aa11291732afe0e12240be9", null ],
     [ "col", "classNAV_1_1internal_1_1KeyedMatrixBase.html#ac12a639533d11c29e3019a2d769ba125", null ],
     [ "inverse", "classNAV_1_1internal_1_1KeyedMatrixBase.html#afe651969fa6d05bb003475804a9592b3", null ],

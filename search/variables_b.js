@@ -1,8 +1,14 @@
 var searchData=
 [
   ['k_0',['K',['../classNAV_1_1KalmanFilter.html#a365af79f4b8eaa4d87998615c6f2985b',1,'NAV::KalmanFilter::K'],['../classNAV_1_1KeyedKalmanFilter.html#a80d2d56bab21a718c06e7afd0b9d8349',1,'NAV::KeyedKalmanFilter::K'],['../structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html#aaa24fb47c9d4c8d020dd448957f1aa00',1,'NAV::KeyedKalmanFilter::SavedPreUpdate::K']]],
-  ['k_5fb_1',['k_B',['../classNAV_1_1InsConst.html#a01ae2d2c9d267e9f49d5089813ef65e2',1,'NAV::InsConst']]],
+  ['k_5fb_1',['k_B',['../classNAV_1_1InsConst.html#a388723212a14ab03e602f983e3c98a42',1,'NAV::InsConst']]],
   ['key_2',['key',['../structNAV_1_1vendor_1_1pixhawk_1_1message__info__s.html#a112cb71f7060f06ddc187cfa267f9acb',1,'NAV::vendor::pixhawk::message_info_s::key'],['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html#a897440a2993c68e0bcbdc6049eaf45f3',1,'NAV::vendor::pixhawk::ulog_message_info_multiple_header_s::key'],['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html#a6260bda98ad18e4b49042236fe37e4b3',1,'NAV::vendor::pixhawk::ulog_message_parameter_default_header_s::key']]],
   ['key_5flen_3',['key_len',['../structNAV_1_1vendor_1_1pixhawk_1_1message__info__s.html#a3d478ec4fd4394830363c1df33b33d9b',1,'NAV::vendor::pixhawk::message_info_s::key_len'],['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html#a25ba06230432229df84dece2c6da5f4a',1,'NAV::vendor::pixhawk::ulog_message_info_multiple_header_s::key_len'],['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html#a67c759b54f486bb2ebfa8231cb5b0937',1,'NAV::vendor::pixhawk::ulog_message_parameter_default_header_s::key_len']]],
-  ['kind_4',['kind',['../classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4',1,'NAV::Node::kind'],['../classNAV_1_1Pin.html#ae871e8d9f5c066bbc5c5389af43ec9fb',1,'NAV::Pin::kind'],['../structNAV_1_1NodeRegistry_1_1PinInfo.html#a630b93db9e2eb3f25018eba839d98269',1,'NAV::NodeRegistry::PinInfo::kind']]]
+  ['kfaccbias_4',['KFAccBias',['../classNAV_1_1LooselyCoupledKF.html#a3a9bdf19fdf0654fb98479841e330045',1,'NAV::LooselyCoupledKF']]],
+  ['kfatt_5',['KFAtt',['../classNAV_1_1LooselyCoupledKF.html#a6fc5e1a733f804c88f6bf367f7f57b62',1,'NAV::LooselyCoupledKF']]],
+  ['kfgyrbias_6',['KFGyrBias',['../classNAV_1_1LooselyCoupledKF.html#ac422cda4a67b5de511b993283d9c7b12',1,'NAV::LooselyCoupledKF']]],
+  ['kfpos_7',['KFPos',['../classNAV_1_1LooselyCoupledKF.html#ab35a5e0ec2db6a5f05421a0233cdee13',1,'NAV::LooselyCoupledKF']]],
+  ['kfposvel_8',['KFPosVel',['../classNAV_1_1LooselyCoupledKF.html#a9a0caa95672404f545010b00e52bb9ad',1,'NAV::LooselyCoupledKF']]],
+  ['kfvel_9',['KFVel',['../classNAV_1_1LooselyCoupledKF.html#a56760b03af32f9d4f16387fb5f2783a0',1,'NAV::LooselyCoupledKF']]],
+  ['kind_10',['kind',['../classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4',1,'NAV::Node::kind'],['../classNAV_1_1Pin.html#ae871e8d9f5c066bbc5c5389af43ec9fb',1,'NAV::Pin::kind'],['../structNAV_1_1NodeRegistry_1_1PinInfo.html#a630b93db9e2eb3f25018eba839d98269',1,'NAV::NodeRegistry::PinInfo::kind']]]
 ];

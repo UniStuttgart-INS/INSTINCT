@@ -1,9 +1,11 @@
 var classNAV_1_1ObservationFilter =
 [
+    [ "Filtered", "structNAV_1_1ObservationFilter_1_1Filtered.html", "structNAV_1_1ObservationFilter_1_1Filtered" ],
     [ "ObservationFilter", "classNAV_1_1ObservationFilter.html#aa0fc39c6d5bde8d85a96cf627e5a24f2", null ],
     [ "~ObservationFilter", "classNAV_1_1ObservationFilter.html#a4fad335ecc17e427225b98f8e2725994", null ],
     [ "ObservationFilter", "classNAV_1_1ObservationFilter.html#aaa7a1c825296bca5e10f860cf288fabd", null ],
     [ "ObservationFilter", "classNAV_1_1ObservationFilter.html#a16bd1cd262977320e49c4381e54b026c", null ],
+    [ "disableFilter", "classNAV_1_1ObservationFilter.html#a4f08da58c9e018d9e728d4c8da3bb206", null ],
     [ "excludeSignalTemporarily", "classNAV_1_1ObservationFilter.html#acf2bc6a9a1cb3024bf445ce10a7d9e79", null ],
     [ "getCodeFilter", "classNAV_1_1ObservationFilter.html#a3b7a4b82003b0d482bb014afdca5bd2a", null ],
     [ "getFrequencyFilter", "classNAV_1_1ObservationFilter.html#aa7ea3277823447718388e0e62cf60fcb", null ],
@@ -15,9 +17,19 @@ var classNAV_1_1ObservationFilter =
     [ "operator=", "classNAV_1_1ObservationFilter.html#aaea526708a3cf25653b837907e740925", null ],
     [ "operator=", "classNAV_1_1ObservationFilter.html#a309f13e64df20b5d546dc8d9eac813a7", null ],
     [ "reset", "classNAV_1_1ObservationFilter.html#a847723580f8b832ef3dc4efeaef69032", null ],
-    [ "selectObservationsForCalculation", "classNAV_1_1ObservationFilter.html#a0afec5fedc61ad50275d84dba28a206f", null ],
+    [ "selectObservationsForCalculation", "classNAV_1_1ObservationFilter.html#af8c3b4b2c33f5851410bfb0e49c88104", null ],
     [ "ShowGuiWidgets", "classNAV_1_1ObservationFilter.html#a990b27f3d1ed9103694ef8ae8dcce6be", null ],
     [ "useObsType", "classNAV_1_1ObservationFilter.html#a3d600c10bf34a9c5a14f1891d8a7e2f1", null ],
     [ "from_json", "classNAV_1_1ObservationFilter.html#a3781a576d45ab2d4bd69155be0169538", null ],
-    [ "to_json", "classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b", null ]
+    [ "to_json", "classNAV_1_1ObservationFilter.html#a1eb6c6082d4b8e43a3229ff5536bc49b", null ],
+    [ "_availableObsTypes", "classNAV_1_1ObservationFilter.html#a5675b5e2cc93399d276695017e14ce8b", null ],
+    [ "_elevationMask", "classNAV_1_1ObservationFilter.html#aab35f139ab5f5fd194aeeadbb870e441", null ],
+    [ "_excludedSatellites", "classNAV_1_1ObservationFilter.html#a1ab18ef1eedf457a657488ffb2d79fab", null ],
+    [ "_filterCode", "classNAV_1_1ObservationFilter.html#a43194befe1fdfdba0c5090936d90c23b", null ],
+    [ "_filterFreq", "classNAV_1_1ObservationFilter.html#aecdffcdc609f5ea08958b40c87eb577e", null ],
+    [ "_neededObsTypes", "classNAV_1_1ObservationFilter.html#ab36ba63f241b46995ee50a5e75f1921f", null ],
+    [ "_sameSnrMaskForAllReceivers", "classNAV_1_1ObservationFilter.html#aee9a3546ec5b863a546a1cc8d212e3d6", null ],
+    [ "_snrMask", "classNAV_1_1ObservationFilter.html#acb7a1b5d557577285388465870a780d3", null ],
+    [ "_temporarilyExcludedSignalsSatellites", "classNAV_1_1ObservationFilter.html#a3419d3e08af71884672414c7176536dc", null ],
+    [ "_usedObsTypes", "classNAV_1_1ObservationFilter.html#a6d8825977df63d45d5b71f026cf0d4b8", null ]
 ];

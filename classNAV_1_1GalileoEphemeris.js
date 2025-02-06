@@ -7,6 +7,7 @@ var classNAV_1_1GalileoEphemeris =
     [ "GalileoEphemeris", "classNAV_1_1GalileoEphemeris.html#a58af152fd11eb02dacd15c4455f04a3a", null ],
     [ "GalileoEphemeris", "classNAV_1_1GalileoEphemeris.html#aa0c357f7e202ba3036a9eddffd658e12", null ],
     [ "calcClockCorrections", "classNAV_1_1GalileoEphemeris.html#a5e555bc9469367d2d28e13d84683d3e1", null ],
+    [ "calcSatelliteData", "classNAV_1_1GalileoEphemeris.html#aeeb91d8cf15b2daceedc7e717b613d4d", null ],
     [ "calcSatellitePositionVariance", "classNAV_1_1GalileoEphemeris.html#a084d6119368047d66363a7c3ea413aae", null ],
     [ "isHealthy", "classNAV_1_1GalileoEphemeris.html#a44b08ab9978d060645b1fef31ae81fad", null ],
     [ "operator=", "classNAV_1_1GalileoEphemeris.html#a8d6fbc9216b8e64c28db7d1f1e421273", null ],

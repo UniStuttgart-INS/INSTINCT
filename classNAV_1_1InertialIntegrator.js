@@ -1,26 +1,27 @@
 var classNAV_1_1InertialIntegrator =
 [
     [ "Measurement", "structNAV_1_1InertialIntegrator_1_1Measurement.html", "structNAV_1_1InertialIntegrator_1_1Measurement" ],
-    [ "IntegrationAlgorithm", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110", [
-      [ "SingleStepRungeKutta1", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110af2045735cb663838a817e921497d1eda", null ],
-      [ "SingleStepRungeKutta2", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ad6912c5bf09d571d6525e69773223b24", null ],
-      [ "SingleStepHeun2", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a426743f9d9a9d59b87232836b42294ba", null ],
-      [ "SingleStepRungeKutta3", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ab283dc938c8fb85bc25fc26b4c1c586c", null ],
-      [ "SingleStepHeun3", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110ae263035e72d1b3ed9dcdf764dbf5135a", null ],
-      [ "SingleStepRungeKutta4", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a058e9ccea82c53c1bb14fc6486d5ba8b", null ],
-      [ "MultiStepRK3", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a7c17ee8042ca1e624ca9ba3176766eac", null ],
-      [ "MultiStepRK4", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a1b210c745bfc2a62de00c7231c3f45ff", null ],
-      [ "COUNT", "classNAV_1_1InertialIntegrator.html#ac9203ec3ab3b297c207bc0f9ec596110a4905ac9d6a22bdfc1ae096094ce6248d", null ]
+    [ "IntegrationAlgorithm", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52", [
+      [ "SingleStepRungeKutta1", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52af2045735cb663838a817e921497d1eda", null ],
+      [ "SingleStepRungeKutta2", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52ad6912c5bf09d571d6525e69773223b24", null ],
+      [ "SingleStepHeun2", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52a426743f9d9a9d59b87232836b42294ba", null ],
+      [ "SingleStepRungeKutta3", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52ab283dc938c8fb85bc25fc26b4c1c586c", null ],
+      [ "SingleStepHeun3", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52ae263035e72d1b3ed9dcdf764dbf5135a", null ],
+      [ "SingleStepRungeKutta4", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52a058e9ccea82c53c1bb14fc6486d5ba8b", null ],
+      [ "MultiStepRK3", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52a7c17ee8042ca1e624ca9ba3176766eac", null ],
+      [ "MultiStepRK4", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52a1b210c745bfc2a62de00c7231c3f45ff", null ],
+      [ "COUNT", "classNAV_1_1InertialIntegrator.html#a467717a9c1e1fb82f892fba30ea04e52a4905ac9d6a22bdfc1ae096094ce6248d", null ]
     ] ],
-    [ "IntegrationFrame", "classNAV_1_1InertialIntegrator.html#a80464716d19f500db97fc3186a81bf09", [
-      [ "ECEF", "classNAV_1_1InertialIntegrator.html#a80464716d19f500db97fc3186a81bf09ae9f56677a676cd46515c806cba38fffa", null ],
-      [ "NED", "classNAV_1_1InertialIntegrator.html#a80464716d19f500db97fc3186a81bf09acd3459b28418fa8fa75ffaba4f3e7c74", null ]
+    [ "IntegrationFrame", "classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1", [
+      [ "ECEF", "classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1ae9f56677a676cd46515c806cba38fffa", null ],
+      [ "NED", "classNAV_1_1InertialIntegrator.html#abeff56dbebc53fbd89cdbd070948e8e1acd3459b28418fa8fa75ffaba4f3e7c74", null ]
     ] ],
     [ "applySensorBiasesIncrements", "classNAV_1_1InertialIntegrator.html#af78342cbcf720805e11fbdf0f68382ee", null ],
     [ "applyStateErrors_e", "classNAV_1_1InertialIntegrator.html#a08e9d8d8f2fead125671baa2bc53006a", null ],
     [ "applyStateErrors_n", "classNAV_1_1InertialIntegrator.html#a3fb393a7586dd8c25ac6b960a322b170", null ],
     [ "calcInertialSolution", "classNAV_1_1InertialIntegrator.html#ac6ab0da2d4bced3499ebc9a3ac310508", null ],
-    [ "calcInertialSolutionDelta", "classNAV_1_1InertialIntegrator.html#ac820130ce55f6c59787c9fa395a5a97f", null ],
+    [ "calcInertialSolutionDelta", "classNAV_1_1InertialIntegrator.html#a5e46d684b5c76f93fecd306a6efdc748", null ],
+    [ "calcInertialSolutionFromMeasurementBuffer", "classNAV_1_1InertialIntegrator.html#a91ce1e84bb86188d9c8b32b959a99089", null ],
     [ "getIntegrationFrame", "classNAV_1_1InertialIntegrator.html#a2bbd94d48b6659980aecc49ccd5be379", null ],
     [ "getLatestState", "classNAV_1_1InertialIntegrator.html#a3efd3531c785b0c3b4b6aae794571bbe", null ],
     [ "getMeasurements", "classNAV_1_1InertialIntegrator.html#ae5cfe239aac5db459a2061f527630dbc", null ],
@@ -30,10 +31,18 @@ var classNAV_1_1InertialIntegrator =
     [ "p_getLastAccelerationBias", "classNAV_1_1InertialIntegrator.html#a58ab49c9bb5c34e73b97da4da5eae347", null ],
     [ "p_getLastAngularRateBias", "classNAV_1_1InertialIntegrator.html#af27ab86da2cf7297a485d8a86e933562", null ],
     [ "reset", "classNAV_1_1InertialIntegrator.html#ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc", null ],
+    [ "setBufferSizes", "classNAV_1_1InertialIntegrator.html#a68d94fbdecd1132d10e097313dc2c4a8", null ],
     [ "setInitialState", "classNAV_1_1InertialIntegrator.html#acc160f301e62bfa0bd2de9179cc66d3c", null ],
     [ "setState", "classNAV_1_1InertialIntegrator.html#a33a5f4024652fdad50f8ade48bb2ef74", null ],
     [ "setTotalSensorBiases", "classNAV_1_1InertialIntegrator.html#a57cf5af87a9ac4f936ee2a940db927f7", null ],
     [ "from_json", "classNAV_1_1InertialIntegrator.html#a7be8ccc8da4ba614cdac5616806554eb", null ],
-    [ "InertialIntegratorGui", "classNAV_1_1InertialIntegrator.html#ae2f5e79e3ec6082a63ae0ed40b4692e2", null ],
-    [ "to_json", "classNAV_1_1InertialIntegrator.html#a3d75aa888b74bbd216793580cf422531", null ]
+    [ "InertialIntegratorGui", "classNAV_1_1InertialIntegrator.html#a879a5c0aac1a52b6062764ac7cd174d3", null ],
+    [ "to_json", "classNAV_1_1InertialIntegrator.html#a3d75aa888b74bbd216793580cf422531", null ],
+    [ "_integrationAlgorithm", "classNAV_1_1InertialIntegrator.html#a0130189567a4e41f28d045c0628341af", null ],
+    [ "_integrationFrame", "classNAV_1_1InertialIntegrator.html#ad8e04bf0864388673ac7fef414c0dc9f", null ],
+    [ "_measurements", "classNAV_1_1InertialIntegrator.html#a6a1c9dc0a0080c4fe16e0fc88e481d23", null ],
+    [ "_posVelAttDerivativeConstants", "classNAV_1_1InertialIntegrator.html#a3c85bd5e0557e22528341891e301b8dd", null ],
+    [ "_states", "classNAV_1_1InertialIntegrator.html#a22148e2989f6dedde871426fdad6b528", null ],
+    [ "p_lastBiasAcceleration", "classNAV_1_1InertialIntegrator.html#af80def563599df19f3182a8074a7eeec", null ],
+    [ "p_lastBiasAngularRate", "classNAV_1_1InertialIntegrator.html#a2d65123b1848fbe95586c90abec69a7a", null ]
 ];

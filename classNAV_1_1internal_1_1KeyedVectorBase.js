@@ -7,6 +7,7 @@ var classNAV_1_1internal_1_1KeyedVectorBase =
     [ "KeyedVectorBase", "classNAV_1_1internal_1_1KeyedVectorBase.html#a9d83ff1f0106e8c85e0df8930263d710", null ],
     [ "KeyedVectorBase", "classNAV_1_1internal_1_1KeyedVectorBase.html#ae08e80d049bd375059085d93de425892", null ],
     [ "KeyedVectorBase", "classNAV_1_1internal_1_1KeyedVectorBase.html#ac410039d2ffedeb6dc373a122353cbab", null ],
+    [ "checkContinuousSegment", "classNAV_1_1internal_1_1KeyedVectorBase.html#afa600cf82110bff23db92e815acdabc8", null ],
     [ "operator Eigen::Vector< Scalar, Rows >", "classNAV_1_1internal_1_1KeyedVectorBase.html#a0ca6fd19924e905f4d79c0a89e7612ed", null ],
     [ "operator()", "classNAV_1_1internal_1_1KeyedVectorBase.html#a6b0471d08d6afe64a49d8fffa6afd154", null ],
     [ "operator()", "classNAV_1_1internal_1_1KeyedVectorBase.html#ab2094a78361e8b5cf9badd5d3bcefa3a", null ],

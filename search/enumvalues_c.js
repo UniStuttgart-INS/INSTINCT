@@ -1,15 +1,19 @@
 var searchData=
 [
-  ['l_0',['L',['../RINEXUtilities_8hpp.html#abe9eb1497056e79316848a08e68050acad20caec3b48a1eef164cb4ca81ba2587',1,'NAV::vendor::RINEX']]],
+  ['l_0',['L',['../RINEXUtilities_8hpp.html#a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587',1,'NAV::vendor::RINEX']]],
   ['l1_1',['L1',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a9ec4c0afd450ceac7adb81c3bcfc9732',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l2_2',['L2',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a7e6aa2d53f6ee2b1a34b017fa403cb76',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l5_3',['L5',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a25d6c78aa672ad5603fb0b7da416f90a',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l_5fchan_4',['L_Chan',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba842223a7ef45cafd8712123ac116b778',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
-  ['leastsquares_5',['LeastSquares',['../classNAV_1_1SPP_1_1Algorithm.html#a6db3ea08a04532fb39fe556ce50002e6ad143c366b3274edc1e5496e302795a46',1,'NAV::SPP::Algorithm::LeastSquares'],['../classNAV_1_1PolynomialRegressor.html#aeb8bcf105601dc48a420b7741b83c9ccad143c366b3274edc1e5496e302795a46',1,'NAV::PolynomialRegressor::LeastSquares']]],
-  ['lessdatathanwindowsize_6',['LessDataThanWindowSize',['../PolynomialCycleSlipDetector_8hpp.html#ac2db38ee6de820e1e1868628e8a99428aaa7e68801c2142245b0f1a6caf51c16e',1,'NAV']]],
-  ['line_7',['Line',['../structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem_1_1Style.html#a27134cc2e67fbc7b0c3dbe7e0ca57fb9a4803e6b9e63dabf04de980788d6a13c4',1,'NAV::Plot::PlotInfo::PlotItem::Style']]],
-  ['lla_8',['LLA',['../structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#af65dcf776b8aefae637e9e9557f29bdda12606487276650180570ece64f6c41dc',1,'NAV::gui::widgets::PositionWithFrame']]],
-  ['lli_9',['LLI',['../classNAV_1_1CycleSlipDetector.html#ac50e03e3ee6671972ac2e9a5b495d64aa1efc409e30263ae9a61e5f1756914978',1,'NAV::CycleSlipDetector']]],
-  ['load_10',['Load',['../GlobalActions_8hpp.html#a1a8113ee44ef1f5d95186370c14eeabcac40ec5db2990469fc236f4c5dea23edb',1,'GlobalActions.hpp']]],
-  ['lossofgnss_11',['LossOfGNSS',['../classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#a1988b87a9c5f649c3e41c982185d4ec5a801034cdcc980e8793956a3964d939cb',1,'NAV::vendor::vectornav::InsStatus']]]
+  ['leastsquares_5',['LeastSquares',['../classNAV_1_1SPP_1_1Algorithm.html#ad6bd47f691f902d1828abde86ec92b63ad143c366b3274edc1e5496e302795a46',1,'NAV::SPP::Algorithm::LeastSquares'],['../classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fcad143c366b3274edc1e5496e302795a46',1,'NAV::PolynomialRegressor::LeastSquares']]],
+  ['lessdatathanwindowsize_6',['LessDataThanWindowSize',['../PolynomialCycleSlipDetector_8hpp.html#a166bacce8e517be943258a35964626a1aaa7e68801c2142245b0f1a6caf51c16e',1,'NAV']]],
+  ['line_7',['Line',['../structNAV_1_1PlotItemStyle.html#a977565f3f4c2886ddd560a2cb53718a9a4803e6b9e63dabf04de980788d6a13c4',1,'NAV::PlotItemStyle']]],
+  ['linear_8',['Linear',['../classNAV_1_1LowPassFilter.html#a8d1db7dbeacec53ee245c8c676e0991aa32a843da6ea40ab3b17a3421ccdf671b',1,'NAV::LowPassFilter::Linear'],['../classNAV_1_1ImuSimulator.html#a18a915dcefec7aedb766ab4bd2ce9e09a32a843da6ea40ab3b17a3421ccdf671b',1,'NAV::ImuSimulator::Linear']]],
+  ['lla_9',['LLA',['../structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#a0702d2b71c0d57125fa299bfae86430ea12606487276650180570ece64f6c41dc',1,'NAV::gui::widgets::PositionWithFrame::LLA'],['../classNAV_1_1WiFiPositioning.html#a2d661c978e5ab7ab43bf87eae2347b5ba12606487276650180570ece64f6c41dc',1,'NAV::WiFiPositioning::LLA']]],
+  ['lli_10',['LLI',['../classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4da1efc409e30263ae9a61e5f1756914978',1,'NAV::CycleSlipDetector']]],
+  ['load_11',['Load',['../GlobalActions_8hpp.html#acb05681edc8f1a3eca100c56e424281cac40ec5db2990469fc236f4c5dea23edb',1,'GlobalActions.hpp']]],
+  ['logoutput_12',['LogOutput',['../classNAV_1_1gui_1_1NodeEditorApplication.html#a64a771741070e6f37080264f37174104a85ed6eb5e1325951879b8a78faa2ba96',1,'NAV::gui::NodeEditorApplication']]],
+  ['lossofgnss_13',['LossOfGNSS',['../classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html#a24dafc7ba02d386cf99f3b7d4d5902e0a801034cdcc980e8793956a3964d939cb',1,'NAV::vendor::vectornav::InsStatus']]],
+  ['lsm_14',['LSM',['../classNAV_1_1Navio2Sensor.html#a68ca3d58596700a430d34865adc1bfa0a020dba91aec8db64e3015d9e5f41fc40',1,'NAV::Navio2Sensor']]],
+  ['lsq_15',['LSQ',['../classNAV_1_1WiFiPositioning.html#a049a94ddc43eb9a25033aa717bb84e57a065d740f68932c8f44eff46266e4e6f1',1,'NAV::WiFiPositioning']]]
 ];

@@ -9,5 +9,8 @@ var classCallbackTimer =
     [ "operator=", "classCallbackTimer.html#aabbbf75f454866561edb2e40bbb73a68", null ],
     [ "setInterval", "classCallbackTimer.html#a3f1f2d1a0ef733f7132f575b2ac8f53e", null ],
     [ "start", "classCallbackTimer.html#a60b269f529895db9dae56d2ba575e26d", null ],
-    [ "stop", "classCallbackTimer.html#aa3dfc2d25f1bdb5d209f6ba5f2f7a6be", null ]
+    [ "stop", "classCallbackTimer.html#aa3dfc2d25f1bdb5d209f6ba5f2f7a6be", null ],
+    [ "_execute", "classCallbackTimer.html#a183822f6795e58f40ad66327ee9face1", null ],
+    [ "_interval", "classCallbackTimer.html#abdb3a4c6f9105e8de2601008ca20c1af", null ],
+    [ "_thd", "classCallbackTimer.html#a32cffafc16289516ce5ed878abdedf46", null ]
 ];

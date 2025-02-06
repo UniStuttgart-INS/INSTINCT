@@ -1,16 +1,27 @@
 var classNAV_1_1PolynomialCycleSlipDetector =
 [
+    [ "SignalDetector", "structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector.html", "structNAV_1_1PolynomialCycleSlipDetector_1_1SignalDetector" ],
     [ "Strategy", "classNAV_1_1PolynomialCycleSlipDetector.html#a656d5f87e2dd2de8960a11957fc44b14", null ],
     [ "PolynomialCycleSlipDetector", "classNAV_1_1PolynomialCycleSlipDetector.html#adf906eb42f8374eeccf65724ec7e84ff", null ],
+    [ "addMeasurement", "classNAV_1_1PolynomialCycleSlipDetector.html#a2b197369fd665b97c013f3cfdb268bff", null ],
+    [ "calcPolynomial", "classNAV_1_1PolynomialCycleSlipDetector.html#aa3ed76ed6ac6675f067b0226959cf93d", null ],
+    [ "calcRelativeTime", "classNAV_1_1PolynomialCycleSlipDetector.html#a9fd4af1ea825928ff0e6355c8b2d7283", null ],
+    [ "calcRelativeTime", "classNAV_1_1PolynomialCycleSlipDetector.html#a9364bd32f4d6e9e7415cef051d56d8dd", null ],
     [ "checkForCycleSlip", "classNAV_1_1PolynomialCycleSlipDetector.html#ab6cdf1febd5f1a6e5864e552835fa425", null ],
     [ "clear", "classNAV_1_1PolynomialCycleSlipDetector.html#af329eb1c387fe2f6d933e1aae02948f4", null ],
     [ "getFitStrategy", "classNAV_1_1PolynomialCycleSlipDetector.html#aca521f480f82ccb1d56ce3d5912c79c3", null ],
     [ "getPolynomialDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#a0f5d92ecb50210799fad875059eddeb7", null ],
     [ "getWindowSize", "classNAV_1_1PolynomialCycleSlipDetector.html#a98d64c1c598e5979ea5f9067ad083bb2", null ],
     [ "isEnabled", "classNAV_1_1PolynomialCycleSlipDetector.html#a85929df95ac0ae98a4580f8e124c659c", null ],
+    [ "predictValue", "classNAV_1_1PolynomialCycleSlipDetector.html#a2fb90c0dc5ec45fbe09a411fd1b24142", null ],
     [ "reset", "classNAV_1_1PolynomialCycleSlipDetector.html#ad0333bd458a5bde9475508b27a255bc8", null ],
     [ "setEnabled", "classNAV_1_1PolynomialCycleSlipDetector.html#a5d14bc1834ec427b22a8331de96ee616", null ],
     [ "setFitStrategy", "classNAV_1_1PolynomialCycleSlipDetector.html#a150a74d718463350804f867cb16e7851", null ],
     [ "setPolynomialDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#a967d078c52ad86d6ed6bfa0140946967", null ],
-    [ "setWindowSize", "classNAV_1_1PolynomialCycleSlipDetector.html#a26078e2c85d1cd62102f944c8e3a1576", null ]
+    [ "setWindowSize", "classNAV_1_1PolynomialCycleSlipDetector.html#a26078e2c85d1cd62102f944c8e3a1576", null ],
+    [ "_detectors", "classNAV_1_1PolynomialCycleSlipDetector.html#ad06dcafc7863c9c36c40ad1eb857e0a5", null ],
+    [ "_enabled", "classNAV_1_1PolynomialCycleSlipDetector.html#ac7c736e81a26526971da6f6e0fcb796e", null ],
+    [ "_polyDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#acd8634283375e6163672815c39822f08", null ],
+    [ "_strategy", "classNAV_1_1PolynomialCycleSlipDetector.html#aa04741cf3c23ea8420f6b7c4737f23fe", null ],
+    [ "_windowSize", "classNAV_1_1PolynomialCycleSlipDetector.html#abeaeb336945ba3dd8dc5b2fdd897da42", null ]
 ];

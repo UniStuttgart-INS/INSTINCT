@@ -1,10 +1,10 @@
 var structNAV_1_1Receiver =
 [
-    [ "Receiver", "structNAV_1_1Receiver.html#a2f31b2ce8ea1eb0fd81876378e8ab8b9", null ],
-    [ "e_posAntennaPhaseCenter", "structNAV_1_1Receiver.html#ae7771b794b73aa7915d29da2103b0c22", null ],
-    [ "e_posARP", "structNAV_1_1Receiver.html#a35c5766aa8294ccaa379dad61ab52e20", null ],
-    [ "lla_posAntennaPhaseCenter", "structNAV_1_1Receiver.html#a4c485e74ae92d83f5fb673b530b36ddc", null ],
-    [ "lla_posARP", "structNAV_1_1Receiver.html#a6d8e1569d91e1971d95758c9c25779b0", null ],
+    [ "Receiver", "structNAV_1_1Receiver.html#a61afb27fe4223ee32c3f4658c0679652", null ],
+    [ "e_calcPosAPC", "structNAV_1_1Receiver.html#aa2e05afbe26527187285551577984473", null ],
+    [ "e_calcPosARP", "structNAV_1_1Receiver.html#a872633e854cc6ef93c3abeb1e186e98b", null ],
+    [ "lla_calcPosAPC", "structNAV_1_1Receiver.html#a7d6f7e7f7a2b4aa122b244ebd856ca7b", null ],
+    [ "lla_calcPosARP", "structNAV_1_1Receiver.html#abc13708126ed28124a07e7f121e9527d", null ],
     [ "e_posMarker", "structNAV_1_1Receiver.html#acba871d5bc7ae43d7537845bc6aa9301", null ],
     [ "e_vel", "structNAV_1_1Receiver.html#ad7930a781b010e1221c5a0ce26c7aa3d", null ],
     [ "gnssObs", "structNAV_1_1Receiver.html#a18a3c49669903ea09213932d121c3594", null ],

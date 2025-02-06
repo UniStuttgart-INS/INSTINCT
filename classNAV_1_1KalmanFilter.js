@@ -8,6 +8,7 @@ var classNAV_1_1KalmanFilter =
     [ "setZero", "classNAV_1_1KalmanFilter.html#a9a742443d4dd5896bc8a1fbbe68ee4fd", null ],
     [ "transitionMatrix", "classNAV_1_1KalmanFilter.html#aac8d6d5ae484449d24b4b76ab6e0b21e", null ],
     [ "H", "classNAV_1_1KalmanFilter.html#ae84bf41f54c7416c3fd96e4c8f8ab347", null ],
+    [ "I", "classNAV_1_1KalmanFilter.html#a641b0cb08c543b26729bb3cf323ceb80", null ],
     [ "K", "classNAV_1_1KalmanFilter.html#a365af79f4b8eaa4d87998615c6f2985b", null ],
     [ "P", "classNAV_1_1KalmanFilter.html#a901b111b8a1ffd2a058f100943c8cc6d", null ],
     [ "Phi", "classNAV_1_1KalmanFilter.html#ace1fca781a588e472e493771f95a1252", null ],

@@ -2,6 +2,7 @@ var classNAV_1_1InsGnssTCKFSolution =
 [
     [ "GetStaticDataDescriptors", "classNAV_1_1InsGnssTCKFSolution.html#a3bd2ce5a1149fea855319a3dffb63983", null ],
     [ "GetStaticDescriptorCount", "classNAV_1_1InsGnssTCKFSolution.html#a49a51664c0bcacc53e0db7b2406e3841", null ],
+    [ "getType", "classNAV_1_1InsGnssTCKFSolution.html#ae93fac42dd793d4560fbe85b73d27b24", null ],
     [ "getValueAt", "classNAV_1_1InsGnssTCKFSolution.html#ae219654bccd2a82dae90753b77771d53", null ],
     [ "parentTypes", "classNAV_1_1InsGnssTCKFSolution.html#ad6782968b5d4730c9281fea833c5f28b", null ],
     [ "staticDataDescriptors", "classNAV_1_1InsGnssTCKFSolution.html#aa6ddb6e26fb3df9a53747f35761e3c5e", null ],

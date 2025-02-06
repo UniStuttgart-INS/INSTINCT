@@ -23,5 +23,6 @@ var structNAV_1_1Pin_1_1Type =
     [ "operator!=", "structNAV_1_1Pin_1_1Type.html#a1d6752e5bec4d435d666aec2eb16ae1e", null ],
     [ "operator==", "structNAV_1_1Pin_1_1Type.html#a9e145ac7e52a2c9ab9d1306aa4f80f55", null ],
     [ "operator==", "structNAV_1_1Pin_1_1Type.html#a6480a7861673384a7dcb56e23b9c4fc3", null ],
-    [ "operator==", "structNAV_1_1Pin_1_1Type.html#ac99df95dbb4098f688fef4e817844e56", null ]
+    [ "operator==", "structNAV_1_1Pin_1_1Type.html#ac99df95dbb4098f688fef4e817844e56", null ],
+    [ "value", "structNAV_1_1Pin_1_1Type.html#a64f35b395acea6695a4b69aa084810c7", null ]
 ];

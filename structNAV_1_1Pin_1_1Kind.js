@@ -17,5 +17,6 @@ var structNAV_1_1Pin_1_1Kind =
     [ "operator!=", "structNAV_1_1Pin_1_1Kind.html#a7896b1e2b82c3142ea1a4e49abbb8d47", null ],
     [ "operator==", "structNAV_1_1Pin_1_1Kind.html#a761464a9b0e4954c4eba3afd99379027", null ],
     [ "operator==", "structNAV_1_1Pin_1_1Kind.html#a647adaba15779378fdd87ee63f652973", null ],
-    [ "operator==", "structNAV_1_1Pin_1_1Kind.html#a7c9ecede1cb3f57b9224d48b207c8ea9", null ]
+    [ "operator==", "structNAV_1_1Pin_1_1Kind.html#a7c9ecede1cb3f57b9224d48b207c8ea9", null ],
+    [ "value", "structNAV_1_1Pin_1_1Kind.html#a9a07cc82039cfb13eeaf7334595a4f86", null ]
 ];

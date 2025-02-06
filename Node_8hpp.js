@@ -2,7 +2,6 @@ var Node_8hpp =
 [
     [ "NAV::Node::Kind", "structNAV_1_1Node_1_1Kind.html", "structNAV_1_1Node_1_1Kind" ],
     [ "NAV::Node", "classNAV_1_1Node.html", "classNAV_1_1Node" ],
-    [ "json", "Node_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d", null ],
     [ "deinitialize", "Node_8hpp.html#a12cff72df8259bfc2e51d2a6cf44ff34", null ],
     [ "execute", "Node_8hpp.html#abdca197ceadc3cd79da319d70d2af8c9", null ],
     [ "from_json", "Node_8hpp.html#a8fda297b9241b9ab3d37457283d070f9", null ],

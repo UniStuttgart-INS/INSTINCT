@@ -1,17 +1,19 @@
 var StringUtil_8hpp =
 [
     [ "NAV::str::StdString", "conceptNAV_1_1str_1_1StdString.html", null ],
-    [ "CaseSensitivity", "StringUtil_8hpp.html#a439b8f4f7776fc73ddbb78330d0f5828", [
-      [ "RespectCase", "StringUtil_8hpp.html#a439b8f4f7776fc73ddbb78330d0f5828a7823bb65d3e0f9df35ec541298dbc5c2", null ],
-      [ "IgnoreCase", "StringUtil_8hpp.html#a439b8f4f7776fc73ddbb78330d0f5828af30ae137e03639660e772e37219e054f", null ]
+    [ "CaseSensitivity", "StringUtil_8hpp.html#ad04f6027c0d6d6abf74f7b52dd66af25", [
+      [ "RespectCase", "StringUtil_8hpp.html#ad04f6027c0d6d6abf74f7b52dd66af25a7823bb65d3e0f9df35ec541298dbc5c2", null ],
+      [ "IgnoreCase", "StringUtil_8hpp.html#ad04f6027c0d6d6abf74f7b52dd66af25af30ae137e03639660e772e37219e054f", null ]
     ] ],
     [ "ltrim", "StringUtil_8hpp.html#a5f1391b96d539eb1a0b1d18059bae2e3", null ],
     [ "ltrim", "StringUtil_8hpp.html#a742fd68e29790f91c7c74f831e8d06d1", null ],
     [ "ltrim_copy", "StringUtil_8hpp.html#a4d7d86aac2d9ca2f5ea4fc0cd0518872", null ],
     [ "ltrim_copy", "StringUtil_8hpp.html#a1bb0d715893cbd807d6178c34f500aee", null ],
     [ "replace", "StringUtil_8hpp.html#af8eada300e4ae226dc3a3f6f2a97708b", null ],
-    [ "replaceAll", "StringUtil_8hpp.html#a1b231a4ebf764e6a493164afb8e37dd8", null ],
-    [ "replaceAll_copy", "StringUtil_8hpp.html#abf8f2bff21a9cfc1f68b519dc1599bab", null ],
+    [ "replaceAll", "StringUtil_8hpp.html#a69f3c9e429aaa9e96df86e7c27c5c2df", null ],
+    [ "replaceAll", "StringUtil_8hpp.html#ab5803d12f66d8f41f367753a5b01f1b5", null ],
+    [ "replaceAll_copy", "StringUtil_8hpp.html#aa4895d0fb7a561b9463cb796ea7768f0", null ],
+    [ "replaceAll_copy", "StringUtil_8hpp.html#a8d254a3dc66d17dc6efb433646a22f06", null ],
     [ "rtrim", "StringUtil_8hpp.html#a53db120e886eb55f69bfed007a369470", null ],
     [ "rtrim", "StringUtil_8hpp.html#ad0416116ed0a038c9fe97c5849ef2253", null ],
     [ "rtrim_copy", "StringUtil_8hpp.html#a9eab4c74a3d658d46f2caff85c4e6852", null ],

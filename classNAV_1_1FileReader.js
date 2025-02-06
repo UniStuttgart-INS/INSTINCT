@@ -1,14 +1,14 @@
 var classNAV_1_1FileReader =
 [
-    [ "FileType", "classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2e", [
-      [ "NONE", "classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eaf95d110903dd742fcbe22539bb897b30", null ],
-      [ "BINARY", "classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2eabab7b9439937fbc5374332f59762d419", null ],
-      [ "ASCII", "classNAV_1_1FileReader.html#af2e5120198c08c760522fdccd1ac8c2ea69a91d628ae2c47dce2ec93108fe8533", null ]
+    [ "FileType", "classNAV_1_1FileReader.html#a2737f4aef217e4d1c63df387e8ba6085", [
+      [ "NONE", "classNAV_1_1FileReader.html#a2737f4aef217e4d1c63df387e8ba6085af95d110903dd742fcbe22539bb897b30", null ],
+      [ "BINARY", "classNAV_1_1FileReader.html#a2737f4aef217e4d1c63df387e8ba6085abab7b9439937fbc5374332f59762d419", null ],
+      [ "ASCII", "classNAV_1_1FileReader.html#a2737f4aef217e4d1c63df387e8ba6085a69a91d628ae2c47dce2ec93108fe8533", null ]
     ] ],
-    [ "GuiResult", "classNAV_1_1FileReader.html#af8f48aea789c21488dda550b2c33528b", [
-      [ "PATH_UNCHANGED", "classNAV_1_1FileReader.html#af8f48aea789c21488dda550b2c33528ba3e3159f074631b0bc74e98def4d33016", null ],
-      [ "PATH_CHANGED", "classNAV_1_1FileReader.html#af8f48aea789c21488dda550b2c33528ba46bb5b58448ce26d3d870d60880a5a65", null ],
-      [ "PATH_CHANGED_INVALID", "classNAV_1_1FileReader.html#af8f48aea789c21488dda550b2c33528ba4ce5931509812e60c67bb139b1066198", null ]
+    [ "GuiResult", "classNAV_1_1FileReader.html#a5bd5ecfa03710561e3b9b82bbe853327", [
+      [ "PATH_UNCHANGED", "classNAV_1_1FileReader.html#a5bd5ecfa03710561e3b9b82bbe853327a3e3159f074631b0bc74e98def4d33016", null ],
+      [ "PATH_CHANGED", "classNAV_1_1FileReader.html#a5bd5ecfa03710561e3b9b82bbe853327a46bb5b58448ce26d3d870d60880a5a65", null ],
+      [ "PATH_CHANGED_INVALID", "classNAV_1_1FileReader.html#a5bd5ecfa03710561e3b9b82bbe853327a4ce5931509812e60c67bb139b1066198", null ]
     ] ],
     [ "~FileReader", "classNAV_1_1FileReader.html#a41f403389e246be39e9987cd7c3b8fb0", null ],
     [ "FileReader", "classNAV_1_1FileReader.html#a87df549174cbd25d56f6f7536b57f81e", null ],
@@ -35,7 +35,11 @@ var classNAV_1_1FileReader =
     [ "save", "classNAV_1_1FileReader.html#ab16522f6e43a0186b6bf4e408fba0e7b", null ],
     [ "seekg", "classNAV_1_1FileReader.html#ac937085345de516d9cf1f9ad5c020bea", null ],
     [ "tellg", "classNAV_1_1FileReader.html#a7402d72cb27434d95703ee607ff2eb12", null ],
+    [ "_dataStart", "classNAV_1_1FileReader.html#abd2488479bef81428238c2d21dd39ad4", null ],
+    [ "_filestream", "classNAV_1_1FileReader.html#a2f0574dbda1717f13e36a6ad9028b1cd", null ],
     [ "_fileType", "classNAV_1_1FileReader.html#a3d4f018dc0c28737692da025e8dd788b", null ],
     [ "_headerColumns", "classNAV_1_1FileReader.html#a738e7dac58d7cdec5a2274ae019fe93f", null ],
+    [ "_lineCnt", "classNAV_1_1FileReader.html#ae54085ae6e26aa0e2002b9bc3149637a", null ],
+    [ "_lineCntDataStart", "classNAV_1_1FileReader.html#ae9783b3874e440f6b71e7e1e665d883d", null ],
     [ "_path", "classNAV_1_1FileReader.html#a2644402909ede89d66f9b519620624a5", null ]
 ];
