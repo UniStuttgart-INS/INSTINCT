@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 16:09:31</td>
+      <td>2025-02-06 21:54:50</td>
     </tr>
   </table>
 </div>
@@ -71,11 +71,11 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l160">NAV::TimeSystem::TimeSystem(NAV::TimeSystem::TimeSystemEnum) (line 160)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l47">NAV::TimeSystem::TimeSystem(NAV::TimeSystem_) (line 47)</a></td><td>called 941830 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l53">NAV::TimeSystem::fromString(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 53)</a></td><td>called 60 times</td><td>39.0%</td></tr>
-    <tr><td><a href="#l99">NAV::TimeSystem::operator NAV::TimeSystem_() const (line 99)</a></td><td>called 968559 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l47">NAV::TimeSystem::TimeSystem(NAV::TimeSystem_) (line 47)</a></td><td>called 941829 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l53">NAV::TimeSystem::fromString(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 53)</a></td><td>called 59 times</td><td>39.0%</td></tr>
+    <tr><td><a href="#l99">NAV::TimeSystem::operator NAV::TimeSystem_() const (line 99)</a></td><td>called 968564 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l109">NAV::TimeSystem::operator std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;() const (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l90">NAV::TimeSystem::operator=(NAV::TimeSystem_) (line 90)</a></td><td>called 432 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l90">NAV::TimeSystem::operator=(NAV::TimeSystem_) (line 90)</a></td><td>called 427 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l112">NAV::TimeSystem::toString() const (line 112)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l280">NAV::operator&amp;(NAV::TimeSystem_, NAV::TimeSystem_) (line 280)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l365">NAV::operator==(NAV::TimeSystem const&amp;, NAV::TimeSystem const&amp;) (line 365)</a></td><td>called 6267 times</td><td>100.0%</td></tr>
@@ -421,21 +421,21 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">941830</td>
+      <td class="linecount coveredLine">941829</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">TimeSystem</span><span class="p">(</span><span class="n">TimeSystem_</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="c1">// NOLINT(hicpp-explicit-conversions, google-explicit-constructor)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">941830</td>
+      <td class="linecount coveredLine">941829</td>
       <td class="src coveredLine"><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">value</span><span class="p">(</span><span class="n">type</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">941830</td>
+      <td class="linecount coveredLine">941829</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -463,7 +463,7 @@
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">60</td>
+      <td class="linecount coveredLine">59</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">TimeSystem</span><span class="w"> </span><span class="n">fromString</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">typeString</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -480,11 +480,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 54 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 53 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">60</td>
+      <td class="linecount coveredLine">59</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">typeString</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;UTC&quot;</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -514,7 +514,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 48 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 47 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 6 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 45 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 3 times.</div>
@@ -523,7 +523,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">54</td>
+      <td class="linecount coveredLine">53</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">typeString</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GPST&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">typeString</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GPS&quot;</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -751,7 +751,7 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">432</td>
+      <td class="linecount coveredLine">427</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">TimeSystem</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">TimeSystem_</span><span class="w"> </span><span class="n">v</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -765,14 +765,14 @@
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">432</td>
+      <td class="linecount coveredLine">427</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">432</td>
+      <td class="linecount coveredLine">427</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -814,7 +814,7 @@
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">968559</td>
+      <td class="linecount coveredLine">968564</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="n">TimeSystem_</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 16:09:31</td>
+      <td>2025-02-06 21:54:50</td>
     </tr>
   </table>
 </div>
@@ -81,7 +81,7 @@
     <tr><td><a href="#l102">NAV::VectorNavDataLogger::save[abi:cxx11]() const (line 102)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l43">NAV::VectorNavDataLogger::typeStatic[abi:cxx11]() (line 43)</a></td><td>called 228 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l48">NAV::VectorNavDataLogger::type[abi:cxx11]() const (line 48)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l164">NAV::VectorNavDataLogger::writeObservation(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long) (line 164)</a></td><td>called 58 times</td><td>76.0%</td></tr>
+    <tr><td><a href="#l164">NAV::VectorNavDataLogger::writeObservation(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long) (line 164)</a></td><td>called 59 times</td><td>76.0%</td></tr>
     <tr><td><a href="#l38">NAV::VectorNavDataLogger::~VectorNavDataLogger() (line 38)</a></td><td>called 120 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -1302,7 +1302,7 @@
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58</td>
+      <td class="linecount coveredLine">59</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">VectorNavDataLogger</span><span class="o">::</span><span class="n">writeObservation</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">InputPin</span><span class="o">::</span><span class="n">NodeDataQueue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="cm">/* pinIdx */</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1318,12 +1318,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 59 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">58</td>
+      <td class="linecount partialCoveredLine">59</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">static_pointer_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">VectorNavBinaryOutput</span><span class="o">&gt;</span><span class="p">(</span><span class="n">queue</span><span class="p">.</span><span class="n">extract_front</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
