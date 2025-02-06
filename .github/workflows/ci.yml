@@ -9,7 +9,6 @@ on:
    #   - main
    #   - develop
 
-
 env:
   # Conan cache environment variables
   CONAN_SYSREQUIRES_MODE: enabled
@@ -17,53 +16,12 @@ env:
   CONAN_USER_HOME_SHORT: "${{ github.workspace }}/conan-cache/short"
 
 jobs:
-  Clang-tidy:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Setup Cache
-        uses: ./.github/actions/setup_cache
-        with:
-          compiler: llvm
-          build_type: Release
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: llvm
-          cmake: true
-          conan: "2.6.0"
-          clangtidy: "14.0.0"
-      - name: Setup Linux
-        run: |
-          sudo apt install -y libglfw3-dev libglfw3
-      - name: Create default conan profile
-        run: |
-          conan profile detect --force
-      - name: Check tool versions
-        uses: ./.github/actions/check_tool_versions
-        with:
-          clangtidy: true
-      - name: Installing conan dependencies
-        run: |
-          conan install . --build=missing -s build_type=Release -s compiler.cppstd=17
-      - name: Configure CMake
-        run: |
-          cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-      - name: Copy compile commands
-        run: |
-          cmake --build ./build --target copy-compile-commands --config Release
-      - name: Run clang-tidy on ./src
-        run: |
-          python3 ./tools/run-clang-tidy.py $PWD/src
-      - name: Run clang-tidy on ./test
-        run: |
-          python3 ./tools/run-clang-tidy.py $PWD/test
-
   Documentation:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,15 +30,15 @@ jobs:
       - name: Setup Cache
         uses: ./.github/actions/setup_cache
         with:
-          compiler: gcc-11
+          compiler: gcc-13
           build_type: Release
           doxygen: "ON"
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: gcc-11
+          compiler: gcc-13
           cmake: true
-          conan: "2.6.0"
+          conan: true
           doxygen: true
       - name: Setup Linux
         run: |
@@ -99,42 +57,62 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B ./build -S. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="build/Release/generators/conan_toolchain.cmake" -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
-      - name: Check documentation
+      - name: Build documentation
         run: |
           cmake --build ./build --target doc --config Release
+      - name: Archive Documentation
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: build/doc/html/
+          if-no-files-found: error
 
-  Build:
+  Test:
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
-          - macos-13
+          - ubuntu-24.04
+          - macos-latest
           - windows-2022
         compiler:
           # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm
-          - gcc-11
+          - apple-clang
+          - llvm-18
+          - gcc-13
           - msvc-2022
         build_type:
-          - Debug
+          - Release
         log-level:
           - "DEBUG"
         exclude:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             compiler: msvc-2022
-          - os: macos-13
-            compiler: gcc-11
-          - os: macos-13
+          - os: ubuntu-24.04
+            compiler: apple-clang
+          - os: macos-latest
+            compiler: gcc-13
+          - os: macos-latest
             compiler: msvc-2022
+          - os: macos-latest
+            compiler: llvm-18
           - os: windows-2022
-            compiler: gcc-11
+            compiler: gcc-13
           - os: windows-2022
-            compiler: llvm
+            compiler: llvm-18
+          - os: windows-2022
+            compiler: apple-clang
         include:
-          - os: ubuntu-22.04
-            compiler: gcc-11
+          - os: ubuntu-24.04 # For coverage generation
+            compiler: gcc-13
+            build_type: Debug
+            log-level: "DEBUG"
+          - os: ubuntu-24.04
+            compiler: gcc-13
             build_type: Debug
             log-level: "OFF"
     steps:
@@ -150,94 +128,12 @@ jobs:
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
-          compiler: ${{ matrix.compiler }}
+          compiler: ${{ matrix.compiler != 'apple-clang' && matrix.compiler || 'appleclang' }}
           vcvarsall: ${{ contains(matrix.os, 'windows' )}}
           cmake: true
           brew: true
-          conan: "2.6.0"
-      - name: Setup MacOS
-        if: ${{ runner.os == 'macOS' }}
-        run: |
-          brew install glfw
-      - name: Setup Linux
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo apt install -y libglfw3-dev libglfw3
-      - name: Create default conan profile
-        run: |
-          conan profile detect --force
-      - name: Check tool versions
-        uses: ./.github/actions/check_tool_versions
-        with:
-          compiler: ${{ matrix.compiler }}
-      - name: Installing conan dependencies
-        run: |
-          conan install . --build=missing -s build_type=${{matrix.build_type}} -s compiler.cppstd=17
-      - name: Configure CMake
-        if: ${{ runner.os != 'Windows' }}
-        run: |
-          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/${{matrix.build_type}}/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') }} -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-      - name: Configure CMake
-        if: ${{ runner.os == 'Windows' }}
-        run: |
-          cmake -S . -B ./build -DCMAKE_BUILD_TYPE:STRING=${{matrix.build_type}} -DCMAKE_TOOLCHAIN_FILE="build/generators/conan_toolchain.cmake" -DENABLE_MAIN=TRUE -DENABLE_TESTING=TRUE -DENABLE_COVERAGE:BOOL=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL:STRING=${{matrix.log-level}} -DWARNINGS_AS_ERRORS:BOOL=${{ !contains(matrix.os, 'windows' )}} -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-      - name: Build
-        run: |
-          cmake --build ./build --config ${{matrix.build_type}}
-
-  Test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-22.04
-          - macos-13
-          - windows-2022
-        compiler:
-          # you can specify the version after `-` like "llvm-13.0.0".
-          - llvm
-          - gcc-11
-          - msvc-2022
-        build_type:
-          - Release
-        log-level:
-          - "DEBUG"
-        exclude:
-          - os: ubuntu-22.04
-            compiler: msvc-2022
-          - os: macos-13
-            compiler: gcc-11
-          - os: macos-13
-            compiler: msvc-2022
-          - os: windows-2022
-            compiler: gcc-11
-          - os: windows-2022
-            compiler: llvm
-        include:
-          - os: ubuntu-22.04 # For coverage generation
-            compiler: gcc-11
-            build_type: Debug
-            log-level: "DEBUG"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Setup Cache
-        uses: ./.github/actions/setup_cache
-        with:
-          compiler: ${{ matrix.compiler }}
-          build_type: ${{ matrix.build_type }}
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: ${{ matrix.compiler }}
-          vcvarsall: ${{ contains(matrix.os, 'windows' )}}
-          cmake: true
-          brew: true
-          conan: "2.6.0"
-          gcovr: "7.2"
+          conan: true
+          gcovr: "8.2"
       - name: Setup MacOS
         if: ${{ runner.os == 'macOS' }}
         run: |
@@ -268,6 +164,15 @@ jobs:
       - name: Build
         run: |
           cmake --build ./build --config ${{matrix.build_type}}
+      - name: Archive executable
+        if: ${{ matrix.build_type == 'Release' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: instinct-${{runner.os}}-${{runner.arch}}-${{matrix.compiler}}
+          path: |
+            build/bin/Release/instinct*
+            !build/bin/Release/instinct.exp
+            !build/bin/Release/instinct.lib
       - name: Test
         if: ${{ matrix.build_type == 'Release' || startsWith(matrix.compiler, 'gcc') }}
         working-directory: ./build
@@ -280,15 +185,47 @@ jobs:
           name: test-logs
           path: test/logs
       - name: Coverage
-        if: ${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') }}
+        if: ${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') && matrix.log-level == 'DEBUG' }}
         run: |
           mkdir -p build/coverage
           gcovr --config doc/coverage/gcovr.cfg
       - name: Publish to codecov
-        if: ${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') }}
+        if: ${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') && matrix.log-level == 'DEBUG' }}
         uses: codecov/codecov-action@v4
         with:
           flags: ${{ runner.os }}
           name: ${{ runner.os }}-coverage
           files: ./build/cobertura.xml
           token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Archive Coverage Report
+        if: ${{ runner.os == 'Linux' && matrix.build_type == 'Debug' && startsWith(matrix.compiler, 'gcc') && matrix.log-level == 'DEBUG' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/coverage/
+          if-no-files-found: error
+
+  Pages:
+    runs-on: ubuntu-24.04
+    needs: [Documentation, Test]
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: Download documentation
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: public/
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: public/coverage/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public

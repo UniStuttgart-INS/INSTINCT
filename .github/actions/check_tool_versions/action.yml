@@ -60,15 +60,6 @@ runs:
     - run: doxygen --version
       shell: bash
       if: ${{ inputs.documentation == 'true' }}
-    - run: dvips --version
-      shell: bash
-      if: ${{ inputs.documentation == 'true' }}
-    - run: gs --version
-      shell: bash
-      if: ${{ inputs.documentation == 'true' }}
-    - run: latex --version
-      shell: bash
-      if: ${{ inputs.documentation == 'true' }}
-    - run: command -v pdf2svg
+    - run: bibtex --version
       shell: bash
       if: ${{ inputs.documentation == 'true' }}
