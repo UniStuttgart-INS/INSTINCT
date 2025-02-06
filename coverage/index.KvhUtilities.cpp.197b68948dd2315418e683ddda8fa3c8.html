@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>INSTINCT Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="index.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>INSTINCT Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>src/</td>
+    </tr>
+    <tr>
+      <th scope="row">File:</th>
+      <td>util/Vendor/KVH/KvhUtilities.cpp</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2025-02-06 16:09:31</td>
+    </tr>
+  </table>
+</div>
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>0</td>
+      <td>45</td>
+      <td class="coverage-none">0.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>0</td>
+      <td>2</td>
+      <td class="coverage-none">0.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>0</td>
+      <td>70</td>
+      <td class="coverage-none">0.0%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+<details>
+  <summary>List of functions</summary>
+  <table class="listOfFunctions">
+    <tr>
+      <th>Function (Line)</th>
+      <th>Call count</th>
+      <th>Block coverage</th>
+    </tr>
+    <tr><td><a href="#l97">NAV::vendor::kvh::decryptKvhObs(std::shared_ptr&lt;NAV::KvhObs&gt; const&amp;) (line 97)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l84">NAV::vendor::kvh::ui32CalcImuCRC(std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt; const&amp;) (line 84)</a></td><td>not called</td><td>0.0%</td></tr>
+  </table>
+</details>
+
+    </nav>
+    <main>
+<div class="file-source">
+  <table>
+    <tr>
+      <th align="right">Line</th>
+      <th align="right">Branch</th>
+      <th align="right">Exec</th>
+      <th align="left">Source</th>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1" href="#l1">1</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l2" href="#l2">2</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// Navigation Concepts and Training by the Institute of Navigation of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l3" href="#l3">3</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// the University of Stuttgart, Germany.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l4" href="#l4">4</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l5" href="#l5">5</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// This Source Code Form is subject to the terms of the Mozilla Public</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l6" href="#l6">6</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l7" href="#l7">7</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l8" href="#l8">8</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l9" href="#l9">9</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;KvhUtilities.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l10" href="#l10">10</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l11" href="#l11">11</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;util/Logger.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l12" href="#l12">12</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Navigation/Constants.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l13" href="#l13">13</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;util/Vendor/KVH/KvhUartSensor.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l14" href="#l14">14</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;array&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l15" href="#l15">15</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l16" href="#l16">16</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// Static table used for the table driven implementation of the 32-bit CRC algorithm.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l17" href="#l17">17</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ui32aCRCTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l18" href="#l18">18</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x00000000</span><span class="p">,</span><span class="w"> </span><span class="mh">0x04c11db7</span><span class="p">,</span><span class="w"> </span><span class="mh">0x09823b6e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0d4326d9</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l19" href="#l19">19</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x130476dc</span><span class="p">,</span><span class="w"> </span><span class="mh">0x17c56b6b</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1a864db2</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1e475005</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l20" href="#l20">20</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x2608edb8</span><span class="p">,</span><span class="w"> </span><span class="mh">0x22c9f00f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2f8ad6d6</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2b4bcb61</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l21" href="#l21">21</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x350c9b64</span><span class="p">,</span><span class="w"> </span><span class="mh">0x31cd86d3</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3c8ea00a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x384fbdbd</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l22" href="#l22">22</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x4c11db70</span><span class="p">,</span><span class="w"> </span><span class="mh">0x48d0c6c7</span><span class="p">,</span><span class="w"> </span><span class="mh">0x4593e01e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x4152fda9</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l23" href="#l23">23</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x5f15adac</span><span class="p">,</span><span class="w"> </span><span class="mh">0x5bd4b01b</span><span class="p">,</span><span class="w"> </span><span class="mh">0x569796c2</span><span class="p">,</span><span class="w"> </span><span class="mh">0x52568b75</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l24" href="#l24">24</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x6a1936c8</span><span class="p">,</span><span class="w"> </span><span class="mh">0x6ed82b7f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x639b0da6</span><span class="p">,</span><span class="w"> </span><span class="mh">0x675a1011</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l25" href="#l25">25</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x791d4014</span><span class="p">,</span><span class="w"> </span><span class="mh">0x7ddc5da3</span><span class="p">,</span><span class="w"> </span><span class="mh">0x709f7b7a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x745e66cd</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l26" href="#l26">26</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x9823b6e0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9ce2ab57</span><span class="p">,</span><span class="w"> </span><span class="mh">0x91a18d8e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x95609039</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l27" href="#l27">27</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x8b27c03c</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8fe6dd8b</span><span class="p">,</span><span class="w"> </span><span class="mh">0x82a5fb52</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8664e6e5</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l28" href="#l28">28</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xbe2b5b58</span><span class="p">,</span><span class="w"> </span><span class="mh">0xbaea46ef</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb7a96036</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb3687d81</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l29" href="#l29">29</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xad2f2d84</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa9ee3033</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa4ad16ea</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa06c0b5d</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l30" href="#l30">30</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xd4326d90</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd0f37027</span><span class="p">,</span><span class="w"> </span><span class="mh">0xddb056fe</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd9714b49</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l31" href="#l31">31</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xc7361b4c</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc3f706fb</span><span class="p">,</span><span class="w"> </span><span class="mh">0xceb42022</span><span class="p">,</span><span class="w"> </span><span class="mh">0xca753d95</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l32" href="#l32">32</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xf23a8028</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf6fb9d9f</span><span class="p">,</span><span class="w"> </span><span class="mh">0xfbb8bb46</span><span class="p">,</span><span class="w"> </span><span class="mh">0xff79a6f1</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l33" href="#l33">33</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xe13ef6f4</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe5ffeb43</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe8bccd9a</span><span class="p">,</span><span class="w"> </span><span class="mh">0xec7dd02d</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l34" href="#l34">34</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x34867077</span><span class="p">,</span><span class="w"> </span><span class="mh">0x30476dc0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3d044b19</span><span class="p">,</span><span class="w"> </span><span class="mh">0x39c556ae</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l35" href="#l35">35</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x278206ab</span><span class="p">,</span><span class="w"> </span><span class="mh">0x23431b1c</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2e003dc5</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2ac12072</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l36" href="#l36">36</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x128e9dcf</span><span class="p">,</span><span class="w"> </span><span class="mh">0x164f8078</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1b0ca6a1</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1fcdbb16</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l37" href="#l37">37</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x018aeb13</span><span class="p">,</span><span class="w"> </span><span class="mh">0x054bf6a4</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0808d07d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0cc9cdca</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l38" href="#l38">38</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x7897ab07</span><span class="p">,</span><span class="w"> </span><span class="mh">0x7c56b6b0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x71159069</span><span class="p">,</span><span class="w"> </span><span class="mh">0x75d48dde</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l39" href="#l39">39</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x6b93dddb</span><span class="p">,</span><span class="w"> </span><span class="mh">0x6f52c06c</span><span class="p">,</span><span class="w"> </span><span class="mh">0x6211e6b5</span><span class="p">,</span><span class="w"> </span><span class="mh">0x66d0fb02</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l40" href="#l40">40</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x5e9f46bf</span><span class="p">,</span><span class="w"> </span><span class="mh">0x5a5e5b08</span><span class="p">,</span><span class="w"> </span><span class="mh">0x571d7dd1</span><span class="p">,</span><span class="w"> </span><span class="mh">0x53dc6066</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l41" href="#l41">41</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x4d9b3063</span><span class="p">,</span><span class="w"> </span><span class="mh">0x495a2dd4</span><span class="p">,</span><span class="w"> </span><span class="mh">0x44190b0d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x40d816ba</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l42" href="#l42">42</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xaca5c697</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa864db20</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa527fdf9</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa1e6e04e</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l43" href="#l43">43</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xbfa1b04b</span><span class="p">,</span><span class="w"> </span><span class="mh">0xbb60adfc</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb6238b25</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb2e29692</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l44" href="#l44">44</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x8aad2b2f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8e6c3698</span><span class="p">,</span><span class="w"> </span><span class="mh">0x832f1041</span><span class="p">,</span><span class="w"> </span><span class="mh">0x87ee0df6</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l45" href="#l45">45</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x99a95df3</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9d684044</span><span class="p">,</span><span class="w"> </span><span class="mh">0x902b669d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x94ea7b2a</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l46" href="#l46">46</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xe0b41de7</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe4750050</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe9362689</span><span class="p">,</span><span class="w"> </span><span class="mh">0xedf73b3e</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l47" href="#l47">47</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xf3b06b3b</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf771768c</span><span class="p">,</span><span class="w"> </span><span class="mh">0xfa325055</span><span class="p">,</span><span class="w"> </span><span class="mh">0xfef34de2</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l48" href="#l48">48</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xc6bcf05f</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc27dede8</span><span class="p">,</span><span class="w"> </span><span class="mh">0xcf3ecb31</span><span class="p">,</span><span class="w"> </span><span class="mh">0xcbffd686</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l49" href="#l49">49</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xd5b88683</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd1799b34</span><span class="p">,</span><span class="w"> </span><span class="mh">0xdc3abded</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd8fba05a</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l50" href="#l50">50</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x690ce0ee</span><span class="p">,</span><span class="w"> </span><span class="mh">0x6dcdfd59</span><span class="p">,</span><span class="w"> </span><span class="mh">0x608edb80</span><span class="p">,</span><span class="w"> </span><span class="mh">0x644fc637</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l51" href="#l51">51</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x7a089632</span><span class="p">,</span><span class="w"> </span><span class="mh">0x7ec98b85</span><span class="p">,</span><span class="w"> </span><span class="mh">0x738aad5c</span><span class="p">,</span><span class="w"> </span><span class="mh">0x774bb0eb</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x4f040d56</span><span class="p">,</span><span class="w"> </span><span class="mh">0x4bc510e1</span><span class="p">,</span><span class="w"> </span><span class="mh">0x46863638</span><span class="p">,</span><span class="w"> </span><span class="mh">0x42472b8f</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l53" href="#l53">53</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x5c007b8a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x58c1663d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x558240e4</span><span class="p">,</span><span class="w"> </span><span class="mh">0x51435d53</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l54" href="#l54">54</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x251d3b9e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x21dc2629</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2c9f00f0</span><span class="p">,</span><span class="w"> </span><span class="mh">0x285e1d47</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x36194d42</span><span class="p">,</span><span class="w"> </span><span class="mh">0x32d850f5</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3f9b762c</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3b5a6b9b</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x0315d626</span><span class="p">,</span><span class="w"> </span><span class="mh">0x07d4cb91</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0a97ed48</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0e56f0ff</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l57" href="#l57">57</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x1011a0fa</span><span class="p">,</span><span class="w"> </span><span class="mh">0x14d0bd4d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x19939b94</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1d528623</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l58" href="#l58">58</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xf12f560e</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf5ee4bb9</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf8ad6d60</span><span class="p">,</span><span class="w"> </span><span class="mh">0xfc6c70d7</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xe22b20d2</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe6ea3d65</span><span class="p">,</span><span class="w"> </span><span class="mh">0xeba91bbc</span><span class="p">,</span><span class="w"> </span><span class="mh">0xef68060b</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xd727bbb6</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd3e6a601</span><span class="p">,</span><span class="w"> </span><span class="mh">0xdea580d8</span><span class="p">,</span><span class="w"> </span><span class="mh">0xda649d6f</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xc423cd6a</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc0e2d0dd</span><span class="p">,</span><span class="w"> </span><span class="mh">0xcda1f604</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc960ebb3</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l62" href="#l62">62</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xbd3e8d7e</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb9ff90c9</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb4bcb610</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb07daba7</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l63" href="#l63">63</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xae3afba2</span><span class="p">,</span><span class="w"> </span><span class="mh">0xaafbe615</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa7b8c0cc</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa379dd7b</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l64" href="#l64">64</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x9b3660c6</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9ff77d71</span><span class="p">,</span><span class="w"> </span><span class="mh">0x92b45ba8</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9675461f</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l65" href="#l65">65</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x8832161a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8cf30bad</span><span class="p">,</span><span class="w"> </span><span class="mh">0x81b02d74</span><span class="p">,</span><span class="w"> </span><span class="mh">0x857130c3</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l66" href="#l66">66</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x5d8a9099</span><span class="p">,</span><span class="w"> </span><span class="mh">0x594b8d2e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x5408abf7</span><span class="p">,</span><span class="w"> </span><span class="mh">0x50c9b640</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l67" href="#l67">67</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x4e8ee645</span><span class="p">,</span><span class="w"> </span><span class="mh">0x4a4ffbf2</span><span class="p">,</span><span class="w"> </span><span class="mh">0x470cdd2b</span><span class="p">,</span><span class="w"> </span><span class="mh">0x43cdc09c</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x7b827d21</span><span class="p">,</span><span class="w"> </span><span class="mh">0x7f436096</span><span class="p">,</span><span class="w"> </span><span class="mh">0x7200464f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x76c15bf8</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x68860bfd</span><span class="p">,</span><span class="w"> </span><span class="mh">0x6c47164a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x61043093</span><span class="p">,</span><span class="w"> </span><span class="mh">0x65c52d24</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l70" href="#l70">70</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x119b4be9</span><span class="p">,</span><span class="w"> </span><span class="mh">0x155a565e</span><span class="p">,</span><span class="w"> </span><span class="mh">0x18197087</span><span class="p">,</span><span class="w"> </span><span class="mh">0x1cd86d30</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x029f3d35</span><span class="p">,</span><span class="w"> </span><span class="mh">0x065e2082</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0b1d065b</span><span class="p">,</span><span class="w"> </span><span class="mh">0x0fdc1bec</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l72" href="#l72">72</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x3793a651</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3352bbe6</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3e119d3f</span><span class="p">,</span><span class="w"> </span><span class="mh">0x3ad08088</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l73" href="#l73">73</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x2497d08d</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2056cd3a</span><span class="p">,</span><span class="w"> </span><span class="mh">0x2d15ebe3</span><span class="p">,</span><span class="w"> </span><span class="mh">0x29d4f654</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l74" href="#l74">74</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xc5a92679</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc1683bce</span><span class="p">,</span><span class="w"> </span><span class="mh">0xcc2b1d17</span><span class="p">,</span><span class="w"> </span><span class="mh">0xc8ea00a0</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l75" href="#l75">75</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xd6ad50a5</span><span class="p">,</span><span class="w"> </span><span class="mh">0xd26c4d12</span><span class="p">,</span><span class="w"> </span><span class="mh">0xdf2f6bcb</span><span class="p">,</span><span class="w"> </span><span class="mh">0xdbee767c</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xe3a1cbc1</span><span class="p">,</span><span class="w"> </span><span class="mh">0xe760d676</span><span class="p">,</span><span class="w"> </span><span class="mh">0xea23f0af</span><span class="p">,</span><span class="w"> </span><span class="mh">0xeee2ed18</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xf0a5bd1d</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf464a0aa</span><span class="p">,</span><span class="w"> </span><span class="mh">0xf9278673</span><span class="p">,</span><span class="w"> </span><span class="mh">0xfde69bc4</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l78" href="#l78">78</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x89b8fd09</span><span class="p">,</span><span class="w"> </span><span class="mh">0x8d79e0be</span><span class="p">,</span><span class="w"> </span><span class="mh">0x803ac667</span><span class="p">,</span><span class="w"> </span><span class="mh">0x84fbdbd0</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0x9abc8bd5</span><span class="p">,</span><span class="w"> </span><span class="mh">0x9e7d9662</span><span class="p">,</span><span class="w"> </span><span class="mh">0x933eb0bb</span><span class="p">,</span><span class="w"> </span><span class="mh">0x97ffad0c</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xafb010b1</span><span class="p">,</span><span class="w"> </span><span class="mh">0xab710d06</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa6322bdf</span><span class="p">,</span><span class="w"> </span><span class="mh">0xa2f33668</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="mh">0xbcb4666d</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb8757bda</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb5365d03</span><span class="p">,</span><span class="w"> </span><span class="mh">0xb1f740b4</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">};</span><span class="w"> </span><span class="c1">// ui32aCRCTable[]</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">uint32_t</span><span class="w"> </span><span class="nf">NAV::vendor::kvh::ui32CalcImuCRC</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">uint8_t</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">rawData</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ui32CRCVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xFFFFFFFF</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rawData</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">uint32_t</span><span class="p">);</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">ixTableEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">ui32CRCVal</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">24U</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="n">rawData</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFFU</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ui32CRCVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ui32aCRCTable</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">ixTableEntry</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="p">(</span><span class="n">ui32CRCVal</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8U</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ui32CRCVal</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">NAV::vendor::kvh::decryptKvhObs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">KvhObs</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">obs</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">headerType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint32</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">uart</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">Packet</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">TYPE_BINARY</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">headerType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">vendor</span><span class="o">::</span><span class="n">kvh</span><span class="o">::</span><span class="n">KvhUartSensor</span><span class="o">::</span><span class="n">HEADER_FMT_A</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_angularRate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l109" href="#l109">109</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l110" href="#l110">110</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l111" href="#l111">111</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l112" href="#l112">112</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l113" href="#l113">113</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l114" href="#l114">114</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">sequenceNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint16</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">headerType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">vendor</span><span class="o">::</span><span class="n">kvh</span><span class="o">::</span><span class="n">KvhUartSensor</span><span class="o">::</span><span class="n">HEADER_FMT_B</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_angularRate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l122" href="#l122">122</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l123" href="#l123">123</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l124" href="#l124">124</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l125" href="#l125">125</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l126" href="#l126">126</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l127" href="#l127">127</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">timeSinceStartup</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint32</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l128" href="#l128">128</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l129" href="#l129">129</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">sequenceNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l130" href="#l130">130</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint16</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l131" href="#l131">131</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l132" href="#l132">132</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">headerType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">vendor</span><span class="o">::</span><span class="n">kvh</span><span class="o">::</span><span class="n">KvhUartSensor</span><span class="o">::</span><span class="n">HEADER_FMT_C</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l133" href="#l133">133</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l134" href="#l134">134</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_angularRate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l135" href="#l135">135</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l136" href="#l136">136</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                   </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l137" href="#l137">137</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l138" href="#l138">138</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l139" href="#l139">139</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l140" href="#l140">140</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                                    </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">()</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l141" href="#l141">141</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l142" href="#l142">142</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">OneOfTempMagXYZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractFloat</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l143" href="#l143">143</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l144" href="#l144">144</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l145" href="#l145">145</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">sequenceNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">extractUint8</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l146" href="#l146">146</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l147" href="#l147">147</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="c1">// Static is wrong here!!! If Multtiple KVH units were used, it would be the same for all of them</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l148" href="#l148">148</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="c1">// As only 1 KVH is used, this doesn&#39;t give any problems</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l149" href="#l149">149</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tempMagXYZ</span><span class="p">{</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nan</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nan</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nan</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">nan</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l150" href="#l150">150</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">tempMagXYZ</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">sequenceNumber</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">OneOfTempMagXYZ</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l151" href="#l151">151</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l152" href="#l152">152</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tempMagXYZ</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l153" href="#l153">153</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_magneticField</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">tempMagXYZ</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">tempMagXYZ</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="n">tempMagXYZ</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l154" href="#l154">154</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l155" href="#l155">155</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l156" href="#l156">156</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">G_NORM</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l157" href="#l157">157</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l158" href="#l158">158</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l159" href="#l159">159</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+  </table>
+</div>
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>

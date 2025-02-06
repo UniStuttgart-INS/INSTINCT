@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>INSTINCT Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="index.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>INSTINCT Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>src/</td>
+    </tr>
+    <tr>
+      <th scope="row">File:</th>
+      <td>internal/NodeManager.hpp</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2025-02-06 16:09:31</td>
+    </tr>
+  </table>
+</div>
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>14</td>
+      <td>14</td>
+      <td class="coverage-high">100.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>46</td>
+      <td>62</td>
+      <td class="coverage-low">74.2%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>11</td>
+      <td>26</td>
+      <td class="coverage-low">42.3%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+<details>
+  <summary>List of functions</summary>
+  <table class="listOfFunctions">
+    <tr>
+      <th>Function (Line)</th>
+      <th>Call count</th>
+      <th>Block coverage</th>
+    </tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::AllanDeviation&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::AllanDeviation::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Combiner&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Combiner::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 227 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::CsvLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::CsvLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l105">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Demo&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Demo::*)(NAV::InsTime const&amp;, unsigned long), int) (line 105)</a></td><td>called 112 times</td><td>85.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Demo&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Demo::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::ErrorModel&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::ErrorModel::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 120 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::GnssAnalyzer&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::GnssAnalyzer::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::ImuFusion&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::ImuFusion::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 233 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::ImuIntegrator&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::ImuIntegrator::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 228 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::KmlLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::KmlLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::LooselyCoupledKF&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::LooselyCoupledKF::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 275 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::LowPassFilter&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::LowPassFilter::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l105">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::MatrixLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::MatrixLogger::*)(NAV::InsTime const&amp;, unsigned long), int) (line 105)</a></td><td>called 112 times</td><td>85.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::MavlinkSend&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::MavlinkSend::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Merger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Merger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 228 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Plot&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Plot::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 186 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::PosVelAttInitializer&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::PosVelAttInitializer::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 224 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::RinexObsLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::RinexObsLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 124 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::RtklibPosConverter&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::RtklibPosConverter::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::SinglePointPositioning&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::SinglePointPositioning::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 120 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::Terminator&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::Terminator::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 161 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::TightlyCoupledKF&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::TightlyCoupledKF::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::TimeWindow&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::TimeWindow::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 114 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::UartDataLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::UartDataLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::UartPacketConverter&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::UartPacketConverter::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::UbloxGnssObsConverter&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::UbloxGnssObsConverter::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 113 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::UbloxGnssOrbitCollector&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::UbloxGnssOrbitCollector::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 113 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::UdpSend&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::UdpSend::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::VectorNavBinaryConverter&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::VectorNavBinaryConverter::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 144 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::VectorNavDataLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::VectorNavDataLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 116 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::WiFiObsLogger&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::WiFiObsLogger::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::WiFiPositioning&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::WiFiPositioning::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>called 112 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::experimental::ARMA&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::experimental::ARMA::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l85">NAV::InputPin* NAV::NodeManager::CreateInputPin&lt;NAV::experimental::Delay&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, void (NAV::experimental::Delay::*)(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long), bool (*)(NAV::Node const*, NAV::InputPin const&amp;), int, int) (line 85)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::Demo&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::Demo::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::EmlidFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::EmlidFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::ImuFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::ImuFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l137">NAV::NodeManager::CreateOutputPin&lt;NAV::ImuSimulator&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::ImuSimulator::*)(unsigned long, bool), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 137)</a></td><td>called 120 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::KvhFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::KvhFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l137">NAV::NodeManager::CreateOutputPin&lt;NAV::MultiImuFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::MultiImuFile::*)(unsigned long, bool), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 137)</a></td><td>called 1140 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::NmeaFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::NmeaFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::PosVelAttFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::PosVelAttFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::RinexObsFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::RinexObsFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::RtklibPosFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::RtklibPosFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::UbloxFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::UbloxFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::UlogFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::UlogFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::VectorNavFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::VectorNavFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l158">NAV::NodeManager::CreateOutputPin&lt;NAV::WiFiObsFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::WiFiObsFile::*)(), int)::{lambda(NAV::OutputPin const&amp;)#1}::operator()(NAV::OutputPin const&amp;) const (line 158)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::Demo&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::Demo::*)(), int) (line 154)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::EmlidFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::EmlidFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::ImuFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::ImuFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l133">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::ImuSimulator&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::ImuSimulator::*)(unsigned long, bool), int) (line 133)</a></td><td>called 240 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::KvhFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::KvhFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l133">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::MultiImuFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::MultiImuFile::*)(unsigned long, bool), int) (line 133)</a></td><td>called 570 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::NmeaFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::NmeaFile::*)(), int) (line 154)</a></td><td>called 113 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::PosVelAttFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::PosVelAttFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::RinexObsFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::RinexObsFile::*)(), int) (line 154)</a></td><td>called 160 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::RtklibPosFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::RtklibPosFile::*)(), int) (line 154)</a></td><td>called 126 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::UbloxFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::UbloxFile::*)(), int) (line 154)</a></td><td>called 114 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::UlogFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::UlogFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::VectorNavFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::VectorNavFile::*)(), int) (line 154)</a></td><td>called 158 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l154">NAV::OutputPin* NAV::NodeManager::CreateOutputPin&lt;NAV::WiFiObsFile&gt;(NAV::Node*, char const*, NAV::Pin::Type, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;, std::shared_ptr&lt;NAV::NodeData const&gt; (NAV::WiFiObsFile::*)(), int) (line 154)</a></td><td>called 112 times</td><td>81.0%</td></tr>
+  </table>
+</details>
+
+    </nav>
+    <main>
+<div class="file-source">
+  <table>
+    <tr>
+      <th align="right">Line</th>
+      <th align="right">Branch</th>
+      <th align="right">Exec</th>
+      <th align="left">Source</th>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1" href="#l1">1</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l2" href="#l2">2</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// Navigation Concepts and Training by the Institute of Navigation of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l3" href="#l3">3</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// the University of Stuttgart, Germany.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l4" href="#l4">4</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l5" href="#l5">5</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// This Source Code Form is subject to the terms of the Mozilla Public</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l6" href="#l6">6</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l7" href="#l7">7</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l8" href="#l8">8</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l9" href="#l9">9</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @file NodeManager.hpp</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l10" href="#l10">10</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Manages all Nodes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l11" href="#l11">11</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l12" href="#l12">12</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @date 2020-12-14</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l13" href="#l13">13</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l14" href="#l14">14</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#pragma once</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l15" href="#l15">15</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l16" href="#l16">16</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;imgui_node_editor.h&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l17" href="#l17">17</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l18" href="#l18">18</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;internal/Node/Node.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l19" href="#l19">19</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;internal/Node/Pin.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l20" href="#l20">20</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;util/Assert.h&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l21" href="#l21">21</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l22" href="#l22">22</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;NodeData/NodeData.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l23" href="#l23">23</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l24" href="#l24">24</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l25" href="#l25">25</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l26" href="#l26">26</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l27" href="#l27">27</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">namespace</span><span class="w"> </span><span class="nn">NAV</span><span class="o">::</span><span class="nn">NodeManager</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l28" href="#l28">28</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l29" href="#l29">29</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// Flag if invokeCallbacks triggers a GUI Flow event</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l30" href="#l30">30</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">extern</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">showFlowWhenInvokingCallbacks</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l31" href="#l31">31</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l32" href="#l32">32</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// Flag if notifyOutputValueChanged &amp; notifyInputValueChanged triggers a GUI Flow event</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l33" href="#l33">33</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">extern</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">showFlowWhenNotifyingValueChange</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l34" href="#l34">34</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l35" href="#l35">35</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief List of all registered Nodes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l36" href="#l36">36</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">*&gt;&amp;</span><span class="w"> </span><span class="n">m_Nodes</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l37" href="#l37">37</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l38" href="#l38">38</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Add the provided node object to the list of nodes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l39" href="#l39">39</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node object to add to the list</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l40" href="#l40">40</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">AddNode</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l41" href="#l41">41</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l42" href="#l42">42</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Update the provided node object</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l43" href="#l43">43</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node object to add to the list</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l44" href="#l44">44</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateNode</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l45" href="#l45">45</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l46" href="#l46">46</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Delete the node provided by id</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l47" href="#l47">47</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] nodeId Unique Id of the Node to delete</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l48" href="#l48">48</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return True if delete was successful, false if NodeId does not exist</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l49" href="#l49">49</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">DeleteNode</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">NodeId</span><span class="w"> </span><span class="n">nodeId</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l50" href="#l50">50</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l51" href="#l51">51</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Delete all nodes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">DeleteAllNodes</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l53" href="#l53">53</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l54" href="#l54">54</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Adds the link</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] linkId Unique Id of the link</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">AddLink</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">LinkId</span><span class="w"> </span><span class="n">linkId</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l57" href="#l57">57</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l58" href="#l58">58</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Input Pin object</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l62" href="#l62">62</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l63" href="#l63">63</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Callback to register with the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l64" href="#l64">64</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] firable Function to check whether the callback is firable</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l65" href="#l65">65</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l66" href="#l66">66</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l67" href="#l67">67</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">InputPin</span><span class="o">*</span><span class="w"> </span><span class="nf">CreateInputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{},</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="n">InputPin</span><span class="o">::</span><span class="n">Callback</span><span class="w"> </span><span class="n">callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">InputPin</span><span class="o">::</span><span class="n">FlowFirableCallbackFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="k">nullptr</span><span class="p">),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l70" href="#l70">70</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="n">InputPin</span><span class="o">::</span><span class="n">FlowFirableCheckFunc</span><span class="w"> </span><span class="n">firable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="kt">int</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l72" href="#l72">72</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l73" href="#l73">73</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Input Pin object</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l74" href="#l74">74</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @tparam T Node Class where the function is member of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l75" href="#l75">75</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l78" href="#l78">78</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Flow firable callback function to register with the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] firable Function to check whether the callback is firable</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] priority Priority when checking firable condition related to other pins (higher priority gets triggered first)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">derived_from</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">4182</td>
+      <td class="src coveredLine"><span class="n">InputPin</span><span class="o">*</span><span class="w"> </span><span class="n">CreateInputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{},</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="o">::*</span><span class="n">callback</span><span class="p">)(</span><span class="n">InputPin</span><span class="o">::</span><span class="n">NodeDataQueue</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="n">InputPin</span><span class="o">::</span><span class="n">FlowFirableCheckFunc</span><span class="w"> </span><span class="n">firable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="kt">int</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 4182 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">4182</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">pinType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Flow</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 4182 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">4182</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CreateInputPin</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="n">InputPin</span><span class="o">::</span><span class="n">Callback</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">InputPin</span><span class="o">::</span><span class="n">FlowFirableCallbackFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">callback</span><span class="p">)),</span><span class="w"> </span><span class="n">firable</span><span class="p">,</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Input Pin object</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @tparam T Node Class where the function is member of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] notifyFunc Function to call when the data is updated</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">derived_from</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">224</td>
+      <td class="src coveredLine"><span class="n">InputPin</span><span class="o">*</span><span class="w"> </span><span class="n">CreateInputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                         </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="o">::*</span><span class="n">notifyFunc</span><span class="p">)(</span><span class="k">const</span><span class="w"> </span><span class="n">InsTime</span><span class="o">&amp;</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="p">),</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 224 times.</div>
+            <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 224 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">224</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">pinType</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Flow</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">pinType</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Delegate</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l109" href="#l109">109</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l110" href="#l110">110</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 224 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">224</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CreateInputPin</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="n">InputPin</span><span class="o">::</span><span class="n">Callback</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">InputPin</span><span class="o">::</span><span class="n">DataChangedNotifyFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">notifyFunc</span><span class="p">)),</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l111" href="#l111">111</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l112" href="#l112">112</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l113" href="#l113">113</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Output Pin object</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l114" href="#l114">114</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] data Pointer to data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">OutputPin</span><span class="o">*</span><span class="w"> </span><span class="n">CreateOutputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PinData</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="k">nullptr</span><span class="p">),</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l122" href="#l122">122</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l123" href="#l123">123</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Output Pin object for Flow Pins</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l124" href="#l124">124</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @tparam T Class where the function is member of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l125" href="#l125">125</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l126" href="#l126">126</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l127" href="#l127">127</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l128" href="#l128">128</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l129" href="#l129">129</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] peekPollDataFunc Function to poll for data on this pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l130" href="#l130">130</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l131" href="#l131">131</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l132" href="#l132">132</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">derived_from</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l133" href="#l133">133</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">810</td>
+      <td class="src coveredLine"><span class="n">OutputPin</span><span class="o">*</span><span class="w"> </span><span class="n">CreateOutputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l134" href="#l134">134</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                           </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">NodeData</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="o">::*</span><span class="n">peekPollDataFunc</span><span class="p">)(</span><span class="kt">size_t</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l135" href="#l135">135</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l136" href="#l136">136</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 810 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">810</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">pinType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Flow</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l137" href="#l137">137</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 3 taken 810 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">2070</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">INS_ASSERT_USER_ERROR</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">none_of</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">outputPins</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">outputPins</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l138" href="#l138">138</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                       </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">OutputPin</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PollDataFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">outputPin</span><span class="p">.</span><span class="n">data</span><span class="p">);</span><span class="w"> </span><span class="p">}),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l139" href="#l139">139</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                          </span><span class="s">&quot;You cannot mix PollDataFunc and PeekPollDataFunc output pins. Use only PeekPollDataFunc pins if multiple pins are needed.&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l140" href="#l140">140</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l141" href="#l141">141</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 810 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">810</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CreateOutputPin</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PinData</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PeekPollDataFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">peekPollDataFunc</span><span class="p">)),</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l142" href="#l142">142</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l143" href="#l143">143</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l144" href="#l144">144</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Create an Output Pin object for Flow Pins</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l145" href="#l145">145</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @tparam T Class where the function is member of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l146" href="#l146">146</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] node Node to register the Pin for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l147" href="#l147">147</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] name Display name of the Pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l148" href="#l148">148</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pinType Type of the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l149" href="#l149">149</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] dataIdentifier Identifier of the data which is represented by the pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l150" href="#l150">150</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] pollDataFunc Function to poll for data on this pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l151" href="#l151">151</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] idx Index where to put the new pin (-1 means at the end)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l152" href="#l152">152</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the created pin</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l153" href="#l153">153</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">derived_from</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">T</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l154" href="#l154">154</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1343</td>
+      <td class="src coveredLine"><span class="n">OutputPin</span><span class="o">*</span><span class="w"> </span><span class="n">CreateOutputPin</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l155" href="#l155">155</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                           </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">NodeData</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="o">::*</span><span class="n">pollDataFunc</span><span class="p">)()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l156" href="#l156">156</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l157" href="#l157">157</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1343 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">1343</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">pinType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Flow</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l158" href="#l158">158</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/6</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 3 taken 1343 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">1343</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">INS_ASSERT_USER_ERROR</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">none_of</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">outputPins</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">outputPins</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l159" href="#l159">159</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                       </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">OutputPin</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPin</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PeekPollDataFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">outputPin</span><span class="p">.</span><span class="n">data</span><span class="p">)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l160" href="#l160">160</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                                               </span><span class="o">||</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PollDataFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">outputPin</span><span class="p">.</span><span class="n">data</span><span class="p">);</span><span class="w"> </span><span class="p">}),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l161" href="#l161">161</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                          </span><span class="s">&quot;There can only be one poll pin if the poll only data function is chosen. If multiple are needed, create PeekPollDataFunc pins.&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l162" href="#l162">162</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l163" href="#l163">163</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 1343 times.</div>
+            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">1343</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">CreateOutputPin</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">pinType</span><span class="p">,</span><span class="w"> </span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PinData</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">PollDataFunc</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pollDataFunc</span><span class="p">)),</span><span class="w"> </span><span class="n">idx</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l164" href="#l164">164</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Deletes the output pin. Invalidates the pin reference given.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in, out] pin Output Pin to delete</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return True if the pin was delete</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="n">DeleteOutputPin</span><span class="p">(</span><span class="n">OutputPin</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pin</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Deletes the input pin. Invalidates the pin reference given.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l172" href="#l172">172</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in, out] pin Input Pin to delete</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l173" href="#l173">173</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return True if the pin was delete</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l174" href="#l174">174</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">DeleteInputPin</span><span class="p">(</span><span class="n">InputPin</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pin</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l175" href="#l175">175</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l176" href="#l176">176</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Finds the Node for the NodeId</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l177" href="#l177">177</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] id Unique Id of the Node to search for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l178" href="#l178">178</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the node or nullptr if the NodeId does not exist</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l179" href="#l179">179</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">NodeId</span><span class="w"> </span><span class="n">id</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Finds the Pin for the PinId</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l182" href="#l182">182</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] id Unique Id of the Pin to search for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l183" href="#l183">183</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the pin or nullptr if the PinId does not exist</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">OutputPin</span><span class="o">*</span><span class="w"> </span><span class="nf">FindOutputPin</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">PinId</span><span class="w"> </span><span class="n">id</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Finds the Pin for the PinId</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l187" href="#l187">187</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] id Unique Id of the Pin to search for</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l188" href="#l188">188</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Pointer to the pin or nullptr if the PinId does not exist</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l189" href="#l189">189</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">InputPin</span><span class="o">*</span><span class="w"> </span><span class="nf">FindInputPin</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">PinId</span><span class="w"> </span><span class="n">id</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Enables all Node callbacks</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">EnableAllCallbacks</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Disables all Node callbacks</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">DisableAllCallbacks</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Clears all nodes queues</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">ClearAllNodeQueues</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l199" href="#l199">199</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l200" href="#l200">200</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Initializes all nodes.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l201" href="#l201">201</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @return Returns false if one of the nodes could not initialize</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l202" href="#l202">202</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">InitializeAllNodes</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l203" href="#l203">203</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l204" href="#l204">204</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Initializes all nodes in a separate thread</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l205" href="#l205">205</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeAllNodesAsync</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l206" href="#l206">206</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l207" href="#l207">207</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Generates a new node id</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l208" href="#l208">208</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">NodeId</span><span class="w"> </span><span class="nf">GetNextNodeId</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l209" href="#l209">209</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l210" href="#l210">210</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Generates a new link id</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l211" href="#l211">211</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">LinkId</span><span class="w"> </span><span class="nf">GetNextLinkId</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l212" href="#l212">212</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Generates a new pin id</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l214" href="#l214">214</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">PinId</span><span class="w"> </span><span class="nf">GetNextPinId</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l215" href="#l215">215</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l216" href="#l216">216</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#ifdef TESTING</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l217" href="#l217">217</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l218" href="#l218">218</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Registers the callback function to the watcher list</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l219" href="#l219">219</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] id Output pin id to add the callback to</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l220" href="#l220">220</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Callback function</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l221" href="#l221">221</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l222" href="#l222">222</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterWatcherCallbackToInputPin</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">PinId</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputPin</span><span class="o">::</span><span class="n">WatcherCallback</span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l223" href="#l223">223</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l224" href="#l224">224</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Registers the callback function to the watcher list</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l225" href="#l225">225</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] id Link id to add the callback to</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l226" href="#l226">226</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Callback function</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l227" href="#l227">227</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l228" href="#l228">228</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterWatcherCallbackToLink</span><span class="p">(</span><span class="n">ax</span><span class="o">::</span><span class="n">NodeEditor</span><span class="o">::</span><span class="n">LinkId</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputPin</span><span class="o">::</span><span class="n">WatcherCallback</span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l229" href="#l229">229</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l230" href="#l230">230</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Applies the watcher lists to the node pins</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l231" href="#l231">231</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">ApplyWatcherCallbacks</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l232" href="#l232">232</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l233" href="#l233">233</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Registers a callback function which gets called before the nodes are initialized. Used to change node settings.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l234" href="#l234">234</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Callback function</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l235" href="#l235">235</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterPreInitCallback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l236" href="#l236">236</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l237" href="#l237">237</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Calls the pre-init callback</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l238" href="#l238">238</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">CallPreInitCallback</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l239" href="#l239">239</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l240" href="#l240">240</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Registers a callback which gets called after flow execution before cleanup</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l241" href="#l241">241</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @param[in] callback Callback function</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l242" href="#l242">242</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">RegisterCleanupCallback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l243" href="#l243">243</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l244" href="#l244">244</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Calls the cleanup callback</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l245" href="#l245">245</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">CallCleanupCallback</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l246" href="#l246">246</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l247" href="#l247">247</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">/// @brief Clears the watcher list</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l248" href="#l248">248</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="kt">void</span><span class="w"> </span><span class="nf">ClearRegisteredCallbacks</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l249" href="#l249">249</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l250" href="#l250">250</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l251" href="#l251">251</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l252" href="#l252">252</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w"> </span><span class="c1">// namespace NAV::NodeManager</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l253" href="#l253">253</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+  </table>
+</div>
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>
