@@ -20,8 +20,7 @@
 \section Preface
 INSTINCT is a PNT software developed at the Institute of Navigation (INS), University of Stuttgart, Germany. It allows \ref introduction_programming for real-time operation with different sensors, or post-processing using its own simulators and file readers.
 
-\image html placeholderTitleImage.png width=1000
-//TODO: Update with GitHub image with RTK
+\image html smallFlow.png width=1000
 
 \section introduction_installation Installation
 INSTINCT can be obtained via [GitHub](https://github.com/UniStuttgart-INS/INSTINCT) where a [installation guide](https://github.com/UniStuttgart-INS/INSTINCT#getting-started) is also provided. If you encounter any issues whit the installation, refer to the [discussions](https://github.com/UniStuttgart-INS/INSTINCT/discussions) on GitHub and use the Q&A section.

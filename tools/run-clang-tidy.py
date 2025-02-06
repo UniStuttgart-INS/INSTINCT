@@ -273,8 +273,8 @@ def main():
 
     # Load the database and extract all files.
     database = json.load(open(os.path.join(build_path, db_path)))
-    files = [make_absolute(entry['file'], entry['directory'])
-             for entry in database]
+    files_database = [make_absolute(entry['file'], entry['directory'])
+                      for entry in database]
 
     max_task = args.j
     if max_task == 0:
@@ -301,16 +301,20 @@ def main():
             t.daemon = True
             t.start()
 
+        # Remove duplicates
+        files = set()
+        for name in files_database:
+            if file_name_re.search(name):
+                files.add(name)
+
         # Count the amount of files
         global fileAmount
         for name in files:
-            if file_name_re.search(name):
-                fileAmount += 1
+            fileAmount += 1
 
         # Fill the queue with files.
         for name in files:
-            if file_name_re.search(name):
-                task_queue.put(name)
+            task_queue.put(name)
 
         # Wait for all threads to be done.
         task_queue.join()
