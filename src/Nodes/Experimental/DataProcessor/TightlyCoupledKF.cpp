@@ -8,6 +8,8 @@
 
 #include "TightlyCoupledKF.hpp"
 
+/*
+
 #include "util/Eigen.hpp"
 #include <cmath>
 
@@ -1286,7 +1288,7 @@ void NAV::TightlyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
     invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, tckfSolution);
 }
 
-void NAV::TightlyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::TightlyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     auto nodeData = queue.extract_front();
     if (nodeData->insTime.empty())
@@ -1327,7 +1329,7 @@ void NAV::TightlyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
     }
 }
 
-void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     auto obs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     LOG_DATA("{}: recvGnssObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
@@ -1335,7 +1337,7 @@ void NAV::TightlyCoupledKF::recvGnssObs(InputPin::NodeDataQueue& queue, size_t /
     tightlyCoupledUpdate(obs);
 }
 
-void NAV::TightlyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::TightlyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t pinIdx)
 {
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
     inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
@@ -1682,7 +1684,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     }
 }
 
-void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& /* gnssObs */)
+void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const GnssObs>& gnssObs)
 {
     // TODO: Rework node
     // LOG_DATA("{}: Updating to [{}]", nameId(), gnssObs->insTime);
@@ -2464,3 +2466,5 @@ Eigen::MatrixXd NAV::TightlyCoupledKF::measurementInnovation_dz(const std::vecto
 
     return deltaZ;
 }
+
+*/

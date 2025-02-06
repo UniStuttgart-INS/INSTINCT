@@ -13,6 +13,8 @@
 
 #pragma once
 
+/*
+
 #include "Navigation/GNSS/Core/SatelliteSystem.hpp"
 #include "internal/Node/Node.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
@@ -208,7 +210,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎_ra Standard deviation of the noise on the accelerometer specific-force measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    Eigen::Vector3d _stdev_ra = 0.04 /* [mg/√(Hz)] */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_ra = 0.04 * Eigen::Vector3d::Ones(); // [mg/√(Hz)]
 
     // ###########################################################################################################
 
@@ -223,7 +225,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎_rg Standard deviation of the noise on the gyro angular-rate measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    Eigen::Vector3d _stdev_rg = 5 /* [deg/hr/√(Hz)]^2 */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_rg = 5 * Eigen::Vector3d::Ones(); // [deg/hr/√(Hz)]^2
 
     // ###########################################################################################################
 
@@ -238,7 +240,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    Eigen::Vector3d _stdev_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_bad = 10 * Eigen::Vector3d::Ones(); // [µg]
 
     /// @brief Correlation length of the accelerometer dynamic bias in [s]
     Eigen::Vector3d _tau_bad = 0.1 * Eigen::Vector3d::Ones();
@@ -256,7 +258,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    Eigen::Vector3d _stdev_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_bgd = 1 * Eigen::Vector3d::Ones(); // [°/h]
 
     /// @brief Correlation length of the gyro dynamic bias in [s]
     Eigen::Vector3d _tau_bgd = 0.1 * Eigen::Vector3d::Ones();
@@ -273,7 +275,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎_cf Standard deviation of the receiver clock phase drift
     /// @note See Groves (2013) eq. (9.153)
-    double _stdev_cp = 0 /* [m / √(Hz)] */;
+    double _stdev_cp = 0; // [m / √(Hz)]
 
     // ###########################################################################################################
 
@@ -287,7 +289,7 @@ class TightlyCoupledKF : public Node
 
     /// @brief 𝜎_cf Standard deviation of the receiver clock frequency drift
     /// @note See Brown (2012) table 9.2
-    double _stdev_cf = 5 /* [m / s / √(Hz)] */;
+    double _stdev_cf = 5; // [m / s / √(Hz)]
 
     // ###########################################################################################################
 
@@ -302,7 +304,7 @@ class TightlyCoupledKF : public Node
     // GnssMeasurementUncertaintyPseudorangeUnit _gnssMeasurementUncertaintyPseudorangeUnit = GnssMeasurementUncertaintyPseudorangeUnit::meter;
 
     // /// @brief GUI selection of the GNSS pseudorange measurement uncertainty (standard deviation σ or Variance σ²).
-    // double _gnssMeasurementUncertaintyPseudorange = 5 /* [m] */;
+    // double _gnssMeasurementUncertaintyPseudorange = 5; // [m]
 
     // // ###########################################################################################################
 
@@ -316,7 +318,7 @@ class TightlyCoupledKF : public Node
     // GnssMeasurementUncertaintyPseudorangeRateUnit _gnssMeasurementUncertaintyPseudorangeRateUnit = GnssMeasurementUncertaintyPseudorangeRateUnit::m_s;
 
     // /// @brief GUI selection of the GNSS pseudorange-rate measurement uncertainty (standard deviation σ or Variance σ²).
-    // double _gnssMeasurementUncertaintyPseudorangeRate = 5 /* [m/s] */;
+    // double _gnssMeasurementUncertaintyPseudorangeRate = 5; // [m/s]
 
     // ###########################################################################################################
 
@@ -681,3 +683,5 @@ class TightlyCoupledKF : public Node
 };
 
 } // namespace NAV
+
+*/

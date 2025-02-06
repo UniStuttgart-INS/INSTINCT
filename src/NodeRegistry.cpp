@@ -200,7 +200,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/GNSS/SinglePointPositioning.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
-#include "Nodes/DataProcessor/KalmanFilter/TightlyCoupledKF.hpp"
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
 #include "Nodes/DataProcessor/WiFi/WiFiPositioning.hpp"
 #include "Nodes/DataProcessor/Filter/LowPassFilter.hpp"
@@ -278,7 +277,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     registerNodeType<LowPassFilter>();
-    // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     registerNodeType<WiFiPositioning>();
     // Data Provider
@@ -359,7 +357,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
     registerNodeDataType<InsGnssLCKFSolution>();
-    registerNodeDataType<InsGnssTCKFSolution>();
     registerNodeDataType<Pos>();
     registerNodeDataType<PosVel>();
     registerNodeDataType<PosVelAtt>();
