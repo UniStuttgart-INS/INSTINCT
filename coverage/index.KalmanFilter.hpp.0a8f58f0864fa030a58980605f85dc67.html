@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 21:54:50</td>
+      <td>2025-02-07 16:54:41</td>
     </tr>
   </table>
 </div>
@@ -41,20 +41,20 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>34</td>
-      <td>52</td>
-      <td class="coverage-low">65.4%</td>
+      <td>50</td>
+      <td class="coverage-low">68.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
       <td>4</td>
-      <td>8</td>
-      <td class="coverage-low">50.0%</td>
+      <td>6</td>
+      <td class="coverage-low">66.7%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
       <td>46</td>
-      <td>170</td>
-      <td class="coverage-low">27.1%</td>
+      <td>160</td>
+      <td class="coverage-low">28.7%</td>
     </tr>
   </table>
 </div>
@@ -71,8 +71,6 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l195">Eigen::Matrix&lt;double, -1, -1, 0, -1, -1&gt;::PlainObject NAV::transitionMatrix_Phi_Taylor&lt;Eigen::Matrix&lt;double, -1, -1, 0, -1, -1&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Matrix&lt;double, -1, -1, 0, -1, -1&gt; &gt; const&amp;, double, unsigned long) (line 195)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l195">Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt;::PlainObject NAV::transitionMatrix_Phi_Taylor&lt;Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt; &gt; const&amp;, double, unsigned long) (line 195)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l235">Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt;::PlainObject NAV::transitionMatrix_Phi_exp&lt;Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt; &gt; const&amp;, Eigen::Matrix&lt;double, 17, 17, 0, 17, 17&gt;::Scalar) (line 235)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l30">NAV::KalmanFilter::KalmanFilter(int, int) (line 30)</a></td><td>called 232 times</td><td>52.0%</td></tr>
     <tr><td><a href="#l113">NAV::KalmanFilter::correct() (line 113)</a></td><td>called 17386 times</td><td>60.0%</td></tr>
     <tr><td><a href="#l132">NAV::KalmanFilter::correctWithMeasurementInnovation() (line 132)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -1905,8 +1903,8 @@
       <td class="lineno"><a id="l235" href="#l235">235</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">PlainObject</span><span class="w"> </span><span class="n">transitionMatrix_Phi_exp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixBase</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">Scalar</span><span class="w"> </span><span class="n">tau_s</span><span class="p">)</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">PlainObject</span><span class="w"> </span><span class="n">transitionMatrix_Phi_exp</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixBase</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">Scalar</span><span class="w"> </span><span class="n">tau_s</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l236" href="#l236">236</a></td>
@@ -1926,8 +1924,8 @@
       <td class="lineno"><a id="l238" href="#l238">238</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">tau_s</span><span class="p">).</span><span class="n">exp</span><span class="p">();</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">F</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">tau_s</span><span class="p">).</span><span class="n">exp</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l239" href="#l239">239</a></td>

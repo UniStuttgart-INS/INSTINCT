@@ -9,13 +9,11 @@ var searchData=
   ['starttimesource_6',['StartTimeSource',['../classNAV_1_1ImuSimulator.html#a2cd0efeeccace81e31af683dbd976889',1,'NAV::ImuSimulator']]],
   ['state_7',['State',['../classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3',1,'NAV::Node']]],
   ['statekeys_8',['StateKeys',['../structNAV_1_1Pos_1_1States.html#a2b00e6e59bb69d1e40d72799fd235456',1,'NAV::Pos::States::StateKeys'],['../structNAV_1_1PosVel_1_1States.html#a0f7194b0d790393865e2ef8f2daebcfe',1,'NAV::PosVel::States::StateKeys']]],
-  ['stdevaccelbiasunits_9',['StdevAccelBiasUnits',['../classNAV_1_1LooselyCoupledKF.html#a42b5e4c4a856d3129d3abe9cf8744350',1,'NAV::LooselyCoupledKF::StdevAccelBiasUnits'],['../classNAV_1_1TightlyCoupledKF.html#a8ccd30efa193a3d8be364c347f22f1b4',1,'NAV::TightlyCoupledKF::StdevAccelBiasUnits']]],
-  ['stdevaccelnoiseunits_10',['StdevAccelNoiseUnits',['../classNAV_1_1LooselyCoupledKF.html#adc5339d3bc789337d6e756d5ff0b9cf0',1,'NAV::LooselyCoupledKF::StdevAccelNoiseUnits'],['../classNAV_1_1TightlyCoupledKF.html#a05a1890a687b30e22e485076bf2930ca',1,'NAV::TightlyCoupledKF::StdevAccelNoiseUnits']]],
-  ['stdevclockfrequnits_11',['StdevClockFreqUnits',['../classNAV_1_1TightlyCoupledKF.html#a45aead509ccc98470b726028822669b2',1,'NAV::TightlyCoupledKF']]],
-  ['stdevclockphaseunits_12',['StdevClockPhaseUnits',['../classNAV_1_1TightlyCoupledKF.html#a58cf2d3ff7d756eadb6a6ab183ab547e',1,'NAV::TightlyCoupledKF']]],
-  ['stdevgyrobiasunits_13',['StdevGyroBiasUnits',['../classNAV_1_1LooselyCoupledKF.html#a37e76bef24e2e8c75e931c43d67b414d',1,'NAV::LooselyCoupledKF::StdevGyroBiasUnits'],['../classNAV_1_1TightlyCoupledKF.html#ace2e429553cea484268a8c0e3319384f',1,'NAV::TightlyCoupledKF::StdevGyroBiasUnits']]],
-  ['stdevgyronoiseunits_14',['StdevGyroNoiseUnits',['../classNAV_1_1LooselyCoupledKF.html#a0e14f2d39353ee90a1d6fa00a6b85cc3',1,'NAV::LooselyCoupledKF::StdevGyroNoiseUnits'],['../classNAV_1_1TightlyCoupledKF.html#a9a4b347c3c40a2d66819cf8b609274c3',1,'NAV::TightlyCoupledKF::StdevGyroNoiseUnits']]],
-  ['stopcondition_15',['StopCondition',['../classNAV_1_1ImuSimulator.html#a9e642a13fa4566d2e97c6d428b9a01e1',1,'NAV::ImuSimulator']]],
-  ['strategy_16',['Strategy',['../classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc',1,'NAV::PolynomialRegressor']]],
-  ['systemmodelcalcalgorithm_17',['SystemModelCalcAlgorithm',['../SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6',1,'NAV']]]
+  ['stdevaccelbiasunits_9',['StdevAccelBiasUnits',['../classNAV_1_1LooselyCoupledKF.html#a42b5e4c4a856d3129d3abe9cf8744350',1,'NAV::LooselyCoupledKF']]],
+  ['stdevaccelnoiseunits_10',['StdevAccelNoiseUnits',['../classNAV_1_1LooselyCoupledKF.html#adc5339d3bc789337d6e756d5ff0b9cf0',1,'NAV::LooselyCoupledKF']]],
+  ['stdevgyrobiasunits_11',['StdevGyroBiasUnits',['../classNAV_1_1LooselyCoupledKF.html#a37e76bef24e2e8c75e931c43d67b414d',1,'NAV::LooselyCoupledKF']]],
+  ['stdevgyronoiseunits_12',['StdevGyroNoiseUnits',['../classNAV_1_1LooselyCoupledKF.html#a0e14f2d39353ee90a1d6fa00a6b85cc3',1,'NAV::LooselyCoupledKF']]],
+  ['stopcondition_13',['StopCondition',['../classNAV_1_1ImuSimulator.html#a9e642a13fa4566d2e97c6d428b9a01e1',1,'NAV::ImuSimulator']]],
+  ['strategy_14',['Strategy',['../classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc',1,'NAV::PolynomialRegressor']]],
+  ['systemmodelcalcalgorithm_15',['SystemModelCalcAlgorithm',['../SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6',1,'NAV']]]
 ];

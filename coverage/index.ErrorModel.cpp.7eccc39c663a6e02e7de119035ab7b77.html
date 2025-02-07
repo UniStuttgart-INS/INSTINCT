@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 21:54:50</td>
+      <td>2025-02-07 16:54:41</td>
     </tr>
   </table>
 </div>
@@ -78,9 +78,9 @@
     <tr><td><a href="#l358">NAV::ErrorModel::guiConfig()::{lambda(NAV::ErrorModel::CycleSlipInfo const&amp;)#1}::operator()(NAV::ErrorModel::CycleSlipInfo const&amp;) const (line 358)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l136">NAV::ErrorModel::guiConfig()::{lambda(char const*, NAV::RandomNumberGenerator&amp;)#1}::operator()(char const*, NAV::RandomNumberGenerator&amp;) const (line 136)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l957">NAV::ErrorModel::receiveGnssObs(std::shared_ptr&lt;NAV::GnssObs&gt; const&amp;) (line 957)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l714">NAV::ErrorModel::receiveImuObs(std::shared_ptr&lt;NAV::ImuObs&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;) (line 714)</a></td><td>called 35010 times</td><td>64.0%</td></tr>
-    <tr><td><a href="#l800">NAV::ErrorModel::receiveImuObsWDelta(std::shared_ptr&lt;NAV::ImuObsWDelta&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;) (line 800)</a></td><td>called 35011 times</td><td>68.0%</td></tr>
-    <tr><td><a href="#l651">NAV::ErrorModel::receiveObs(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long) (line 651)</a></td><td>called 60018 times</td><td>31.0%</td></tr>
+    <tr><td><a href="#l714">NAV::ErrorModel::receiveImuObs(std::shared_ptr&lt;NAV::ImuObs&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;) (line 714)</a></td><td>called 35005 times</td><td>64.0%</td></tr>
+    <tr><td><a href="#l800">NAV::ErrorModel::receiveImuObsWDelta(std::shared_ptr&lt;NAV::ImuObsWDelta&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;, Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; const&amp;) (line 800)</a></td><td>called 35012 times</td><td>68.0%</td></tr>
+    <tr><td><a href="#l651">NAV::ErrorModel::receiveObs(NAV::TsDeque&lt;std::shared_ptr&lt;NAV::NodeData const&gt;, std::allocator&lt;std::shared_ptr&lt;NAV::NodeData const&gt; &gt; &gt;&amp;, unsigned long) (line 651)</a></td><td>called 60020 times</td><td>31.0%</td></tr>
     <tr><td><a href="#l827">NAV::ErrorModel::receivePosVelAtt(std::shared_ptr&lt;NAV::PosVelAtt&gt; const&amp;) (line 827)</a></td><td>called 25008 times</td><td>51.0%</td></tr>
     <tr><td><a href="#l532">NAV::ErrorModel::resetNode() (line 532)</a></td><td>called 16 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l462">NAV::ErrorModel::restore(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;) (line 462)</a></td><td>called 8 times</td><td>100.0%</td></tr>
@@ -5538,7 +5538,7 @@
       <td class="lineno"><a id="l651" href="#l651">651</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">60018</td>
+      <td class="linecount coveredLine">60020</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ErrorModel</span><span class="o">::</span><span class="n">receiveObs</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">InputPin</span><span class="o">::</span><span class="n">NodeDataQueue</span><span class="o">&amp;</span><span class="w"> </span><span class="n">queue</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="cm">/* pinIdx */</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5554,12 +5554,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60016 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60009 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60018</td>
+      <td class="linecount partialCoveredLine">60020</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="n">extract_front</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -5568,14 +5568,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60002 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 8 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 60011 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 60008 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60016</td>
+      <td class="linecount partialCoveredLine">60009</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_lastObservationTime</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">((</span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">insTime</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_lastObservationTime</span><span class="p">).</span><span class="n">count</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -5598,12 +5598,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60011 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60018</td>
+      <td class="linecount partialCoveredLine">60015</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">accelerometerBias_p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuAccelerometerBias_p</span><span class="p">,</span><span class="w"> </span><span class="n">_imuAccelerometerBiasUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -5633,12 +5633,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60014 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60008 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60011</td>
+      <td class="linecount partialCoveredLine">60003</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">gyroscopeBias_p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuGyroscopeBias_p</span><span class="p">,</span><span class="w"> </span><span class="n">_imuGyroscopeBiasUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -5682,12 +5682,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60015 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60013 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60014</td>
+      <td class="linecount partialCoveredLine">60008</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuAccelerometerNoise</span><span class="p">,</span><span class="w"> </span><span class="n">_imuAccelerometerNoiseUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -5717,12 +5717,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60016 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60012 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60015</td>
+      <td class="linecount partialCoveredLine">60013</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuGyroscopeNoise</span><span class="p">,</span><span class="w"> </span><span class="n">_imuGyroscopeNoiseUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -5752,22 +5752,22 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">7/12</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 60017 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 60011 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 60018 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 60003 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 60019 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 60015 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 60013 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 60018 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 35010 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 60007 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 60009 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 35001 times.</div>
             <div class="takenBranch">&check; Branch 14 taken 25008 times.</div>
             <div class="notTakenBranch">&cross; Branch 16 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 17 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">180045</td>
+      <td class="linecount partialCoveredLine">180034</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">NodeRegistry</span><span class="o">::</span><span class="n">NodeDataTypeAnyIsChildOf</span><span class="p">(</span><span class="n">outputPins</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">OUTPUT_PORT_INDEX_FLOW</span><span class="p">).</span><span class="n">dataIdentifier</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ImuObsSimulated</span><span class="o">::</span><span class="n">type</span><span class="p">()</span><span class="w"> </span><span class="p">}))</span></td>
     </tr>
     <tr class="source-line">
@@ -5797,14 +5797,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 35010 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 7 taken 35010 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70021</td>
+      <td class="linecount partialCoveredLine">70012</td>
       <td class="src partialCoveredLine"><span class="w">                        </span><span class="n">receiveImuObsWDelta</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">ImuObsSimulated</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">std</span><span class="o">::</span><span class="n">static_pointer_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">ImuObsSimulated</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obs</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6097,14 +6097,14 @@
       <td class="lineno"><a id="l711" href="#l711">711</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">60020</td>
+      <td class="linecount coveredLine">60015</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">_lastObservationTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">insTime</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l712" href="#l712">712</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">195050</td>
+      <td class="linecount coveredLine">195048</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -6118,7 +6118,7 @@
       <td class="lineno"><a id="l714" href="#l714">714</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35010</td>
+      <td class="linecount coveredLine">35005</td>
       <td class="src coveredLine"><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">ImuObs</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ErrorModel</span><span class="o">::</span><span class="n">receiveImuObs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImuObs</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">imuObs</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -6162,12 +6162,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34994 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">35010</td>
+      <td class="linecount coveredLine">35005</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_lastObservationTime</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span></td>
     </tr>
     <tr class="source-line">
@@ -6197,12 +6197,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34992 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35002</td>
+      <td class="linecount partialCoveredLine">34994</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">accelerometerRWStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuAccelerometerRW</span><span class="p">,</span><span class="w"> </span><span class="n">_imuAccelerometerRWUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6232,12 +6232,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35001 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35001</td>
+      <td class="linecount partialCoveredLine">34995</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuAccelerometerRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerRWStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6246,14 +6246,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34999 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35004</td>
+      <td class="linecount partialCoveredLine">35001</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuAccelerometerRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerRWStd</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6262,11 +6262,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -6280,16 +6280,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35001 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34995 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 34996 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 34998 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 34990 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70009</td>
+      <td class="linecount partialCoveredLine">69997</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6319,12 +6319,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34996 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">34998</td>
+      <td class="linecount partialCoveredLine">34990</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">accelerometerIRWStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuAccelerometerIRW</span><span class="p">,</span><span class="w"> </span><span class="n">_imuAccelerometerIRWUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6361,12 +6361,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35003</td>
+      <td class="linecount partialCoveredLine">34999</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuAccelerometerIRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerIRWStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6375,14 +6375,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35006</td>
+      <td class="linecount partialCoveredLine">35005</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuAccelerometerIRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerIRWStd</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6391,16 +6391,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35006</td>
+      <td class="linecount partialCoveredLine">35005</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuAccelerometerIRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerIRWStd</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -6409,16 +6409,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34999 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35003 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 34998 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70007</td>
+      <td class="linecount partialCoveredLine">70001</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6441,14 +6441,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35003</td>
+      <td class="linecount partialCoveredLine">34998</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">_integratedRandomWalkAccelerometer</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">_integratedRandomWalkAccelerometer_velocity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">_dt</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -6478,12 +6478,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35002</td>
+      <td class="linecount partialCoveredLine">35000</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">gyroscopeRWStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuGyroscopeRW</span><span class="p">,</span><span class="w"> </span><span class="n">_imuGyroscopeRWUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6518,7 +6518,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35004</td>
+      <td class="linecount partialCoveredLine">35002</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuGyroscopeRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeRWStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6527,9 +6527,9 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
@@ -6543,7 +6543,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
@@ -6552,7 +6552,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35005</td>
+      <td class="linecount partialCoveredLine">35006</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuGyroscopeRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeRWStd</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -6561,16 +6561,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70009</td>
+      <td class="linecount partialCoveredLine">70007</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6605,7 +6605,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35005</td>
+      <td class="linecount partialCoveredLine">35002</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">gyroscopeIRWStd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">convertUnit</span><span class="p">(</span><span class="n">_imuGyroscopeIRW</span><span class="p">,</span><span class="w"> </span><span class="n">_imuGyroscopeIRWUnit</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -6647,7 +6647,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35002</td>
+      <td class="linecount partialCoveredLine">35000</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">_imuGyroscopeIRWRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeIRWStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6656,7 +6656,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
@@ -6672,9 +6672,9 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="takenBranch">&check; Branch 7 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
@@ -6690,11 +6690,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -6722,14 +6722,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35001 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35004</td>
+      <td class="linecount partialCoveredLine">35002</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">_integratedRandomWalkGyroscope</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">_integratedRandomWalkGyroscope_velocity</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">_dt</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -6771,7 +6771,7 @@
       <td class="lineno"><a id="l778" href="#l778">778</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35010</td>
+      <td class="linecount coveredLine">35006</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">imuObs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">accelerometerBias_p</span></td>
     </tr>
     <tr class="source-line">
@@ -6787,11 +6787,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35011 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35009 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35010 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35009 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -6826,16 +6826,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35011 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35008 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35010 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35011 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70021</td>
+      <td class="linecount partialCoveredLine">70014</td>
       <td class="src partialCoveredLine"><span class="w">                             </span><span class="o">+</span><span class="w"> </span><span class="n">_integratedRandomWalkGyroscope</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -6844,12 +6844,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 34999 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">35011</td>
+      <td class="linecount coveredLine">35005</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_dt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1e-9</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -6865,12 +6865,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70007</td>
+      <td class="linecount partialCoveredLine">70003</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">imuObs</span><span class="o">-&gt;</span><span class="n">p_acceleration</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="w"> </span><span class="n">_imuAccelerometerRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6886,7 +6886,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35006</td>
+      <td class="linecount partialCoveredLine">35005</td>
       <td class="src partialCoveredLine"><span class="w">                                                   </span><span class="n">_imuAccelerometerRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6897,9 +6897,9 @@
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -6913,16 +6913,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35001 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 34992 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">105014</td>
+      <td class="linecount partialCoveredLine">105007</td>
       <td class="src partialCoveredLine"><span class="w">                                  </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span><span class="w"> </span><span class="c1">// Scale with input frequency</span></td>
     </tr>
     <tr class="source-line">
@@ -6936,7 +6936,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70009</td>
+      <td class="linecount partialCoveredLine">70002</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">imuObs</span><span class="o">-&gt;</span><span class="n">p_angularRate</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="w"> </span><span class="n">_imuGyroscopeRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -6945,7 +6945,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
@@ -6961,11 +6961,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -6979,16 +6979,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 34996 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">105013</td>
+      <td class="linecount partialCoveredLine">105001</td>
       <td class="src partialCoveredLine"><span class="w">                                 </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span><span class="w"> </span><span class="c1">// Scale with input frequency</span></td>
     </tr>
     <tr class="source-line">
@@ -7009,7 +7009,7 @@
       <td class="lineno"><a id="l797" href="#l797">797</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35010</td>
+      <td class="linecount coveredLine">35012</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">imuObs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -7030,7 +7030,7 @@
       <td class="lineno"><a id="l800" href="#l800">800</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35011</td>
+      <td class="linecount coveredLine">35012</td>
       <td class="src coveredLine"><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NAV</span><span class="o">::</span><span class="n">ImuObsWDelta</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">ErrorModel</span><span class="o">::</span><span class="n">receiveImuObsWDelta</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ImuObsWDelta</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -7079,7 +7079,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35011</td>
+      <td class="linecount partialCoveredLine">35012</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">receiveImuObs</span><span class="p">(</span><span class="n">imuObsWDelta</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerBias_p</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeBias_p</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -7095,12 +7095,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 35001 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">35010</td>
+      <td class="linecount coveredLine">35007</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">imuObsWDeltaAverageWindow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_dt</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">0.0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">_dt</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtime</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -7118,16 +7118,16 @@
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 35010 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35010 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35008 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 35011 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 35007 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 34998 times.</div>
             <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35010</td>
+      <td class="linecount partialCoveredLine">35002</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dvel</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtime</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">accelerometerBias_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_randomWalkAccelerometer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_integratedRandomWalkAccelerometer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -7136,18 +7136,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35008 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35010 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35007 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 35009 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 35012 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 35009 times.</div>
             <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35005</td>
+      <td class="linecount partialCoveredLine">34998</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtheta</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtime</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">gyroscopeBias_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_randomWalkGyroscope</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_integratedRandomWalkGyroscope</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -7156,12 +7156,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 35003 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">35012</td>
+      <td class="linecount coveredLine">35009</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_dt</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1e-9</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -7177,12 +7177,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70007</td>
+      <td class="linecount partialCoveredLine">69999</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dvel</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="w"> </span><span class="n">_imuAccelerometerRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imuObsWDeltaAverageWindow</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -7191,14 +7191,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35005</td>
+      <td class="linecount partialCoveredLine">35004</td>
       <td class="src partialCoveredLine"><span class="w">                                               </span><span class="n">_imuAccelerometerRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">accelerometerNoiseStd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imuObsWDeltaAverageWindow</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -7207,11 +7207,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
@@ -7225,18 +7225,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 34997 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 35003 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 34999 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 34987 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">105016</td>
+      <td class="linecount partialCoveredLine">105008</td>
       <td class="src partialCoveredLine"><span class="w">                              </span><span class="o">*</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtime</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span><span class="w"> </span><span class="c1">// Scale with input frequency</span></td>
     </tr>
     <tr class="source-line">
@@ -7245,12 +7245,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">70007</td>
+      <td class="linecount partialCoveredLine">69991</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtheta</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">{</span><span class="w"> </span><span class="n">_imuGyroscopeRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imuObsWDeltaAverageWindow</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -7259,14 +7259,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35004 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35002 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35006</td>
+      <td class="linecount partialCoveredLine">35003</td>
       <td class="src partialCoveredLine"><span class="w">                                                 </span><span class="n">_imuGyroscopeRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imuObsWDeltaAverageWindow</span><span class="p">)),</span></td>
     </tr>
     <tr class="source-line">
@@ -7275,16 +7275,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 35001 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 35006 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 35003 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">35005</td>
+      <td class="linecount partialCoveredLine">35003</td>
       <td class="src partialCoveredLine"><span class="w">                                                 </span><span class="n">_imuGyroscopeRng</span><span class="p">.</span><span class="n">getRand_normalDist</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">gyroscopeNoiseStd</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">imuObsWDeltaAverageWindow</span><span class="p">))</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -7293,18 +7293,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 35001 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 34991 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 34998 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 35006 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 35005 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 35000 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">105010</td>
+      <td class="linecount partialCoveredLine">104990</td>
       <td class="src partialCoveredLine"><span class="w">                                </span><span class="o">*</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="o">-&gt;</span><span class="n">dtime</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_dt</span><span class="p">);</span><span class="w"> </span><span class="c1">// Scale with input frequency</span></td>
     </tr>
     <tr class="source-line">
@@ -7325,7 +7325,7 @@
       <td class="lineno"><a id="l824" href="#l824">824</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">35011</td>
+      <td class="linecount coveredLine">35006</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">imuObsWDelta</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">

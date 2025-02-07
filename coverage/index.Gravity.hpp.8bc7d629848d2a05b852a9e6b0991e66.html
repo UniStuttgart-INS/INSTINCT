@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 21:54:50</td>
+      <td>2025-02-07 16:54:41</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l129">Eigen::Matrix&lt;Eigen::Block&lt;Eigen::Matrix&lt;double, 10, 1, 0, 10, 1&gt; const, 3, 1, false&gt;::Scalar, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_EGM96&lt;Eigen::Block&lt;Eigen::Matrix&lt;double, 10, 1, 0, 10, 1&gt; const, 3, 1, false&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Block&lt;Eigen::Matrix&lt;double, 10, 1, 0, 10, 1&gt; const, 3, 1, false&gt; &gt; const&amp;, unsigned long) (line 129)</a></td><td>called 41019 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l194">Eigen::Matrix&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt;::Scalar, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt; const&amp;, NAV::GravitationModel) (line 194)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l129">Eigen::Matrix&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt;::Scalar, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_EGM96&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt;(Eigen::MatrixBase&lt;Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; &gt; const&amp;, unsigned long) (line 129)</a></td><td>called 140304 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l58">Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_SomiglianaAltitude&lt;double&gt;(double const&amp;, double const&amp;) (line 58)</a></td><td>called 2889521 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l58">Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_SomiglianaAltitude&lt;double&gt;(double const&amp;, double const&amp;) (line 58)</a></td><td>called 2885972 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l106">Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_WGS84&lt;double&gt;(double const&amp;, double const&amp;) (line 106)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l83">Eigen::Matrix&lt;double, 3, 1, 0, 3, 1&gt; NAV::n_calcGravitation_WGS84_Skydel&lt;double&gt;(double const&amp;, double const&amp;) (line 83)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
@@ -492,7 +492,7 @@
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2889521</td>
+      <td class="linecount coveredLine">2885972</td>
       <td class="src coveredLine"><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3</span><span class="o">&lt;</span><span class="n">Scalar</span><span class="o">&gt;</span><span class="w"> </span><span class="n">n_calcGravitation_SomiglianaAltitude</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Scalar</span><span class="o">&amp;</span><span class="w"> </span><span class="n">latitude</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Scalar</span><span class="o">&amp;</span><span class="w"> </span><span class="n">altitude</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -513,14 +513,14 @@
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2889521</td>
+      <td class="linecount coveredLine">2885972</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">g_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">9.7803253359</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.931853e-3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">latitude</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2892471</td>
+      <td class="linecount coveredLine">2893868</td>
       <td class="src coveredLine"><span class="w">               </span><span class="o">/</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">e_squared</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">latitude</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -541,42 +541,42 @@
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2880525</td>
+      <td class="linecount coveredLine">2881708</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5758551</td>
+      <td class="linecount coveredLine">5763971</td>
       <td class="src coveredLine"><span class="w">             </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">altitude</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">a</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2873040</td>
+      <td class="linecount coveredLine">2874460</td>
       <td class="src coveredLine"><span class="w">                   </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">f</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2885511</td>
+      <td class="linecount coveredLine">2889511</td>
       <td class="src coveredLine"><span class="w">                      </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">InsConst</span><span class="o">::</span><span class="n">omega_ie</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2873040</td>
+      <td class="linecount coveredLine">2874460</td>
       <td class="src coveredLine"><span class="w">                            </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">b</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">MU</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2873040</td>
+      <td class="linecount coveredLine">2874460</td>
       <td class="src coveredLine"><span class="w">             </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pow</span><span class="p">(</span><span class="n">altitude</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">InsConst</span><span class="o">::</span><span class="n">WGS84</span><span class="o">::</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -592,12 +592,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2882344 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2883168 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5762869</td>
+      <td class="linecount partialCoveredLine">5764876</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">g_0</span><span class="w"> </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
@@ -1621,7 +1621,7 @@
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3009529</td>
+      <td class="linecount coveredLine">3007960</td>
       <td class="src coveredLine"><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">Scalar</span><span class="o">&gt;</span><span class="w"> </span><span class="n">n_calcGravitation</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixBase</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">lla_position</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1642,14 +1642,14 @@
       <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3009529</td>
+      <td class="linecount coveredLine">3007960</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">Scalar</span><span class="o">&amp;</span><span class="w"> </span><span class="n">latitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lla_position</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3009984</td>
+      <td class="linecount coveredLine">3010981</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Derived</span><span class="o">::</span><span class="n">Scalar</span><span class="o">&amp;</span><span class="w"> </span><span class="n">altitude</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lla_position</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1670,7 +1670,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3014864</td>
+      <td class="linecount partialCoveredLine">3015559</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gravitationModel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GravitationModel</span><span class="o">::</span><span class="n">WGS84</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1705,7 +1705,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3014864</td>
+      <td class="linecount partialCoveredLine">3015559</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gravitationModel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GravitationModel</span><span class="o">::</span><span class="n">WGS84_Skydel</span><span class="p">)</span><span class="w"> </span><span class="c1">// TODO: This function becomes obsolete, once the ImuStream is deactivated due to the &#39;InstinctDataStream&#39;</span></td>
     </tr>
     <tr class="source-line">
@@ -1740,7 +1740,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3014864</td>
+      <td class="linecount partialCoveredLine">3015559</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gravitationModel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GravitationModel</span><span class="o">::</span><span class="n">Somigliana</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1754,7 +1754,7 @@
       <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2883550</td>
+      <td class="linecount coveredLine">2884285</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">n_calcGravitation_SomiglianaAltitude</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span><span class="w"> </span><span class="n">altitude</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1775,7 +1775,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">131314</td>
+      <td class="linecount partialCoveredLine">131274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gravitationModel</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GravitationModel</span><span class="o">::</span><span class="n">EGM96</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">

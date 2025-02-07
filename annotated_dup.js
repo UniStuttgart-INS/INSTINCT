@@ -269,7 +269,6 @@ var annotated_dup =
       [ "StringObs", "classNAV_1_1StringObs.html", "classNAV_1_1StringObs" ],
       [ "TemperatureModel", "classNAV_1_1TemperatureModel.html", "classNAV_1_1TemperatureModel" ],
       [ "Terminator", "classNAV_1_1Terminator.html", "classNAV_1_1Terminator" ],
-      [ "TightlyCoupledKF", "classNAV_1_1TightlyCoupledKF.html", "classNAV_1_1TightlyCoupledKF" ],
       [ "TimeSystem", "classNAV_1_1TimeSystem.html", "classNAV_1_1TimeSystem" ],
       [ "TimeWindow", "classNAV_1_1TimeWindow.html", "classNAV_1_1TimeWindow" ],
       [ "TroposphereModelSelection", "structNAV_1_1TroposphereModelSelection.html", "structNAV_1_1TroposphereModelSelection" ],

@@ -417,7 +417,6 @@ var hierarchy =
       [ "NAV::RtklibPosFile", "classNAV_1_1RtklibPosFile.html", null ],
       [ "NAV::SinglePointPositioning", "classNAV_1_1SinglePointPositioning.html", null ],
       [ "NAV::Terminator", "classNAV_1_1Terminator.html", null ],
-      [ "NAV::TightlyCoupledKF", "classNAV_1_1TightlyCoupledKF.html", null ],
       [ "NAV::TimeWindow", "classNAV_1_1TimeWindow.html", null ],
       [ "NAV::UartDataLogger", "classNAV_1_1UartDataLogger.html", null ],
       [ "NAV::UartPacketConverter", "classNAV_1_1UartPacketConverter.html", null ],

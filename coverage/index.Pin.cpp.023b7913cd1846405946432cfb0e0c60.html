@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 21:54:50</td>
+      <td>2025-02-07 16:54:41</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l438">NAV::InputPin::IncomingLink::getConnectedPin() const (line 438)</a></td><td>called 1557497 times</td><td>93.0%</td></tr>
+    <tr><td><a href="#l438">NAV::InputPin::IncomingLink::getConnectedPin() const (line 438)</a></td><td>called 1571889 times</td><td>93.0%</td></tr>
     <tr><td><a href="#l350">NAV::InputPin::canCreateLink(NAV::OutputPin const&amp;) const (line 350)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l378">NAV::InputPin::connect(NAV::OutputPin&amp;, ax::NodeEditor::LinkId) (line 378)</a></td><td>called 540 times</td><td>74.0%</td></tr>
     <tr><td><a href="#l385">NAV::InputPin::connect(NAV::OutputPin&amp;, ax::NodeEditor::LinkId)::{lambda(NAV::OutputPin::OutgoingLink const&amp;)#1}::operator()(NAV::OutputPin::OutgoingLink const&amp;) const (line 385)</a></td><td>called 336 times</td><td>100.0%</td></tr>
@@ -78,9 +78,9 @@
     <tr><td><a href="#l370">NAV::InputPin::deleteLink() (line 370)</a></td><td>called 172 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l414">NAV::InputPin::disconnect() (line 414)</a></td><td>called 807 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l426">NAV::InputPin::disconnect()::{lambda(NAV::OutputPin::OutgoingLink const&amp;)#1}::operator()(NAV::OutputPin::OutgoingLink const&amp;) const (line 426)</a></td><td>called 66 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l355">NAV::InputPin::isPinLinked() const (line 355)</a></td><td>called 641908 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l355">NAV::InputPin::isPinLinked() const (line 355)</a></td><td>called 656138 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l365">NAV::InputPin::recreateLink(NAV::OutputPin&amp;) (line 365)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l334">NAV::OutputPin::OutgoingLink::getConnectedPin() const (line 334)</a></td><td>called 543449 times</td><td>93.0%</td></tr>
+    <tr><td><a href="#l334">NAV::OutputPin::OutgoingLink::getConnectedPin() const (line 334)</a></td><td>called 543491 times</td><td>93.0%</td></tr>
     <tr><td><a href="#l239">NAV::OutputPin::canCreateLink(NAV::InputPin const&amp;) const (line 239)</a></td><td>called 273 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l287">NAV::OutputPin::connect(NAV::InputPin&amp;, ax::NodeEditor::LinkId) (line 287)</a></td><td>called 270 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l289">NAV::OutputPin::connect(NAV::InputPin&amp;, ax::NodeEditor::LinkId)::{lambda(NAV::OutputPin::OutgoingLink const&amp;)#1}::operator()(NAV::OutputPin::OutgoingLink const&amp;) const (line 289)</a></td><td>called 66 times</td><td>86.0%</td></tr>
@@ -2879,7 +2879,7 @@
       <td class="lineno"><a id="l334" href="#l334">334</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">543449</td>
+      <td class="linecount coveredLine">543491</td>
       <td class="src coveredLine"><span class="n">NAV</span><span class="o">::</span><span class="n">InputPin</span><span class="o">*</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">OutputPin</span><span class="o">::</span><span class="n">OutgoingLink</span><span class="o">::</span><span class="n">getConnectedPin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -2895,12 +2895,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 543409 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 543293 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 198 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">543449</td>
+      <td class="linecount coveredLine">543491</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">connectedNode</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -2916,12 +2916,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 1047390 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 1047172 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1047530</td>
+      <td class="linecount partialCoveredLine">1047405</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPin</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">connectedNode</span><span class="o">-&gt;</span><span class="n">inputPins</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -2937,14 +2937,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1047626 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1047634 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 543505 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 504121 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 543522 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 504112 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1047294</td>
+      <td class="linecount partialCoveredLine">1047143</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">inputPin</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">connectedPinId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inputPin</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2965,7 +2965,7 @@
       <td class="lineno"><a id="l343" href="#l343">343</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">40</td>
+      <td class="linecount coveredLine">198</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -3049,7 +3049,7 @@
       <td class="lineno"><a id="l355" href="#l355">355</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">641908</td>
+      <td class="linecount coveredLine">656138</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">InputPin</span><span class="o">::</span><span class="n">isPinLinked</span><span class="p">()</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -3065,16 +3065,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 641471 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 242 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 641487 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 655730 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 236 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 655764 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 641282 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 654810 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">641908</td>
+      <td class="linecount partialCoveredLine">656138</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">link</span><span class="p">.</span><span class="n">linkId</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">link</span><span class="p">.</span><span class="n">connectedNode</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">link</span><span class="p">.</span><span class="n">connectedPinId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -3761,7 +3761,7 @@
       <td class="lineno"><a id="l438" href="#l438">438</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1557497</td>
+      <td class="linecount coveredLine">1571889</td>
       <td class="src coveredLine"><span class="n">NAV</span><span class="o">::</span><span class="n">OutputPin</span><span class="o">*</span><span class="w"> </span><span class="n">NAV</span><span class="o">::</span><span class="n">InputPin</span><span class="o">::</span><span class="n">IncomingLink</span><span class="o">::</span><span class="n">getConnectedPin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -3777,12 +3777,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1557209 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 288 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 1571598 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 291 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1557497</td>
+      <td class="linecount coveredLine">1571889</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">connectedNode</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3798,12 +3798,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 2124051 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 2140431 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2124449</td>
+      <td class="linecount partialCoveredLine">2140854</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outputPin</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">connectedNode</span><span class="o">-&gt;</span><span class="n">outputPins</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3819,14 +3819,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2124333 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2140699 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 1557093 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 567240 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1571443 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 569256 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2124054</td>
+      <td class="linecount partialCoveredLine">2140406</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outputPin</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">connectedPinId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="n">outputPin</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -3847,7 +3847,7 @@
       <td class="lineno"><a id="l447" href="#l447">447</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">288</td>
+      <td class="linecount coveredLine">291</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">

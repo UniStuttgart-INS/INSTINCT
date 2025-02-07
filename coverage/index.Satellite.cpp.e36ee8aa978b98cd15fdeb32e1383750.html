@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-06 21:54:50</td>
+      <td>2025-02-07 16:54:41</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,9 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l46">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 46)</a></td><td>called 8290 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l46">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 46)</a></td><td>called 8291 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l49">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#1}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 49)</a></td><td>called 37476 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l58">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#2}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 58)</a></td><td>called 22646 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l58">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#2}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 58)</a></td><td>called 22647 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l36">NAV::Satellite::calcClockCorrections(NAV::InsTime const&amp;, double, NAV::Frequency const&amp;) const (line 36)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l16">NAV::Satellite::calcSatellitePos(NAV::InsTime const&amp;) const (line 16)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l21">NAV::Satellite::calcSatellitePosVel(NAV::InsTime const&amp;) const (line 21)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -413,7 +413,7 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8290</td>
+      <td class="linecount coveredLine">8291</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Satellite</span><span class="o">::</span><span class="n">addSatNavData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">satNavData</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -441,7 +441,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8290</td>
+      <td class="linecount partialCoveredLine">8291</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">find_if</span><span class="p">(</span><span class="n">m_navigationData</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">satNavData</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">navData</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -513,7 +513,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3627 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3628 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
@@ -525,7 +525,7 @@
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22646</td>
+      <td class="linecount coveredLine">22647</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">navData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">satNavData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -553,7 +553,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3627</td>
+      <td class="linecount partialCoveredLine">3628</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">satNavData</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

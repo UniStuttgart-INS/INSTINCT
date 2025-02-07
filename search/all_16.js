@@ -14,7 +14,7 @@ var searchData=
   ['q_5fdomega_5fpsi_11',['Q_domega_psi',['../ProcessNoise_8hpp.html#a2b4a1019ba09a5e0eaca3e4b5b7f470c',1,'NAV']]],
   ['q_5fgnss_12',['Q_gnss',['../ProcessNoise_8hpp.html#ac1eb8f48cf64a84309ff6d0e00717184',1,'NAV']]],
   ['q_5fpsi_5fpsi_13',['Q_psi_psi',['../ProcessNoise_8hpp.html#a8ebeaa3c5a938cb3cbd844e694e517d5',1,'NAV']]],
-  ['qcalculationalgorithm_14',['QCalculationAlgorithm',['../classNAV_1_1LooselyCoupledKF.html#a5f8285ab40f36629570419f57710c11d',1,'NAV::LooselyCoupledKF::QCalculationAlgorithm'],['../classNAV_1_1TightlyCoupledKF.html#a8b7150a332823ce2ee162b5e15f7d6f2',1,'NAV::TightlyCoupledKF::QCalculationAlgorithm']]],
+  ['qcalculationalgorithm_14',['QCalculationAlgorithm',['../classNAV_1_1LooselyCoupledKF.html#a5f8285ab40f36629570419f57710c11d',1,'NAV::LooselyCoupledKF']]],
   ['qi_15',['qi',['../structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#a767f5778c0bfe5c727913a10611adad0',1,'NAV::vendor::vectornav::SatInfo::SatInfoElement']]],
   ['qtn_16',['qtn',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#ac35e86181a13e350ab20be59fad7c1ca',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
   ['quadraticbsplines_17',['quadraticBsplines',['../QuadraticBsplines_8hpp.html#a32329b7d4c3a30b82bf76e2f3ebb571d',1,'NAV::BsplineKF']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['phicalculationalgorithm_0',['PhiCalculationAlgorithm',['../classNAV_1_1LooselyCoupledKF.html#a8043352454067669f7815abe3988d8b6',1,'NAV::LooselyCoupledKF::PhiCalculationAlgorithm'],['../classNAV_1_1TightlyCoupledKF.html#a96f3010b239cb561c22973c6f82729d8',1,'NAV::TightlyCoupledKF::PhiCalculationAlgorithm']]],
+  ['phicalculationalgorithm_0',['PhiCalculationAlgorithm',['../classNAV_1_1LooselyCoupledKF.html#a8043352454067669f7815abe3988d8b6',1,'NAV::LooselyCoupledKF']]],
   ['pintype_1',['PinType',['../structNAV_1_1Plot_1_1PinData.html#a0a7f48eb12c80e1d1ee0ea2aba149b61',1,'NAV::Plot::PinData']]],
   ['polynomialcycleslipdetectorresult_2',['PolynomialCycleSlipDetectorResult',['../PolynomialCycleSlipDetector_8hpp.html#a166bacce8e517be943258a35964626a1',1,'NAV']]],
   ['positionbiasunits_3',['PositionBiasUnits',['../classNAV_1_1ErrorModel.html#a12d450f6da7a033779c423f08dd42a7c',1,'NAV::ErrorModel']]],
