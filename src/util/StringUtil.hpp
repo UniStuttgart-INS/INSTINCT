@@ -334,6 +334,26 @@ int64_t stol(const String& str, int64_t default_value, std::size_t* pos = nullpt
 /// @param base the number base
 /// @return Value corresponding to the content of str
 template<StdString String>
+uint64_t stoul(const String& str, uint64_t default_value, std::size_t* pos = nullptr, int base = 10) noexcept
+{
+    try
+    {
+        return std::stoul(str, pos, base);
+    }
+    catch (...) // NOLINT(bugprone-empty-catch)
+    {}
+
+    return default_value;
+}
+
+/// @brief Interprets a value in the string str
+/// @tparam String std::string or std::wstring and also allowing convertible types like const char*
+/// @param str the string to convert
+/// @param default_value default value to take if an invalid argument is given
+/// @param pos address of an integer to store the number of characters processed
+/// @param base the number base
+/// @return Value corresponding to the content of str
+template<StdString String>
 int64_t stoll(const String& str, int64_t default_value, std::size_t* pos = nullptr, int base = 10) noexcept
 {
     try
