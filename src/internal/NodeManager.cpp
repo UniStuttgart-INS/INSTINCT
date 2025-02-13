@@ -196,7 +196,7 @@ NAV::InputPin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* nam
 
     flow::ApplyChanges();
 
-    return &node->inputPins.back();
+    return &node->inputPins.at(static_cast<size_t>(idx));
 }
 
 NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, OutputPin::PinData data, int idx)
@@ -216,7 +216,7 @@ NAV::OutputPin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* n
 
     flow::ApplyChanges();
 
-    return &node->outputPins.back();
+    return &node->outputPins.at(static_cast<size_t>(idx));
 }
 
 bool NAV::NodeManager::DeleteOutputPin(NAV::OutputPin& pin)
@@ -238,6 +238,7 @@ bool NAV::NodeManager::DeleteInputPin(NAV::InputPin& pin)
     pin.deleteLink();
 
     size_t pinIndex = pin.parentNode->inputPinIndexFromId(pin.id);
+    LOG_DEBUG("Erasing pin at idx {}", pinIndex);
     pin.parentNode->inputPins.erase(pin.parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
 
     return true;

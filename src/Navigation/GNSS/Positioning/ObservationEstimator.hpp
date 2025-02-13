@@ -765,7 +765,7 @@ class ObservationEstimator
     friend void to_json(json& j, const ObservationEstimator& obj)
     {
         j = json{
-            { "ionosphereModel", Frequency_(obj._ionosphereModel) },
+            { "ionosphereModel", obj._ionosphereModel },
             { "troposphereModels", obj._troposphereModels },
             { "gnssMeasurementError", obj._gnssMeasurementErrorModel },
             { "antenna", obj._antenna },
