@@ -1,56 +1,46 @@
 {
+    "bottomViewHeight": 200.0,
     "colormaps": [],
+    "commonLog": {
+        "useGuiInputs": false
+    },
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigPanelFont": false,
+        "useBigWindowFont": false
+    },
+    "gridLinesEnabled": 0.1568627506494522,
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 350.0,
+        "rightWidth": 850.0
+    },
+    "lightMode": false,
     "links": {
-        "link-11": {
-            "endPinId": 3,
-            "id": 11,
-            "startPinId": 1
-        },
         "link-12": {
             "endPinId": 10,
             "id": 12,
             "startPinId": 1
         },
-        "link-19": {
-            "endPinId": 15,
-            "id": 19,
-            "startPinId": 7
-        },
         "link-20": {
             "endPinId": 18,
             "id": 20,
             "startPinId": 7
+        },
+        "link-27": {
+            "endPinId": 25,
+            "id": 27,
+            "startPinId": 1
+        },
+        "link-30": {
+            "endPinId": 28,
+            "id": 30,
+            "startPinId": 7
         }
     },
     "nodes": {
-        "node-14": {
-            "data": {
-                "FileWriter": {
-                    "fileType": 2,
-                    "path": "vn310-gnss.csv"
-                }
-            },
-            "enabled": true,
-            "id": 14,
-            "inputPins": [
-                {
-                    "id": 15,
-                    "name": "BinaryOutput"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "VectorNavDataLogger - vn310-gnss.csv",
-            "outputPins": [],
-            "pos": {
-                "x": 840.0,
-                "y": -98.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "VectorNavDataLogger"
-        },
         "node-17": {
             "data": {
                 "FileWriter": {
@@ -70,8 +60,8 @@
             "name": "VectorNavDataLogger - vn310-gnss.vnb",
             "outputPins": [],
             "pos": {
-                "x": 840.0,
-                "y": -2.0
+                "x": 808.0,
+                "y": -194.0
             },
             "size": {
                 "x": 0.0,
@@ -176,8 +166,8 @@
                 }
             ],
             "pos": {
-                "x": 342.0,
-                "y": -305.0
+                "x": 324.0,
+                "y": -306.0
             },
             "size": {
                 "x": 0.0,
@@ -185,33 +175,805 @@
             },
             "type": "VectorNavFile"
         },
-        "node-4": {
+        "node-26": {
             "data": {
                 "FileWriter": {
                     "fileType": 2,
                     "path": "vn310-imu.csv"
-                }
+                },
+                "header": [
+                    [
+                        "Time::TimeStartup [ns]",
+                        true
+                    ],
+                    [
+                        "Time::GpsTow [ns]",
+                        true
+                    ],
+                    [
+                        "Time::GpsWeek",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::timeOk",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::dateOk",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::utcTimeValid",
+                        true
+                    ],
+                    [
+                        "IMU::UncompMag::X [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompMag::Y [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompMag::Z [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompAccel::X [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompAccel::Y [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompAccel::Z [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompGyro::X [rad/s]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompGyro::Y [rad/s]",
+                        true
+                    ],
+                    [
+                        "IMU::UncompGyro::Z [rad/s]",
+                        true
+                    ],
+                    [
+                        "IMU::Temp [Celsius]",
+                        true
+                    ],
+                    [
+                        "IMU::Pres [kPa]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaTime [s]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaTheta::X [deg]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaTheta::Y [deg]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaTheta::Z [deg]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaVel::X [m/s]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaVel::Y [m/s]",
+                        true
+                    ],
+                    [
+                        "IMU::DeltaVel::Z [m/s]",
+                        true
+                    ],
+                    [
+                        "IMU::Mag::X [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::Mag::Y [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::Mag::Z [Gauss]",
+                        true
+                    ],
+                    [
+                        "IMU::Accel::X [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::Accel::Y [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::Accel::Z [m/s^2]",
+                        true
+                    ],
+                    [
+                        "IMU::AngularRate::X [rad/s]",
+                        true
+                    ],
+                    [
+                        "IMU::AngularRate::Y [rad/s]",
+                        true
+                    ],
+                    [
+                        "IMU::AngularRate::Z [rad/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::Tow [ns]",
+                        true
+                    ],
+                    [
+                        "GNSS1::Week",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::timeOk",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::dateOk",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::utcTimeValid",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::LeapSeconds",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::Y [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::P [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::R [deg]",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::w",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::x",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::y",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::z",
+                        true
+                    ],
+                    [
+                        "Att::YprU::Y [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YprU::P [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YprU::R [deg]",
+                        true
+                    ]
+                ],
+                "headerLoggingDefault": true,
+                "headerLoggingRegex": "",
+                "headerLoggingSortGui": false,
+                "lastConnectedType": "VectorNavBinaryOutput"
             },
             "enabled": true,
-            "id": 4,
+            "id": 26,
             "inputPins": [
                 {
-                    "id": 3,
-                    "name": "BinaryOutput"
+                    "id": 25,
+                    "name": "CsvOutput"
                 }
             ],
             "kind": "Blueprint",
-            "name": "VectorNavDataLogger - vn310-imu.csv",
+            "name": "CsvLogger - vn310-imu.csv",
             "outputPins": [],
             "pos": {
-                "x": 840.0,
-                "y": -322.0
+                "x": 808.0,
+                "y": -418.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "VectorNavDataLogger"
+            "type": "CsvLogger"
+        },
+        "node-29": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "vn310-gnss.csv"
+                },
+                "header": [
+                    [
+                        "Time::TimeStartup [ns]",
+                        true
+                    ],
+                    [
+                        "Time::GpsTow [ns]",
+                        true
+                    ],
+                    [
+                        "Time::GpsWeek",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::year",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::month",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::day",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::hour",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::min",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::sec",
+                        true
+                    ],
+                    [
+                        "Time::TimeUTC::ms",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::timeOk",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::dateOk",
+                        true
+                    ],
+                    [
+                        "Time::TimeStatus::utcTimeValid",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::year",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::month",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::day",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::hour",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::min",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::sec",
+                        true
+                    ],
+                    [
+                        "GNSS1::UTC::ms",
+                        true
+                    ],
+                    [
+                        "GNSS1::Tow [ns]",
+                        true
+                    ],
+                    [
+                        "GNSS1::Week",
+                        true
+                    ],
+                    [
+                        "GNSS1::NumSats",
+                        true
+                    ],
+                    [
+                        "GNSS1::Fix",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosLla::latitude [deg]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosLla::longitude [deg]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosLla::altitude [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosEcef::X [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosEcef::Y [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosEcef::Z [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelNed::N [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelNed::E [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelNed::D [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelEcef::X [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelEcef::Y [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelEcef::Z [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosU::N [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosU::E [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::PosU::D [m]",
+                        true
+                    ],
+                    [
+                        "GNSS1::VelU [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeU [s]",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::timeOk",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::dateOk",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::Status::utcTimeValid",
+                        true
+                    ],
+                    [
+                        "GNSS1::TimeInfo::LeapSeconds",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::g",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::p",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::t",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::v",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::h",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::n",
+                        true
+                    ],
+                    [
+                        "GNSS1::DOP::e",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::Y [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::P [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YawPitchRoll::R [deg]",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::w",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::x",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::y",
+                        true
+                    ],
+                    [
+                        "Att::Quaternion::z",
+                        true
+                    ],
+                    [
+                        "Att::YprU::Y [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YprU::P [deg]",
+                        true
+                    ],
+                    [
+                        "Att::YprU::R [deg]",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::Mode",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::GpsFix",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::Error::IMU",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::Error::MagPres",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::Error::GNSS",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::GpsHeadingIns",
+                        true
+                    ],
+                    [
+                        "INS::InsStatus::GpsCompass",
+                        true
+                    ],
+                    [
+                        "INS::PosLla::latitude [deg]",
+                        true
+                    ],
+                    [
+                        "INS::PosLla::longitude [deg]",
+                        true
+                    ],
+                    [
+                        "INS::PosLla::altitude [m]",
+                        true
+                    ],
+                    [
+                        "INS::PosEcef::X [m]",
+                        true
+                    ],
+                    [
+                        "INS::PosEcef::Y [m]",
+                        true
+                    ],
+                    [
+                        "INS::PosEcef::Z [m]",
+                        true
+                    ],
+                    [
+                        "INS::VelBody::X [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelBody::Y [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelBody::Z [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelNed::N [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelNed::E [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelNed::D [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelEcef::X [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelEcef::Y [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::VelEcef::Z [m/s]",
+                        true
+                    ],
+                    [
+                        "INS::MagEcef::X [Gauss]",
+                        true
+                    ],
+                    [
+                        "INS::MagEcef::Y [Gauss]",
+                        true
+                    ],
+                    [
+                        "INS::MagEcef::Z [Gauss]",
+                        true
+                    ],
+                    [
+                        "INS::AccelEcef::X [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::AccelEcef::Y [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::AccelEcef::Z [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::LinearAccelEcef::X [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::LinearAccelEcef::Y [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::LinearAccelEcef::Z [m/s^2]",
+                        true
+                    ],
+                    [
+                        "INS::PosU [m]",
+                        true
+                    ],
+                    [
+                        "INS::VelU [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::year",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::month",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::day",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::hour",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::min",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::sec",
+                        true
+                    ],
+                    [
+                        "GNSS2::UTC::ms",
+                        true
+                    ],
+                    [
+                        "GNSS2::Tow [ns]",
+                        true
+                    ],
+                    [
+                        "GNSS2::Week",
+                        true
+                    ],
+                    [
+                        "GNSS2::NumSats",
+                        true
+                    ],
+                    [
+                        "GNSS2::Fix",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosLla::latitude [deg]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosLla::longitude [deg]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosLla::altitude [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosEcef::X [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosEcef::Y [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosEcef::Z [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelNed::N [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelNed::E [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelNed::D [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelEcef::X [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelEcef::Y [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelEcef::Z [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosU::N [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosU::E [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::PosU::D [m]",
+                        true
+                    ],
+                    [
+                        "GNSS2::VelU [m/s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::TimeU [s]",
+                        true
+                    ],
+                    [
+                        "GNSS2::TimeInfo::Status::timeOk",
+                        true
+                    ],
+                    [
+                        "GNSS2::TimeInfo::Status::dateOk",
+                        true
+                    ],
+                    [
+                        "GNSS2::TimeInfo::Status::utcTimeValid",
+                        true
+                    ],
+                    [
+                        "GNSS2::TimeInfo::LeapSeconds",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::g",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::p",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::t",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::v",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::h",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::n",
+                        true
+                    ],
+                    [
+                        "GNSS2::DOP::e",
+                        true
+                    ]
+                ],
+                "headerLoggingDefault": true,
+                "headerLoggingRegex": "",
+                "headerLoggingSortGui": false,
+                "lastConnectedType": "VectorNavBinaryOutput"
+            },
+            "enabled": true,
+            "id": 29,
+            "inputPins": [
+                {
+                    "id": 28,
+                    "name": "CsvOutput"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "CsvLogger - vn310-gnss.csv",
+            "outputPins": [],
+            "pos": {
+                "x": 808.0,
+                "y": -66.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "CsvLogger"
         },
         "node-6": {
             "data": {
@@ -310,8 +1072,8 @@
                 }
             ],
             "pos": {
-                "x": 326.0,
-                "y": -66.0
+                "x": 334.0,
+                "y": -194.0
             },
             "size": {
                 "x": 0.0,
@@ -338,8 +1100,8 @@
             "name": "VectorNavDataLogger - vn310-imu.vnb",
             "outputPins": [],
             "pos": {
-                "x": 840.0,
-                "y": -226.0
+                "x": 808.0,
+                "y": -306.0
             },
             "size": {
                 "x": 0.0,
@@ -347,5 +1109,6 @@
             },
             "type": "VectorNavDataLogger"
         }
-    }
+    },
+    "transparentWindows": 0.9399999976158142
 }

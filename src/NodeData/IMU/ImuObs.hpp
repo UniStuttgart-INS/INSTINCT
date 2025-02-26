@@ -16,7 +16,6 @@
 #include "NodeData/NodeData.hpp"
 
 #include "ImuPos.hpp"
-#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -51,7 +50,6 @@ class ImuObs : public NodeData
     [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
         return {
-            "Time since startup [ns]",
             "Accel X [m/s^2]",
             "Accel Y [m/s^2]",
             "Accel Z [m/s^2]",
@@ -66,7 +64,7 @@ class ImuObs : public NodeData
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 11; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 10; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -82,31 +80,28 @@ class ImuObs : public NodeData
         INS_ASSERT(idx < GetStaticDescriptorCount());
         switch (idx)
         {
-        case 0: // Time since startup [ns]
-            if (timeSinceStartup.has_value()) { return static_cast<double>(timeSinceStartup.value()); }
-            break;
-        case 1: // Accel X [m/s^2]
+        case 0: // Accel X [m/s^2]
             return p_acceleration.x();
-        case 2: // Accel Y [m/s^2]
+        case 1: // Accel Y [m/s^2]
             return p_acceleration.y();
-        case 3: // Accel Z [m/s^2]
+        case 2: // Accel Z [m/s^2]
             return p_acceleration.z();
-        case 4: // Gyro X [rad/s]
+        case 3: // Gyro X [rad/s]
             return p_angularRate.x();
-        case 5: // Gyro Y [rad/s]
+        case 4: // Gyro Y [rad/s]
             return p_angularRate.y();
-        case 6: // Gyro Z [rad/s]
+        case 5: // Gyro Z [rad/s]
             return p_angularRate.z();
-        case 7: // Mag X [Gauss]
+        case 6: // Mag X [Gauss]
             if (p_magneticField.has_value()) { return p_magneticField->x(); }
             break;
-        case 8: // Mag Y [Gauss]
+        case 7: // Mag Y [Gauss]
             if (p_magneticField.has_value()) { return p_magneticField->y(); }
             break;
-        case 9: // Mag Z [Gauss]
+        case 8: // Mag Z [Gauss]
             if (p_magneticField.has_value()) { return p_magneticField->z(); }
             break;
-        case 10: // Temperature [°C]
+        case 9: // Temperature [°C]
             return temperature;
         default:
             return std::nullopt;
@@ -124,53 +119,46 @@ class ImuObs : public NodeData
 
         switch (idx)
         {
-        case 0: // Time since startup [ns]
-            if (value >= 0.0)
-            {
-                timeSinceStartup = static_cast<size_t>(value);
-                return true;
-            }
-            break;
-        case 1: // Accel X [m/s^2]
+        case 0: // Accel X [m/s^2]
             p_acceleration.x() = value;
             return true;
-        case 2: // Accel Y [m/s^2]
+        case 1: // Accel Y [m/s^2]
             p_acceleration.y() = value;
             return true;
-        case 3: // Accel Z [m/s^2]
+        case 2: // Accel Z [m/s^2]
             p_acceleration.z() = value;
             return true;
-        case 4: // Gyro X [rad/s]
+        case 3: // Gyro X [rad/s]
             p_angularRate.x() = value;
             return true;
-        case 5: // Gyro Y [rad/s]
+        case 4: // Gyro Y [rad/s]
             p_angularRate.y() = value;
             return true;
-        case 6: // Gyro Z [rad/s]
+        case 5: // Gyro Z [rad/s]
             p_angularRate.z() = value;
             return true;
-        case 7: // Mag X [Gauss]
+        case 6: // Mag X [Gauss]
             if (p_magneticField.has_value())
             {
                 p_magneticField->x() = value;
                 return true;
             }
             break;
-        case 8: // Mag Y [Gauss]
+        case 7: // Mag Y [Gauss]
             if (p_magneticField.has_value())
             {
                 p_magneticField->y() = value;
                 return true;
             }
             break;
-        case 9: // Mag Z [Gauss]
+        case 8: // Mag Z [Gauss]
             if (p_magneticField.has_value())
             {
                 p_magneticField->z() = value;
                 return true;
             }
             break;
-        case 10: // Temperature [°C]
+        case 9: // Temperature [°C]
             temperature = value;
             return true;
         default:
@@ -182,9 +170,6 @@ class ImuObs : public NodeData
 
     /// Position and rotation information for conversion from platform to body frame
     const ImuPos& imuPos;
-
-    /// The system time since startup measured in [nano seconds].
-    std::optional<uint64_t> timeSinceStartup;
 
     /// The IMU acceleration measured in units of [m/s^2], given in the platform frame.
     Eigen::Vector3d p_acceleration;

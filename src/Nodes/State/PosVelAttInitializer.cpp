@@ -467,7 +467,7 @@ bool NAV::PosVelAttInitializer::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    _startTime = 0;
+    _startTime.reset();
 
     _countAveragedAttitude = 0.0;
 
@@ -619,16 +619,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
     if (_posVelAttInitialized.at(3)) { return; }
     LOG_DATA("{}: receiveImuObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-    if (!obs->timeSinceStartup.has_value()) // TODO: Make this work with insTime
-    {
-        LOG_ERROR("{}: Can only process data with an insTime", nameId());
-        return;
-    }
-
-    if (_startTime == 0)
-    {
-        _startTime = obs->timeSinceStartup.value();
-    }
+    if (_startTime.empty()) { _startTime = obs->insTime; }
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = obs->imuPos;
@@ -669,7 +660,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
 
     if ((_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::IMU
          || _inputPinIdxGNSS < 0 || !inputPins.at(static_cast<size_t>(_inputPinIdxGNSS)).isPinLinked())
-        && (static_cast<double>(obs->timeSinceStartup.value() - _startTime) * 1e-9 >= _initDuration
+        && (static_cast<double>((obs->insTime - _startTime).count()) >= _initDuration
             || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
         _n_Quat_b_init = trafo::n_Quat_b(_overrideRollPitchYaw.at(0) ? deg2rad(_overrideRollPitchYawValues.at(0)) : _averagedAttitude.at(0),

@@ -119,8 +119,8 @@ class PosVelAttInitializer : public Node
     /// Time in [s] to initialize the state
     double _initDuration = 5.0;
 
-    /// Start time of the averageing process
-    uint64_t _startTime = 0;
+    /// Start time of the averaging process
+    InsTime _startTime;
 
     /// Initialization source for attitude
     enum class AttitudeMode : uint8_t

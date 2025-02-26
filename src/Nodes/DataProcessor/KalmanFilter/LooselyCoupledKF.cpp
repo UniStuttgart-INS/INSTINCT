@@ -30,7 +30,6 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/INS/EcefFrame/ErrorEquations.hpp"
 #include "Navigation/INS/LocalNavFrame/ErrorEquations.hpp"
 #include "Navigation/Math/Math.hpp"
-#include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "util/Logger.hpp"

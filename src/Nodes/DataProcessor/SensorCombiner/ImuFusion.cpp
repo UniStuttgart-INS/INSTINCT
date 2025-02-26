@@ -1351,7 +1351,7 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(queue.extract_front());
 
-    if (imuObs->insTime.empty() && !imuObs->timeSinceStartup.has_value())
+    if (imuObs->insTime.empty())
     {
         LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;

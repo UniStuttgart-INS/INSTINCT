@@ -100,6 +100,8 @@ void SkydelNetworkStream::do_receive()
                 auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
                 //  Inits for simulated measurement variables
+                uint64_t timeSinceStartup = 0;
+
                 double posX = 0.0;
                 double posY = 0.0;
                 double posZ = 0.0;
@@ -122,7 +124,7 @@ void SkydelNetworkStream::do_receive()
                         switch (i)
                         {
                         case 0:
-                            obs->timeSinceStartup = std::stod(cell) * 1e6; // [ns] = [ms] * 1e6
+                            timeSinceStartup = static_cast<uint64_t>(std::stod(cell) * 1e6); // [ns] = [ms] * 1e6
                             break;
                         case 1:
                             posX = std::stod(cell);
@@ -196,20 +198,17 @@ void SkydelNetworkStream::do_receive()
                     obsG->insTime = currentTime;
                 }
 
-                if (obs->timeSinceStartup.has_value())
+                if (_lastMessageTime)
                 {
-                    if (_lastMessageTime)
+                    // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
+                    // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
+                    if (timeSinceStartup - _lastMessageTime >= static_cast<uint64_t>(1.5 / _dataRate * 1e9))
                     {
-                        // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
-                        // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->timeSinceStartup.value() - _lastMessageTime >= static_cast<uint64_t>(1.5 / _dataRate * 1e9))
-                        {
-                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
-                                     _lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - _lastMessageTime) * 1e-9);
-                        }
+                        LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
+                                 _lastMessageTime, timeSinceStartup, static_cast<double>(timeSinceStartup - _lastMessageTime) * 1e-9);
                     }
-                    _lastMessageTime = obs->timeSinceStartup.value();
                 }
+                _lastMessageTime = timeSinceStartup;
 
                 this->invokeCallbacks(OUTPUT_PORT_INDEX_GNSS_OBS, obsG);
                 this->invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);

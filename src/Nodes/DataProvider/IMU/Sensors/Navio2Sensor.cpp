@@ -160,7 +160,6 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     auto* navio = static_cast<Navio2Sensor*>(userData);
     auto obs = std::make_shared<ImuObs>(navio->_imuPos);
 
-    auto currentTime = std::chrono::steady_clock::now();
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     navio->_sensor->update();
 
@@ -181,10 +180,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
         // obs->p_magneticField.value() *= uT2Gauss;
     }
 
-    std::chrono::nanoseconds diff = currentTime - navio->_startTime;
-    obs->timeSinceStartup = diff.count();
-
-    LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
+    LOG_DATA("DATA({}): {}°C, a=({}, {}, {})", navio->name, obs->temperature.value(),
              navio->_ax, navio->_ay, navio->_az);
 
     if (InsTime currentTime = util::time::GetCurrentInsTime();

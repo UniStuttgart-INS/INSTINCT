@@ -2068,6 +2068,15 @@ void NAV::Plot::plotFlowData(NAV::InputPin::NodeDataQueue& queue, size_t pinIdx)
         {
             plotData(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIdx, i);
         }
+        // ---------------------------------------------- BARO -----------------------------------------------
+        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { BarometricPressureObs::type() }))
+        {
+            plotData(std::static_pointer_cast<const BarometricPressureObs>(nodeData), pinIdx, i);
+        }
+        else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { BarometricHeight::type() }))
+        {
+            plotData(std::static_pointer_cast<const BarometricHeight>(nodeData), pinIdx, i);
+        }
         // --------------------------------------------- State -----------------------------------------------
         else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(sourcePin->dataIdentifier, { Pos::type() }))
         {

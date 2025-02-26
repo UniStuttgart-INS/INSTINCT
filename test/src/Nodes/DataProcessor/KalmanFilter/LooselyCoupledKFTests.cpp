@@ -13,12 +13,6 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <algorithm>
-#include <atomic>
-#include <mutex>
 #include <Eigen/Core>
 
 #include "FlowTester.hpp"
@@ -48,8 +42,6 @@ namespace nm = NAV::NodeManager;
 #endif
 
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/InsGnssLCKFSolution.hpp"
-#include "util/Logger/CommonLog.hpp"
 
 namespace NAV::TESTS::LooselyCoupledKFTests
 {
@@ -179,9 +171,9 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         // VectorNavFile - IMU (2)           VectorNavBinaryConverter (5)
         //    (1) Binary Output |> --(6)-->  |> Binary Input (4)    (3) ImuObsWDelta |> \         INS/GNSS LCKF (10)                           Plot (26)
         //                                                                               \(36)--> |> ImuObsIn (7)   (9) PosVelAtt |> --(27)--> |> LCKF (21)
-        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(18)--> |> PosVel (8)                               -|> VectorNav (37)
-        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(20)--> |> Init PVA (19)                           /
-        //                                                                              \---------------------------(38)--------------------/
+        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(42)--> |> PosVel (8)                               -|> VectorNav (37)
+        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(43)--> |> Init PVA (19)                           /
+        //                                                                              \---------------------------(41)--------------------/
         //
         // ###########################################################################################################
         REQUIRE(testFlow("test/flow/Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.flow"));

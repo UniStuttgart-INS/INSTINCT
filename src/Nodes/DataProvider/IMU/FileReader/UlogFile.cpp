@@ -1128,10 +1128,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData()
 
                 obs->insTime = lastGnssTime.gnssTime + std::chrono::microseconds(static_cast<int64_t>(timeSinceStartupNew) - static_cast<int64_t>(lastGnssTime.timeSinceStartup));
 
-                obs->timeSinceStartup = 1000 * timeSinceStartupNew; // latest timestamp in [ns]
-                LOG_DATA("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
-
-                LOG_DATA("{}: Sending out ImuObs {}: {} - {}", nameId(), multi_id, obs->insTime.toYMDHMS(), obs->timeSinceStartup.value());
+                LOG_DATA("{}: Sending out ImuObs {}: {}", nameId(), multi_id, obs->insTime.toYMDHMS());
                 if (multi_id == 0)
                 {
                     invokeCallbacks(OUTPUT_PORT_INDEX_IMUOBS_1, obs);

@@ -259,10 +259,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData()
             {
                 gpsToW = std::stold(cell);
             }
-            else if (column.starts_with("TimeStartup"))
-            {
-                obs->timeSinceStartup.emplace(std::stoull(cell));
-            }
             else if (column.starts_with("MagX"))
             {
                 magX = std::stod(cell);

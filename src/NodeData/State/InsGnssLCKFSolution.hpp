@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include "util/Eigen.hpp"
 #include "PosVelAtt.hpp"
 #include <cstdint>
 

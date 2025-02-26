@@ -9,10 +9,6 @@
 #include "Gravity.hpp"
 
 #include <cmath>
-#include <optional>
-#include <string>
-#include <fstream>
-#include <streambuf>
 
 #include <imgui.h>
 

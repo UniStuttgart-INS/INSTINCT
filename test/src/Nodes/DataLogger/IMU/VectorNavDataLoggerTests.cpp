@@ -13,10 +13,8 @@
 
 #if !__APPLE__ // This test continously fails on MacOS but can be recovered by restarting the test a few times. So we decided to disable it
 
+    #include "CatchMatchers.hpp"
     #include <catch2/catch_test_macros.hpp>
-    #include <string>
-    #include <fstream>
-    #include <sstream>
     #include <deque>
     #include <atomic>
     #include <mutex>
@@ -301,14 +299,14 @@ void compareObservations(std::deque<std::shared_ptr<const NAV::VectorNavBinaryOu
 
         if (data_csv->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
         {
-            REQUIRE(data_csv->gnss1Outputs->posLla == logs_csv->gnss1Outputs->posLla);
+            REQUIRE_THAT(data_csv->gnss1Outputs->posLla - logs_csv->gnss1Outputs->posLla, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-12));
 
             REQUIRE(data_csv->gnss1Outputs->posLla == logs_vnb->gnss1Outputs->posLla);
         }
 
         if (data_csv->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
         {
-            REQUIRE(data_csv->gnss1Outputs->posEcef == logs_csv->gnss1Outputs->posEcef);
+            REQUIRE_THAT(data_csv->gnss1Outputs->posEcef - logs_csv->gnss1Outputs->posEcef, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-8));
 
             REQUIRE(data_csv->gnss1Outputs->posEcef == logs_vnb->gnss1Outputs->posEcef);
         }
@@ -554,13 +552,13 @@ void compareObservations(std::deque<std::shared_ptr<const NAV::VectorNavBinaryOu
         }
         if (data_csv->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
-            REQUIRE(data_csv->insOutputs->posLla == logs_csv->insOutputs->posLla);
+            REQUIRE_THAT(data_csv->insOutputs->posLla - logs_csv->insOutputs->posLla, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-12));
 
             REQUIRE(data_csv->insOutputs->posLla == logs_vnb->insOutputs->posLla);
         }
         if (data_csv->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
         {
-            REQUIRE(data_csv->insOutputs->posEcef == logs_csv->insOutputs->posEcef);
+            REQUIRE_THAT(data_csv->insOutputs->posEcef - logs_csv->insOutputs->posEcef, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-8));
 
             REQUIRE(data_csv->insOutputs->posEcef == logs_vnb->insOutputs->posEcef);
         }
@@ -672,14 +670,14 @@ void compareObservations(std::deque<std::shared_ptr<const NAV::VectorNavBinaryOu
 
         if (data_csv->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
         {
-            REQUIRE(data_csv->gnss2Outputs->posLla == logs_csv->gnss2Outputs->posLla);
+            REQUIRE_THAT(data_csv->gnss2Outputs->posLla - logs_csv->gnss2Outputs->posLla, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-12));
 
             REQUIRE(data_csv->gnss2Outputs->posLla == logs_vnb->gnss2Outputs->posLla);
         }
 
         if (data_csv->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
         {
-            REQUIRE(data_csv->gnss2Outputs->posEcef == logs_csv->gnss2Outputs->posEcef);
+            REQUIRE_THAT(data_csv->gnss2Outputs->posEcef - logs_csv->gnss2Outputs->posEcef, Catch::Matchers::WithinAbs(Eigen::Vector3d{ 0.0, 0.0, 0.0 }, 1e-8));
 
             REQUIRE(data_csv->gnss2Outputs->posEcef == logs_vnb->gnss2Outputs->posEcef);
         }
@@ -845,17 +843,17 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     //                                         VectorNavDataLogger.flow
     // ###########################################################################################################
     //
-    // VectorNavFile("data/vn310-imu.csv") (2)              VectorNavDataLogger("logs/vn310-imu.csv") (4)
-    //                    (1) Binary Output |>  --(11)-->  |> Binary Output (3)
-    //                                          \
-    //                                           \          VectorNavDataLogger("logs/vn310-imu.vnb") (9)
-    //                                            (12)-->  |> Binary Output (10)
+    //                                                      CsvLogger("logs/vn310-imu.csv") (26)
+    //                                            (27)-->  |> Binary Output (25)
+    //                                           /
+    // VectorNavFile("data/vn310-imu.csv") (2)  /           VectorNavDataLogger("logs/vn310-imu.vnb") (9)
+    //                    (1) Binary Output |>  --(12)-->  |> Binary Output (10)
     //
-    // VectorNavFile("data/vn310-gnss.csv") (6)              VectorNavDataLogger("logs/vn310-gnss.csv") (14)
-    //                     (7) Binary Output |>  --(19)-->  |> Binary Output (15)
-    //                                           \
-    //                                            \          VectorNavDataLogger("logs/vn310-gnss.vnb") (17)
-    //                                             (20)-->  |> Binary Output (18)
+    // VectorNavFile("data/vn310-gnss.csv") (6)             VectorNavDataLogger("logs/vn310-gnss.vnb") (17)
+    //                    (7) Binary Output |>  --(20)-->  |> Binary Output (18)
+    //                                          \
+    //                                           \          CsvLogger("logs/vn310-gnss.csv") (29)
+    //                                            (30)-->  |> Binary Output (28)
     //
     // ###########################################################################################################
 

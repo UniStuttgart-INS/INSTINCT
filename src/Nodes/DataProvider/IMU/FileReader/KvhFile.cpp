@@ -249,10 +249,6 @@ std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData()
                 {
                     gpsToW = std::stold(cell);
                 }
-                else if (column == "TimeStartup [ns]")
-                {
-                    obs->timeSinceStartup.emplace(std::stoull(cell));
-                }
                 else if (column == "MagX [Gauss]")
                 {
                     magX = std::stod(cell);

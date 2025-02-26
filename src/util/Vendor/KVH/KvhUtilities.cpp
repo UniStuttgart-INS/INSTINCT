@@ -124,7 +124,7 @@ void NAV::vendor::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
                                     obs->raw.extractFloat(),
                                     obs->raw.extractFloat() };
 
-            obs->timeSinceStartup.emplace(obs->raw.extractUint32() * 1000);
+            [[maybe_unused]] auto timeSinceStartup = obs->raw.extractUint32() * 1000;
             obs->status = obs->raw.extractUint8();
             obs->sequenceNumber = obs->raw.extractUint8();
             obs->temperature = obs->raw.extractUint16();

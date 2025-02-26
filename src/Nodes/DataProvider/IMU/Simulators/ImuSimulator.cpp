@@ -1513,7 +1513,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
     }
 
     auto obs = std::make_shared<ImuObsSimulated>(_imuPos);
-    obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = _startTime + std::chrono::duration<double>(imuUpdateTime);
     LOG_DATA("{}: Simulated IMU data for time [{}] (_imuUpdateCnt {}, _imuInternalUpdateCnt {})", nameId(), obs->insTime.toYMDHMS(),
              _imuUpdateCnt, _imuInternalUpdateCnt);
