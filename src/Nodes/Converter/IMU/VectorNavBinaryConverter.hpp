@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "NodeData/Baro/BarometricPressureObs.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
 #include "internal/Node/Node.hpp"
 
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
@@ -21,7 +21,6 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 
-#include <array>
 #include <cstdint>
 #include <memory>
 
@@ -67,12 +66,12 @@ class VectorNavBinaryConverter : public Node
     /// Enum specifying the type of the output message
     enum class OutputType : uint8_t
     {
-        ImuObs,                ///< Extract ImuObs data
-        ImuObsWDelta,          ///< Extract ImuObsWDelta data
-        BarometricPressureObs, ///< Extract BarometricPressureObs data
-        PosVelAtt,             ///< Extract PosVelAtt data
-        GnssObs,               ///< Extract GnssObs data
-        COUNT,                 ///< Number of items in the enum
+        ImuObs,       ///< Extract ImuObs data
+        ImuObsWDelta, ///< Extract ImuObsWDelta data
+        BaroPressObs, ///< Extract BaroPressObs data
+        PosVelAtt,    ///< Extract PosVelAtt data
+        GnssObs,      ///< Extract GnssObs data
+        COUNT,        ///< Number of items in the enum
     };
 
   private:
@@ -121,10 +120,10 @@ class VectorNavBinaryConverter : public Node
     /// @return The converted data
     std::shared_ptr<const ImuObs> convert2ImuObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const;
 
-    /// @brief Converts the VectorNavBinaryOutput to a BarometricPressureObs observation
+    /// @brief Converts the VectorNavBinaryOutput to a BaroPressObs observation
     /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<const BarometricPressureObs> convert2BarometricPressureObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const;
+    std::shared_ptr<const BaroPressObs> convert2BaroPressObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const;
 
     /// @brief Converts the VectorNavBinaryOutput to a PosVelAtt observation
     /// @param[in] vnObs VectorNavBinaryOutput to process

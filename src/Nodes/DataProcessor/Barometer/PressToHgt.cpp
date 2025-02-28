@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include "PressureToHeight.hpp"
+#include "PressToHgt.hpp"
 
 #include "util/Logger.hpp"
 
@@ -14,8 +14,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/Baro/BarometricPressureObs.hpp"
-#include "NodeData/Baro/BarometricHeight.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
+#include "NodeData/Baro/BaroHgt.hpp"
 
 #include "Navigation/Gravity/Gravity.hpp"
 
@@ -24,39 +24,39 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-NAV::PressureToHeight::PressureToHeight()
+NAV::PressToHgt::PressToHgt()
     : Node(typeStatic())
 {
     LOG_TRACE("{}: called", name);
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 710, 220 };
 
-    nm::CreateInputPin(this, "BarometricPressureObs", Pin::Type::Flow, { NAV::BarometricPressureObs::type() }, &PressureToHeight::receiveObs);
+    nm::CreateInputPin(this, "BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() }, &PressToHgt::receiveObs);
 
-    nm::CreateOutputPin(this, "BarometricHeight", Pin::Type::Flow, { NAV::BarometricHeight::type() });
+    nm::CreateOutputPin(this, "BaroHgt", Pin::Type::Flow, { NAV::BaroHgt::type() });
 }
 
-NAV::PressureToHeight::~PressureToHeight()
+NAV::PressToHgt::~PressToHgt()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::PressureToHeight::typeStatic()
+std::string NAV::PressToHgt::typeStatic()
 {
-    return "PressureToHeight";
+    return "PressToHgt";
 }
 
-std::string NAV::PressureToHeight::type() const
+std::string NAV::PressToHgt::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::PressureToHeight::category()
+std::string NAV::PressToHgt::category()
 {
     return "Data Processor";
 }
 
-void NAV::PressureToHeight::guiConfig()
+void NAV::PressToHgt::guiConfig()
 {
     float columnWidth = 140.0F * gui::NodeEditorApplication::windowFontRatio();
 
@@ -105,24 +105,24 @@ void NAV::PressureToHeight::guiConfig()
     }
 }
 
-bool NAV::PressureToHeight::initialize()
+bool NAV::PressToHgt::initialize()
 {
     LOG_TRACE("{}: called", nameId());
     if (_gravityInput == GravityInput::Position)
     {
         _gravity = n_calcGravitation_EGM96(_initPos).norm();
-        LOG_DATA("{}: PressureToHeight - Local gravity magnitude: {} m/s² at initial position: {} [deg, deg, m]", nameId(), _gravity, _initPos.transpose());
+        LOG_DATA("{}: PressToHgt - Local gravity magnitude: {} m/s² at initial position: {} [deg, deg, m]", nameId(), _gravity, _initPos.transpose());
     }
     _exponent = _gravity * InsConst::dMtr / InsConst::Rg / _lapserate;
     return true;
 }
 
-void NAV::PressureToHeight::deinitialize()
+void NAV::PressToHgt::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-[[nodiscard]] json NAV::PressureToHeight::save() const
+[[nodiscard]] json NAV::PressToHgt::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -138,7 +138,7 @@ void NAV::PressureToHeight::deinitialize()
     return j;
 }
 
-void NAV::PressureToHeight::restore(json const& j)
+void NAV::PressToHgt::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -172,11 +172,11 @@ void NAV::PressureToHeight::restore(json const& j)
     }
 }
 
-void NAV::PressureToHeight::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::PressToHgt::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto pressureObs = std::static_pointer_cast<const BarometricPressureObs>(queue.extract_front());
+    auto pressureObs = std::static_pointer_cast<const BaroPressObs>(queue.extract_front());
 
-    auto baroheight = std::make_shared<BarometricHeight>();
+    auto baroheight = std::make_shared<BaroHgt>();
 
     baroheight->insTime = pressureObs->insTime;
 

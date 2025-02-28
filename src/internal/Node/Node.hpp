@@ -20,11 +20,8 @@
 #include "internal/Node/Pin.hpp"
 #include "Navigation/Time/InsTime.hpp"
 
-#include "util/Logger.hpp"
-
 #include <string>
 #include <vector>
-#include <deque>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -282,6 +279,10 @@ class Node
     /// @brief Unblocks the connected node. Has to be called when the input value should be released and getInputValue was not called.
     /// @param[in] portIndex Input port where the data should be released
     void releaseInputValue(size_t portIndex);
+
+    /// @brief Checks wether there is an input pin with the same time
+    /// @param[in] insTime Time to check
+    bool hasInputPinWithSameTime(const InsTime& insTime) const;
 
     /// @brief Calls all registered callbacks on the specified output port
     /// @param[in] portIndex Output port where to call the callbacks

@@ -22,9 +22,6 @@
 
 #include "internal/gui/widgets/TimeEdit.hpp"
 
-#include <deque>
-#include <utility>
-
 namespace NAV
 {
 /// @brief Combines signals of sensors that provide the same signal-type to one signal

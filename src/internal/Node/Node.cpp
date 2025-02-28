@@ -169,6 +169,13 @@ void NAV::Node::releaseInputValue(size_t portIndex)
     }
 }
 
+bool NAV::Node::hasInputPinWithSameTime(const InsTime& insTime) const
+{
+    return std::ranges::any_of(inputPins, [&insTime](const InputPin& pin) {
+        return !pin.queue.empty() && pin.queue.front()->insTime == insTime;
+    });
+}
+
 void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NAV::NodeData>& data)
 {
     if (callbacksEnabled)

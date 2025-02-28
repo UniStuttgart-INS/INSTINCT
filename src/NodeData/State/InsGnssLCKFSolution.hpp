@@ -15,7 +15,7 @@
 
 #include "PosVelAtt.hpp"
 #include <cstdint>
-
+#include "util/Container/UncertainValue.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
 namespace NAV
@@ -73,14 +73,22 @@ class InsGnssLCKFSolution : public PosVelAtt
         desc.emplace_back("Gyroscope bias b_X [rad/s]");
         desc.emplace_back("Gyroscope bias b_Y [rad/s]");
         desc.emplace_back("Gyroscope bias b_Z [rad/s]");
+        desc.emplace_back("Barometric height bias [m]");
+        desc.emplace_back("Barometric height bias StdDev [m]");
+        desc.emplace_back("Barometric height scale [m/m]");
+        desc.emplace_back("Barometric height scale StdDev [m/m]");
+
         return desc;
     }
 
     /// @brief Get the number of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount() + 24; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount() + 28; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
+
+    /// @brief Get the amount of descriptors
+    [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
     /// @param idx Index corresponding to data descriptor order
@@ -157,6 +165,14 @@ class InsGnssLCKFSolution : public PosVelAtt
             return b_biasGyro(1);
         case PosVelAtt::GetStaticDescriptorCount() + 23: // Gyroscope bias b_Z [rad/s]
             return b_biasGyro(2);
+        case PosVelAtt::GetStaticDescriptorCount() + 24: // Barometric height bias [m]
+            return heightBias.value;
+        case PosVelAtt::GetStaticDescriptorCount() + 25: // Barometric height bias StdDev[m]
+            return heightBias.stdDev;
+        case PosVelAtt::GetStaticDescriptorCount() + 26: // Barometric height scale [m/m]
+            return heightScale.value;
+        case PosVelAtt::GetStaticDescriptorCount() + 27: // Barometric height scale StdDev [m/m]
+            return heightScale.stdDev;
         default:
             return std::nullopt;
         }
@@ -184,6 +200,12 @@ class InsGnssLCKFSolution : public PosVelAtt
     Eigen::Vector3d b_biasAccel{ 0, 0, 0 };
     /// 𝐛_g The gyroscope bias in body frame in [rad/s]
     Eigen::Vector3d b_biasGyro{ 0, 0, 0 };
+
+    /// Barometric height bias in [m]
+    UncertainValue<double> heightBias = { .value = std::nan(""), .stdDev = std::nan("") };
+
+    /// Barometric height scale in [m/m]
+    UncertainValue<double> heightScale = { .value = std::nan(""), .stdDev = std::nan("") };
 };
 
 } // namespace NAV

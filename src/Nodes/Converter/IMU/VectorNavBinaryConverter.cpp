@@ -11,7 +11,7 @@
 #include <cmath>
 
 #include "Navigation/Time/InsTime.hpp"
-#include "NodeData/Baro/BarometricPressureObs.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
 #include "util/Logger.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -73,10 +73,10 @@ void NAV::VectorNavBinaryConverter::guiConfig()
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObsWDelta::type() };
             outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObsWDelta::type();
         }
-        else if (_outputType == OutputType::BarometricPressureObs)
+        else if (_outputType == OutputType::BaroPressObs)
         {
-            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::BarometricPressureObs::type() };
-            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::BarometricPressureObs::type();
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::BaroPressObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::BaroPressObs::type();
         }
         else if (_outputType == OutputType::PosVelAtt)
         {
@@ -158,10 +158,10 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObs::type() };
                 outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObs::type();
             }
-            else if (_outputType == OutputType::BarometricPressureObs)
+            else if (_outputType == OutputType::BaroPressObs)
             {
-                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::BarometricPressureObs::type() };
-                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::BarometricPressureObs::type();
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::BaroPressObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::BaroPressObs::type();
             }
             else if (_outputType == OutputType::PosVelAtt)
             {
@@ -212,9 +212,9 @@ void NAV::VectorNavBinaryConverter::receiveObs(NAV::InputPin::NodeDataQueue& que
     {
         convertedData = convert2ImuObs(vnObs);
     }
-    else if (_outputType == OutputType::BarometricPressureObs)
+    else if (_outputType == OutputType::BaroPressObs)
     {
-        convertedData = convert2BarometricPressureObs(vnObs);
+        convertedData = convert2BaroPressObs(vnObs);
     }
     else if (_outputType == OutputType::PosVelAtt)
     {
@@ -401,9 +401,9 @@ std::shared_ptr<const NAV::ImuObs> NAV::VectorNavBinaryConverter::convert2ImuObs
     return nullptr;
 }
 
-std::shared_ptr<const NAV::BarometricPressureObs> NAV::VectorNavBinaryConverter::convert2BarometricPressureObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
+std::shared_ptr<const NAV::BaroPressObs> NAV::VectorNavBinaryConverter::convert2BaroPressObs(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto barometricPressureObs = std::make_shared<BarometricPressureObs>();
+    auto baroPressObs = std::make_shared<BaroPressObs>();
 
     if (vnObs->gnss1Outputs || vnObs->gnss2Outputs) // If there is no GNSS data selected in the vnSensor, Baro messages should still be sent out. The VN-100 will not provide any data otherwise.
     {
@@ -416,14 +416,14 @@ std::shared_ptr<const NAV::BarometricPressureObs> NAV::VectorNavBinaryConverter:
         {
             return nullptr;
         }
-        barometricPressureObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
+        baroPressObs->insTime = InsTime(InsTime_GPSweekTow(0, static_cast<int32_t>(vnObs->timeOutputs->gpsWeek), static_cast<double>(vnObs->timeOutputs->gpsTow) * 1e-9L));
     }
     else
     {
         // VN-100 vnObs->insTime is set from
         // - 'timeSyncMaster->ppsTime + timeSyncIn' when working together with the VN-310E or
         // - the computer time
-        barometricPressureObs->insTime = vnObs->insTime;
+        baroPressObs->insTime = vnObs->insTime;
     }
 
     bool baroFound = false;
@@ -431,19 +431,19 @@ std::shared_ptr<const NAV::BarometricPressureObs> NAV::VectorNavBinaryConverter:
     {
         if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
         {
-            barometricPressureObs->baro_pressure = SCALE_FACTOR_KILO2HECTOPASCAL * static_cast<double>(vnObs->imuOutputs->pres);
+            baroPressObs->baro_pressure = SCALE_FACTOR_KILO2HECTOPASCAL * static_cast<double>(vnObs->imuOutputs->pres);
             baroFound = true;
         }
 
         // if (vnObs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
         // {
-        //     barometricPressureObs->temperature = vnObs->imuOutputs->temp;
+        //     baroPressObs->temperature = vnObs->imuOutputs->temp;
         // }
     }
 
     if (baroFound)
     {
-        return barometricPressureObs;
+        return baroPressObs;
     }
 
     LOG_ERROR("{}: Conversion failed. No barometer pressure data found in the input data.", nameId());
@@ -1184,8 +1184,8 @@ const char* NAV::to_string(NAV::VectorNavBinaryConverter::OutputType value)
         return "ImuObs";
     case NAV::VectorNavBinaryConverter::OutputType::ImuObsWDelta:
         return "ImuObsWDelta";
-    case NAV::VectorNavBinaryConverter::OutputType::BarometricPressureObs:
-        return "BarometricPressureObs";
+    case NAV::VectorNavBinaryConverter::OutputType::BaroPressObs:
+        return "BaroPressObs";
     case NAV::VectorNavBinaryConverter::OutputType::PosVelAtt:
         return "PosVelAtt";
     case NAV::VectorNavBinaryConverter::OutputType::GnssObs:

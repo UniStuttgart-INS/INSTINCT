@@ -203,7 +203,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataProcessor/SensorCombiner/ImuFusion.hpp"
 #include "Nodes/DataProcessor/WiFi/WiFiPositioning.hpp"
 #include "Nodes/DataProcessor/Filter/LowPassFilter.hpp"
-#include "Nodes/DataProcessor/Barometer/PressureToHeight.hpp"
+#include "Nodes/DataProcessor/Barometer/PressToHgt.hpp"
 // Data Provider
 #include "Nodes/DataProvider/CSV/CsvFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RinexNavFile.hpp"
@@ -279,7 +279,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     registerNodeType<LowPassFilter>();
-    registerNodeType<PressureToHeight>();
+    registerNodeType<PressToHgt>();
     // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     registerNodeType<WiFiPositioning>();
@@ -338,8 +338,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/State/Pos.hpp"
 #include "NodeData/State/PosVel.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/Baro/BarometricPressureObs.hpp"
-#include "NodeData/Baro/BarometricHeight.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
+#include "NodeData/Baro/BaroHgt.hpp"
 
 #include "NodeData/WiFi/WiFiObs.hpp"
 #include "NodeData/WiFi/WiFiPositioningSolution.hpp"
@@ -372,8 +372,8 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<WiFiObs>();
     registerNodeDataType<WiFiPositioningSolution>();
     // Barometer
-    registerNodeDataType<BarometricPressureObs>();
-    registerNodeDataType<BarometricHeight>();
+    registerNodeDataType<BaroPressObs>();
+    registerNodeDataType<BaroHgt>();
 }
 
 std::vector<std::string> NAV::NodeRegistry::GetStaticDataDescriptors(const std::vector<std::string>& dataIdentifier)
@@ -404,8 +404,8 @@ std::vector<std::string> NAV::NodeRegistry::GetStaticDataDescriptors(const std::
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { KvhObs::type() })) { return KvhObs::GetStaticDataDescriptors(); }
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { ImuObs::type() })) { return ImuObs::GetStaticDataDescriptors(); }
     // Barometer
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { BarometricPressureObs::type() })) { return BarometricPressureObs::GetStaticDataDescriptors(); }
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { BarometricHeight::type() })) { return BarometricHeight::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { BaroPressObs::type() })) { return BaroPressObs::GetStaticDataDescriptors(); }
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(dataIdentifier, { BaroHgt::type() })) { return BaroHgt::GetStaticDataDescriptors(); }
 
     return {};
 }
@@ -449,8 +449,8 @@ std::shared_ptr<NAV::NodeData> NAV::NodeRegistry::CopyNodeData(const std::shared
     if (nodeData->getType() == WiFiObs::type()) { return std::make_shared<WiFiObs>(*std::static_pointer_cast<const WiFiObs>(nodeData)); }
     if (nodeData->getType() == WiFiPositioningSolution::type()) { return std::make_shared<WiFiPositioningSolution>(*std::static_pointer_cast<const WiFiPositioningSolution>(nodeData)); }
     // Barometer
-    if (nodeData->getType() == BarometricPressureObs::type()) { return std::make_shared<BarometricPressureObs>(*std::static_pointer_cast<const BarometricPressureObs>(nodeData)); }
-    if (nodeData->getType() == BarometricHeight::type()) { return std::make_shared<BarometricHeight>(*std::static_pointer_cast<const BarometricHeight>(nodeData)); }
+    if (nodeData->getType() == BaroPressObs::type()) { return std::make_shared<BaroPressObs>(*std::static_pointer_cast<const BaroPressObs>(nodeData)); }
+    if (nodeData->getType() == BaroHgt::type()) { return std::make_shared<BaroHgt>(*std::static_pointer_cast<const BaroHgt>(nodeData)); }
 
     return nullptr;
 }

@@ -13,7 +13,6 @@
 #include "util/Logger.hpp"
 
 #include <iomanip> // std::setprecision
-#include <ranges>
 #include <regex>
 
 #include "internal/NodeManager.hpp"

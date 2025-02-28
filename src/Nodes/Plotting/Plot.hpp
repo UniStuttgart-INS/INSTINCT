@@ -57,8 +57,8 @@
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssTCKFSolution.hpp"
 #include "NodeData/WiFi/WiFiPositioningSolution.hpp"
-#include "NodeData/Baro/BarometricPressureObs.hpp"
-#include "NodeData/Baro/BarometricHeight.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
+#include "NodeData/Baro/BaroHgt.hpp"
 
 namespace NAV
 {
@@ -360,8 +360,8 @@ class Plot : public Node, public CommonLog
         // WiFi
         WiFiPositioningSolution::type(),
         // Barometer
-        BarometricHeight::type(),
-        BarometricPressureObs::type(),
+        BaroHgt::type(),
+        BaroPressObs::type(),
 
     };
 

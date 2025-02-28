@@ -9,6 +9,7 @@
 #include "LooselyCoupledKF.hpp"
 
 #include "NodeData/State/PosVel.hpp"
+#include "internal/Node/Pin.hpp"
 #include "util/Eigen.hpp"
 #include <cmath>
 
@@ -21,6 +22,7 @@
 
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
+#include <fmt/format.h>
 namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 #include "Navigation/Constants.hpp"
@@ -38,6 +40,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InsGnssLCKFSolution.hpp"
+#include "NodeData/Baro/BaroHgt.hpp"
 
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
@@ -94,19 +97,29 @@ std::string NAV::LooselyCoupledKF::category()
     return "Data Processor";
 }
 
-void NAV::LooselyCoupledKF::updateExternalPvaInitPin()
+void NAV::LooselyCoupledKF::updateInputPins()
 {
-    if (_initializeStateOverExternalPin && inputPins.size() <= INPUT_PORT_INDEX_POS_VEL_ATT_INIT)
-    {
-        nm::CreateInputPin(
-            this, "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvPosVelAttInit,
-            nullptr,
-            3);
-    }
-    else if (!_initializeStateOverExternalPin && inputPins.size() > INPUT_PORT_INDEX_POS_VEL_ATT_INIT)
-    {
-        nm::DeleteInputPin(inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT]);
-    }
+    size_t pinIdx = INPUT_PORT_INDEX_POS_VEL_ATT_INIT;
+
+    auto updatePin = [&](bool pinExists, bool enabled,
+                         const char* pinName, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {},
+                         auto callback = nullptr, InputPin::FlowFirableCheckFunc firable = nullptr, int priority = 0) {
+        if (!pinExists && enabled)
+        {
+            nm::CreateInputPin(this, pinName, pinType, dataIdentifier, callback,
+                               firable, priority, static_cast<int>(pinIdx));
+        }
+        else if (pinExists && !enabled)
+        {
+            nm::DeleteInputPin(inputPins.at(pinIdx));
+        }
+        if (enabled) { pinIdx++; }
+    };
+
+    updatePin(std::ranges::any_of(inputPins, [](const InputPin& pin) { return pin.dataIdentifier.front() == PosVelAtt::type(); }), _initializeStateOverExternalPin,
+              "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvPosVelAttInit, nullptr, 3);
+    updatePin(std::ranges::any_of(inputPins, [](const InputPin& pin) { return pin.dataIdentifier.front() == BaroHgt::type(); }), _enableBaroHgt,
+              "BaroHgt", Pin::Type::Flow, { NAV::BaroHgt::type() }, &LooselyCoupledKF::recvBaroHeight, nullptr, -1);
 }
 
 void NAV::LooselyCoupledKF::guiConfig()
@@ -120,7 +133,7 @@ void NAV::LooselyCoupledKF::guiConfig()
     {
         if (ImGui::Checkbox(fmt::format("Initialize over pin##{}", size_t(id)).c_str(), &_initializeStateOverExternalPin))
         {
-            updateExternalPvaInitPin();
+            updateInputPins();
             flow::ApplyChanges();
         }
         if (!_initializeStateOverExternalPin)
@@ -204,6 +217,11 @@ void NAV::LooselyCoupledKF::guiConfig()
         {
             _qCalculationAlgorithm = static_cast<decltype(_qCalculationAlgorithm)>(qCalculationAlgorithm);
             LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), fmt::underlying(_qCalculationAlgorithm));
+            flow::ApplyChanges();
+        }
+        if (ImGui::Checkbox(fmt::format("Enable barometric height pin##{}", size_t(id)).c_str(), &_enableBaroHgt))
+        {
+            updateInputPins();
             flow::ApplyChanges();
         }
 
@@ -319,6 +337,35 @@ void NAV::LooselyCoupledKF::guiConfig()
                 }
             }
 
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
+
+            // ----------------------------------------- Barometer -------------------------------------------
+            if (_enableBaroHgt)
+            {
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the baro height##{}", size_t(id))
+                                                          .c_str(),
+                                                      configWidth, unitWidth, &_stdevBaroHeightBias, _stdevBaroHeightBiasUnits,
+                                                      "m\0\0", 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: stdevBaroHeightBias changed to: {}", nameId(), _stdevBaroHeightBias);
+                    LOG_DEBUG("{}: stdevBaroHeightBiasUnits changed to: {}", nameId(), fmt::underlying(_stdevBaroHeightBiasUnits));
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Random walk");
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the baro scale##{}", size_t(id))
+                                                          .c_str(),
+                                                      configWidth, unitWidth, &_stdevBaroHeightScale, _stdevBaroHeightScaleUnits,
+                                                      "m/m\0\0", 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: stdevBaroHeightScale changed to: {}", nameId(), _stdevBaroHeightScale);
+                    LOG_DEBUG("{}: stdevBaroHeightScaleUnits changed to: {}", nameId(), fmt::underlying(_stdevBaroHeightScaleUnits));
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Random walk");
+            }
+
             ImGui::TreePop();
         }
 
@@ -334,7 +381,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             {
                 flow::ApplyChanges();
             }
-            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the position variance in the measurements with this values."); }
+            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the position variance in the measurements with these values."); }
             ImGui::SameLine();
             float checkWidth = ImGui::GetCursorPosX() - curPosX;
             if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS position measurements##{}",
@@ -359,7 +406,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             {
                 flow::ApplyChanges();
             }
-            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the velocity variance in the measurements with this values."); }
+            if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the velocity variance in the measurements with these values."); }
             ImGui::SameLine();
             if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", _gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
                                                                size_t(id))
@@ -371,6 +418,28 @@ void NAV::LooselyCoupledKF::guiConfig()
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), _gnssMeasurementUncertaintyVelocity);
                 LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), fmt::underlying(_gnssMeasurementUncertaintyVelocityUnit));
                 flow::ApplyChanges();
+            }
+
+            if (_enableBaroHgt)
+            {
+                if (ImGui::Checkbox(fmt::format("##Override R Baro Height {}", size_t(id)).c_str(), &_baroHeightMeasurementUncertaintyOverride))
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered()) { ImGui::SetTooltip("Override the barometric height variance in the measurements with this value."); }
+                ImGui::SameLine();
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the barometric height measurements##{}", _barometricHeightMeasurementUncertaintyUnit == BaroHeightMeasurementUncertaintyUnit::m2 ? "Variance" : "Standard deviation",
+                                                                  size_t(id))
+                                                          .c_str(),
+                                                      configWidth - checkWidth, unitWidth, &_barometricHeightMeasurementUncertainty, _barometricHeightMeasurementUncertaintyUnit, "m^2\0"
+                                                                                                                                                                                  "m\0\0",
+
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: barometricHeightMeasurementUncertainty changed to {}", nameId(), _barometricHeightMeasurementUncertainty);
+                    LOG_DEBUG("{}: barometricHeightMeasurementUncertaintyUnit changed to {}", nameId(), fmt::underlying(_barometricHeightMeasurementUncertaintyUnit));
+                    flow::ApplyChanges();
+                }
             }
 
             ImGui::TreePop();
@@ -470,6 +539,37 @@ void NAV::LooselyCoupledKF::guiConfig()
                 LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasGyroUnit));
                 flow::ApplyChanges();
             }
+            if (_enableBaroHgt)
+            {
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Height Bias covariance ({})##{}",
+                                                                  _initCovarianceBiasHeightUnit == InitCovarianceBiasHeightUnit::m2
+                                                                      ? "Variance σ²"
+                                                                      : "Standard deviation σ",
+                                                                  size_t(id))
+                                                          .c_str(),
+                                                      configWidth, unitWidth, &_initCovarianceBiasHeight, _initCovarianceBiasHeightUnit, "m^2\0"
+                                                                                                                                         "m\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: initCovarianceBiasHeight changed to {}", nameId(), _initCovarianceBiasHeight);
+                    LOG_DEBUG("{}: initCovarianceBiasHeightUnit changed to {}", nameId(), fmt::underlying(_initCovarianceBiasHeightUnit));
+                    flow::ApplyChanges();
+                }
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Height Scale covariance ({})##{}",
+                                                                  _initCovarianceScaleHeightUnit == InitCovarianceScaleHeight::m2_m2
+                                                                      ? "Variance σ²"
+                                                                      : "Standard deviation σ",
+                                                                  size_t(id))
+                                                          .c_str(),
+                                                      configWidth, unitWidth, &_initCovarianceScaleHeight, _initCovarianceScaleHeightUnit, "m^2/m^2\0"
+                                                                                                                                           "m/m\0\0",
+                                                      0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))
+                {
+                    LOG_DEBUG("{}: initCovarianceScaleHeight changed to {}", nameId(), _initCovarianceScaleHeight);
+                    LOG_DEBUG("{}: initCovarianceScaleHeightUnit changed to {}", nameId(), fmt::underlying(_initCovarianceScaleHeightUnit));
+                    flow::ApplyChanges();
+                }
+            }
 
             ImGui::TreePop();
         }
@@ -482,7 +582,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (ImGui::TreeNode(fmt::format("IMU biases (init)##{}", size_t(id)).c_str()))
         {
             if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer biases##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _initBiasAccel.data(), _initBiasAccelUnit, "m/s^2\0\0",
+                                                   configWidth, unitWidth, _initBiasAccel.data(), _initBiasAccelUnit, "µg\0m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: initBiasAccel changed to {}", nameId(), _initBiasAccel.transpose());
@@ -539,6 +639,8 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
     j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
 
+    j["enableBaroHgt"] = _enableBaroHgt;
+
     j["randomProcessAccel"] = _randomProcessAccel;
     j["randomProcessGyro"] = _randomProcessGyro;
     j["stdev_ra"] = _stdev_ra;
@@ -551,6 +653,10 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["stdev_bgd"] = _stdev_bgd;
     j["tau_bgd"] = _tau_bgd;
     j["stdevGyroBiasUnits"] = _stdevGyroBiasUnits;
+    j["stdevBaroHeightBiasUnits"] = _stdevBaroHeightBiasUnits;
+    j["stdevBaroHeightBias"] = _stdevBaroHeightBias;
+    j["stdevBaroHeightScaleUnits"] = _stdevBaroHeightScaleUnits;
+    j["stdevBaroHeightScale"] = _stdevBaroHeightScale;
 
     j["gnssMeasurementUncertaintyPositionUnit"] = _gnssMeasurementUncertaintyPositionUnit;
     j["gnssMeasurementUncertaintyPosition"] = _gnssMeasurementUncertaintyPosition;
@@ -558,6 +664,9 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["gnssMeasurementUncertaintyVelocityUnit"] = _gnssMeasurementUncertaintyVelocityUnit;
     j["gnssMeasurementUncertaintyVelocity"] = _gnssMeasurementUncertaintyVelocity;
     j["gnssMeasurementUncertaintyVelocityOverride"] = _gnssMeasurementUncertaintyVelocityOverride;
+    j["barometricHeightMeasurementUncertaintyUnit"] = _barometricHeightMeasurementUncertaintyUnit;
+    j["barometricHeightMeasurementUncertainty"] = _barometricHeightMeasurementUncertainty;
+    j["baroHeightMeasurementUncertaintyOverride"] = _baroHeightMeasurementUncertaintyOverride;
 
     j["initCovariancePositionUnit"] = _initCovariancePositionUnit;
     j["initCovariancePosition"] = _initCovariancePosition;
@@ -569,6 +678,10 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["initCovarianceBiasAccel"] = _initCovarianceBiasAccel;
     j["initCovarianceBiasGyroUnit"] = _initCovarianceBiasGyroUnit;
     j["initCovarianceBiasGyro"] = _initCovarianceBiasGyro;
+    j["initCovarianceBiasHeightUnit"] = _initCovarianceBiasHeightUnit;
+    j["initCovarianceBiasHeight"] = _initCovarianceBiasHeight;
+    j["initCovarianceScaleHeightUnit"] = _initCovarianceScaleHeightUnit;
+    j["initCovarianceScaleHeight"] = _initCovarianceScaleHeight;
 
     j["initBiasAccel"] = _initBiasAccel;
     j["initBiasAccelUnit"] = _initBiasAccelUnit;
@@ -597,9 +710,8 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("initializeStateOverExternalPin"))
     {
         j.at("initializeStateOverExternalPin").get_to(_initializeStateOverExternalPin);
-        updateExternalPvaInitPin();
+        updateInputPins();
     }
-
     if (j.contains("checkKalmanMatricesRanks"))
     {
         j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
@@ -616,6 +728,11 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("qCalculationAlgorithm"))
     {
         j.at("qCalculationAlgorithm").get_to(_qCalculationAlgorithm);
+    }
+    if (j.contains("enableBaroHgt"))
+    {
+        j.at("enableBaroHgt").get_to(_enableBaroHgt);
+        updateInputPins();
     }
     // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
     if (j.contains("randomProcessAccel"))
@@ -666,6 +783,23 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         j.at("stdevGyroBiasUnits").get_to(_stdevGyroBiasUnits);
     }
+    if (j.contains("stdevBaroHeightBiasUnits"))
+    {
+        j.at("stdevBaroHeightBiasUnits").get_to(_stdevBaroHeightBiasUnits);
+    }
+    if (j.contains("stdevBaroHeightBias"))
+    {
+        _stdevBaroHeightBias = j.at("stdevBaroHeightBias");
+    }
+    if (j.contains("stdevBaroHeightScaleUnits"))
+    {
+        j.at("stdevBaroHeightScaleUnits").get_to(_stdevBaroHeightScaleUnits);
+    }
+    if (j.contains("stdevBaroHeightScale"))
+    {
+        _stdevBaroHeightScale = j.at("stdevBaroHeightScale");
+    }
+
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
     {
@@ -690,6 +824,18 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("gnssMeasurementUncertaintyVelocityOverride"))
     {
         j.at("gnssMeasurementUncertaintyVelocityOverride").get_to(_gnssMeasurementUncertaintyVelocityOverride);
+    }
+    if (j.contains("barometricHeightMeasurementUncertaintyUnit"))
+    {
+        j.at("barometricHeightMeasurementUncertaintyUnit").get_to(_barometricHeightMeasurementUncertaintyUnit);
+    }
+    if (j.contains("barometricHeightMeasurementUncertainty"))
+    {
+        _barometricHeightMeasurementUncertainty = j.at("barometricHeightMeasurementUncertainty");
+    }
+    if (j.contains("baroHeightMeasurementUncertaintyOverride"))
+    {
+        j.at("baroHeightMeasurementUncertaintyOverride").get_to(_baroHeightMeasurementUncertaintyOverride);
     }
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovariancePositionUnit"))
@@ -732,6 +878,22 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         _initCovarianceBiasGyro = j.at("initCovarianceBiasGyro");
     }
+    if (j.contains("initCovarianceBiasHeightUnit"))
+    {
+        j.at("initCovarianceBiasHeightUnit").get_to(_initCovarianceBiasHeightUnit);
+    }
+    if (j.contains("initCovarianceBiasHeight"))
+    {
+        _initCovarianceBiasHeight = j.at("initCovarianceBiasHeight");
+    }
+    if (j.contains("initCovarianceScaleHeightUnit"))
+    {
+        j.at("initCovarianceScaleHeightUnit").get_to(_initCovarianceScaleHeightUnit);
+    }
+    if (j.contains("initCovarianceScaleHeight"))
+    {
+        _initCovarianceScaleHeight = j.at("initCovarianceScaleHeight");
+    }
 
     // ---------------------------------------- Initial IMU biases -------------------------------------------
     if (j.contains("initBiasAccel"))
@@ -762,92 +924,115 @@ bool NAV::LooselyCoupledKF::initialize()
     _lastImuObs = nullptr;
     _externalInitTime.reset();
     _initialSensorBiasesApplied = false;
+    _heightBiasTotal = 0.0;
+    _heightScaleTotal = 1.0;
 
     _kalmanFilter.setZero();
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
-    if (_initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2)
+    switch (_initCovarianceAttitudeAnglesUnit)
     {
+    case InitCovarianceAttitudeAnglesUnit::rad2:
         variance_angles = _initCovarianceAttitudeAngles;
-    }
-    else if (_initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2)
-    {
+        break;
+    case InitCovarianceAttitudeAnglesUnit::deg2:
         variance_angles = deg2rad(_initCovarianceAttitudeAngles);
-    }
-    else if (_initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad)
-    {
+        break;
+    case InitCovarianceAttitudeAnglesUnit::rad:
         variance_angles = _initCovarianceAttitudeAngles.array().pow(2);
-    }
-    else if (_initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg)
-    {
+        break;
+    case InitCovarianceAttitudeAnglesUnit::deg:
         variance_angles = deg2rad(_initCovarianceAttitudeAngles).array().pow(2);
+        break;
     }
 
     // Initial Covariance of the velocity in [m²/s²]
     Eigen::Vector3d variance_vel = Eigen::Vector3d::Zero();
-    if (_initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2)
+    switch (_initCovarianceVelocityUnit)
     {
+    case InitCovarianceVelocityUnit::m2_s2:
         variance_vel = _initCovarianceVelocity;
-    }
-    else if (_initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m_s)
-    {
+        break;
+    case InitCovarianceVelocityUnit::m_s:
         variance_vel = _initCovarianceVelocity.array().pow(2);
+        break;
     }
 
-    // Initial Covariance of the position in [m²]
-    Eigen::Vector3d e_variance = Eigen::Vector3d::Zero();
-    // Initial Covariance of the position in [rad² rad² m²]
-    Eigen::Vector3d lla_variance = Eigen::Vector3d::Zero();
-    if (_initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2)
+    Eigen::Vector3d e_variance = Eigen::Vector3d::Zero();   // Initial Covariance of the position in [m²]
+    Eigen::Vector3d lla_variance = Eigen::Vector3d::Zero(); // Initial Covariance of the position in [rad² rad² m²]
+    switch (_initCovariancePositionUnit)
     {
+    case InitCovariancePositionUnit::rad2_rad2_m2:
         e_variance = trafo::lla2ecef_WGS84(_initCovariancePosition.cwiseSqrt()).array().pow(2);
         lla_variance = _initCovariancePosition;
-    }
-    else if (_initCovariancePositionUnit == InitCovariancePositionUnit::rad_rad_m)
-    {
+        break;
+    case InitCovariancePositionUnit::rad_rad_m:
         e_variance = trafo::lla2ecef_WGS84(_initCovariancePosition).array().pow(2);
         lla_variance = _initCovariancePosition.array().pow(2);
-    }
-    else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter)
-    {
+        break;
+    case InitCovariancePositionUnit::meter:
         e_variance = _initCovariancePosition.array().pow(2);
         lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition, Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
-    }
-    else if (_initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
-    {
+        break;
+    case InitCovariancePositionUnit::meter2:
         e_variance = _initCovariancePosition;
         lla_variance = (trafo::ecef2lla_WGS84(trafo::ned2ecef(_initCovariancePosition.cwiseSqrt(), Eigen::Vector3d{ 0, 0, 0 }))).array().pow(2);
+        break;
     }
 
     // Initial Covariance of the accelerometer biases in [m^2/s^4]
     Eigen::Vector3d variance_accelBias = Eigen::Vector3d::Zero();
-    if (_initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4)
+    switch (_initCovarianceBiasAccelUnit)
     {
+    case InitCovarianceBiasAccelUnit::m2_s4:
         variance_accelBias = _initCovarianceBiasAccel;
-    }
-    else if (_initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m_s2)
-    {
+        break;
+    case InitCovarianceBiasAccelUnit::m_s2:
         variance_accelBias = _initCovarianceBiasAccel.array().pow(2);
+        break;
     }
 
     // Initial Covariance of the gyroscope biases in [rad^2/s^2]
     Eigen::Vector3d variance_gyroBias = Eigen::Vector3d::Zero();
-    if (_initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2)
+    switch (_initCovarianceBiasGyroUnit)
     {
+    case InitCovarianceBiasGyroUnit::rad2_s2:
         variance_gyroBias = _initCovarianceBiasGyro;
-    }
-    else if (_initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2)
-    {
+        break;
+    case InitCovarianceBiasGyroUnit::deg2_s2:
         variance_gyroBias = deg2rad(_initCovarianceBiasGyro.array().sqrt()).array().pow(2);
-    }
-    else if (_initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad_s)
-    {
+        break;
+    case InitCovarianceBiasGyroUnit::rad_s:
         variance_gyroBias = _initCovarianceBiasGyro.array().pow(2);
-    }
-    else if (_initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg_s)
-    {
+        break;
+    case InitCovarianceBiasGyroUnit::deg_s:
         variance_gyroBias = deg2rad(_initCovarianceBiasGyro).array().pow(2);
+        break;
+    }
+
+    // Initial Covariance of the height bias in [m^2]
+    double variance_heightBias = 0.0;
+    switch (_initCovarianceBiasHeightUnit)
+    {
+    case InitCovarianceBiasHeightUnit::m:
+        variance_heightBias = std::pow(_initCovarianceBiasHeight, 2);
+        break;
+    case InitCovarianceBiasHeightUnit::m2:
+        variance_heightBias = _initCovarianceBiasHeight;
+        break;
+    }
+
+    // Initial Covariance of the height scale in [m^2/m^2]
+    double variance_heightScale = 0.0;
+    switch (_initCovarianceScaleHeightUnit)
+    {
+    case InitCovarianceScaleHeight::m_m:
+        variance_heightScale = std::pow(_initCovarianceScaleHeight, 2);
+        break;
+    case InitCovarianceScaleHeight::m2_m2:
+        variance_heightScale = _initCovarianceScaleHeight;
+        break;
     }
 
     // 𝐏 Error covariance matrix
@@ -855,26 +1040,32 @@ bool NAV::LooselyCoupledKF::initialize()
                                                       variance_vel,    // Velocity covariance
                                                       _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
                                                           ? lla_variance
-                                                          : e_variance,   // Position (Lat, Lon, Alt) / ECEF covariance
-                                                      variance_accelBias, // Accelerometer Bias covariance
-                                                      variance_gyroBias); // Gyroscope Bias covariance
+                                                          : e_variance,      // Position (Lat, Lon, Alt) / ECEF covariance
+                                                      variance_accelBias,    // Accelerometer Bias covariance
+                                                      variance_gyroBias,     // Gyroscope Bias covariance
+                                                      variance_heightBias,   // height bias covariance
+                                                      variance_heightScale); // height scale covariance
 
     // Initial acceleration bias in body frame coordinates in [m/s^2]
-    Eigen::Vector3d accelBias = Eigen::Vector3d::Zero();
-    if (_initBiasAccelUnit == InitBiasAccelUnit::m_s2)
+    switch (_initBiasAccelUnit)
     {
-        accelBias = _initBiasAccel;
+    case InitBiasAccelUnit::microg:
+        _accelBiasTotal = _initBiasAccel * 1e-6 * InsConst::G_NORM;
+        break;
+    case InitBiasAccelUnit::m_s2:
+        _accelBiasTotal = _initBiasAccel;
+        break;
     }
 
     // Initial angular rate bias in body frame coordinates in [rad/s]
-    Eigen::Vector3d gyroBias = Eigen::Vector3d::Zero();
-    if (_initBiasGyroUnit == InitBiasGyroUnit::deg_s)
+    switch (_initBiasGyroUnit)
     {
-        gyroBias = deg2rad(_initBiasGyro);
-    }
-    else if (_initBiasGyroUnit == InitBiasGyroUnit::rad_s)
-    {
-        gyroBias = _initBiasGyro;
+    case InitBiasGyroUnit::deg_s:
+        _gyroBiasTotal = deg2rad(_initBiasGyro);
+        break;
+    case InitBiasGyroUnit::rad_s:
+        _gyroBiasTotal = _initBiasGyro;
+        break;
     }
 
     LOG_DEBUG("{}: initialized", nameId());
@@ -913,7 +1104,12 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
         lckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * -_inertialIntegrator.p_getLastAccelerationBias();
         lckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * -_inertialIntegrator.p_getLastAngularRateBias();
     }
-    invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
+    if (!hasInputPinWithSameTime(lckfSolution->insTime))
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
 }
 
 void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
@@ -938,7 +1134,7 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         // Initialize biases
         if (!_initialSensorBiasesApplied)
         {
-            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_initBiasAccel, obs->imuPos.p_quatGyro_b() * -_initBiasGyro);
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_accelBiasTotal, obs->imuPos.p_quatGyro_b() * -_gyroBiasTotal);
             _initialSensorBiasesApplied = true;
         }
 
@@ -952,7 +1148,7 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         // Initialize biases
         if (!_initialSensorBiasesApplied)
         {
-            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_initBiasAccel, obs->imuPos.p_quatGyro_b() * -_initBiasGyro);
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_accelBiasTotal, obs->imuPos.p_quatGyro_b() * -_gyroBiasTotal);
             _initialSensorBiasesApplied = true;
         }
 
@@ -1023,6 +1219,25 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
 
         LOG_DATA("{}: [{}] Sending out received solution, as no IMU data yet", nameId(), obs->insTime.toYMDHMS(GPST));
         invokeCallbackWithPosVelAtt(posVelAtt);
+        return;
+    }
+
+    looselyCoupledUpdate(obs);
+}
+
+void NAV::LooselyCoupledKF::recvBaroHeight([[maybe_unused]] InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+{
+    auto obs = std::static_pointer_cast<const BaroHgt>(queue.extract_front());
+    LOG_DATA("{}: [{}] recvPosVelObservation", nameId(), obs->insTime.toYMDHMS(GPST));
+
+    if (!_inertialIntegrator.hasInitialPosition())
+    {
+        return;
+    }
+
+    if (_externalInitTime == obs->insTime) { return; }
+    if (!_lastImuObs)
+    {
         return;
     }
 
@@ -1119,6 +1334,25 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
     LOG_DATA("{}:     sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
 
+    // Standard deviation of the barometric height bias [m]
+    double sigma_heightBias{};
+    switch (_stdevBaroHeightBiasUnits)
+    {
+    case StdevBaroHeightBiasUnits::m: // [m]
+        sigma_heightBias = _stdevBaroHeightBias;
+        break;
+    }
+    LOG_DATA("{}: sigma_heightBias = {} [m]", nameId(), sigma_heightBias);
+
+    // Standard deviation of the barometric height scale [m/m]
+    double sigma_heightScale{};
+    switch (_stdevBaroHeightScaleUnits)
+    {
+    case StdevBaroHeightScaleUnits::m_m: // [m/m]
+        sigma_heightScale = _stdevBaroHeightScale;
+        break;
+    }
+
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
@@ -1166,12 +1400,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // System Matrix
         _kalmanFilter.F = n_systemMatrix_F(n_Quat_b, b_acceleration, n_omega_in, n_velocity, lla_position, R_N, R_E, g_0, r_eS_e, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
-
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
             _kalmanFilter.Q = n_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
+                                                              sigma_heightBias, sigma_heightScale,
                                                               _tau_bad, _tau_bgd,
                                                               _kalmanFilter.F.block<3>(KFVel, KFAtt), T_rn_p,
                                                               n_Quat_b.toRotationMatrix(), tau_i);
@@ -1192,18 +1426,17 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // System Matrix
         _kalmanFilter.F = e_systemMatrix_F(e_Quat_b, b_acceleration, e_position, e_gravitation, r_eS_e, InsConst::e_omega_ie, _tau_bad, _tau_bgd);
         LOG_DATA("{}:     F =\n{}", nameId(), _kalmanFilter.F);
-
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
         {
             // 2. Calculate the system noise covariance matrix Q_{k-1}
             _kalmanFilter.Q = e_systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                               sigma_bad.array().square(), sigma_bgd.array().square(),
+                                                              sigma_heightBias, sigma_heightScale,
                                                               _tau_bad, _tau_bgd,
                                                               _kalmanFilter.F.block<3>(KFVel, KFAtt),
                                                               e_Quat_b.toRotationMatrix(), tau_i);
         }
     }
-
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
@@ -1214,16 +1447,15 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
         _kalmanFilter.W(all, all) = noiseScaleMatrix_W(sigma_ra, sigma_rg,
                                                        sigma_bad, sigma_bgd,
-                                                       _tau_bad, _tau_bgd);
+                                                       _tau_bad, _tau_bgd,
+                                                       sigma_heightBias, sigma_heightScale);
         LOG_DATA("{}:     W =\n{}", nameId(), _kalmanFilter.W(all, all));
-
         LOG_DATA("{}:     G*W*G^T =\n{}", nameId(), _kalmanFilter.G(all, all) * _kalmanFilter.W(all, all) * _kalmanFilter.G(all, all).transpose());
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.calcPhiAndQWithVanLoanMethod(tau_i);
     }
-
     // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
     if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::Exponential || _qCalculationAlgorithm != QCalculationAlgorithm::VanLoan)
     {
@@ -1357,6 +1589,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
                                      ? _lastImuObs->imuPos.b_quatGyro_p() * p_omega_ip.value()
                                      : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
+
+    _kalmanFilter.setMeasurements(Meas);
 
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
@@ -1502,19 +1736,180 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b());
         lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
     }
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
 
     // Closed loop
     _kalmanFilter.x(all).setZero();
 
     LOG_DATA("{}: [{}] Sending out updated solution", nameId(), lckfSolution->insTime.toYMDHMS(GPST));
-    invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    if (!hasInputPinWithSameTime(lckfSolution->insTime))
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
+}
+
+void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const BaroHgt>& baroHgtObs)
+{
+    INS_ASSERT_USER_ERROR(_inertialIntegrator.getLatestState().has_value(), "The update should not even trigger without an initial state.");
+
+    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), _inertialIntegrator.getLatestState().value().get().insTime.toYMDHMS(GPST));
+
+    // -------------------------------------------- GUI Parameters -----------------------------------------------
+
+    // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
+    const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
+    LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
+
+    // Baro height measurement uncertainty (Variance σ²) in [m^2]
+    double baroHeightSigmaSquared{};
+    if (_baroHeightMeasurementUncertaintyOverride || !baroHgtObs->baro_heightStdev.has_value())
+    {
+        switch (_barometricHeightMeasurementUncertaintyUnit)
+        {
+        case BaroHeightMeasurementUncertaintyUnit::m:
+            baroHeightSigmaSquared = std::pow(_barometricHeightMeasurementUncertainty, 2);
+            break;
+        case BaroHeightMeasurementUncertaintyUnit::m2:
+            baroHeightSigmaSquared = _barometricHeightMeasurementUncertainty;
+            break;
+        }
+    }
+    else
+    {
+        baroHeightSigmaSquared = std::pow(baroHgtObs->baro_heightStdev.value(), 2);
+    }
+    LOG_DATA("{}:     baroHeightSigmaSquared = {} [m^2]", nameId(), baroHeightSigmaSquared);
+
+    // ---------------------------------------------- Correction -------------------------------------------------
+    _kalmanFilter.setMeasurements({ KFMeas::dHgt });
+
+    // 5. Calculate the measurement matrix H_k
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        _kalmanFilter.H = n_measurementMatrix_H(lla_position(2), _heightScaleTotal);
+    }
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    {
+        _kalmanFilter.H = e_measurementMatrix_H(_inertialIntegrator.getLatestState().value().get().e_position(), lla_position(2), _heightScaleTotal);
+    }
+
+    // 6. Calculate the measurement noise covariance matrix R_k (here we can use the n-Frame covariance matrix! )
+    _kalmanFilter.R = n_measurementNoiseCovariance_R(baroHeightSigmaSquared);
+
+    // 8. Formulate the measurement z_k
+    _kalmanFilter.z = n_measurementInnovation_dz(baroHgtObs->baro_height, lla_position(2), _heightBiasTotal, _heightScaleTotal);
+
+    LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
+    LOG_DATA("{}:     KF.R =\n{}", nameId(), _kalmanFilter.R);
+    LOG_DATA("{}:     KF.z =\n{}", nameId(), _kalmanFilter.z);
+
+    if (_checkKalmanMatricesRanks)
+    {
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H(all, all) * _kalmanFilter.P(all, all) * _kalmanFilter.H(all, all).transpose() + _kalmanFilter.R(all, all));
+        auto rank = lu.rank();
+        if (rank != _kalmanFilter.H(all, all).rows())
+        {
+            LOG_WARN("{}: [{}] (HPH^T + R).rank = {}", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), rank);
+        }
+    }
+
+    // 7. Calculate the Kalman gain matrix K_k
+    // 9. Update the state vector estimate from x(-) to x(+)
+    // 10. Update the error covariance matrix from P(-) to P(+
+    _kalmanFilter.correctWithMeasurementInnovation();
+
+    LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
+    LOG_DATA("{}:     KF.x =\n{}", nameId(), _kalmanFilter.x);
+    LOG_DATA("{}:     KF.P =\n{}", nameId(), _kalmanFilter.P);
+
+    // Averaging of P to avoid numerical problems with symmetry (did not work)
+    // _kalmanFilter.P = ((_kalmanFilter.P + _kalmanFilter.P.transpose()) / 2.0);
+
+    if (_checkKalmanMatricesRanks)
+    {
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(_kalmanFilter.H(all, all) * _kalmanFilter.P(all, all) * _kalmanFilter.H(all, all).transpose() + _kalmanFilter.R(all, all));
+        auto rank = lu.rank();
+        if (rank != _kalmanFilter.H(all, all).rows())
+        {
+            LOG_WARN("{}: [{}] (HPH^T + R).rank = {}", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), rank);
+        }
+
+        Eigen::FullPivLU<Eigen::MatrixXd> luP(_kalmanFilter.P(all, all));
+        rank = luP.rank();
+        if (rank != _kalmanFilter.P(all, all).rows())
+        {
+            LOG_WARN("{}: [{}] P.rank = {}", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), rank);
+        }
+    }
+
+    // LOG_DEBUG("{}: H\n{}\n", nameId(), _kalmanFilter.H);
+    // LOG_DEBUG("{}: R\n{}\n", nameId(), _kalmanFilter.R);
+    // LOG_DEBUG("{}: z =\n{}", nameId(), _kalmanFilter.z.transposed());
+
+    // LOG_DEBUG("{}: K\n{}\n", nameId(), _kalmanFilter.K);
+    // LOG_DEBUG("{}: x =\n{}", nameId(), _kalmanFilter.x.transposed());
+    // LOG_DEBUG("{}: P\n{}\n", nameId(), _kalmanFilter.P);
+
+    // LOG_DEBUG("{}: K * z =\n{}", nameId(), (_kalmanFilter.K(all, all) * _kalmanFilter.z(all)).transpose());
+
+    // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P(all, all) - _kalmanFilter.P(all, all).transpose());
+
+    // Push out the new data
+    auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
+    lckfSolution->insTime = baroHgtObs->insTime;
+    lckfSolution->positionError = _kalmanFilter.x.segment<3>(KFPos);
+    lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
+    lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
+
+    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
+
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    lckfSolution->b_biasAccel = -_inertialIntegrator.p_getLastAccelerationBias();
+    lckfSolution->b_biasGyro = -_inertialIntegrator.p_getLastAngularRateBias();
+
+    LOG_DATA("{}: Biases after error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), lckfSolution->b_biasAccel.transpose(), lckfSolution->b_biasGyro.transpose());
+
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        lckfSolution->positionError = lckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
+        lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
+        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
+        lckfSolution->setStateAndStdDev_n(_inertialIntegrator.getLatestState().value().get().lla_position(), _kalmanFilter.P(KFPos, KFPos),
+                                          _inertialIntegrator.getLatestState().value().get().n_velocity(), _kalmanFilter.P(KFVel, KFVel),
+                                          _inertialIntegrator.getLatestState().value().get().n_Quat_b());
+        lckfSolution->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
+    }
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    {
+        lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
+        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
+        lckfSolution->setStateAndStdDev_e(_inertialIntegrator.getLatestState().value().get().e_position(), _kalmanFilter.P(KFPos, KFPos),
+                                          _inertialIntegrator.getLatestState().value().get().e_velocity(), _kalmanFilter.P(KFVel, KFVel),
+                                          _inertialIntegrator.getLatestState().value().get().e_Quat_b());
+        lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
+    }
+
+    // Closed loop
+    _heightBiasTotal += _kalmanFilter.x(KFStates::HeightBias);
+    _heightScaleTotal += _kalmanFilter.x(KFStates::HeightScale);
+    lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
+    lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
+    _kalmanFilter.x(all).setZero();
+
+    LOG_DATA("{}: [{}] Sending out updated solution", nameId(), lckfSolution->insTime.toYMDHMS(GPST));
+    if (!hasInputPinWithSameTime(lckfSolution->insTime))
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
 }
 
 // ###########################################################################################################
 //                                             System matrix 𝐅
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                             const Eigen::Vector3d& b_specForce_ib,
                                             const Eigen::Vector3d& n_omega_in,
@@ -1535,7 +1930,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     // System matrix 𝐅
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & \mathbf{C}_b^n \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} \end{pmatrix}
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> F(Eigen::Matrix<double, 15, 15>::Zero(), States);
+    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+        F(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States);
 
     F.block<3>(KFAtt, KFAtt) = n_F_dpsi_dpsi(n_omega_in);
     F.block<3>(KFAtt, KFVel) = n_F_dpsi_dv(latitude, altitude, R_N, R_E);
@@ -1573,7 +1969,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     return F;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_systemMatrix_F(const Eigen::Quaterniond& e_Quat_b,
                                             const Eigen::Vector3d& b_specForce_ib,
                                             const Eigen::Vector3d& e_position,
@@ -1588,7 +1984,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     // System matrix 𝐅
     // Math: \mathbf{F}^e = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{C}_b^e \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^e & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \vee -\mathbf{\beta} \end{pmatrix}
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> F(Eigen::Matrix<double, 15, 15>::Zero(), States);
+    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+        F(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States);
 
     F.block<3>(KFAtt, KFAtt) = e_F_dpsi_dpsi(e_omega_ie.z());
     F.block<3>(KFAtt, KFGyrBias) = e_F_dpsi_dw(e_Quat_b.toRotationMatrix());
@@ -1626,41 +2023,49 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::noiseInputMatrix_G(const Eigen::Quaterniond& ien_Quat_b)
 {
     // DCM matrix from body to navigation frame
     Eigen::Matrix3d ien_Dcm_b = ien_Quat_b.toRotationMatrix();
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^{i,e,n} & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^{i,e,n} & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix}
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> G(Eigen::Matrix<double, 15, 15>::Zero(), States, States);
+    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+        G(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
 
     G.block<3>(KFAtt, KFAtt) = SCALE_FACTOR_ATTITUDE * ien_Dcm_b;
     G.block<3>(KFVel, KFVel) = ien_Dcm_b;
     G.block<3>(KFAccBias, KFAccBias) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
     G.block<3>(KFGyrBias, KFGyrBias) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
-
+    G(KFStates::HeightBias, KFStates::HeightBias) = 1.0;
+    G(KFStates::HeightScale, KFStates::HeightScale) = 1.0;
     return G;
 }
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
-                                                                        const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
-                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd)
+Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+    NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma_ra, const Eigen::Vector3d& sigma_rg,
+                                              const Eigen::Vector3d& sigma_bad, const Eigen::Vector3d& sigma_bgd,
+                                              const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                              const double& sigma_heightBias, const double& sigma_heightScale)
 {
-    Eigen::Matrix<double, 15, 15> W = Eigen::Matrix<double, 15, 15>::Zero();
+    Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT> W =
+        Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero();
 
     W.diagonal() << sigma_rg.array().square(),
         sigma_ra.array().square(),
         Eigen::Vector3d::Zero(),
         (_randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad)).array().square(), // S_bad
-        (_randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd)).array().square();  // S_bgd
+        (_randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd)).array().square(),  // S_bgd
+        sigma_heightBias * sigma_heightBias,
+        sigma_heightScale * sigma_heightScale;
 
     return W;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                            const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                           const double& sigma_heightBias, const double& sigma_heightScale,
                                                            const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                            const Eigen::Matrix3d& n_F_21, const Eigen::Matrix3d& T_rn_p,
                                                            const Eigen::Matrix3d& n_Dcm_b, const double& tau_s)
@@ -1673,7 +2078,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     Eigen::Matrix3d b_Dcm_n = n_Dcm_b.transpose();
 
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> Q(Eigen::Matrix<double, 15, 15>::Zero(), States, States);
+    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+        Q(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
     Q.block<3>(KFAtt, KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                              // Q_11
     Q.block<3>(KFVel, KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, n_F_21, tau_s);                   // Q_21
     Q.block<3>(KFVel, KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, n_F_21, tau_s);       // Q_22
@@ -1696,6 +2102,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     Q.block<3>(KFGyrBias, KFPos) = Q.block<3>(KFPos, KFGyrBias).transpose(); // Q_35^T
     Q.block<3>(KFVel, KFAccBias) = Q.block<3>(KFAccBias, KFVel).transpose(); // Q_42^T
     Q.block<3>(KFAtt, KFGyrBias) = Q.block<3>(KFGyrBias, KFAtt).transpose(); // Q_51^T
+    Q(KFStates::HeightBias, KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
+    Q(KFStates::HeightScale, KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
 
     Q.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
     Q.middleRows<2>({ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
@@ -1710,9 +2118,10 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     return Q;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                            const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                           const double& sigma_heightBias, const double& sigma_heightScale,
                                                            const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                            const Eigen::Matrix3d& e_F_21,
                                                            const Eigen::Matrix3d& e_Dcm_b, const double& tau_s)
@@ -1725,7 +2134,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 
     Eigen::Matrix3d b_Dcm_e = e_Dcm_b.transpose();
 
-    KeyedMatrix<double, KFStates, KFStates, 15, 15> Q(Eigen::Matrix<double, 15, 15>::Zero(), States, States);
+    KeyedMatrix<double, KFStates, KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
+        Q(Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), States, States);
     Q.block<3>(KFAtt, KFAtt) = Q_psi_psi(S_rg, S_bgd, tau_s);                        // Q_11
     Q.block<3>(KFVel, KFAtt) = ien_Q_dv_psi(S_rg, S_bgd, e_F_21, tau_s);             // Q_21
     Q.block<3>(KFVel, KFVel) = ien_Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, e_F_21, tau_s); // Q_22
@@ -1748,6 +2158,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     Q.block<3>(KFGyrBias, KFPos) = Q.block<3>(KFPos, KFGyrBias).transpose(); // Q_35^T
     Q.block<3>(KFVel, KFAccBias) = Q.block<3>(KFAccBias, KFVel).transpose(); // Q_42^T
     Q.block<3>(KFAtt, KFGyrBias) = Q.block<3>(KFGyrBias, KFAtt).transpose(); // Q_51^T
+    Q(KFStates::HeightBias, KFStates::HeightBias) = sigma_heightBias * sigma_heightBias * tau_s;
+    Q(KFStates::HeightScale, KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
 
     Q.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
     Q.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
@@ -1764,17 +2176,20 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                         Error covariance matrix P
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, 15, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::initialErrorCovarianceMatrix_P0(const Eigen::Vector3d& variance_angles,
                                                            const Eigen::Vector3d& variance_vel,
                                                            const Eigen::Vector3d& variance_pos,
                                                            const Eigen::Vector3d& variance_accelBias,
-                                                           const Eigen::Vector3d& variance_gyroBias) const
+                                                           const Eigen::Vector3d& variance_gyroBias,
+                                                           const double& variance_heightBias,
+                                                           const double& variance_heightScale) const
 {
     double scaleFactorPosition = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED ? SCALE_FACTOR_LAT_LON : 1.0;
 
     // 𝐏 Error covariance matrix
-    Eigen::Matrix<double, 15, 15> P = Eigen::Matrix<double, 15, 15>::Zero();
+    Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT> P =
+        Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero();
 
     P.diagonal() << std::pow(SCALE_FACTOR_ATTITUDE, 2) * variance_angles, // Flight Angles covariance
         variance_vel,                                                     // Velocity covariance
@@ -1782,8 +2197,9 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
         std::pow(scaleFactorPosition, 2) * variance_pos(1),               // Longitude/Pos Y covariance
         variance_pos(2),                                                  // Altitude/Pos Z covariance
         std::pow(SCALE_FACTOR_ACCELERATION, 2) * variance_accelBias,      // Accelerometer Bias covariance
-        std::pow(SCALE_FACTOR_ANGULAR_RATE, 2) * variance_gyroBias;       // Gyroscope Bias covariance
-
+        std::pow(SCALE_FACTOR_ANGULAR_RATE, 2) * variance_gyroBias,       // Gyroscope Bias covariance
+        variance_heightBias,                                              // Height Bias covariance
+        variance_heightScale;                                             // Height Scale covariance
     return { P, States };
 }
 
@@ -1791,13 +2207,14 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
 //                                                Correction
 // ###########################################################################################################
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::n_measurementMatrix_H(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& b_omega_ib, const Eigen::Vector3d& b_leverArm_InsGnss, const Eigen::Matrix3d& n_Omega_ie)
 {
     // Math: \mathbf{H}_{G,k}^n = \begin{pmatrix} \mathbf{H}_{r1}^n & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^n & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^n \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
 
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, 15> H(Eigen::Matrix<double, 6, 15>::Zero(), Meas, States);
+    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
+        H(Eigen::Matrix<double, 6, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), Meas, States);
 
     // Math: \mathbf{H}_{r1}^n \approx \mathbf{\hat{T}}_{r(n)}^p \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^n \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     H.block<3>(dPos, KFAtt) = T_rn_p * math::skewSymmetricMatrix(n_Dcm_b * b_leverArm_InsGnss);
@@ -1818,13 +2235,27 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     return H;
 }
 
-NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, 15>
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+    NAV::LooselyCoupledKF::n_measurementMatrix_H(const double& height, const double& scale)
+{
+    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), { KFMeas::dHgt }, States);
+
+    H(KFMeas::dHgt, PosAlt) = -scale;
+    H(KFMeas::dHgt, HeightBias) = 1.0;
+    H(KFMeas::dHgt, HeightScale) = height;
+
+    return H;
+}
+
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
     NAV::LooselyCoupledKF::e_measurementMatrix_H(const Eigen::Matrix3d& e_Dcm_b, const Eigen::Vector3d& b_omega_ib, const Eigen::Vector3d& b_leverArm_InsGnss, const Eigen::Matrix3d& e_Omega_ie)
 {
     // Math: \mathbf{H}_{G,k}^e = \begin{pmatrix} \mathbf{H}_{r1}^e & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^e & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^e \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
 
-    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, 15> H(Eigen::Matrix<double, 6, 15>::Zero(), Meas, States);
+    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 6, NAV::LooselyCoupledKF::KFStates_COUNT>
+        H(Eigen::Matrix<double, 6, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), Meas, States);
 
     // Math: \mathbf{H}_{r1}^e \approx \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^e \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     H.block<3>(dPos, KFAtt) = math::skewSymmetricMatrix(e_Dcm_b * b_leverArm_InsGnss);
@@ -1842,6 +2273,19 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     return H;
 }
 
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+    NAV::LooselyCoupledKF::e_measurementMatrix_H(const Eigen::Vector3d& e_positionEstimate, const double& height, const double& scale)
+{
+    NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
+        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), { KFMeas::dHgt }, States);
+
+    H(KFMeas::dHgt, KFPos) = -scale * e_positionEstimate.normalized().transpose();
+    H(KFMeas::dHgt, HeightBias) = 1.0;
+    H(KFMeas::dHgt, HeightScale) = height;
+
+    return H;
+}
+
 NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 6, 6>
     NAV::LooselyCoupledKF::n_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity)
 {
@@ -1851,6 +2295,15 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     R.block<3>(dVel, dVel).diagonal() = gnssVarianceVelocity;
 
     R.block<2>({ dPosLat, dPosLon }, { dPosLat, dPosLon }).diagonal() *= std::pow(SCALE_FACTOR_LAT_LON, 2);
+
+    return R;
+}
+
+NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 1, 1>
+    NAV::LooselyCoupledKF::n_measurementNoiseCovariance_R(const double& baroVarianceHeight)
+{
+    KeyedMatrix<double, KFMeas, KFMeas, 1, 1> R(Eigen::Matrix<double, 1, 1>::Zero(), { KFMeas::dHgt });
+    R(KFMeas::dHgt, KFMeas::dHgt) = baroVarianceHeight;
 
     return R;
 }
@@ -1882,6 +2335,15 @@ NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>
     innovation << deltaLLA, deltaVel;
 
     return { innovation, Meas };
+}
+
+NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 1>
+    NAV::LooselyCoupledKF::n_measurementInnovation_dz(const double& baroheight, const double& height, const double& heightbias, const double& heightscale)
+{
+    Eigen::Matrix<double, 1, 1> innovation;
+    innovation << baroheight - (height * heightscale + heightbias);
+
+    return { innovation, { KFMeas::dHgt } };
 }
 
 NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>

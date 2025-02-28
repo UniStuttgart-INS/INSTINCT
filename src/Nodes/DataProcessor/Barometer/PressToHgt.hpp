@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file PressureToHeight.hpp
+/// @file PressToHgt.hpp
 /// @brief Pressure to height converter
 /// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
 /// @date 2025-02-10
@@ -19,22 +19,22 @@
 
 namespace NAV
 {
-/// Convert RTKLib pos files into PosVel
-class PressureToHeight : public Node
+/// Pressure to height converter
+class PressToHgt : public Node
 {
   public:
     /// @brief Default constructor
-    PressureToHeight();
+    PressToHgt();
     /// @brief Destructor
-    ~PressureToHeight() override;
+    ~PressToHgt() override;
     /// @brief Copy constructor
-    PressureToHeight(const PressureToHeight&) = delete;
+    PressToHgt(const PressToHgt&) = delete;
     /// @brief Move constructor
-    PressureToHeight(PressureToHeight&&) = delete;
+    PressToHgt(PressToHgt&&) = delete;
     /// @brief Copy assignment operator
-    PressureToHeight& operator=(const PressureToHeight&) = delete;
+    PressToHgt& operator=(const PressToHgt&) = delete;
     /// @brief Move assignment operator
-    PressureToHeight& operator=(PressureToHeight&&) = delete;
+    PressToHgt& operator=(PressToHgt&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -108,15 +108,15 @@ class PressureToHeight : public Node
 /// @brief Converts the enum to a string
 /// @param[in] value Enum value to convert into text
 /// @return String representation of the enum
-constexpr const char* to_string(NAV::PressureToHeight::GravityInput value)
+constexpr const char* to_string(NAV::PressToHgt::GravityInput value)
 {
     switch (value)
     {
-    case NAV::PressureToHeight::GravityInput::Manual:
+    case NAV::PressToHgt::GravityInput::Manual:
         return "Manual";
-    case NAV::PressureToHeight::GravityInput::Position:
+    case NAV::PressToHgt::GravityInput::Position:
         return "Position";
-    case NAV::PressureToHeight::GravityInput::COUNT:
+    case NAV::PressToHgt::GravityInput::COUNT:
         return "";
     }
     return "";

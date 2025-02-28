@@ -17,7 +17,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/State/Pos.hpp"
-#include "NodeData/Baro/BarometricPressureObs.hpp"
+#include "NodeData/Baro/BaroPressObs.hpp"
 
 #include "Navigation/Gravity/Gravity.hpp"
 
@@ -37,7 +37,7 @@ NAV::BaroSimulator::BaroSimulator()
     std::uniform_int_distribution<uint64_t> dist(0, std::numeric_limits<uint64_t>::max() / 2);
     _pressureRng.seed = dist(gen);
 
-    nm::CreateOutputPin(this, "BarometricPressureObs", Pin::Type::Flow, { NAV::BarometricPressureObs::type() });
+    nm::CreateOutputPin(this, "BaroPressObs", Pin::Type::Flow, { NAV::BaroPressObs::type() });
 
     nm::CreateInputPin(this, "Pos", Pin::Type::Flow, { NAV::Pos::type() }, &BaroSimulator::receiveObs);
 }
@@ -148,7 +148,7 @@ bool NAV::BaroSimulator::initialize()
     if (_gravityInput == GravityInput::Position)
     {
         _gravity = n_calcGravitation_EGM96(_initPos).norm();
-        LOG_DATA("{}: PressureToHeight - Local gravity magnitude: {} m/s² at initial position: {} [deg, deg, m]", nameId(), _gravity, _initPos.transpose());
+        LOG_DATA("{}: PressToHgt - Local gravity magnitude: {} m/s² at initial position: {} [deg, deg, m]", nameId(), _gravity, _initPos.transpose());
     }
     _exponent = _gravity * InsConst::dMtr / InsConst::Rg / _lapserate;
     _pressureRng.resetSeed();
@@ -224,7 +224,7 @@ void NAV::BaroSimulator::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t 
 {
     auto PosObs = std::static_pointer_cast<const Pos>(queue.extract_front());
 
-    auto pressureObs = std::make_shared<BarometricPressureObs>();
+    auto pressureObs = std::make_shared<BaroPressObs>();
 
     pressureObs->insTime = PosObs->insTime;
 

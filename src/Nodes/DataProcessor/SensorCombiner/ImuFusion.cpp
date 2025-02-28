@@ -10,9 +10,6 @@
 
 #include "util/Logger.hpp"
 
-#include <numeric>
-#include "Navigation/Math/Math.hpp"
-#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
 #include "Navigation/INS/SensorCombiner/IRWKF/IRWKF.hpp"

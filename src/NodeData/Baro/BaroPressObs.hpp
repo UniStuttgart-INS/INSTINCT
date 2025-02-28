@@ -6,8 +6,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-/// @file BarometricHeight.hpp
-/// @brief Barometric Height Storage Class
+/// @file BaroPressObs.hpp
+/// @brief Barometric Pressure Storage Class
 /// @author T. Hobiger (hobiger@ins.uni-stuttgart.de)
 /// @date 2025-02-10
 
@@ -15,19 +15,18 @@
 
 #include "NodeData/NodeData.hpp"
 #include "util/Assert.h"
-#include <Eigen/src/Core/MatrixBase.h>
 
 namespace NAV
 {
-/// Position, Velocity and Attitude Storage Class
-class BarometricHeight : public NodeData
+/// Barometric pressure storage class
+class BaroPressObs : public NodeData
 {
   public:
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return "BarometricHeight";
+        return "BaroPressObs";
     }
 
     /// @brief Returns the type of the data class
@@ -45,18 +44,17 @@ class BarometricHeight : public NodeData
     [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
         return {
-            "BarometricHeight [m]",
-            "BarometricHeight StDev [m]"
+            "BaroPressObs [hPa]"
         };
     }
 
-    /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 2; }
+    /// @brief Get the number of descriptors
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 1; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
 
-    /// @brief Get the amount of descriptors
+    /// @brief Get the number of descriptors
     [[nodiscard]] size_t staticDescriptorCount() const override { return GetStaticDescriptorCount(); }
 
     /// @brief Get the value at the index
@@ -65,14 +63,9 @@ class BarometricHeight : public NodeData
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
-        switch (idx)
+        if (idx == 0) // BaroPressObs [hPa]
         {
-        case 0: // BarometricHeight [m]
-            return baro_height;
-        case 1: // BarometricHeight StDev [m]
-            return baro_heightStdev;
-        default:
-            return std::nullopt;
+            return baro_pressure;
         }
         return std::nullopt;
     }
@@ -84,24 +77,20 @@ class BarometricHeight : public NodeData
     [[nodiscard]] bool setValueAt(size_t idx, double value) override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
-        switch (idx)
+        if (idx == 0)
         {
-        case 0: // BarometricHeight [m]
-            baro_height = value;
-            break;
-        case 1: // BarometricHeight StDev [m]
-        default:
+            baro_pressure = value;
+        }
+        else
+        {
             return false;
         }
 
         return true;
     }
 
-    /// Barometric height [m]
-    double baro_height{ std::nan("") };
-
-    /// Standard deviation of barometric height [m]
-    std::optional<double> baro_heightStdev;
+    /// Barometric pressure [hPa]
+    double baro_pressure{ std::nan("") };
 };
 
 } // namespace NAV
