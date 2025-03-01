@@ -14,18 +14,20 @@
 #pragma once
 
 #include <cstdint>
+#include <Eigen/src/Core/MatrixBase.h>
+
+#include "NodeData/NodeData.hpp"
+#include "Navigation/GNSS/SystemModel/MotionModel.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 
 #include "util/Logger/CommonLog.hpp"
-#include "NodeData/NodeData.hpp"
 #include "util/Container/KeyedMatrix.hpp"
 #include "util/Assert.h"
-#include <Eigen/src/Core/MatrixBase.h>
 
 namespace NAV
 {
-/// Position, Velocity and Attitude Storage Class
+/// Position Storage Class
 class Pos : public NodeData
 {
   public:
@@ -108,40 +110,40 @@ class Pos : public NodeData
         case 7: // Z-ECEF [m]
             return e_position().z();
         case 8: // X-ECEF StDev [m]
-            if (auto stDev = e_positionStdev()) { return stDev->get().x(); }
+            if (auto stDev = e_positionStdev()) { return stDev->x(); }
             break;
         case 9: // Y-ECEF StDev [m]
-            if (auto stDev = e_positionStdev()) { return stDev->get().y(); }
+            if (auto stDev = e_positionStdev()) { return stDev->y(); }
             break;
         case 10: // Z-ECEF StDev [m]
-            if (auto stDev = e_positionStdev()) { return stDev->get().z(); }
+            if (auto stDev = e_positionStdev()) { return stDev->z(); }
             break;
         case 11: // XY-ECEF StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(States::PosX, States::PosY); }
+            if (_e_covarianceMatrix) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::PosX, Keys::PosY))); }
             break;
         case 12: // XZ-ECEF StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(States::PosX, States::PosZ); }
+            if (_e_covarianceMatrix) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::PosX, Keys::PosZ))); }
             break;
         case 13: // YZ-ECEF StDev [m]
-            if (e_CovarianceMatrix().has_value()) { return (*e_CovarianceMatrix())(States::PosY, States::PosZ); }
+            if (_e_covarianceMatrix) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::PosY, Keys::PosZ))); }
             break;
         case 14: // North StDev [m]
-            if (auto stDev = n_positionStdev()) { return stDev->get().x(); }
+            if (auto stDev = n_positionStdev()) { return stDev->x(); }
             break;
         case 15: // East StDev [m]
-            if (auto stDev = n_positionStdev()) { return stDev->get().y(); }
+            if (auto stDev = n_positionStdev()) { return stDev->y(); }
             break;
         case 16: // Down StDev [m]
-            if (auto stDev = n_positionStdev()) { return stDev->get().z(); }
+            if (auto stDev = n_positionStdev()) { return stDev->z(); }
             break;
         case 17: // NE StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(States::PosX, States::PosY); }
+            if (_n_covarianceMatrix) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::PosX, Keys::PosY))); }
             break;
         case 18: // ND StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(States::PosX, States::PosZ); }
+            if (_n_covarianceMatrix) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::PosX, Keys::PosZ))); }
             break;
         case 19: // ED StDev [m]
-            if (n_CovarianceMatrix().has_value()) { return (*n_CovarianceMatrix())(States::PosY, States::PosZ); }
+            if (_n_covarianceMatrix) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::PosY, Keys::PosZ))); }
             break;
         default:
             return std::nullopt;
@@ -231,24 +233,6 @@ class Pos : public NodeData
     /*                                                 Position                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// @brief States
-    struct States
-    {
-        /// @brief Constructor
-        States() = delete;
-
-        /// @brief State Keys
-        enum StateKeys : uint8_t
-        {
-            PosX,         ///< Position ECEF_X [m]
-            PosY,         ///< Position ECEF_Y [m]
-            PosZ,         ///< Position ECEF_Z [m]
-            States_COUNT, ///< Count
-        };
-        /// @brief All position keys
-        inline static const std::vector<StateKeys> Pos = { PosX, PosY, PosZ };
-    };
-
     /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
     [[nodiscard]] const Eigen::Vector3d& lla_position() const { return _lla_position; }
 
@@ -265,16 +249,30 @@ class Pos : public NodeData
     [[nodiscard]] const Eigen::Vector3d& e_position() const { return _e_position; }
 
     /// Returns the standard deviation of the position in ECEF frame coordinates in [m]
-    [[nodiscard]] std::optional<std::reference_wrapper<const Eigen::Vector3d>> e_positionStdev() const { return _e_positionStdev; }
+    [[nodiscard]] std::optional<Eigen::Vector3d> e_positionStdev() const
+    {
+        if (_e_covarianceMatrix)
+        {
+            return (*_e_covarianceMatrix)(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>).diagonal().cwiseSqrt();
+        }
+        return std::nullopt;
+    }
 
     /// Returns the standard deviation of the position in local navigation frame coordinates in [m]
-    [[nodiscard]] std::optional<std::reference_wrapper<const Eigen::Vector3d>> n_positionStdev() const { return _n_positionStdev; }
+    [[nodiscard]] std::optional<Eigen::Vector3d> n_positionStdev() const
+    {
+        if (_n_covarianceMatrix)
+        {
+            return (*_n_covarianceMatrix)(Keys::Pos<Keys::MotionModelKey>, Keys::Pos<Keys::MotionModelKey>).diagonal().cwiseSqrt();
+        }
+        return std::nullopt;
+    }
 
     /// Returns the Covariance matrix in ECEF frame
-    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<States::StateKeys, States::StateKeys>>> e_CovarianceMatrix() const { return _e_covarianceMatrix; }
+    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>>> e_CovarianceMatrix() const { return _e_covarianceMatrix; }
 
     /// Returns the Covariance matrix in local navigation frame
-    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<States::StateKeys, States::StateKeys>>> n_CovarianceMatrix() const { return _n_covarianceMatrix; }
+    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>>> n_CovarianceMatrix() const { return _n_covarianceMatrix; }
 
     // ###########################################################################################################
     //                                                  Setter
@@ -298,26 +296,24 @@ class Pos : public NodeData
         _lla_position = lla_position;
     }
 
-    /// @brief Set the Position in ECEF coordinates and its standard deviation
-    /// @param[in] e_position New Position in ECEF coordinates [m]
-    /// @param[in] e_positionCovarianceMatrix Covariance matrix of position in ECEF coordinates [m]
-    template<typename Derived, typename Derived2>
-    void setPositionAndStdDev_e(const Eigen::MatrixBase<Derived>& e_position, const Eigen::MatrixBase<Derived2>& e_positionCovarianceMatrix)
+    /// @brief Set the position and the covariance matrix
+    /// @param[in] e_position New Position in ECEF coordinates
+    /// @param[in] e_covarianceMatrix 3x3 Pos Error variance
+    template<typename DerivedP, typename Derived>
+    void setPositionAndCov_e(const Eigen::MatrixBase<DerivedP>& e_position, const Eigen::MatrixBase<Derived>& e_covarianceMatrix)
     {
         setPosition_e(e_position);
-        _e_positionStdev = e_positionCovarianceMatrix.diagonal().cwiseSqrt();
-        _n_positionStdev = (n_Quat_e() * e_positionCovarianceMatrix * e_Quat_n()).diagonal().cwiseSqrt();
+        setPosCovarianceMatrix_e(e_covarianceMatrix);
     }
 
-    /// @brief Set the Position in LLA coordinates and its standard deviation
-    /// @param[in] lla_position New Position in LatLonAlt coordinates
-    /// @param[in] n_positionCovarianceMatrix Covariance matrix of Position in NED coordinates [m]
-    template<typename Derived, typename Derived2>
-    void setPositionAndStdDev_lla(const Eigen::MatrixBase<Derived>& lla_position, const Eigen::MatrixBase<Derived2>& n_positionCovarianceMatrix)
+    /// @brief Set the position and the covariance matrix
+    /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] n_covarianceMatrix 3x3 Pos Error variance in NED frame [m]
+    template<typename DerivedP, typename Derived>
+    void setPositionAndCov_n(const Eigen::MatrixBase<DerivedP>& lla_position, const Eigen::MatrixBase<Derived>& n_covarianceMatrix)
     {
         setPosition_lla(lla_position);
-        _n_positionStdev = n_positionCovarianceMatrix.diagonal().cwiseSqrt();
-        _e_positionStdev = (e_Quat_n() * n_positionCovarianceMatrix * n_Quat_e()).diagonal().cwiseSqrt();
+        setPosCovarianceMatrix_n(n_covarianceMatrix);
     }
 
     /// @brief Set the Covariance matrix in ECEF coordinates
@@ -329,17 +325,16 @@ class Pos : public NodeData
         INS_ASSERT_USER_ERROR(e_covarianceMatrix.rows() == 3, "This function needs a 3x3 matrix as input");
         INS_ASSERT_USER_ERROR(e_covarianceMatrix.cols() == 3, "This function needs a 3x3 matrix as input");
 
-        _e_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(e_covarianceMatrix,
-                                                               States::Pos);
-        _n_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(n_Quat_e()
-                                                                   * (*_e_covarianceMatrix)(States::Pos, States::Pos)
-                                                                   * e_Quat_n(),
-                                                               States::Pos);
+        _e_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            e_covarianceMatrix, Keys::Pos<Keys::MotionModelKey>);
+
+        Eigen::Matrix3d J = n_Quat_e().toRotationMatrix();
+
+        _n_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            J * e_covarianceMatrix * J.transpose(), Keys::Pos<Keys::MotionModelKey>);
     }
 
-    /// @brief Set the Covariance matrix in ECEF coordinates
+    /// @brief Set the Covariance matrix in NED coordinates
     /// @param[in] n_covarianceMatrix 3x3 Pos Error variance
     /// @attention Position has to be set before calling this
     template<typename Derived>
@@ -348,36 +343,31 @@ class Pos : public NodeData
         INS_ASSERT_USER_ERROR(n_covarianceMatrix.rows() == 3, "This function needs a 3x3 matrix as input");
         INS_ASSERT_USER_ERROR(n_covarianceMatrix.cols() == 3, "This function needs a 3x3 matrix as input");
 
-        _n_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(n_covarianceMatrix,
-                                                               States::Pos);
-        _e_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(e_Quat_n()
-                                                                   * (*_n_covarianceMatrix)(States::Pos, States::Pos)
-                                                                   * n_Quat_e(),
-                                                               States::Pos);
+        _n_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            n_covarianceMatrix, Keys::Pos<Keys::MotionModelKey>);
+
+        Eigen::Matrix3d J = e_Quat_n().toRotationMatrix();
+
+        _e_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            J * n_covarianceMatrix * J.transpose(), Keys::Pos<Keys::MotionModelKey>);
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
     /* -------------------------------------------------------------------------------------------------------- */
 
+  protected:
+    /// Covariance matrix in ECEF coordinates
+    std::optional<KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>> _e_covarianceMatrix;
+
+    /// Covariance matrix in local navigation coordinates
+    std::optional<KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>> _n_covarianceMatrix;
+
   private:
     /// Position in ECEF coordinates [m]
     Eigen::Vector3d _e_position{ std::nan(""), std::nan(""), std::nan("") };
     /// Position in LatLonAlt coordinates [rad, rad, m]
     Eigen::Vector3d _lla_position{ std::nan(""), std::nan(""), std::nan("") };
-
-    /// Standard deviation of Position in ECEF coordinates [m]
-    std::optional<Eigen::Vector3d> _e_positionStdev;
-    /// Standard deviation of Position in local navigation frame coordinates [m]
-    std::optional<Eigen::Vector3d> _n_positionStdev;
-
-    /// Covariance matrix in ECEF coordinates
-    std::optional<KeyedMatrixXd<States::StateKeys, States::StateKeys>> _e_covarianceMatrix;
-
-    /// Covariance matrix in local navigation coordinates
-    std::optional<KeyedMatrixXd<States::StateKeys, States::StateKeys>> _n_covarianceMatrix;
 };
 
 } // namespace NAV

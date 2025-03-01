@@ -93,7 +93,7 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
     double yaw = deg2rad(66);
 
     PosVelAtt state;
-    state.setState_e(trafo::lla2ecef_WGS84(lla_position), e_vel, trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
+    state.setPosVelAtt_e(trafo::lla2ecef_WGS84(lla_position), e_vel, trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw));
 
     CHECK_THAT((state.lla_position() - lla_position).head<2>(), Catch::Matchers::WithinAbs(Eigen::Vector2d::Zero(), EPSILON));
     CHECK_THAT((state.lla_position() - lla_position)(2), Catch::Matchers::WithinAbs(0, 1.3e-9));
@@ -103,7 +103,7 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
     CHECK_THAT(state.e_Quat_b(), Catch::Matchers::WithinAbs(trafo::e_Quat_n(lla_position(0), lla_position(1)) * trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
     CHECK_THAT(state.b_Quat_e(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(lla_position(0), lla_position(1)), EPSILON));
 
-    state.setState_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
+    state.setPosVelAtt_n(lla_position, n_vel, trafo::n_Quat_b(roll, pitch, yaw));
     CHECK_THAT(state.n_velocity(), Catch::Matchers::WithinAbs(n_vel, EPSILON));
     CHECK_THAT(state.n_Quat_b(), Catch::Matchers::WithinAbs(trafo::n_Quat_b(roll, pitch, yaw), EPSILON));
     CHECK_THAT(state.b_Quat_n(), Catch::Matchers::WithinAbs(trafo::b_Quat_n(roll, pitch, yaw), EPSILON));
@@ -141,19 +141,19 @@ TEST_CASE("[PosVelAtt] State setStateAndStdDev_n", "[PosVelAtt]")
     auto logger = initializeTestLogger();
 
     Eigen::Vector3d lla_position{ deg2rad(0.0), deg2rad(0.0), 0.0 };
-    Eigen::Matrix3d n_positionCovarianceMatrix = Eigen::Matrix3d::Zero();
-    n_positionCovarianceMatrix.diagonal() << 1, 4, 9;
     Eigen::Vector3d n_velocity = Eigen::Vector3d::Zero();
-    Eigen::Matrix3d n_velocityCovarianceMatrix = Eigen::Matrix3d::Zero();
-    n_velocityCovarianceMatrix.diagonal() << 1, 4, 9;
+    Eigen::Matrix<double, 10, 10> n_covarianceMatrix = Eigen::Matrix<double, 10, 10>::Zero();
+    n_covarianceMatrix.diagonal() << 1, 4, 9, 1, 4, 9, 16, 25, 36, 49;
 
     PosVelAtt state;
-    state.setStateAndStdDev_n(lla_position, n_positionCovarianceMatrix,
-                              n_velocity, n_velocityCovarianceMatrix,
-                              trafo::n_Quat_b(0.0, 0.0, 0.0));
+    state.setPosVelAttAndCov_n(lla_position,
+                               n_velocity,
+                               trafo::n_Quat_b(0.0, 0.0, 0.0),
+                               n_covarianceMatrix);
 
-    REQUIRE_THAT(state.e_positionStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
-    REQUIRE_THAT(state.e_velocityStdev().value().get(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
+    REQUIRE_THAT(state.e_positionStdev().value(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
+    REQUIRE_THAT(state.e_velocityStdev().value(), Catch::Matchers::WithinAbs(Eigen::Vector3d(3, 2, 1), 1e-8));
+    REQUIRE_THAT(state.n_QuatStdev().value(), Catch::Matchers::WithinAbs(Eigen::Vector4d(4, 5, 6, 7), 1e-8));
 }
 
 } // namespace NAV::TESTS::PosVelAttTests

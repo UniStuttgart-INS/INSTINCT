@@ -469,26 +469,22 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData()
                                timeSystem);
     }
 
-    if (!e_position.hasNaN() && !e_posVar.hasNaN()) { obs->setPositionAndStdDev_e(e_position, e_posVar); }
-    else if (!lla_position.hasNaN() && !n_posVar.hasNaN()) { obs->setPositionAndStdDev_lla(lla_position, n_posVar); }
-    else if (!e_position.hasNaN()) { obs->setPosition_e(e_position); }
+    if (!e_position.hasNaN()) { obs->setPosition_e(e_position); }
     else if (!lla_position.hasNaN()) { obs->setPosition_lla(lla_position); }
 
-    if (!e_velocity.hasNaN() && !e_velVar.hasNaN()) { obs->setVelocityAndStdDev_e(e_velocity, e_velVar); }
-    if (!n_velocity.hasNaN() && !n_velVar.hasNaN()) { obs->setVelocityAndStdDev_n(n_velocity, n_velVar); }
-    else if (!e_velocity.hasNaN()) { obs->setVelocity_e(e_velocity); }
+    if (!e_velocity.hasNaN()) { obs->setVelocity_e(e_velocity); }
     else if (!n_velocity.hasNaN()) { obs->setVelocity_n(n_velocity); }
 
     if (!e_velVar.hasNaN() && !e_posVar.hasNaN())
     {
-        Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(6, 6);
+        Eigen::Matrix6d cov = Eigen::Matrix6d::Zero(6, 6);
         cov.block<3, 3>(0, 0) = e_posVar;
         cov.block<3, 3>(3, 3) = e_velVar;
         obs->setPosVelCovarianceMatrix_e(cov);
     }
     else if (!n_velVar.hasNaN() && !n_posVar.hasNaN())
     {
-        Eigen::MatrixXd cov = Eigen::MatrixXd::Zero(6, 6);
+        Eigen::Matrix6d cov = Eigen::Matrix6d::Zero(6, 6);
         cov.block<3, 3>(0, 0) = n_posVar;
         cov.block<3, 3>(3, 3) = n_velVar;
         obs->setPosVelCovarianceMatrix_n(cov);

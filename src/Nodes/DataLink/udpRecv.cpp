@@ -159,7 +159,7 @@ void NAV::UdpRecv::asyncReceive()
                 auto gpsW = static_cast<int32_t>(_data.at(11));
                 auto gpsT = static_cast<long double>(_data.at(12));
 
-                obs->setState_n(posLLA, vel_n, n_Quat_b);
+                obs->setPosVelAtt_n(posLLA, vel_n, n_Quat_b);
                 obs->insTime = InsTime(gpsC, gpsW, gpsT);
 
                 this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);

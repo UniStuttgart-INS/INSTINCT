@@ -844,8 +844,8 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             if (_devices.size() == _numOfDevices)
             {
                 LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
-                wifiPositioningSolution->setPositionAndStdDev_e(lsqSolution.solution.block<3, 1>(0, 0), lsqSolution.variance.block<3, 3>(0, 0).cwiseSqrt());
-                wifiPositioningSolution->setPosCovarianceMatrix_e(lsqSolution.variance.block<3, 3>(0, 0));
+                wifiPositioningSolution->setPositionAndCov_e(lsqSolution.solution.block<3, 1>(0, 0),
+                                                             lsqSolution.variance.block<3, 3>(0, 0));
                 if (_estimateBias)
                 {
                     wifiPositioningSolution->bias = _state.bias;
@@ -858,14 +858,14 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
         else if (_solutionMode == SolutionMode::KF)
         {
             WiFiPositioning::kfSolution();
-            wifiPositioningSolution->setPositionAndStdDev_e(_kalmanFilter.x.block<3, 1>(0, 0), _kalmanFilter.P.block<3, 3>(0, 0).cwiseSqrt());
+            wifiPositioningSolution->setPosVelAndCov_e(_kalmanFilter.x.block<3, 1>(0, 0),
+                                                       _kalmanFilter.x.block<3, 1>(3, 0),
+                                                       _kalmanFilter.P.block<6, 6>(0, 0));
             if (_estimateBias)
             {
                 wifiPositioningSolution->bias = _kalmanFilter.x(6);
                 wifiPositioningSolution->biasStdev = _kalmanFilter.P(6, 6);
             }
-            wifiPositioningSolution->setVelocityAndStdDev_e(_kalmanFilter.x.block<3, 1>(3, 0), _kalmanFilter.P.block<3, 3>(3, 3).cwiseSqrt());
-            wifiPositioningSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P);
             invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
         }
 

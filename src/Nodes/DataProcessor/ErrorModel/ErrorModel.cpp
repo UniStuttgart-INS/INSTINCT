@@ -8,9 +8,14 @@
 
 #include "ErrorModel.hpp"
 
-#include "NodeRegistry.hpp"
 #include <algorithm>
 #include <imgui.h>
+#include <imgui_internal.h>
+#include <limits>
+#include <set>
+#include <type_traits>
+
+#include "NodeRegistry.hpp"
 #include "Navigation/INS/Units.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -19,22 +24,17 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObsSimulated.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Transformations/Units.hpp"
+#include "Navigation/GNSS/Functions.hpp"
+
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/gui/widgets/InputWithUnit.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
-#include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Transformations/Units.hpp"
-#include "Navigation/GNSS/Functions.hpp"
-
 #include "util/Eigen.hpp"
 #include "util/StringUtil.hpp"
-
-#include <imgui_internal.h>
-#include <limits>
-#include <set>
-#include <type_traits>
 
 // ---------------------------------------------------------- Private variabels ------------------------------------------------------------
 
@@ -871,6 +871,7 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
     Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
     Eigen::Vector3d NED_pos_variance = Eigen::Vector3d::Zero();
     Eigen::Vector3d NED_velocity_variance = Eigen::Vector3d::Zero();
+    Eigen::Vector3d RPY_attitude_variance = Eigen::Vector3d::Zero();
     switch (_positionNoiseUnit)
     {
     case PositionNoiseUnits::meter:
@@ -917,39 +918,50 @@ std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::sha
     {
     case AttitudeNoiseUnits::rad:
         attitudeNoiseStd = _attitudeNoise;
+        RPY_attitude_variance = _attitudeNoise.cwiseAbs2();
         break;
     case AttitudeNoiseUnits::deg:
         attitudeNoiseStd = deg2rad(_attitudeNoise);
+        RPY_attitude_variance = deg2rad(_attitudeNoise).cwiseAbs2();
         break;
     case AttitudeNoiseUnits::rad2:
         attitudeNoiseStd = _attitudeNoise.cwiseSqrt();
+        RPY_attitude_variance = _attitudeNoise;
         break;
     case AttitudeNoiseUnits::deg2:
         attitudeNoiseStd = deg2rad(_attitudeNoise.cwiseSqrt());
+        RPY_attitude_variance = deg2rad(deg2rad(_attitudeNoise));
         break;
     }
     LOG_DATA("{}: attitudeNoiseStd = {} [rad]", nameId(), attitudeNoiseStd.transpose());
 
     // #########################################################################################################################################
 
-    posVelAtt->setStateAndStdDev_n(posVelAtt->lla_position()
-                                       + lla_positionBias
-                                       + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
-                                                          _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
-                                                          _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
+    Eigen::Matrix<double, 9, 9> cov_n = Eigen::Matrix<double, 9, 9>::Zero();
+    cov_n.block<3, 3>(0, 0).diagonal() = NED_pos_variance;
+    cov_n.block<3, 3>(3, 3).diagonal() = NED_velocity_variance;
+    cov_n.block<3, 3>(6, 6).diagonal() = RPY_attitude_variance;
 
-                                   NED_pos_variance.asDiagonal().toDenseMatrix(),
-                                   posVelAtt->n_velocity()
-                                       + n_velocityBias
-                                       + Eigen::Vector3d{ _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(0)),
-                                                          _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(1)),
-                                                          _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(2)) },
-                                   NED_velocity_variance.asDiagonal().toDenseMatrix(),
-                                   trafo::n_Quat_b(posVelAtt->rollPitchYaw()
-                                                   + attitudeBias
-                                                   + Eigen::Vector3d{ _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(0)),
-                                                                      _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(1)),
-                                                                      _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(2)) }));
+    Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+    J.topLeftCorner<6, 6>().setIdentity();
+    J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(posVelAtt->n_Quat_b());
+
+    posVelAtt->setPosVelAttAndCov_n(posVelAtt->lla_position()
+                                        + lla_positionBias
+                                        + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
+                                                           _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
+                                                           _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
+                                    posVelAtt->n_velocity()
+                                        + n_velocityBias
+                                        + Eigen::Vector3d{ _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(0)),
+                                                           _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(1)),
+                                                           _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(2)) },
+                                    trafo::n_Quat_b(posVelAtt->rollPitchYaw()
+                                                    + attitudeBias
+                                                    + Eigen::Vector3d{ _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(0)),
+                                                                       _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(1)),
+                                                                       _attitudeRng.getRand_normalDist(0.0, attitudeNoiseStd(2)) }),
+                                    J * cov_n * J.transpose());
 
     return posVelAtt;
 }

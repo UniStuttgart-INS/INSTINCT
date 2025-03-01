@@ -94,7 +94,7 @@ TEST_CASE("[KeyedKalmanFilter] Basic usage", "[KeyedKalmanFilter]")
     static const std::vector<StateKeys> Pos = { StateKey::PosX, StateKey::PosY, StateKey::PosZ };
     static const std::vector<StateKeys> Vel = { StateKey::VelX, StateKey::VelY, StateKey::VelZ };
 
-    KeyedKalmanFilter<double, StateKeys, MeasKeys> kf({ StateKey::PosX, StateKey::PosY, StateKey::PosZ, StateKey::VelX, StateKey::VelY, StateKey::VelZ },
+    KeyedKalmanFilter<double, StateKeys, MeasKeys> kf(std::vector<StateKeys>{ StateKey::PosX, StateKey::PosY, StateKey::PosZ, StateKey::VelX, StateKey::VelY, StateKey::VelZ },
                                                       {});
     REQUIRE(kf.x(all) == Eigen::VectorXd::Zero(6));
     REQUIRE(kf.x(Pos) == Eigen::VectorXd::Zero(3));
@@ -107,8 +107,8 @@ TEST_CASE("[KeyedKalmanFilter] Basic usage", "[KeyedKalmanFilter]")
     REQUIRE(kf.Phi(all, all) == Eigen::MatrixXd::Zero(6, 6));
     REQUIRE(kf.Q(all, all) == Eigen::MatrixXd::Zero(6, 6));
 
-    kf.setMeasurements({ MeasurementKey::Pseudorange{ 0 }, MeasurementKey::Pseudorange{ 1 },
-                         MeasurementKey::Carrierphase{ 0 }, MeasurementKey::Carrierphase{ 1 } });
+    kf.setMeasurements(std::vector<MeasKeys>{ MeasurementKey::Pseudorange{ 0 }, MeasurementKey::Pseudorange{ 1 },
+                                              MeasurementKey::Carrierphase{ 0 }, MeasurementKey::Carrierphase{ 1 } });
     REQUIRE(kf.z(all) == Eigen::VectorXd::Zero(4));
     REQUIRE(kf.H(all, all) == Eigen::MatrixXd::Zero(4, 6));
     REQUIRE(kf.R(all, all) == Eigen::MatrixXd::Zero(4, 4));
@@ -116,7 +116,7 @@ TEST_CASE("[KeyedKalmanFilter] Basic usage", "[KeyedKalmanFilter]")
     REQUIRE(kf.K(all, all) == Eigen::MatrixXd::Zero(6, 4));
 
     kf.addState(StateKey::Ambiguity{ 0 });
-    kf.addStates({ StateKey::Ambiguity{ 1 }, StateKey::Ambiguity{ 2 } });
+    kf.addStates(std::vector<StateKeys>{ StateKey::Ambiguity{ 1 }, StateKey::Ambiguity{ 2 } });
     REQUIRE(kf.x(all) == Eigen::VectorXd::Zero(9));
 
     kf.x(all) = (Eigen::VectorXd(9) << 0, 1, 2, 3, 4, 5, 6, 7, 8).finished();
@@ -152,11 +152,11 @@ TEST_CASE("[KeyedKalmanFilter] Replace state", "[KeyedKalmanFilter]")
     using StateKeys = std::variant<StateKey::States, StateKey::Ambiguity>;
     using MeasKeys = std::variant<MeasurementKey::Pseudorange, MeasurementKey::Carrierphase>;
 
-    KeyedKalmanFilter<double, StateKeys, MeasKeys> kf({ StateKey::PosX, StateKey::VelX },
+    KeyedKalmanFilter<double, StateKeys, MeasKeys> kf(std::vector<StateKeys>{ StateKey::PosX, StateKey::VelX },
                                                       {});
 
-    kf.addStates({ StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 1 } });
-    kf.setMeasurements({ MeasurementKey::Pseudorange{ 0 } });
+    kf.addStates(std::vector<StateKeys>{ StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 1 } });
+    kf.setMeasurements(std::vector<MeasKeys>{ MeasurementKey::Pseudorange{ 0 } });
     REQUIRE(kf.x(all) == Eigen::VectorXd::Zero(4));
     REQUIRE(kf.x.rowKeys() == std::vector<StateKeys>{ StateKey::PosX, StateKey::VelX, StateKey::Ambiguity{ 0 }, StateKey::Ambiguity{ 1 } });
 

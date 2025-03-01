@@ -44,19 +44,32 @@ enum MotionModelKey : uint8_t
     VelX,                 ///< Velocity ECEF_X [m/s]
     VelY,                 ///< Velocity ECEF_Y [m/s]
     VelZ,                 ///< Velocity ECEF_Z [m/s]
+    AttQ1,                ///< x: Coefficient of i
+    AttQ2,                ///< y: Coefficient of j
+    AttQ3,                ///< z: Coefficient of k
+    AttQ0,                ///< w: Real (scalar) part of the Quaternion
     MotionModelKey_COUNT, ///< Count
 };
 
 /// @brief All position keys
 template<typename StateKeyType>
-const std::vector<StateKeyType> Pos = { Keys::PosX, Keys::PosY, Keys::PosZ };
+constexpr std::array<StateKeyType, 3> Pos = { Keys::PosX, Keys::PosY, Keys::PosZ };
 /// @brief All velocity keys
 template<typename StateKeyType>
-const std::vector<StateKeyType> Vel = { Keys::VelX, Keys::VelY, Keys::VelZ };
-/// @brief Vector with all position and velocity state keys
+constexpr std::array<StateKeyType, 3> Vel = { Keys::VelX, Keys::VelY, Keys::VelZ };
+/// @brief All attitude keys
 template<typename StateKeyType>
-const std::vector<StateKeyType> PosVel = { Keys::PosX, Keys::PosY, Keys::PosZ,
-                                           Keys::VelX, Keys::VelY, Keys::VelZ };
+constexpr std::array<StateKeyType, 4> Att = { Keys::AttQ1, Keys::AttQ2, Keys::AttQ3, Keys::AttQ0 };
+
+/// @brief Vector with all position and velocity keys
+template<typename StateKeyType>
+constexpr std::array<StateKeyType, 6> PosVel = { Keys::PosX, Keys::PosY, Keys::PosZ,
+                                                 Keys::VelX, Keys::VelY, Keys::VelZ };
+/// @brief Vector with all position velocity and attitude keys
+template<typename StateKeyType>
+constexpr std::array<StateKeyType, 10> PosVelAtt = { Keys::PosX, Keys::PosY, Keys::PosZ,
+                                                     Keys::VelX, Keys::VelY, Keys::VelZ,
+                                                     Keys::AttQ1, Keys::AttQ2, Keys::AttQ3, Keys::AttQ0 };
 
 } // namespace Keys
 
@@ -183,11 +196,11 @@ class MotionModel
 
   private:
     /// @brief All position keys
-    const std::vector<StateKeyType>& Pos = Keys::Pos<StateKeyType>;
+    const std::array<StateKeyType, 3>& Pos = Keys::Pos<StateKeyType>;
     /// @brief All velocity keys
-    const std::vector<StateKeyType>& Vel = Keys::Vel<StateKeyType>;
+    const std::array<StateKeyType, 3>& Vel = Keys::Vel<StateKeyType>;
     /// @brief All position and velocity keys
-    const std::vector<StateKeyType>& PosVel = Keys::PosVel<StateKeyType>;
+    const std::array<StateKeyType, 6>& PosVel = Keys::PosVel<StateKeyType>;
 
     /// @brief Calculates the process noise matrix Q
     /// @param[in] dt Time step [s]
@@ -284,6 +297,14 @@ struct fmt::formatter<NAV::Keys::MotionModelKey> : fmt::formatter<const char*>
             return fmt::formatter<const char*>::format("VelY", ctx);
         case VelZ:
             return fmt::formatter<const char*>::format("VelZ", ctx);
+        case AttQ1:
+            return fmt::formatter<const char*>::format("AttQ1", ctx);
+        case AttQ2:
+            return fmt::formatter<const char*>::format("AttQ2", ctx);
+        case AttQ3:
+            return fmt::formatter<const char*>::format("AttQ3", ctx);
+        case AttQ0:
+            return fmt::formatter<const char*>::format("AttQ0", ctx);
         case MotionModelKey_COUNT:
             return fmt::formatter<const char*>::format("MotionModelKey_COUNT", ctx);
         }

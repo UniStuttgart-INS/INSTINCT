@@ -212,6 +212,31 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
     REQUIRE(raw[1] == 6);
     REQUIRE(raw[2] == 4);
 
+    buffer1.pop_front();
+    REQUIRE(buffer1.getRawString() == "5.000000, 6.000000, _");
+    std::cout << "pop_front  (3): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(!buffer1.full());
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 5);
+    REQUIRE(buffer1.back() == 6);
+    REQUIRE(buffer1.at(0) == 5);
+    REQUIRE(buffer1.at(1) == 6);
+    REQUIRE_THROWS_AS(buffer1.at(2), std::out_of_range);
+
+    buffer1.pop_back();
+    REQUIRE(buffer1.getRawString() == "5.000000, _, _");
+    std::cout << "pop_back   (3): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 1);
+    REQUIRE(!buffer1.full());
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 5);
+    REQUIRE(buffer1.back() == 5);
+    REQUIRE(buffer1.at(0) == 5);
+    REQUIRE_THROWS_AS(buffer1.at(1), std::out_of_range);
+
     buffer1.clear();
     REQUIRE(buffer1.getRawString() == "_, _, _");
     std::cout << "Clear      (3): " << buffer1.getRawString() << '\n';
@@ -293,6 +318,31 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions (padding)", "[ScrollingBuffer
     REQUIRE(raw[2] == 2.0);
     REQUIRE(raw[3] == 3.0);
     REQUIRE(raw[4] == 4.0);
+
+    buffer1.pop_front();
+    REQUIRE(buffer1.getRawString() == "5.000000, 6.000000, _, X, X");
+    std::cout << "pop_front  (3): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(!buffer1.full());
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 5);
+    REQUIRE(buffer1.back() == 6);
+    REQUIRE(buffer1.at(0) == 5);
+    REQUIRE(buffer1.at(1) == 6);
+    REQUIRE_THROWS_AS(buffer1.at(2), std::out_of_range);
+
+    buffer1.pop_back();
+    REQUIRE(buffer1.getRawString() == "5.000000, _, _, X, X");
+    std::cout << "pop_back   (3): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 1);
+    REQUIRE(!buffer1.full());
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 5);
+    REQUIRE(buffer1.back() == 5);
+    REQUIRE(buffer1.at(0) == 5);
+    REQUIRE_THROWS_AS(buffer1.at(1), std::out_of_range);
 
     buffer1.clear();
     REQUIRE(buffer1.getRawString() == "X, X, _, _, _");
@@ -1210,6 +1260,131 @@ TEST_CASE("[ScrollingBuffer] Pop front (infinite buffer)", "[ScrollingBuffer]")
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(buffer1.front() == 1);
     REQUIRE(buffer1.back() == 7);
+}
+
+TEST_CASE("[ScrollingBuffer] Pop back (finite buffer)", "[ScrollingBuffer]")
+{
+    auto logger = initializeTestLogger();
+
+    {
+        ScrollingBuffer<int> buffer1(5);
+        for (int i = 0; i < 7; i++)
+        {
+            buffer1.push_back(i);
+        }
+        REQUIRE(buffer1.getRawString() == "5, 6, 2, 3, 4");
+        std::cout << "Buffer (5): " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 5);
+        REQUIRE(buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "5, _, 2, 3, 4");
+        std::cout << "pop_back: " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 4);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 2);
+        REQUIRE(buffer1.back() == 5);
+
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "_, _, 2, 3, 4");
+        std::cout << "pop_back: " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 3);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 2);
+        REQUIRE(buffer1.back() == 4);
+
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "_, _, 2, 3, _");
+        std::cout << "pop_back: " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 2);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 2);
+        REQUIRE(buffer1.back() == 3);
+
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "_, _, 2, _, _");
+        std::cout << "pop_back: " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 1);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 2);
+        REQUIRE(buffer1.back() == 2);
+
+        for (int i = 7; i <= 8; i++)
+        {
+            buffer1.push_back(i);
+        }
+        REQUIRE(buffer1.getRawString() == "_, _, 2, 7, 8");
+        std::cout << "push_back(7, 8): " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 3);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 2);
+        REQUIRE(buffer1.back() == 8);
+
+        buffer1.pop_back();
+        buffer1.pop_back();
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "_, _, _, _, _");
+        std::cout << "pop_back(): " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.empty());
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+    }
+    {
+        ScrollingBuffer<int> buffer1(5);
+        for (int i = 0; i < 4; i++)
+        {
+            buffer1.push_back(i);
+        }
+        REQUIRE(buffer1.getRawString() == "0, 1, 2, 3, _");
+        std::cout << "Buffer (5): " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 4);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 0);
+        REQUIRE(buffer1.back() == 3);
+
+        buffer1.pop_back();
+        REQUIRE(buffer1.getRawString() == "0, 1, 2, _, _");
+        std::cout << "pop_back: " << buffer1.getRawString() << '\n';
+        REQUIRE(buffer1.size() == 3);
+        REQUIRE(!buffer1.full());
+        REQUIRE(buffer1.capacity() == 5);
+        REQUIRE(buffer1.front() == 0);
+        REQUIRE(buffer1.back() == 2);
+    }
+}
+
+TEST_CASE("[ScrollingBuffer] Pop back (infinite buffer)", "[ScrollingBuffer]")
+{
+    auto logger = initializeTestLogger();
+
+    ScrollingBuffer<int> buffer1(0);
+    for (int i = 0; i < 8; i++)
+    {
+        buffer1.push_back(i);
+    }
+    REQUIRE(buffer1.getRawString() == "0, 1, 2, 3, 4, 5, 6, 7");
+    std::cout << "Buffer (0): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 8);
+    REQUIRE(buffer1.capacity() == 0);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 7);
+
+    buffer1.pop_back();
+    REQUIRE(buffer1.getRawString() == "0, 1, 2, 3, 4, 5, 6");
+    std::cout << "Buffer (0): " << buffer1.getRawString() << '\n';
+    REQUIRE(buffer1.size() == 7);
+    REQUIRE(buffer1.capacity() == 0);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 6);
 }
 
 TEST_CASE("[ScrollingBuffer] Iterator", "[ScrollingBuffer]")

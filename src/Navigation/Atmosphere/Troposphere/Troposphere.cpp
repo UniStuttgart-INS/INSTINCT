@@ -340,7 +340,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                                                               || model.get().temperatureModel == TemperatureModel::GPT2
                                                               || model.get().waterVaporModel == WaterVaporModel::GPT2; }))
     {
-        LOG_DATA("{}: Calculating GPT2 parameters", nameId);
+        // LOG_DATA("{}: Calculating GPT2 parameters", nameId);
         gpt2outputs = GPT2_param(mjd, lla_pos);
     }
 
@@ -353,14 +353,14 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                                                               || model.get().temperatureModel == TemperatureModel::GPT3
                                                               || model.get().waterVaporModel == WaterVaporModel::GPT3; }))
     {
-        LOG_DATA("{}: Calculating GPT3 parameters", nameId);
+        // LOG_DATA("{}: Calculating GPT3 parameters", nameId);
         gpt3outputs = GPT3_param(mjd, lla_pos);
     }
 
-    LOG_DATA("{}: Calculating Atmosphere parameters ZHD=({},{}) ZWD=({},{}) [el={}°, pos={} {} {}]", nameId,
-             troposphereModels.zhdModel.first, troposphereModels.zhdMappingFunction.first,
-             troposphereModels.zwdModel.first, troposphereModels.zwdMappingFunction.first,
-             rad2deg(elevation), rad2deg(lla_pos(0)), rad2deg(lla_pos(1)), lla_pos(2));
+    // LOG_DATA("{}: Calculating Atmosphere parameters ZHD=({},{}) ZWD=({},{}) [el={}°, pos={} {} {}]", nameId,
+    //          troposphereModels.zhdModel.first, troposphereModels.zhdMappingFunction.first,
+    //          troposphereModels.zwdModel.first, troposphereModels.zwdMappingFunction.first,
+    //          rad2deg(elevation), rad2deg(lla_pos(0)), rad2deg(lla_pos(1)), lla_pos(2));
     for (size_t i = 0; i < COUNT; i++)
     {
         bool alreadyCalculated = false;
@@ -389,8 +389,8 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 pressure.at(i) = calcTotalPressure(lla_pos(2), atmosphereModels.at(i).get().pressureModel);
             }
         }
-        LOG_DATA("{}:   [{}]: {} - p {} [millibar] (Total barometric pressure) - value {}", nameId, i, atmosphereModels.at(i).get().pressureModel,
-                 pressure.at(i), alreadyCalculated ? "reused" : "calculated");
+        // LOG_DATA("{}:   [{}]: {} - p {} [millibar] (Total barometric pressure) - value {}", nameId, i, atmosphereModels.at(i).get().pressureModel,
+        //          pressure.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
         for (size_t j = 0; j < i; j++)
@@ -418,8 +418,8 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 temperature.at(i) = atmosphereModels.at(i).get().temperatureModel.calcAbsoluteTemperature(lla_pos(2));
             }
         }
-        LOG_DATA("{}:   [{}]: {} - T {} [K] (Absolute temperature) - value {}", nameId, i, atmosphereModels.at(i).get().temperatureModel,
-                 temperature.at(i), alreadyCalculated ? "reused" : "calculated");
+        // LOG_DATA("{}:   [{}]: {} - T {} [K] (Absolute temperature) - value {}", nameId, i, atmosphereModels.at(i).get().temperatureModel,
+        //          temperature.at(i), alreadyCalculated ? "reused" : "calculated");
 
         alreadyCalculated = false;
         for (size_t j = 0; j < i; j++)
@@ -448,8 +448,8 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
                 waterVapor.at(i) = calcWaterVaporPartialPressure(temperature.at(i), 0.7, atmosphereModels.at(i).get().waterVaporModel);
             }
         }
-        LOG_DATA("{}:   [{}]: {} - e {} [millibar] (Partial pressure of water vapour) - value {}", nameId, i,
-                 atmosphereModels.at(i).get().waterVaporModel, waterVapor.at(i), alreadyCalculated ? "reused" : "calculated");
+        // LOG_DATA("{}:   [{}]: {} - e {} [millibar] (Partial pressure of water vapour) - value {}", nameId, i,
+        //          atmosphereModels.at(i).get().waterVaporModel, waterVapor.at(i), alreadyCalculated ? "reused" : "calculated");
     }
 
     double zhd = 0.0;
@@ -527,7 +527,7 @@ ZenithDelay calcTroposphericDelayAndMapping(const InsTime& insTime, const Eigen:
     case MappingFunction::COUNT:
         break;
     }
-    LOG_DATA("{}:   el = {}, ZHD = {}, ZWD = {}, ZHDMF = {}, ZWDMF = {}", nameId, elevation, zhd, zwd, zhdMappingFactor, zwdMappingFactor);
+    // LOG_DATA("{}:   el = {}, ZHD = {}, ZWD = {}, ZHDMF = {}, ZWDMF = {}", nameId, elevation, zhd, zwd, zhdMappingFactor, zwdMappingFactor);
 
     return { .ZHD = zhd,
              .ZWD = zwd,

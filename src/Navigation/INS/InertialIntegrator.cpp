@@ -365,10 +365,10 @@ std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionFromMeasureme
     switch (_integrationFrame)
     {
     case IntegrationFrame::NED:
-        posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
+        posVelAtt__t0->setPosVelAtt_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
         break;
     case IntegrationFrame::ECEF:
-        posVelAtt__t0->setState_e(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
+        posVelAtt__t0->setPosVelAtt_e(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
         break;
     }
 

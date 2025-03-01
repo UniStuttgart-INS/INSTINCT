@@ -87,7 +87,6 @@ void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data)
 
 double NAV::convertUnit(const double& value, Units::CovarianceAccelUnits unit)
 {
-    // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
     switch (unit)
     {
     case Units::CovarianceAccelUnits::m2_s3:
@@ -97,12 +96,11 @@ double NAV::convertUnit(const double& value, Units::CovarianceAccelUnits unit)
     case Units::CovarianceAccelUnits::COUNT:
         break;
     }
-    return value;
+    return value; // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
 }
 
 double NAV::convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits unit)
 {
-    // Covariance of the clock phase drift [m²/s]
     switch (unit)
     {
     case Units::CovarianceClkPhaseDriftUnits::m2_s:
@@ -112,12 +110,11 @@ double NAV::convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits
     case Units::CovarianceClkPhaseDriftUnits::COUNT:
         break;
     }
-    return value;
+    return value; // Covariance of the clock phase drift [m²/s]
 }
 
 double NAV::convertUnit(const double& value, Units::CovarianceClkFrequencyDriftUnits unit)
 {
-    // Covariance of the frequency phase drift [m²/s³]
     switch (unit)
     {
     case Units::CovarianceClkFrequencyDriftUnits::m2_s3:
@@ -127,7 +124,7 @@ double NAV::convertUnit(const double& value, Units::CovarianceClkFrequencyDriftU
     case Units::CovarianceClkFrequencyDriftUnits::COUNT:
         break;
     }
-    return value;
+    return value; // Covariance of the frequency phase drift [m²/s³]
 }
 
 std::string NAV::to_string(Units::CovarianceAccelUnits unit)

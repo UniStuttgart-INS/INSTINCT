@@ -122,7 +122,7 @@ class ScrollingBuffer
     /// @return Reference to the last element.
     [[nodiscard]] const T& back() const
     {
-        if (_data.size() < _maxSize || _dataEnd == 0)
+        if (_dataEnd == 0)
         {
             return _data.back();
         }
@@ -514,6 +514,30 @@ class ScrollingBuffer
             //       e  s              e        s              e        s              s            e    s        e
             // 5, 6, _, 3, 4  // 5, 6, _, _, _, 3, 4  // 5, 6, _, X, X, 3, 4  // X, X, 7, 8, 9, 10, _ // 5, 6, 7, _
             _dataStart = (_dataStart + 1) % _maxSize;
+        }
+    }
+
+    /// @brief Removes the last element of the container
+    void pop_back()
+    {
+        if (empty())
+        {
+            return;
+        }
+        if (size() == 1)
+        {
+            clear();
+            return;
+        }
+
+        if (_infiniteBuffer)
+        {
+            _data.pop_back();
+            _maxSize = _data.size();
+        }
+        else
+        {
+            _dataEnd = _dataEnd == 0 ? _maxSize - 1 : (_dataEnd - 1);
         }
     }
 

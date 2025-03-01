@@ -1676,7 +1676,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(size_t /* 
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
 
-    obs->setState_n(lla_position.cast<double>(), n_vel.cast<double>(), trafo::n_Quat_b(roll, pitch, yaw).cast<double>());
+    obs->setPosVelAtt_n(lla_position.cast<double>(), n_vel.cast<double>(), trafo::n_Quat_b(roll, pitch, yaw).cast<double>());
 
     _gnssUpdateCnt++;
     invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, obs);

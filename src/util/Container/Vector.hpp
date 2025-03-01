@@ -14,6 +14,7 @@
 #pragma once
 
 #include <vector>
+#include <span>
 
 namespace NAV
 {
@@ -55,5 +56,30 @@ std::vector<Scalar> genRangeVector(Scalar start, Scalar stepSize, Scalar end)
 
     return container;
 };
+
+/// @brief Comparison operator for span and vector
+/// @param lhs Left-hand side
+/// @param rhs Right-hand side
+/// @return True if all elements are equal
+template<typename T>
+[[nodiscard]] bool operator==(const std::vector<T>& lhs, std::span<const T> rhs)
+{
+    if (lhs.size() != rhs.size()) { return false; }
+    for (size_t i = 0; i < lhs.size(); i++)
+    {
+        if (lhs[i] != rhs[i]) { return false; }
+    }
+    return true;
+}
+
+/// @brief Comparison operator for span and vector
+/// @param lhs Left-hand side
+/// @param rhs Right-hand side
+/// @return True if all elements are equal
+template<typename T>
+[[nodiscard]] bool operator==(std::span<const T> lhs, const std::vector<T>& rhs)
+{
+    return rhs == lhs;
+}
 
 } // namespace NAV

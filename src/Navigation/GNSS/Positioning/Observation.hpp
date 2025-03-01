@@ -243,30 +243,13 @@ struct Observations
     /// @param[in] obsType Observation type
     /// @param[in] nameId Name and Id of the calling node for logging purposes
     /// @return True if something was removed
-    template<typename ReceiverType>
-    bool removeMeasurementsFor(const Code& code, const GnssObs::ObservationType& obsType, [[maybe_unused]] const std::string& nameId)
-    {
-        LOG_DATA("{}: Searching observations to remove on [{}][{}]", nameId, code, obsType);
-        bool somethingRemoved = false;
-        for (auto& [satSigId, sigObs] : signals)
-        {
-            if (satSigId.code != code) { continue; }
+    bool removeMeasurementsFor(const Code& code, const GnssObs::ObservationType& obsType, const std::string& nameId);
 
-            for (size_t i = 0; i < sigObs.recvObs.size(); i++)
-            {
-                if (!sigObs.recvObs.contains(i)) { continue; }
-                auto& recvObs = sigObs.recvObs.at(i);
-                if (recvObs->obs.contains(obsType))
-                {
-                    recvObs->obs.erase(obsType);
-                    LOG_DATA("{}:   Erasing observation [{}][{}] of receiver '{}'", nameId, satSigId, obsType, to_string(static_cast<ReceiverType>(i)));
-                    somethingRemoved = true;
-                }
-            }
-        }
-        if (somethingRemoved) { recalcObservableCounts(nameId); }
-        return somethingRemoved;
-    }
+    /// @brief Remove all measurements for the provided observation type
+    /// @param[in] obsType Observation type
+    /// @param[in] nameId Name and Id of the calling node for logging purposes
+    /// @return True if something was removed
+    bool removeObsType(const GnssObs::ObservationType& obsType, const std::string& nameId);
 };
 
 } // namespace NAV

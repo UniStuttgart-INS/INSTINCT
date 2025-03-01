@@ -761,4 +761,22 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK_THAT(e_Dcm_b_ref, Catch::Matchers::WithinAbs(e_Dcm_b_quat, 1e-13));
 }
 
+// TEST_CASE("[InsTransformations] Covariance RPY <--> Quat", "[InsTransformations]")
+// {
+//     auto logger = initializeTestLogger();
+
+//     Eigen::Matrix3d covRPYorig;
+//     covRPYorig << 1, 2, 3,
+//         4, 5, 6,
+//         7, 8, 9;
+
+//     Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(deg2rad(25.0), deg2rad(80.0), deg2rad(120.0));
+
+//     Eigen::Matrix4d covQuat = trafo::covRPY2quat(covRPYorig, n_Quat_b);
+
+//     Eigen::Matrix3d covRPY = trafo::covQuat2RPY(covQuat, n_Quat_b);
+
+//     CHECK_THAT(covRPYorig, Catch::Matchers::WithinAbs(covRPY, 1e-8));
+// }
+
 } // namespace NAV::TESTS::CoordinateFramesTests

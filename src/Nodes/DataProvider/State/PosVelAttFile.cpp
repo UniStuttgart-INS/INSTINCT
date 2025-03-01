@@ -357,67 +357,91 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
         return nullptr;
     }
 
-    if (e_position_x.has_value() && e_position_y.has_value() && e_position_z.has_value())
-    {
-        if (e_positionStdDev_x.has_value() && e_positionStdDev_y.has_value() && e_positionStdDev_z.has_value())
-        {
-            obs->setPositionAndStdDev_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() },
-                                        Eigen::DiagonalMatrix<double, 3>{ e_positionStdDev_x.value(), e_positionStdDev_y.value(), e_positionStdDev_z.value() }.toDenseMatrix());
-        }
-        else
-        {
-            obs->setPosition_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() });
-        }
-    }
-    else if (lla_position_x.has_value() && lla_position_y.has_value() && lla_position_z.has_value())
-    {
-        if (n_positionStdDev_n.has_value() && n_positionStdDev_e.has_value() && n_positionStdDev_d.has_value())
-        {
-            obs->setPositionAndStdDev_lla(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() },
-                                          Eigen::DiagonalMatrix<double, 3>{ n_positionStdDev_n.value(), n_positionStdDev_e.value(), n_positionStdDev_d.value() }.toDenseMatrix());
-        }
-        else
-        {
-            obs->setPosition_lla(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() });
-        }
-    }
-    else
-    {
-        LOG_WARN("{}: A PosVelAtt File needs a position.", nameId());
-        return nullptr;
-    }
-
     if (_fileContent == FileContent::PosVel || _fileContent == FileContent::PosVelAtt)
     {
-        if (e_velocity_x.has_value() && e_velocity_y.has_value() && e_velocity_z.has_value())
+        if (e_position_x.has_value() && e_position_y.has_value() && e_position_z.has_value()
+            && e_velocity_x.has_value() && e_velocity_y.has_value() && e_velocity_z.has_value())
         {
             if (auto posVel = std::reinterpret_pointer_cast<PosVel>(obs))
             {
-                if (e_velocityStdDev_x.has_value() && e_velocityStdDev_y.has_value() && e_velocityStdDev_z.has_value())
+                if (e_positionStdDev_x.has_value() && e_positionStdDev_y.has_value() && e_positionStdDev_z.has_value()
+                    && e_velocityStdDev_x.has_value() && e_velocityStdDev_y.has_value() && e_velocityStdDev_z.has_value())
                 {
-                    posVel->setVelocityAndStdDev_e(Eigen::Vector3d{ e_velocity_x.value(), e_velocity_y.value(), e_velocity_z.value() },
-                                                   Eigen::DiagonalMatrix<double, 3>{ e_velocityStdDev_x.value(), e_velocityStdDev_y.value(), e_velocityStdDev_z.value() }.toDenseMatrix());
+                    ;
+                    posVel->setPosVelAndCov_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() },
+                                              Eigen::Vector3d{ e_velocity_x.value(), e_velocity_y.value(), e_velocity_z.value() },
+                                              (Eigen::Vector6d() << e_positionStdDev_x.value(), e_positionStdDev_y.value(), e_positionStdDev_z.value(),
+                                               e_velocityStdDev_x.value(), e_velocityStdDev_y.value(), e_velocityStdDev_z.value())
+                                                  .finished()
+                                                  .asDiagonal()
+                                                  .toDenseMatrix());
                 }
                 else
                 {
+                    posVel->setPosition_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() });
                     posVel->setVelocity_e(Eigen::Vector3d{ e_velocity_x.value(), e_velocity_y.value(), e_velocity_z.value() });
                 }
             }
         }
-        else if (n_velocity_n.has_value() && n_velocity_e.has_value() && n_velocity_d.has_value())
+        else if (lla_position_x.has_value() && lla_position_y.has_value() && lla_position_z.has_value()
+                 && n_velocity_n.has_value() && n_velocity_e.has_value() && n_velocity_d.has_value())
         {
             if (auto posVel = std::reinterpret_pointer_cast<PosVel>(obs))
             {
-                if (n_velocityStdDev_n.has_value() && n_velocityStdDev_e.has_value() && n_velocityStdDev_d.has_value())
+                if (n_positionStdDev_n.has_value() && n_positionStdDev_e.has_value() && n_positionStdDev_d.has_value()
+                    && n_velocityStdDev_n.has_value() && n_velocityStdDev_e.has_value() && n_velocityStdDev_d.has_value())
                 {
-                    posVel->setVelocityAndStdDev_n(Eigen::Vector3d{ n_velocity_n.value(), n_velocity_e.value(), n_velocity_d.value() },
-                                                   Eigen::DiagonalMatrix<double, 3>{ n_velocityStdDev_n.value(), n_velocityStdDev_e.value(), n_velocityStdDev_d.value() }.toDenseMatrix());
+                    posVel->setPosVelAndCov_n(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() },
+                                              Eigen::Vector3d{ n_velocity_n.value(), n_velocity_e.value(), n_velocity_d.value() },
+                                              (Eigen::Vector6d() << n_positionStdDev_n.value(), n_positionStdDev_e.value(), n_positionStdDev_d.value(),
+                                               n_velocityStdDev_n.value(), n_velocityStdDev_e.value(), n_velocityStdDev_d.value())
+                                                  .finished()
+                                                  .asDiagonal()
+                                                  .toDenseMatrix());
                 }
                 else
                 {
+                    posVel->setPosition_lla(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() });
                     posVel->setVelocity_n(Eigen::Vector3d{ n_velocity_n.value(), n_velocity_e.value(), n_velocity_d.value() });
                 }
             }
+        }
+        else
+        {
+            LOG_WARN("{}: A PosVel/PosVelAtt file needs a position and velocity.", nameId());
+            return nullptr;
+        }
+    }
+    else if (_fileContent == FileContent::Pos)
+    {
+        if (e_position_x.has_value() && e_position_y.has_value() && e_position_z.has_value())
+        {
+            if (e_positionStdDev_x.has_value() && e_positionStdDev_y.has_value() && e_positionStdDev_z.has_value())
+            {
+                obs->setPositionAndCov_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() },
+                                         Eigen::DiagonalMatrix<double, 3>{ e_positionStdDev_x.value(), e_positionStdDev_y.value(), e_positionStdDev_z.value() }.toDenseMatrix());
+            }
+            else
+            {
+                obs->setPosition_e(Eigen::Vector3d{ e_position_x.value(), e_position_y.value(), e_position_z.value() });
+            }
+        }
+        else if (lla_position_x.has_value() && lla_position_y.has_value() && lla_position_z.has_value())
+        {
+            if (n_positionStdDev_n.has_value() && n_positionStdDev_e.has_value() && n_positionStdDev_d.has_value())
+            {
+                obs->setPositionAndCov_n(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() },
+                                         Eigen::DiagonalMatrix<double, 3>{ n_positionStdDev_n.value(), n_positionStdDev_e.value(), n_positionStdDev_d.value() }.toDenseMatrix());
+            }
+            else
+            {
+                obs->setPosition_lla(Eigen::Vector3d{ lla_position_x.value(), lla_position_y.value(), lla_position_z.value() });
+            }
+        }
+        else
+        {
+            LOG_WARN("{}: A Pos file needs a position.", nameId());
+            return nullptr;
         }
     }
 

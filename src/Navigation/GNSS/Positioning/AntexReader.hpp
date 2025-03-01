@@ -391,15 +391,15 @@ class AntexReader
     /// @param[in] azimuth Azimuth in [rad] or nullopt to use the azimuth independent (NOAZI)
     /// @param[in] nameId NameId of the calling node for Log output
     /// @return The interpolated phase center variation in [m]
-    std::optional<double> getAntennaPhaseCenterVariation(const std::string& antennaType, Frequency_ freq, const InsTime& insTime,
-                                                         double elevation, std::optional<double> azimuth,
-                                                         [[maybe_unused]] const std::string& nameId) const
+    template<typename T>
+    std::optional<T> getAntennaPhaseCenterVariation(const std::string& antennaType, Frequency_ freq, const InsTime& insTime,
+                                                    const T& elevation, std::optional<double> azimuth,
+                                                    [[maybe_unused]] const std::string& nameId) const
     {
-        LOG_DATA("{}: getAntennaPhaseCenterVariation({}, {}, {}, {}, {})", nameId, antennaType, Frequency(freq), insTime.toYMDHMS(GPST), elevation, azimuth);
         auto antInfo = getAntennaInfo(antennaType, insTime, nameId);
         if (!antInfo.has_value()) { return std::nullopt; }
 
-        double zenith = deg2rad(90.0) - elevation;
+        auto zenith = deg2rad(90.0) - elevation;
 
         if (zenith < antInfo->get().zenithStart || zenith > antInfo->get().zenithEnd
             || (azimuth && (azimuth < antInfo->get().azimuthStart || azimuth > antInfo->get().azimuthEnd)))
@@ -428,10 +428,7 @@ class AntexReader
             Eigen::Index uLoc = zenithLoc - 1;
             double a = pattern(0, uLoc);
             double b = pattern(0, zenithLoc);
-            double t = (zenith - a) / (b - a);
-
-            LOG_DATA("{}: t = {:.3f} [a = {:.1f}°, z = {:.1f}°, b = {:.1f}°]", nameId, t, rad2deg(a), rad2deg(zenith), rad2deg(b));
-            LOG_DATA("{}: zenith {:.1f}° at idx {} = {:.5f}", nameId, rad2deg(zenith), zenithLoc, std::lerp(pattern(1, uLoc), pattern(1, zenithLoc), t));
+            auto t = (zenith - a) / (b - a);
 
             return std::lerp(pattern(1, uLoc), pattern(1, zenithLoc), t);
         }
@@ -463,24 +460,18 @@ class AntexReader
         }
 
         Eigen::Index uZenithLoc = zenithLoc - 1;
-        double za = pattern(0, uZenithLoc);
-        double zb = pattern(0, zenithLoc);
-        double zt = (zenith - za) / (zb - za);
-        LOG_DATA("{}: zenith:  t = {:.3f} [a = {:.1f}°, {:.1f}°, b = {:.1f}°]", nameId, zt, rad2deg(za), rad2deg(zenith), rad2deg(zb));
-        Eigen::Index uAzimuthLoc = azimuthLoc - 1;
-        double aa = pattern(uAzimuthLoc, 0);
-        double ab = pattern(azimuthLoc, 0);
-        double at = (*azimuth - aa) / (ab - aa);
-        LOG_DATA("{}: azimuth: t = {:.3f} [a = {:.1f}°, {:.1f}°, b = {:.1f}°]", nameId, at, rad2deg(aa), rad2deg(*azimuth), rad2deg(ab));
+        auto za = pattern(0, uZenithLoc);
+        auto zb = pattern(0, zenithLoc);
+        auto zt = (zenith - za) / (zb - za);
 
-        LOG_DATA("{}: bilinearInterpolation(tx = {:.1f}, ty = {:.1f}, c00 = {:.5f}, c10 = {:.5f}, c01 = {:.5f}, c11 = {:.5f})", nameId,
-                 zt, at,
-                 pattern(uAzimuthLoc, uZenithLoc), pattern(azimuthLoc, uZenithLoc),
-                 pattern(uAzimuthLoc, zenithLoc), pattern(azimuthLoc, zenithLoc));
-        double v = math::bilinearInterpolation(at, zt,
-                                               pattern(uAzimuthLoc, uZenithLoc), pattern(azimuthLoc, uZenithLoc),
-                                               pattern(uAzimuthLoc, zenithLoc), pattern(azimuthLoc, zenithLoc));
-        LOG_DATA("{}: azimuth {:.1f}°, zenith {:.1f}° at idx ({},{}) = {:.5f}", nameId, rad2deg(*azimuth), rad2deg(zenith), azimuthLoc, zenithLoc, v);
+        Eigen::Index uAzimuthLoc = azimuthLoc - 1;
+        auto aa = pattern(uAzimuthLoc, 0);
+        auto ab = pattern(azimuthLoc, 0);
+        auto at = (*azimuth - aa) / (ab - aa);
+
+        auto v = math::bilinearInterpolation(at, zt,
+                                             pattern(uAzimuthLoc, uZenithLoc), pattern(azimuthLoc, uZenithLoc),
+                                             pattern(uAzimuthLoc, zenithLoc), pattern(azimuthLoc, zenithLoc));
 
         return v;
     }

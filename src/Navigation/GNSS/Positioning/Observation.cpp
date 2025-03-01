@@ -124,4 +124,50 @@ bool Observations::removeSatellite(const SatId& satId, [[maybe_unused]] const st
     return !toRemove.empty();
 }
 
+bool Observations::removeMeasurementsFor(const Code& code, const GnssObs::ObservationType& obsType, [[maybe_unused]] const std::string& nameId)
+{
+    LOG_DATA("{}: Searching observations to remove on [{}][{}]", nameId, code, obsType);
+    bool somethingRemoved = false;
+    for (auto& [satSigId, sigObs] : signals)
+    {
+        if (satSigId.code != code) { continue; }
+
+        for (size_t i = 0; i < sigObs.recvObs.size(); i++)
+        {
+            if (!sigObs.recvObs.contains(i)) { continue; }
+            auto& recvObs = sigObs.recvObs.at(i);
+            if (recvObs->obs.contains(obsType))
+            {
+                recvObs->obs.erase(obsType);
+                LOG_DATA("{}:   Erasing observation [{}][{}] of receiver '{}'", nameId, satSigId, obsType, i);
+                somethingRemoved = true;
+            }
+        }
+    }
+    if (somethingRemoved) { recalcObservableCounts(nameId); }
+    return somethingRemoved;
+}
+
+bool Observations::removeObsType(const GnssObs::ObservationType& obsType, [[maybe_unused]] const std::string& nameId)
+{
+    LOG_DATA("{}: Searching observations to remove on [{}]", nameId, obsType);
+    bool somethingRemoved = false;
+    for (auto& [satSigId, sigObs] : signals)
+    {
+        for (size_t i = 0; i < sigObs.recvObs.size(); i++)
+        {
+            if (!sigObs.recvObs.contains(i)) { continue; }
+            auto& recvObs = sigObs.recvObs.at(i);
+            if (recvObs->obs.contains(obsType))
+            {
+                recvObs->obs.erase(obsType);
+                LOG_DATA("{}:   Erasing observation [{}][{}] of receiver '{}'", nameId, satSigId, obsType, i);
+                somethingRemoved = true;
+            }
+        }
+    }
+    if (somethingRemoved) { recalcObservableCounts(nameId); }
+    return somethingRemoved;
+}
+
 } // namespace NAV

@@ -63,10 +63,10 @@ inline bool operator==(const RtklibPosObs& lhs, const RtklibPosObs& rhs)
     REQUIRE(lhs.e_velocityStdev().has_value() == rhs.e_velocityStdev().has_value());
     REQUIRE(lhs.n_velocityStdev().has_value() == rhs.n_velocityStdev().has_value());
 
-    if (lhs.e_positionStdev()) { REQUIRE_THAT(lhs.e_positionStdev()->get(), Catch::Matchers::WithinAbs(rhs.e_positionStdev()->get(), 1e-10)); }
-    if (lhs.n_positionStdev()) { REQUIRE_THAT(lhs.n_positionStdev()->get(), Catch::Matchers::WithinAbs(rhs.n_positionStdev()->get(), 1e-10)); }
-    if (lhs.e_velocityStdev()) { REQUIRE_THAT(lhs.e_velocityStdev()->get(), Catch::Matchers::WithinAbs(rhs.e_velocityStdev()->get(), 1e-10)); }
-    if (lhs.n_velocityStdev()) { REQUIRE_THAT(lhs.n_velocityStdev()->get(), Catch::Matchers::WithinAbs(rhs.n_velocityStdev()->get(), 1e-10)); }
+    if (lhs.e_positionStdev()) { REQUIRE_THAT(*lhs.e_positionStdev(), Catch::Matchers::WithinAbs(*rhs.e_positionStdev(), 1e-10)); }
+    if (lhs.n_positionStdev()) { REQUIRE_THAT(*lhs.n_positionStdev(), Catch::Matchers::WithinAbs(*rhs.n_positionStdev(), 1e-10)); }
+    if (lhs.e_velocityStdev()) { REQUIRE_THAT(*lhs.e_velocityStdev(), Catch::Matchers::WithinAbs(*rhs.e_velocityStdev(), 1e-10)); }
+    if (lhs.n_velocityStdev()) { REQUIRE_THAT(*lhs.n_velocityStdev(), Catch::Matchers::WithinAbs(*rhs.n_velocityStdev(), 1e-10)); }
 
     return true;
 }

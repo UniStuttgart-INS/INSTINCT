@@ -256,15 +256,13 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     LOG_DATA("{}: x =\n{}", nameId, _kalmanFilter.getState().transposed());
                     LOG_DATA("{}: P =\n{}", nameId, _kalmanFilter.getErrorCovarianceMatrix());
                 }
-                sppSol->setPositionAndStdDev_e(_receiver.e_posMarker, lsq.variance.block<3>(PosKey, PosKey));
                 if (lsq.variance.hasRows(VelKey))
                 {
-                    sppSol->setVelocityAndStdDev_e(_receiver.e_vel, lsq.variance.block<3>(VelKey, VelKey));
-                    sppSol->setPosVelCovarianceMatrix_e(lsq.variance(PosVelKey, PosVelKey));
+                    sppSol->setPosVelAndCov_e(_receiver.e_posMarker, _receiver.e_vel, lsq.variance(PosVelKey, PosVelKey));
                 }
                 else
                 {
-                    sppSol->setPosCovarianceMatrix_e(lsq.variance(PosKey, PosKey));
+                    sppSol->setPositionAndCov_e(_receiver.e_posMarker, lsq.variance.block<3>(PosKey, PosKey));
                 }
 
                 sppSol->satData.reserve(observations.satellites.size());
@@ -299,9 +297,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
             }
 
             assignKalmanFilterResult(_kalmanFilter.getState(), _kalmanFilter.getErrorCovarianceMatrix(), nameId);
-            sppSol->setPositionAndStdDev_e(_receiver.e_posMarker, _kalmanFilter.getErrorCovarianceMatrix().block<3>(PosKey, PosKey));
-            sppSol->setVelocityAndStdDev_e(_receiver.e_vel, _kalmanFilter.getErrorCovarianceMatrix().block<3>(VelKey, VelKey));
-            sppSol->setPosVelCovarianceMatrix_e(_kalmanFilter.getErrorCovarianceMatrix()(PosVelKey, PosVelKey));
+            sppSol->setPosVelAndCov_e(_receiver.e_posMarker, _receiver.e_vel, _kalmanFilter.getErrorCovarianceMatrix()(PosVelKey, PosVelKey));
 
             sppSol->satData.reserve(observations.satellites.size());
             for (const auto& [satSigId, signalObs] : observations.signals)
@@ -423,7 +419,9 @@ std::vector<States::StateKeyType> Algorithm::determineStateKeys(const std::set<S
         return _kalmanFilter.getStateKeys();
     }
 
-    std::vector<States::StateKeyType> stateKeys = PosKey;
+    std::vector<States::StateKeyType> stateKeys;
+    stateKeys.reserve(PosKey.size());
+    std::ranges::copy(PosKey, std::back_inserter(stateKeys));
     stateKeys.reserve(stateKeys.size() + 1
                       + canCalculateVelocity(nDoppMeas) * (VelKey.size() + 1)
                       + usedSatSystems.size() * (1 + canCalculateVelocity(nDoppMeas)));

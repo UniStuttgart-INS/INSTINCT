@@ -55,6 +55,7 @@ target_link_libraries(
           libUartSensor)
 
 target_compile_definitions(tests PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
+target_compile_definitions(tests PUBLIC "NOMINMAX")
 
 if(NOT APPLE AND NOT WIN32)
   target_link_libraries(tests PRIVATE libnavio)

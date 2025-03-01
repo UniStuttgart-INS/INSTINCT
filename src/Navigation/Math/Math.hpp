@@ -338,15 +338,15 @@ LerpSearchResult lerpSearch(const auto& data, const auto& value)
 /// c00 ------ c10
 ///
 /// @note See https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/interpolation/bilinear-filtering.html
-auto bilinearInterpolation(const double& tx, const double& ty,
+auto bilinearInterpolation(const auto& tx, const auto& ty,
                            const auto& c00, const auto& c10,
                            const auto& c01, const auto& c11)
 {
-    auto a = c00 * (1 - tx) + c10 * tx;
-    auto b = c01 * (1 - tx) + c11 * tx;
-    return a * (1 - ty) + b * ty;
+    auto a = c00 * (1.0 - tx) + c10 * tx;
+    auto b = c01 * (1.0 - tx) + c11 * tx;
+    return a * (1.0 - ty) + b * ty;
     // Alternative implementation:
-    // return (1 - tx) * (1 - ty) * c00 + tx * (1 - ty) * c10 + (1 - tx) * ty * c01 + tx * ty * c11;
+    // return (1.0 - tx) * (1.0 - ty) * c00 + tx * (1.0 - ty) * c10 + (1.0 - tx) * ty * c01 + tx * ty * c11;
 }
 
 /// @brief Calculates the incomplete elliptical integral of the second kind

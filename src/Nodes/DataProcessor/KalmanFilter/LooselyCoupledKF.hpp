@@ -222,6 +222,10 @@ class LooselyCoupledKF : public Node
     /// @brief All position and velocity keys
     inline static const std::vector<KFStates> KFPosVel = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
                                                            KFStates::VelN, KFStates::VelE, KFStates::VelD };
+    /// @brief All position, velocity and attitude keys
+    inline static const std::vector<KFStates> KFPosVelAtt = { KFStates::PosLat, KFStates::PosLon, KFStates::PosAlt,
+                                                              KFStates::VelN, KFStates::VelE, KFStates::VelD,
+                                                              KFStates::Roll, KFStates::Pitch, KFStates::Yaw };
 
     /// @brief Vector with all measurement keys
     inline static const std::vector<KFMeas> Meas = { KFMeas::dPosLat, KFMeas::dPosLon, KFMeas::dPosAlt, KFMeas::dVelN, KFMeas::dVelE, KFMeas::dVelD };

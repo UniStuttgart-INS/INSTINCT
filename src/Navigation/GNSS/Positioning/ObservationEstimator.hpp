@@ -266,35 +266,29 @@ class ObservationEstimator
     /// @brief Calculates the pseudorange estimate
     /// @param[in] freq Signal frequency
     /// @param[in] receiverType Receiver type to select the correct antenna
-    /// @param[in] e_recvPosMarker Receiver marker position in ECEF coordinates [m]
+    /// @param[in] e_recvPosAPC Receiver antenna phase center position in ECEF coordinates [m]
     /// @param[in] recvClockBias Receiver clock bias [s]
     /// @param[in] interFreqBias Receiver inter-frequency bias [s]
     /// @param[in] dpsr_T_r_s Estimated troposphere propagation error [m]
     /// @param[in] dpsr_I_r_s Estimated ionosphere propagation error [m]
     /// @param[in] satInfo Satellite Information (pos, vel, clock)
+    /// @param[in] elevation Elevation of the satellite [rad]
     /// @param[in] gnssObs GNSS observation
     /// @param[in] nameId Name and Id of the node used for log messages only
     /// @return The estimate [m] and the position line-of-sight unit vector (used for the Jacobian)
     template<typename Derived>
     auto calcPseudorangeEstimate(Frequency freq,
                                  size_t receiverType,
-                                 const Eigen::MatrixBase<Derived>& e_recvPosMarker,
-                                 auto recvClockBias,
-                                 auto interFreqBias,
-                                 auto dpsr_T_r_s,
-                                 auto dpsr_I_r_s,
+                                 const Eigen::MatrixBase<Derived>& e_recvPosAPC,
+                                 const auto& recvClockBias,
+                                 const auto& interFreqBias,
+                                 const auto& dpsr_T_r_s,
+                                 const auto& dpsr_I_r_s,
                                  const std::shared_ptr<const SatelliteInfo>& satInfo,
+                                 const auto& elevation,
                                  const std::shared_ptr<const GnssObs>& gnssObs,
                                  [[maybe_unused]] const std::string& nameId) const
     {
-        Eigen::Vector3d e_recvPosAPC = e_calcRecvPosAPC(freq, receiverType, e_recvPosMarker, gnssObs, nameId);
-        Eigen::Vector3d lla_recvPosAPC = trafo::ecef2lla_WGS84(e_recvPosAPC);
-
-        Eigen::Vector3d e_pLOS = e_calcLineOfSightUnitVector(e_recvPosAPC, satInfo->e_satPos);
-        Eigen::Vector3d n_lineOfSightUnitVector = trafo::n_Quat_e(lla_recvPosAPC(0), lla_recvPosAPC(1)) * e_pLOS;
-        double elevation = calcSatElevation(n_lineOfSightUnitVector);
-        // double azimuth = calcSatAzimuth(n_lineOfSightUnitVector);
-
         // Receiver-Satellite Range [m]
         auto rho_r_s = (satInfo->e_satPos - e_recvPosAPC).norm();
 
@@ -306,7 +300,7 @@ class ObservationEstimator
         // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
         //                                                                        : 0.0;
 
-        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+        auto pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
 
         return rho_r_s
                + dpsr_ie_r_s
@@ -361,7 +355,7 @@ class ObservationEstimator
         // double dt_rel_stc = e_recvPosAPC.norm() > InsConst::WGS84::a / 2.0 ? 2.0 * InsConst::WGS84::MU / std::pow(InsConst::C, 3) * std::log((posNorm + rho_r_s) / (posNorm - rho_r_s))
         //                                                                        : 0.0;
 
-        double pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
+        auto pcv = calcPCV(freq, gnssObs->insTime, elevation, std::nullopt, receiverType, gnssObs, nameId); // TODO: use 'azimuth', but need antenna azimuth
 
         double estimate = rho_r_s
                           + dpsr_ie_r_s
@@ -388,7 +382,7 @@ class ObservationEstimator
                              size_t receiverType,
                              const Eigen::MatrixBase<DerivedPos>& e_recvPosMarker,
                              const Eigen::MatrixBase<DerivedVel>& e_recvVel,
-                             auto recvClockDrift,
+                             const auto& recvClockDrift,
                              const std::shared_ptr<const SatelliteInfo>& satInfo,
                              const std::shared_ptr<const GnssObs>& gnssObs,
                              [[maybe_unused]] const std::string& nameId) const
@@ -522,16 +516,17 @@ class ObservationEstimator
     /// @param[in] gnssObs GNSS observation
     /// @param[in] nameId Name and Id of the node used for log messages only
     /// @return The PCV value in [m]
-    [[nodiscard]] double calcPCV(const Frequency& freq,
-                                 const InsTime& insTime,
-                                 double elevation,
-                                 std::optional<double> azimuth,
-                                 size_t receiverType,
-                                 const std::shared_ptr<const GnssObs>& gnssObs,
-                                 [[maybe_unused]] const std::string& nameId) const
+    template<typename T>
+    [[nodiscard]] T calcPCV(const Frequency& freq,
+                            const InsTime& insTime,
+                            const T& elevation,
+                            std::optional<double> azimuth,
+                            size_t receiverType,
+                            const std::shared_ptr<const GnssObs>& gnssObs,
+                            [[maybe_unused]] const std::string& nameId) const
     {
         if (std::isnan(elevation)
-            || (azimuth.has_value() && std::isnan(*azimuth))) { return 0.0; }
+            || (azimuth.has_value() && std::isnan(*azimuth))) { return T(0.0); }
         const Antenna& antenna = _antenna.at(receiverType);
         if (antenna.correctPCV)
         {
@@ -550,10 +545,10 @@ class ObservationEstimator
                                                                      elevation,
                                                                      azimuth,
                                                                      nameId)
-                .value_or(0.0);
+                .value_or(T(0.0));
         }
 
-        return 0.0;
+        return T(0.0);
     }
 
     /// @brief Calculate the ionospheric delay with the model selected in the GUI

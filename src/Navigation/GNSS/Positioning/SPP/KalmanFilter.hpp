@@ -102,9 +102,9 @@ class KalmanFilter // NOLINT(clang-analyzer-optin.performance.Padding)
     // const std::vector<SPP::States::StateKeyType>& PosKey = Keys::Pos<SPP::States::StateKeyType>;
 
     /// @brief All velocity keys
-    const std::vector<SPP::States::StateKeyType>& VelKey = Keys::Vel<SPP::States::StateKeyType>;
+    const std::array<SPP::States::StateKeyType, 3>& VelKey = Keys::Vel<SPP::States::StateKeyType>;
     /// @brief All position and velocity keys
-    const std::vector<SPP::States::StateKeyType>& PosVelKey = Keys::PosVel<SPP::States::StateKeyType>;
+    const std::array<SPP::States::StateKeyType, 6>& PosVelKey = Keys::PosVel<SPP::States::StateKeyType>;
 
     /// Kalman Filter representation
     KeyedKalmanFilterD<SPP::States::StateKeyType, SPP::Meas::MeasKeyTypes> _kalmanFilter{ PosVelKey, {} };

@@ -92,11 +92,11 @@ class Algorithm
     using Receiver = NAV::Receiver<ReceiverType>; ///< Receiver
 
     /// @brief All position keys
-    const std::vector<SPP::States::StateKeyType>& PosKey = Keys::Pos<SPP::States::StateKeyType>;
+    const std::array<SPP::States::StateKeyType, 3>& PosKey = Keys::Pos<SPP::States::StateKeyType>;
     /// @brief All velocity keys
-    const std::vector<SPP::States::StateKeyType>& VelKey = Keys::Vel<SPP::States::StateKeyType>;
+    const std::array<SPP::States::StateKeyType, 3>& VelKey = Keys::Vel<SPP::States::StateKeyType>;
     /// @brief All position and velocity keys
-    const std::vector<SPP::States::StateKeyType>& PosVelKey = Keys::PosVel<SPP::States::StateKeyType>;
+    const std::array<SPP::States::StateKeyType, 6>& PosVelKey = Keys::PosVel<SPP::States::StateKeyType>;
 
     /// @brief Checks if the SPP algorithm can calculate the position (always true for Kalman filter)
     /// @param[in] nDoppMeas Amount of Doppler measurements

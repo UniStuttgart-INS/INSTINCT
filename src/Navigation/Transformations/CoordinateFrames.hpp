@@ -156,6 +156,88 @@ template<typename Derived>
     return XYZ;
 }
 
+/// @brief Calculates the Jacobian to convert an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion
+/// @param n_quat_b Quaternion for rotations from body to navigation frame
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 4, 3> covRPY2quatJacobian(const Eigen::QuaternionBase<Derived>& n_quat_b)
+{
+    auto RPY = trafo::quat2eulerZYX(n_quat_b);
+    double ccc = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    double scc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    double csc = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    double ccs = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    double ssc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    double scs = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    double css = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    double sss = std::sin(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+
+    Eigen::Matrix<typename Derived::Scalar, 4, 3> J;
+    // clang-format off
+    J <<  (ccc + sss) / 2.0, -(ccs + ssc) / 2.0, -(csc + scs) / 2.0,
+          (ccs - ssc) / 2.0,  (ccc - sss) / 2.0,  (scc - css) / 2.0,
+         -(csc + scs) / 2.0, -(css + scc) / 2.0,  (ccc + sss) / 2.0,
+          (css - scc) / 2.0,  (scs - csc) / 2.0,  (ssc - ccs) / 2.0;
+    // clang-format on
+    return J;
+}
+
+/// @brief Converts a covariance for an attitude represented in Euler angels (roll, pitch, yaw) into a covariance for a quaternion
+/// @param covRPY Covariance for the Euler angles
+/// @param n_quat_b Quaternion for rotations from body to navigation frame
+/// @return Covariance for the quaternion
+template<typename Derived, typename DerivedQ>
+[[nodiscard]] Eigen::Matrix4<typename Derived::Scalar> covRPY2quat(const Eigen::MatrixBase<Derived>& covRPY, const Eigen::QuaternionBase<DerivedQ>& n_quat_b)
+{
+    auto J = covRPY2quatJacobian(n_quat_b);
+    return J * covRPY * J.transpose();
+}
+
+/// @brief Calculates the Jacobian to convert an attitude represented in quaternions into a covariance in Euler angels (roll, pitch, yaw)
+/// @param n_quat_b Quaternion for rotations from body to navigation frame
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 3, 4> covQuat2RPYJacobian(const Eigen::QuaternionBase<Derived>& n_quat_b)
+{
+    auto disc = n_quat_b.w() * n_quat_b.y() - n_quat_b.x() * n_quat_b.z();
+    auto a = 2.0 * std::pow(n_quat_b.y(), 2) + 2.0 * std::pow(n_quat_b.z(), 2) - 1.0;
+    auto b = 2.0 * std::pow(n_quat_b.x(), 2) + 2.0 * std::pow(n_quat_b.y(), 2) - 1.0;
+    auto c = n_quat_b.w() * n_quat_b.z() + n_quat_b.x() * n_quat_b.y();
+    auto d = n_quat_b.w() * n_quat_b.x() + n_quat_b.y() * n_quat_b.z();
+    auto e = std::pow(b, 2) + 4.0 * std::pow(d, 2);
+    auto f = std::sqrt(1.0 - 4.0 * std::pow(disc, 2));
+    auto g = std::pow(a, 2) + 4.0 * std::pow(c, 2);
+
+    Eigen::Matrix<typename Derived::Scalar, 3, 4> J;
+    J << // clang-format off
+         (2.0 * (-b * n_quat_b.w() + 4.0 * d * n_quat_b.x())) / e,
+         (2.0 * (-b * n_quat_b.z() + 4.0 * d * n_quat_b.y())) / e,
+        -(2.0 * b * n_quat_b.y()) / e,
+        -(2.0 * b * n_quat_b.x()) / e,
+
+        -2.0 * n_quat_b.z() / f,
+         2.0 * n_quat_b.w() / f,
+        -2.0 * n_quat_b.x() / f,
+         2.0 * n_quat_b.y() / f,
+
+        -(2.0 * a * n_quat_b.y()) / g,
+         (2.0 * (-a * n_quat_b.x() + 4.0 * c * n_quat_b.y())) / g,
+         (2.0 * (-a * n_quat_b.w() + 4.0 * c * n_quat_b.z())) / g,
+        -(2.0 * a * n_quat_b.z()) / g;
+         // clang-format on
+
+    return J;
+}
+
+/// @brief Converts a covariance for an attitude represented in quaternion form into a covariance for Euler angels (yaw, pitch, roll)
+/// @param covQuat Covariance for the quaternion
+/// @param n_quat_b Quaternion for rotations from body to navigation frame
+/// @return Covariance for the Euler angels (roll, pitch, yaw)
+template<typename Derived, typename DerivedQ>
+[[nodiscard]] Eigen::Matrix3<typename Derived::Scalar> covQuat2RPY(const Eigen::MatrixBase<Derived>& covQuat, const Eigen::QuaternionBase<DerivedQ>& n_quat_b)
+{
+    auto J = covQuat2RPYJacobian(n_quat_b);
+    return J * covQuat * J.transpose();
+}
+
 /// @brief Quaternion for rotations from inertial to Earth-centered-Earth-fixed frame
 /// @param[in] time Time (t - t0)
 /// @param[in] omega_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
@@ -184,7 +266,7 @@ template<typename Scalar>
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
 template<typename Scalar>
-[[nodiscard]] Eigen::Quaternion<Scalar> e_Quat_n(Scalar latitude, Scalar longitude)
+[[nodiscard]] Eigen::Quaternion<Scalar> e_Quat_n(const Scalar& latitude, const Scalar& longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -199,7 +281,7 @@ template<typename Scalar>
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
 template<typename Scalar>
-[[nodiscard]] Eigen::Quaternion<Scalar> n_Quat_e(Scalar latitude, Scalar longitude)
+[[nodiscard]] Eigen::Quaternion<Scalar> n_Quat_e(const Scalar& latitude, const Scalar& longitude)
 {
     return e_Quat_n(latitude, longitude).conjugate();
 }
@@ -210,7 +292,7 @@ template<typename Scalar>
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
 template<typename Scalar>
-[[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_n(Scalar roll, Scalar pitch, Scalar yaw)
+[[nodiscard]] Eigen::Quaternion<Scalar> b_Quat_n(const Scalar& roll, const Scalar& pitch, const Scalar& yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.

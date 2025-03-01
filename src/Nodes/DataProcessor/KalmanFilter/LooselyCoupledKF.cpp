@@ -1085,14 +1085,14 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
     lckfSolution->insTime = posVelAtt.insTime;
     if (posVelAtt.e_CovarianceMatrix())
     {
-        lckfSolution->setStateAndStdDev_e(posVelAtt.e_position(), posVelAtt.e_CovarianceMatrix()->get()(PosVel::States::Pos, PosVel::States::Pos),
-                                          posVelAtt.e_velocity(), posVelAtt.e_CovarianceMatrix()->get()(PosVel::States::Vel, PosVel::States::Vel),
-                                          posVelAtt.e_Quat_b());
-        lckfSolution->setPosVelCovarianceMatrix_e(posVelAtt.e_CovarianceMatrix()->get()(PosVel::States::PosVel, PosVel::States::PosVel));
+        lckfSolution->setPosVelAttAndCov_e(posVelAtt.e_position(),
+                                           posVelAtt.e_velocity(),
+                                           posVelAtt.e_Quat_b(),
+                                           (*posVelAtt.e_CovarianceMatrix())(all, all));
     }
     else
     {
-        lckfSolution->setState_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
+        lckfSolution->setPosVelAtt_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
     }
 
     lckfSolution->frame = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
@@ -1158,19 +1158,24 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
     {
         looselyCoupledPrediction(inertialNavSol, _inertialIntegrator.getMeasurements().back().dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
 
+        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+        J.topLeftCorner<6, 6>().setIdentity();
         if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
         {
-            inertialNavSol->setStateAndStdDev_n(inertialNavSol->lla_position(), _kalmanFilter.P(KFPos, KFPos),
-                                                inertialNavSol->n_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                                inertialNavSol->n_Quat_b());
-            inertialNavSol->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
+            J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
+
+            inertialNavSol->setPosVelAttAndCov_n(inertialNavSol->lla_position(),
+                                                 inertialNavSol->n_velocity(),
+                                                 inertialNavSol->n_Quat_b(),
+                                                 J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
         }
         else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
         {
-            inertialNavSol->setStateAndStdDev_e(inertialNavSol->e_position(), _kalmanFilter.P(KFPos, KFPos),
-                                                inertialNavSol->e_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                                inertialNavSol->e_Quat_b());
-            inertialNavSol->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
+            J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
+            inertialNavSol->setPosVelAttAndCov_e(inertialNavSol->e_position(),
+                                                 inertialNavSol->e_velocity(),
+                                                 inertialNavSol->e_Quat_b(),
+                                                 J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
         }
 
         LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
@@ -1196,8 +1201,8 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
 
         PosVelAtt posVelAtt;
         posVelAtt.insTime = obs->insTime;
-        posVelAtt.setState_n(obs->lla_position(), obs->n_velocity(),
-                             trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
+        posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(),
+                                 trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
 
         _inertialIntegrator.setInitialState(posVelAtt);
         LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt.e_position().transpose());
@@ -1214,7 +1219,7 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
     {
         PosVelAtt posVelAtt;
         posVelAtt.insTime = obs->insTime;
-        posVelAtt.setState_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().n_Quat_b());
+        posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().n_Quat_b());
         _inertialIntegrator.setState(posVelAtt);
 
         LOG_DATA("{}: [{}] Sending out received solution, as no IMU data yet", nameId(), obs->insTime.toYMDHMS(GPST));
@@ -1555,7 +1560,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     }
     else
     {
-        gnssSigmaSquaredPosition = posVelObs->e_positionStdev()->get().array().pow(2) * 10;
+        gnssSigmaSquaredPosition = posVelObs->e_positionStdev()->array().pow(2) * 10;
         gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssSigmaSquaredPosition, lla_position)) - lla_position).array().pow(2);
     }
     LOG_DATA("{}:     gnssSigmaSquaredPosition = {} [m^2]", nameId(), gnssSigmaSquaredPosition.transpose());
@@ -1577,7 +1582,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     }
     else
     {
-        gnssSigmaSquaredVelocity = posVelObs->e_velocityStdev()->get().array().pow(2) * 10;
+        gnssSigmaSquaredVelocity = posVelObs->e_velocityStdev()->array().pow(2) * 10;
     }
     LOG_DATA("{}:     gnssSigmaSquaredVelocity = {} [m^2/S^2]", nameId(), gnssSigmaSquaredVelocity.transpose());
 
@@ -1722,19 +1727,29 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         lckfSolution->positionError = lckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
         _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        lckfSolution->setStateAndStdDev_n(_inertialIntegrator.getLatestState().value().get().lla_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          _inertialIntegrator.getLatestState().value().get().n_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          _inertialIntegrator.getLatestState().value().get().n_Quat_b());
-        lckfSolution->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
+
+        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+        J.topLeftCorner<6, 6>().setIdentity();
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
+
+        lckfSolution->setPosVelAttAndCov_n(_inertialIntegrator.getLatestState().value().get().lla_position(),
+                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
+                                           J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
         _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        lckfSolution->setStateAndStdDev_e(_inertialIntegrator.getLatestState().value().get().e_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          _inertialIntegrator.getLatestState().value().get().e_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          _inertialIntegrator.getLatestState().value().get().e_Quat_b());
-        lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
+
+        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+        J.topLeftCorner<6, 6>().setIdentity();
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
+
+        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
+                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
+                                           J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
     }
     lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
     lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
@@ -1782,7 +1797,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     LOG_DATA("{}:     baroHeightSigmaSquared = {} [m^2]", nameId(), baroHeightSigmaSquared);
 
     // ---------------------------------------------- Correction -------------------------------------------------
-    _kalmanFilter.setMeasurements({ KFMeas::dHgt });
+    _kalmanFilter.setMeasurements(std::array{ KFMeas::dHgt });
 
     // 5. Calculate the measurement matrix H_k
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
@@ -1876,18 +1891,30 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
         lckfSolution->positionError = lckfSolution->positionError.array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
         _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        lckfSolution->setStateAndStdDev_n(_inertialIntegrator.getLatestState().value().get().lla_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          _inertialIntegrator.getLatestState().value().get().n_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          _inertialIntegrator.getLatestState().value().get().n_Quat_b());
+
+        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+        J.topLeftCorner<6, 6>().setIdentity();
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
+
+        lckfSolution->setPosVelAttAndCov_n(_inertialIntegrator.getLatestState().value().get().lla_position(),
+                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
+                                           J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
         lckfSolution->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
         _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-        lckfSolution->setStateAndStdDev_e(_inertialIntegrator.getLatestState().value().get().e_position(), _kalmanFilter.P(KFPos, KFPos),
-                                          _inertialIntegrator.getLatestState().value().get().e_velocity(), _kalmanFilter.P(KFVel, KFVel),
-                                          _inertialIntegrator.getLatestState().value().get().e_Quat_b());
+
+        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+        J.topLeftCorner<6, 6>().setIdentity();
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
+
+        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
+                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
+                                           J * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J.transpose());
         lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
     }
 
@@ -1955,8 +1982,8 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     // F.middleRows<3>(Vel) *= 1.; // 𝛿v' [m / s^2] = 1 * [m / s^2]
     // F.middleCols<3>(Vel) *= 1. / 1.;
 
-    F.middleRows<2>({ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON; // 𝛿ϕ' [pseudometre / s] = R0 * [rad / s]
-    F.middleCols<2>({ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+    F.middleRows<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON; // 𝛿ϕ' [pseudometre / s] = R0 * [rad / s]
+    F.middleCols<2>(std::array{ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
     // F.row(PosAlt) *= 1.; // 𝛿h' [m / s] = 1 * [m / s]
     // F.col(PosAlt) *= 1. / 1.;
 
@@ -2106,12 +2133,12 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     Q(KFStates::HeightScale, KFStates::HeightScale) = sigma_heightScale * sigma_heightScale * tau_s;
 
     Q.middleRows<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleRows<2>({ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
+    Q.middleRows<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
     Q.middleRows<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
     Q.middleRows<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
     Q.middleCols<3>(KFAtt) *= SCALE_FACTOR_ATTITUDE;
-    Q.middleCols<2>({ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
+    Q.middleCols<2>(std::array{ PosLat, PosLon }) *= SCALE_FACTOR_LAT_LON;
     Q.middleCols<3>(KFAccBias) *= SCALE_FACTOR_ACCELERATION;
     Q.middleCols<3>(KFGyrBias) *= SCALE_FACTOR_ANGULAR_RATE;
 
@@ -2225,10 +2252,10 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     // Math: \mathbf{H}_{v5}^n = \mathbf{C}_b^n \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     H.block<3>(dVel, KFGyrBias) = n_Dcm_b * math::skewSymmetricMatrix(b_leverArm_InsGnss);
 
-    H.middleRows<2>({ dPosLat, dPosLon }) *= SCALE_FACTOR_LAT_LON;
+    H.middleRows<2>(std::array{ dPosLat, dPosLon }) *= SCALE_FACTOR_LAT_LON;
 
     H.middleCols<3>(KFAtt) *= 1. / SCALE_FACTOR_ATTITUDE;
-    H.middleCols<2>({ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
+    H.middleCols<2>(std::array{ PosLat, PosLon }) *= 1. / SCALE_FACTOR_LAT_LON;
     // H.middleCols<3>(AccBias) *= 1. / SCALE_FACTOR_ACCELERATION; // Only zero elements
     H.middleCols<3>(KFGyrBias) *= 1. / SCALE_FACTOR_ANGULAR_RATE;
 
@@ -2239,7 +2266,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     NAV::LooselyCoupledKF::n_measurementMatrix_H(const double& height, const double& scale)
 {
     NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), { KFMeas::dHgt }, States);
+        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), std::array{ KFMeas::dHgt }, States);
 
     H(KFMeas::dHgt, PosAlt) = -scale;
     H(KFMeas::dHgt, HeightBias) = 1.0;
@@ -2277,7 +2304,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     NAV::LooselyCoupledKF::e_measurementMatrix_H(const Eigen::Vector3d& e_positionEstimate, const double& height, const double& scale)
 {
     NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFStates, 1, NAV::LooselyCoupledKF::KFStates_COUNT>
-        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), { KFMeas::dHgt }, States);
+        H(Eigen::Matrix<double, 1, NAV::LooselyCoupledKF::KFStates_COUNT>::Zero(), std::array{ KFMeas::dHgt }, States);
 
     H(KFMeas::dHgt, KFPos) = -scale * e_positionEstimate.normalized().transpose();
     H(KFMeas::dHgt, HeightBias) = 1.0;
@@ -2294,7 +2321,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
     R.block<3>(dPos, dPos).diagonal() = gnssVarianceLatLonAlt;
     R.block<3>(dVel, dVel).diagonal() = gnssVarianceVelocity;
 
-    R.block<2>({ dPosLat, dPosLon }, { dPosLat, dPosLon }).diagonal() *= std::pow(SCALE_FACTOR_LAT_LON, 2);
+    R.block<2>(std::array{ dPosLat, dPosLon }, std::array{ dPosLat, dPosLon }).diagonal() *= std::pow(SCALE_FACTOR_LAT_LON, 2);
 
     return R;
 }
@@ -2302,7 +2329,7 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::K
 NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFMeas, NAV::LooselyCoupledKF::KFMeas, 1, 1>
     NAV::LooselyCoupledKF::n_measurementNoiseCovariance_R(const double& baroVarianceHeight)
 {
-    KeyedMatrix<double, KFMeas, KFMeas, 1, 1> R(Eigen::Matrix<double, 1, 1>::Zero(), { KFMeas::dHgt });
+    KeyedMatrix<double, KFMeas, KFMeas, 1, 1> R(Eigen::Matrix<double, 1, 1>::Zero(), std::array{ KFMeas::dHgt });
     R(KFMeas::dHgt, KFMeas::dHgt) = baroVarianceHeight;
 
     return R;
@@ -2343,7 +2370,7 @@ NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 1>
     Eigen::Matrix<double, 1, 1> innovation;
     innovation << baroheight - (height * heightscale + heightbias);
 
-    return { innovation, { KFMeas::dHgt } };
+    return { innovation, std::array{ KFMeas::dHgt } };
 }
 
 NAV::KeyedVector<double, NAV::LooselyCoupledKF::KFMeas, 6>

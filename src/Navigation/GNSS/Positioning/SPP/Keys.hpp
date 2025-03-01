@@ -178,6 +178,14 @@ struct fmt::formatter<NAV::SPP::States::StateKeyType> : fmt::formatter<std::stri
                 return fmt::formatter<std::string>::format("VelY", ctx);
             case VelZ:
                 return fmt::formatter<std::string>::format("VelZ", ctx);
+            case AttQ1:
+                return fmt::formatter<std::string>::format("AttQ1", ctx);
+            case AttQ2:
+                return fmt::formatter<std::string>::format("AttQ2", ctx);
+            case AttQ3:
+                return fmt::formatter<std::string>::format("AttQ3", ctx);
+            case AttQ0:
+                return fmt::formatter<std::string>::format("AttQ0", ctx);
             case MotionModelKey_COUNT:
                 return fmt::formatter<std::string>::format("MotionModelKey_COUNT", ctx);
             }

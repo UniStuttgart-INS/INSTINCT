@@ -86,41 +86,49 @@ class RtklibPosObs : public PosVel
 
         if (e_position && sdXYZ && sdxy && sdzx && sdyz)
         {
-            Eigen::Matrix3d cov;
-            cov << std::pow(sdXYZ->x(), 2), *sdxy, -(*sdzx),
+            Eigen::Matrix3d covPos;
+            covPos << std::pow(sdXYZ->x(), 2), *sdxy, -(*sdzx),
                 -(*sdxy), std::pow(sdXYZ->y(), 2), *sdyz,
                 *sdzx, -(*sdyz), std::pow(sdXYZ->z(), 2);
-            this->setPositionAndStdDev_e(*e_position, cov);
-            this->setPosCovarianceMatrix_e(cov);
+            if (e_velocity && sdvXYZ && sdvxy && sdvzx && sdvyz)
+            {
+                Eigen::Matrix6d cov = Eigen::Matrix6d::Zero();
+                cov.topLeftCorner<3, 3>() = covPos;
+                cov.bottomRightCorner<3, 3>() << std::pow(sdvXYZ->x(), 2), *sdvxy, -(*sdvzx),
+                    -(*sdvxy), std::pow(sdvXYZ->y(), 2), *sdvyz,
+                    *sdvzx, -(*sdvyz), std::pow(sdvXYZ->z(), 2);
+
+                setPosVelAndCov_e(*e_position, *e_velocity, cov);
+            }
+            else
+            {
+                this->setPositionAndCov_e(*e_position, covPos);
+            }
         }
         else if (lla_position && sdNED && sdne && sddn && sded)
         {
-            Eigen::Matrix3d cov;
-            cov << std::pow(sdNED->x(), 2), *sdne, -(*sddn),
+            Eigen::Matrix3d covPos;
+            covPos << std::pow(sdNED->x(), 2), *sdne, -(*sddn),
                 -(*sdne), std::pow(sdNED->y(), 2), *sded,
                 *sddn, -(*sded), std::pow(sdNED->z(), 2);
-            this->setPositionAndStdDev_lla(*lla_position, cov);
-            this->setPosCovarianceMatrix_n(cov);
+
+            if (n_velocity && sdvNED && sdvne && sdvdn && sdved)
+            {
+                Eigen::Matrix6d cov = Eigen::Matrix6d::Zero();
+                cov.topLeftCorner<3, 3>() = covPos;
+                cov.bottomRightCorner<3, 3>() << std::pow(sdvNED->x(), 2), *sdvne, -(*sdvdn),
+                    -(*sdvne), std::pow(sdvNED->y(), 2), *sdved,
+                    *sdvdn, -(*sdved), std::pow(sdvNED->z(), 2);
+                this->setPosVelAndCov_n(*lla_position, *n_velocity, cov);
+            }
+            else
+            {
+                this->setPositionAndCov_n(*lla_position, covPos);
+            }
         }
         else if (e_position) { this->setPosition_e(*e_position); }
         else if (lla_position) { this->setPosition_lla(*lla_position); }
 
-        if (e_velocity && sdvXYZ && sdvxy && sdvzx && sdvyz)
-        {
-            Eigen::Matrix3d cov;
-            cov << std::pow(sdvXYZ->x(), 2), *sdvxy, -(*sdvzx),
-                -(*sdvxy), std::pow(sdvXYZ->y(), 2), *sdvyz,
-                *sdvzx, -(*sdvyz), std::pow(sdvXYZ->z(), 2);
-            this->setVelocityAndStdDev_e(*e_velocity, cov);
-        }
-        else if (n_velocity && sdvNED && sdvne && sdvdn && sdved)
-        {
-            Eigen::Matrix3d cov;
-            cov << std::pow(sdvNED->x(), 2), *sdvne, -(*sdvdn),
-                -(*sdvne), std::pow(sdvNED->y(), 2), *sdved,
-                *sdvdn, -(*sdved), std::pow(sdvNED->z(), 2);
-            this->setVelocityAndStdDev_n(*n_velocity, cov);
-        }
         else if (e_velocity) { this->setVelocity_e(*e_velocity); }
         else if (n_velocity) { this->setVelocity_n(*n_velocity); }
     }

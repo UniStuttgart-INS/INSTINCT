@@ -1273,7 +1273,7 @@ void NAV::TightlyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
 {
     auto tckfSolution = std::make_shared<InsGnssTCKFSolution>();
     tckfSolution->insTime = posVelAtt.insTime;
-    tckfSolution->setState_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
+    tckfSolution->setPosVelAtt_e(posVelAtt.e_position(), posVelAtt.e_velocity(), posVelAtt.e_Quat_b());
 
     tckfSolution->frame = _inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED
                               ? InsGnssTCKFSolution::Frame::NED
@@ -1733,7 +1733,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     //     {
     //         PosVelAtt posVelAtt;
     //         posVelAtt.insTime = sppSol->insTime;
-    //         posVelAtt.setState_n(sppSol->lla_position(), sppSol->n_velocity(),
+    //         posVelAtt.setPosVelAtt_n(sppSol->lla_position(), sppSol->n_velocity(),
     //                              trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
 
     //         _inertialIntegrator.setInitialState(posVelAtt);
@@ -2040,7 +2040,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledUpdate(const std::shared_ptr<const Gns
     //     tckfSolution->frame = InsGnssTCKFSolution::Frame::NED;
     //     _inertialIntegrator.applyStateErrors_n(tckfSolution->positionError, tckfSolution->velocityError, tckfSolution->attitudeError);
     //     const auto& state = _inertialIntegrator.getLatestState().value().get();
-    //     tckfSolution->setState_n(state.lla_position(), state.n_velocity(), state.n_Quat_b());
+    //     tckfSolution->setPosVelAtt_n(state.lla_position(), state.n_velocity(), state.n_Quat_b());
     // }
     // LOG_DATA("tckfSolution->positionError = {}", tckfSolution->positionError.transpose());
     // LOG_DATA("tckfSolution->velocityError = {}", tckfSolution->velocityError.transpose());

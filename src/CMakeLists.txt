@@ -43,6 +43,7 @@ if(ENABLE_MAIN)
             libUartSensor)
 
   target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC IMGUI_DEFINE_MATH_OPERATORS)
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC "NOMINMAX")
 
   if(NOT APPLE AND NOT WIN32)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)

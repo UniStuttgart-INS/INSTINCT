@@ -15,11 +15,11 @@
 
 #include "internal/Node/Node.hpp"
 
+#include "Navigation/INS/Units.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
-#include "Navigation/INS/Units.hpp"
 
 #include "util/Random/RandomNumberGenerator.hpp"
 

@@ -7,7 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file PosVel.hpp
-/// @brief Position, Velocity and Attitude Storage Class
+/// @brief Position and Velocity Storage Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-10-27
 
@@ -18,7 +18,7 @@
 
 namespace NAV
 {
-/// Position, Velocity and Attitude Storage Class
+/// Position and Velocity Storage Class
 class PosVel : public Pos
 {
   public:
@@ -102,40 +102,40 @@ class PosVel : public Pos
         case Pos::GetStaticDescriptorCount() + 6: // Down velocity [m/s]
             return n_velocity().z();
         case Pos::GetStaticDescriptorCount() + 7: // X velocity ECEF StDev [m/s]
-            if (auto stDev = e_velocityStdev()) { return stDev->get().x(); }
+            if (auto stDev = e_velocityStdev()) { return stDev->x(); }
             break;
         case Pos::GetStaticDescriptorCount() + 8: // Y velocity ECEF StDev [m/s]
-            if (auto stDev = e_velocityStdev()) { return stDev->get().y(); }
+            if (auto stDev = e_velocityStdev()) { return stDev->y(); }
             break;
         case Pos::GetStaticDescriptorCount() + 9: // Z velocity ECEF StDev [m/s]
-            if (auto stDev = e_velocityStdev()) { return stDev->get().z(); }
+            if (auto stDev = e_velocityStdev()) { return stDev->z(); }
             break;
         case Pos::GetStaticDescriptorCount() + 10: // XY velocity StDev [m]
-            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelX, States::VelY); }
+            if (_e_covarianceMatrix && _e_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::VelX, Keys::VelY))); }
             break;
         case Pos::GetStaticDescriptorCount() + 11: // XZ velocity StDev [m]
-            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelX, States::VelZ); }
+            if (_e_covarianceMatrix && _e_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::VelX, Keys::VelZ))); }
             break;
         case Pos::GetStaticDescriptorCount() + 12: // YZ velocity StDev [m]
-            if (e_CovarianceMatrix().has_value() && (*e_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*e_CovarianceMatrix())(States::VelY, States::VelZ); }
+            if (_e_covarianceMatrix && _e_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_e_covarianceMatrix)(Keys::VelY, Keys::VelZ))); }
             break;
         case Pos::GetStaticDescriptorCount() + 13: // North velocity StDev [m/s]
-            if (auto stDev = n_velocityStdev()) { return stDev->get().x(); }
+            if (auto stDev = n_velocityStdev()) { return stDev->x(); }
             break;
         case Pos::GetStaticDescriptorCount() + 14: // East velocity StDev [m/s]
-            if (auto stDev = n_velocityStdev()) { return stDev->get().y(); }
+            if (auto stDev = n_velocityStdev()) { return stDev->y(); }
             break;
         case Pos::GetStaticDescriptorCount() + 15: // Down velocity StDev [m/s]
-            if (auto stDev = n_velocityStdev()) { return stDev->get().z(); }
+            if (auto stDev = n_velocityStdev()) { return stDev->z(); }
             break;
         case Pos::GetStaticDescriptorCount() + 16: // NE velocity StDev [m]
-            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelX, States::VelY); }
+            if (_n_covarianceMatrix && _n_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::VelX, Keys::VelY))); }
             break;
         case Pos::GetStaticDescriptorCount() + 17: // ND velocity StDev [m]
-            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelX, States::VelZ); }
+            if (_n_covarianceMatrix && _n_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::VelX, Keys::VelZ))); }
             break;
         case Pos::GetStaticDescriptorCount() + 18: // ED velocity StDev [m]
-            if (n_CovarianceMatrix().has_value() && (*n_CovarianceMatrix()).get().hasAnyCols(States::Vel)) { return (*n_CovarianceMatrix())(States::VelY, States::VelZ); }
+            if (_n_covarianceMatrix && _n_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>)) { return std::sqrt(std::abs((*_n_covarianceMatrix)(Keys::VelY, Keys::VelZ))); }
             break;
         default:
             return std::nullopt;
@@ -204,32 +204,6 @@ class PosVel : public Pos
     /*                                                 Velocity                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// @brief States
-    struct States
-    {
-        /// @brief Constructor
-        States() = delete;
-
-        /// @brief State Keys
-        enum StateKeys : uint8_t
-        {
-            PosX,         ///< Position ECEF_X [m]
-            PosY,         ///< Position ECEF_Y [m]
-            PosZ,         ///< Position ECEF_Z [m]
-            VelX,         ///< Velocity ECEF_X [m/s]
-            VelY,         ///< Velocity ECEF_Y [m/s]
-            VelZ,         ///< Velocity ECEF_Z [m/s]
-            States_COUNT, ///< Count
-        };
-        /// @brief All position keys
-        inline static const std::vector<StateKeys> Pos = { PosX, PosY, PosZ };
-        /// @brief All velocity keys
-        inline static const std::vector<StateKeys> Vel = { States::VelX, States::VelY, States::VelZ };
-        /// @brief Vector with all position and velocity state keys
-        inline static const std::vector<StateKeys> PosVel = { States::PosX, States::PosY, States::PosZ,
-                                                              States::VelX, States::VelY, States::VelZ };
-    };
-
     /// Returns the velocity in [m/s], in earth coordinates
     [[nodiscard]] const Eigen::Vector3d& e_velocity() const { return _e_velocity; }
 
@@ -237,16 +211,24 @@ class PosVel : public Pos
     [[nodiscard]] const Eigen::Vector3d& n_velocity() const { return _n_velocity; }
 
     /// Returns the standard deviation of the velocity in [m/s], in earth coordinates
-    [[nodiscard]] std::optional<std::reference_wrapper<const Eigen::Vector3d>> e_velocityStdev() const { return _e_velocityStdev; }
+    [[nodiscard]] std::optional<Eigen::Vector3d> e_velocityStdev() const
+    {
+        if (_e_covarianceMatrix && _e_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>))
+        {
+            return (*_e_covarianceMatrix)(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>).diagonal().cwiseSqrt();
+        }
+        return std::nullopt;
+    }
 
     /// Returns the standard deviation of the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] std::optional<std::reference_wrapper<const Eigen::Vector3d>> n_velocityStdev() const { return _n_velocityStdev; }
-
-    /// Returns the Covariance matrix in ECEF frame
-    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<States::StateKeys, States::StateKeys>>> e_CovarianceMatrix() const { return _e_covarianceMatrix; }
-
-    /// Returns the Covariance matrix in local navigation frame
-    [[nodiscard]] std::optional<std::reference_wrapper<const KeyedMatrixXd<States::StateKeys, States::StateKeys>>> n_CovarianceMatrix() const { return _n_covarianceMatrix; }
+    [[nodiscard]] std::optional<Eigen::Vector3d> n_velocityStdev() const
+    {
+        if (_n_covarianceMatrix && _e_covarianceMatrix->hasRows(Keys::Vel<Keys::MotionModelKey>))
+        {
+            return (*_n_covarianceMatrix)(Keys::Vel<Keys::MotionModelKey>, Keys::Vel<Keys::MotionModelKey>).diagonal().cwiseSqrt();
+        }
+        return std::nullopt;
+    }
 
     // ###########################################################################################################
     //                                                  Setter
@@ -270,26 +252,50 @@ class PosVel : public Pos
         _n_velocity = n_velocity;
     }
 
-    /// @brief Set the Velocity in ECEF coordinates and its standard deviation
-    /// @param[in] e_velocity New Velocity in ECEF coordinates [m/s]
-    /// @param[in] e_velocityCovarianceMatrix Covariance matrix of Velocity in earth coordinates [m/s]
-    template<typename Derived, typename Derived2>
-    void setVelocityAndStdDev_e(const Eigen::MatrixBase<Derived>& e_velocity, const Eigen::MatrixBase<Derived2>& e_velocityCovarianceMatrix)
+    /// @brief Set the position and velocity
+    /// @param[in] e_position New Position in ECEF coordinates
+    /// @param[in] e_velocity The new velocity in the earth frame
+    template<typename DerivedP, typename DerivedV>
+    void setPosVel_e(const Eigen::MatrixBase<DerivedP>& e_position, const Eigen::MatrixBase<DerivedV>& e_velocity)
     {
+        setPosition_e(e_position);
         setVelocity_e(e_velocity);
-        _e_velocityStdev = e_velocityCovarianceMatrix.diagonal().cwiseSqrt();
-        _n_velocityStdev = (n_Quat_e() * e_velocityCovarianceMatrix * e_Quat_n()).diagonal().cwiseSqrt();
     }
 
-    /// @brief Set the Velocity in NED coordinates and its standard deviation
-    /// @param[in] n_velocity New Velocity in NED coordinates [m/s]
-    /// @param[in] n_velocityCovarianceMatrix Covariance matrix of Velocity in navigation coordinates [m/s]
-    template<typename Derived, typename Derived2>
-    void setVelocityAndStdDev_n(const Eigen::MatrixBase<Derived>& n_velocity, const Eigen::MatrixBase<Derived2>& n_velocityCovarianceMatrix)
+    /// @brief Set the position and velocity
+    /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
+    template<typename DerivedP, typename DerivedV>
+    void setPosVel_n(const Eigen::MatrixBase<DerivedP>& lla_position, const Eigen::MatrixBase<DerivedV>& n_velocity)
     {
+        setPosition_lla(lla_position);
         setVelocity_n(n_velocity);
-        _n_velocityStdev = n_velocityCovarianceMatrix.diagonal().cwiseSqrt();
-        _e_velocityStdev = (e_Quat_n() * n_velocityCovarianceMatrix * n_Quat_e()).diagonal().cwiseSqrt();
+    }
+
+    /// @brief Set the position, velocity and the covariance matrix
+    /// @param[in] e_position New Position in ECEF coordinates
+    /// @param[in] e_velocity The new velocity in the earth frame
+    /// @param[in] e_covarianceMatrix 6x6 PosVel Error variance
+    template<typename DerivedP, typename DerivedV, typename Derived>
+    void setPosVelAndCov_e(const Eigen::MatrixBase<DerivedP>& e_position, const Eigen::MatrixBase<DerivedV>& e_velocity,
+                           const Eigen::MatrixBase<Derived>& e_covarianceMatrix)
+    {
+        setPosition_e(e_position);
+        setVelocity_e(e_velocity);
+        setPosVelCovarianceMatrix_e(e_covarianceMatrix);
+    }
+
+    /// @brief Set the position, velocity and the covariance matrix
+    /// @param[in] lla_position New Position in LatLonAlt coordinates [rad, rad, m]
+    /// @param[in] n_velocity The new velocity in the NED frame [m/s, m/s, m/s]
+    /// @param[in] n_covarianceMatrix 6x6 PosVel Error variance
+    template<typename DerivedP, typename DerivedV, typename Derived>
+    void setPosVelAndCov_n(const Eigen::MatrixBase<DerivedP>& lla_position, const Eigen::MatrixBase<DerivedV>& n_velocity,
+                           const Eigen::MatrixBase<Derived>& n_covarianceMatrix)
+    {
+        setPosition_lla(lla_position);
+        setVelocity_n(n_velocity);
+        setPosVelCovarianceMatrix_n(n_covarianceMatrix);
     }
 
     /// @brief Set the Covariance matrix in ECEF coordinates
@@ -301,17 +307,16 @@ class PosVel : public Pos
         INS_ASSERT_USER_ERROR(e_covarianceMatrix.rows() == 6, "This function needs a 6x6 matrix as input");
         INS_ASSERT_USER_ERROR(e_covarianceMatrix.cols() == 6, "This function needs a 6x6 matrix as input");
 
-        _e_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(e_covarianceMatrix,
-                                                               States::PosVel);
-        _n_covarianceMatrix = _e_covarianceMatrix;
+        _e_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            e_covarianceMatrix, Keys::PosVel<Keys::MotionModelKey>);
 
-        Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(latitude(), longitude());
-        Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(latitude(), longitude());
+        Eigen::Quaterniond n_q_e = n_Quat_e();
+        Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
+        J.block<3, 3>(0, 0) = n_q_e.toRotationMatrix();
+        J.block<3, 3>(3, 3) = n_q_e.toRotationMatrix();
 
-        (*_n_covarianceMatrix)(all, all).setZero();
-        (*_n_covarianceMatrix)(States::Pos, States::Pos) = n_Quat_e * (*_e_covarianceMatrix)(States::Pos, States::Pos) * e_Quat_n;
-        (*_n_covarianceMatrix)(States::Vel, States::Vel) = n_Quat_e * (*_e_covarianceMatrix)(States::Vel, States::Vel) * e_Quat_n;
+        _n_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            J * e_covarianceMatrix * J.transpose(), Keys::PosVel<Keys::MotionModelKey>);
     }
 
     /// @brief Set the Covariance matrix in NED coordinates
@@ -323,17 +328,16 @@ class PosVel : public Pos
         INS_ASSERT_USER_ERROR(n_covarianceMatrix.rows() == 6, "This function needs a 6x6 matrix as input");
         INS_ASSERT_USER_ERROR(n_covarianceMatrix.cols() == 6, "This function needs a 6x6 matrix as input");
 
-        _n_covarianceMatrix = KeyedMatrixXd<States::StateKeys,
-                                            States::StateKeys>(n_covarianceMatrix,
-                                                               States::PosVel);
-        _e_covarianceMatrix = _n_covarianceMatrix;
+        _n_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            n_covarianceMatrix, Keys::PosVel<Keys::MotionModelKey>);
 
-        Eigen::Quaterniond n_Quat_e = trafo::n_Quat_e(latitude(), longitude());
-        Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(latitude(), longitude());
+        Eigen::Quaterniond e_q_n = e_Quat_n();
+        Eigen::Matrix<double, 6, 6> J = Eigen::Matrix<double, 6, 6>::Zero();
+        J.block<3, 3>(0, 0) = e_q_n.toRotationMatrix();
+        J.block<3, 3>(3, 3) = e_q_n.toRotationMatrix();
 
-        (*_e_covarianceMatrix)(all, all).setZero();
-        (*_e_covarianceMatrix)(States::Pos, States::Pos) = e_Quat_n * (*_n_covarianceMatrix)(States::Pos, States::Pos) * n_Quat_e;
-        (*_e_covarianceMatrix)(States::Vel, States::Vel) = e_Quat_n * (*_n_covarianceMatrix)(States::Vel, States::Vel) * n_Quat_e;
+        _e_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
+            J * n_covarianceMatrix * J.transpose(), Keys::PosVel<Keys::MotionModelKey>);
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -345,17 +349,6 @@ class PosVel : public Pos
     Eigen::Vector3d _e_velocity{ std::nan(""), std::nan(""), std::nan("") };
     /// Velocity in navigation coordinates [m/s]
     Eigen::Vector3d _n_velocity{ std::nan(""), std::nan(""), std::nan("") };
-
-    /// Standard deviation of Velocity in earth coordinates [m/s]
-    std::optional<Eigen::Vector3d> _e_velocityStdev;
-    /// Standard deviation of Velocity in navigation coordinates [m/s]
-    std::optional<Eigen::Vector3d> _n_velocityStdev;
-
-    /// Covariance matrix in ECEF coordinates
-    std::optional<KeyedMatrixXd<States::StateKeys, States::StateKeys>> _e_covarianceMatrix;
-
-    /// Covariance matrix in local navigation coordinates
-    std::optional<KeyedMatrixXd<States::StateKeys, States::StateKeys>> _n_covarianceMatrix;
 };
 
 } // namespace NAV

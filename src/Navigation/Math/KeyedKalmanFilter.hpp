@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <span>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <imgui.h>
 
@@ -43,7 +44,7 @@ class KeyedKalmanFilter
     /// @brief Constructor
     /// @param stateKeys State keys
     /// @param measKeys Measurement keys
-    KeyedKalmanFilter(const std::vector<StateKeyType>& stateKeys, const std::vector<MeasKeyType>& measKeys)
+    KeyedKalmanFilter(std::span<const StateKeyType> stateKeys, std::span<const MeasKeyType> measKeys)
     {
         std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
         INS_ASSERT_USER_ERROR(stateSet.size() == stateKeys.size(), "Each state key must be unique");
@@ -143,18 +144,18 @@ class KeyedKalmanFilter
     [[nodiscard]] bool hasState(const StateKeyType& stateKey) const { return x.hasRow(stateKey); }
     /// @brief Checks if the filter has the keys
     /// @param stateKeys State keys
-    [[nodiscard]] bool hasStates(const std::vector<StateKeyType>& stateKeys) const { return x.hasStates(stateKeys); }
+    [[nodiscard]] bool hasStates(std::span<const StateKeyType> stateKeys) const { return x.hasStates(stateKeys); }
     /// @brief Checks if the filter has any of the provided keys
     /// @param stateKeys State keys
-    [[nodiscard]] bool hasAnyStates(const std::vector<StateKeyType>& stateKeys) const { return x.hasAnyStates(stateKeys); }
+    [[nodiscard]] bool hasAnyStates(std::span<const StateKeyType> stateKeys) const { return x.hasAnyStates(stateKeys); }
 
     /// @brief Add a new state to the filter
     /// @param stateKey State key
-    void addState(const StateKeyType& stateKey) { addStates({ stateKey }); }
+    void addState(const StateKeyType& stateKey) { addStates(std::initializer_list<StateKeyType>{ stateKey }); }
 
     /// @brief Add new states to the filter
     /// @param stateKeys State keys
-    void addStates(const std::vector<StateKeyType>& stateKeys)
+    void addStates(std::span<const StateKeyType> stateKeys)
     {
         INS_ASSERT_USER_ERROR(!x.hasAnyRows(stateKeys), "You cannot add a state key which is already in the Kalman filter.");
         std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
@@ -176,11 +177,11 @@ class KeyedKalmanFilter
 
     /// @brief Remove a state from the filter
     /// @param stateKey State key
-    void removeState(const StateKeyType& stateKey) { removeStates({ stateKey }); }
+    void removeState(const StateKeyType& stateKey) { removeStates(std::initializer_list<StateKeyType>{ stateKey }); }
 
     /// @brief Remove states from the filter
     /// @param stateKeys State keys
-    void removeStates(const std::vector<StateKeyType>& stateKeys)
+    void removeStates(std::span<const StateKeyType> stateKeys)
     {
         INS_ASSERT_USER_ERROR(x.hasRows(stateKeys), "Not all state keys you are trying to remove are in the Kalman filter.");
         std::unordered_set<StateKeyType> stateSet = { stateKeys.begin(), stateKeys.end() };
@@ -224,7 +225,7 @@ class KeyedKalmanFilter
 
     /// @brief Sets the measurement keys and initializes matrices z, H, R, S, K with Zero
     /// @param measKeys Measurement keys
-    void setMeasurements(const std::vector<MeasKeyType>& measKeys)
+    void setMeasurements(std::span<const MeasKeyType> measKeys)
     {
         std::unordered_set<MeasKeyType> measSet = { measKeys.begin(), measKeys.end() };
         INS_ASSERT_USER_ERROR(measSet.size() == measKeys.size(), "Each measurement key must be unique");
@@ -243,11 +244,11 @@ class KeyedKalmanFilter
 
     /// @brief Add a measurement to the filter
     /// @param measKey Measurement key
-    void addMeasurement(const MeasKeyType& measKey) { addMeasurements({ measKey }); }
+    void addMeasurement(const MeasKeyType& measKey) { addMeasurements(std::initializer_list<MeasKeyType>{ measKey }); }
 
     /// @brief Add measurements to the filter
     /// @param measKeys Measurement keys
-    void addMeasurements(const std::vector<MeasKeyType>& measKeys)
+    void addMeasurements(std::span<const MeasKeyType> measKeys)
     {
         INS_ASSERT_USER_ERROR(!z.hasAnyRows(measKeys), "A measurement keys you are trying to add was already in the Kalman filter.");
         std::unordered_set<MeasKeyType> measurementSet = { measKeys.begin(), measKeys.end() };
@@ -262,11 +263,11 @@ class KeyedKalmanFilter
 
     /// @brief Remove a measurement from the filter
     /// @param measKey Measurement key
-    void removeMeasurement(const MeasKeyType& measKey) { removeMeasurements({ measKey }); }
+    void removeMeasurement(const MeasKeyType& measKey) { removeMeasurements(std::initializer_list<MeasKeyType>{ measKey }); }
 
     /// @brief Remove measurements from the filter
     /// @param measKeys Measurement keys
-    void removeMeasurements(const std::vector<MeasKeyType>& measKeys)
+    void removeMeasurements(std::span<const MeasKeyType> measKeys)
     {
         INS_ASSERT_USER_ERROR(z.hasRows(measKeys), "Not all measurement keys you are trying to remove are in the Kalman filter.");
         std::unordered_set<MeasKeyType> measurementSet = { measKeys.begin(), measKeys.end() };
