@@ -49,9 +49,9 @@ enum ErbMessageID : uint8_t
 /// medium level of version and low level of version. Full version of protocol looks as follows:
 /// [High level].[Medium level].[Low level]
 /// For example 1.2.3, where:
-/// 1 – high level of version (verH)
-/// 2 – medium level of version (verM)
-/// 3 – low level of version (verL)
+/// 1 - high level of version (verH)
+/// 2 - medium level of version (verM)
+/// 3 - low level of version (verL)
 struct ErbVer
 {
     uint32_t iTOW = 0; ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
@@ -81,7 +81,7 @@ struct ErbStat
 {
     uint32_t iTOW = 0;     ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
     uint16_t weekGPS = 0;  ///< GPS week number of the navigation epoch [weeks]
-    uint8_t fixType = 0;   ///< GPSfix type: 0x00 – no Fix, 0x01 – Single, 0x02 – Float, 0x03 – RTK Fix
+    uint8_t fixType = 0;   ///< GPSfix type: 0x00 - no Fix, 0x01 - Single, 0x02 - Float, 0x03 - RTK Fix
     uint8_t fixStatus = 0; ///< Navigation Fix Status. If position and velocity are valid 0x01, else 0x00
     uint8_t numSV = 0;     ///< Number of used SVs
 };

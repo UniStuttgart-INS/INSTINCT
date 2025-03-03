@@ -208,8 +208,8 @@ Orbit::PosVelAccel BDSEphemeris::calcSatelliteData(const InsTime& transTime, Orb
     for (size_t i = 0; std::abs(E_k - E_k_old) > 1e-13 && i < 10; i++)
     {
         E_k_old = E_k;                                                         // Kepler’s equation ( Mk = E_k − e sin E_k ) may be solved for Eccentric anomaly (E_k) by iteration:
-        E_k = E_k + (M_k - E_k + e * std::sin(E_k)) / (1 - e * std::cos(E_k)); // – Refined Value, minimum of three iterations, (j=1,2,3)
-        LOG_DATA("      E_k {} [rad] (Eccentric anomaly)", E_k);               // – Final Value (radians)
+        E_k = E_k + (M_k - E_k + e * std::sin(E_k)) / (1 - e * std::cos(E_k)); // - Refined Value, minimum of three iterations, (j=1,2,3)
+        LOG_DATA("      E_k {} [rad] (Eccentric anomaly)", E_k);               // - Final Value (radians)
     }
 
     // auto v_k = std::atan2(std::sqrt(1 - e * e) * std::sin(E_k) / (1 - e * std::cos(E_k)), (std::cos(E_k) - e) / (1 - e * std::cos(E_k))); // True Anomaly [rad]

@@ -7,7 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file TimeOutputs.hpp
-/// @brief Binary Group 5 – Attitude Outputs
+/// @brief Binary Group 5 - Attitude Outputs
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-07-01
 
@@ -21,7 +21,7 @@
 
 namespace NAV::vendor::vectornav
 {
-/// @brief Binary Group 5 – Attitude Outputs
+/// @brief Binary Group 5 - Attitude Outputs
 struct AttitudeOutputs
 {
     /// @brief Available data in this struct

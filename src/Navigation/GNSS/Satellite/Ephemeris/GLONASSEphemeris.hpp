@@ -93,7 +93,7 @@ class GLONASSEphemeris final : public SatNavData
     /// @param[in] ageOfOperationInfo Age of oper. information (days) (E)
     /// @param[in] statusFlags Status Flags
     /// @param[in] L1L2groupDelayDifference L1/L2 group delay difference Δτ (seconds)
-    /// @param[in] URAI URAI; GLO-M/K only – raw accuracy index F_T.
+    /// @param[in] URAI URAI; GLO-M/K only - raw accuracy index F_T.
     /// @param[in] healthFlags Health Flags
     /// @param[in] tau_c Coefficient of linear polynomial of time system difference [s]
     GLONASSEphemeris(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t minute, double second,

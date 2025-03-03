@@ -16,6 +16,8 @@ namespace Instinct {
 
 /** \page SppBasics Single Point Positioning Basics
 
+\tableofcontents
+
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section SppBasics-estimators Estimators
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -38,12 +40,12 @@ Used observations
 
 \subsubsection SppBasics-measurementModel-innovation-vector Innovation vector
 
-\anchor eq-SppBasics-measurementModel-innovation \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-innovation}
 \delta\mathbf{z}(\boldsymbol{x}) = \mathbf{z} - \mathbf{h}(\mathbf{x})
 \f}
 
 <b> Measurement vector </b>
-\anchor eq-SppBasics-measurementModel-innovation-measurementVector \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-innovation-measurementVector}
 \mathbf{z} = \left\{ \begin{array}{c:c}
 \tilde{p}_r^1,\quad \tilde{p}_r^2,\quad \dots,\quad \tilde{p}_r^m &
 \tilde{d}_r^1,\quad \tilde{d}_r^2,\quad \dots,\quad \tilde{d}_r^m
@@ -51,7 +53,7 @@ Used observations
 \f}
 
 <b> Estimates vector </b>
-\anchor eq-SppBasics-measurementModel-innovation-estimatesVector \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimatesVector}
 \mathbf{h}(\mathbf{x}) = \left\{ \begin{array}{c:c}
 \hat{p}_r^1,\quad \hat{p}_r^2,\quad \dots,\quad \hat{p}_r^m &
 \hat{d}_r^1,\quad \hat{d}_r^2,\quad \dots,\quad \hat{d}_r^m
@@ -59,7 +61,7 @@ Used observations
 \f}
 
 - Pseudorange estimates
-  \anchor eq-SppBasics-measurementModel-innovation-estimates-pseudorange \f{equation}{
+  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorange}
   \hat{p}_r^s = \hat{\rho}_r^s + c [d\hat{t}_r - d\hat{t}^s + d\hat{t}_{ISB}] + \hat{I}_r^s + \hat{T}_r^s + \delta\hat{\rho}_r^s
   \f}
   where
@@ -74,17 +76,17 @@ Used observations
   (\cite SpringerHandbookGNSS2017 Springer Handbook, ch. 21.1.1, eq. 21.1, p. 606)
 
 - Pseudorange-rate estimates
-  \anchor eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate \f{equation}{
-  \hat{d}_r^s = {\mathbf{u}_{as}^e}^T [\mathbf{\hat{v}}^e_s - \mathbf{\hat{v}}^e_r] + c [d\hat{\dot{t}}_r - d\hat{\dot{t}}^s + d\hat{\dot{t}}_{ISB}] - \delta\hat{\dot{\rho}}_r^s
+  \fl{equation,eq-SppBasics-measurementModel-innovation-estimates-pseudorangeRate}
+  \hat{d}_r^s = {\mathbf{u}_{as}^e}^T [\mathbf{\hat{v}}^e_s - \mathbf{\hat{v}}^e_r] + c [d\hat{\dotup{t}}_r - d\hat{\dotup{t}}^s + d\hat{\dotup{t}}_{ISB}] - \delta\hat{\dotup{\rho}}_r^s
   \f}
   where
   - \f$ \mathbf{u}_{rs}^e \f$ Line-of-Sight vector
   - \f$ \mathbf{\hat{v}}^e_s \f$ Satellite velocity [m/s]
   - \f$ \mathbf{\hat{v}}^e_r \f$ Receiver velocity [m/s]
-  - \f$ d\hat{\dot{t}}_r \f$ Receiver clock drift [s/s]
-  - \f$ d\hat{\dot{t}}^s \f$ Satellite clock drift [s/s]
-  - \f$ d\hat{\dot{t}}_{ISB} \f$ Inter-system bias clock drift [s/s]
-  - \f$ \delta\hat{\dot{\rho}}_r^s \f$ Range-rate Sagnac correction [m/s]
+  - \f$ d\hat{\dotup{t}}_r \f$ Receiver clock drift [s/s]
+  - \f$ d\hat{\dotup{t}}^s \f$ Satellite clock drift [s/s]
+  - \f$ d\hat{\dotup{t}}_{ISB} \f$ Inter-system bias clock drift [s/s]
+  - \f$ \delta\hat{\dotup{\rho}}_r^s \f$ Range-rate Sagnac correction [m/s]
 
   (\cite Groves2013 Groves, ch. 9.4.1, eq. 9.142, p. 412 (Sagnac correction different sign))
 
@@ -92,7 +94,7 @@ Used observations
 \subsubsection SppBasics-measurementModel-innovation-estimates Measurement estimates
 
 <b> Receiver-satellite range </b>
-\anchor eq-SppBasics-measurementModel-innovation-estimates-rho \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-rho}
 \hat{\rho}_r^s = \mid(\mathbf{x}^s\left(t_{\mathrm{E}}\right) - \mathbf{x}_r\left(t_{\mathrm{A}}\right))\mid
 \f}
 
@@ -103,14 +105,14 @@ See \ref Ionosphere-Model-Klobuchar
 See \ref Troposphere-Model-Saastamoinen
 
 <b> Sagnac correction </b>
-\anchor eq-SppBasics-measurementModel-innovation-estimates-sagnac \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac}
 \delta\hat{\rho}_r^s = \frac{1}{c}\left(\boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)-\boldsymbol{x}^{s}\left(t_{\mathrm{E}}\right)\right) \cdot \left(\boldsymbol{\omega}_{ie} \times \boldsymbol{x}_{r}\left(t_{\mathrm{A}}\right)\right)
 \f}
 (\cite SpringerHandbookGNSS2017 Springer Handbook, ch. 19.1.1, eq. 19.7, p. 562)
 
 <b> Range-rate Sagnac correction </b>
-\anchor eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate \f{equation}{
-\delta\hat{\dot{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right)
+\fl{equation,eq-SppBasics-measurementModel-innovation-estimates-sagnac-rate}
+\delta\hat{\dotup{\rho}}_r^s = \frac{\boldsymbol{\omega}_{ie}}{c}\left(v_y^s \cdot x_r + y^s \cdot v_{x,r} - v_x^s \cdot y_r - x^s \cdot v_{y,r}\right)
 \f}
 (\cite Groves2013 Groves, ch. 8.5.3, eq. 8.46, p. 342)
 
@@ -118,7 +120,7 @@ See \ref Troposphere-Model-Saastamoinen
 
 \subsection SppBasics-measurementModel-sensitivityMatrix Design matrix / Measurement sensitivity matrix
 
-\anchor eq-SppBasics-measurementModel-sensitivityMatrix-general \f{equation}{
+\fl{equation,eq-SppBasics-measurementModel-sensitivityMatrix-general}
 \mathbf{H}_k = \left.\frac{\delta\mathbf{h}(\mathbf{x}, t_k)}{\delta\mathbf{x}}\right|_{x=\hat{x}_k^-}
 \f}
 

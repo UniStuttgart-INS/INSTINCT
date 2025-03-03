@@ -116,9 +116,9 @@ struct TimeInfo
     ///
     /// Name         | Description
     /// ------------ | ----------------------------------
-    /// timeOk       | 1 – GpsTow is valid.
-    /// dateOk       | 1 – TimeGps and GpsWeek are valid.
-    /// utcTimeValid | 1 – UTC time is valid.
+    /// timeOk       | 1 - GpsTow is valid.
+    /// dateOk       | 1 - TimeGps and GpsWeek are valid.
+    /// utcTimeValid | 1 - UTC time is valid.
     /// resv         | Reserved for future use.
     TimeStatus status{};
     /// @brief Amount of leap seconds
@@ -490,9 +490,9 @@ constexpr RawMeas::SatRawElement::Flags operator&(RawMeas::SatRawElement::Flags 
 /// 0+1 | AttitudeQuality         | Provides an indication of the quality of the attitude solution. 0 - Excellent, 1 - Good, 2 - Bad, 3 - Not tracking
 ///  2  | GyroSaturation          | At least one gyro axis is currently saturated.
 ///  3  | GyroSaturationRecovery  | Filter is in the process of recovering from a gyro saturation event.
-/// 4+5 | MagDisturbance          | A magnetic DC disturbance has been detected. 0 – No magnetic disturbance. 1 to 3 – Magnetic disturbance is present.
+/// 4+5 | MagDisturbance          | A magnetic DC disturbance has been detected. 0 - No magnetic disturbance. 1 to 3 - Magnetic disturbance is present.
 ///  6  | MagSaturation           | At least one magnetometer axis is currently saturated.
-/// 7+8 | AccDisturbance          | A strong acceleration disturbance has been detected. 0 – No acceleration disturbance. 1 to 3 – Acceleration disturbance has been detected.
+/// 7+8 | AccDisturbance          | A strong acceleration disturbance has been detected. 0 - No acceleration disturbance. 1 to 3 - Acceleration disturbance has been detected.
 ///  9  | AccSaturation           | At least one accelerometer axis is currently saturated.
 /// 11  | KnownMagDisturbance     | A known magnetic disturbance has been reported by the user and the magnetometer is currently tuned out.
 /// 12  | KnownAccelDisturbance   | A known acceleration disturbance has been reported by the user and the accelerometer is currently tuned out.

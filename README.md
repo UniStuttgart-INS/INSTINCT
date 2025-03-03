@@ -110,7 +110,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
   ```
 - Documentation
   ```shell
-  sudo pacman -S --noconfirm --needed doxygen texlive-basic
+  sudo pacman -S --noconfirm --needed doxygen texlive-most pdf2svg ghostscript
   ```
 - Optional
   - Compiler cache
@@ -136,7 +136,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 - Documentation
   - TexLive for citations
     ```shell
-    sudo apt install -y texlive-base
+    sudo apt install -y texlive texlive-lang-german texlive-latex-extra ghostscript pdf2svg
     ```
   - Ubuntu has too old doxygen version
     ```shell
@@ -177,7 +177,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
   ```
 - Documentation
   ```shell
-  brew install doxygen texlive
+  brew install doxygen texlive pdf2svg
   ```
 - Optional
   - Compiler cache

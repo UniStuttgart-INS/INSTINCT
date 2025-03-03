@@ -2096,22 +2096,22 @@ class VectorNavBinaryOutput : public NodeData
 
     // ------------------------------------------ Public members ---------------------------------------------
 
-    /// @brief Binary Group 2 – Time Outputs
+    /// @brief Binary Group 2 - Time Outputs
     std::shared_ptr<vendor::vectornav::TimeOutputs> timeOutputs = nullptr;
 
-    /// @brief Binary Group 3 – IMU Outputs
+    /// @brief Binary Group 3 - IMU Outputs
     std::shared_ptr<vendor::vectornav::ImuOutputs> imuOutputs = nullptr;
 
-    /// @brief Binary Group 4 – GNSS1 Outputs
+    /// @brief Binary Group 4 - GNSS1 Outputs
     std::shared_ptr<vendor::vectornav::GnssOutputs> gnss1Outputs = nullptr;
 
-    /// @brief Binary Group 5 – Attitude Outputs
+    /// @brief Binary Group 5 - Attitude Outputs
     std::shared_ptr<vendor::vectornav::AttitudeOutputs> attitudeOutputs = nullptr;
 
-    /// @brief Binary Group 6 – INS Outputs
+    /// @brief Binary Group 6 - INS Outputs
     std::shared_ptr<vendor::vectornav::InsOutputs> insOutputs = nullptr;
 
-    /// @brief Binary Group 7 – GNSS2 Outputs
+    /// @brief Binary Group 7 - GNSS2 Outputs
     std::shared_ptr<vendor::vectornav::GnssOutputs> gnss2Outputs = nullptr;
 
     /// Position and rotation information for conversion from platform to body frame

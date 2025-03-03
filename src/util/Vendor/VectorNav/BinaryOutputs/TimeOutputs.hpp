@@ -7,7 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 /// @file TimeOutputs.hpp
-/// @brief Binary Group 2 – Time Outputs
+/// @brief Binary Group 2 - Time Outputs
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-07-01
 
@@ -20,7 +20,7 @@
 
 namespace NAV::vendor::vectornav
 {
-/// @brief Binary Group 2 – Time Outputs
+/// @brief Binary Group 2 - Time Outputs
 struct TimeOutputs
 {
     /// @brief Available data in this struct
@@ -82,9 +82,9 @@ struct TimeOutputs
     ///
     /// Name         | Description
     /// ------------ | ----------------------------------
-    /// timeOk       | 1 – GpsTow is valid.
-    /// dateOk       | 1 – TimeGps and GpsWeek are valid.
-    /// utcTimeValid | 1 – UTC time is valid.
+    /// timeOk       | 1 - GpsTow is valid.
+    /// dateOk       | 1 - TimeGps and GpsWeek are valid.
+    /// utcTimeValid | 1 - UTC time is valid.
     /// resv         | Reserved for future use.
     TimeStatus timeStatus{};
 };

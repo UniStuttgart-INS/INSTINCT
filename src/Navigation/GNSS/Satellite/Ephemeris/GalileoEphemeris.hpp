@@ -132,8 +132,8 @@ class GalileoEphemeris final : public SatNavData
 
     /// SISA (Signal in space accuracy) [m]
     ///
-    /// Signal – In – Space Accuracy (SISA) is a prediction of the minimum standard deviation
-    /// (1-sigma) of the unbiased Gaussian distribution which overbounds the Signal – In – Space
+    /// Signal - In - Space Accuracy (SISA) is a prediction of the minimum standard deviation
+    /// (1-sigma) of the unbiased Gaussian distribution which overbounds the Signal - In - Space
     /// Error (SISE) predictable distribution for all possible user locations within the satellite
     /// coverage area. When no accurate prediction is available (SISA = NAPA), this is an indicator
     /// of a potential anomalous SIS.

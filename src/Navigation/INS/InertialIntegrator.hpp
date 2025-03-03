@@ -198,4 +198,9 @@ void from_json(const json& j, InertialIntegrator& data);
 /// @return String representation of the enum
 const char* to_string(InertialIntegrator::IntegrationAlgorithm algorithm);
 
+/// @brief Converts the enum to a string
+/// @param[in] frame Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(InertialIntegrator::IntegrationFrame frame);
+
 } // namespace NAV

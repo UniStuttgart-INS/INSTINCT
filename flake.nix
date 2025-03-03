@@ -32,8 +32,12 @@
               gcc13
               gcc13Stdenv
               doxygen
-              texliveSmall
+              texliveFull
               graphviz
+              mscgen
+              dia
+              ghostscript
+              pdf2svg
 
               ccache
               ccacheStdenv

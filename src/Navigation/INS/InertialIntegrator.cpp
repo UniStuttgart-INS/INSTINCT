@@ -539,4 +539,16 @@ const char* to_string(InertialIntegrator::IntegrationAlgorithm algorithm)
     return "";
 }
 
+const char* to_string(InertialIntegrator::IntegrationFrame frame)
+{
+    switch (frame)
+    {
+    case InertialIntegrator::IntegrationFrame::ECEF:
+        return "ECEF";
+    case InertialIntegrator::IntegrationFrame::NED:
+        return "NED";
+    }
+    return "";
+}
+
 } // namespace NAV
