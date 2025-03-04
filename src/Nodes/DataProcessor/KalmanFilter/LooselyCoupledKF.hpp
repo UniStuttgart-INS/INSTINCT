@@ -368,10 +368,8 @@ class LooselyCoupledKF : public Node
     /// Possible Units for the GNSS measurement uncertainty for the position (standard deviation σ or Variance σ²)
     enum class GnssMeasurementUncertaintyPositionUnit : uint8_t
     {
-        rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
-        rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
-        meter2,       ///< Variance NED [m^2, m^2, m^2]
-        meter,        ///< Standard deviation NED [m, m, m]
+        meter2, ///< Variance [m^2, m^2, m^2]
+        meter,  ///< Standard deviation [m, m, m]
     };
     /// Gui selection for the Unit of the GNSS measurement uncertainty for the position
     GnssMeasurementUncertaintyPositionUnit _gnssMeasurementUncertaintyPositionUnit = GnssMeasurementUncertaintyPositionUnit::meter;
@@ -755,11 +753,15 @@ class LooselyCoupledKF : public Node
                                                                                             const double& scale);
 
     /// @brief Measurement noise covariance matrix 𝐑
-    /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
-    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
+    /// @param[in] posVelObs Position and velocity observation
+    /// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
+    /// @param[in] R_N Meridian radius of curvature in [m]
+    /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @return The 6x6 measurement covariance matrix 𝐑
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFMeas, 6, 6> n_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt,
-                                                                                                  const Eigen::Vector3d& gnssVarianceVelocity);
+    [[nodiscard]] KeyedMatrix<double, KFMeas, KFMeas, 6, 6> n_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs,
+                                                                                           const Eigen::Vector3d& lla_position,
+                                                                                           double R_N,
+                                                                                           double R_E) const;
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] baroVarianceHeight Variance of height in [m²]
@@ -767,11 +769,9 @@ class LooselyCoupledKF : public Node
     [[nodiscard]] static KeyedMatrix<double, KFMeas, KFMeas, 1, 1> n_measurementNoiseCovariance_R(const double& baroVarianceHeight);
 
     /// @brief Measurement noise covariance matrix 𝐑
-    /// @param[in] gnssVariancePosition Variances of the position in [m²]
-    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m²/s²]
+    /// @param[in] posVelObs Position and velocity observation
     /// @return The 6x6 measurement covariance matrix 𝐑
-    [[nodiscard]] static KeyedMatrix<double, KFMeas, KFMeas, 6, 6> e_measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVariancePosition,
-                                                                                                  const Eigen::Vector3d& gnssVarianceVelocity);
+    [[nodiscard]] KeyedMatrix<double, KFMeas, KFMeas, 6, 6> e_measurementNoiseCovariance_R(const std::shared_ptr<const PosVel>& posVelObs) const;
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] lla_positionMeasurement Position measurement as Lat Lon Alt in [rad rad m]
