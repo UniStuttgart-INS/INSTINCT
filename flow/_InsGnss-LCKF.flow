@@ -1,10 +1,37 @@
 {
+    "bottomViewHeight": 200.0,
     "colormaps": [],
+    "commonLog": {
+        "originPosition": {
+            "frame": "LLA",
+            "position": {
+                "0": {
+                    "0": 2.9086740704441076e-18
+                },
+                "1": {
+                    "0": 0.004491576411396717
+                },
+                "2": {
+                    "0": 0.019598199178490924
+                }
+            }
+        },
+        "useGuiInputs": false
+    },
     "fonts": {
         "useBigDefaultFont": false,
         "useBigMonoFont": false,
+        "useBigPanelFont": false,
         "useBigWindowFont": false
     },
+    "gridLinesEnabled": 0.1568627506494522,
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 301.0,
+        "rightWidth": 899.0
+    },
+    "lightMode": false,
     "links": {
         "link-16": {
             "endPinId": 10,
@@ -231,16 +258,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             }
                         ],
                         "size": 0,
@@ -386,16 +434,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             }
                         ],
                         "size": 0,
@@ -413,9 +482,6 @@
                             },
                             {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "Time since startup [ns]"
                             },
                             {
                                 "displayName": "Accel X [m/s^2]"
@@ -648,16 +714,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             },
                             {
                                 "displayName": "KF State Roll error [deg]"
@@ -730,6 +817,18 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Barometric height bias [m]"
+                            },
+                            {
+                                "displayName": "Barometric height bias StdDev [m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale [m/m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale StdDev [m/m]"
                             }
                         ],
                         "size": 0,
@@ -778,6 +877,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -839,6 +942,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -935,6 +1042,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 3,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1031,6 +1142,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 4,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1127,6 +1242,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1223,6 +1342,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1319,6 +1442,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 7,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1415,6 +1542,10 @@
                                         -1
                                     ],
                                     "colormapMaskDataCmpIdx": 8,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1496,7 +1627,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 67,
+                                "dataIndex": 74,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1510,7 +1641,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 67,
+                                    "colormapMaskDataCmpIdx": 74,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1528,13 +1663,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "X",
+                                    "legendName": "Accelerometer bias b_X [m/s^2] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 67,
+                                    "markerColormapMaskDataCmpIdx": 74,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1557,7 +1692,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 68,
+                                "dataIndex": 75,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1571,7 +1706,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 68,
+                                    "colormapMaskDataCmpIdx": 75,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1589,13 +1728,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Y",
+                                    "legendName": "Accelerometer bias b_Y [m/s^2] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 68,
+                                    "markerColormapMaskDataCmpIdx": 75,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1618,7 +1757,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 69,
+                                "dataIndex": 76,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1632,7 +1771,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 69,
+                                    "colormapMaskDataCmpIdx": 76,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1650,13 +1793,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Z",
+                                    "legendName": "Accelerometer bias b_Z [m/s^2] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 69,
+                                    "markerColormapMaskDataCmpIdx": 76,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1714,7 +1857,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 70,
+                                "dataIndex": 77,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1728,7 +1871,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 70,
+                                    "colormapMaskDataCmpIdx": 77,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1746,13 +1893,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "X",
+                                    "legendName": "Gyroscope bias b_X [rad/s] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 70,
+                                    "markerColormapMaskDataCmpIdx": 77,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1775,7 +1922,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 71,
+                                "dataIndex": 78,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1789,7 +1936,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 71,
+                                    "colormapMaskDataCmpIdx": 78,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1807,13 +1958,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Y",
+                                    "legendName": "Gyroscope bias b_Y [rad/s] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 71,
+                                    "markerColormapMaskDataCmpIdx": 78,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1836,7 +1987,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 72,
+                                "dataIndex": 79,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 3,
                                 "style": {
@@ -1850,7 +2001,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 72,
+                                    "colormapMaskDataCmpIdx": 79,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1868,13 +2023,13 @@
                                     "eventMarkerWeight": 2.0,
                                     "eventTooltipFilterRegex": "",
                                     "eventsEnabled": false,
-                                    "legendName": "Z",
+                                    "legendName": "Gyroscope bias b_Z [rad/s] (LCKF)",
                                     "lineType": 1,
                                     "markerColormapMask": [
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 72,
+                                    "markerColormapMaskDataCmpIdx": 79,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1964,7 +2119,11 @@
         },
         "node-37": {
             "data": {
+                "baroHeightMeasurementUncertaintyOverride": false,
+                "barometricHeightMeasurementUncertainty": 1.0,
+                "barometricHeightMeasurementUncertaintyUnit": 1,
                 "checkKalmanMatricesRanks": true,
+                "enableBaroHgt": false,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
                         "0": 1.0
@@ -1977,7 +2136,7 @@
                     }
                 },
                 "gnssMeasurementUncertaintyPositionOverride": true,
-                "gnssMeasurementUncertaintyPositionUnit": 3,
+                "gnssMeasurementUncertaintyPositionUnit": 1,
                 "gnssMeasurementUncertaintyVelocity": {
                     "0": {
                         "0": 0.01
@@ -2062,6 +2221,8 @@
                     }
                 },
                 "initCovarianceBiasGyroUnit": 2,
+                "initCovarianceBiasHeight": 100.0,
+                "initCovarianceBiasHeightUnit": 0,
                 "initCovariancePosition": {
                     "0": {
                         "0": 100.0
@@ -2074,6 +2235,8 @@
                     }
                 },
                 "initCovariancePositionUnit": 3,
+                "initCovarianceScaleHeight": 0.01,
+                "initCovarianceScaleHeightUnit": 0,
                 "initCovarianceVelocity": {
                     "0": {
                         "0": 10.0
@@ -2100,6 +2263,10 @@
                 "randomProcessGyro": 0,
                 "stdevAccelBiasUnits": 1,
                 "stdevAccelNoiseUnits": 1,
+                "stdevBaroHeightBias": 1e-06,
+                "stdevBaroHeightBiasUnits": 0,
+                "stdevBaroHeightScale": 1e-08,
+                "stdevBaroHeightScaleUnits": 0,
                 "stdevGyroBiasUnits": 0,
                 "stdevGyroNoiseUnits": 1,
                 "stdev_bad": {
@@ -3092,6 +3259,10 @@
                 "dynamicInputPins": {
                     "nDynamicInputPins": 3
                 },
+                "maxTimeDiffMultiplierFrequency": 2.1,
+                "maxTimeStepMultiplierFrequency": 5.0,
+                "noOutputIfTimeDiffLarge": true,
+                "noOutputIfTimeStepLarge": true,
                 "outputMissingAsNaN": false,
                 "refPinIdx": 0
             },
@@ -3129,5 +3300,6 @@
             },
             "type": "Combiner"
         }
-    }
+    },
+    "transparentWindows": 0.9399999976158142
 }
