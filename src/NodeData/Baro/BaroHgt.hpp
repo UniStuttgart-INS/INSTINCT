@@ -90,6 +90,8 @@ class BaroHgt : public NodeData
             baro_height = value;
             break;
         case 1: // BaroHgt StDev [m]
+            baro_heightStdev = value;
+            break;
         default:
             return false;
         }

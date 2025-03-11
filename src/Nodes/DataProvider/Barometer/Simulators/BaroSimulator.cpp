@@ -230,5 +230,7 @@ void NAV::BaroSimulator::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t 
 
     pressureObs->baro_pressure = _pressure0 * std::pow(1 - _lapserate * (PosObs->altitude() - _geoidhgt) / _temp0, _exponent) + _pressureRng.getRand_normalDist(0.0, _pressurenoise);
 
+    pressureObs->baro_pressureStdev = _pressurenoise;
+
     invokeCallbacks(OUTPUT_PORT_INDEX_BAROPRESSURE, pressureObs);
 }

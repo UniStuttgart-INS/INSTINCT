@@ -182,5 +182,11 @@ void NAV::PressToHgt::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
 
     baroheight->baro_height = _temp0 / _lapserate * (1.0 - std::pow(pressureObs->baro_pressure / _pressure0, 1.0 / _exponent)) + _geoidhgt;
 
+    // if uncertainty of pressure value is provided carry out error propagation for barometric height (assuming all other parameters are error free)
+    if (pressureObs->baro_pressureStdev.has_value())
+    {
+        baroheight->baro_heightStdev = std::fabs(_temp0 / (_lapserate * _exponent * pressureObs->baro_pressure) * std::pow(pressureObs->baro_pressure / _pressure0, 1.0 / _exponent - 1.0)) * pressureObs->baro_pressureStdev.value();
+    }
+
     invokeCallbacks(OUTPUT_PORT_INDEX_BAROHEIGHT, baroheight);
 }

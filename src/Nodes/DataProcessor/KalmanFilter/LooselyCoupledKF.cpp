@@ -343,7 +343,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             // ----------------------------------------- Barometer -------------------------------------------
             if (_enableBaroHgt)
             {
-                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the baro height##{}", size_t(id))
+                if (gui::widgets::InputDoubleWithUnit(fmt::format("Standard deviation of the baro height bias##{}", size_t(id))
                                                           .c_str(),
                                                       configWidth, unitWidth, &_stdevBaroHeightBias, _stdevBaroHeightBiasUnits,
                                                       "m\0\0", 0.0, 0.0, "%.2e", ImGuiInputTextFlags_CharsScientific))

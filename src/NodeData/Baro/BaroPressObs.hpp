@@ -44,12 +44,13 @@ class BaroPressObs : public NodeData
     [[nodiscard]] static std::vector<std::string> GetStaticDataDescriptors()
     {
         return {
-            "BaroPressObs [hPa]"
+            "BaroPressObs [hPa]",
+            "BaroPressObs StDev [hPa]"
         };
     }
 
     /// @brief Get the number of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 1; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return 2; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -62,10 +63,14 @@ class BaroPressObs : public NodeData
     /// @return Value if in the observation
     [[nodiscard]] std::optional<double> getValueAt(size_t idx) const override
     {
-        INS_ASSERT(idx < GetStaticDescriptorCount());
-        if (idx == 0) // BaroPressObs [hPa]
+        switch (idx)
         {
+        case 0: // BaroPressObs [hPa]
             return baro_pressure;
+        case 1: // BaroPressObs StDev [hPa]
+            return baro_pressureStdev;
+        default:
+            return std::nullopt;
         }
         return std::nullopt;
     }
@@ -77,12 +82,15 @@ class BaroPressObs : public NodeData
     [[nodiscard]] bool setValueAt(size_t idx, double value) override
     {
         INS_ASSERT(idx < GetStaticDescriptorCount());
-        if (idx == 0)
+        switch (idx)
         {
+        case 0: // Baro pressure [hPa]
             baro_pressure = value;
-        }
-        else
-        {
+            break;
+        case 1: // Baro pressure StDev [hPa]
+            baro_pressureStdev = value;
+            break;
+        default:
             return false;
         }
 
@@ -91,6 +99,9 @@ class BaroPressObs : public NodeData
 
     /// Barometric pressure [hPa]
     double baro_pressure{ std::nan("") };
+
+    /// Standard deviation of barometric pressure
+    std::optional<double> baro_pressureStdev;
 };
 
 } // namespace NAV
