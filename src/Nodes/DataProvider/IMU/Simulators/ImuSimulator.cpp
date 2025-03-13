@@ -9,20 +9,20 @@
 #include "ImuSimulator.hpp"
 
 #include <ctime>
+#include <optional>
 
+#include "Navigation/Time/InsTime.hpp"
 #include "util/Logger.hpp"
-#include "util/StringUtil.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/LocalNavFrame/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
-#include "Navigation/Math/NumericalIntegration.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Transformations/Units.hpp"
-#include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
 #include <Eigen/src/Geometry/AngleAxis.h>
+#include <Eigen/src/Geometry/Quaternion.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
@@ -253,8 +253,7 @@ void NAV::ImuSimulator::guiConfig()
 
                 ImGui::TextUnformatted("Attitude information:");
                 ImGui::SameLine();
-                gui::widgets::HelpMarker("This is optional. If not provided the simulator will calculate\nit using a rotation minimizing frame.\n\n"
-                                         "You can either provide the attitude as an angle or quaternion.");
+                gui::widgets::HelpMarker("You can either provide the attitude as an angle or quaternion.");
                 if (ImGui::BeginTable(fmt::format("##Attitude ({})", size_t(id)).c_str(), 5,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoHostExtendX))
                 {
@@ -843,96 +842,124 @@ void NAV::ImuSimulator::restore(json const& j)
     }
 }
 
-NAV::InsTime NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
+std::optional<NAV::InsTime> NAV::ImuSimulator::getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto gpsCycleIter = std::ranges::find(description, "GpsCycle");
     auto gpsWeekIter = std::ranges::find(description, "GpsWeek");
     auto gpsTowIter = std::ranges::find(description, "GpsToW [s]");
     if (gpsCycleIter != description.end() && gpsWeekIter != description.end() && gpsTowIter != description.end())
     {
-        auto gpsCycle = static_cast<int32_t>(std::get<double>(line.at(static_cast<size_t>(gpsCycleIter - description.begin()))));
-        auto gpsWeek = static_cast<int32_t>(std::get<double>(line.at(static_cast<size_t>(gpsWeekIter - description.begin()))));
-        auto gpsTow = std::get<double>(line.at(static_cast<size_t>(gpsTowIter - description.begin())));
-        return { gpsCycle, gpsWeek, gpsTow };
+        const auto* gpsCycle = std::get_if<double>(&line.at(static_cast<size_t>(gpsCycleIter - description.begin())));
+        const auto* gpsWeek = std::get_if<double>(&line.at(static_cast<size_t>(gpsWeekIter - description.begin())));
+        const auto* gpsTow = std::get_if<double>(&line.at(static_cast<size_t>(gpsTowIter - description.begin())));
+        if (gpsCycle && gpsWeek && gpsTow)
+        {
+            return InsTime{ static_cast<int32_t>(*gpsCycle), static_cast<int32_t>(*gpsWeek), *gpsTow };
+        }
     }
-
-    auto yearUTCIter = std::ranges::find(description, "YearUTC");
-    auto monthUTCIter = std::ranges::find(description, "MonthUTC");
-    auto dayUTCIter = std::ranges::find(description, "DayUTC");
-    auto hourUTCIter = std::ranges::find(description, "HourUTC");
-    auto minUTCIter = std::ranges::find(description, "MinUTC");
-    auto secUTCIter = std::ranges::find(description, "SecUTC");
-    if (yearUTCIter != description.end() && monthUTCIter != description.end() && dayUTCIter != description.end()
-        && hourUTCIter != description.end() && minUTCIter != description.end() && secUTCIter != description.end())
+    else
     {
-        auto yearUTC = static_cast<uint16_t>(std::get<double>(line.at(static_cast<size_t>(yearUTCIter - description.begin()))));
-        auto monthUTC = static_cast<uint16_t>(std::get<double>(line.at(static_cast<size_t>(monthUTCIter - description.begin()))));
-        auto dayUTC = static_cast<uint16_t>(std::get<double>(line.at(static_cast<size_t>(dayUTCIter - description.begin()))));
-        auto hourUTC = static_cast<uint16_t>(std::get<double>(line.at(static_cast<size_t>(hourUTCIter - description.begin()))));
-        auto minUTC = static_cast<uint16_t>(std::get<double>(line.at(static_cast<size_t>(minUTCIter - description.begin()))));
-        auto secUTC = std::get<double>(line.at(static_cast<size_t>(secUTCIter - description.begin())));
-        return { yearUTC, monthUTC, dayUTC, hourUTC, minUTC, secUTC, UTC };
+        auto yearUTCIter = std::ranges::find(description, "YearUTC");
+        auto monthUTCIter = std::ranges::find(description, "MonthUTC");
+        auto dayUTCIter = std::ranges::find(description, "DayUTC");
+        auto hourUTCIter = std::ranges::find(description, "HourUTC");
+        auto minUTCIter = std::ranges::find(description, "MinUTC");
+        auto secUTCIter = std::ranges::find(description, "SecUTC");
+        if (yearUTCIter != description.end() && monthUTCIter != description.end() && dayUTCIter != description.end()
+            && hourUTCIter != description.end() && minUTCIter != description.end() && secUTCIter != description.end())
+        {
+            const auto* yearUTC = std::get_if<double>(&line.at(static_cast<size_t>(yearUTCIter - description.begin())));
+            const auto* monthUTC = std::get_if<double>(&line.at(static_cast<size_t>(monthUTCIter - description.begin())));
+            const auto* dayUTC = std::get_if<double>(&line.at(static_cast<size_t>(dayUTCIter - description.begin())));
+            const auto* hourUTC = std::get_if<double>(&line.at(static_cast<size_t>(hourUTCIter - description.begin())));
+            const auto* minUTC = std::get_if<double>(&line.at(static_cast<size_t>(minUTCIter - description.begin())));
+            const auto* secUTC = std::get_if<double>(&line.at(static_cast<size_t>(secUTCIter - description.begin())));
+            if (yearUTC && monthUTC && dayUTC && hourUTC && minUTC && secUTC)
+            {
+                return InsTime{
+                    static_cast<uint16_t>(*yearUTC), static_cast<uint16_t>(*monthUTC), static_cast<uint16_t>(*dayUTC),
+                    static_cast<uint16_t>(*hourUTC), static_cast<uint16_t>(*minUTC), *secUTC, UTC
+                };
+            }
+        }
     }
 
     LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the time.", nameId());
-    return {};
+    return std::nullopt;
 }
 
-Eigen::Vector3d NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
+std::optional<Eigen::Vector3d> NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto posXIter = std::ranges::find(description, "Pos ECEF X [m]");
     auto posYIter = std::ranges::find(description, "Pos ECEF Y [m]");
     auto posZIter = std::ranges::find(description, "Pos ECEF Z [m]");
     if (posXIter != description.end() && posYIter != description.end() && posZIter != description.end())
     {
-        auto posX = std::get<double>(line.at(static_cast<size_t>(posXIter - description.begin())));
-        auto posY = std::get<double>(line.at(static_cast<size_t>(posYIter - description.begin())));
-        auto posZ = std::get<double>(line.at(static_cast<size_t>(posZIter - description.begin())));
-        return { posX, posY, posZ };
+        const auto* posX = std::get_if<double>(&line.at(static_cast<size_t>(posXIter - description.begin())));
+        const auto* posY = std::get_if<double>(&line.at(static_cast<size_t>(posYIter - description.begin())));
+        const auto* posZ = std::get_if<double>(&line.at(static_cast<size_t>(posZIter - description.begin())));
+        if (posX && posY && posZ)
+        {
+            return Eigen::Vector3d{ *posX, *posY, *posZ };
+        }
     }
-
-    auto latIter = std::ranges::find(description, "Latitude [deg]");
-    auto lonIter = std::ranges::find(description, "Longitude [deg]");
-    auto altIter = std::ranges::find(description, "Altitude [m]");
-    if (latIter != description.end() && lonIter != description.end() && altIter != description.end())
+    else
     {
-        auto lat = deg2rad(std::get<double>(line.at(static_cast<size_t>(latIter - description.begin()))));
-        auto lon = deg2rad(std::get<double>(line.at(static_cast<size_t>(lonIter - description.begin()))));
-        auto alt = std::get<double>(line.at(static_cast<size_t>(altIter - description.begin())));
-        return trafo::lla2ecef_WGS84(Eigen::Vector3d(lat, lon, alt));
+        auto latIter = std::ranges::find(description, "Latitude [deg]");
+        auto lonIter = std::ranges::find(description, "Longitude [deg]");
+        auto altIter = std::ranges::find(description, "Altitude [m]");
+        if (latIter != description.end() && lonIter != description.end() && altIter != description.end())
+        {
+            const auto* lat = std::get_if<double>(&line.at(static_cast<size_t>(latIter - description.begin())));
+            const auto* lon = std::get_if<double>(&line.at(static_cast<size_t>(lonIter - description.begin())));
+            const auto* alt = std::get_if<double>(&line.at(static_cast<size_t>(altIter - description.begin())));
+            if (lat && lon && alt)
+            {
+                return trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(*lat), deg2rad(*lon), *alt));
+            }
+        }
     }
 
     LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the position.", nameId());
-    return { std::nan(""), std::nan(""), std::nan("") };
+    return std::nullopt;
 }
 
-Eigen::Quaterniond NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description)
+std::optional<Eigen::Quaterniond> NAV::ImuSimulator::n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description) const
 {
     auto rollIter = std::ranges::find(description, "Roll [deg]");
     auto pitchIter = std::ranges::find(description, "Pitch [deg]");
     auto yawIter = std::ranges::find(description, "Yaw [deg]");
     if (rollIter != description.end() && pitchIter != description.end() && yawIter != description.end())
     {
-        auto roll = std::get<double>(line.at(static_cast<size_t>(rollIter - description.begin())));
-        auto pitch = std::get<double>(line.at(static_cast<size_t>(pitchIter - description.begin())));
-        auto yaw = std::get<double>(line.at(static_cast<size_t>(yawIter - description.begin())));
-        return trafo::n_Quat_b(deg2rad(roll), deg2rad(pitch), deg2rad(yaw));
+        const auto* roll = std::get_if<double>(&line.at(static_cast<size_t>(rollIter - description.begin())));
+        const auto* pitch = std::get_if<double>(&line.at(static_cast<size_t>(pitchIter - description.begin())));
+        const auto* yaw = std::get_if<double>(&line.at(static_cast<size_t>(yawIter - description.begin())));
+        if (roll && pitch && yaw)
+        {
+            return trafo::n_Quat_b(deg2rad(*roll), deg2rad(*pitch), deg2rad(*yaw));
+        }
     }
-
-    auto quatWIter = std::ranges::find(description, "n_Quat_b w");
-    auto quatXIter = std::ranges::find(description, "n_Quat_b x");
-    auto quatYIter = std::ranges::find(description, "n_Quat_b y");
-    auto quatZIter = std::ranges::find(description, "n_Quat_b z");
-    if (quatWIter != description.end() && quatXIter != description.end() && quatYIter != description.end() && quatZIter != description.end())
+    else
     {
-        auto w = std::get<double>(line.at(static_cast<size_t>(quatWIter - description.begin())));
-        auto x = std::get<double>(line.at(static_cast<size_t>(quatXIter - description.begin())));
-        auto y = std::get<double>(line.at(static_cast<size_t>(quatYIter - description.begin())));
-        auto z = std::get<double>(line.at(static_cast<size_t>(quatZIter - description.begin())));
-        return { w, x, y, z };
+        auto quatWIter = std::ranges::find(description, "n_Quat_b w");
+        auto quatXIter = std::ranges::find(description, "n_Quat_b x");
+        auto quatYIter = std::ranges::find(description, "n_Quat_b y");
+        auto quatZIter = std::ranges::find(description, "n_Quat_b z");
+        if (quatWIter != description.end() && quatXIter != description.end() && quatYIter != description.end() && quatZIter != description.end())
+        {
+            const auto* w = std::get_if<double>(&line.at(static_cast<size_t>(quatWIter - description.begin())));
+            const auto* x = std::get_if<double>(&line.at(static_cast<size_t>(quatXIter - description.begin())));
+            const auto* y = std::get_if<double>(&line.at(static_cast<size_t>(quatYIter - description.begin())));
+            const auto* z = std::get_if<double>(&line.at(static_cast<size_t>(quatZIter - description.begin())));
+            if (w && x && y && z)
+            {
+                return Eigen::Quaterniond{ *w, *x, *y, *z };
+            }
+        }
     }
 
-    return { std::nan(""), std::nan(""), std::nan(""), std::nan("") };
+    LOG_ERROR("{}: Could not find the necessary columns in the CSV file to determine the attitude.", nameId());
+    return std::nullopt;
 }
 
 bool NAV::ImuSimulator::initializeSplines()
@@ -1280,8 +1307,11 @@ bool NAV::ImuSimulator::initializeSplines()
         if (auto csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && csvData->v->lines.size() >= 2)
         {
-            _startTime = getTimeFromCsvLine(csvData->v->lines.front(), csvData->v->description);
-            if (_startTime.empty()) { return false; }
+            if (auto startTime = getTimeFromCsvLine(csvData->v->lines.front(), csvData->v->description))
+            {
+                if (!startTime) { return false; }
+                _startTime = *startTime;
+            }
 
             constexpr size_t nVirtPoints = 0;
             splineTime.resize(nVirtPoints); // Preallocate points to make the spline start at the right point
@@ -1294,29 +1324,37 @@ bool NAV::ImuSimulator::initializeSplines()
 
             for (size_t i = 0; i < csvData->v->lines.size(); i++)
             {
-                InsTime insTime = getTimeFromCsvLine(csvData->v->lines[i], csvData->v->description);
-                if (insTime.empty()) { return false; }
-                // LOG_DATA("{}: Time {}", nameId(), insTime);
-                auto time = static_cast<double>((insTime - _startTime).count());
-
-                Eigen::Vector3d e_pos = e_getPositionFromCsvLine(csvData->v->lines[i], csvData->v->description);
-                if (std::isnan(e_pos.x())) { return false; }
-                // LOG_DATA("{}: e_pos {}", nameId(), e_pos);
-
-                Eigen::Quaterniond n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->v->lines[i], csvData->v->description);
-                if (std::isnan(n_Quat_b.w()))
+                auto insTime = getTimeFromCsvLine(csvData->v->lines[i], csvData->v->description);
+                if (!insTime)
                 {
-                    // TODO: Calculate with rotation minimizing frame instead of returning false
+                    LOG_ERROR("{}: Data in time column not found in line {}", nameId(), i + 2);
                     return false;
                 }
-                // LOG_DATA("{}: n_Quat_b {}", nameId(), n_Quat_b);
+                // LOG_DATA("{}: Time {}", nameId(), *insTime);
+                auto time = static_cast<double>((*insTime - _startTime).count());
+
+                auto e_pos = e_getPositionFromCsvLine(csvData->v->lines[i], csvData->v->description);
+                if (!e_pos)
+                {
+                    LOG_ERROR("{}: Data in position column not found in line {}", nameId(), i + 2);
+                    return false;
+                }
+                // LOG_DATA("{}: e_pos {}", nameId(), *e_pos);
+
+                auto n_Quat_b = n_getAttitudeQuaternionFromCsvLine_b(csvData->v->lines[i], csvData->v->description);
+                if (!n_Quat_b)
+                {
+                    LOG_ERROR("{}: Data in attitude column not found in line {}", nameId(), i + 2);
+                    return false;
+                }
+                // LOG_DATA("{}: n_Quat_b {}", nameId(), *n_Quat_b);
 
                 splineTime.push_back(time);
-                splineX.push_back(e_pos.x());
-                splineY.push_back(e_pos.y());
-                splineZ.push_back(e_pos.z());
+                splineX.push_back(e_pos->x());
+                splineY.push_back(e_pos->y());
+                splineZ.push_back(e_pos->z());
 
-                auto rpy = trafo::quat2eulerZYX(n_Quat_b);
+                auto rpy = trafo::quat2eulerZYX(*n_Quat_b);
                 // LOG_DATA("{}: RPY {} [deg] (from CSV)", nameId(), rad2deg(rpy).transpose());
                 splineRoll.push_back(i > 0 ? unwrapAngle(rpy(0), splineRoll.back(), M_PI) : rpy(0));
                 splinePitch.push_back(i > 0 ? unwrapAngle(rpy(1), splinePitch.back(), M_PI_2) : rpy(1));
@@ -1435,10 +1473,10 @@ bool NAV::ImuSimulator::resetNode()
         if (auto csvData = getInputValue<CsvData>(INPUT_PORT_INDEX_CSV);
             csvData && !csvData->v->lines.empty())
         {
-            _startTime = getTimeFromCsvLine(csvData->v->lines.front(), csvData->v->description);
-            if (_startTime.empty())
+            if (auto startTime = getTimeFromCsvLine(csvData->v->lines.front(), csvData->v->description))
             {
-                return false;
+                if (!startTime) { return false; }
+                _startTime = *startTime;
             }
             LOG_DEBUG("{}: Start Time set to {}", nameId(), _startTime);
         }

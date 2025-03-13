@@ -251,19 +251,19 @@ class ImuSimulator : public Imu
     /// @param[in] line Line with data from the csv
     /// @param[in] description Description of the data
     /// @return InsTime or empty time if data not found
-    [[nodiscard]] InsTime getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
+    [[nodiscard]] std::optional<InsTime> getTimeFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
 
     /// @brief Get the Position from a CSV line
     /// @param[in] line Line with data from the csv
     /// @param[in] description Description of the data
     /// @return Position in ECEF coordinates in [m] or NaN if data not found
-    [[nodiscard]] Eigen::Vector3d e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
+    [[nodiscard]] std::optional<Eigen::Vector3d> e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
 
     /// @brief Get the Attitude quaternion n_quat_b from a CSV line
     /// @param[in] line Line with data from the csv
     /// @param[in] description Description of the data
     /// @return Attitude quaternion n_quat_b or NaN if data not found
-    static Eigen::Quaterniond n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description);
+    [[nodiscard]] std::optional<Eigen::Quaterniond> n_getAttitudeQuaternionFromCsvLine_b(const CsvData::CsvLine& line, const std::vector<std::string>& description) const;
 
     /// Assign a variable that holds the Spline information
     struct

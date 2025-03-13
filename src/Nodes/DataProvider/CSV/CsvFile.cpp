@@ -7,6 +7,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "CsvFile.hpp"
+#include <algorithm>
+#include <string>
+#include <vector>
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
@@ -191,6 +194,7 @@ bool NAV::CsvFile::initialize()
     }
 
     std::string line;
+    std::vector<size_t> emptyCols{};
     while (!eof())
     {
         getline(line);
@@ -199,8 +203,16 @@ bool NAV::CsvFile::initialize()
         auto splittedData = str::split(line, _delimiter);
         if (!splittedData.empty()) { _data.lines.emplace_back(); }
 
-        for (const auto& cell : splittedData)
+        for (size_t i = 0; i < splittedData.size(); i++)
         {
+            const auto& cell = splittedData.at(i);
+
+            if (cell.empty() && std::ranges::find(emptyCols, i) == emptyCols.end())
+            {
+                emptyCols.push_back(i);
+                LOG_WARN("{}: Data missing in column: '{}' at: {} s and possibly afterwards, too.", nameId(), _data.description.at(i), splittedData.front());
+            }
+
             CsvData::CsvElement value;
             try
             {
