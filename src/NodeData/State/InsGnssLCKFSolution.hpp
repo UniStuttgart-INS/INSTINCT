@@ -17,6 +17,7 @@
 #include <cstdint>
 #include "util/Container/UncertainValue.hpp"
 #include "Navigation/Transformations/Units.hpp"
+#include <Eigen/src/Core/Matrix.h>
 
 namespace NAV
 {
@@ -70,9 +71,15 @@ class InsGnssLCKFSolution : public PosVelAtt
         desc.emplace_back("Accelerometer bias b_X [m/s^2]");
         desc.emplace_back("Accelerometer bias b_Y [m/s^2]");
         desc.emplace_back("Accelerometer bias b_Z [m/s^2]");
+        desc.emplace_back("Accelerometer bias b_X StdDev [m/s^2]");
+        desc.emplace_back("Accelerometer bias b_Y StdDev [m/s^2]");
+        desc.emplace_back("Accelerometer bias b_Z StdDev [m/s^2]");
         desc.emplace_back("Gyroscope bias b_X [rad/s]");
         desc.emplace_back("Gyroscope bias b_Y [rad/s]");
         desc.emplace_back("Gyroscope bias b_Z [rad/s]");
+        desc.emplace_back("Gyroscope bias b_X StdDev [rad/s]");
+        desc.emplace_back("Gyroscope bias b_Y StdDev [rad/s]");
+        desc.emplace_back("Gyroscope bias b_Z StdDev [rad/s]");
         desc.emplace_back("Barometric height bias [m]");
         desc.emplace_back("Barometric height bias StdDev [m]");
         desc.emplace_back("Barometric height scale [m/m]");
@@ -82,7 +89,7 @@ class InsGnssLCKFSolution : public PosVelAtt
     }
 
     /// @brief Get the number of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount() + 28; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVelAtt::GetStaticDescriptorCount() + 34; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -154,24 +161,36 @@ class InsGnssLCKFSolution : public PosVelAtt
             if (frame == Frame::ECEF) { return velocityError(2); }
             break;
         case PosVelAtt::GetStaticDescriptorCount() + 18: // Accelerometer bias b_X [m/s^2]
-            return b_biasAccel(0);
+            return b_biasAccel.value(0);
         case PosVelAtt::GetStaticDescriptorCount() + 19: // Accelerometer bias b_Y [m/s^2]
-            return b_biasAccel(1);
+            return b_biasAccel.value(1);
         case PosVelAtt::GetStaticDescriptorCount() + 20: // Accelerometer bias b_Z [m/s^2]
-            return b_biasAccel(2);
-        case PosVelAtt::GetStaticDescriptorCount() + 21: // Gyroscope bias b_X [rad/s]
-            return b_biasGyro(0);
-        case PosVelAtt::GetStaticDescriptorCount() + 22: // Gyroscope bias b_Y [rad/s]
-            return b_biasGyro(1);
-        case PosVelAtt::GetStaticDescriptorCount() + 23: // Gyroscope bias b_Z [rad/s]
-            return b_biasGyro(2);
-        case PosVelAtt::GetStaticDescriptorCount() + 24: // Barometric height bias [m]
+            return b_biasAccel.value(2);
+        case PosVelAtt::GetStaticDescriptorCount() + 21: // Accelerometer bias b_X StdDev [m/s^2]
+            return b_biasAccel.stdDev(0);
+        case PosVelAtt::GetStaticDescriptorCount() + 22: // Accelerometer bias b_Y StdDev [m/s^2]
+            return b_biasAccel.stdDev(1);
+        case PosVelAtt::GetStaticDescriptorCount() + 23: // Accelerometer bias b_Z StdDev [m/s^2]
+            return b_biasAccel.stdDev(2);
+        case PosVelAtt::GetStaticDescriptorCount() + 24: // Gyroscope bias b_X [rad/s]
+            return b_biasGyro.value(0);
+        case PosVelAtt::GetStaticDescriptorCount() + 25: // Gyroscope bias b_Y [rad/s]
+            return b_biasGyro.value(1);
+        case PosVelAtt::GetStaticDescriptorCount() + 26: // Gyroscope bias b_Z [rad/s]
+            return b_biasGyro.value(2);
+        case PosVelAtt::GetStaticDescriptorCount() + 27: // Gyroscope bias b_X StdDev [rad/s]
+            return b_biasGyro.stdDev(0);
+        case PosVelAtt::GetStaticDescriptorCount() + 28: // Gyroscope bias b_Y StdDev [rad/s]
+            return b_biasGyro.stdDev(1);
+        case PosVelAtt::GetStaticDescriptorCount() + 29: // Gyroscope bias b_Z StdDev [rad/s]
+            return b_biasGyro.stdDev(2);
+        case PosVelAtt::GetStaticDescriptorCount() + 30: // Barometric height bias [m]
             return heightBias.value;
-        case PosVelAtt::GetStaticDescriptorCount() + 25: // Barometric height bias StdDev[m]
+        case PosVelAtt::GetStaticDescriptorCount() + 31: // Barometric height bias StdDev[m]
             return heightBias.stdDev;
-        case PosVelAtt::GetStaticDescriptorCount() + 26: // Barometric height scale [m/m]
+        case PosVelAtt::GetStaticDescriptorCount() + 32: // Barometric height scale [m/m]
             return heightScale.value;
-        case PosVelAtt::GetStaticDescriptorCount() + 27: // Barometric height scale StdDev [m/m]
+        case PosVelAtt::GetStaticDescriptorCount() + 33: // Barometric height scale StdDev [m/m]
             return heightScale.stdDev;
         default:
             return std::nullopt;
@@ -197,9 +216,11 @@ class InsGnssLCKFSolution : public PosVelAtt
     Eigen::Vector3d positionError{ 0, 0, 0 };
 
     /// 𝐛_a The accelerometer bias in body frame in [m/s^2]
-    Eigen::Vector3d b_biasAccel{ 0, 0, 0 };
+    // Eigen::Vector3d b_biasAccel{ 0, 0, 0 };
+    UncertainValue<Eigen::Vector3d> b_biasAccel = { .value = Eigen::Vector3d::Zero(), .stdDev = Eigen::Vector3d::Zero() };
     /// 𝐛_g The gyroscope bias in body frame in [rad/s]
-    Eigen::Vector3d b_biasGyro{ 0, 0, 0 };
+    // Eigen::Vector3d b_biasGyro{ 0, 0, 0 };
+    UncertainValue<Eigen::Vector3d> b_biasGyro = { .value = Eigen::Vector3d::Zero(), .stdDev = Eigen::Vector3d::Zero() };
 
     /// Barometric height bias in [m]
     UncertainValue<double> heightBias = { .value = std::nan(""), .stdDev = std::nan("") };

@@ -8,6 +8,7 @@
 
 #include "ImuSimulator.hpp"
 
+#include <cmath>
 #include <ctime>
 #include <optional>
 
@@ -898,7 +899,7 @@ std::optional<Eigen::Vector3d> NAV::ImuSimulator::e_getPositionFromCsvLine(const
         const auto* posX = std::get_if<double>(&line.at(static_cast<size_t>(posXIter - description.begin())));
         const auto* posY = std::get_if<double>(&line.at(static_cast<size_t>(posYIter - description.begin())));
         const auto* posZ = std::get_if<double>(&line.at(static_cast<size_t>(posZIter - description.begin())));
-        if (posX && posY && posZ)
+        if (posX && posY && posZ && !std::isnan(*posX) && !std::isnan(*posY) && !std::isnan(*posZ))
         {
             return Eigen::Vector3d{ *posX, *posY, *posZ };
         }
@@ -913,7 +914,7 @@ std::optional<Eigen::Vector3d> NAV::ImuSimulator::e_getPositionFromCsvLine(const
             const auto* lat = std::get_if<double>(&line.at(static_cast<size_t>(latIter - description.begin())));
             const auto* lon = std::get_if<double>(&line.at(static_cast<size_t>(lonIter - description.begin())));
             const auto* alt = std::get_if<double>(&line.at(static_cast<size_t>(altIter - description.begin())));
-            if (lat && lon && alt)
+            if (lat && lon && alt && !std::isnan(*lat) && !std::isnan(*lon) && !std::isnan(*alt))
             {
                 return trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(*lat), deg2rad(*lon), *alt));
             }
@@ -934,7 +935,7 @@ std::optional<Eigen::Quaterniond> NAV::ImuSimulator::n_getAttitudeQuaternionFrom
         const auto* roll = std::get_if<double>(&line.at(static_cast<size_t>(rollIter - description.begin())));
         const auto* pitch = std::get_if<double>(&line.at(static_cast<size_t>(pitchIter - description.begin())));
         const auto* yaw = std::get_if<double>(&line.at(static_cast<size_t>(yawIter - description.begin())));
-        if (roll && pitch && yaw)
+        if (roll && pitch && yaw && !std::isnan(*roll) && !std::isnan(*pitch) && !std::isnan(*yaw))
         {
             return trafo::n_Quat_b(deg2rad(*roll), deg2rad(*pitch), deg2rad(*yaw));
         }
@@ -951,7 +952,7 @@ std::optional<Eigen::Quaterniond> NAV::ImuSimulator::n_getAttitudeQuaternionFrom
             const auto* x = std::get_if<double>(&line.at(static_cast<size_t>(quatXIter - description.begin())));
             const auto* y = std::get_if<double>(&line.at(static_cast<size_t>(quatYIter - description.begin())));
             const auto* z = std::get_if<double>(&line.at(static_cast<size_t>(quatZIter - description.begin())));
-            if (w && x && y && z)
+            if (w && x && y && z && !std::isnan(*w) && !std::isnan(*x) && !std::isnan(*y) && !std::isnan(*z))
             {
                 return Eigen::Quaterniond{ *w, *x, *y, *z };
             }

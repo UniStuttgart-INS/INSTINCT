@@ -1565,11 +1565,11 @@ void NAV::ImuFusion::combineSignals(const std::shared_ptr<const ImuObs>& imuObs)
         auto biasIndex = _numStatesEst + static_cast<uint8_t>((OUTPUT_PORT_INDEX_BIAS - 1) * _numStatesPerPin);
         LOG_DATA("{}: biasIndex = {}", nameId(), biasIndex);
 
-        imuRelativeBiases->b_biasGyro = { _kalmanFilter.x(biasIndex, 0), _kalmanFilter.x(biasIndex + 1, 0), _kalmanFilter.x(biasIndex + 2, 0) };
-        imuRelativeBiases->b_biasAccel = { _kalmanFilter.x(biasIndex + 3, 0), _kalmanFilter.x(biasIndex + 4, 0), _kalmanFilter.x(biasIndex + 5, 0) };
+        imuRelativeBiases->b_biasGyro.value = { _kalmanFilter.x(biasIndex, 0), _kalmanFilter.x(biasIndex + 1, 0), _kalmanFilter.x(biasIndex + 2, 0) };
+        imuRelativeBiases->b_biasAccel.value = { _kalmanFilter.x(biasIndex + 3, 0), _kalmanFilter.x(biasIndex + 4, 0), _kalmanFilter.x(biasIndex + 5, 0) };
 
-        LOG_DATA("{}: timeSinceStartup = {}, Relative bias {}1 Gyro:  {}", nameId(), _timeSinceStartup, OUTPUT_PORT_INDEX_BIAS + 1, imuRelativeBiases->b_biasGyro.transpose());
-        LOG_DATA("{}: timeSinceStartup = {}, Relative bias {}1 Accel: {}", nameId(), _timeSinceStartup, OUTPUT_PORT_INDEX_BIAS + 1, imuRelativeBiases->b_biasAccel.transpose());
+        LOG_DATA("{}: timeSinceStartup = {}, Relative bias {}1 Gyro:  {}", nameId(), _timeSinceStartup, OUTPUT_PORT_INDEX_BIAS + 1, imuRelativeBiases->b_biasGyro.value.transpose());
+        LOG_DATA("{}: timeSinceStartup = {}, Relative bias {}1 Accel: {}", nameId(), _timeSinceStartup, OUTPUT_PORT_INDEX_BIAS + 1, imuRelativeBiases->b_biasAccel.value.transpose());
 
         invokeCallbacks(OUTPUT_PORT_INDEX_BIAS, imuRelativeBiases);
     }

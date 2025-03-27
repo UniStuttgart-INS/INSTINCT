@@ -1102,8 +1102,18 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
 
     if (_lastImuObs)
     {
-        lckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * -_inertialIntegrator.p_getLastAccelerationBias();
-        lckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * -_inertialIntegrator.p_getLastAngularRateBias();
+        lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quatAccel_p() * -_inertialIntegrator.p_getLastAccelerationBias();
+        lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
+            std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+            std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+            std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+        };
+        lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quatGyro_p() * -_inertialIntegrator.p_getLastAngularRateBias();
+        lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
+            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+            std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+        };
     }
     lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
     lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
@@ -1616,7 +1626,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
-    // 10. Update the error covariance matrix from P(-) to P(+
+    // 10. Update the error covariance matrix from P(-) to P(+)
     _kalmanFilter.correctWithMeasurementInnovation();
 
     LOG_DATA("{}:     KF.K =\n{}", nameId(), _kalmanFilter.K);
@@ -1662,14 +1672,24 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
     lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
 
-    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
+    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
     _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
                                                     _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
-    lckfSolution->b_biasAccel = -_inertialIntegrator.p_getLastAccelerationBias();
-    lckfSolution->b_biasGyro = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
+    lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+    };
+    lckfSolution->b_biasGyro.value = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+    };
 
-    LOG_DATA("{}: Biases after error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), lckfSolution->b_biasAccel.transpose(), lckfSolution->b_biasGyro.transpose());
+    LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
 
     Eigen::Matrix<double, 9, 9> deg2rad_2 = Eigen::Matrix<double, 9, 9>::Identity();
     deg2rad_2.bottomRightCorner<3, 3>().diagonal().setConstant(std::pow(std::numbers::pi_v<double> / 180.0, 2.0));
@@ -1828,14 +1848,24 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     lckfSolution->velocityError = _kalmanFilter.x.segment<3>(KFVel);
     lckfSolution->attitudeError = _kalmanFilter.x.segment<3>(KFAtt) * (1. / SCALE_FACTOR_ATTITUDE);
 
-    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
+    LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
     _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
                                                     _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
-    lckfSolution->b_biasAccel = -_inertialIntegrator.p_getLastAccelerationBias();
-    lckfSolution->b_biasGyro = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
+    lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
+    };
+    lckfSolution->b_biasGyro.value = -_inertialIntegrator.p_getLastAngularRateBias();
+    lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
+        std::sqrt(_kalmanFilter.P(KFStates::GyrBiasZ, KFStates::GyrBiasZ) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2)))
+    };
 
-    LOG_DATA("{}: Biases after error has been applied: b_biasAccel = {}, b_biasGyro = {}", nameId(), lckfSolution->b_biasAccel.transpose(), lckfSolution->b_biasGyro.transpose());
+    LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
 
     Eigen::Matrix<double, 9, 9> deg2rad_2 = Eigen::Matrix<double, 9, 9>::Identity();
     deg2rad_2.bottomRightCorner<3, 3>().diagonal().setConstant(std::pow(std::numbers::pi_v<double> / 180.0, 2.0));

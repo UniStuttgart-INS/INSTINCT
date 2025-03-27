@@ -1,10 +1,23 @@
 {
+    "bottomViewHeight": 200.0,
     "colormaps": [],
+    "commonLog": {
+        "useGuiInputs": false
+    },
     "fonts": {
         "useBigDefaultFont": false,
         "useBigMonoFont": false,
+        "useBigPanelFont": false,
         "useBigWindowFont": false
     },
+    "gridLinesEnabled": 0.1568627506494522,
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 350.0,
+        "rightWidth": 850.0
+    },
+    "lightMode": false,
     "links": {
         "link-101": {
             "endPinId": 95,
@@ -221,16 +234,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             },
                             {
                                 "displayName": "KF State Roll error [deg]"
@@ -296,6 +330,15 @@
                                 "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z StdDev [m/s^2]"
+                            },
+                            {
                                 "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
@@ -303,6 +346,27 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Barometric height bias [m]"
+                            },
+                            {
+                                "displayName": "Barometric height bias StdDev [m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale [m/m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale StdDev [m/m]"
                             }
                         ],
                         "size": 0,
@@ -448,16 +512,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             },
                             {
                                 "displayName": "KF State Roll error [deg]"
@@ -523,6 +608,15 @@
                                 "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z StdDev [m/s^2]"
+                            },
+                            {
                                 "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
@@ -530,6 +624,27 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Barometric height bias [m]"
+                            },
+                            {
+                                "displayName": "Barometric height bias StdDev [m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale [m/m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale StdDev [m/m]"
                             }
                         ],
                         "size": 0,
@@ -675,16 +790,37 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
-                                "displayName": "Quaternion::w"
+                                "displayName": "Roll StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::x"
+                                "displayName": "Pitch StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::y"
+                                "displayName": "Yaw StdDev [deg]"
                             },
                             {
-                                "displayName": "Quaternion::z"
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
                             },
                             {
                                 "displayName": "KF State Roll error [deg]"
@@ -750,6 +886,15 @@
                                 "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z StdDev [m/s^2]"
+                            },
+                            {
                                 "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
@@ -757,6 +902,27 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Barometric height bias [m]"
+                            },
+                            {
+                                "displayName": "Barometric height bias StdDev [m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale [m/m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale StdDev [m/m]"
                             }
                         ],
                         "size": 0,
@@ -773,7 +939,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 67,
+                                "dataIndex": 74,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -787,7 +953,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 67,
+                                    "colormapMaskDataCmpIdx": 74,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -811,7 +981,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 67,
+                                    "markerColormapMaskDataCmpIdx": 74,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -834,7 +1004,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 67,
+                                "dataIndex": 74,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -848,7 +1018,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 67,
+                                    "colormapMaskDataCmpIdx": 74,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -872,7 +1046,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 67,
+                                    "markerColormapMaskDataCmpIdx": 74,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -895,7 +1069,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 67,
+                                "dataIndex": 74,
                                 "displayName": "Accelerometer bias b_X [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -909,7 +1083,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 67,
+                                    "colormapMaskDataCmpIdx": 74,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -933,7 +1111,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 67,
+                                    "markerColormapMaskDataCmpIdx": 74,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -989,7 +1167,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 68,
+                                "dataIndex": 75,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1003,7 +1181,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 68,
+                                    "colormapMaskDataCmpIdx": 75,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1027,7 +1209,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 68,
+                                    "markerColormapMaskDataCmpIdx": 75,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1050,7 +1232,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 68,
+                                "dataIndex": 75,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1064,7 +1246,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 68,
+                                    "colormapMaskDataCmpIdx": 75,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1088,7 +1274,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 68,
+                                    "markerColormapMaskDataCmpIdx": 75,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1111,7 +1297,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 68,
+                                "dataIndex": 75,
                                 "displayName": "Accelerometer bias b_Y [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -1125,7 +1311,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 68,
+                                    "colormapMaskDataCmpIdx": 75,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1149,7 +1339,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 68,
+                                    "markerColormapMaskDataCmpIdx": 75,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1205,7 +1395,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 69,
+                                "dataIndex": 76,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1219,7 +1409,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 69,
+                                    "colormapMaskDataCmpIdx": 76,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1243,7 +1437,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 69,
+                                    "markerColormapMaskDataCmpIdx": 76,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1266,7 +1460,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 69,
+                                "dataIndex": 76,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1280,7 +1474,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 69,
+                                    "colormapMaskDataCmpIdx": 76,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1304,7 +1502,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 69,
+                                    "markerColormapMaskDataCmpIdx": 76,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1327,7 +1525,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 69,
+                                "dataIndex": 76,
                                 "displayName": "Accelerometer bias b_Z [m/s^2]",
                                 "pinIndex": 2,
                                 "style": {
@@ -1341,7 +1539,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 69,
+                                    "colormapMaskDataCmpIdx": 76,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1365,7 +1567,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 69,
+                                    "markerColormapMaskDataCmpIdx": 76,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1421,7 +1623,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 70,
+                                "dataIndex": 80,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1435,7 +1637,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 70,
+                                    "colormapMaskDataCmpIdx": 80,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1459,7 +1665,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 70,
+                                    "markerColormapMaskDataCmpIdx": 80,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1482,7 +1688,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 70,
+                                "dataIndex": 80,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1496,7 +1702,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 70,
+                                    "colormapMaskDataCmpIdx": 80,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1520,7 +1730,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 70,
+                                    "markerColormapMaskDataCmpIdx": 80,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1543,7 +1753,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 70,
+                                "dataIndex": 80,
                                 "displayName": "Gyroscope bias b_X [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -1557,7 +1767,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 70,
+                                    "colormapMaskDataCmpIdx": 80,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1581,7 +1795,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 70,
+                                    "markerColormapMaskDataCmpIdx": 80,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1637,7 +1851,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 71,
+                                "dataIndex": 81,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1651,7 +1865,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 71,
+                                    "colormapMaskDataCmpIdx": 81,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1675,7 +1893,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 71,
+                                    "markerColormapMaskDataCmpIdx": 81,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1698,7 +1916,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 71,
+                                "dataIndex": 81,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1712,7 +1930,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 71,
+                                    "colormapMaskDataCmpIdx": 81,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1736,7 +1958,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 71,
+                                    "markerColormapMaskDataCmpIdx": 81,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1759,7 +1981,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 71,
+                                "dataIndex": 81,
                                 "displayName": "Gyroscope bias b_Y [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -1773,7 +1995,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 71,
+                                    "colormapMaskDataCmpIdx": 81,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1797,7 +2023,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 71,
+                                    "markerColormapMaskDataCmpIdx": 81,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1853,7 +2079,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 72,
+                                "dataIndex": 82,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -1867,7 +2093,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 72,
+                                    "colormapMaskDataCmpIdx": 82,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1891,7 +2121,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 72,
+                                    "markerColormapMaskDataCmpIdx": 82,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1914,7 +2144,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 72,
+                                "dataIndex": 82,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -1928,7 +2158,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 72,
+                                    "colormapMaskDataCmpIdx": 82,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -1952,7 +2186,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 72,
+                                    "markerColormapMaskDataCmpIdx": 82,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -1975,7 +2209,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 72,
+                                "dataIndex": 82,
                                 "displayName": "Gyroscope bias b_Z [rad/s]",
                                 "pinIndex": 2,
                                 "style": {
@@ -1989,7 +2223,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 72,
+                                    "colormapMaskDataCmpIdx": 82,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -2013,7 +2251,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 72,
+                                    "markerColormapMaskDataCmpIdx": 82,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -2929,7 +3167,7 @@
                         "0": 0.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.2
                     }
                 },
                 "imuGyroscopeIRW": {
@@ -3199,7 +3437,7 @@
                         "0": 0.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.3
                     }
                 },
                 "imuGyroscopeIRW": {
@@ -3391,7 +3629,7 @@
                     }
                 },
                 "initJerkAngAcc": true,
-                "kfInitialized": false,
+                "kfInitialized": true,
                 "nInputPins": 4,
                 "numStates": 30,
                 "pinData": [
@@ -4638,7 +4876,7 @@
                         "0": 0.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": -0.4
                     }
                 },
                 "imuGyroscopeIRW": {
@@ -4800,9 +5038,6 @@
                                 "displayName": "GPS time of week [s]"
                             },
                             {
-                                "displayName": "Time since startup [ns]"
-                            },
-                            {
                                 "displayName": "Accel X [m/s^2]"
                             },
                             {
@@ -4888,6 +5123,9 @@
                             },
                             {
                                 "displayName": "AngularRateZ ECEF (ω_nb_e) [rad/s]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
                             }
                         ],
                         "size": 0,
@@ -4905,9 +5143,6 @@
                             },
                             {
                                 "displayName": "GPS time of week [s]"
-                            },
-                            {
-                                "displayName": "Time since startup [ns]"
                             },
                             {
                                 "displayName": "Accel X [m/s^2]"
@@ -4938,6 +5173,9 @@
                             },
                             {
                                 "displayName": "Temperature [°C]"
+                            },
+                            {
+                                "displayName": "Time since startup [ns]"
                             }
                         ],
                         "size": 0,
@@ -4954,7 +5192,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 4,
+                                "dataIndex": 3,
                                 "displayName": "Accel X [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -4968,7 +5206,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 4,
+                                    "colormapMaskDataCmpIdx": 3,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -4992,7 +5234,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerColormapMaskDataCmpIdx": 3,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5015,7 +5257,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 4,
+                                "dataIndex": 3,
                                 "displayName": "Accel X [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5029,7 +5271,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 4,
+                                    "colormapMaskDataCmpIdx": 3,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5053,7 +5299,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 4,
+                                    "markerColormapMaskDataCmpIdx": 3,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5108,7 +5354,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 5,
+                                "dataIndex": 4,
                                 "displayName": "Accel Y [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5122,7 +5368,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 5,
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5146,7 +5396,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerColormapMaskDataCmpIdx": 4,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5169,7 +5419,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 5,
+                                "dataIndex": 4,
                                 "displayName": "Accel Y [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5183,7 +5433,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 5,
+                                    "colormapMaskDataCmpIdx": 4,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5207,7 +5461,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 5,
+                                    "markerColormapMaskDataCmpIdx": 4,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5262,7 +5516,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 6,
+                                "dataIndex": 5,
                                 "displayName": "Accel Z [m/s^2]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5276,7 +5530,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 6,
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5300,7 +5558,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerColormapMaskDataCmpIdx": 5,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5323,7 +5581,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 6,
+                                "dataIndex": 5,
                                 "displayName": "Accel Z [m/s^2]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5337,7 +5595,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 6,
+                                    "colormapMaskDataCmpIdx": 5,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5361,7 +5623,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 6,
+                                    "markerColormapMaskDataCmpIdx": 5,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5416,7 +5678,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 6,
                                 "displayName": "Gyro X [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5430,7 +5692,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 7,
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5454,7 +5720,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 7,
+                                    "markerColormapMaskDataCmpIdx": 6,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5477,7 +5743,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 7,
+                                "dataIndex": 6,
                                 "displayName": "Gyro X [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5491,7 +5757,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 7,
+                                    "colormapMaskDataCmpIdx": 6,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5515,7 +5785,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 7,
+                                    "markerColormapMaskDataCmpIdx": 6,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5570,7 +5840,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 7,
                                 "displayName": "Gyro Y [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5584,7 +5854,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 8,
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5608,7 +5882,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 8,
+                                    "markerColormapMaskDataCmpIdx": 7,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5631,7 +5905,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 8,
+                                "dataIndex": 7,
                                 "displayName": "Gyro Y [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5645,7 +5919,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 8,
+                                    "colormapMaskDataCmpIdx": 7,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5669,7 +5947,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 8,
+                                    "markerColormapMaskDataCmpIdx": 7,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5724,7 +6002,7 @@
                         "plotItems": [
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 8,
                                 "displayName": "Gyro Z [rad/s]",
                                 "pinIndex": 0,
                                 "style": {
@@ -5738,7 +6016,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 9,
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5762,7 +6044,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 9,
+                                    "markerColormapMaskDataCmpIdx": 8,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5785,7 +6067,7 @@
                             },
                             {
                                 "axis": 3,
-                                "dataIndex": 9,
+                                "dataIndex": 8,
                                 "displayName": "Gyro Z [rad/s]",
                                 "pinIndex": 1,
                                 "style": {
@@ -5799,7 +6081,11 @@
                                         0,
                                         -1
                                     ],
-                                    "colormapMaskDataCmpIdx": 9,
+                                    "colormapMaskDataCmpIdx": 8,
+                                    "errorBoundsAlpha": 0.25,
+                                    "errorBoundsDataIdx": 0,
+                                    "errorBoundsEnabled": false,
+                                    "errorBoundsModifierExpression": "",
                                     "eventMarkerFillColor": {
                                         "w": 1.0,
                                         "x": 1.0,
@@ -5823,7 +6109,7 @@
                                         0,
                                         -1
                                     ],
-                                    "markerColormapMaskDataCmpIdx": 9,
+                                    "markerColormapMaskDataCmpIdx": 8,
                                     "markerFillColor": {
                                         "w": -1.0,
                                         "x": 0.0,
@@ -5896,5 +6182,6 @@
             },
             "type": "Plot"
         }
-    }
+    },
+    "transparentWindows": 0.9399999976158142
 }
