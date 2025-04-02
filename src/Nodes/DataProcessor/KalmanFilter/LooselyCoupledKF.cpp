@@ -8,9 +8,12 @@
 
 #include "LooselyCoupledKF.hpp"
 
+#include "NodeData/State/InsGnssLCKFSolution.hpp"
 #include "NodeData/State/PosVel.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 #include "internal/Node/Pin.hpp"
 #include "util/Eigen.hpp"
+#include <memory>
 #include <numbers>
 #include <cmath>
 
@@ -39,9 +42,6 @@ namespace nm = NAV::NodeManager;
 #include "util/Assert.h"
 
 #include "NodeData/IMU/ImuObsWDelta.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/State/InsGnssLCKFSolution.hpp"
-#include "NodeData/Baro/BaroHgt.hpp"
 
 /// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
@@ -1169,27 +1169,9 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
     {
         looselyCoupledPrediction(inertialNavSol, _inertialIntegrator.getMeasurements().back().dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
 
-        Eigen::Matrix<double, 9, 9> deg2rad_2 = Eigen::Matrix<double, 9, 9>::Identity();
-        deg2rad_2.bottomRightCorner<3, 3>().diagonal().setConstant(std::pow(std::numbers::pi_v<double> / 180.0, 2.0));
-        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
-        J.topLeftCorner<6, 6>().setIdentity();
-        if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
-        {
-            J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
-
-            inertialNavSol->setPosVelAttAndCov_n(inertialNavSol->lla_position(),
-                                                 inertialNavSol->n_velocity(),
-                                                 inertialNavSol->n_Quat_b(),
-                                                 J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
-        }
-        else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
-        {
-            J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
-            inertialNavSol->setPosVelAttAndCov_e(inertialNavSol->e_position(),
-                                                 inertialNavSol->e_velocity(),
-                                                 inertialNavSol->e_Quat_b(),
-                                                 J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
-        }
+        setSolutionPosVelAttAndCov(inertialNavSol,
+                                   calcEarthRadius_N(_inertialIntegrator.getLatestState().value().get().lla_position().x()),
+                                   calcEarthRadius_E(_inertialIntegrator.getLatestState().value().get().lla_position().x()));
 
         LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
         LOG_DATA("{}:   e_velocity   = {}", nameId(), inertialNavSol->e_velocity().transpose());
@@ -1556,13 +1538,16 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     _kalmanFilter.setMeasurements(Meas);
 
+    // Prime vertical radius of curvature (East/West) [m]
+    double R_E = 0.0;
+    // Meridian radius of curvature in [m]
+    double R_N = 0.0;
+
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
-        // Prime vertical radius of curvature (East/West) [m]
-        double R_E = calcEarthRadius_E(lla_position(0));
+        R_E = calcEarthRadius_E(lla_position(0));
         LOG_DATA("{}:     R_E = {} [m]", nameId(), R_E);
-        // Meridian radius of curvature in [m]
-        double R_N = calcEarthRadius_N(lla_position(0));
+        R_N = calcEarthRadius_N(lla_position(0));
         LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
@@ -1691,37 +1676,24 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
 
-    Eigen::Matrix<double, 9, 9> deg2rad_2 = Eigen::Matrix<double, 9, 9>::Identity();
-    deg2rad_2.bottomRightCorner<3, 3>().diagonal().setConstant(std::pow(std::numbers::pi_v<double> / 180.0, 2.0));
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         lckfSolution->positionError.topRows<2>() *= 1.0 / SCALE_FACTOR_LAT_LON;
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
-        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-
-        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
-        J.topLeftCorner<6, 6>().setIdentity();
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
-
-        lckfSolution->setPosVelAttAndCov_n(_inertialIntegrator.getLatestState().value().get().lla_position(),
-                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
-                                           J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
+        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError,
+                                               lckfSolution->velocityError,
+                                               lckfSolution->attitudeError);
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
-        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-
-        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
-        J.topLeftCorner<6, 6>().setIdentity();
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
-
-        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
-                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
-                                           J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
+        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError,
+                                               lckfSolution->velocityError,
+                                               lckfSolution->attitudeError);
     }
+
+    setSolutionPosVelAttAndCov(lckfSolution, R_N, R_E);
+
     lckfSolution->heightBias = { .value = _heightBiasTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightBias, KFStates::HeightBias)) };
     lckfSolution->heightScale = { .value = _heightScaleTotal, .stdDev = std::sqrt(_kalmanFilter.P(KFStates::HeightScale, KFStates::HeightScale)) };
 
@@ -1867,39 +1839,23 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
 
     LOG_DATA("{}: Biases after error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), lckfSolution->b_biasAccel.value.transpose(), lckfSolution->b_biasGyro.value.transpose());
 
-    Eigen::Matrix<double, 9, 9> deg2rad_2 = Eigen::Matrix<double, 9, 9>::Identity();
-    deg2rad_2.bottomRightCorner<3, 3>().diagonal().setConstant(std::pow(std::numbers::pi_v<double> / 180.0, 2.0));
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         lckfSolution->positionError.topRows<2>() *= 1.0 / SCALE_FACTOR_LAT_LON;
         lckfSolution->frame = InsGnssLCKFSolution::Frame::NED;
-        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-
-        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
-        J.topLeftCorner<6, 6>().setIdentity();
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
-
-        lckfSolution->setPosVelAttAndCov_n(_inertialIntegrator.getLatestState().value().get().lla_position(),
-                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
-                                           J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
-        lckfSolution->setPosVelCovarianceMatrix_n(_kalmanFilter.P(KFPosVel, KFPosVel));
+        _inertialIntegrator.applyStateErrors_n(lckfSolution->positionError,
+                                               lckfSolution->velocityError,
+                                               lckfSolution->attitudeError);
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         lckfSolution->frame = InsGnssLCKFSolution::Frame::ECEF;
-        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError, lckfSolution->velocityError, lckfSolution->attitudeError);
-
-        Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
-        J.topLeftCorner<6, 6>().setIdentity();
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
-
-        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
-                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
-                                           J * (_kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * deg2rad_2) * J.transpose());
-        lckfSolution->setPosVelCovarianceMatrix_e(_kalmanFilter.P(KFPosVel, KFPosVel));
+        _inertialIntegrator.applyStateErrors_e(lckfSolution->positionError,
+                                               lckfSolution->velocityError,
+                                               lckfSolution->attitudeError);
     }
+
+    setSolutionPosVelAttAndCov(lckfSolution, calcEarthRadius_N(lla_position.x()), calcEarthRadius_E(lla_position.x()));
 
     // Closed loop
     _heightBiasTotal += _kalmanFilter.x(KFStates::HeightBias);
@@ -1912,6 +1868,44 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     if (!hasInputPinWithSameTime(lckfSolution->insTime))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_SOLUTION, lckfSolution);
+    }
+}
+
+void NAV::LooselyCoupledKF::setSolutionPosVelAttAndCov(const std::shared_ptr<PosVelAtt>& lckfSolution, double R_N, double R_E)
+{
+    Eigen::Matrix<double, 10, 9> J = Eigen::Matrix<double, 10, 9>::Zero();
+    J.topLeftCorner<6, 6>().setIdentity();
+
+    Eigen::Matrix9d J_units = Eigen::Matrix9d::Identity();
+    J_units.bottomRightCorner<3, 3>().diagonal().setConstant(std::numbers::pi_v<double> / 180.0);
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
+
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
+        J_units.topLeftCorner<3, 3>().diagonal() = 1.0
+                                                   / n_F_dr_dv(lla_position.x(),
+                                                               lla_position.z(),
+                                                               R_N,
+                                                               R_E)
+                                                         .diagonal()
+                                                         .array();
+
+        J_units.topLeftCorner<2, 2>().diagonal() *= 1.0 / SCALE_FACTOR_LAT_LON;
+
+        lckfSolution->setPosVelAttAndCov_n(lla_position,
+                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
+                                           J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
+    }
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    {
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
+
+        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
+                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
+                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
+                                           J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
     }
 }
 

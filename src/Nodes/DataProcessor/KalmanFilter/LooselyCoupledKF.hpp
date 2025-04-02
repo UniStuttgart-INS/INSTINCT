@@ -169,6 +169,12 @@ class LooselyCoupledKF : public Node
     /// Add or remove input pins for external PVA init and Baro
     void updateInputPins();
 
+    /// @brief Sets the covariance matrix P of the LCKF (and does the necessary unit conversions)
+    /// @param[in] lckfSolution LCKF solution from prediction or update
+    /// @param[in] R_N Prime vertical radius of curvature (East/West) [m]
+    /// @param[in] R_E Meridian radius of curvature in [m]
+    void setSolutionPosVelAttAndCov(const std::shared_ptr<PosVelAtt>& lckfSolution, double R_N, double R_E);
+
     /// @brief Inertial Integrator
     InertialIntegrator _inertialIntegrator;
     /// Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
