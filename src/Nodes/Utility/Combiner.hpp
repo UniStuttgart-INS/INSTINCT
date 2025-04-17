@@ -13,15 +13,6 @@
 
 #pragma once
 
-// <boost/asio.hpp> needs to be included before <winsock.h> (even though not used in this file)
-// https://stackoverflow.com/questions/9750344/boostasio-winsock-and-winsock-2-compatibility-issue
-#ifdef _WIN32
-    // Set the proper SDK version before including boost/Asio
-    #include <SDKDDKVer.h>
-    // Note boost/ASIO includes Windows.h.
-    #include <boost/asio.hpp>
-#endif //_WIN32
-
 #include <limits>
 #include <memory>
 #include <unordered_set>
@@ -208,6 +199,7 @@ class Combiner : public Node, public CommonLog
         size_t combIndex = 0;                                                         ///< Combination Index
         std::unordered_set<size_t> termIndices;                                       ///< Term indices, which are already calculated
         double result = 0.0;                                                          ///< Calculation result
+        bool termNullopt = false;                                                     ///< True if one of the terms values returned std::nullopt
         std::vector<std::pair<std::string, std::shared_ptr<const NodeData>>> rawData; ///< List of the raw data of all terms contributing to the result
     };
 

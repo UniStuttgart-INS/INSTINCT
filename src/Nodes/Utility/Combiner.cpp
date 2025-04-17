@@ -576,12 +576,16 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                 flow::ApplyChanges();
             }
 
-            auto value = std::holds_alternative<size_t>(term.dataSelection) ? nodeData->getValueAt(std::get<size_t>(term.dataSelection))
-                                                                            : nodeData->getDynamicDataAt(std::get<std::string>(term.dataSelection));
-            if (!value) { continue; }
-
-            LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
-            term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
+            if (auto value = std::holds_alternative<size_t>(term.dataSelection) ? nodeData->getValueAt(std::get<size_t>(term.dataSelection))
+                                                                                : nodeData->getDynamicDataAt(std::get<std::string>(term.dataSelection)))
+            {
+                LOG_DATA("{}:     Term '{}': {:.3g}", nameId(), term.description(this, getDataDescriptors(term.pinIndex)), *value);
+                term.polyReg.push_back(std::make_pair(nodeDataTimeIntoRun, *value));
+            }
+            else
+            {
+                LOG_DATA("{}:     Term '{}': Value not available", nameId(), term.description(this, getDataDescriptors(term.pinIndex)));
+            }
             term.rawData.push_back(nodeData);
             LOG_DATA("{}:       Adding NodeData to the end of term.rawData. It now includes:", nameId());
             for ([[maybe_unused]] const auto& data : term.rawData)
@@ -592,7 +596,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
             // Check for all combinations with new info:
 
             if (std::ranges::any_of(comb.terms, [&](const auto& t) {
-                    bool termHasNoData = t.polyReg.empty();
+                    bool termHasNoData = t.rawData.empty();
                     if (termHasNoData)
                     {
                         LOG_DATA("{}:       Skipping, because no data on other term '{}' yet", nameId(), t.description(this, getDataDescriptors(t.pinIndex)));
@@ -650,12 +654,20 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
                             }
                         }
 
-                        auto poly = term.polyReg.calcPolynomial();
-                        LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
-                                 sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
-                                 math::round(calcTimeIntoRun(sendRequestTime), 8));
+                        if (term.polyReg.empty())
+                        {
+                            sendRequest.termNullopt = true;
+                            LOG_DATA("{}:           Flagging send request as term missing", nameId());
+                        }
+                        else
+                        {
+                            auto poly = term.polyReg.calcPolynomial();
+                            LOG_DATA("{}:           Updating send request: {} += {:.2f} * {:.3g} (by interpolating to time [{:.3f}s])", nameId(),
+                                     sendRequest.result, term.factor, poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8)),
+                                     math::round(calcTimeIntoRun(sendRequestTime), 8));
+                            sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
+                        }
                         sendRequest.termIndices.insert(t);
-                        sendRequest.result += term.factor * poly.f(math::round(calcTimeIntoRun(sendRequestTime), 8));
 
                         bool exactTimeFound = false;
                         for (const auto& rawData : term.rawData)
@@ -710,7 +722,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
         for (const auto& sendRequest : sendRequests)
         {
             const auto& comb = _combinations.at(sendRequest.combIndex);
-            LOG_DATA("{}:       Combination: {}", nameId(), comb.description(this));
+            LOG_DATA("{}:       Combination: {}{}", nameId(), comb.description(this), sendRequest.termNullopt ? " (some term war nullopt)" : "");
             for (size_t t = 0; t < comb.terms.size(); ++t)
             {
                 LOG_DATA("{}:         Term '{}' is {}", nameId(), comb.terms.at(t).description(this, getDataDescriptors(comb.terms.at(t).pinIndex)),
@@ -738,6 +750,7 @@ void Combiner::receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx)
 
             for (const auto& sendRequest : sendRequests)
             {
+                if (sendRequest.termNullopt) { continue; }
                 const auto& comb = _combinations.at(sendRequest.combIndex);
                 DynamicData::Data data{
                     .description = comb.description(this),
