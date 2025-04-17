@@ -60,9 +60,9 @@ namespace internal
 template<typename Derived>
 Eigen::Vector3<typename Derived::Scalar> lla2ecef(const Eigen::MatrixBase<Derived>& lla_position, double a, double e_squared)
 {
-    const auto& latitude = lla_position(0);  // 𝜙 Geodetic latitude
-    const auto& longitude = lla_position(1); // λ Geodetic longitude
-    const auto& altitude = lla_position(2);  // Altitude (Height above ground)
+    const typename Derived::Scalar& latitude = lla_position(0);  // 𝜙 Geodetic latitude
+    const typename Derived::Scalar& longitude = lla_position(1); // λ Geodetic longitude
+    const typename Derived::Scalar& altitude = lla_position(2);  // Altitude (Height above ground)
 
     // Radius of curvature of the ellipsoid in the prime vertical plane,
     // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
@@ -100,35 +100,35 @@ Eigen::Vector3<typename Derived::Scalar> ecef2lla(const Eigen::MatrixBase<Derive
 
     // Calculate longitude
 
-    auto lon = atan2(y, x);
+    auto lon = std::atan2(y, x);
 
     // Start computing intermediate variables needed to compute altitude
 
     auto p = e_position.head(2).norm();
-    auto E = sqrt(a * a - b * b);
-    auto F = 54.0 * pow(b * z, 2.0);
+    auto E = std::sqrt(a * a - b * b);
+    auto F = 54.0 * std::pow(b * z, 2.0);
     auto G = p * p + (1.0 - e_squared) * z * z - e_squared * E * E;
-    auto c = e_squared * e_squared * F * p * p / pow(G, 3.0);
-    auto s = pow(1.0 + c + sqrt(c * c + 2.0 * c), 1.0 / 3.0);
-    auto P = (F / (3.0 * G * G)) / pow(s + (1.0 / s) + 1.0, 2.0);
-    auto Q = sqrt(1.0 + 2.0 * e_squared * e_squared * P);
+    auto c = e_squared * e_squared * F * p * p / std::pow(G, 3.0);
+    auto s = std::pow(1.0 + c + std::sqrt(c * c + 2.0 * c), 1.0 / 3.0);
+    auto P = (F / (3.0 * G * G)) / std::pow(s + (1.0 / s) + 1.0, 2.0);
+    auto Q = std::sqrt(1.0 + 2.0 * e_squared * e_squared * P);
     auto k_1 = -P * e_squared * p / (1.0 + Q);
     auto k_2 = 0.5 * a * a * (1.0 + 1.0 / Q);
     auto k_3 = -P * (1.0 - e_squared) * z * z / (Q * (1.0 + Q));
     auto k_4 = -0.5 * P * p * p;
-    auto r_0 = k_1 + sqrt(k_2 + k_3 + k_4);
+    auto r_0 = k_1 + std::sqrt(k_2 + k_3 + k_4);
     auto k_5 = (p - e_squared * r_0);
-    auto U = sqrt(k_5 * k_5 + z * z);
-    auto V = sqrt(k_5 * k_5 + (1.0 - e_squared) * z * z);
+    auto U = std::sqrt(k_5 * k_5 + z * z);
+    auto V = std::sqrt(k_5 * k_5 + (1.0 - e_squared) * z * z);
 
     auto alt = U * (1.0 - (b * b / (a * V)));
 
     // Compute additional values required for computing latitude
 
     auto z_0 = (b * b * z) / (a * V);
-    auto e_p = (a / b) * sqrt(e_squared);
+    auto e_p = (a / b) * std::sqrt(e_squared);
 
-    auto lat = atan((z + z_0 * (e_p * e_p)) / p);
+    auto lat = std::atan((z + z_0 * (e_p * e_p)) / p);
 
     return { lat, lon, alt };
 }
@@ -162,14 +162,20 @@ template<typename Derived>
 [[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 4, 3> covRPY2quatJacobian(const Eigen::QuaternionBase<Derived>& n_quat_b)
 {
     auto RPY = trafo::quat2eulerZYX(n_quat_b);
-    double ccc = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
-    double scc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
-    double csc = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
-    double ccs = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
-    double ssc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
-    double scs = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
-    double css = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
-    double sss = std::sin(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+
+    if (std::abs(RPY.y()) > typename Derived::Scalar(deg2rad(90 - 1e-9))) // Gimbal Lock
+    {
+        Eigen::Quaternion<typename Derived::Scalar> n_quat2_b = n_quat_b * Eigen::AngleAxis<typename Derived::Scalar>(typename Derived::Scalar(deg2rad(1e-8)), Eigen::Vector3<typename Derived::Scalar>::UnitY());
+        RPY = trafo::quat2eulerZYX(n_quat2_b);
+    }
+    auto ccc = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    auto scc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    auto csc = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    auto ccs = std::cos(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    auto ssc = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::cos(RPY(2) / 2.0);
+    auto scs = std::sin(RPY(0) / 2.0) * std::cos(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    auto css = std::cos(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
+    auto sss = std::sin(RPY(0) / 2.0) * std::sin(RPY(1) / 2.0) * std::sin(RPY(2) / 2.0);
 
     Eigen::Matrix<typename Derived::Scalar, 4, 3> J;
     // clang-format off
@@ -236,6 +242,36 @@ template<typename Derived, typename DerivedQ>
 {
     auto J = covQuat2RPYJacobian(n_quat_b);
     return J * covQuat * J.transpose();
+}
+
+/// @brief Calculates the Jacobian to convert an attitude represented in quaternions from one frame into another. Multiply: cov_beta = J * cov_alpha * J^T
+/// @param beta_quat_alpha Quaternion for rotations from frame alpha to frame beta. e.g. n_q_e if converting e_cov_b to n_cov_b
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 4, 4> covQuat2QuatJacobian(const Eigen::QuaternionBase<Derived>& beta_quat_alpha)
+{
+    Eigen::Matrix<typename Derived::Scalar, 4, 4> J;
+    J << // clang-format off
+         beta_quat_alpha.w(), -beta_quat_alpha.z(),  beta_quat_alpha.y(), beta_quat_alpha.x(),
+         beta_quat_alpha.z(),  beta_quat_alpha.w(),  beta_quat_alpha.x(), beta_quat_alpha.y(),
+        -beta_quat_alpha.y(),  beta_quat_alpha.x(),  beta_quat_alpha.w(), beta_quat_alpha.z(),
+        -beta_quat_alpha.x(), -beta_quat_alpha.y(), -beta_quat_alpha.z(), beta_quat_alpha.w();
+         // clang-format on
+
+    return J;
+}
+
+/// @brief Calculates the Jacobian to convert an attitude represented in quaternions into the difference of the vector part of two quaternions
+/// @param quat Quaternion for which the Jacobian is wanted
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix<typename Derived::Scalar, 3, 4> covQuatDiffJacobian(const Eigen::QuaternionBase<Derived>& quat)
+{
+    Eigen::Matrix<typename Derived::Scalar, 3, 4> J;
+    J << // clang-format off
+    2.0 * quat.w(), -2.0 * quat.z(),  2.0 * quat.y(), -2.0 * quat.x(),
+    2.0 * quat.z(),  2.0 * quat.w(), -2.0 * quat.x(), -2.0 * quat.y(),
+   -2.0 * quat.y(),  2.0 * quat.x(),  2.0 * quat.w(), -2.0 * quat.z();
+         // clang-format on
+    return J;
 }
 
 /// @brief Quaternion for rotations from inertial to Earth-centered-Earth-fixed frame

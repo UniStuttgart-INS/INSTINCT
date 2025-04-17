@@ -17,6 +17,7 @@
 #include <cstdint>
 #include "internal/Node/Node.hpp"
 
+#include "Navigation/INS/Units.hpp"
 #include "Navigation/Time/InsTime.hpp"
 #include "Navigation/INS/InertialIntegrator.hpp"
 
@@ -254,19 +255,8 @@ class LooselyCoupledKF : public Node
     //                                                Parameters
     // ###########################################################################################################
 
-    /// Lever arm between INS and GNSS in [m, m, m]
-    Eigen::Vector3d _b_leverArm_InsGnss{ 0.0, 0.0, 0.0 };
-
-    // ###########################################################################################################
-
-    /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
-    enum class StdevAccelNoiseUnits : uint8_t
-    {
-        mg_sqrtHz,   ///< [mg / √(Hz)]
-        m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
-    };
     /// Gui selection for the Unit of the input stdev_ra parameter
-    StdevAccelNoiseUnits _stdevAccelNoiseUnits = StdevAccelNoiseUnits::mg_sqrtHz;
+    Units::ImuAccelerometerFilterNoiseUnits _stdevAccelNoiseUnits = Units::ImuAccelerometerFilterNoiseUnits::mg_sqrtHz;
 
     /// @brief 𝜎_ra Standard deviation of the noise on the accelerometer specific-force measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
@@ -274,14 +264,8 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
-    enum class StdevGyroNoiseUnits : uint8_t
-    {
-        deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
-        rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
-    };
     /// Gui selection for the Unit of the input stdev_rg parameter
-    StdevGyroNoiseUnits _stdevGyroNoiseUnits = StdevGyroNoiseUnits::deg_hr_sqrtHz;
+    Units::ImuGyroscopeFilterNoiseUnits _stdevGyroNoiseUnits = Units::ImuGyroscopeFilterNoiseUnits::deg_hr_sqrtHz;
 
     /// @brief 𝜎_rg Standard deviation of the noise on the gyro angular-rate measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
@@ -289,14 +273,8 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevAccelBiasUnits : uint8_t
-    {
-        microg, ///< [µg]
-        m_s2,   ///< [m / s^2]
-    };
     /// Gui selection for the Unit of the input variance_bad parameter
-    StdevAccelBiasUnits _stdevAccelBiasUnits = StdevAccelBiasUnits::microg;
+    Units::ImuAccelerometerFilterBiasUnits _stdevAccelBiasUnits = Units::ImuAccelerometerFilterBiasUnits::microg;
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
@@ -307,14 +285,8 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class StdevGyroBiasUnits : uint8_t
-    {
-        deg_h, ///< [°/h]
-        rad_s, ///< [1/s]
-    };
     /// Gui selection for the Unit of the input variance_bad parameter
-    StdevGyroBiasUnits _stdevGyroBiasUnits = StdevGyroBiasUnits::deg_h;
+    Units::ImuGyroscopeFilterBiasUnits _stdevGyroBiasUnits = Units::ImuGyroscopeFilterBiasUnits::deg_h;
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))

@@ -53,22 +53,22 @@ bool ComboGravitationModel(const char* label, GravitationModel& gravitationModel
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
-template<std::floating_point Scalar>
-[[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_SomiglianaAltitude(const Scalar& latitude, const Scalar& altitude)
+template<typename T>
+[[nodiscard]] Eigen::Vector3<T> n_calcGravitation_SomiglianaAltitude(const T& latitude, const T& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
     auto g_0 = 9.7803253359 * (1.0 + 1.931853e-3 * std::pow(std::sin(latitude), 2))
                / std::sqrt(1.0 - InsConst::WGS84::e_squared * std::pow(std::sin(latitude), 2));
 
     // Altitude compensation (Matlab example from Chapter 6_GNSS_INS_1 - glocal.m)
-    auto k = 1
-             - (2 * altitude / InsConst::WGS84::a)
-                   * (1 + InsConst::WGS84::f
+    auto k = 1.0
+             - (2.0 * altitude / InsConst::WGS84::a)
+                   * (1.0 + InsConst::WGS84::f
                       + (std::pow(InsConst::omega_ie * InsConst::WGS84::a, 2))
                             * (InsConst::WGS84::b / InsConst::WGS84::MU))
-             + 3 * std::pow(altitude / InsConst::WGS84::a, 2);
+             + 3.0 * std::pow(altitude / InsConst::WGS84::a, 2.0);
 
-    return { 0.0, 0.0, k * g_0 };
+    return { T(0.0), T(0.0), k * g_0 };
 }
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
@@ -78,8 +78,8 @@ template<std::floating_point Scalar>
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Skydel API plug-in 'skydel_plugin/source/library/inertial_math/Sources/source/gravity.cpp'
-template<std::floating_point Scalar>
-[[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84_Skydel(const Scalar& latitude, const Scalar& altitude)
+template<typename T>
+[[nodiscard]] Eigen::Vector3<T> n_calcGravitation_WGS84_Skydel(const T& latitude, const T& altitude)
 {
     // geocentric latitude determination from geographic latitude
     auto latitudeGeocentric = std::atan((std::pow(InsConst::WGS84::b, 2.0) / std::pow(InsConst::WGS84::a, 2.0)) * std::tan(latitude));
@@ -88,10 +88,10 @@ template<std::floating_point Scalar>
 
     // Derivation of gravity, i.e. gravitational potential derived after effective radius
     auto gravitationMagnitude = InsConst::WGS84::MU * std::pow(radiusSpheroid, -2.0)
-                                - 3 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
+                                - 3.0 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3.0 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1.0)
                                 - std::pow(InsConst::omega_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
-    return { 0, 0, gravitationMagnitude };
+    return { T(0.0), T(0.0), gravitationMagnitude };
 }
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
@@ -101,8 +101,8 @@ template<std::floating_point Scalar>
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See 'INS-Projects/INSTINCT/SpecificLiterature/GravityPotentialWGS84' in NC folder (eq. (3) derived after 'r')
-template<std::floating_point Scalar>
-[[nodiscard]] Eigen::Vector3<Scalar> n_calcGravitation_WGS84(const Scalar& latitude, const Scalar& altitude)
+template<typename T>
+[[nodiscard]] Eigen::Vector3<T> n_calcGravitation_WGS84(const T& latitude, const T& altitude)
 {
     // Geocentric latitude determination from geographic latitude
     auto latitudeGeocentric = std::atan((std::pow(InsConst::WGS84::b, 2.0) / std::pow(InsConst::WGS84::a, 2.0)) * std::tan(latitude));
@@ -111,10 +111,10 @@ template<std::floating_point Scalar>
 
     // Magnitude of the gravity, i.e. without orientation
     auto gravitationMagnitude = InsConst::WGS84::MU * std::pow(radiusSpheroid, -2.0)
-                                - 3 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
+                                - 3.0 * InsConst::WGS84::MU * InsConst::WGS84::J2 * std::pow(InsConst::WGS84::a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3.0 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1.0)
                                 - std::pow(InsConst::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
-    return { 0, 0, gravitationMagnitude };
+    return { T(0.0), T(0.0), gravitationMagnitude };
 }
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
@@ -138,18 +138,18 @@ template<typename Derived>
     // Spherical coordinates
     auto radius = std::sqrt(e_position(0) * e_position(0) + e_position(1) * e_position(1) + e_position(2) * e_position(2));
     auto elevation = M_PI_2 - latitudeGeocentric; // [rad]
-    auto azimuth = lla_position(1);               // [rad]
+    const auto& azimuth = lla_position(1);        // [rad]
 
     // Gravitation vector in local-navigation frame coordinates in [m/s^2]
     Eigen::Vector3<typename Derived::Scalar> n_gravitation = Eigen::Vector3<typename Derived::Scalar>::Zero();
 
-    typename Derived::Scalar Pnm = 0;
-    typename Derived::Scalar Pnmd = 0;
+    typename Derived::Scalar Pnm(0.0);
+    typename Derived::Scalar Pnmd(0.0);
 
     auto coeffsRows = egm96Coeffs.size();
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
-    auto [P, Pd] = associatedLegendre(static_cast<double>(elevation), ndegree);
+    auto [P, Pd] = associatedLegendre(elevation, ndegree);
 
     for (size_t i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {

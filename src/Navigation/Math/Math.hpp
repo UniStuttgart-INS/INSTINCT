@@ -19,6 +19,7 @@
 #include <optional>
 #include <type_traits>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include <gcem.hpp>
 #include <fmt/format.h>
 
@@ -138,6 +139,39 @@ template<typename T>
 int sgn(const T& val)
 {
     return (T(0) < val) - (val < T(0));
+}
+
+/// @brief Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ
+/// @param[in] X Matrix
+/// @param[in] order The order of the Taylor polynom to calculate
+/// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+template<typename Derived>
+typename Derived::PlainObject expm(const Eigen::MatrixBase<Derived>& X, size_t order)
+{
+    INS_ASSERT_USER_ERROR(X.rows() == X.cols(), "Matrix exponential calculation only possible for n x n matrices");
+
+    typename Derived::PlainObject e_X;
+
+    if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic)
+    {
+        e_X = Eigen::MatrixBase<Derived>::Identity(X.rows(), X.cols());
+    }
+    else
+    {
+        e_X = Eigen::MatrixBase<Derived>::Identity();
+    }
+    typename Derived::PlainObject Xpower = X;
+    for (size_t i = 1; i <= order; i++)
+    {
+        e_X += Xpower / static_cast<double>(math::factorial(i));
+
+        if (i < order)
+        {
+            Xpower *= X;
+        }
+    }
+
+    return e_X;
 }
 
 /// @brief Find (L^T D L)-decomposition of Q-matrix via outer product method
@@ -274,6 +308,25 @@ typename DerivedA::Scalar squaredNormVectorMatrix(const Eigen::MatrixBase<Derive
 /// @param value Value to calculate the CDF for
 double normalCDF(double value);
 
+/// @brief Returns the inverse square root of a matrix
+/// @param matrix Matrix to use
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject inverseSqrt(const Eigen::MatrixBase<Derived>& matrix)
+{
+    INS_ASSERT_USER_ERROR(matrix.rows() == matrix.cols(), "Only square matrix supported");
+    if constexpr (std::is_floating_point_v<typename Derived::Scalar>)
+    {
+        return matrix.inverse().sqrt(); // Eigen::SelfAdjointEigenSolver<Eigen::MatrixX<T>>{ covMatrix }.operatorInverseSqrt();
+    }
+    else // Eigen gets problems with ceres::Jet in the .sqrt() function
+    {
+        Eigen::JacobiSVD<Eigen::MatrixX<typename Derived::Scalar>> svd(matrix.inverse(), Eigen::ComputeFullV);
+        typename Derived::PlainObject sqrtInverse = svd.matrixV() * svd.singularValues().cwiseSqrt().asDiagonal() * svd.matrixV().transpose();
+        INS_ASSERT_USER_ERROR(!sqrtInverse.hasNaN(), "The matrix is not invertible");
+        return sqrtInverse;
+    }
+}
+
 /// @brief Change the sign of x according to the value of y
 /// @param[in] x input value
 /// @param[in] y input value
@@ -295,7 +348,7 @@ T sign(const T& x, const T& y)
 /// @param t Multiplier. [0, 1] for interpolation
 /// @return a + t * (b - a)
 template<typename Derived>
-typename Derived::PlainObject lerp(const Eigen::MatrixBase<Derived>& a, const Eigen::MatrixBase<Derived>& b, const typename Derived::Scalar& t)
+typename Derived::PlainObject lerp(const Eigen::MatrixBase<Derived>& a, const Eigen::MatrixBase<Derived>& b, auto t)
 {
     return a + t * (b - a);
 }

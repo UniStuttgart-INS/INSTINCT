@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include "util/Logger.hpp"
+#include "Navigation/Transformations/Units.hpp"
 
 namespace NAV::Units
 {
@@ -29,6 +30,29 @@ void from_json(const json& j, CovarianceAccelUnits& data)
     for (size_t i = 0; i < static_cast<size_t>(CovarianceAccelUnits::COUNT); i++)
     {
         auto enumItem = static_cast<CovarianceAccelUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const CovarianceAngularVelocityUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, CovarianceAngularVelocityUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into CovarianceAngularVelocityUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(CovarianceAngularVelocityUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<CovarianceAngularVelocityUnits>(i);
         if (str == to_string(enumItem))
         {
             data = enumItem;
@@ -99,6 +123,28 @@ double NAV::convertUnit(const double& value, Units::CovarianceAccelUnits unit)
     return value; // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
 }
 
+double NAV::convertUnit(const double& value, Units::CovarianceAngularVelocityUnits unit)
+{
+    switch (unit)
+    {
+    case Units::CovarianceAngularVelocityUnits::rad2_s:
+        return value;
+    case Units::CovarianceAngularVelocityUnits::rad_sqrts:
+        return std::pow(value, 2);
+    case Units::CovarianceAngularVelocityUnits::deg2_s:
+        return deg2rad(deg2rad(value));
+    case Units::CovarianceAngularVelocityUnits::deg_sqrts:
+        return std::pow(deg2rad(value), 2);
+    case Units::CovarianceAngularVelocityUnits::deg2s_min2:
+        return deg2rad(deg2rad(value)) / 3600.0;
+    case Units::CovarianceAngularVelocityUnits::degsqrts_min:
+        return std::pow(deg2rad(value) / 60.0, 2);
+    case Units::CovarianceAngularVelocityUnits::COUNT:
+        break;
+    }
+    return value; // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
+}
+
 double NAV::convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits unit)
 {
     switch (unit)
@@ -136,6 +182,28 @@ std::string NAV::to_string(Units::CovarianceAccelUnits unit)
     case Units::CovarianceAccelUnits::m_sqrts3:
         return "m/√(s^3)";
     case Units::CovarianceAccelUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::CovarianceAngularVelocityUnits unit)
+{
+    switch (unit)
+    {
+    case Units::CovarianceAngularVelocityUnits::rad2_s:
+        return "rad^2/s";
+    case Units::CovarianceAngularVelocityUnits::rad_sqrts:
+        return "rad/√(s)";
+    case Units::CovarianceAngularVelocityUnits::deg2_s:
+        return "deg^2/s";
+    case Units::CovarianceAngularVelocityUnits::deg_sqrts:
+        return "deg/√(s)";
+    case Units::CovarianceAngularVelocityUnits::deg2s_min2:
+        return "deg^2 s/min^2";
+    case Units::CovarianceAngularVelocityUnits::degsqrts_min:
+        return "deg √(s)/min";
+    case Units::CovarianceAngularVelocityUnits::COUNT:
         break;
     }
     return "";

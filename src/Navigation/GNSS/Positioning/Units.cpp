@@ -84,6 +84,52 @@ void from_json(const json& j, AttitudeUncertaintyUnits& data)
     }
 }
 
+void to_json(json& j, const VelocityUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, VelocityUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into VelocityUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(VelocityUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<VelocityUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const AttitudeUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, AttitudeUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into AttitudeUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(AttitudeUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<AttitudeUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
 } // namespace NAV::Units
 
 double NAV::convertUnit(const double& value, Units::PositionUncertaintyUnits unit)
@@ -175,6 +221,56 @@ Eigen::Vector3d NAV::convertUnit(const Eigen::Vector3d& value, Units::AttitudeUn
     return value; // Attitude standard deviation [rad]
 }
 
+double NAV::convertUnit(const double& value, Units::VelocityUnits unit)
+{
+    switch (unit)
+    {
+    case Units::VelocityUnits::m_s:
+        return value;
+    case Units::VelocityUnits::COUNT:
+        break;
+    }
+    return value; // [m/s]
+}
+Eigen::Vector3d NAV::convertUnit(const Eigen::Vector3d& value, Units::VelocityUnits unit)
+{
+    switch (unit)
+    {
+    case Units::VelocityUnits::m_s:
+        return value;
+    case Units::VelocityUnits::COUNT:
+        break;
+    }
+    return value; // [m/s]
+}
+
+double NAV::convertUnit(const double& value, Units::AttitudeUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AttitudeUnits::rad:
+        return value;
+    case Units::AttitudeUnits::deg:
+        return deg2rad(value);
+    case Units::AttitudeUnits::COUNT:
+        break;
+    }
+    return value; // [rad]
+}
+Eigen::Vector3d NAV::convertUnit(const Eigen::Vector3d& value, Units::AttitudeUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AttitudeUnits::rad:
+        return value;
+    case Units::AttitudeUnits::deg:
+        return deg2rad(value);
+    case Units::AttitudeUnits::COUNT:
+        break;
+    }
+    return value; // [rad]
+}
+
 std::string NAV::to_string(Units::PositionUncertaintyUnits unit)
 {
     switch (unit)
@@ -216,6 +312,32 @@ std::string NAV::to_string(Units::AttitudeUncertaintyUnits unit)
     case Units::AttitudeUncertaintyUnits::deg2:
         return "deg^2";
     case Units::AttitudeUncertaintyUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::VelocityUnits unit)
+{
+    switch (unit)
+    {
+    case Units::VelocityUnits::m_s:
+        return "m/s";
+    case Units::VelocityUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::AttitudeUnits unit)
+{
+    switch (unit)
+    {
+    case Units::AttitudeUnits::rad:
+        return "rad";
+    case Units::AttitudeUnits::deg:
+        return "deg";
+    case Units::AttitudeUnits::COUNT:
         break;
     }
     return "";

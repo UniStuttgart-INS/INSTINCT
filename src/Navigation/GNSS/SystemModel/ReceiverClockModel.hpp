@@ -59,6 +59,15 @@ class ReceiverClockModel
 {
   public:
     /// @brief Initializes the receiver clock model
+    void initialize()
+    {
+        // Covariance of the clock phase drift [m²/s]
+        _covarianceClkPhaseDrift = convertUnit(_gui_covarianceClkPhaseDrift, _gui_covarianceClkPhaseDriftUnit);
+        // Covariance of the frequency phase drift [m²/s³]
+        _covarianceClkFrequencyDrift = convertUnit(_gui_covarianceClkFrequencyDrift, _gui_covarianceClkFrequencyDriftUnit);
+    }
+
+    /// @brief Initializes the receiver clock model
     /// @param[in, out] F System model matrix
     /// @param[in, out] G Noise input matrix
     /// @param[in, out] W Noise scale matrix
@@ -67,10 +76,7 @@ class ReceiverClockModel
                     KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& G,
                     KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
     {
-        // Covariance of the clock phase drift [m²/s]
-        _covarianceClkPhaseDrift = convertUnit(_gui_covarianceClkPhaseDrift, _gui_covarianceClkPhaseDriftUnit);
-        // Covariance of the frequency phase drift [m²/s³]
-        _covarianceClkFrequencyDrift = convertUnit(_gui_covarianceClkFrequencyDrift, _gui_covarianceClkFrequencyDriftUnit);
+        initialize();
 
         for (const auto& key : F.rowKeys())
         {

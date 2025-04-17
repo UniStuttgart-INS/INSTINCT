@@ -91,37 +91,37 @@ The quaternion \f$ \mathbf{q} = a + \mathbf{i} b + \mathbf{j} c + \mathbf{k} d \
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-base}
   \mathbf{\dotup{q}}_b^n = 0.5 \mathbf{q}_b^n \cdot \mathbf{p}_{nb}^b
 \f}
-where \f$ \mathbf{p}_{nb}^b = \begin{pmatrix} 0 & \boldsymbol{\omega}_{nb}^b \end{pmatrix}^T = \begin{pmatrix} 0 & \omega_{nb,x}^b & \omega_{nb,y}^b & \omega_{nb,z}^b \end{pmatrix}^T \f$
+where \f$ \mathbf{p}_{nb}^b = \begin{pmatrix} \boldsymbol{\omega}_{nb}^b & 0 \end{pmatrix}^T = \begin{pmatrix} \omega_{nb,x}^b & \omega_{nb,y}^b & \omega_{nb,z}^b & 0 \end{pmatrix}^T \f$
 
 This can be written in matrix form as
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-base-matrix}
   \mathbf{\dotup{q}}_b^n
-      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
-      = 0.5 \begin{bmatrix} a & -b & -c & -d \\
-                            b &  a & -d &  c \\
-                            c &  d &  a & -b \\
-                            d & -c &  b &  a \end{bmatrix}
-            \begin{bmatrix} 0 \\ \omega_{nb,x}^b \\ \omega_{nb,y}^b \\ \omega_{nb,z}^b \end{bmatrix}
+      = \begin{bmatrix} \dotup{b} \\ \dotup{c} \\ \dotup{d} \\  \dotup{a} \end{bmatrix}
+      = 0.5 \begin{bmatrix}  a & -d &  c & b \\
+                             d &  a & -b & c \\
+                            -c &  b &  a & d \\
+                            -b & -c & -d & a \end{bmatrix}
+            \begin{bmatrix} \omega_{nb,x}^b \\ \omega_{nb,y}^b \\ \omega_{nb,z}^b \\ 0 \end{bmatrix}
 \f}
 that is
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-components}
 \begin{aligned}
-  \dotup{a} &= -0.5 (b \omega_{nb,x}^b + c \omega_{nb,y}^b + d \omega_{nb,z}^b) &=  0.5 ( 0 \cdot a - \omega_{nb,x}^b b - \omega_{nb,y}^b c - \omega_{nb,z}^b d) \\
-  \dotup{b} &=  0.5 (a \omega_{nb,x}^b - d \omega_{nb,y}^b + c \omega_{nb,z}^b) &=  0.5 (\omega_{nb,x}^b a +  0 \cdot b + \omega_{nb,z}^b c - \omega_{nb,y}^b d) \\
-  \dotup{c} &=  0.5 (d \omega_{nb,x}^b + a \omega_{nb,y}^b - b \omega_{nb,z}^b) &=  0.5 (\omega_{nb,y}^b a - \omega_{nb,z}^b b +  0 \cdot c + \omega_{nb,x}^b d) \\
-  \dotup{d} &= -0.5 (c \omega_{nb,x}^b - b \omega_{nb,y}^b - a \omega_{nb,z}^b) &=  0.5 (\omega_{nb,z}^b a + \omega_{nb,y}^b b - \omega_{nb,x}^b c +  0 \cdot d) \\
+  \dotup{b} &=  0.5 (a \omega_{nb,x}^b - d \omega_{nb,y}^b + c \omega_{nb,z}^b) &=  0.5 (+         0 \cdot b + \omega_{nb,z}^b c - \omega_{nb,y}^b d + \omega_{nb,x}^b a) \\
+  \dotup{c} &=  0.5 (d \omega_{nb,x}^b + a \omega_{nb,y}^b - b \omega_{nb,z}^b) &=  0.5 (- \omega_{nb,z}^b b +         0 \cdot c + \omega_{nb,x}^b d + \omega_{nb,y}^b a) \\
+  \dotup{d} &= -0.5 (c \omega_{nb,x}^b - b \omega_{nb,y}^b - a \omega_{nb,z}^b) &=  0.5 (+ \omega_{nb,y}^b b - \omega_{nb,x}^b c +         0 \cdot d + \omega_{nb,z}^b a) \\
+  \dotup{a} &= -0.5 (b \omega_{nb,x}^b + c \omega_{nb,y}^b + d \omega_{nb,z}^b) &=  0.5 (- \omega_{nb,x}^b b - \omega_{nb,y}^b c - \omega_{nb,z}^b d +         0 \cdot a) \\
 \end{aligned}
 \f}
 
 and this can be written in matrix form again as
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
   \mathbf{\dotup{q}}_b^n
-      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
-      = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b \\
-                                    \omega_{nb,x}^b &        0         &  \omega_{nb,z}^b & -\omega_{nb,y}^b \\
-                                    \omega_{nb,y}^b & -\omega_{nb,z}^b &        0         &  \omega_{nb,x}^b \\
-                                    \omega_{nb,z}^b &  \omega_{nb,y}^b & -\omega_{nb,x}^b &        0         \end{bmatrix}
-                    \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+      = \begin{bmatrix} \dotup{b} \\ \dotup{c} \\ \dotup{d} \\ \dotup{a} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}        0         &  \omega_{nb,z}^b & -\omega_{nb,y}^b & \omega_{nb,x}^b \\
+                                    -\omega_{nb,z}^b &        0         &  \omega_{nb,x}^b & \omega_{nb,y}^b \\
+                                     \omega_{nb,y}^b & -\omega_{nb,x}^b &        0         & \omega_{nb,z}^b \\
+                                    -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b &        0        \end{bmatrix}
+                    \begin{bmatrix} b \\ c \\ d \\ a \end{bmatrix}
 \f}
 see
 - \cite Titterton2004 Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319

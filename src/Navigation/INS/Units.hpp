@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <string>
 
+#include "Navigation/Constants.hpp"
 #include "Navigation/Transformations/Units.hpp"
 #include "util/Eigen.hpp"
 #include "util/Json.hpp"
@@ -30,6 +31,7 @@ namespace Units
 enum class ImuAccelerometerUnits : uint8_t
 {
     m_s2,  ///< [m/s^2]
+    g,     ///< [g]
     COUNT, ///< Amount of items in the enum
 };
 
@@ -75,6 +77,42 @@ enum class ImuGyroscopeIRWUnits : uint8_t
     deg_s2_sqrts, ///< [deg/s^2/sqrt(s)] (Standard deviation)
     deg_s2_sqrth, ///< [deg/s^2/sqrt(h)] (Standard deviation)
     COUNT,        ///< Amount of items in the enum
+};
+
+/// Possible units to specify an accelerometer noise in a filter
+enum class ImuAccelerometerFilterNoiseUnits : uint8_t
+{
+    m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
+    mg_sqrtHz,   ///< [mg / √(Hz)]
+    COUNT,       ///< Amount of items in the enum
+};
+
+/// Possible units to specify an gyro noise in a filter
+enum class ImuGyroscopeFilterNoiseUnits : uint8_t
+{
+    rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
+    rad_hr_sqrtHz, ///< [rad / hr /√(Hz)]
+    deg_s_sqrtHz,  ///< [deg / s /√(Hz)]
+    deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
+    COUNT,         ///< Amount of items in the enum
+};
+
+/// Possible units for the accelerometer dynamic bias
+enum class ImuAccelerometerFilterBiasUnits : uint8_t
+{
+    m_s2,   ///< [m / s^2]
+    microg, ///< [µg]
+    COUNT,  ///< Amount of items in the enum
+};
+
+/// Possible units for the gyroscope dynamic bias
+enum class ImuGyroscopeFilterBiasUnits : uint8_t
+{
+    rad_s, ///< [1/s]
+    rad_h, ///< [1/h]
+    deg_s, ///< [°/s]
+    deg_h, ///< [°/h]
+    COUNT, ///< Amount of items in the enum
 };
 
 /// @brief Converts the provided data into a json object
@@ -131,6 +169,42 @@ void to_json(json& j, const ImuGyroscopeIRWUnits& data);
 /// @param[out] data Object to fill from the json
 void from_json(const json& j, ImuGyroscopeIRWUnits& data);
 
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuAccelerometerFilterNoiseUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuAccelerometerFilterNoiseUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuGyroscopeFilterNoiseUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuGyroscopeFilterNoiseUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuAccelerometerFilterBiasUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuAccelerometerFilterBiasUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const ImuGyroscopeFilterBiasUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, ImuGyroscopeFilterBiasUnits& data);
+
 } // namespace Units
 
 /// @brief Converts the value depending on the unit provided
@@ -144,6 +218,8 @@ template<typename Derived>
     {
     case Units::ImuAccelerometerUnits::m_s2:
         return value;
+    case Units::ImuAccelerometerUnits::g:
+        return value * InsConst::G_NORM;
     case Units::ImuAccelerometerUnits::COUNT:
         break;
     }
@@ -253,6 +329,90 @@ template<typename Derived>
     return value;
 }
 
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuAccelerometerFilterNoiseUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerFilterNoiseUnits::m_s2_sqrtHz:
+        return value;
+    case Units::ImuAccelerometerFilterNoiseUnits::mg_sqrtHz:
+        return value * 1e-3 * InsConst::G_NORM;
+    case Units::ImuAccelerometerFilterNoiseUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuGyroscopeFilterNoiseUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeFilterNoiseUnits::rad_s_sqrtHz:
+        return value;
+    case Units::ImuGyroscopeFilterNoiseUnits::rad_hr_sqrtHz:
+        return value / 3600.0;
+    case Units::ImuGyroscopeFilterNoiseUnits::deg_s_sqrtHz:
+        return deg2rad(value);
+    case Units::ImuGyroscopeFilterNoiseUnits::deg_hr_sqrtHz:
+        return deg2rad(value) / 3600.0;
+    case Units::ImuGyroscopeFilterNoiseUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuAccelerometerFilterBiasUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerFilterBiasUnits::m_s2:
+        return value;
+    case Units::ImuAccelerometerFilterBiasUnits::microg:
+        return value * 1e-6 * InsConst::G_NORM;
+    case Units::ImuAccelerometerFilterBiasUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+template<typename Derived>
+[[nodiscard]] typename Derived::PlainObject convertUnit(const Eigen::MatrixBase<Derived>& value, Units::ImuGyroscopeFilterBiasUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeFilterBiasUnits::rad_s:
+        return value;
+    case Units::ImuGyroscopeFilterBiasUnits::rad_h:
+        return value / 3600.0;
+    case Units::ImuGyroscopeFilterBiasUnits::deg_s:
+        return deg2rad(value);
+    case Units::ImuGyroscopeFilterBiasUnits::deg_h:
+        return deg2rad(value) / 3600.0;
+    case Units::ImuGyroscopeFilterBiasUnits::COUNT:
+        break;
+    }
+    return value;
+}
+
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::ImuAccelerometerUnits unit);
@@ -271,5 +431,17 @@ template<typename Derived>
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::ImuGyroscopeIRWUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuAccelerometerFilterNoiseUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuGyroscopeFilterNoiseUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuAccelerometerFilterBiasUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::ImuGyroscopeFilterBiasUnits unit);
 
 } // namespace NAV

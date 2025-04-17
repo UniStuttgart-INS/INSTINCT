@@ -1280,8 +1280,8 @@ void NAV::TightlyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
                               : InsGnssTCKFSolution::Frame::ECEF;
     if (_lastImuObs)
     {
-        tckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quatAccel_p() * _inertialIntegrator.p_getLastAccelerationBias();
-        tckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quatGyro_p() * _inertialIntegrator.p_getLastAngularRateBias();
+        tckfSolution->b_biasAccel = _lastImuObs->imuPos.b_quat_p() * _inertialIntegrator.p_getLastAccelerationBias();
+        tckfSolution->b_biasGyro = _lastImuObs->imuPos.b_quat_p() * _inertialIntegrator.p_getLastAngularRateBias();
     }
     tckfSolution->recvClkOffset = 0; // TODO
     tckfSolution->recvClkDrift = 0;
@@ -1458,7 +1458,7 @@ void NAV::TightlyCoupledKF::tightlyCoupledPrediction(const std::shared_ptr<const
     auto p_acceleration = _inertialIntegrator.p_calcCurrentAcceleration();
     // Acceleration in [m/s^2], in body coordinates
     Eigen::Vector3d b_acceleration = p_acceleration
-                                         ? imuPos.b_quatAccel_p() * p_acceleration.value()
+                                         ? imuPos.b_quat_p() * p_acceleration.value()
                                          : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
@@ -2144,7 +2144,7 @@ Eigen::Matrix<double, 17, 17> NAV::TightlyCoupledKF::e_systemMatrix_F(const Eige
     F.block<3, 3>(3, 0) = e_F_dv_dpsi(e_Quat_b * b_specForce_ib);
     F.block<3, 3>(3, 3) = e_F_dv_dv(e_omega_ie.z());
     F.block<3, 3>(3, 6) = e_F_dv_dr(e_position, e_gravitation, r_eS_e, e_omega_ie);
-    F.block<3, 3>(3, 9) = e_F_dv_df(e_Quat_b.toRotationMatrix());
+    F.block<3, 3>(3, 9) = e_F_dv_df_b(e_Quat_b.toRotationMatrix());
     F.block<3, 3>(6, 3) = e_F_dr_dv();
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {

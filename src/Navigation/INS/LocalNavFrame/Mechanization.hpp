@@ -35,35 +35,37 @@ namespace NAV
 ///
 /// \anchor eq-INS-Mechanization-n_Quat_b-dot \f{equation}{ \label{eq:eq-INS-Mechanization-n_Quat_b-dot}
 ///   \mathbf{\dot{q}}_b^n
-///    = \begin{bmatrix} \dot{w} \\ \dot{x} \\ \dot{y} \\ \dot{z} \end{bmatrix}
-///    = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b \\
-///                                  \omega_{nb,x}^b &        0         &  \omega_{nb,z}^b & -\omega_{nb,y}^b \\
-///                                  \omega_{nb,y}^b & -\omega_{nb,z}^b &        0         &  \omega_{nb,x}^b \\
-///                                  \omega_{nb,z}^b &  \omega_{nb,y}^b & -\omega_{nb,x}^b &        0         \end{bmatrix}
-///                  \begin{bmatrix} w \\ x \\ y \\ z \end{bmatrix}
+///    = \begin{bmatrix} \dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{w} \end{bmatrix}
+///    = \frac{1}{2} \begin{bmatrix}        0         &  \omega_{nb,z}^b & -\omega_{nb,y}^b & \omega_{nb,x}^b \\
+///                                  -\omega_{nb,z}^b &        0         &  \omega_{nb,x}^b & \omega_{nb,y}^b \\
+///                                   \omega_{nb,y}^b & -\omega_{nb,x}^b &        0         & \omega_{nb,z}^b \\
+///                                  -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b &        0        \end{bmatrix}
+///                  \begin{bmatrix} x \\ y \\ z \\ w \end{bmatrix}
 /// \f}
 ///
 /// @param[in] b_omega_nb ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
-/// @param[in] n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
-/// @return The time derivative of the coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
+/// @param[in] n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b in order x, y, z, w (q = w + ix + jy + kz)
+/// @return The time derivative of the coefficients of the quaternion n_Quat_b in order x, y, z, w (q = w + ix + jy + kz)
 ///
 /// @note See \ref ImuIntegrator-Mechanization-n-Attitude-Quaternion equation \eqref{eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
 template<typename DerivedA, typename DerivedB>
 Eigen::Vector4<typename DerivedA::Scalar> calcTimeDerivativeFor_n_Quat_b(const Eigen::MatrixBase<DerivedA>& b_omega_nb,
                                                                          const Eigen::MatrixBase<DerivedB>& n_Quat_b_coeffs)
 {
+    using T = typename DerivedA::Scalar;
+
     // Angular rates in matrix form (Titterton (2005), eq. (11.35))
-    Eigen::Matrix4<typename DerivedA::Scalar> A;
+    Eigen::Matrix4<T> A;
 
     // clang-format off
-    A <<       0.0     , -b_omega_nb(0), -b_omega_nb(1), -b_omega_nb(2),
-          b_omega_nb(0),       0.0     ,  b_omega_nb(2), -b_omega_nb(1),
-          b_omega_nb(1), -b_omega_nb(2),       0.0     ,  b_omega_nb(0),
-          b_omega_nb(2),  b_omega_nb(1), -b_omega_nb(0),       0.0     ;
+    A <<     T(0.0)    ,  b_omega_nb(2), -b_omega_nb(1), b_omega_nb(0),
+         -b_omega_nb(2),     T(0.0)    ,  b_omega_nb(0), b_omega_nb(1),
+          b_omega_nb(1), -b_omega_nb(0),     T(0.0)    , b_omega_nb(2),
+         -b_omega_nb(0), -b_omega_nb(1), -b_omega_nb(2),    T(0.0)    ;
     // clang-format on
 
     // Propagation of an attitude Quaternion with time (Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319)
-    return 0.5 * A * n_Quat_b_coeffs; // (w, x, y, z)
+    return 0.5 * A * n_Quat_b_coeffs; // (x, y, z, w)
 }
 
 /// @brief Calculates the time derivative of the velocity in local-navigation frame coordinates
@@ -115,8 +117,8 @@ Eigen::Vector3<typename DerivedA::Scalar> n_calcTimeDerivativeForVelocity(const 
 /// @note See \ref ImuIntegrator-Mechanization-n-Position equation \eqref{eq-ImuIntegrator-Mechanization-n-Position}
 template<typename Derived>
 Eigen::Vector3<typename Derived::Scalar> lla_calcTimeDerivativeForPosition(const Eigen::MatrixBase<Derived>& n_velocity,
-                                                                           const typename Derived::Scalar& phi, const typename Derived::Scalar& h,
-                                                                           const typename Derived::Scalar& R_N, const typename Derived::Scalar& R_E)
+                                                                           const auto& phi, const auto& h,
+                                                                           const auto& R_N, const auto& R_E)
 {
     // Velocity North in [m/s]
     const auto& v_N = n_velocity(0);
@@ -131,74 +133,74 @@ Eigen::Vector3<typename Derived::Scalar> lla_calcTimeDerivativeForPosition(const
 }
 
 /// @brief Calculates the derivative of the quaternion, velocity and curvilinear position
-/// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+/// @param[in] y [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
 /// @param[in] z [fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-template<std::floating_point Scalar>
-Eigen::Vector<Scalar, 10> n_calcPosVelAttDerivative(const Eigen::Vector<Scalar, 10>& y, const Eigen::Vector<Scalar, 6>& z, const PosVelAttDerivativeConstants<Scalar>& c, Scalar /* t */ = 0.0)
+/// @return The derivative ∂/∂t [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
+template<typename T>
+Eigen::Vector<T, 10> n_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, const Eigen::Vector<T, 6>& z, const PosVelAttDerivativeConstants& c, double /* t */ = 0.0)
 {
-    //  0  1  2  3   4    5    6   7  8  9
-    // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-    Eigen::Vector<Scalar, 10> y_dot = Eigen::Vector<Scalar, 10>::Zero();
+    //         0  1  2   3    4    5     6       7       8       9
+    // ∂/∂t  [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
+    Eigen::Vector<T, 10> y_dot = Eigen::Vector<T, 10>::Zero();
 
-    Eigen::Quaternion<Scalar> n_Quat_b{ y(0), y(1), y(2), y(3) };
+    Eigen::Quaternion<T> n_Quat_b{ y.template segment<4>(6) };
     n_Quat_b.normalize();
-    Eigen::Quaternion<Scalar> n_Quat_e = trafo::n_Quat_e(y(7), y(8));
+    Eigen::Quaternion<T> n_Quat_e = trafo::n_Quat_e(y(0), y(1));
 
     LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
-    LOG_DATA("n_velocity   = {} [m/s]", y.template segment<3>(4).transpose());
-    LOG_DATA("lla_position = {}°, {}°, {} m", rad2deg(y(7)), rad2deg(y(8)), y(9));
+    LOG_DATA("n_velocity   = {} [m/s]", y.template segment<3>(3).transpose());
+    LOG_DATA("lla_position = {}°, {}°, {} m", rad2deg(y(0)), rad2deg(y(1)), y(2));
 
-    auto R_N = calcEarthRadius_N(y(7));
+    auto R_N = calcEarthRadius_N(y(0));
     LOG_DATA("R_N = {} [m]", R_N);
-    auto R_E = calcEarthRadius_E(y(7));
+    auto R_E = calcEarthRadius_E(y(0));
     LOG_DATA("R_E = {} [m]", R_E);
 
     // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
-    Eigen::Vector3<Scalar> n_omega_ie = n_Quat_e * InsConst::e_omega_ie;
+    Eigen::Vector3<T> n_omega_ie = n_Quat_e * InsConst::e_omega_ie.cast<T>();
     LOG_DATA("n_omega_ie = {} [rad/s]", n_omega_ie.transpose());
     // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
-    Eigen::Vector3<Scalar> n_omega_en = n_calcTransportRate(y.template segment<3>(7), y.template segment<3>(4), R_N, R_E);
+    Eigen::Vector3<T> n_omega_en = n_calcTransportRate(y.template segment<3>(0), y.template segment<3>(3), R_N, R_E);
     LOG_DATA("n_omega_en = {} [rad/s]", n_omega_en.transpose());
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
-    Eigen::Vector3<Scalar> b_omega_nb = z.template segment<3>(3)
-                                        - n_Quat_b.conjugate()
-                                              * ((c.angularRateEarthRotationCompensationEnabled ? n_omega_ie : Eigen::Vector3<Scalar>::Zero())
-                                                 + (c.angularRateTransportRateCompensationEnabled ? n_omega_en : Eigen::Vector3<Scalar>::Zero()));
+    Eigen::Vector3<T> b_omega_nb = z.template segment<3>(3)
+                                   - n_Quat_b.conjugate()
+                                         * ((c.angularRateEarthRotationCompensationEnabled ? n_omega_ie : Eigen::Vector3<T>::Zero())
+                                            + (c.angularRateTransportRateCompensationEnabled ? n_omega_en : Eigen::Vector3<T>::Zero()));
     LOG_DATA("b_omega_nb = {} [rad/s]", b_omega_nb.transpose());
 
     // Coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
-    Eigen::Vector3<Scalar> n_coriolisAcceleration = c.coriolisAccelerationCompensationEnabled
-                                                        ? n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, y.template segment<3>(4))
-                                                        : Eigen::Vector3<Scalar>::Zero();
+    Eigen::Vector3<T> n_coriolisAcceleration = c.coriolisAccelerationCompensationEnabled
+                                                   ? n_calcCoriolisAcceleration(n_omega_ie, n_omega_en, y.template segment<3>(3))
+                                                   : Eigen::Vector3<T>::Zero();
     LOG_DATA("n_coriolisAcceleration = {} [m/s^2]", n_coriolisAcceleration.transpose());
     // Centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path)
-    Eigen::Vector3<Scalar> n_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
-                                                           ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.template segment<3>(7)), InsConst::e_omega_ie)
-                                                           : Eigen::Vector3<Scalar>::Zero();
+    Eigen::Vector3<T> n_centrifugalAcceleration = c.centrifgalAccelerationCompensationEnabled
+                                                      ? n_Quat_e * e_calcCentrifugalAcceleration(trafo::lla2ecef_WGS84(y.template segment<3>(0)), InsConst::e_omega_ie)
+                                                      : Eigen::Vector3<T>::Zero();
     LOG_DATA("n_centrifugalAcceleration = {} [m/s^2]", n_centrifugalAcceleration.transpose());
 
-    Eigen::Vector3<Scalar> n_gravitation = n_calcGravitation(y.template segment<3>(7), c.gravitationModel);
+    Eigen::Vector3<T> n_gravitation = n_calcGravitation(y.template segment<3>(0), c.gravitationModel);
     LOG_DATA("n_gravitation = {} [m/s^2] ({})", n_gravitation.transpose(), to_string(c.gravitationModel));
 
-    y_dot.template segment<4>(0) = calcTimeDerivativeFor_n_Quat_b(b_omega_nb,                // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
-                                                                  y.template segment<4>(0)); // n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b in order w, x, y, z (q = w + ix + jy + kz)
+    y_dot.template segment<3>(0) = lla_calcTimeDerivativeForPosition(y.template segment<3>(3), // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                                     y(0),                     // 𝜙 Latitude in [rad]
+                                                                     y(2),                     // h Altitude in [m]
+                                                                     R_N,                      // North/South (meridian) earth radius [m]
+                                                                     R_E);                     // East/West (prime vertical) earth radius [m]
 
-    y_dot.template segment<3>(4) = n_calcTimeDerivativeForVelocity(n_Quat_b * z.template segment<3>(0), // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+    y_dot.template segment<3>(3) = n_calcTimeDerivativeForVelocity(n_Quat_b * z.template segment<3>(0), // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
                                                                    n_coriolisAcceleration,              // Coriolis acceleration in local-navigation coordinates in [m/s^2]
                                                                    n_gravitation,                       // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
                                                                    n_centrifugalAcceleration);          // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 
-    y_dot.template segment<3>(7) = lla_calcTimeDerivativeForPosition(y.template segment<3>(4), // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
-                                                                     y(7),                     // 𝜙 Latitude in [rad]
-                                                                     y(9),                     // h Altitude in [m]
-                                                                     R_N,                      // North/South (meridian) earth radius [m]
-                                                                     R_E);                     // East/West (prime vertical) earth radius [m]
+    y_dot.template segment<4>(6) = calcTimeDerivativeFor_n_Quat_b(b_omega_nb,                // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
+                                                                  y.template segment<4>(6)); // n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b
 
-    LOG_DATA("n_Quat_b_dot = {} ", y_dot.template segment<4>(0).transpose());
-    LOG_DATA("n_velocity_dot = {} [m/s^2]", y_dot.template segment<3>(4).transpose());
-    LOG_DATA("lla_position_dot = {} [rad/s, rad/s, m/s]", y_dot.template segment<3>(7).transpose());
+    LOG_DATA("lla_position_dot = {} [rad/s, rad/s, m/s]", y_dot.template segment<3>(0).transpose());
+    LOG_DATA("n_velocity_dot = {} [m/s^2]", y_dot.template segment<3>(3).transpose());
+    LOG_DATA("n_Quat_b_dot = {} ", y_dot.template segment<4>(6).transpose());
 
     return y_dot;
 }

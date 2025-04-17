@@ -166,18 +166,9 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     if (ImGui::CollapsingHeader(fmt::format("IMU Integrator settings##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
     {
-        if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator))
+        if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator, _preferAccelerationOverDeltaMeasurements))
         {
             flow::ApplyChanges();
-        }
-        if (inputPins.at(INPUT_PORT_INDEX_IMU).isPinLinked()
-            && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
-        {
-            ImGui::Separator();
-            if (ImGui::Checkbox(fmt::format("Prefer raw measurements over delta##{}", size_t(id)).c_str(), &_preferAccelerationOverDeltaMeasurements))
-            {
-                flow::ApplyChanges();
-            }
         }
     }
     if (ImGui::CollapsingHeader(fmt::format("Kalman Filter settings##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
@@ -232,6 +223,17 @@ void NAV::LooselyCoupledKF::guiConfig()
         //                                Q - System/Process noise covariance matrix
         // ###########################################################################################################
 
+        auto inputVector3WithUnit = [&](const char* title, Eigen::Vector3d& data, auto& unit, const char* combo_items_separated_by_zeros, const char* format) {
+            if (auto response = gui::widgets::InputDouble3WithUnit(fmt::format("{}##{}", title, size_t(id)).c_str(), configWidth, unitWidth,
+                                                                   data.data(), unit, combo_items_separated_by_zeros,
+                                                                   format, ImGuiInputTextFlags_CharsScientific))
+            {
+                if (response == gui::widgets::InputWithUnitChange_Input) { LOG_DEBUG("{}: {} changed to {}", nameId(), title, data.transpose()); }
+                if (response == gui::widgets::InputWithUnitChange_Unit) { LOG_DEBUG("{}: {} unit changed to {}", nameId(), title, fmt::underlying(unit)); }
+                flow::ApplyChanges();
+            }
+        };
+
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
         {
@@ -249,34 +251,19 @@ void NAV::LooselyCoupledKF::guiConfig()
                 }
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_ra.data(), _stdevAccelNoiseUnits, "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
-                LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevAccelNoiseUnits));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the accel {}##{}",
-                                                               _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
-                                                                   ? "dynamic bias, in σ²/τ"
-                                                                   : (_randomProcessAccel == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
-                                                               size_t(id))
-                                                       .c_str(),
-                                                   configWidth, unitWidth, _stdev_bad.data(), _stdevAccelBiasUnits, "µg\0m/s^2\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
-                LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), fmt::underlying(_stdevAccelBiasUnits));
-                flow::ApplyChanges();
-            }
+            inputVector3WithUnit("Standard deviation of the noise on the\naccelerometer specific-force measurements",
+                                 _stdev_ra, _stdevAccelNoiseUnits, MakeComboItems<Units::ImuAccelerometerFilterNoiseUnits>().c_str(), "%.2e");
+            inputVector3WithUnit(fmt::format("Standard deviation σ of the accel {}",
+                                             _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
+                                                 ? "dynamic bias, in σ²/τ"
+                                                 : (_randomProcessAccel == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"))
+                                     .c_str(),
+                                 _stdev_bad, _stdevAccelBiasUnits, MakeComboItems<Units::ImuAccelerometerFilterBiasUnits>().c_str(), "%.2e");
 
             if (_randomProcessAccel == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
             {
                 int unitCorrelationLength = 0;
-                if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the accel {}##Correlation length τ of the accel dynamic bias {}",
-                                                                    _qCalculationAlgorithm == QCalculationAlgorithm::VanLoan ? "bias noise" : "dynamic bias", size_t(id))
-                                                            .c_str(),
+                if (gui::widgets::InputDouble3LWithUnit(fmt::format("Correlation length τ of the accel dynamic bias##Correlation length τ of the accel dynamic bias {}", size_t(id)).c_str(),
                                                         configWidth, unitWidth, _tau_bad.data(), 0., std::numeric_limits<double>::max(),
                                                         unitCorrelationLength, "s\0\0", "%.2e", ImGuiInputTextFlags_CharsScientific))
                 {
@@ -302,27 +289,14 @@ void NAV::LooselyCoupledKF::guiConfig()
                 }
             }
 
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_rg.data(), _stdevGyroNoiseUnits, "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
-                LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), fmt::underlying(_stdevGyroNoiseUnits));
-                flow::ApplyChanges();
-            }
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation σ of the gyro {}##{}",
-                                                               _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
-                                                                   ? "dynamic bias, in σ²/τ"
-                                                                   : (_randomProcessGyro == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"),
-                                                               size_t(id))
-                                                       .c_str(),
-                                                   configWidth, unitWidth, _stdev_bgd.data(), _stdevGyroBiasUnits, "°/h\0rad/s\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
-                LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), fmt::underlying(_stdevGyroBiasUnits));
-                flow::ApplyChanges();
-            }
+            inputVector3WithUnit("Standard deviation of the noise on\nthe gyro angular-rate measurements",
+                                 _stdev_rg, _stdevGyroNoiseUnits, MakeComboItems<Units::ImuGyroscopeFilterNoiseUnits>().c_str(), "%.2e");
+            inputVector3WithUnit(fmt::format("Standard deviation σ of the gyro {}",
+                                             _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1
+                                                 ? "dynamic bias, in σ²/τ"
+                                                 : (_randomProcessGyro == RandomProcess::RandomWalk ? "bias noise" : "bias noise, in √(2σ²β)"))
+                                     .c_str(),
+                                 _stdev_bgd, _stdevGyroBiasUnits, MakeComboItems<Units::ImuGyroscopeFilterBiasUnits>().c_str(), "%.2e");
 
             if (_randomProcessGyro == RandomProcess::GaussMarkov1 || _qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
             {
@@ -1102,13 +1076,13 @@ void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelA
 
     if (_lastImuObs)
     {
-        lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quatAccel_p() * -_inertialIntegrator.p_getLastAccelerationBias();
+        lckfSolution->b_biasAccel.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAccelerationBias();
         lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
             std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
             std::sqrt(_kalmanFilter.P(KFStates::AccBiasY, KFStates::AccBiasY) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
             std::sqrt(_kalmanFilter.P(KFStates::AccBiasZ, KFStates::AccBiasZ) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2)))
         };
-        lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quatGyro_p() * -_inertialIntegrator.p_getLastAngularRateBias();
+        lckfSolution->b_biasGyro.value = _lastImuObs->imuPos.b_quat_p() * -_inertialIntegrator.p_getLastAngularRateBias();
         lckfSolution->b_biasGyro.stdDev = Eigen::Vector3d{
             std::sqrt(_kalmanFilter.P(KFStates::GyrBiasX, KFStates::GyrBiasX) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
             std::sqrt(_kalmanFilter.P(KFStates::GyrBiasY, KFStates::GyrBiasY) * (1. / std::pow(SCALE_FACTOR_ANGULAR_RATE, 2))),
@@ -1145,11 +1119,11 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         // Initialize biases
         if (!_initialSensorBiasesApplied)
         {
-            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_accelBiasTotal, obs->imuPos.p_quatGyro_b() * -_gyroBiasTotal);
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quat_b() * -_accelBiasTotal, obs->imuPos.p_quat_b() * -_gyroBiasTotal);
             _initialSensorBiasesApplied = true;
         }
 
-        inertialNavSol = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos);
+        inertialNavSol = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos, nameId().c_str());
     }
     else
     {
@@ -1159,19 +1133,20 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         // Initialize biases
         if (!_initialSensorBiasesApplied)
         {
-            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quatAccel_b() * -_accelBiasTotal, obs->imuPos.p_quatGyro_b() * -_gyroBiasTotal);
+            _inertialIntegrator.setTotalSensorBiases(obs->imuPos.p_quat_b() * -_accelBiasTotal, obs->imuPos.p_quat_b() * -_gyroBiasTotal);
             _initialSensorBiasesApplied = true;
         }
 
-        inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+        inertialNavSol = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos, nameId().c_str());
     }
-    if (inertialNavSol && _inertialIntegrator.getMeasurements().back().dt > 1e-8)
+    if (const auto& latestState = _inertialIntegrator.getLatestState();
+        inertialNavSol && latestState && latestState->get().m.dt > 1e-8)
     {
-        looselyCoupledPrediction(inertialNavSol, _inertialIntegrator.getMeasurements().back().dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
+        looselyCoupledPrediction(inertialNavSol, latestState->get().m.dt, std::static_pointer_cast<const ImuObs>(nodeData)->imuPos);
 
         setSolutionPosVelAttAndCov(inertialNavSol,
-                                   calcEarthRadius_N(_inertialIntegrator.getLatestState().value().get().lla_position().x()),
-                                   calcEarthRadius_E(_inertialIntegrator.getLatestState().value().get().lla_position().x()));
+                                   calcEarthRadius_N(inertialNavSol->latitude()),
+                                   calcEarthRadius_E(inertialNavSol->latitude()));
 
         LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
         LOG_DATA("{}:   e_velocity   = {}", nameId(), inertialNavSol->e_velocity().transpose());
@@ -1199,7 +1174,7 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
         posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(),
                                  trafo::n_Quat_b(deg2rad(_initalRollPitchYaw[0]), deg2rad(_initalRollPitchYaw[1]), deg2rad(_initalRollPitchYaw[2])));
 
-        _inertialIntegrator.setInitialState(posVelAtt);
+        _inertialIntegrator.setInitialState(posVelAtt, nameId().c_str());
         LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt.e_position().transpose());
         LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt.e_velocity().transpose());
         LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt.rollPitchYaw()).transpose());
@@ -1214,8 +1189,14 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
     {
         PosVelAtt posVelAtt;
         posVelAtt.insTime = obs->insTime;
-        posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().n_Quat_b());
-        _inertialIntegrator.setState(posVelAtt);
+        if (obs->n_CovarianceMatrix())
+        {
+            Eigen::Matrix<double, 10, 10> n_cov = Eigen::Matrix<double, 10, 10>::Zero();
+            n_cov.topLeftCorner<6, 6>() = obs->n_CovarianceMatrix()->get()(Keys::PosVel<Keys::MotionModelKey>, Keys::PosVel<Keys::MotionModelKey>);
+            posVelAtt.setPosVelAttAndCov_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().attitude, n_cov);
+        }
+        else { posVelAtt.setPosVelAtt_n(obs->lla_position(), obs->n_velocity(), _inertialIntegrator.getLatestState()->get().attitude); }
+        _inertialIntegrator.addState(posVelAtt, nameId().c_str());
 
         LOG_DATA("{}: [{}] Sending out received solution, as no IMU data yet", nameId(), obs->insTime.toYMDHMS(GPST));
         invokeCallbackWithPosVelAtt(posVelAtt);
@@ -1255,7 +1236,7 @@ void NAV::LooselyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, si
     inputPins[INPUT_PORT_INDEX_GNSS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
     _externalInitTime = posVelAtt->insTime;
 
-    _inertialIntegrator.setInitialState(*posVelAtt);
+    _inertialIntegrator.setInitialState(*posVelAtt, nameId().c_str());
     LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt->e_position().transpose());
     LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt->e_velocity().transpose());
     LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt->rollPitchYaw()).transpose());
@@ -1274,64 +1255,19 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
     // 𝜎_ra Standard deviation of the noise on the accelerometer specific-force state [m / (s^2 · √(s))]
-    Eigen::Vector3d sigma_ra = Eigen::Vector3d::Zero();
-    switch (_stdevAccelNoiseUnits)
-    {
-    case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
-        sigma_ra = _stdev_ra * 1e-3;      // [g / √(Hz)]
-        sigma_ra *= InsConst::G_NORM;     // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
-        // sigma_ra /= 1.;                // [m / (s^2 · √(s))]
-        break;
-    case StdevAccelNoiseUnits::m_s2_sqrtHz: // [m / (s^2 · √(Hz))] = [m / (s · √(s))]
-        sigma_ra = _stdev_ra;
-        // sigma_ra /= 1.;                  // [m / (s^2 · √(s))]
-        break;
-    }
+    Eigen::Vector3d sigma_ra = convertUnit(_stdev_ra, _stdevAccelNoiseUnits);
     LOG_DATA("{}:     sigma_ra = {} [m / (s^2 · √(s))]", nameId(), sigma_ra.transpose());
 
     // 𝜎_rg Standard deviation of the noise on the gyro angular-rate state [rad / (s · √(s))]
-    Eigen::Vector3d sigma_rg = Eigen::Vector3d::Zero();
-    switch (_stdevGyroNoiseUnits)
-    {
-    case StdevGyroNoiseUnits::deg_hr_sqrtHz: // [deg / hr / √(Hz)] (see Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours)
-        sigma_rg = deg2rad(_stdev_rg);       // [rad / hr / √(Hz)]
-        sigma_rg /= 60.;                     // [rad / √(hr)]
-        sigma_rg /= 60.;                     // [rad / √(s)]
-        // sigma_rg /= 1.;                    // [rad / (s · √(s))]
-        break;
-    case StdevGyroNoiseUnits::rad_s_sqrtHz: // [rad / (s · √(Hz))] = [rad / √(s)]
-        sigma_rg = _stdev_rg;
-        // sigma_rg /= 1.;                  // [rad / (s · √(s))]
-        break;
-    }
+    Eigen::Vector3d sigma_rg = convertUnit(_stdev_rg, _stdevGyroNoiseUnits);
     LOG_DATA("{}:     sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg.transpose());
 
     // 𝜎_bad Standard deviation of the accelerometer dynamic bias [m / s^2]
-    Eigen::Vector3d sigma_bad = Eigen::Vector3d::Zero();
-    switch (_stdevAccelBiasUnits)
-    {
-    case StdevAccelBiasUnits::microg:  // [µg]
-        sigma_bad = _stdev_bad * 1e-6; // [g]
-        sigma_bad *= InsConst::G_NORM; // [m / s^2]
-        break;
-    case StdevAccelBiasUnits::m_s2: // [m / s^2]
-        sigma_bad = _stdev_bad;
-        break;
-    }
+    Eigen::Vector3d sigma_bad = convertUnit(_stdev_bad, _stdevAccelBiasUnits);
     LOG_DATA("{}:     sigma_bad = {} [m / s^2]", nameId(), sigma_bad.transpose());
 
     // 𝜎_bgd Standard deviation of the gyro dynamic bias [rad / s]
-    Eigen::Vector3d sigma_bgd = Eigen::Vector3d::Zero();
-    switch (_stdevGyroBiasUnits)
-    {
-    case StdevGyroBiasUnits::deg_h:      // [° / h]
-        sigma_bgd = _stdev_bgd / 3600.0; // [° / s]
-        sigma_bgd = deg2rad(sigma_bgd);  // [rad / s]
-        break;
-    case StdevGyroBiasUnits::rad_s: // [rad / s]
-        sigma_bgd = _stdev_bgd;
-        break;
-    }
+    Eigen::Vector3d sigma_bgd = convertUnit(_stdev_bgd, _stdevGyroBiasUnits);
     LOG_DATA("{}:     sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
 
     // Standard deviation of the barometric height bias [m]
@@ -1368,7 +1304,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     auto p_acceleration = _inertialIntegrator.p_calcCurrentAcceleration();
     // Acceleration in [m/s^2], in body coordinates
     Eigen::Vector3d b_acceleration = p_acceleration
-                                         ? imuPos.b_quatAccel_p() * p_acceleration.value()
+                                         ? imuPos.b_quat_p() * p_acceleration.value()
                                          : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_acceleration = {} [m/s^2]", nameId(), b_acceleration.transpose());
 
@@ -1519,12 +1455,21 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 {
     INS_ASSERT_USER_ERROR(_inertialIntegrator.getLatestState().has_value(), "The update should not even trigger without an initial state.");
 
-    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), posVelObs->insTime.toYMDHMS(GPST), _inertialIntegrator.getLatestState().value().get().insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), posVelObs->insTime.toYMDHMS(GPST),
+             _inertialIntegrator.getLatestState().value().get().epoch.toYMDHMS(GPST));
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
+    Eigen::Vector3d lla_position;
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        lla_position = _inertialIntegrator.getLatestState().value().get().position;
+    }
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    {
+        lla_position = trafo::lla2ecef_WGS84(_inertialIntegrator.getLatestState().value().get().position);
+    }
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // ---------------------------------------------- Correction -------------------------------------------------
@@ -1532,7 +1477,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     auto p_omega_ip = _inertialIntegrator.p_calcCurrentAngularRate();
     // Angular rate measured in units of [rad/s], and given in the body frame
     Eigen::Vector3d b_omega_ip = p_omega_ip
-                                     ? _lastImuObs->imuPos.b_quatGyro_p() * p_omega_ip.value()
+                                     ? _lastImuObs->imuPos.b_quat_p() * p_omega_ip.value()
                                      : Eigen::Vector3d::Zero();
     LOG_DATA("{}:     b_omega_ip = {} [rad/s]", nameId(), b_omega_ip.transpose());
 
@@ -1543,6 +1488,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // Meridian radius of curvature in [m]
     double R_N = 0.0;
 
+    Eigen::Vector3d b_leverArm_InsGnss = _lastImuObs->imuPos.b_positionIMU_p();
+
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
         R_E = calcEarthRadius_E(lla_position(0));
@@ -1551,7 +1498,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     R_N = {} [m]", nameId(), R_N);
 
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d n_Dcm_b = _inertialIntegrator.getLatestState().value().get().n_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d n_Dcm_b = _inertialIntegrator.getLatestState().value().get().attitude.toRotationMatrix();
         LOG_DATA("{}:     n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
         // Conversion matrix between cartesian and curvilinear perturbations to the position
@@ -1559,24 +1506,24 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     T_rn_p =\n{}", nameId(), T_rn_p);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_inertialIntegrator.getLatestState().value().get().n_Quat_e() * InsConst::e_omega_ie);
+        Eigen::Matrix3d n_Omega_ie = math::skewSymmetricMatrix(_inertialIntegrator.getLatestState().value().get().attitude * InsConst::e_omega_ie);
         LOG_DATA("{}:     n_Omega_ie =\n{}", nameId(), n_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
-        _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, n_Omega_ie);
+        _kalmanFilter.H = n_measurementMatrix_H(T_rn_p, n_Dcm_b, b_omega_ip, b_leverArm_InsGnss, n_Omega_ie);
 
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = n_measurementNoiseCovariance_R(posVelObs, lla_position, R_N, R_E);
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().lla_position(),
-                                                     posVelObs->n_velocity(), _inertialIntegrator.getLatestState().value().get().n_velocity(),
-                                                     T_rn_p, _inertialIntegrator.getLatestState().value().get().n_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
+        _kalmanFilter.z = n_measurementInnovation_dz(posVelObs->lla_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                     posVelObs->n_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                     T_rn_p, _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, n_Omega_ie);
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
         // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-        Eigen::Matrix3d e_Dcm_b = _inertialIntegrator.getLatestState().value().get().e_Quat_b().toRotationMatrix();
+        Eigen::Matrix3d e_Dcm_b = _inertialIntegrator.getLatestState().value().get().attitude.toRotationMatrix();
         LOG_DATA("{}:     e_Dcm_b =\n{}", nameId(), e_Dcm_b);
 
         // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
@@ -1584,15 +1531,15 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
         LOG_DATA("{}:     e_Omega_ie =\n{}", nameId(), e_Omega_ie);
 
         // 5. Calculate the measurement matrix H_k
-        _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, _b_leverArm_InsGnss, e_Omega_ie);
+        _kalmanFilter.H = e_measurementMatrix_H(e_Dcm_b, b_omega_ip, b_leverArm_InsGnss, e_Omega_ie);
 
         // 6. Calculate the measurement noise covariance matrix R_k
         _kalmanFilter.R = e_measurementNoiseCovariance_R(posVelObs);
 
         // 8. Formulate the measurement z_k
-        _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().e_position(),
-                                                     posVelObs->e_velocity(), _inertialIntegrator.getLatestState().value().get().e_velocity(),
-                                                     _inertialIntegrator.getLatestState().value().get().e_Quat_b(), _b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
+        _kalmanFilter.z = e_measurementInnovation_dz(posVelObs->e_position(), _inertialIntegrator.getLatestState().value().get().position,
+                                                     posVelObs->e_velocity(), _inertialIntegrator.getLatestState().value().get().velocity,
+                                                     _inertialIntegrator.getLatestState().value().get().attitude, b_leverArm_InsGnss, b_omega_ip, e_Omega_ie);
     }
 
     LOG_DATA("{}:     KF.H =\n{}", nameId(), _kalmanFilter.H);
@@ -1659,8 +1606,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
-    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
-                                                    _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
     lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
     lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
         std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
@@ -1711,12 +1658,20 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
 {
     INS_ASSERT_USER_ERROR(_inertialIntegrator.getLatestState().has_value(), "The update should not even trigger without an initial state.");
 
-    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), _inertialIntegrator.getLatestState().value().get().insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: [{}] Updating (lastInertial at [{}])", nameId(), baroHgtObs->insTime.toYMDHMS(GPST), _inertialIntegrator.getLatestState().value().get().epoch.toYMDHMS(GPST));
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
+    Eigen::Vector3d lla_position;
+    if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
+    {
+        lla_position = _inertialIntegrator.getLatestState().value().get().position;
+    }
+    else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
+    {
+        lla_position = trafo::lla2ecef_WGS84(_inertialIntegrator.getLatestState().value().get().position);
+    }
     LOG_DATA("{}:     lla_position = {} [rad, rad, m]", nameId(), lla_position.transpose());
 
     // Baro height measurement uncertainty (Variance σ²) in [m^2]
@@ -1749,7 +1704,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
-        _kalmanFilter.H = e_measurementMatrix_H(_inertialIntegrator.getLatestState().value().get().e_position(), lla_position(2), _heightScaleTotal);
+        _kalmanFilter.H = e_measurementMatrix_H(_inertialIntegrator.getLatestState().value().get().position, lla_position(2), _heightScaleTotal);
     }
 
     // 6. Calculate the measurement noise covariance matrix R_k (here we can use the n-Frame covariance matrix! )
@@ -1822,8 +1777,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Bar
 
     LOG_DATA("{}: Accumulated biases before error has been applied: b_biasAccel.value = {}, b_biasGyro.value = {}", nameId(), _inertialIntegrator.p_getLastAccelerationBias().transpose(), _inertialIntegrator.p_getLastAngularRateBias().transpose());
 
-    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quatAccel_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
-                                                    _lastImuObs->imuPos.p_quatGyro_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
+    _inertialIntegrator.applySensorBiasesIncrements(_lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFAccBias) * (1. / SCALE_FACTOR_ACCELERATION),
+                                                    _lastImuObs->imuPos.p_quat_b() * -_kalmanFilter.x.segment<3>(KFGyrBias) * (1. / SCALE_FACTOR_ANGULAR_RATE));
     lckfSolution->b_biasAccel.value = -_inertialIntegrator.p_getLastAccelerationBias();
     lckfSolution->b_biasAccel.stdDev = Eigen::Vector3d{
         std::sqrt(_kalmanFilter.P(KFStates::AccBiasX, KFStates::AccBiasX) * (1. / std::pow(SCALE_FACTOR_ACCELERATION, 2))),
@@ -1880,9 +1835,9 @@ void NAV::LooselyCoupledKF::setSolutionPosVelAttAndCov(const std::shared_ptr<Pos
     J_units.bottomRightCorner<3, 3>().diagonal().setConstant(std::numbers::pi_v<double> / 180.0);
     if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::NED)
     {
-        const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().lla_position();
+        const Eigen::Vector3d& lla_position = _inertialIntegrator.getLatestState().value().get().position;
 
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().n_Quat_b());
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().attitude);
         J_units.topLeftCorner<3, 3>().diagonal() = 1.0
                                                    / n_F_dr_dv(lla_position.x(),
                                                                lla_position.z(),
@@ -1894,17 +1849,17 @@ void NAV::LooselyCoupledKF::setSolutionPosVelAttAndCov(const std::shared_ptr<Pos
         J_units.topLeftCorner<2, 2>().diagonal() *= 1.0 / SCALE_FACTOR_LAT_LON;
 
         lckfSolution->setPosVelAttAndCov_n(lla_position,
-                                           _inertialIntegrator.getLatestState().value().get().n_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().n_Quat_b(),
+                                           _inertialIntegrator.getLatestState().value().get().velocity,
+                                           _inertialIntegrator.getLatestState().value().get().attitude,
                                            J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
     }
     else // if (_inertialIntegrator.getIntegrationFrame() == InertialIntegrator::IntegrationFrame::ECEF)
     {
-        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().e_Quat_b());
+        J.bottomRightCorner<4, 3>() = trafo::covRPY2quatJacobian(_inertialIntegrator.getLatestState().value().get().attitude);
 
-        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().e_position(),
-                                           _inertialIntegrator.getLatestState().value().get().e_velocity(),
-                                           _inertialIntegrator.getLatestState().value().get().e_Quat_b(),
+        lckfSolution->setPosVelAttAndCov_e(_inertialIntegrator.getLatestState().value().get().position,
+                                           _inertialIntegrator.getLatestState().value().get().velocity,
+                                           _inertialIntegrator.getLatestState().value().get().attitude,
                                            J * (J_units * _kalmanFilter.P(KFPosVelAtt, KFPosVelAtt) * J_units.transpose()) * J.transpose());
     }
 }
@@ -1994,10 +1949,10 @@ NAV::KeyedMatrix<double, NAV::LooselyCoupledKF::KFStates, NAV::LooselyCoupledKF:
     F.block<3>(KFAtt, KFAtt) = e_F_dpsi_dpsi(e_omega_ie.z());
     F.block<3>(KFAtt, KFGyrBias) = e_F_dpsi_dw(e_Quat_b.toRotationMatrix());
     F.block<3>(KFVel, KFAtt) = e_F_dv_dpsi(e_Quat_b * b_specForce_ib);
-    F.block<3>(KFVel, KFVel) = e_F_dv_dv(e_omega_ie.z());
+    F.block<3>(KFVel, KFVel) = e_F_dv_dv<double>(e_omega_ie.z());
     F.block<3>(KFVel, KFPos) = e_F_dv_dr(e_position, e_gravitation, r_eS_e, e_omega_ie);
-    F.block<3>(KFVel, KFAccBias) = e_F_dv_df(e_Quat_b.toRotationMatrix());
-    F.block<3>(KFPos, KFVel) = e_F_dr_dv();
+    F.block<3>(KFVel, KFAccBias) = e_F_dv_df_b(e_Quat_b.toRotationMatrix());
+    F.block<3>(KFPos, KFVel) = e_F_dr_dv<double>();
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         F.block<3>(KFAccBias, KFAccBias) = e_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
@@ -2058,8 +2013,8 @@ Eigen::Matrix<double, NAV::LooselyCoupledKF::KFStates_COUNT, NAV::LooselyCoupled
     W.diagonal() << sigma_rg.array().square(),
         sigma_ra.array().square(),
         Eigen::Vector3d::Zero(),
-        (_randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad : psdBiasGaussMarkov(sigma_bad.array().square(), tau_bad)).array().square(), // S_bad
-        (_randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd : psdBiasGaussMarkov(sigma_bgd.array().square(), tau_bgd)).array().square(),  // S_bgd
+        _randomProcessAccel == RandomProcess::RandomWalk ? sigma_bad.array().square() : psd2BiasGaussMarkov(sigma_bad.array().square(), tau_bad), // S_bad
+        _randomProcessGyro == RandomProcess::RandomWalk ? sigma_bgd.array().square() : psd2BiasGaussMarkov(sigma_bgd.array().square(), tau_bgd),  // S_bgd
         sigma_heightBias * sigma_heightBias,
         sigma_heightScale * sigma_heightScale;
 

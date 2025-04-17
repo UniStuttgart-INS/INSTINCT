@@ -1415,12 +1415,12 @@ void NAV::ImuFusion::recvSignal(NAV::InputPin::NodeDataQueue& queue, size_t pinI
     if (std::isnan(_imuRotations_accel[pinIdx](0, 0)))
     {
         // Rotation matrix of the accelerometer platform to body frame
-        _imuRotations_accel[pinIdx] = imuObs->imuPos.b_quatAccel_p().toRotationMatrix();
+        _imuRotations_accel[pinIdx] = imuObs->imuPos.b_quat_p().toRotationMatrix();
     }
     if (std::isnan(_imuRotations_gyro[pinIdx](0, 0)))
     {
         // Rotation matrix of the gyro platform to body frame
-        _imuRotations_gyro[pinIdx] = imuObs->imuPos.b_quatGyro_p().toRotationMatrix();
+        _imuRotations_gyro[pinIdx] = imuObs->imuPos.b_quat_p().toRotationMatrix();
     }
 
     // Initialize H with mounting angles (DCM) of the sensor that provided the latest measurement

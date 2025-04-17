@@ -29,7 +29,7 @@ template<class T>
 template<typename Scalar>
 [[nodiscard]] inline Eigen::Vector3<Scalar> deg2rad(const Eigen::Vector3<Scalar>& deg)
 {
-    return deg * std::numbers::pi_v<Scalar> / 180.0;
+    return deg * std::numbers::pi_v<double> / 180.0;
 }
 
 /// @brief Convert Radians to Degree
@@ -47,7 +47,7 @@ template<class T>
 template<typename Scalar>
 [[nodiscard]] inline Eigen::Vector3<Scalar> rad2deg(const Eigen::Vector3<Scalar>& rad)
 {
-    return rad * 180.0 / std::numbers::pi_v<Scalar>;
+    return rad * 180.0 / std::numbers::pi_v<double>;
 }
 
 /// @brief Convert Semicircles to Radians

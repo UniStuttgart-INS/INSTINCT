@@ -633,11 +633,11 @@ void NAV::PosVelAttInitializer::receiveImuObs(InputPin::NodeDataQueue& queue, si
     Eigen::Vector3d mag_p = obs->p_magneticField ? obs->p_magneticField.value() : Eigen::Vector3d::Zero();
 
     // Calculate Magnetic Heading
-    const Eigen::Vector3d b_mag = imuPosition.b_quatMag_p() * mag_p;
+    const Eigen::Vector3d b_mag = imuPosition.b_quat_p() * mag_p;
     auto magneticHeading = -std::atan2(b_mag.y(), b_mag.x());
 
     // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
-    const Eigen::Vector3d b_accel = imuPosition.b_quatAccel_p() * obs->p_acceleration * -1;
+    const Eigen::Vector3d b_accel = imuPosition.b_quat_p() * obs->p_acceleration * -1;
     auto roll = calcRollFromStaticAcceleration(b_accel);
     auto pitch = calcPitchFromStaticAcceleration(b_accel);
 

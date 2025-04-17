@@ -14,23 +14,23 @@
 #include "InertialIntegrator.hpp"
 
 #include "internal/gui/NodeEditorApplication.hpp"
-#include "util/Logger.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
-#include "Navigation/INS/LocalNavFrame/Mechanization.hpp"
-#include "Navigation/INS/EcefFrame/Mechanization.hpp"
 #include "Navigation/Math/Math.hpp"
 
 namespace NAV
 {
 
+InertialIntegrator::InertialIntegrator(IntegrationFrame integrationFrame)
+    : _integrationFrame(integrationFrame), _lockIntegrationFrame(true) {}
+
 void InertialIntegrator::reset()
 {
-    _measurements.clear();
     _states.clear();
-    p_lastBiasAcceleration = Eigen::Vector3d::Zero();
-    p_lastBiasAngularRate = Eigen::Vector3d::Zero();
+    _p_lastBiasAcceleration.setZero();
+    _p_lastBiasAngularRate.setZero();
     setBufferSizes();
 }
 
@@ -39,86 +39,82 @@ bool InertialIntegrator::hasInitialPosition() const
     return !_states.empty();
 }
 
-void InertialIntegrator::setInitialState(const PosVelAtt& state)
+void InertialIntegrator::setInitialState(const PosVelAtt& state, const char* nameId)
 {
     _states.clear();
-    _states.push_back(state);
+    addState(state, nameId);
 }
 
-void InertialIntegrator::setState(const PosVelAtt& state)
+void InertialIntegrator::addState(const PosVelAtt& state, [[maybe_unused]] const char* nameId)
 {
-    _states.push_back(state);
+    _states.push_back(State{
+        .epoch = state.insTime,
+        .position = _integrationFrame == IntegrationFrame::ECEF ? state.e_position() : state.lla_position(),
+        .velocity = _integrationFrame == IntegrationFrame::ECEF ? state.e_velocity() : state.n_velocity(),
+        .attitude = _integrationFrame == IntegrationFrame::ECEF ? state.e_Quat_b() : state.n_Quat_b(),
+        .m = Measurement{
+            .averagedMeasurement = false,
+            .dt = 0.0,
+            .p_acceleration = Eigen::Vector3d::Zero(),
+            .p_angularRate = Eigen::Vector3d::Zero(),
+        } });
+    LOG_DATA("{}: Adding state for [{}]. Now has {} states", nameId, state.insTime.toYMDHMS(GPST), _states.size());
 }
 
 void InertialIntegrator::setTotalSensorBiases(const Eigen::Vector3d& p_biasAcceleration, const Eigen::Vector3d& p_biasAngularRate)
 {
-    p_lastBiasAcceleration = p_biasAcceleration;
-    p_lastBiasAngularRate = p_biasAngularRate;
-    if (!_measurements.empty())
-    {
-        _measurements.back().p_biasAcceleration = p_lastBiasAcceleration;
-        _measurements.back().p_biasAngularRate = p_lastBiasAngularRate;
-    }
+    _p_lastBiasAcceleration = p_biasAcceleration;
+    _p_lastBiasAngularRate = p_biasAngularRate;
 }
 
 void InertialIntegrator::applySensorBiasesIncrements(const Eigen::Vector3d& p_deltaBiasAcceleration, const Eigen::Vector3d& p_deltaBiasAngularRate)
 {
-    p_lastBiasAcceleration += p_deltaBiasAcceleration;
-    p_lastBiasAngularRate += p_deltaBiasAngularRate;
-    if (!_measurements.empty())
-    {
-        _measurements.back().p_biasAcceleration = p_lastBiasAcceleration;
-        _measurements.back().p_biasAngularRate = p_lastBiasAngularRate;
-    }
+    _p_lastBiasAcceleration += p_deltaBiasAcceleration;
+    _p_lastBiasAngularRate += p_deltaBiasAngularRate;
 }
 
 void InertialIntegrator::applyStateErrors_n(const Eigen::Vector3d& lla_positionError, const Eigen::Vector3d& n_velocityError, const Eigen::Vector3d& n_attitudeError_b)
 {
-    if (!_states.empty())
-    {
-        _states.back().setPosition_lla(_states.back().lla_position() - lla_positionError);
-        _states.back().setVelocity_n(_states.back().n_velocity() - n_velocityError);
-        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Matrix3d n_Dcm_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(n_attitudeError_b)) * _states.back().n_Quat_b().toRotationMatrix();
-        _states.back().setAttitude_n_Quat_b(Eigen::Quaterniond(n_Dcm_b).normalized());
+    INS_ASSERT_USER_ERROR(_integrationFrame == IntegrationFrame::NED, "You can only apply errors to the selected integration frame");
+    INS_ASSERT_USER_ERROR(!_states.empty(), "You can only apply errors if the states vector is not empty");
 
-        // TODO: Test this out again
-        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-        // Eigen::Quaterniond n_Quat_b = posVelAtt->n_Quat_b()
-        //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
-        //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
-        //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
-        //                                        .normalized();
-        // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b.normalized());
+    _states.back().position -= lla_positionError;
+    _states.back().velocity -= n_velocityError;
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+    Eigen::Matrix3d n_Dcm_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(n_attitudeError_b)) * _states.back().attitude.toRotationMatrix();
+    _states.back().attitude = Eigen::Quaterniond(n_Dcm_b).normalized();
 
-        // Eigen::Vector3d attError = pvaError->n_attitudeError();
-        // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b();
-        // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
-        //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
-        //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
-        //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
-        // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b_c.normalized());
-    }
+    // TODO: Test this out again
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+    // Eigen::Quaterniond n_Quat_b = posVelAtt->n_Quat_b()
+    //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
+    //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
+    //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
+    //                                        .normalized();
+    // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b.normalized());
+
+    // Eigen::Vector3d attError = pvaError->n_attitudeError();
+    // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b();
+    // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
+    //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
+    //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
+    //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
+    // posVelAttCorrected->setAttitude_n_Quat_b(n_Quat_b_c.normalized());
 }
 
 void InertialIntegrator::applyStateErrors_e(const Eigen::Vector3d& e_positionError, const Eigen::Vector3d& e_velocityError, const Eigen::Vector3d& e_attitudeError_b)
 {
-    if (!_states.empty())
-    {
-        _states.back().setPosition_e(_states.back().e_position() - e_positionError);
-        _states.back().setVelocity_e(_states.back().e_velocity() - e_velocityError);
-        // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-        Eigen::Matrix3d e_Dcm_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(e_attitudeError_b)) * _states.back().e_Quat_b().toRotationMatrix();
-        _states.back().setAttitude_e_Quat_b(Eigen::Quaterniond(e_Dcm_b).normalized());
-    }
+    INS_ASSERT_USER_ERROR(_integrationFrame == IntegrationFrame::ECEF, "You can only apply errors to the selected integration frame");
+    INS_ASSERT_USER_ERROR(!_states.empty(), "You can only apply errors if the states vector is not empty");
+
+    _states.back().position -= e_positionError;
+    _states.back().velocity -= e_velocityError;
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+    Eigen::Matrix3d e_Dcm_b = (Eigen::Matrix3d::Identity() - math::skewSymmetricMatrix(e_attitudeError_b)) * _states.back().attitude.toRotationMatrix();
+    _states.back().attitude = Eigen::Quaterniond(e_Dcm_b).normalized();
 }
 
-const ScrollingBuffer<InertialIntegrator::Measurement>& InertialIntegrator::getMeasurements() const
-{
-    return _measurements;
-}
-
-std::optional<std::reference_wrapper<const PosVelAtt>> InertialIntegrator::getLatestState() const
+std::optional<std::reference_wrapper<const InertialIntegrator::State>> InertialIntegrator::getLatestState() const
 {
     if (_states.empty()) { return {}; }
     return _states.back();
@@ -126,12 +122,12 @@ std::optional<std::reference_wrapper<const PosVelAtt>> InertialIntegrator::getLa
 
 const Eigen::Vector3d& InertialIntegrator::p_getLastAccelerationBias() const
 {
-    return p_lastBiasAcceleration;
+    return _p_lastBiasAcceleration;
 }
 
 const Eigen::Vector3d& InertialIntegrator::p_getLastAngularRateBias() const
 {
-    return p_lastBiasAngularRate;
+    return _p_lastBiasAngularRate;
 }
 
 InertialIntegrator::IntegrationFrame InertialIntegrator::getIntegrationFrame() const
@@ -139,249 +135,178 @@ InertialIntegrator::IntegrationFrame InertialIntegrator::getIntegrationFrame() c
     return _integrationFrame;
 }
 
+const PosVelAttDerivativeConstants& InertialIntegrator::getConstants() const
+{
+    return _posVelAttDerivativeConstants;
+}
+
+bool InertialIntegrator::areAccelerationsAveragedMeasurements() const
+{
+    return _accelerationsAreAveragedMeasurements;
+}
+
 std::optional<Eigen::Vector3d> InertialIntegrator::p_calcCurrentAcceleration() const
 {
-    if (_measurements.empty()) { return {}; }
+    if (_states.empty()) { return {}; }
 
-    return _measurements.back().p_acceleration + _measurements.back().p_biasAcceleration;
+    return _states.back().m.p_acceleration + _states.back().p_biasAcceleration;
 }
 
 std::optional<Eigen::Vector3d> InertialIntegrator::p_calcCurrentAngularRate() const
 {
-    if (_measurements.empty()) { return {}; }
+    if (_states.empty()) { return {}; }
 
-    return _measurements.back().p_angularRate + _measurements.back().p_biasAngularRate;
+    return _states.back().m.p_angularRate + _states.back().p_biasAngularRate;
 }
 
-std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolution(const InsTime& obsTime, const Eigen::Vector3d& p_acceleration,
-                                                                    const Eigen::Vector3d& p_angularRate, const ImuPos& imuPos)
+void InertialIntegrator::addMeasurement(const InsTime& epoch, double dt, const Eigen::Vector3d& p_acceleration, const Eigen::Vector3d& p_angularRate, [[maybe_unused]] const char* nameId)
 {
-    if (!hasInitialPosition() || obsTime < _states.back().insTime) { return nullptr; }
-    if (_states.back().insTime.empty()) { _states.back().insTime = obsTime; }
+    LOG_DATA("{}: Adding measurement [{}]. Last state at [{}]", nameId, epoch.toYMDHMS(GPST), _states.back().epoch.toYMDHMS(GPST));
+    INS_ASSERT_USER_ERROR(!_states.empty(), "You need to add an initial state first");
 
-    _measurements.push_back(Measurement{ .dt = static_cast<double>((obsTime - _states.back().insTime).count()),
-                                         .p_acceleration = p_acceleration,
-                                         .p_angularRate = p_angularRate,
-                                         .p_biasAcceleration = p_lastBiasAcceleration,
-                                         .p_biasAngularRate = p_lastBiasAngularRate });
+    if (_states.back().epoch == epoch)
+    {
+        LOG_DATA("{}:   Updating existing state", nameId);
+        _states.back().m.averagedMeasurement = _accelerationsAreAveragedMeasurements;
+        _states.back().m.dt = dt;
+        _states.back().m.p_acceleration = p_acceleration;
+        _states.back().m.p_angularRate = p_angularRate;
+        _states.back().p_biasAcceleration = _p_lastBiasAcceleration;
+        _states.back().p_biasAngularRate = _p_lastBiasAngularRate;
+        return;
+    }
 
-    return calcInertialSolutionFromMeasurementBuffer(imuPos);
+    LOG_DATA("{}:   Adding as new state", nameId);
+    _states.push_back(State{
+        .epoch = epoch,
+        .position = _states.back().position,
+        .velocity = _states.back().velocity,
+        .attitude = _states.back().attitude,
+        .m = Measurement{
+            .averagedMeasurement = _accelerationsAreAveragedMeasurements,
+            .dt = dt,
+            .p_acceleration = p_acceleration,
+            .p_angularRate = p_angularRate,
+        },
+        .p_biasAcceleration = _p_lastBiasAcceleration,
+        .p_biasAngularRate = _p_lastBiasAngularRate,
+    });
 }
 
-std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionDelta(const InsTime& obsTime, const double& dt,
-                                                                         const Eigen::Vector3d& p_deltaVelocity, const Eigen::Vector3d& p_deltaTheta,
-                                                                         const ImuPos& imuPos)
+void InertialIntegrator::addDeltaMeasurement(const InsTime& epoch, double dt, double deltaTime, const Eigen::Vector3d& p_deltaVelocity, const Eigen::Vector3d& p_deltaTheta, const char* nameId)
 {
-    if (!hasInitialPosition() || obsTime < _states.back().insTime) { return nullptr; }
-    if (_states.back().insTime.empty()) { _states.back().insTime = obsTime; }
-
-    double dTimeLastState = static_cast<double>((obsTime - _states.back().insTime).count());
-
+    LOG_DATA("{}: Adding delta measurement for [{}]", nameId, epoch.toYMDHMS(GPST));
     Eigen::Vector3d p_acceleration = Eigen::Vector3d::Zero();
     Eigen::Vector3d p_angularRate = Eigen::Vector3d::Zero();
 
-    if (dt > 0.0) // dt given by sensor (should never be 0 or negative, but check here just in case)
+    if (deltaTime > 0.0) // dt given by sensor (should never be 0 or negative, but check here just in case)
     {
+        p_acceleration = p_deltaVelocity / deltaTime;
+        p_angularRate = p_deltaTheta / deltaTime;
+    }
+    else if (std::abs(dt) > 0.0) // Time difference between messages (differs from dt if message lost)
+    {
+        // Negative values of dTimeLastState should not happen, but algorithm can work with it to propagate backwards
         p_acceleration = p_deltaVelocity / dt;
         p_angularRate = p_deltaTheta / dt;
     }
-    else if (std::abs(dTimeLastState) > 0.0) // Time difference between messages (differs from dt if message lost)
-    {
-        // Negative values of dTimeLastState should not happen, but algorithm can work with it to propagate backwards
-        p_acceleration = p_deltaVelocity / dTimeLastState;
-        p_angularRate = p_deltaTheta / dTimeLastState;
-    }
 
-    _measurements.push_back(Measurement{ .dt = dTimeLastState,
-                                         .p_acceleration = p_acceleration,
-                                         .p_angularRate = p_angularRate,
-                                         .p_biasAcceleration = p_lastBiasAcceleration,
-                                         .p_biasAngularRate = p_lastBiasAngularRate });
-
-    return calcInertialSolutionFromMeasurementBuffer(imuPos);
+    addMeasurement(epoch, dt, p_acceleration, p_angularRate, nameId);
+    _states.back().m.averagedMeasurement = true;
 }
 
-std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionFromMeasurementBuffer(const ImuPos& imuPos)
+std::shared_ptr<PosVelAtt> InertialIntegrator::lastStateAsPosVelAtt() const
 {
-    LOG_DATA("New measurement: dt = {:.5f}, p_accel [{}], p_angRate [{}], p_biasAccel [{}], p_biasAngRate [{}]", _measurements.back().dt,
-             _measurements.back().p_acceleration.transpose(), _measurements.back().p_angularRate.transpose(),
-             _measurements.back().p_biasAcceleration.transpose(), _measurements.back().p_biasAngularRate.transpose());
+    INS_ASSERT_USER_ERROR(!_states.empty(), "You need to add an initial state first");
 
-    if (std::abs(_measurements.back().dt) < 1e-8) // e.g. Initial state at 0.0s, first measurement at 0.0s --> Send out initial state
-    {
-        return std::make_shared<PosVelAtt>(_states.back());
-    }
-
-    if (_measurements.size() == 1) // e.g. Initial state at 0.0s, first measurement at 0.1s -> Assuming constant acceleration and angular rate
-    {
-        _measurements.push_back(_measurements.back());
-    }
-
-    const auto& posVelAtt__t1 = _states.back();
-
-    Eigen::Matrix<double, 10, 1> y;
+    auto posVelAtt = std::make_shared<PosVelAtt>();
+    posVelAtt->insTime = _states.back().epoch;
     switch (_integrationFrame)
     {
     case IntegrationFrame::NED:
-        //  0  1  2  3   4    5    6   7  8  9
-        // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
-        y.segment<4>(0) = Eigen::Vector4d{ posVelAtt__t1.n_Quat_b().w(), posVelAtt__t1.n_Quat_b().x(), posVelAtt__t1.n_Quat_b().y(), posVelAtt__t1.n_Quat_b().z() };
-        y.segment<3>(4) = posVelAtt__t1.n_velocity();
-        y.segment<3>(7) = posVelAtt__t1.lla_position();
+        posVelAtt->setPosVelAtt_n(_states.back().position, _states.back().velocity, _states.back().attitude);
         break;
     case IntegrationFrame::ECEF:
-        //  0  1  2  3   4    5    6   7  8  9
-        // [w, x, y, z, v_x, v_y, v_z, x, y, z]^T
-        y.segment<4>(0) = Eigen::Vector4d{ posVelAtt__t1.e_Quat_b().w(), posVelAtt__t1.e_Quat_b().x(), posVelAtt__t1.e_Quat_b().y(), posVelAtt__t1.e_Quat_b().z() };
-        y.segment<3>(4) = posVelAtt__t1.e_velocity();
-        y.segment<3>(7) = posVelAtt__t1.e_position();
+        posVelAtt->setPosVelAtt_e(_states.back().position, _states.back().velocity, _states.back().attitude);
         break;
     }
 
-    double dt = _measurements.back().dt;
+    return posVelAtt;
+}
 
-    if (_measurements.size() == 2)
+std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolution(const InsTime& obsTime,
+                                                                    const Eigen::Vector3d& p_acceleration, const Eigen::Vector3d& p_angularRate,
+                                                                    const ImuPos& imuPos, const char* nameId)
+{
+    if (!hasInitialPosition() || obsTime < _states.back().epoch) { return nullptr; }
+    if (_states.back().epoch.empty()) { _states.back().epoch = obsTime; }
+
+    auto dt = static_cast<double>((obsTime - _states.back().epoch).count());
+    addMeasurement(obsTime, dt, p_acceleration, p_angularRate, nameId);
+    if (std::abs(dt) < 1e-8)
     {
-        Eigen::Vector3d b_accel__t1 = imuPos.b_quatAccel_p() * (_measurements.front().p_acceleration + _measurements.front().p_biasAcceleration);
-        Eigen::Vector3d b_gyro__t1 = imuPos.b_quatGyro_p() * (_measurements.front().p_angularRate + _measurements.front().p_biasAngularRate);
-        Eigen::Vector3d b_accel__t0 = imuPos.b_quatAccel_p() * (_measurements.back().p_acceleration + _measurements.back().p_biasAcceleration);
-        Eigen::Vector3d b_gyro__t0 = imuPos.b_quatGyro_p() * (_measurements.back().p_angularRate + _measurements.back().p_biasAngularRate);
-
-        LOG_DATA("[{:.1f}] p_accel__t0 [{:+.10f} {:+.10f} {:+.10f}]; p_accel__t1 [{:+.10f} {:+.10f} {:+.10f}]",
-                 dt, b_accel__t0.x(), b_accel__t0.y(), b_accel__t0.z(), b_accel__t1.x(), b_accel__t1.y(), b_accel__t1.z());
-        LOG_DATA("[{:.1f}] p_gyro__t0 [{:+.10f} {:+.10f} {:+.10f}]; p_gyro__t1 [{:+.10f} {:+.10f} {:+.10f}]",
-                 dt, b_gyro__t0.x(), b_gyro__t0.y(), b_gyro__t0.z(), b_gyro__t1.x(), b_gyro__t1.y(), b_gyro__t1.z());
-
-        if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepRungeKutta1)
-        {
-            std::array<Eigen::Vector<double, 6>, 1> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = RungeKutta1(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = RungeKutta1(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepRungeKutta2)
-        {
-            std::array<Eigen::Vector<double, 6>, 2> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            z[1] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 0.5);
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = RungeKutta2(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = RungeKutta2(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepHeun2)
-        {
-            std::array<Eigen::Vector<double, 6>, 2> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            z[1] << b_accel__t0, b_gyro__t0;
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = Heun2(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = Heun2(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepRungeKutta3
-                 || _integrationAlgorithm == IntegrationAlgorithm::MultiStepRK3)
-        {
-            std::array<Eigen::Vector<double, 6>, 3> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            z[1] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 0.5);
-            z[2] << b_accel__t0, b_gyro__t0;
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = RungeKutta3(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = RungeKutta3(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepHeun3)
-        {
-            std::array<Eigen::Vector<double, 6>, 3> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            z[1] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 1.0 / 3.0);
-            z[2] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 2.0 / 3.0);
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = RungeKutta3(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = RungeKutta3(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::SingleStepRungeKutta4
-                 || _integrationAlgorithm == IntegrationAlgorithm::MultiStepRK4)
-        {
-            std::array<Eigen::Vector<double, 6>, 4> z;
-            z[0] << b_accel__t1, b_gyro__t1;
-            z[1] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 0.5);
-            z[2] << math::lerp(b_accel__t1, b_accel__t0, 0.5), math::lerp(b_gyro__t1, b_gyro__t0, 0.5);
-            z[3] << b_accel__t0, b_gyro__t0;
-            switch (_integrationFrame)
-            {
-            case IntegrationFrame::NED:
-                y = RungeKutta4(y, z, dt, n_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            case IntegrationFrame::ECEF:
-                y = RungeKutta4(y, z, dt, e_calcPosVelAttDerivative<double>, _posVelAttDerivativeConstants);
-                break;
-            }
-        }
-    }
-    else // if (_measurements.size() == 3)
-    {
-        if (_integrationAlgorithm == IntegrationAlgorithm::MultiStepRK3)
-        {
-            LOG_ERROR("Not implemented yet"); // TODO
-        }
-        else if (_integrationAlgorithm == IntegrationAlgorithm::MultiStepRK4)
-        {
-            LOG_ERROR("Not implemented yet"); // TODO
-        }
+        LOG_DATA("{}: Returning state [{}], as no time difference between measurement.", nameId, _states.back().epoch.toYMDHMS(GPST));
+        return lastStateAsPosVelAtt();
     }
 
-    auto posVelAtt__t0 = std::make_shared<PosVelAtt>();
-    posVelAtt__t0->insTime = posVelAtt__t1.insTime + std::chrono::duration<double>(dt);
+    return calcInertialSolutionFromMeasurementBuffer(imuPos, nameId);
+}
+
+std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionDelta(const InsTime& obsTime, double deltaTime,
+                                                                         const Eigen::Vector3d& p_deltaVelocity, const Eigen::Vector3d& p_deltaTheta,
+                                                                         const ImuPos& imuPos, const char* nameId)
+{
+    if (!hasInitialPosition() || obsTime < _states.back().epoch) { return nullptr; }
+    if (_states.back().epoch.empty()) { _states.back().epoch = obsTime; }
+
+    auto dt = static_cast<double>((obsTime - _states.back().epoch).count());
+    addDeltaMeasurement(obsTime, dt, deltaTime, p_deltaVelocity, p_deltaTheta, nameId);
+    if (std::abs(dt) < 1e-8)
+    {
+        LOG_DATA("{}: Returning state [{}], as no time difference between measurement.", nameId, _states.back().epoch.toYMDHMS(GPST));
+        return lastStateAsPosVelAtt();
+    }
+
+    return calcInertialSolutionFromMeasurementBuffer(imuPos, nameId);
+}
+
+std::shared_ptr<PosVelAtt> InertialIntegrator::calcInertialSolutionFromMeasurementBuffer(const ImuPos& imuPos, const char* nameId)
+{
+    INS_ASSERT_USER_ERROR(!_states.empty(), "You need to add an initial state first");
+    INS_ASSERT_USER_ERROR(_states.size() >= 2, "You need to add an initial state and at least one measurement first");
+
+    LOG_DATA("{}: Calculating inertial solution from buffer. States t0 = [{}], t1 = [{}]",
+             nameId, _states.back().epoch.toYMDHMS(GPST), _states.at(_states.size() - 2).epoch.toYMDHMS(GPST));
+
+    auto y = calcInertialSolution(imuPos, _states.back(), _states.at(_states.size() - 2), nameId);
+
+    auto posVelAtt = std::make_shared<PosVelAtt>();
+    posVelAtt->insTime = _states.back().epoch;
     switch (_integrationFrame)
     {
     case IntegrationFrame::NED:
-        posVelAtt__t0->setPosVelAtt_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
+        posVelAtt->setPosVelAtt_n(y.segment<3>(0), y.segment<3>(3), Eigen::Quaterniond(y.segment<4>(6)));
         break;
     case IntegrationFrame::ECEF:
-        posVelAtt__t0->setPosVelAtt_e(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
+        posVelAtt->setPosVelAtt_e(y.segment<3>(0), y.segment<3>(3), Eigen::Quaterniond(y.segment<4>(6)));
         break;
     }
 
-    LOG_DATA("posVelAtt__t0->e_position() = {}", posVelAtt__t0->e_position().transpose());
-    LOG_DATA("posVelAtt__t0->lla_position() - posVelAtt__t1->lla_position() = {} [m]",
-             calcGeographicalDistance(posVelAtt__t0->latitude(), posVelAtt__t0->longitude(), posVelAtt__t1.latitude(), posVelAtt__t1.longitude()));
-    LOG_DATA("posVelAtt__t0->n_velocity() = {}", posVelAtt__t0->n_velocity().transpose());
-    LOG_DATA("posVelAtt__t0->e_velocity() = {}", posVelAtt__t0->e_velocity().transpose());
-    LOG_DATA("posVelAtt__t0->n_Quat_b() = {}", posVelAtt__t0->n_Quat_b());
-    LOG_DATA("posVelAtt__t0->e_Quat_b() = {}", posVelAtt__t0->e_Quat_b());
+    switch (_integrationFrame)
+    {
+    case IntegrationFrame::NED:
+        _states.back().position = posVelAtt->lla_position();
+        _states.back().velocity = posVelAtt->n_velocity();
+        _states.back().attitude = posVelAtt->n_Quat_b();
+        break;
+    case IntegrationFrame::ECEF:
+        _states.back().position = posVelAtt->e_position();
+        _states.back().velocity = posVelAtt->e_velocity();
+        _states.back().attitude = posVelAtt->e_Quat_b();
+        break;
+    }
 
-    _states.push_back(*posVelAtt__t0);
-    return posVelAtt__t0;
+    return posVelAtt;
 }
 
 void InertialIntegrator::setBufferSizes()
@@ -394,23 +319,22 @@ void InertialIntegrator::setBufferSizes()
     case IntegrationAlgorithm::SingleStepRungeKutta3:
     case IntegrationAlgorithm::SingleStepHeun3:
     case IntegrationAlgorithm::SingleStepRungeKutta4:
-        _measurements.resize(2);
-        _states.resize(1);
+        _states.resize(2);
         break;
     case IntegrationAlgorithm::MultiStepRK3:
     case IntegrationAlgorithm::MultiStepRK4:
-        _measurements.resize(3);
-        _states.resize(2);
+        _states.resize(3);
         break;
     case IntegrationAlgorithm::COUNT:
         break;
     }
 }
 
-bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, float width)
+bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, bool& preferAccelerationOverDeltaMeasurements, float width)
 {
     bool changed = false;
 
+    if (integrator._lockIntegrationFrame) { ImGui::BeginDisabled(); }
     ImGui::SetNextItemWidth(width * gui::NodeEditorApplication::windowFontRatio());
     if (auto integrationFrame = static_cast<int>(integrator._integrationFrame);
         ImGui::Combo(fmt::format("Integration Frame##{}", label).c_str(), &integrationFrame, "ECEF\0NED\0\0"))
@@ -419,6 +343,7 @@ bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, fl
         LOG_DEBUG("Integration Frame changed to {}", integrator._integrationFrame == InertialIntegrator::IntegrationFrame::NED ? "NED" : "ECEF");
         changed = true;
     }
+    if (integrator._lockIntegrationFrame) { ImGui::EndDisabled(); }
 
     ImGui::SetNextItemWidth(width * gui::NodeEditorApplication::windowFontRatio());
     if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", label).c_str(), to_string(integrator._integrationAlgorithm)))
@@ -442,6 +367,18 @@ bool InertialIntegratorGui(const char* label, InertialIntegrator& integrator, fl
         }
 
         ImGui::EndCombo();
+    }
+
+    changed |= ImGui::Checkbox(fmt::format("Prefer raw measurements over delta##{}", label).c_str(), &preferAccelerationOverDeltaMeasurements);
+
+    if (preferAccelerationOverDeltaMeasurements)
+    {
+        changed |= ImGui::Checkbox(fmt::format("Accumulated Acceleration##{}", label).c_str(), &integrator._accelerationsAreAveragedMeasurements);
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Some IMUs operate at higher rates than their output rate. (e.g. internal rate 800Hz and output rate is 100Hz)\n"
+                                 "- Such IMUs often output averaged accelerations between the current and last output.\n"
+                                 "- If the connected IMU (e.g. a VectorNavSensor node) is such as sensor, please check this.\n"
+                                 "- If delta measurements are used, this is automatically true");
     }
 
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
@@ -497,7 +434,9 @@ void to_json(json& j, const InertialIntegrator& data)
 {
     j = json{
         { "integrationFrame", data._integrationFrame },
+        { "lockIntegrationFrame", data._lockIntegrationFrame },
         { "integrationAlgorithm", data._integrationAlgorithm },
+        { "accelerationsAreAveragedMeasurements", data._accelerationsAreAveragedMeasurements },
         { "posVelAttDerivativeConstants", data._posVelAttDerivativeConstants },
     };
 }
@@ -505,11 +444,13 @@ void to_json(json& j, const InertialIntegrator& data)
 void from_json(const json& j, InertialIntegrator& data)
 {
     if (j.contains("integrationFrame")) { j.at("integrationFrame").get_to(data._integrationFrame); }
+    if (j.contains("lockIntegrationFrame")) { j.at("lockIntegrationFrame").get_to(data._lockIntegrationFrame); }
     if (j.contains("integrationAlgorithm"))
     {
         j.at("integrationAlgorithm").get_to(data._integrationAlgorithm);
         data.setBufferSizes();
     }
+    if (j.contains("accelerationsAreAveragedMeasurements")) { j.at("accelerationsAreAveragedMeasurements").get_to(data._accelerationsAreAveragedMeasurements); }
     if (j.contains("posVelAttDerivativeConstants")) { j.at("posVelAttDerivativeConstants").get_to(data._posVelAttDerivativeConstants); }
 }
 

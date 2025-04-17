@@ -15,6 +15,11 @@
 
 #include <Eigen/Core>
 
+#include "Navigation/GNSS/SystemModel/MotionModel.hpp"
+#include "Navigation/INS/Keys.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "util/Container/KeyedMatrix.hpp"
+
 namespace NAV
 {
 
@@ -29,11 +34,11 @@ Eigen::Matrix3d G_RandomWalk(const Eigen::Vector3d& sigma2);
 /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
 Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vector3d& beta);
 
-/// @brief u_bias Power Spectral Density of the bias for a Gauss-Markov random process
+/// @brief u_bias^2 Power Spectral Density of the bias for a Gauss-Markov random process
 /// @param[in] sigma2_bd 𝜎²_bd standard deviation of the bias noise
 /// @param[in] tau_bd 𝜏 Correlation length in [s]
 /// @note See Brown & Hwang (2011) - Introduction to Random Signals and Applied Kalman Filtering (example 9.6)
-[[nodiscard]] Eigen::Vector3d psdBiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
+[[nodiscard]] Eigen::Vector3d psd2BiasGaussMarkov(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd);
 
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -209,5 +214,119 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return See Groves (2013) equation (9.152)
 [[nodiscard]] Eigen::Matrix2d Q_gnss(const double& S_cPhi, const double& S_cf, const double& tau_s);
+
+/// @brief Calculate the noise input matrix in Earth frame coordinates
+/// @param b_quat_p Quaternion from IMU platform frame to body frame
+/// @param e_quat_b Quaternion from body to Earth frame
+/// @param accelBiases Flag wether to calculate the rows and columns for the acceleration bias
+/// @param gyroBiases Flag wether to calculate the rows and columns for the angular rate bias
+/// @param accelScaleFactor Flag wether to calculate the rows and columns for the acceleration scale factor
+/// @param gyroScaleFactor Flag wether to calculate the rows and columns for the angular rate scale factor
+/// @param accelMisalignment Flag wether to calculate the rows and columns for the accelerometer misalignment
+/// @param gyroMisalignment Flag wether to calculate the rows and columns for the gyroscope misalignment
+template<typename KeyType, typename T>
+[[nodiscard]] KeyedMatrixX<T, KeyType, KeyType> e_noiseInput_G(const Eigen::Quaterniond& b_quat_p,
+                                                               const Eigen::Quaternion<T>& e_quat_b,
+                                                               bool accelBiases, bool gyroBiases,
+                                                               bool accelScaleFactor, bool gyroScaleFactor,
+                                                               bool accelMisalignment, bool gyroMisalignment)
+
+{
+    std::vector<KeyType> rowKeys;
+    rowKeys.reserve(3 + 3 + 4
+                    + 3 * (static_cast<size_t>(accelBiases) + static_cast<size_t>(gyroBiases))
+                    + 3 * (static_cast<size_t>(accelScaleFactor) + static_cast<size_t>(gyroScaleFactor))
+                    + 4 * (static_cast<size_t>(accelMisalignment) + static_cast<size_t>(gyroMisalignment)));
+    std::vector<KeyType> colKeys;
+    colKeys.reserve(3 + 3 + 3
+                    + 3 * (static_cast<size_t>(accelBiases) + static_cast<size_t>(gyroBiases))
+                    + 3 * (static_cast<size_t>(accelScaleFactor) + static_cast<size_t>(gyroScaleFactor)));
+
+    constexpr std::array<KeyType, 3> AngleErrorKeys = { Keys::AttQ1, Keys::AttQ2, Keys::AttQ3 }; // 3 quaternion keys are used for the angle error
+
+    rowKeys.insert(rowKeys.end(), Keys::PosVelAtt<KeyType>.begin(), Keys::PosVelAtt<KeyType>.end());
+    colKeys.insert(colKeys.end(), Keys::PosVel<KeyType>.begin(), Keys::PosVel<KeyType>.end());
+    colKeys.insert(colKeys.end(), AngleErrorKeys.begin(), AngleErrorKeys.end());
+
+    if (accelBiases)
+    {
+        rowKeys.insert(rowKeys.end(), Keys::AccelBias<KeyType>.begin(), Keys::AccelBias<KeyType>.end());
+        colKeys.insert(colKeys.end(), Keys::AccelBias<KeyType>.begin(), Keys::AccelBias<KeyType>.end());
+    }
+    if (gyroBiases)
+    {
+        rowKeys.insert(rowKeys.end(), Keys::GyroBias<KeyType>.begin(), Keys::GyroBias<KeyType>.end());
+        colKeys.insert(colKeys.end(), Keys::GyroBias<KeyType>.begin(), Keys::GyroBias<KeyType>.end());
+    }
+    if (accelScaleFactor)
+    {
+        rowKeys.insert(rowKeys.end(), Keys::AccelScaleFactor<KeyType>.begin(), Keys::AccelScaleFactor<KeyType>.end());
+        colKeys.insert(colKeys.end(), Keys::AccelScaleFactor<KeyType>.begin(), Keys::AccelScaleFactor<KeyType>.end());
+    }
+    if (gyroScaleFactor)
+    {
+        rowKeys.insert(rowKeys.end(), Keys::GyroScaleFactor<KeyType>.begin(), Keys::GyroScaleFactor<KeyType>.end());
+        colKeys.insert(colKeys.end(), Keys::GyroScaleFactor<KeyType>.begin(), Keys::GyroScaleFactor<KeyType>.end());
+    }
+    if (accelMisalignment) { rowKeys.insert(rowKeys.end(), Keys::AccelMisalignment<KeyType>.begin(), Keys::AccelMisalignment<KeyType>.end()); }
+    if (gyroMisalignment) { rowKeys.insert(rowKeys.end(), Keys::GyroMisalignment<KeyType>.begin(), Keys::GyroMisalignment<KeyType>.end()); }
+
+    KeyedMatrixX<T, KeyType, KeyType> G(Eigen::MatrixX<T>::Zero(static_cast<int>(rowKeys.size()), static_cast<int>(colKeys.size())), rowKeys, colKeys);
+
+    Eigen::Quaternion<T> e_quat_p = e_quat_b * b_quat_p.cast<T>();
+    G(Keys::Vel<KeyType>, Keys::Vel<KeyType>) = e_quat_p.toRotationMatrix();
+    G(Keys::Att<KeyType>, AngleErrorKeys) = trafo::covRPY2quatJacobian(e_quat_p) * e_quat_p.toRotationMatrix();
+    if (accelBiases) { G(Keys::AccelBias<KeyType>, Keys::AccelBias<KeyType>).setIdentity(); }
+    if (gyroBiases) { G(Keys::GyroBias<KeyType>, Keys::GyroBias<KeyType>).setIdentity(); }
+    if (accelScaleFactor) { G(Keys::AccelScaleFactor<KeyType>, Keys::AccelScaleFactor<KeyType>).setIdentity(); }
+    if (gyroScaleFactor) { G(Keys::GyroScaleFactor<KeyType>, Keys::GyroScaleFactor<KeyType>).setIdentity(); }
+
+    return G;
+}
+
+/// @brief Calculate the noise scale matrix in Earth frame coordinates
+/// @param sigma2_ra 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m^2 / s^4 / Hz]
+/// @param sigma2_rg 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [rad^2 / s^2 /Hz]
+/// @param sigma2_bad 𝜎²_bad Variance of the accelerometer dynamic bias [m^2 / s^4]
+/// @param sigma2_bgd 𝜎²_bgd Variance of the gyro dynamic bias [rad^2/s^2]
+/// @param sigma2_sad 𝜎²_sad Variance of the accelerometer dynamic scale factor [-]
+/// @param sigma2_sgd 𝜎²_sgd Variance of the gyro dynamic scale factor [-]
+/// @param accelBiases Flag wether to calculate the rows and columns for the acceleration bias
+/// @param gyroBiases Flag wether to calculate the rows and columns for the angular rate bias
+/// @param accelScaleFactor Flag wether to calculate the rows and columns for the acceleration scale factor
+/// @param gyroScaleFactor Flag wether to calculate the rows and columns for the angular rate scale factor
+template<typename KeyType, typename T>
+[[nodiscard]] KeyedMatrixX<T, KeyType, KeyType> e_noiseScale_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                               const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                               const Eigen::Vector3d& sigma2_sad, const Eigen::Vector3d& sigma2_sgd,
+                                                               bool accelBiases, bool gyroBiases,
+                                                               bool accelScaleFactor, bool gyroScaleFactor)
+
+{
+    std::vector<KeyType> keys;
+    keys.reserve(3 + 3 + 3
+                 + 3 * (static_cast<size_t>(accelBiases) + static_cast<size_t>(gyroBiases))
+                 + 3 * (static_cast<size_t>(accelScaleFactor) + static_cast<size_t>(gyroScaleFactor)));
+
+    constexpr std::array<KeyType, 3> AngleErrorKeys = { Keys::AttQ1, Keys::AttQ2, Keys::AttQ3 }; // 3 quaternion keys are used for the angle error
+    keys.insert(keys.end(), Keys::PosVel<KeyType>.begin(), Keys::PosVel<KeyType>.end());
+    keys.insert(keys.end(), AngleErrorKeys.begin(), AngleErrorKeys.end());
+
+    if (accelBiases) { keys.insert(keys.end(), Keys::AccelBias<KeyType>.begin(), Keys::AccelBias<KeyType>.end()); }
+    if (gyroBiases) { keys.insert(keys.end(), Keys::GyroBias<KeyType>.begin(), Keys::GyroBias<KeyType>.end()); }
+    if (accelScaleFactor) { keys.insert(keys.end(), Keys::AccelScaleFactor<KeyType>.begin(), Keys::AccelScaleFactor<KeyType>.end()); }
+    if (gyroScaleFactor) { keys.insert(keys.end(), Keys::GyroScaleFactor<KeyType>.begin(), Keys::GyroScaleFactor<KeyType>.end()); }
+
+    KeyedMatrixX<T, KeyType, KeyType> W(Eigen::MatrixX<T>::Zero(static_cast<int>(keys.size()), static_cast<int>(keys.size())), keys, keys);
+
+    W(Keys::Vel<KeyType>, Keys::Vel<KeyType>).diagonal() = sigma2_ra.cast<T>();
+    W(AngleErrorKeys, AngleErrorKeys).diagonal() = sigma2_rg.cast<T>();
+    if (accelBiases) { W(Keys::AccelBias<KeyType>, Keys::AccelBias<KeyType>).diagonal() = sigma2_bad.cast<T>(); }
+    if (gyroBiases) { W(Keys::GyroBias<KeyType>, Keys::GyroBias<KeyType>).diagonal() = sigma2_bgd.cast<T>(); }
+    if (accelScaleFactor) { W(Keys::AccelScaleFactor<KeyType>, Keys::AccelScaleFactor<KeyType>).diagonal() = sigma2_sad.cast<T>(); }
+    if (gyroScaleFactor) { W(Keys::GyroScaleFactor<KeyType>, Keys::GyroScaleFactor<KeyType>).diagonal() = sigma2_sgd.cast<T>(); }
+
+    return W;
+}
 
 } // namespace NAV

@@ -91,79 +91,31 @@ void NAV::MultiImuFile::guiConfig()
         if (i == 0) { showRotation = false; }
         if (ImGui::TreeNode(fmt::format("Imu #{} Position & Rotation##{}", i + 1, size_t(id)).c_str()))
         {
-            std::array<float, 3> imuPosAccel = { static_cast<float>(_imuPosAll[i].b_positionAccel().x()), static_cast<float>(_imuPosAll[i].b_positionAccel().y()), static_cast<float>(_imuPosAll[i].b_positionAccel().z()) };
-            if (ImGui::InputFloat3(fmt::format("Lever Accel [m]##{}", size_t(id)).c_str(), imuPosAccel.data()))
+            ImGui::BeginDisabled(); // FIXME Not properly simulated and accounted for in the algorithms
+            std::array<float, 3> imuPos = { static_cast<float>(_imuPosAll[i].b_positionIMU_p().x()), static_cast<float>(_imuPosAll[i].b_positionIMU_p().y()), static_cast<float>(_imuPosAll[i].b_positionIMU_p().z()) };
+            if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), imuPos.data()))
             {
                 flow::ApplyChanges();
-                _imuPosAll[i]._b_positionAccel = Eigen::Vector3d(imuPosAccel.at(0), imuPosAccel.at(1), imuPosAccel.at(2));
+                _imuPosAll[i]._b_positionIMU_p = Eigen::Vector3d(imuPos.at(0), imuPos.at(1), imuPos.at(2));
             }
+            ImGui::EndDisabled();
             ImGui::SameLine();
-            gui::widgets::HelpMarker("Position of the accelerometer sensor relative to the vehicle center of mass in the body coordinate frame.");
+            gui::widgets::HelpMarker("Position of the IMU sensor relative to the vehicle center of mass in the body coordinate frame.");
 
-            std::array<float, 3> imuPosGyro = { static_cast<float>(_imuPosAll[i].b_positionGyro().x()), static_cast<float>(_imuPosAll[i].b_positionGyro().y()), static_cast<float>(_imuPosAll[i].b_positionGyro().z()) };
-            if (ImGui::InputFloat3(fmt::format("Lever Gyro [m]##{}", size_t(id)).c_str(), imuPosGyro.data()))
-            {
-                flow::ApplyChanges();
-                _imuPosAll[i]._b_positionGyro = Eigen::Vector3d(imuPosGyro.at(0), imuPosGyro.at(1), imuPosGyro.at(2));
-            }
-            ImGui::SameLine();
-            gui::widgets::HelpMarker("Position of the gyroscope sensor relative to the vehicle center of mass in the body coordinate frame.");
-
-            std::array<float, 3> imuPosMag = { static_cast<float>(_imuPosAll[i].b_positionMag().x()), static_cast<float>(_imuPosAll[i].b_positionMag().y()), static_cast<float>(_imuPosAll[i].b_positionMag().z()) };
-            if (ImGui::InputFloat3(fmt::format("Lever Mag [m]##{}", size_t(id)).c_str(), imuPosMag.data()))
-            {
-                flow::ApplyChanges();
-                _imuPosAll[i]._b_positionMag = Eigen::Vector3d(imuPosMag.at(0), imuPosMag.at(1), imuPosMag.at(2));
-            }
-            ImGui::SameLine();
-            gui::widgets::HelpMarker("Position of the magnetometer sensor relative to the vehicle center of mass in the body coordinate frame.");
-
-            Eigen::Vector3d eulerAccel = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quatAccel_b()));
-            std::array<float, 3> imuRotAccel = { static_cast<float>(eulerAccel.x()), static_cast<float>(eulerAccel.y()), static_cast<float>(eulerAccel.z()) };
-            if (ImGui::InputFloat3(fmt::format("Rotation Accel [deg]##{}", size_t(id)).c_str(), imuRotAccel.data()))
+            Eigen::Vector3d eulerAnglesIMU = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quat_b()));
+            std::array<float, 3> imuRot = { static_cast<float>(eulerAnglesIMU.x()), static_cast<float>(eulerAnglesIMU.y()), static_cast<float>(eulerAnglesIMU.z()) };
+            if (ImGui::InputFloat3(fmt::format("Rotation [deg]##{}", size_t(id)).c_str(), imuRot.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                imuRotAccel.at(0) = std::max(imuRotAccel.at(0), -179.9999F);
-                imuRotAccel.at(0) = std::min(imuRotAccel.at(0), 180.0F);
-                imuRotAccel.at(1) = std::max(imuRotAccel.at(1), -89.9999F);
-                imuRotAccel.at(1) = std::min(imuRotAccel.at(1), 90.0F);
-                imuRotAccel.at(2) = std::max(imuRotAccel.at(2), -179.9999F);
-                imuRotAccel.at(2) = std::min(imuRotAccel.at(2), 180.0F);
+                imuRot.at(0) = std::max(imuRot.at(0), -179.9999F);
+                imuRot.at(0) = std::min(imuRot.at(0), 180.0F);
+                imuRot.at(1) = std::max(imuRot.at(1), -89.9999F);
+                imuRot.at(1) = std::min(imuRot.at(1), 90.0F);
+                imuRot.at(2) = std::max(imuRot.at(2), -179.9999F);
+                imuRot.at(2) = std::min(imuRot.at(2), 180.0F);
 
                 flow::ApplyChanges();
-                _imuPosAll[i]._b_quatAccel_p = trafo::b_Quat_p(deg2rad(imuRotAccel.at(0)), deg2rad(imuRotAccel.at(1)), deg2rad(imuRotAccel.at(2)));
-            }
-
-            Eigen::Vector3d eulerGyro = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quatGyro_b()));
-            std::array<float, 3> imuRotGyro = { static_cast<float>(eulerGyro.x()), static_cast<float>(eulerGyro.y()), static_cast<float>(eulerGyro.z()) };
-            if (ImGui::InputFloat3(fmt::format("Rotation Gyro [deg]##{}", size_t(id)).c_str(), imuRotGyro.data()))
-            {
-                // (-180:180] x (-90:90] x (-180:180]
-                imuRotGyro.at(0) = std::max(imuRotGyro.at(0), -179.9999F);
-                imuRotGyro.at(0) = std::min(imuRotGyro.at(0), 180.0F);
-                imuRotGyro.at(1) = std::max(imuRotGyro.at(1), -89.9999F);
-                imuRotGyro.at(1) = std::min(imuRotGyro.at(1), 90.0F);
-                imuRotGyro.at(2) = std::max(imuRotGyro.at(2), -179.9999F);
-                imuRotGyro.at(2) = std::min(imuRotGyro.at(2), 180.0F);
-
-                flow::ApplyChanges();
-                _imuPosAll[i]._b_quatGyro_p = trafo::b_Quat_p(deg2rad(imuRotGyro.at(0)), deg2rad(imuRotGyro.at(1)), deg2rad(imuRotGyro.at(2)));
-            }
-
-            Eigen::Vector3d eulerMag = rad2deg(trafo::quat2eulerZYX(_imuPosAll[i].p_quatMag_b()));
-            std::array<float, 3> imuRotMag = { static_cast<float>(eulerMag.x()), static_cast<float>(eulerMag.y()), static_cast<float>(eulerMag.z()) };
-            if (ImGui::InputFloat3(fmt::format("Rotation Mag [deg]##{}", size_t(id)).c_str(), imuRotMag.data()))
-            {
-                // (-180:180] x (-90:90] x (-180:180]
-                imuRotMag.at(0) = std::max(imuRotMag.at(0), -179.9999F);
-                imuRotMag.at(0) = std::min(imuRotMag.at(0), 180.0F);
-                imuRotMag.at(1) = std::max(imuRotMag.at(1), -89.9999F);
-                imuRotMag.at(1) = std::min(imuRotMag.at(1), 90.0F);
-                imuRotMag.at(2) = std::max(imuRotMag.at(2), -179.9999F);
-                imuRotMag.at(2) = std::min(imuRotMag.at(2), 180.0F);
-
-                flow::ApplyChanges();
-                _imuPosAll[i]._b_quatMag_p = trafo::b_Quat_p(deg2rad(imuRotMag.at(0)), deg2rad(imuRotMag.at(1)), deg2rad(imuRotMag.at(2)));
+                _imuPosAll[i]._b_quat_p = trafo::b_Quat_p(deg2rad(imuRot.at(0)), deg2rad(imuRot.at(1)), deg2rad(imuRot.at(2)));
             }
 
             ImGui::TreePop();

@@ -22,7 +22,6 @@ namespace NAV
 {
 
 /// @brief Values needed to calculate the PosVelAttDerivative for the local-navigation frame
-template<std::floating_point Scalar>
 struct PosVelAttDerivativeConstants
 {
     GravitationModel gravitationModel = GravitationModel::EGM96; ///< Gravity Model to use
@@ -30,34 +29,16 @@ struct PosVelAttDerivativeConstants
     bool centrifgalAccelerationCompensationEnabled = true;       ///< Apply the centrifugal acceleration compensation to the measured accelerations
     bool angularRateEarthRotationCompensationEnabled = true;     ///< Apply the Earth rotation rate compensation to the measured angular rates
     bool angularRateTransportRateCompensationEnabled = true;     ///< Apply the transport rate compensation to the measured angular rates
-    Scalar timeDifferenceSec = 0.0;                              ///< Time difference over the whole integration step [s]
 };
 
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] data Object to read info from
-template<std::floating_point Scalar>
-void to_json(json& j, const PosVelAttDerivativeConstants<Scalar>& data)
-{
-    j = json{
-        { "gravitationModel", data.gravitationModel },
-        { "coriolisAccelerationCompensationEnabled", data.coriolisAccelerationCompensationEnabled },
-        { "centrifgalAccelerationCompensationEnabled", data.centrifgalAccelerationCompensationEnabled },
-        { "angularRateEarthRotationCompensationEnabled", data.angularRateEarthRotationCompensationEnabled },
-        { "angularRateTransportRateCompensationEnabled", data.angularRateTransportRateCompensationEnabled },
-    };
-}
+void to_json(json& j, const PosVelAttDerivativeConstants& data);
+
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
 /// @param[out] data Output object
-template<std::floating_point Scalar>
-void from_json(const json& j, PosVelAttDerivativeConstants<Scalar>& data)
-{
-    if (j.contains("gravitationModel")) { j.at("gravitationModel").get_to(data.gravitationModel); }
-    if (j.contains("coriolisAccelerationCompensationEnabled")) { j.at("coriolisAccelerationCompensationEnabled").get_to(data.coriolisAccelerationCompensationEnabled); }
-    if (j.contains("centrifgalAccelerationCompensationEnabled")) { j.at("centrifgalAccelerationCompensationEnabled").get_to(data.centrifgalAccelerationCompensationEnabled); }
-    if (j.contains("angularRateEarthRotationCompensationEnabled")) { j.at("angularRateEarthRotationCompensationEnabled").get_to(data.angularRateEarthRotationCompensationEnabled); }
-    if (j.contains("angularRateTransportRateCompensationEnabled")) { j.at("angularRateTransportRateCompensationEnabled").get_to(data.angularRateTransportRateCompensationEnabled); }
-}
+void from_json(const json& j, PosVelAttDerivativeConstants& data);
 
 } // namespace NAV

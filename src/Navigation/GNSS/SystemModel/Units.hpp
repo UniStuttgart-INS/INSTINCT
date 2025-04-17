@@ -32,6 +32,18 @@ enum class CovarianceAccelUnits : uint8_t
     COUNT,    ///< Amount of items in the enum
 };
 
+/// Possible Units for the Standard deviation of the rotation velocity
+enum class CovarianceAngularVelocityUnits : uint8_t
+{
+    rad2_s,       ///< [ rad^2 / s ]
+    rad_sqrts,    ///< [ rad / √(s) ]
+    deg2_s,       ///< [ deg^2 / s ]
+    deg_sqrts,    ///< [ deg / √(s) ]
+    deg2s_min2,   ///< [ deg^2 s / min^2 ]
+    degsqrts_min, ///< [ deg √(s) / min ]
+    COUNT,        ///< Amount of items in the enum
+};
+
 /// Possible Units for the Standard deviation of the clock phase drift
 enum class CovarianceClkPhaseDriftUnits : uint8_t
 {
@@ -56,6 +68,15 @@ void to_json(json& j, const CovarianceAccelUnits& data);
 /// @param[in] j Json object with the needed values
 /// @param[out] data Object to fill from the json
 void from_json(const json& j, CovarianceAccelUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const CovarianceAngularVelocityUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, CovarianceAngularVelocityUnits& data);
 
 /// @brief Converts the provided data into a json object
 /// @param[out] j Json object which gets filled with the info
@@ -87,6 +108,12 @@ void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data);
 /// @param[in] value Value to convert
 /// @param[in] unit Unit the value is in
 /// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] double convertUnit(const double& value, Units::CovarianceAngularVelocityUnits unit);
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
 [[nodiscard]] double convertUnit(const double& value, Units::CovarianceClkPhaseDriftUnits unit);
 
 /// @brief Converts the value depending on the unit provided
@@ -98,6 +125,9 @@ void from_json(const json& j, CovarianceClkFrequencyDriftUnits& data);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::CovarianceAccelUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::CovarianceAngularVelocityUnits unit);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::CovarianceClkPhaseDriftUnits unit);

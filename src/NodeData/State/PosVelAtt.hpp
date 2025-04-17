@@ -318,12 +318,7 @@ class PosVelAtt : public PosVel
         Eigen::Matrix<double, 10, 10> J = Eigen::Matrix<double, 10, 10>::Zero();
         J.block<3, 3>(0, 0) = n_q_e.toRotationMatrix();
         J.block<3, 3>(3, 3) = n_q_e.toRotationMatrix();
-        J.block<4, 4>(6, 6) << // clang-format off
-             n_q_e.w(), -n_q_e.z(),  n_q_e.y(), n_q_e.x(),
-             n_q_e.z(),  n_q_e.w(),  n_q_e.x(), n_q_e.y(),
-            -n_q_e.y(),  n_q_e.x(),  n_q_e.w(), n_q_e.z(),
-            -n_q_e.x(), -n_q_e.y(), -n_q_e.z(), n_q_e.w();
-        // clang-format on
+        J.block<4, 4>(6, 6) = trafo::covQuat2QuatJacobian(n_q_e);
 
         _n_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
             J * e_covarianceMatrix * J.transpose(), Keys::PosVelAtt<Keys::MotionModelKey>);
@@ -345,12 +340,7 @@ class PosVelAtt : public PosVel
         Eigen::Matrix<double, 10, 10> J = Eigen::Matrix<double, 10, 10>::Zero();
         J.block<3, 3>(0, 0) = e_q_n.toRotationMatrix();
         J.block<3, 3>(3, 3) = e_q_n.toRotationMatrix();
-        J.block<4, 4>(6, 6) << // clang-format off
-             e_q_n.w(), -e_q_n.z(),  e_q_n.y(), e_q_n.x(),
-             e_q_n.z(),  e_q_n.w(),  e_q_n.x(), e_q_n.y(),
-            -e_q_n.y(),  e_q_n.x(),  e_q_n.w(), e_q_n.z(),
-            -e_q_n.x(), -e_q_n.y(), -e_q_n.z(), e_q_n.w();
-        // clang-format on
+        J.block<4, 4>(6, 6) = trafo::covQuat2QuatJacobian(e_q_n);
 
         _e_covarianceMatrix = KeyedMatrixXd<Keys::MotionModelKey, Keys::MotionModelKey>(
             J * n_covarianceMatrix * J.transpose(), Keys::PosVelAtt<Keys::MotionModelKey>);

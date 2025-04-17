@@ -79,17 +79,23 @@ class MotionModel
 {
   public:
     /// @brief Initializes the motion model
-    /// @param[in, out] F System model matrix
-    /// @param[in, out] W Noise scale matrix
-    template<typename Scalar, int Size>
-    void initialize(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& F,
-                    KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
+    void initialize()
     {
         for (size_t i = 0; i < _gui_covarianceAccel.size(); i++)
         {
             // Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]
             _covarianceAccel.at(i) = convertUnit(_gui_covarianceAccel.at(i), _gui_covarianceAccelUnit);
         }
+    }
+
+    /// @brief Initializes the motion model
+    /// @param[in, out] F System model matrix
+    /// @param[in, out] W Noise scale matrix
+    template<typename Scalar, int Size>
+    void initialize(KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& F,
+                    KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
+    {
+        initialize();
 
         F.template block<3>(Pos, Vel) = Eigen::Matrix3d::Identity();
         W.template block<3>(Vel, Vel) = Eigen::DiagonalMatrix<double, 3>(_covarianceAccel[0], _covarianceAccel[0], _covarianceAccel[1]);

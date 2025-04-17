@@ -48,6 +48,13 @@ class InterFrequencyBiasModel
 {
   public:
     /// @brief Initializes the inter-frequency bias
+    void initialize()
+    {
+        // Covariance of the inter-frequency bias [m²/s]
+        _covarianceInterFrequencyBias = convertUnit(_gui_covarianceInterFrequencyBias, _gui_covarianceInterFrequencyBiasUnit);
+    }
+
+    /// @brief Initializes the inter-frequency bias
     /// @param[in] bias Bias to init
     /// @param[in, out] F System model matrix
     /// @param[in, out] G Noise input matrix
@@ -58,8 +65,7 @@ class InterFrequencyBiasModel
                     KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& G,
                     KeyedMatrix<Scalar, StateKeyType, StateKeyType, Size, Size>& W)
     {
-        // Covariance of the inter-frequency bias [m²/s]
-        _covarianceInterFrequencyBias = convertUnit(_gui_covarianceInterFrequencyBias, _gui_covarianceInterFrequencyBiasUnit);
+        initialize();
 
         F(bias, bias) = 0;
         G(bias, bias) = 1;

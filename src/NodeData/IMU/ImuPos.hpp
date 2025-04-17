@@ -25,69 +25,29 @@ class MultiImuFile;
 class ImuPos
 {
   public:
-    /// Accelerometer position in body frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& b_positionAccel() const
+    /// IMU position in body frame coordinates in [m]
+    [[nodiscard]] const Eigen::Vector3d& b_positionIMU_p() const
     {
-        return _b_positionAccel;
-    }
-    /// Gyroscope position in body frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& b_positionGyro() const
-    {
-        return _b_positionGyro;
-    }
-    /// Magnetometer position in body frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& b_positionMag() const
-    {
-        return _b_positionMag;
+        return _b_positionIMU_p;
     }
 
-    /// Quaternion from accelerometer platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& b_quatAccel_p() const
+    /// Quaternion from IMU platform frame to body frame
+    [[nodiscard]] const Eigen::Quaterniond& b_quat_p() const
     {
-        return _b_quatAccel_p;
+        return _b_quat_p;
     }
-    /// Quaternion from body frame to accelerometer platform frame
-    [[nodiscard]] Eigen::Quaterniond p_quatAccel_b() const
+    /// Quaternion from body frame to IMU platform frame
+    [[nodiscard]] Eigen::Quaterniond p_quat_b() const
     {
-        return _b_quatAccel_p.conjugate();
-    }
-
-    /// Quaternion from gyroscope platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& b_quatGyro_p() const
-    {
-        return _b_quatGyro_p;
-    }
-    /// Quaternion from body frame to gyroscope platform frame
-    [[nodiscard]] Eigen::Quaterniond p_quatGyro_b() const
-    {
-        return _b_quatGyro_p.conjugate();
-    }
-
-    /// Quaternion from magnetometer platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& b_quatMag_p() const
-    {
-        return _b_quatMag_p;
-    }
-    /// Quaternion from body frame to magnetometer platform frame
-    [[nodiscard]] Eigen::Quaterniond p_quatMag_b() const
-    {
-        return _b_quatMag_p.conjugate();
+        return _b_quat_p.conjugate();
     }
 
   private:
-    /// Accelerometer position in body frame coordinates in [m]
-    Eigen::Vector3d _b_positionAccel = { 0, 0, 0 };
-    /// Gyroscope position in body frame coordinates in [m]
-    Eigen::Vector3d _b_positionGyro = { 0, 0, 0 };
-    /// Magnetometer position in body frame coordinates in [m]
-    Eigen::Vector3d _b_positionMag = { 0, 0, 0 };
+    /// IMU position in body frame coordinates in [m]
+    Eigen::Vector3d _b_positionIMU_p = Eigen::Vector3d::Zero();
 
-    /// Quaternion from accelerometer platform frame to body frame
-    Eigen::Quaterniond _b_quatAccel_p = Eigen::Quaterniond::Identity();
-    /// Quaternion from gyroscope platform frame to body frame
-    Eigen::Quaterniond _b_quatGyro_p = { 1, 0, 0, 0 };
-    /// Quaternion from magnetometer platform frame to body frame
-    Eigen::Quaterniond _b_quatMag_p = { 1, 0, 0, 0 };
+    /// Quaternion from IMU platform frame to body frame
+    Eigen::Quaterniond _b_quat_p = Eigen::Quaterniond::Identity();
 
     friend class Imu;
     friend class MultiImuFile;

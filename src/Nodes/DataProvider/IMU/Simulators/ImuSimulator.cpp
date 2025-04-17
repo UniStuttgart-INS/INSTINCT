@@ -1619,7 +1619,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
         }
 
         // Acceleration measured by the accelerometer in platform coordinates
-        Eigen::Vector3d p_accel = _imuPos.p_quatAccel_b() * b_Quat_n * n_accel;
+        Eigen::Vector3d p_accel = _imuPos.p_quat_b() * b_Quat_n * n_accel;
         LOG_DATA("{}: [{:8.3f}] p_accel = {} [m/s^2]", nameId(), imuInternalUpdateTime, p_accel.transpose());
 
         // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
@@ -1640,7 +1640,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(size_t /* pin
         // ω_ib_b = b_Quat_n * ω_ib_n
         //                            = 0
         // ω_ip_p = p_Quat_b * (ω_ib_b + ω_bp_b) = p_Quat_b * ω_ib_b
-        Eigen::Vector3d p_omega_ip = _imuPos.p_quatGyro_b() * b_Quat_n * n_omega_ib;
+        Eigen::Vector3d p_omega_ip = _imuPos.p_quat_b() * b_Quat_n * n_omega_ib;
         LOG_DATA("{}: [{:8.3f}] p_omega_ip = {} [rad/s]", nameId(), imuInternalUpdateTime, p_omega_ip.transpose());
 
         // -------------------------------------------------- Construct the message to send out ----------------------------------------------------

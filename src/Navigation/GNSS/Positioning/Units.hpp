@@ -51,6 +51,21 @@ enum class AttitudeUncertaintyUnits : uint8_t
     COUNT, ///< Amount of items in the enum
 };
 
+/// Possible units for the velocity
+enum class VelocityUnits : uint8_t
+{
+    m_s,   ///< [m/s]
+    COUNT, ///< Amount of items in the enum
+};
+
+/// Possible units for the attitude
+enum class AttitudeUnits : uint8_t
+{
+    rad,   ///< [radian]
+    deg,   ///< [degree]
+    COUNT, ///< Amount of items in the enum
+};
+
 /// @brief Converts the provided data into a json object
 /// @param[out] j Json object which gets filled with the info
 /// @param[in] data Data to convert into json
@@ -77,6 +92,24 @@ void to_json(json& j, const AttitudeUncertaintyUnits& data);
 /// @param[in] j Json object with the needed values
 /// @param[out] data Object to fill from the json
 void from_json(const json& j, AttitudeUncertaintyUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const VelocityUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, VelocityUnits& data);
+
+/// @brief Converts the provided data into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] data Data to convert into json
+void to_json(json& j, const AttitudeUnits& data);
+/// @brief Converts the provided json object into the data object
+/// @param[in] j Json object with the needed values
+/// @param[out] data Object to fill from the json
+void from_json(const json& j, AttitudeUnits& data);
 
 } // namespace Units
 
@@ -113,6 +146,28 @@ void from_json(const json& j, AttitudeUncertaintyUnits& data);
 /// @return Value in unit of the first item in the Unit enum
 [[nodiscard]] Eigen::Vector3d convertUnit(const Eigen::Vector3d& value, Units::AttitudeUncertaintyUnits unit);
 
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] double convertUnit(const double& value, Units::VelocityUnits unit);
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] Eigen::Vector3d convertUnit(const Eigen::Vector3d& value, Units::VelocityUnits unit);
+
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] double convertUnit(const double& value, Units::AttitudeUnits unit);
+/// @brief Converts the value depending on the unit provided
+/// @param[in] value Value to convert
+/// @param[in] unit Unit the value is in
+/// @return Value in unit of the first item in the Unit enum
+[[nodiscard]] Eigen::Vector3d convertUnit(const Eigen::Vector3d& value, Units::AttitudeUnits unit);
+
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::PositionUncertaintyUnits unit);
@@ -122,5 +177,12 @@ void from_json(const json& j, AttitudeUncertaintyUnits& data);
 /// @brief Converts the unit into a string
 /// @param[in] unit Unit
 [[nodiscard]] std::string to_string(Units::AttitudeUncertaintyUnits unit);
+
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::VelocityUnits unit);
+/// @brief Converts the unit into a string
+/// @param[in] unit Unit
+[[nodiscard]] std::string to_string(Units::AttitudeUnits unit);
 
 } // namespace NAV

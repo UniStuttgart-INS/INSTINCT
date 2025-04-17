@@ -69,18 +69,9 @@ std::string NAV::ImuIntegrator::category()
 
 void NAV::ImuIntegrator::guiConfig()
 {
-    if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator))
+    if (InertialIntegratorGui(std::to_string(size_t(id)).c_str(), _inertialIntegrator, _preferAccelerationOverDeltaMeasurements))
     {
         flow::ApplyChanges();
-    }
-    if (inputPins.at(INPUT_PORT_INDEX_IMU_OBS).isPinLinked()
-        && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(inputPins.at(INPUT_PORT_INDEX_IMU_OBS).link.getConnectedPin()->dataIdentifier, { ImuObsWDelta::type() }))
-    {
-        ImGui::Separator();
-        if (ImGui::Checkbox(fmt::format("Prefer raw measurements over delta##{}", size_t(id)).c_str(), &_preferAccelerationOverDeltaMeasurements))
-        {
-            flow::ApplyChanges();
-        }
     }
 }
 
@@ -143,14 +134,14 @@ void NAV::ImuIntegrator::recvObservation(NAV::InputPin::NodeDataQueue& queue, si
         auto obs = std::static_pointer_cast<const ImuObsWDelta>(nodeData);
         LOG_DATA("{}: recvImuObsWDelta at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-        integratedPosVelAtt = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos);
+        integratedPosVelAtt = _inertialIntegrator.calcInertialSolutionDelta(obs->insTime, obs->dtime, obs->dvel, obs->dtheta, obs->imuPos, nameId().c_str());
     }
     else
     {
         auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
         LOG_DATA("{}: recvImuObs at time [{}]", nameId(), obs->insTime.toYMDHMS());
 
-        integratedPosVelAtt = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos);
+        integratedPosVelAtt = _inertialIntegrator.calcInertialSolution(obs->insTime, obs->p_acceleration, obs->p_angularRate, obs->imuPos, nameId().c_str());
     }
 
     if (integratedPosVelAtt)
@@ -172,7 +163,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(NAV::InputPin::NodeDataQueue& queue, 
 
     if (!_inertialIntegrator.hasInitialPosition())
     {
-        _inertialIntegrator.setInitialState(*posVelAtt);
+        _inertialIntegrator.setInitialState(*posVelAtt, nameId().c_str());
         LOG_DATA("{}:   e_position   = {}", nameId(), posVelAtt->e_position().transpose());
         LOG_DATA("{}:   e_velocity   = {}", nameId(), posVelAtt->e_velocity().transpose());
         LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(posVelAtt->rollPitchYaw()).transpose());

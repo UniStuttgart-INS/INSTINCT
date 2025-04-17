@@ -151,6 +151,98 @@ void from_json(const json& j, ImuGyroscopeIRWUnits& data)
     }
 }
 
+void to_json(json& j, const ImuAccelerometerFilterNoiseUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuAccelerometerFilterNoiseUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuAccelerometerFilterNoiseUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuAccelerometerFilterNoiseUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuAccelerometerFilterNoiseUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const ImuGyroscopeFilterNoiseUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuGyroscopeFilterNoiseUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuGyroscopeFilterNoiseUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuGyroscopeFilterNoiseUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuGyroscopeFilterNoiseUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const ImuAccelerometerFilterBiasUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuAccelerometerFilterBiasUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuAccelerometerFilterBiasUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuAccelerometerFilterBiasUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuAccelerometerFilterBiasUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
+void to_json(json& j, const ImuGyroscopeFilterBiasUnits& data)
+{
+    j = to_string(data);
+}
+void from_json(const json& j, ImuGyroscopeFilterBiasUnits& data)
+{
+    if (!j.is_string())
+    {
+        LOG_WARN("Could not parse '{}' into ImuGyroscopeFilterBiasUnits. Consider resaving the flow", j.dump());
+        return;
+    }
+    std::string str = j.get<std::string>();
+    for (size_t i = 0; i < static_cast<size_t>(ImuGyroscopeFilterBiasUnits::COUNT); i++)
+    {
+        auto enumItem = static_cast<ImuGyroscopeFilterBiasUnits>(i);
+        if (str == to_string(enumItem))
+        {
+            data = enumItem;
+            return;
+        }
+    }
+}
+
 } // namespace NAV::Units
 
 std::string NAV::to_string(Units::ImuAccelerometerUnits unit)
@@ -159,6 +251,8 @@ std::string NAV::to_string(Units::ImuAccelerometerUnits unit)
     {
     case Units::ImuAccelerometerUnits::m_s2:
         return "m/s^2";
+    case Units::ImuAccelerometerUnits::g:
+        return "g";
     case Units::ImuAccelerometerUnits::COUNT:
         break;
     }
@@ -238,6 +332,70 @@ std::string NAV::to_string(Units::ImuGyroscopeIRWUnits unit)
     case Units::ImuGyroscopeIRWUnits::deg_s2_sqrth:
         return "deg/s^2/√(h)";
     case Units::ImuGyroscopeIRWUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuAccelerometerFilterNoiseUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerFilterNoiseUnits::m_s2_sqrtHz:
+        return "m/s^2/√(Hz)";
+    case Units::ImuAccelerometerFilterNoiseUnits::mg_sqrtHz:
+        return "mg/√(Hz)";
+    case Units::ImuAccelerometerFilterNoiseUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuGyroscopeFilterNoiseUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeFilterNoiseUnits::rad_s_sqrtHz:
+        return "rad/s/√(Hz)";
+    case Units::ImuGyroscopeFilterNoiseUnits::rad_hr_sqrtHz:
+        return "rad/hr/√(Hz)";
+    case Units::ImuGyroscopeFilterNoiseUnits::deg_s_sqrtHz:
+        return "deg/s/√(Hz)";
+    case Units::ImuGyroscopeFilterNoiseUnits::deg_hr_sqrtHz:
+        return "deg/hr/√(Hz)";
+    case Units::ImuGyroscopeFilterNoiseUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuAccelerometerFilterBiasUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuAccelerometerFilterBiasUnits::m_s2:
+        return "m/s^2";
+    case Units::ImuAccelerometerFilterBiasUnits::microg:
+        return "µg";
+    case Units::ImuAccelerometerFilterBiasUnits::COUNT:
+        break;
+    }
+    return "";
+}
+
+std::string NAV::to_string(Units::ImuGyroscopeFilterBiasUnits unit)
+{
+    switch (unit)
+    {
+    case Units::ImuGyroscopeFilterBiasUnits::rad_s:
+        return "1/s";
+    case Units::ImuGyroscopeFilterBiasUnits::rad_h:
+        return "1/h";
+    case Units::ImuGyroscopeFilterBiasUnits::deg_s:
+        return "°/s";
+    case Units::ImuGyroscopeFilterBiasUnits::deg_h:
+        return "°/h";
+    case Units::ImuGyroscopeFilterBiasUnits::COUNT:
         break;
     }
     return "";
