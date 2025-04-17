@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include "util/Logger/CommonLog.hpp"
-
 #include "internal/Node/Node.hpp"
 #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
+#include "util/Logger/CommonLog.hpp"
 
 namespace NAV
 {

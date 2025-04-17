@@ -38,8 +38,8 @@ namespace NAV
 template<typename DerivedA, typename DerivedB>
 [[nodiscard]] Eigen::Vector3<typename DerivedA::Scalar> n_calcTransportRate(const Eigen::MatrixBase<DerivedA>& lla_position,
                                                                             const Eigen::MatrixBase<DerivedB>& n_velocity,
-                                                                            const typename DerivedA::Scalar& R_N,
-                                                                            const typename DerivedA::Scalar& R_E)
+                                                                            const auto& R_N,
+                                                                            const auto& R_E)
 {
     // 𝜙 Latitude in [rad]
     const auto& latitude = lla_position(0);
@@ -73,7 +73,7 @@ template<typename DerivedA, typename DerivedB = DerivedA>
                                                                                       const Eigen::MatrixBase<DerivedB>& e_omega_ie = InsConst::e_omega_ie)
 {
     // ω_ie_e ⨯ [ω_ie_e ⨯ x_e]
-    return e_omega_ie.cross(e_omega_ie.cross(e_position));
+    return e_omega_ie.template cast<typename DerivedA::Scalar>().cross(e_omega_ie.template cast<typename DerivedA::Scalar>().cross(e_position));
 }
 
 /// @brief Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
@@ -91,7 +91,7 @@ template<typename DerivedA, typename DerivedB, typename DerivedC>
                                                                                    const Eigen::MatrixBase<DerivedB>& n_omega_en,
                                                                                    const Eigen::MatrixBase<DerivedC>& n_velocity)
 {
-    return (2 * n_omega_ie + n_omega_en).cross(n_velocity);
+    return (2.0 * n_omega_ie + n_omega_en).cross(n_velocity);
 }
 
 /// @brief Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
@@ -104,9 +104,9 @@ template<typename DerivedA, typename DerivedB, typename DerivedC>
 /// @param[in] e_velocity Velocity in ECEF frame coordinates in [m/s^2]
 /// @return Coriolis acceleration in ECEF coordinates in [m/s^2]
 template<typename DerivedA, typename DerivedB>
-[[nodiscard]] Eigen::Vector3<typename DerivedA::Scalar> e_calcCoriolisAcceleration(const Eigen::MatrixBase<DerivedA>& e_omega_ie, const Eigen::MatrixBase<DerivedB>& e_velocity)
+[[nodiscard]] Eigen::Vector3<typename DerivedB::Scalar> e_calcCoriolisAcceleration(const Eigen::MatrixBase<DerivedA>& e_omega_ie, const Eigen::MatrixBase<DerivedB>& e_velocity)
 {
-    return (2 * e_omega_ie).cross(e_velocity);
+    return (2.0 * e_omega_ie.template cast<typename DerivedB::Scalar>()).cross(e_velocity);
 }
 
 /// @brief Calculates the roll angle from a static acceleration measurement

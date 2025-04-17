@@ -151,6 +151,48 @@ constexpr int32_t daysInMonth(int32_t month, int32_t year)
         return 366;
     }
 }
+
+/// @brief Formats a duration given in seconds into days, hours, minutes and seconds
+/// @param[in] seconds Amount of seconds
+/// @param[in] digits Digits to round the seconds to
+/// @return Formatted string of the duration
+constexpr std::string formatDuration(double seconds, size_t digits = 9)
+{
+    std::string str;
+    if (seconds >= SECONDS_PER_DAY)
+    {
+        auto days = static_cast<int32_t>(seconds) / SECONDS_PER_DAY;
+        str += fmt::format("{}{:d}d", str.empty() ? "" : " ", days);
+        seconds -= days * SECONDS_PER_DAY;
+    }
+    if (seconds >= SECONDS_PER_HOUR)
+    {
+        auto hours = static_cast<int32_t>(seconds) / SECONDS_PER_HOUR;
+        str += fmt::format("{}{:d}h", str.empty() ? "" : " ", hours);
+        seconds -= hours * SECONDS_PER_HOUR;
+    }
+    if (seconds >= SECONDS_PER_MINUTE)
+    {
+        auto minutes = static_cast<int32_t>(seconds) / SECONDS_PER_MINUTE;
+        str += fmt::format("{}{:d}m", str.empty() ? "" : " ", minutes);
+        seconds -= minutes * SECONDS_PER_MINUTE;
+    }
+    if (seconds > 1e-9)
+    {
+        size_t d = 0;
+        for (; d < digits + 1; d++)
+        {
+            if (2.0 * std::abs(std::round(seconds * std::pow(10.0, d)) - seconds * std::pow(10.0, d))
+                < std::pow(10.0, -(static_cast<double>(digits) - static_cast<double>(d))))
+            {
+                break;
+            }
+        }
+        str += fmt::format("{}{:.{}f}s", str.empty() ? "" : " ", seconds, d);
+    }
+    return str;
+}
+
 } // namespace InsTimeUtil
 
 /// Modified Julien Date [UTC]

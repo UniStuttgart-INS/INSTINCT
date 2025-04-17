@@ -51,7 +51,7 @@ using Quaternionld = Quaternion<long double>; ///< Long double Eigen::Quaternion
 
 using AngleAxisld = AngleAxis<long double>; ///< Long double Eigen::AngleAxis
 
-/// @brief Converts the provided matrix into a json objetc
+/// @brief Converts the provided matrix into a json object
 /// @tparam _Scalar Data Type of the matrix
 /// @tparam _Rows Amount of rows of the matrix
 /// @tparam _Cols Amount of cols of the matrix
@@ -114,6 +114,26 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
             }
         }
     }
+}
+
+/// @brief Converts the provided quaternion into a json object
+/// @tparam _Scalar Data Type of the quaternion
+/// @param[out] j Json object to fill with
+/// @param[in] quat Quaternion to convert into json
+template<typename _Scalar>
+void to_json(json& j, const Quaternion<_Scalar>& quat)
+{
+    to_json(j, quat.coeffs());
+}
+
+/// @brief Converts the provided json object into a quaternion
+/// @tparam _Scalar Data Type of the quaternion
+/// @param[in] j Json object to read the coefficients from
+/// @param[out] quat Quaternion object to fill
+template<typename _Scalar>
+void from_json(const json& j, Quaternion<_Scalar>& quat)
+{
+    from_json(j, quat.coeffs());
 }
 
 } // namespace Eigen
@@ -259,19 +279,18 @@ template<typename T>
 struct fmt::formatter<T> : ostream_formatter
 {};
 
-// FIXME: This is not compiling with gcc 11.3 but with >12.1.
-// template<typename T>
-// requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
-// struct fmt::formatter<T> : ostream_formatter
-// {};
-template<>
-struct fmt::formatter<Eigen::Quaternionf> : ostream_formatter
+template<typename T>
+struct fmt::formatter<Eigen::MatrixBase<T>> : ostream_formatter
 {};
-template<>
-struct fmt::formatter<Eigen::Quaterniond> : ostream_formatter
+
+
+template<typename T>
+requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
+struct fmt::formatter<T> : ostream_formatter
 {};
-template<>
-struct fmt::formatter<Eigen::Quaternionld> : ostream_formatter
+
+template<typename T>
+struct fmt::formatter<Eigen::QuaternionBase<T>> : ostream_formatter
 {};
 
 // clang-format on

@@ -280,7 +280,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<LooselyCoupledKF>();
     registerNodeType<LowPassFilter>();
     registerNodeType<PressToHgt>();
-    // registerNodeType<TightlyCoupledKF>();
     registerNodeType<ImuFusion>();
     registerNodeType<WiFiPositioning>();
     // Data Provider

@@ -125,5 +125,5 @@
     ],
     "copyScreenshotsToClipboard": true,
     "plotScreenshotImPlotStyleFile": "implot-light.json",
-    "selectedImPlotColormap": 0
+    "selectedImPlotColormap": 16
 }

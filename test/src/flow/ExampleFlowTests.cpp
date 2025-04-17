@@ -32,12 +32,6 @@ TEST_CASE("[ExampleFlow] Test _InsGnss-LCKF.flow", "[ExampleFlow][flow]")
     REQUIRE(testFlow("flow/_InsGnss-LCKF.flow", false));
 }
 
-TEST_CASE("[ExampleFlow] Test _InsGnss-TCKF.flow", "[ExampleFlow][flow]")
-{
-    auto logger = initializeTestLogger();
-    REQUIRE(testFlow("flow/_InsGnss-TCKF.flow", false));
-}
-
 TEST_CASE("[ExampleFlow] Test _MultiIMU.flow", "[ExampleFlow][flow]")
 {
     auto logger = initializeTestLogger();

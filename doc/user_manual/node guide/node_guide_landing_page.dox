@@ -56,7 +56,6 @@ ________
 *  - \subpage single_point_positioning_node
 *  - \subpage imu_integrator_node
 *  - \subpage loosely_coupled_kf_node
-*  - \subpage tightly_coupled_kf_node
 *  - \subpage imu_fusion_node
 
 ________

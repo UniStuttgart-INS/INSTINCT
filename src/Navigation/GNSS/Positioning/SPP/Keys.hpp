@@ -164,43 +164,19 @@ struct fmt::formatter<NAV::SPP::States::StateKeyType> : fmt::formatter<std::stri
 
         if (const auto* s = std::get_if<MotionModelKey>(&state))
         {
-            switch (*s)
-            {
-            case PosX:
-                return fmt::formatter<std::string>::format("PosX", ctx);
-            case PosY:
-                return fmt::formatter<std::string>::format("PosY", ctx);
-            case PosZ:
-                return fmt::formatter<std::string>::format("PosZ", ctx);
-            case VelX:
-                return fmt::formatter<std::string>::format("VelX", ctx);
-            case VelY:
-                return fmt::formatter<std::string>::format("VelY", ctx);
-            case VelZ:
-                return fmt::formatter<std::string>::format("VelZ", ctx);
-            case AttQ1:
-                return fmt::formatter<std::string>::format("AttQ1", ctx);
-            case AttQ2:
-                return fmt::formatter<std::string>::format("AttQ2", ctx);
-            case AttQ3:
-                return fmt::formatter<std::string>::format("AttQ3", ctx);
-            case AttQ0:
-                return fmt::formatter<std::string>::format("AttQ0", ctx);
-            case MotionModelKey_COUNT:
-                return fmt::formatter<std::string>::format("MotionModelKey_COUNT", ctx);
-            }
+            return fmt::formatter<std::string>::format(fmt::format("{}", *s), ctx);
         }
         if (const auto* recvClkErr = std::get_if<RecvClkBias>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("RecvClkBias({})", recvClkErr->satSys), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("{}", *recvClkErr), ctx);
         }
         if (const auto* recvClkDrift = std::get_if<RecvClkDrift>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("RecvClkDrift({})", recvClkDrift->satSys), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("{}", *recvClkDrift), ctx);
         }
         if (const auto* interFreqBias = std::get_if<NAV::Keys::InterFreqBias>(&state))
         {
-            return fmt::formatter<std::string>::format(fmt::format("InterFreqBias({})", interFreqBias->freq), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("{}", *interFreqBias), ctx);
         }
 
         return fmt::formatter<std::string>::format("ERROR", ctx);
@@ -220,11 +196,11 @@ struct fmt::formatter<NAV::SPP::Meas::MeasKeyTypes> : fmt::formatter<std::string
     {
         if (const auto* psr = std::get_if<NAV::SPP::Meas::Psr>(&meas))
         {
-            return fmt::formatter<std::string>::format(fmt::format("psr({})", psr->satSigId), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("{}", *psr), ctx);
         }
         if (const auto* doppler = std::get_if<NAV::SPP::Meas::Doppler>(&meas))
         {
-            return fmt::formatter<std::string>::format(fmt::format("doppler({})", doppler->satSigId), ctx);
+            return fmt::formatter<std::string>::format(fmt::format("{}", *doppler), ctx);
         }
 
         return fmt::formatter<std::string>::format("ERROR", ctx);

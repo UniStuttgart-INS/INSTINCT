@@ -8,6 +8,15 @@
 
 #include "AppLogic.hpp"
 
+// <boost/asio.hpp> needs to be included before <winsock.h> (even though not used in this file)
+// https://stackoverflow.com/questions/9750344/boostasio-winsock-and-winsock-2-compatibility-issue
+#ifdef _WIN32
+    // Set the proper SDK version before including boost/Asio
+    #include <SDKDDKVer.h>
+    // Note boost/ASIO includes Windows.h.
+    #include <boost/asio.hpp>
+#endif //_WIN32
+
 #include <filesystem>
 #include <chrono>
 

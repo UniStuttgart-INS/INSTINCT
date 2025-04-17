@@ -64,6 +64,35 @@ namespace NAV::TESTS::InsTimeTests
     STATIC_REQUIRE_FALSE(lhs >= rhs);        \
     STATIC_REQUIRE(lhs <= rhs);
 
+TEST_CASE("[InsTimeUtil] formatDuration(seconds)", "[InsTimeUtil]")
+{
+    auto logger = initializeTestLogger();
+
+    REQUIRE(InsTimeUtil::formatDuration(3 * static_cast<double>(InsTimeUtil::SECONDS_PER_DAY)) == "3d");
+    REQUIRE(InsTimeUtil::formatDuration(4 * static_cast<double>(InsTimeUtil::SECONDS_PER_HOUR)) == "4h");
+    REQUIRE(InsTimeUtil::formatDuration(10 * static_cast<double>(InsTimeUtil::SECONDS_PER_MINUTE)) == "10m");
+    REQUIRE(InsTimeUtil::formatDuration(static_cast<double>(InsTimeUtil::SECONDS_PER_MINUTE)) == "1m");
+    REQUIRE(InsTimeUtil::formatDuration(static_cast<double>(InsTimeUtil::SECONDS_PER_HOUR)) == "1h");
+    REQUIRE(InsTimeUtil::formatDuration(static_cast<double>(InsTimeUtil::SECONDS_PER_DAY)) == "1d");
+    REQUIRE(InsTimeUtil::formatDuration(59.0) == "59s");
+    REQUIRE(InsTimeUtil::formatDuration(59.1) == "59.1s");
+    REQUIRE(InsTimeUtil::formatDuration(59.999999999) == "59.999999999s");
+    REQUIRE(InsTimeUtil::formatDuration(59.9999999999) == "60s"); // When overflowing the 9 digits, it rounds
+
+    REQUIRE(InsTimeUtil::formatDuration(3 * static_cast<double>(InsTimeUtil::SECONDS_PER_DAY)
+                                        + 27 * static_cast<double>(InsTimeUtil::SECONDS_PER_HOUR)
+                                        + 33 * static_cast<double>(InsTimeUtil::SECONDS_PER_MINUTE)
+                                        + 49.1230067891)
+            == "4d 3h 33m 49.123006789s"); // Maximum of 9 digits get formatted
+
+    REQUIRE(InsTimeUtil::formatDuration(3 * static_cast<double>(InsTimeUtil::SECONDS_PER_DAY)
+                                            + 27 * static_cast<double>(InsTimeUtil::SECONDS_PER_HOUR)
+                                            + 33 * static_cast<double>(InsTimeUtil::SECONDS_PER_MINUTE)
+                                            + 49.1230067891,
+                                        5)
+            == "4d 3h 33m 49.12301s");
+}
+
 TEST_CASE("[InsTime_MJD] Comparisons", "[InsTime]")
 {
     auto logger = initializeTestLogger();

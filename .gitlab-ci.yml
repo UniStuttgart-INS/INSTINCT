@@ -12,6 +12,7 @@ variables:
   ENABLE_MAIN: "OFF"
   ENABLE_TESTING: "OFF"
   TOOLCHAIN_PATH: "build/$BUILD_TYPE"
+  ENABLE_IPO: "ON"
 
 image: ins-cpp:24.04
 
@@ -87,6 +88,9 @@ image: ins-cpp:24.04
 .raspberry:
   tags:
     - armv8
+  variables:
+    ENABLE_IPO: "OFF"
+    CMAKE_BUILD_PARALLEL_LEVEL: 2
 
 .macOS:
   tags:
@@ -214,10 +218,11 @@ documentation:
     - echo "$ENABLE_TESTING"
     - echo "$LOG_LEVEL_INSTINCT"
     - echo "$WARNINGS_AS_ERRORS"
+    - echo "$ENABLE_IPO"
     - echo "$CMAKE_BUILD_PARALLEL_LEVEL"
     - conan profile detect --force
     - conan install . --build=missing -s build_type="$BUILD_TYPE" -s compiler.cppstd=17
-    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="NO" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -B"build/$BUILD_TYPE" -S. -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_PATH/generators/conan_toolchain.cmake" -DENABLE_MAIN="$ENABLE_MAIN" -DENABLE_TESTING="$ENABLE_TESTING" -DCATCH2_JUNIT_OUTPUT="$ENABLE_TESTING" -DENABLE_COVERAGE="NO" -DENABLE_DOXYGEN=OFF -DLOG_LEVEL="$LOG_LEVEL_INSTINCT" -DWARNINGS_AS_ERRORS="$WARNINGS_AS_ERRORS" -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DENABLE_IPO="$ENABLE_IPO"
     - cmake --build "build/$BUILD_TYPE" --config $BUILD_TYPE
 
 .build:linux:
@@ -260,11 +265,13 @@ documentation:
       - build/bin/$BUILD_TYPE/*
     expire_in: 2h
 
-main:win:
+build:win:
   extends:
     - .build
     - .build:main
+    - .build:tests
     - .build:windows
+    - .build:test-artifacts
     - .release
     - .log-debug
 
@@ -296,8 +303,6 @@ raspberry:gcc:
     - .gcc
     - .release
     - .log-trace
-  variables:
-    CMAKE_BUILD_PARALLEL_LEVEL: 2
 
 main:macOS:
   extends:
@@ -348,15 +353,6 @@ tests:gcc:LOG_OFF:
     - .gcc
     - .release
     - .log-off
-
-tests:win:
-  extends:
-    - .build
-    - .build:tests
-    - .build:windows
-    - .build:test-artifacts
-    - .release
-    - .log-trace
 
 tests:macOS:
   extends:
@@ -414,7 +410,7 @@ run-tests:clang:
 #    - .junit
 
 run-tests:win:
-  needs: ["tests:win"]
+  needs: ["build:win"]
   extends:
     - .run-tests
     - .windows

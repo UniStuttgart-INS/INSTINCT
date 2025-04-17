@@ -24,6 +24,9 @@ if(ENABLE_IPO AND NOT MSVC)
   endif()
 endif()
 
+# Otherwise template errrors get cut off and we do not see where they originate
+add_compile_options(-ftemplate-backtrace-limit=0)
+
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   add_compile_options(-fcolor-diagnostics)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

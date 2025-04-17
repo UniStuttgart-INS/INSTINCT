@@ -513,6 +513,8 @@ class ScrollingBuffer
             // 5, 6, 2, 3, 4  // 5, 6, _, _, 2, 3, 4  // 5, 6, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, X // 5, 6, 7, 4
             //       e  s              e        s              e        s              s            e    s        e
             // 5, 6, _, 3, 4  // 5, 6, _, _, _, 3, 4  // 5, 6, _, X, X, 3, 4  // X, X, 7, 8, 9, 10, _ // 5, 6, 7, _
+
+            front() = {}; // Set to default in case shared_ptr is stored
             _dataStart = (_dataStart + 1) % _maxSize;
         }
     }
@@ -537,6 +539,7 @@ class ScrollingBuffer
         }
         else
         {
+            back() = {}; // Set to default in case shared_ptr is stored
             _dataEnd = _dataEnd == 0 ? _maxSize - 1 : (_dataEnd - 1);
         }
     }
@@ -692,12 +695,21 @@ class ScrollingBuffer
                 {
                     _maxSize = targetSize + _Padding;
                     _data.reserve(_maxSize);
+                    if (_dataEnd == 0) { _dataEnd = _data.size(); }
                 }
                 //      se                      e     s                 s               e
                 // 6, 7, 3, 4, 5,      // 5, 6, X, X, 2, 3, 4     // X, 6, 7, 8, 9, 10, X
                 // 6, 7, _, 3, 4, 5,   // 5, 6, _, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, _, _, X
                 else // (_dataStart != 0) // Buffer scrolled, so we need to copy the values to the correct positions
                 {
+                    if (_dataEnd == 0) // Buffer actually not scrolled
+                    {
+                        _maxSize = targetSize + _Padding;
+                        _data.reserve(_maxSize);
+                        _dataEnd = _data.size();
+                        return;
+                    }
+
                     _data.resize(targetSize + _Padding);
 
                     auto copy_backward = [](auto first, auto last, auto d_last) { // Needed, as MacOS with C++23 does not support std::copy_backward
@@ -818,9 +830,10 @@ class ScrollingBuffer
                 out += "X"; // padding
             }
             else if (bool scrolled = isScrolled();
-                     (scrolled && static_cast<size_t>(i) >= _dataEnd && (static_cast<int>(_dataStart - _Padding) < 0 || i < static_cast<int>(_dataStart - _Padding)))
+                     static_cast<size_t>(i) >= _data.size()
+                     || (scrolled && static_cast<size_t>(i) >= _dataEnd && (static_cast<int>(_dataStart - _Padding) < 0 || i < static_cast<int>(_dataStart - _Padding)))
                      || (scrolled && _dataStart < _dataEnd && (static_cast<size_t>(i) < _dataStart || static_cast<size_t>(i) >= _dataEnd))
-                     || (!scrolled && static_cast<size_t>(i) >= _dataEnd))
+                     || (_data.size() > 1 && !scrolled && static_cast<size_t>(i) >= _dataEnd))
             {
                 out += "_"; // empty
             }
@@ -862,6 +875,8 @@ class ScrollingBuffer
     /// @brief Checks if the buffer is scrolled
     [[nodiscard]] bool isScrolled() const
     {
+        if (_data.size() == 1) { return false; }
+
         //       e        s
         // 5, 6, _, _, X, 2, 3, 4
 
