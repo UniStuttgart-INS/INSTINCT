@@ -51,6 +51,7 @@ class KeyedMatrixStorage
 {
   protected:
     Eigen::Matrix<Scalar, Rows, Cols> matrix; ///< Data storage of the type
+    mutable std::mutex _sliceMutex;           ///< Mutex for accessing the slices
 
   private:
     template<typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_>
@@ -164,6 +165,7 @@ class KeyedMatrixRows<Scalar, RowKeyType, Eigen::Dynamic, Cols> : public KeyedMa
             this->matrix.conservativeResize(finalSize, Eigen::NoChange);
             this->matrix.block(initialSize, 0, finalSize - initialSize, this->matrix.cols()) = Eigen::MatrixX<Scalar>::Zero(finalSize - initialSize, this->matrix.cols());
         }
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->rowSlice.reserve(this->rowKeysVector.size());
     }
 
@@ -308,6 +310,7 @@ class KeyedMatrixCols<Scalar, ColKeyType, Rows, Eigen::Dynamic> : public KeyedMa
             this->matrix.conservativeResize(Eigen::NoChange, finalSize);
             this->matrix.block(0, initialSize, this->matrix.rows(), finalSize - initialSize) = Eigen::MatrixX<Scalar>::Zero(this->matrix.rows(), finalSize - initialSize);
         }
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->colSlice.reserve(this->colKeysVector.size());
     }
 
@@ -524,6 +527,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @return View into the matrix for the row keys
     decltype(auto) operator()(std::span<const RowKeyType> rowKeys) const
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->rowSlice.clear();
         for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
@@ -534,6 +538,7 @@ class KeyedVectorBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, 1>
     /// @return View into the matrix for the row keys
     decltype(auto) operator()(std::span<const RowKeyType> rowKeys)
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->rowSlice.clear();
         for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
@@ -789,6 +794,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @return View into the matrix for the col keys
     decltype(auto) operator()(std::span<const ColKeyType> colKeys) const
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->colSlice.clear();
         for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
@@ -799,6 +805,7 @@ class KeyedRowVectorBase : public KeyedMatrixCols<Scalar, ColKeyType, 1, Cols>
     /// @return View into the matrix for the col keys
     decltype(auto) operator()(std::span<const ColKeyType> colKeys)
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->colSlice.clear();
         for (const auto& colKey : colKeys) { this->colSlice.push_back(this->colIndices.at(colKey)); }
 
@@ -1094,6 +1101,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return View into the matrix for the row and col keys
     decltype(auto) operator()(std::span<const RowKeyType> rowKeys, std::span<const ColKeyType> colKeys) const
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->rowSlice.clear();
         for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
@@ -1108,6 +1116,7 @@ class KeyedMatrixBase : public KeyedMatrixRows<Scalar, RowKeyType, Rows, Cols>, 
     /// @return View into the matrix for the row and col keys
     decltype(auto) operator()(std::span<const RowKeyType> rowKeys, std::span<const ColKeyType> colKeys)
     {
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->rowSlice.clear();
         for (const auto& rowKey : rowKeys) { this->rowSlice.push_back(this->rowIndices.at(rowKey)); }
 
@@ -2193,6 +2202,7 @@ class KeyedMatrix<Scalar, RowKeyType, ColKeyType, Eigen::Dynamic, Eigen::Dynamic
             this->matrix.block(initialRowSize, 0, rows, this->matrix.cols()) = Eigen::MatrixX<Scalar>::Zero(rows, this->matrix.cols());
             this->matrix.block(0, initialColSize, this->matrix.rows(), cols) = Eigen::MatrixX<Scalar>::Zero(this->matrix.rows(), cols);
         }
+        std::lock_guard<std::mutex> lg{ this->_sliceMutex };
         this->colSlice.reserve(this->colKeysVector.size());
         this->rowSlice.reserve(this->rowKeysVector.size());
     }

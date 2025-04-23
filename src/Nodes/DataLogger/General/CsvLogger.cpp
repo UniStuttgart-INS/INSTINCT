@@ -20,6 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include "NodeRegistry.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
+#include "util/StringUtil.hpp"
 
 NAV::CsvLogger::CsvLogger()
     : Node(typeStatic())
@@ -110,15 +111,22 @@ void NAV::CsvLogger::guiConfig()
     if (regexSelect.has_value())
     {
         bool anyChanged = false;
-        for (auto& [desc, checked] : _headerLogging)
+        try
         {
-            std::regex self_regex(_headerLoggingRegex,
-                                  std::regex_constants::ECMAScript | std::regex_constants::icase);
-            if (std::regex_search(desc, self_regex) && checked != *regexSelect)
+            for (auto& [desc, checked] : _headerLogging)
             {
-                anyChanged = true;
-                checked = *regexSelect;
+                std::regex self_regex(_headerLoggingRegex,
+                                      std::regex_constants::ECMAScript | std::regex_constants::icase);
+                if (std::regex_search(desc, self_regex) && checked != *regexSelect)
+                {
+                    anyChanged = true;
+                    checked = *regexSelect;
+                }
             }
+        }
+        catch (const std::regex_error& e)
+        {
+            LOG_ERROR("Regex could not be parsed: {}", e.what());
         }
         if (anyChanged)
         {
@@ -260,10 +268,11 @@ void NAV::CsvLogger::writeHeader()
         if (!enabled) { continue; }
         _headerLoggingCount++;
 
+        auto header = str::replaceAll_copy(desc, ",", "_");
 #if LOG_LEVEL <= LOG_LEVEL_TRACE
-        headers += "," + desc;
+        headers += "," + header;
 #endif
-        _filestream << "," << desc;
+        _filestream << "," << header;
     }
     _filestream << std::endl; // NOLINT(performance-avoid-endl)
 
