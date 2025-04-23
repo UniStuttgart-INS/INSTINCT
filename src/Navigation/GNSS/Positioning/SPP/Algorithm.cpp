@@ -278,6 +278,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                     }
                 }
 
+                sppSol->_e_sppCovarianceMatrix = lsq.variance;
+
                 break;
             }
         }
@@ -311,6 +313,7 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                                                                        .satAzimuth = signalObs.recvObs.at(Rover)->satAzimuth(_receiver.e_posMarker, _receiver.lla_posMarker) });
                 }
             }
+            sppSol->_e_sppCovarianceMatrix = _kalmanFilter.getErrorCovarianceMatrix();
         }
     }
     // use H matrix to calculate DOPs

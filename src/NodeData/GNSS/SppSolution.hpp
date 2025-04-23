@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <vector>
 #include <optional>
 #include <algorithm>
@@ -246,6 +247,16 @@ class SppSolution : public PosVel
             // descriptors.push_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first));
             // descriptors.push_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first));
         }
+        if (_e_sppCovarianceMatrix)
+        {
+            for (size_t r = 0; r < static_cast<size_t>(_e_sppCovarianceMatrix->rows()); r++)
+            {
+                for (size_t c = r; c < static_cast<size_t>(_e_sppCovarianceMatrix->cols()); c++)
+                {
+                    descriptors.push_back(fmt::format("Cov({},{})", _e_sppCovarianceMatrix->rowKeys().at(r), _e_sppCovarianceMatrix->colKeys().at(c)));
+                }
+            }
+        }
 
         return descriptors;
     }
@@ -274,6 +285,19 @@ class SppSolution : public PosVel
             // if (descriptor == fmt::format("{} SatVel ECEF X [m/s]", satData.first)) { return satData.second.e_satVel.x(); }
             // if (descriptor == fmt::format("{} SatVel ECEF Y [m/s]", satData.first)) { return satData.second.e_satVel.y(); }
             // if (descriptor == fmt::format("{} SatVel ECEF Z [m/s]", satData.first)) { return satData.second.e_satVel.z(); }
+        }
+        if (_e_sppCovarianceMatrix)
+        {
+            for (size_t r = 0; r < static_cast<size_t>(_e_sppCovarianceMatrix->rows()); r++)
+            {
+                for (size_t c = r; c < static_cast<size_t>(_e_sppCovarianceMatrix->cols()); c++)
+                {
+                    if (descriptor == fmt::format("Cov({},{})", _e_sppCovarianceMatrix->rowKeys().at(r), _e_sppCovarianceMatrix->colKeys().at(c)))
+                    {
+                        return (*_e_sppCovarianceMatrix)(all, all)(static_cast<int>(r), static_cast<int>(c));
+                    }
+                }
+            }
         }
         return std::nullopt;
     }
@@ -304,6 +328,17 @@ class SppSolution : public PosVel
             // dynData.emplace_back(fmt::format("{} SatVel ECEF X [m/s]", satData.first), satData.second.e_satVel.x());
             // dynData.emplace_back(fmt::format("{} SatVel ECEF Y [m/s]", satData.first), satData.second.e_satVel.y());
             // dynData.emplace_back(fmt::format("{} SatVel ECEF Z [m/s]", satData.first), satData.second.e_satVel.z());
+        }
+        if (_e_sppCovarianceMatrix)
+        {
+            for (size_t r = 0; r < static_cast<size_t>(_e_sppCovarianceMatrix->rows()); r++)
+            {
+                for (size_t c = r; c < static_cast<size_t>(_e_sppCovarianceMatrix->cols()); c++)
+                {
+                    dynData.emplace_back(fmt::format("Cov({},{})", _e_sppCovarianceMatrix->rowKeys().at(r), _e_sppCovarianceMatrix->colKeys().at(c)),
+                                         (*_e_sppCovarianceMatrix)(all, all)(static_cast<int>(r), static_cast<int>(c)));
+                }
+            }
         }
         return dynData;
     }
@@ -342,26 +377,8 @@ class SppSolution : public PosVel
     /// Extended data for each satellite
     std::vector<std::pair<SatId, SatData>> satData;
 
-    /// @brief Adds an event to the event list
-    /// @param event Event string
-    void addEvent(const std::string& event) { _events.push_back(event); }
-
-  private:
-    /// Standard deviation of Position in ECEF coordinates [m]
-    Eigen::Vector3d _e_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
-    /// Standard deviation of Position in local navigation frame coordinates [m]
-    Eigen::Vector3d _n_positionStdev = Eigen::Vector3d::Zero() * std::nan("");
-
-    /// Standard deviation of Velocity in earth coordinates [m/s]
-    Eigen::Vector3d _e_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
-    /// Standard deviation of Velocity in navigation coordinates [m/s]
-    Eigen::Vector3d _n_velocityStdev = Eigen::Vector3d::Zero() * std::nan("");
-
     /// Covariance matrix in ECEF coordinates
-    std::optional<KeyedMatrixXd<SPP::States::StateKeyType, SPP::States::StateKeyType>> _e_covarianceMatrix;
-
-    /// Covariance matrix in local navigation coordinates
-    std::optional<KeyedMatrixXd<SPP::States::StateKeyType, SPP::States::StateKeyType>> _n_covarianceMatrix;
+    std::optional<KeyedMatrixXd<SPP::States::StateKeyType, SPP::States::StateKeyType>> _e_sppCovarianceMatrix;
 };
 
 } // namespace NAV
