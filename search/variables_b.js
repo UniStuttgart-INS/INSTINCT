@@ -9,6 +9,7 @@ var searchData=
   ['kfgyrbias_6',['KFGyrBias',['../classNAV_1_1LooselyCoupledKF.html#ac422cda4a67b5de511b993283d9c7b12',1,'NAV::LooselyCoupledKF']]],
   ['kfpos_7',['KFPos',['../classNAV_1_1LooselyCoupledKF.html#ab35a5e0ec2db6a5f05421a0233cdee13',1,'NAV::LooselyCoupledKF']]],
   ['kfposvel_8',['KFPosVel',['../classNAV_1_1LooselyCoupledKF.html#a9a0caa95672404f545010b00e52bb9ad',1,'NAV::LooselyCoupledKF']]],
-  ['kfvel_9',['KFVel',['../classNAV_1_1LooselyCoupledKF.html#a56760b03af32f9d4f16387fb5f2783a0',1,'NAV::LooselyCoupledKF']]],
-  ['kind_10',['kind',['../classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4',1,'NAV::Node::kind'],['../classNAV_1_1Pin.html#ae871e8d9f5c066bbc5c5389af43ec9fb',1,'NAV::Pin::kind'],['../structNAV_1_1NodeRegistry_1_1PinInfo.html#a630b93db9e2eb3f25018eba839d98269',1,'NAV::NodeRegistry::PinInfo::kind']]]
+  ['kfposvelatt_9',['KFPosVelAtt',['../classNAV_1_1LooselyCoupledKF.html#a89e79cc3f29c75baf0e36e9d5da22603',1,'NAV::LooselyCoupledKF']]],
+  ['kfvel_10',['KFVel',['../classNAV_1_1LooselyCoupledKF.html#a56760b03af32f9d4f16387fb5f2783a0',1,'NAV::LooselyCoupledKF']]],
+  ['kind_11',['kind',['../classNAV_1_1Node.html#a51e38c43af1eb909a0f6faf2dae3bef4',1,'NAV::Node::kind'],['../classNAV_1_1Pin.html#ae871e8d9f5c066bbc5c5389af43ec9fb',1,'NAV::Pin::kind'],['../structNAV_1_1NodeRegistry_1_1PinInfo.html#a630b93db9e2eb3f25018eba839d98269',1,'NAV::NodeRegistry::PinInfo::kind']]]
 ];

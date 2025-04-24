@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-07 16:54:41</td>
+      <td>2025-04-24 11:37:14</td>
     </tr>
   </table>
 </div>
@@ -70,8 +70,8 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l20">NAV::IonosphericCorrections::IonosphericCorrections(std::vector&lt;NAV::GnssNavInfo const*, std::allocator&lt;NAV::GnssNavInfo const*&gt; &gt; const&amp;) (line 20)</a></td><td>called 603 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l34">NAV::IonosphericCorrections::IonosphericCorrections(std::vector&lt;NAV::IonosphericCorrections::Corrections, std::allocator&lt;NAV::IonosphericCorrections::Corrections&gt; &gt;) (line 34)</a></td><td>called 4304 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l20">NAV::IonosphericCorrections::IonosphericCorrections(std::vector&lt;NAV::GnssNavInfo const*, std::allocator&lt;NAV::GnssNavInfo const*&gt; &gt; const&amp;) (line 20)</a></td><td>called 539 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l34">NAV::IonosphericCorrections::IonosphericCorrections(std::vector&lt;NAV::IonosphericCorrections::Corrections, std::allocator&lt;NAV::IonosphericCorrections::Corrections&gt; &gt;) (line 34)</a></td><td>called 4384 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -222,7 +222,7 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">603</td>
+      <td class="linecount coveredLine">539</td>
       <td class="src coveredLine"><span class="n">IonosphericCorrections</span><span class="o">::</span><span class="n">IonosphericCorrections</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">GnssNavInfo</span><span class="o">*&gt;&amp;</span><span class="w"> </span><span class="n">gnssNavInfos</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -238,12 +238,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 701 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 603 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 637 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 539 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1304</td>
+      <td class="linecount coveredLine">1176</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">gnssNavInfo</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">gnssNavInfos</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -259,12 +259,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 1255 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 701 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 1127 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 637 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1956</td>
+      <td class="linecount coveredLine">1764</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">correction</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">gnssNavInfo</span><span class="o">-&gt;</span><span class="n">ionosphericCorrections</span><span class="p">.</span><span class="n">data</span><span class="p">())</span></td>
     </tr>
     <tr class="source-line">
@@ -280,14 +280,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1255 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1127 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 1255 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1127 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1255</td>
+      <td class="linecount partialCoveredLine">1127</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="n">correction</span><span class="p">.</span><span class="n">satSys</span><span class="p">,</span><span class="w"> </span><span class="n">correction</span><span class="p">.</span><span class="n">alphaBeta</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -303,12 +303,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 1255 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1127 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1255</td>
+      <td class="linecount partialCoveredLine">1127</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">correction</span><span class="p">.</span><span class="n">satSys</span><span class="p">,</span><span class="w"> </span><span class="n">correction</span><span class="p">.</span><span class="n">alphaBeta</span><span class="p">,</span><span class="w"> </span><span class="n">correction</span><span class="p">.</span><span class="n">data</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -336,7 +336,7 @@
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">603</td>
+      <td class="linecount coveredLine">539</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -350,14 +350,14 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4304</td>
+      <td class="linecount coveredLine">4384</td>
       <td class="src coveredLine"><span class="n">IonosphericCorrections</span><span class="o">::</span><span class="n">IonosphericCorrections</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Corrections</span><span class="o">&gt;</span><span class="w"> </span><span class="n">corrections</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4304</td>
+      <td class="linecount coveredLine">4384</td>
       <td class="src coveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_ionosphericCorrections</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">corrections</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">

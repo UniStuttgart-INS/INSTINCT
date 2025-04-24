@@ -9,7 +9,7 @@ var classNAV_1_1AntexReader =
     [ "getAntennaFrequencyInfo", "classNAV_1_1AntexReader.html#a91a0561188a510cc69d19b04b6b4bbaf", null ],
     [ "getAntennaInfo", "classNAV_1_1AntexReader.html#a3299959acba7ff73ac378e1ffae8129b", null ],
     [ "getAntennaPhaseCenterOffsetToARP", "classNAV_1_1AntexReader.html#aebfd6f1e7105bd7de06bce62ff551ecc", null ],
-    [ "getAntennaPhaseCenterVariation", "classNAV_1_1AntexReader.html#aaec43aaa0c183d35178d36d11c79e22e", null ],
+    [ "getAntennaPhaseCenterVariation", "classNAV_1_1AntexReader.html#a11981979212ae66bedda6cb64dc72367", null ],
     [ "initialize", "classNAV_1_1AntexReader.html#aa3735255ca5a819be7cafb1b5b089502", null ],
     [ "reset", "classNAV_1_1AntexReader.html#aff8234109e784c48f0cc6e6966f3bc99", null ],
     [ "_antennaNames", "classNAV_1_1AntexReader.html#a5ba4f8fec52fb7fafaa9819a151095bb", null ],

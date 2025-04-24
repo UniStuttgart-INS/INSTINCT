@@ -34,6 +34,7 @@ var classNAV_1_1Node =
     [ "getSize", "classNAV_1_1Node.html#a2cd5e67970148ca7ddcbfcacf311b800", null ],
     [ "getState", "classNAV_1_1Node.html#ad2befd95eec39d6788b2a5c7586de182", null ],
     [ "guiConfig", "classNAV_1_1Node.html#aeda7296fd8572328532e83d8f7f0589f", null ],
+    [ "hasInputPinWithSameTime", "classNAV_1_1Node.html#a30e943cde4d5e4d11d3fd22fb547fc1f", null ],
     [ "initialize", "classNAV_1_1Node.html#a44b546c8c838cd149053ccd352a51c19", null ],
     [ "inputPinFromId", "classNAV_1_1Node.html#a5c87747edf53f7082899c45d3c307d98", null ],
     [ "inputPinIndexFromId", "classNAV_1_1Node.html#a8f795045d6d56e80212f385ecfae8612", null ],

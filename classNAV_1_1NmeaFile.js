@@ -20,7 +20,7 @@ var classNAV_1_1NmeaFile =
     [ "setDateFromZDA", "classNAV_1_1NmeaFile.html#a01087fa18f2756f389c6b9f00ff43f94", null ],
     [ "type", "classNAV_1_1NmeaFile.html#ac1e766486e5ee89c32ef166ef773be40", null ],
     [ "typeStatic", "classNAV_1_1NmeaFile.html#a7f42d6eb4822bd44571f74e847c0275f", null ],
-    [ "_currentDate", "classNAV_1_1NmeaFile.html#ac8d38af59610c2c0e0fbbe22b8df8990", null ],
+    [ "_currentDate", "classNAV_1_1NmeaFile.html#a613400694e219da7cc77ce7931fd0bf0", null ],
     [ "_hasValidDate", "classNAV_1_1NmeaFile.html#a218a9de3998168b0e22358e742af67c2", null ],
     [ "_oldSoD", "classNAV_1_1NmeaFile.html#a0284c2c32554b8b95e443c559e8dfdc8", null ],
     [ "day", "classNAV_1_1NmeaFile.html#ad78aabc4fa9801cae71d66a4adc06185", null ],

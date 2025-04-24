@@ -1,17 +1,23 @@
 var MotionModel_8hpp =
 [
     [ "NAV::MotionModel< StateKeyType >", "classNAV_1_1MotionModel.html", "classNAV_1_1MotionModel" ],
-    [ "MotionModelKey", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3", [
-      [ "PosX", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a85f31828a857a6d0af0faf195bcdce48", null ],
-      [ "PosY", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a232f0db4ace88093ed1f4b928442292d", null ],
-      [ "PosZ", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3aeb47464a0d378161cfbad232fe7d381f", null ],
-      [ "VelX", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a4199a4edd153e66a04172e3279969c58", null ],
-      [ "VelY", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a3cbe8293757d7ea211084a4c9e587ce5", null ],
-      [ "VelZ", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a29bb0fadafe57a3bf45d8e2ead338c38", null ],
-      [ "MotionModelKey_COUNT", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3af2b69166b84308fea6270c455c3fb4a9", null ]
+    [ "NAV::Keys::MotionModelKey", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3", [
+      [ "NAV::Keys::PosX", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a85f31828a857a6d0af0faf195bcdce48", null ],
+      [ "NAV::Keys::PosY", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a232f0db4ace88093ed1f4b928442292d", null ],
+      [ "NAV::Keys::PosZ", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3aeb47464a0d378161cfbad232fe7d381f", null ],
+      [ "NAV::Keys::VelX", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a4199a4edd153e66a04172e3279969c58", null ],
+      [ "NAV::Keys::VelY", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a3cbe8293757d7ea211084a4c9e587ce5", null ],
+      [ "NAV::Keys::VelZ", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a29bb0fadafe57a3bf45d8e2ead338c38", null ],
+      [ "NAV::Keys::AttQ1", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3acc835e03faff5259ba28677fa6a59b0c", null ],
+      [ "NAV::Keys::AttQ2", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3ae0c086ff22779a107fa0a6111e6cd232", null ],
+      [ "NAV::Keys::AttQ3", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3ab306f467e9838cdc6465938d26abc8b7", null ],
+      [ "NAV::Keys::AttQ0", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3a4d6c0bd80723066be2d5c8970f33e16f", null ],
+      [ "NAV::Keys::MotionModelKey_COUNT", "MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3af2b69166b84308fea6270c455c3fb4a9", null ]
     ] ],
     [ "operator<<", "MotionModel_8hpp.html#a04914ff10aee494ba78ad71245fca38f", null ],
-    [ "Pos", "MotionModel_8hpp.html#a7d3adf81c609f7edc18a117f4cdae371", null ],
-    [ "PosVel", "MotionModel_8hpp.html#a58b63c734f8b8b71e8443f7e57f96283", null ],
-    [ "Vel", "MotionModel_8hpp.html#aa26f85953ef8731dc27c978498799a36", null ]
+    [ "NAV::Keys::Att", "MotionModel_8hpp.html#a056d26346e0d7de016e92b19fffa0085", null ],
+    [ "NAV::Keys::Pos", "MotionModel_8hpp.html#a463d12a7fa0fed69c971f8a90c8f435c", null ],
+    [ "NAV::Keys::PosVel", "MotionModel_8hpp.html#a973608d6773627163098f7ed9cdf9af5", null ],
+    [ "NAV::Keys::PosVelAtt", "MotionModel_8hpp.html#a873048d010b956aca7de30613ba79cb0", null ],
+    [ "NAV::Keys::Vel", "MotionModel_8hpp.html#ad9643459c5e2ee57150cb02565ac7aa7", null ]
 ];

@@ -1,5 +1,6 @@
 var dir_bd36bab2f08dd44d269c5f05c80711ff =
 [
+    [ "AttitudeModel.hpp", "AttitudeModel_8hpp.html", "AttitudeModel_8hpp" ],
     [ "InterFrequencyBiasModel.hpp", "InterFrequencyBiasModel_8hpp.html", "InterFrequencyBiasModel_8hpp" ],
     [ "MotionModel.hpp", "MotionModel_8hpp.html", "MotionModel_8hpp" ],
     [ "ReceiverClockModel.hpp", "ReceiverClockModel_8hpp.html", "ReceiverClockModel_8hpp" ],

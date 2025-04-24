@@ -50,7 +50,6 @@ var searchData=
   ['sm_5fx3_47',['SM_X3',['../classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html#a995fd6637127cc3c737c363af8e10f13adba8e8e8c9a2c3d05252503a87aff996',1,'NAV::vendor::kvh::KvhUartSensor']]],
   ['somigliana_48',['Somigliana',['../Gravity_8hpp.html#a3efcc391e50b070b4c8e660ffca2c92cabb08c06e19a2e689147bdef1ccfcf926',1,'NAV']]],
   ['spaceborne_49',['SPACEBORNE',['../structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6baab9ba3c714ecad335bfdb4593325517a0',1,'NAV::vendor::RINEX::ObsHeader']]],
-  ['states_5fcount_50',['States_COUNT',['../structNAV_1_1Pos_1_1States.html#a2b00e6e59bb69d1e40d72799fd235456a5385b09ee6fc108109feef2e074ebd66',1,'NAV::Pos::States::States_COUNT'],['../structNAV_1_1PosVel_1_1States.html#a0f7194b0d790393865e2ef8f2daebcfea37a51eaf0fd3b39e87569dcf5d6667cb',1,'NAV::PosVel::States::States_COUNT']]],
-  ['sto_51',['STO',['../classNAV_1_1RinexNavFile.html#a676075b95f7e4ad69764dfaa0eaee669a1c79844d86bafd69a5119632d52321aa',1,'NAV::RinexNavFile']]],
-  ['string_52',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type']]]
+  ['sto_50',['STO',['../classNAV_1_1RinexNavFile.html#a676075b95f7e4ad69764dfaa0eaee669a1c79844d86bafd69a5119632d52321aa',1,'NAV::RinexNavFile']]],
+  ['string_51',['String',['../structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07a5722f93011c6502e0233dbe06cf8bcb3',1,'NAV::Pin::Type']]]
 ];

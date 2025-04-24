@@ -1,7 +1,6 @@
 var classNAV_1_1SppSolution =
 [
     [ "SatData", "structNAV_1_1SppSolution_1_1SatData.html", "structNAV_1_1SppSolution_1_1SatData" ],
-    [ "addEvent", "classNAV_1_1SppSolution.html#a7c658a98c45ff1ab6fd75ddc87743f9d", null ],
     [ "dynamicDataDescriptors", "classNAV_1_1SppSolution.html#acb68975b77376d4fa6536348077cb8c9", null ],
     [ "getDynamicData", "classNAV_1_1SppSolution.html#a5a9fb19ad8c600757d28fcf80dc43975", null ],
     [ "getDynamicDataAt", "classNAV_1_1SppSolution.html#a0e4dc765208ae3d694adba5582f160ae", null ],
@@ -13,12 +12,7 @@ var classNAV_1_1SppSolution =
     [ "staticDataDescriptors", "classNAV_1_1SppSolution.html#ad20a1ff7812676f803baf929acc04cd6", null ],
     [ "staticDescriptorCount", "classNAV_1_1SppSolution.html#a18e4602da57e77829b9e6284e9dcae19", null ],
     [ "type", "classNAV_1_1SppSolution.html#a28f1f48ef3d4a2e3f994d943996bacc4", null ],
-    [ "_e_covarianceMatrix", "classNAV_1_1SppSolution.html#af8665c14defce337971372938f2709fd", null ],
-    [ "_e_positionStdev", "classNAV_1_1SppSolution.html#a992c0042874b385eaa54749cff425668", null ],
-    [ "_e_velocityStdev", "classNAV_1_1SppSolution.html#abadf2ec2fcce40c13565f4f100b7b747", null ],
-    [ "_n_covarianceMatrix", "classNAV_1_1SppSolution.html#ac46309b2f055ed995770fb2eaa68d42a", null ],
-    [ "_n_positionStdev", "classNAV_1_1SppSolution.html#a0121b15b6ab48787d8de20faafc73cef", null ],
-    [ "_n_velocityStdev", "classNAV_1_1SppSolution.html#ae87b16fe41b8139584c191e5991c29f4", null ],
+    [ "_e_sppCovarianceMatrix", "classNAV_1_1SppSolution.html#a62081b557fdfa81f55336b2b3f5231f6", null ],
     [ "HDOP", "classNAV_1_1SppSolution.html#ab451e8228fcb5a2e7a0be4d214ec616e", null ],
     [ "interFrequencyBias", "classNAV_1_1SppSolution.html#ac296e7d7d019368ed520309176bda1e5", null ],
     [ "nMeasDopp", "classNAV_1_1SppSolution.html#af9b49dcca4a86e6d48e58f24147a224a", null ],

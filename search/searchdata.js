@@ -13,7 +13,7 @@ var indexSectionsWithContent =
   10: "ilps",
   11: "dgikls",
   12: "abcdefghiklmnoprstuvw",
-  13: "n"
+  13: "s"
 };
 
 var indexSectionNames =

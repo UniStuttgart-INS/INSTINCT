@@ -2,6 +2,7 @@ var classNAV_1_1ReceiverClockModel =
 [
     [ "calcPhiAndQ", "classNAV_1_1ReceiverClockModel.html#a36540ad1c89f18e17bd2618d413d5524", null ],
     [ "calcProcessNoiseMatrixTaylor", "classNAV_1_1ReceiverClockModel.html#aa6fec6dc7ffa99d351909e7abbb7a36f", null ],
+    [ "initialize", "classNAV_1_1ReceiverClockModel.html#a7e6e1ddb50702412b7697aa06620f9ee", null ],
     [ "initialize", "classNAV_1_1ReceiverClockModel.html#a39ac7f79dc063cf08bc83c8fb7e3f95e", null ],
     [ "ShowGui", "classNAV_1_1ReceiverClockModel.html#ac1f4cc17eaa54fc957df789768700010", null ],
     [ "updatePhiAndQ", "classNAV_1_1ReceiverClockModel.html#a26881be1479d2670fb532344c4ab49b3", null ],

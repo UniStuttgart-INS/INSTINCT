@@ -1,8 +1,10 @@
 var classNAV_1_1LooselyCoupledKF =
 [
+    [ "BaroHeightMeasurementUncertaintyUnit", "classNAV_1_1LooselyCoupledKF.html#ab560f05a89636228ed3f625bbb8c40b9", [
+      [ "m2", "classNAV_1_1LooselyCoupledKF.html#ab560f05a89636228ed3f625bbb8c40b9aaaf2f89992379705dac844c0a2a1d45f", null ],
+      [ "m", "classNAV_1_1LooselyCoupledKF.html#ab560f05a89636228ed3f625bbb8c40b9a6f8f57715090da2632453988d9a1501b", null ]
+    ] ],
     [ "GnssMeasurementUncertaintyPositionUnit", "classNAV_1_1LooselyCoupledKF.html#ac55fcab25851bbfd2503d0dbdf9bc8f4", [
-      [ "rad2_rad2_m2", "classNAV_1_1LooselyCoupledKF.html#ac55fcab25851bbfd2503d0dbdf9bc8f4a1366582aece0fcfd7469d55dda93b246", null ],
-      [ "rad_rad_m", "classNAV_1_1LooselyCoupledKF.html#ac55fcab25851bbfd2503d0dbdf9bc8f4a02c20cb4208b5057bad8acb4a2751e48", null ],
       [ "meter2", "classNAV_1_1LooselyCoupledKF.html#ac55fcab25851bbfd2503d0dbdf9bc8f4a2a2bed492b85747fb0a13f399a731833", null ],
       [ "meter", "classNAV_1_1LooselyCoupledKF.html#ac55fcab25851bbfd2503d0dbdf9bc8f4a558ddfdd3620c111fe112b4671b77c6d", null ]
     ] ],
@@ -11,6 +13,7 @@ var classNAV_1_1LooselyCoupledKF =
       [ "m_s", "classNAV_1_1LooselyCoupledKF.html#ae43eebdfca37f2b9e14a81f96bdbcb37a0b731d2ebd143daed5111a68cffef1b3", null ]
     ] ],
     [ "InitBiasAccelUnit", "classNAV_1_1LooselyCoupledKF.html#a9ba5716059f614ac9489639aa6a14291", [
+      [ "microg", "classNAV_1_1LooselyCoupledKF.html#a9ba5716059f614ac9489639aa6a14291ad315dc25b5a669882e8fd7049d488480", null ],
       [ "m_s2", "classNAV_1_1LooselyCoupledKF.html#a9ba5716059f614ac9489639aa6a14291afa18cace4f96e322f9edf03df970a2cb", null ]
     ] ],
     [ "InitBiasGyroUnit", "classNAV_1_1LooselyCoupledKF.html#a2980750f7f947f530b1daaf94d387cc2", [
@@ -33,11 +36,19 @@ var classNAV_1_1LooselyCoupledKF =
       [ "rad_s", "classNAV_1_1LooselyCoupledKF.html#a8aa3d3ea53a80b7a11f2d10ace673068a5048ae192d391e12c3401c38f2ffc497", null ],
       [ "deg_s", "classNAV_1_1LooselyCoupledKF.html#a8aa3d3ea53a80b7a11f2d10ace673068a26b1fed50e629c912150cc2d1dd0dff8", null ]
     ] ],
+    [ "InitCovarianceBiasHeightUnit", "classNAV_1_1LooselyCoupledKF.html#ad8a824fbbc710fd8c8525b152a6052e6", [
+      [ "m2", "classNAV_1_1LooselyCoupledKF.html#ad8a824fbbc710fd8c8525b152a6052e6aaaf2f89992379705dac844c0a2a1d45f", null ],
+      [ "m", "classNAV_1_1LooselyCoupledKF.html#ad8a824fbbc710fd8c8525b152a6052e6a6f8f57715090da2632453988d9a1501b", null ]
+    ] ],
     [ "InitCovariancePositionUnit", "classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1", [
       [ "rad2_rad2_m2", "classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1a1366582aece0fcfd7469d55dda93b246", null ],
       [ "rad_rad_m", "classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1a02c20cb4208b5057bad8acb4a2751e48", null ],
       [ "meter2", "classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1a2a2bed492b85747fb0a13f399a731833", null ],
       [ "meter", "classNAV_1_1LooselyCoupledKF.html#a554f8343ab0462cdd0fe1e1a5ced1ca1a558ddfdd3620c111fe112b4671b77c6d", null ]
+    ] ],
+    [ "InitCovarianceScaleHeight", "classNAV_1_1LooselyCoupledKF.html#a667f78822f4414558f5ee5c619e0d53a", [
+      [ "m2_m2", "classNAV_1_1LooselyCoupledKF.html#a667f78822f4414558f5ee5c619e0d53aa5251ea2b5b765566cdd8c3052bd942e1", null ],
+      [ "m_m", "classNAV_1_1LooselyCoupledKF.html#a667f78822f4414558f5ee5c619e0d53aadedf82e4fed86621ecc367621baf0145", null ]
     ] ],
     [ "InitCovarianceVelocityUnit", "classNAV_1_1LooselyCoupledKF.html#a03faca10834ec6f37e854aa0b9815035", [
       [ "m2_s2", "classNAV_1_1LooselyCoupledKF.html#a03faca10834ec6f37e854aa0b9815035a517cb3a7fe57c63abd3a87cc5cd1853a", null ],
@@ -50,6 +61,7 @@ var classNAV_1_1LooselyCoupledKF =
       [ "dVelN", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26acb09a001b2b2ca73dec5def8043b75dc", null ],
       [ "dVelE", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26a73f926240d606eefc57f0bad6f21f84a", null ],
       [ "dVelD", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26aff050c33e62fc7c47dbc0281b2184d0d", null ],
+      [ "dHgt", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26aa07d1508b5be2ff1c8a20a335a1dc427", null ],
       [ "dPosX", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26a409c432788c487a10b043c83505ea4be", null ],
       [ "dPosY", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26a2ef5f8f080592d6e6f2e627905497d87", null ],
       [ "dPosZ", "classNAV_1_1LooselyCoupledKF.html#a99338f9a572792f63d225697178a1e26a7789eeff4c309115eacefabfa35b69ef", null ],
@@ -73,6 +85,9 @@ var classNAV_1_1LooselyCoupledKF =
       [ "GyrBiasX", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a2ee533b5dd7b0359ffed91bf5a70cc88", null ],
       [ "GyrBiasY", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a76eaacb6a240692ff30ad26bfa5003fe", null ],
       [ "GyrBiasZ", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a74c12e85698f2260c61a72bcb32f8098", null ],
+      [ "HeightBias", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a39cea69b07df23cb6ab7a9f5b56d6253", null ],
+      [ "HeightScale", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a20807c1a7011188b33b01fa7c07596e2", null ],
+      [ "KFStates_COUNT", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7aaf7e6ea6eab3a1eae081b7983c63b008", null ],
       [ "Psi_eb_1", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7af765c362386a12bb9ab8bfe3e553bcfd", null ],
       [ "Psi_eb_2", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7aeffd184c29d7abdadede49b568539987", null ],
       [ "Psi_eb_3", "classNAV_1_1LooselyCoupledKF.html#a0ae8f135eb9c5f0be4b475ddd52d97e7a4dda29b7b3a890f0f1e3b89bb278c9eb", null ],
@@ -95,21 +110,11 @@ var classNAV_1_1LooselyCoupledKF =
       [ "RandomWalk", "classNAV_1_1LooselyCoupledKF.html#acb9fdd8ad02ffec40f7600cecb860c52a9a63e51619bf3fbf6c1888dfc19b7edc", null ],
       [ "GaussMarkov1", "classNAV_1_1LooselyCoupledKF.html#acb9fdd8ad02ffec40f7600cecb860c52a84ad0cf876057e4ee9931e35da329647", null ]
     ] ],
-    [ "StdevAccelBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a42b5e4c4a856d3129d3abe9cf8744350", [
-      [ "microg", "classNAV_1_1LooselyCoupledKF.html#a42b5e4c4a856d3129d3abe9cf8744350ad315dc25b5a669882e8fd7049d488480", null ],
-      [ "m_s2", "classNAV_1_1LooselyCoupledKF.html#a42b5e4c4a856d3129d3abe9cf8744350afa18cace4f96e322f9edf03df970a2cb", null ]
+    [ "StdevBaroHeightBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a65af58a3f05b06031d3a2c406d2013b7", [
+      [ "m", "classNAV_1_1LooselyCoupledKF.html#a65af58a3f05b06031d3a2c406d2013b7a6f8f57715090da2632453988d9a1501b", null ]
     ] ],
-    [ "StdevAccelNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#adc5339d3bc789337d6e756d5ff0b9cf0", [
-      [ "mg_sqrtHz", "classNAV_1_1LooselyCoupledKF.html#adc5339d3bc789337d6e756d5ff0b9cf0a76e5310fb90d63269262b0a414bdbd0b", null ],
-      [ "m_s2_sqrtHz", "classNAV_1_1LooselyCoupledKF.html#adc5339d3bc789337d6e756d5ff0b9cf0addd7a6a1f09cc1fb48acf88cde4241c1", null ]
-    ] ],
-    [ "StdevGyroBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a37e76bef24e2e8c75e931c43d67b414d", [
-      [ "deg_h", "classNAV_1_1LooselyCoupledKF.html#a37e76bef24e2e8c75e931c43d67b414da8738bada345bcb3e460f4df3968cfa8d", null ],
-      [ "rad_s", "classNAV_1_1LooselyCoupledKF.html#a37e76bef24e2e8c75e931c43d67b414da5048ae192d391e12c3401c38f2ffc497", null ]
-    ] ],
-    [ "StdevGyroNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#a0e14f2d39353ee90a1d6fa00a6b85cc3", [
-      [ "deg_hr_sqrtHz", "classNAV_1_1LooselyCoupledKF.html#a0e14f2d39353ee90a1d6fa00a6b85cc3a321779fc5d208ffa4a45f2d2f2fcb16f", null ],
-      [ "rad_s_sqrtHz", "classNAV_1_1LooselyCoupledKF.html#a0e14f2d39353ee90a1d6fa00a6b85cc3a690c6613f999de0373a6ed35efc55881", null ]
+    [ "StdevBaroHeightScaleUnits", "classNAV_1_1LooselyCoupledKF.html#aa79fa3a4b66481739941cfa4d69613d9", [
+      [ "m_m", "classNAV_1_1LooselyCoupledKF.html#aa79fa3a4b66481739941cfa4d69613d9adedf82e4fed86621ecc367621baf0145", null ]
     ] ],
     [ "LooselyCoupledKF", "classNAV_1_1LooselyCoupledKF.html#ac8b77d75380bf5befcfe6282149c8c5f", null ],
     [ "~LooselyCoupledKF", "classNAV_1_1LooselyCoupledKF.html#a528fdaa5405742491c3afc0036bd2500", null ],
@@ -118,35 +123,46 @@ var classNAV_1_1LooselyCoupledKF =
     [ "category", "classNAV_1_1LooselyCoupledKF.html#aed9f9b0777cc7111ff7b82ecacce2661", null ],
     [ "deinitialize", "classNAV_1_1LooselyCoupledKF.html#a8df16117df8098cc85d2bbaff96b3c80", null ],
     [ "e_measurementInnovation_dz", "classNAV_1_1LooselyCoupledKF.html#a97a5c246820bbb2a2d25d86778e2c2da", null ],
-    [ "e_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#a637a200de34fc157dd40795ee2c15931", null ],
-    [ "e_measurementNoiseCovariance_R", "classNAV_1_1LooselyCoupledKF.html#a34b4e211a23a7ad377caa0b2e421fc42", null ],
-    [ "e_systemMatrix_F", "classNAV_1_1LooselyCoupledKF.html#a5cb92a69109bc7355084201e54fd48dc", null ],
-    [ "e_systemNoiseCovarianceMatrix_Q", "classNAV_1_1LooselyCoupledKF.html#ab48737ede7809ccf60c13ed743a7ea91", null ],
+    [ "e_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#ac1861ee67d1e980aa5161c63700f2749", null ],
+    [ "e_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#ac78148a0d28ec21da615243a58af787c", null ],
+    [ "e_measurementNoiseCovariance_R", "classNAV_1_1LooselyCoupledKF.html#a3d93ece9627a57a0c2487cfaff6c0904", null ],
+    [ "e_systemMatrix_F", "classNAV_1_1LooselyCoupledKF.html#a0eb4e9f7a9df1e77f7143d977673c663", null ],
+    [ "e_systemNoiseCovarianceMatrix_Q", "classNAV_1_1LooselyCoupledKF.html#a8906fc08cce07fd1300dd8dfe0f49293", null ],
     [ "guiConfig", "classNAV_1_1LooselyCoupledKF.html#ad918d845177db70144c1abdd876d489a", null ],
-    [ "initialErrorCovarianceMatrix_P0", "classNAV_1_1LooselyCoupledKF.html#a6def7f9b1ac777f24e896899bd0fe29b", null ],
+    [ "initialErrorCovarianceMatrix_P0", "classNAV_1_1LooselyCoupledKF.html#a5ece012ab83cad8a864675667d7de7d3", null ],
     [ "initialize", "classNAV_1_1LooselyCoupledKF.html#adf56cad74ef3aaa238f0514b65745f30", null ],
     [ "invokeCallbackWithPosVelAtt", "classNAV_1_1LooselyCoupledKF.html#a953703f82a55ce774506578be05bbf2e", null ],
     [ "looselyCoupledPrediction", "classNAV_1_1LooselyCoupledKF.html#a96f12df6127f0057725106d8fcde018e", null ],
+    [ "looselyCoupledUpdate", "classNAV_1_1LooselyCoupledKF.html#a2589cc832b424253a969e1a8bf6489bf", null ],
     [ "looselyCoupledUpdate", "classNAV_1_1LooselyCoupledKF.html#a3f957e2bc037a0d832f3e8442e255008", null ],
+    [ "n_measurementInnovation_dz", "classNAV_1_1LooselyCoupledKF.html#a1d6995a0146cd7eeed2107b23f5c33ff", null ],
     [ "n_measurementInnovation_dz", "classNAV_1_1LooselyCoupledKF.html#a9287c8f63eec75dea8f596a2c8b0c8e7", null ],
-    [ "n_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#a6e50a9eef11494126796ed75bd50ef1f", null ],
-    [ "n_measurementNoiseCovariance_R", "classNAV_1_1LooselyCoupledKF.html#aa6da853305ea500e73e35829c25613cd", null ],
-    [ "n_systemMatrix_F", "classNAV_1_1LooselyCoupledKF.html#ad1a4c6a75346007c9c91a18232dd6dfa", null ],
-    [ "n_systemNoiseCovarianceMatrix_Q", "classNAV_1_1LooselyCoupledKF.html#a679f47372b8edcd071d5f1801450cad1", null ],
-    [ "noiseInputMatrix_G", "classNAV_1_1LooselyCoupledKF.html#a011b9864c207b20d98f16fd8232db79c", null ],
-    [ "noiseScaleMatrix_W", "classNAV_1_1LooselyCoupledKF.html#a2383d876b2869d0888edccc52dfa7666", null ],
+    [ "n_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#a74c6b56246fde5df702c79487cc2147e", null ],
+    [ "n_measurementMatrix_H", "classNAV_1_1LooselyCoupledKF.html#a181a70e839ebfb1f2e59b3c0af5a00ad", null ],
+    [ "n_measurementNoiseCovariance_R", "classNAV_1_1LooselyCoupledKF.html#a5a56768d8057ca85ac61b795dfbf0100", null ],
+    [ "n_measurementNoiseCovariance_R", "classNAV_1_1LooselyCoupledKF.html#a3ef5c5aaaa312b3e9ee6bc8b70a26bb0", null ],
+    [ "n_systemMatrix_F", "classNAV_1_1LooselyCoupledKF.html#a551551e2e6a12b83e91ca4a86145e0be", null ],
+    [ "n_systemNoiseCovarianceMatrix_Q", "classNAV_1_1LooselyCoupledKF.html#aed2296ead48a4600fb75cae739ed7525", null ],
+    [ "noiseInputMatrix_G", "classNAV_1_1LooselyCoupledKF.html#a0f88122a795276e866e2d255081e86f3", null ],
+    [ "noiseScaleMatrix_W", "classNAV_1_1LooselyCoupledKF.html#a8d2eed9edb139f1095bea87b3b29b012", null ],
     [ "operator=", "classNAV_1_1LooselyCoupledKF.html#a1a855a698101c19d50893d579deac70d", null ],
     [ "operator=", "classNAV_1_1LooselyCoupledKF.html#a493fa20b9aceafa380b3bf10af0f725d", null ],
+    [ "recvBaroHeight", "classNAV_1_1LooselyCoupledKF.html#a8a53a8303872b0a03fba30ae2424e7ec", null ],
     [ "recvImuObservation", "classNAV_1_1LooselyCoupledKF.html#a392ac07addafff6dcf3b37b42dd15c24", null ],
     [ "recvPosVelAttInit", "classNAV_1_1LooselyCoupledKF.html#a8002cae6a56359950855250541c9075f", null ],
     [ "recvPosVelObservation", "classNAV_1_1LooselyCoupledKF.html#aaa850b749877f4d6db03dbad783c3688", null ],
     [ "restore", "classNAV_1_1LooselyCoupledKF.html#a952989decb342416446313b3f3aa2e09", null ],
     [ "save", "classNAV_1_1LooselyCoupledKF.html#a1305651af483b0b2eae932f75b93cec8", null ],
+    [ "setSolutionPosVelAttAndCov", "classNAV_1_1LooselyCoupledKF.html#a9079945487545af0fee2a30c60cf96f7", null ],
     [ "type", "classNAV_1_1LooselyCoupledKF.html#ac3f26c955d085e06d6a60e2f689d5bd8", null ],
     [ "typeStatic", "classNAV_1_1LooselyCoupledKF.html#aa82cc75cd54c74b3dff828b1f39f9aad", null ],
-    [ "updateExternalPvaInitPin", "classNAV_1_1LooselyCoupledKF.html#a7f6cd25154c93ffe7ff5aa67f3461496", null ],
-    [ "_b_leverArm_InsGnss", "classNAV_1_1LooselyCoupledKF.html#a2dbd88382bcb665909c90f0259fd4cd1", null ],
+    [ "updateInputPins", "classNAV_1_1LooselyCoupledKF.html#a347ff187c98a5d7b9cffc46fd7c20b6f", null ],
+    [ "_accelBiasTotal", "classNAV_1_1LooselyCoupledKF.html#a7f73a74f10716d2f87a9fdafb089ce6a", null ],
+    [ "_baroHeightMeasurementUncertaintyOverride", "classNAV_1_1LooselyCoupledKF.html#aae3f6a8bfc980b762eb89b252103b3a5", null ],
+    [ "_barometricHeightMeasurementUncertainty", "classNAV_1_1LooselyCoupledKF.html#acdea49bf8c7010dfa94df8e74852123f", null ],
+    [ "_barometricHeightMeasurementUncertaintyUnit", "classNAV_1_1LooselyCoupledKF.html#a9bf82b9a3d0c624c1cfc9496156e16cd", null ],
     [ "_checkKalmanMatricesRanks", "classNAV_1_1LooselyCoupledKF.html#a68129e2025a2952c66ceb261eb2fd740", null ],
+    [ "_enableBaroHgt", "classNAV_1_1LooselyCoupledKF.html#adf6669b4df6760df0f7f0c92f5ff256b", null ],
     [ "_externalInitTime", "classNAV_1_1LooselyCoupledKF.html#a8abe685b440b92a21e5f17e7fb0c59cc", null ],
     [ "_gnssMeasurementUncertaintyPosition", "classNAV_1_1LooselyCoupledKF.html#a4d2110e9fd9c2a2ff913447e11692da3", null ],
     [ "_gnssMeasurementUncertaintyPositionOverride", "classNAV_1_1LooselyCoupledKF.html#a4baab8b434a02cfb01850f71045e2862", null ],
@@ -154,6 +170,9 @@ var classNAV_1_1LooselyCoupledKF =
     [ "_gnssMeasurementUncertaintyVelocity", "classNAV_1_1LooselyCoupledKF.html#a1a2805b450f1de9ea3be4bcc466c5377", null ],
     [ "_gnssMeasurementUncertaintyVelocityOverride", "classNAV_1_1LooselyCoupledKF.html#ab2a7dd48708c7694a1a81ef6374c6401", null ],
     [ "_gnssMeasurementUncertaintyVelocityUnit", "classNAV_1_1LooselyCoupledKF.html#a3ab3ade5568937066b5543a3ebf1dd32", null ],
+    [ "_gyroBiasTotal", "classNAV_1_1LooselyCoupledKF.html#ad4afdf2b2a514d1de79a93eff788a0b5", null ],
+    [ "_heightBiasTotal", "classNAV_1_1LooselyCoupledKF.html#aa7860aaa55fda7b9fa00271e6cc06e43", null ],
+    [ "_heightScaleTotal", "classNAV_1_1LooselyCoupledKF.html#a391e704234791502cb31d220e4338632", null ],
     [ "_inertialIntegrator", "classNAV_1_1LooselyCoupledKF.html#a94fb09d23a56fb7c79fcf66750ec9a37", null ],
     [ "_initalRollPitchYaw", "classNAV_1_1LooselyCoupledKF.html#ac8552e3f99e8d64f3a2925df230b429c", null ],
     [ "_initBiasAccel", "classNAV_1_1LooselyCoupledKF.html#a1447ab19de48b0c9ee69db610c78218d", null ],
@@ -166,8 +185,12 @@ var classNAV_1_1LooselyCoupledKF =
     [ "_initCovarianceBiasAccelUnit", "classNAV_1_1LooselyCoupledKF.html#a8474d6f461699d8854df7199cf62244a", null ],
     [ "_initCovarianceBiasGyro", "classNAV_1_1LooselyCoupledKF.html#a48e3a8fd220f65938651aad67dbb5ac1", null ],
     [ "_initCovarianceBiasGyroUnit", "classNAV_1_1LooselyCoupledKF.html#ac0ce71574e3c1b2054c2cf67600106f4", null ],
+    [ "_initCovarianceBiasHeight", "classNAV_1_1LooselyCoupledKF.html#a60cae1aad26e33f3064a9d3fca04633d", null ],
+    [ "_initCovarianceBiasHeightUnit", "classNAV_1_1LooselyCoupledKF.html#af932eea026f880dc8e9e2cd634d5ca4a", null ],
     [ "_initCovariancePosition", "classNAV_1_1LooselyCoupledKF.html#a226b862ef9ac530a7c41efcdf8333f85", null ],
     [ "_initCovariancePositionUnit", "classNAV_1_1LooselyCoupledKF.html#a868ff5b86be4f8e6e5bd4982a4b9b66b", null ],
+    [ "_initCovarianceScaleHeight", "classNAV_1_1LooselyCoupledKF.html#a73fd2deb6dba970c903f57b87ee9a500", null ],
+    [ "_initCovarianceScaleHeightUnit", "classNAV_1_1LooselyCoupledKF.html#a016bad558b73ff3934f3241f7685d866", null ],
     [ "_initCovarianceVelocity", "classNAV_1_1LooselyCoupledKF.html#a41423b19db3db403d524863c465b5fa0", null ],
     [ "_initCovarianceVelocityUnit", "classNAV_1_1LooselyCoupledKF.html#a13c53aafd12ff7eb931f0faa5593cb45", null ],
     [ "_initializeStateOverExternalPin", "classNAV_1_1LooselyCoupledKF.html#a57565384200f45568911d7d3560b56ad", null ],
@@ -184,10 +207,14 @@ var classNAV_1_1LooselyCoupledKF =
     [ "_stdev_bgd", "classNAV_1_1LooselyCoupledKF.html#aea964daa8cae7d83c71ee0e5530a623e", null ],
     [ "_stdev_ra", "classNAV_1_1LooselyCoupledKF.html#ab57ad578d5203f3328539a5502a7ad16", null ],
     [ "_stdev_rg", "classNAV_1_1LooselyCoupledKF.html#a8984435a2f54e13ed23f8a52336dbbdb", null ],
-    [ "_stdevAccelBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a937172adc694836cf822f4decd206f82", null ],
-    [ "_stdevAccelNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#ad7e47ecd29ba5db06b05b0a21b9d16a6", null ],
-    [ "_stdevGyroBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a9844df847393e9bf38bd643f3979341c", null ],
-    [ "_stdevGyroNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#a20fba67ee4101c8facbeccb04fbf4cb3", null ],
+    [ "_stdevAccelBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a69d94099f8ec848581d2f86dfbdee0bd", null ],
+    [ "_stdevAccelNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#a0c0eedd6f468b5b59ad540106b97352c", null ],
+    [ "_stdevBaroHeightBias", "classNAV_1_1LooselyCoupledKF.html#a6c6b0f6984f822740c58c5a72ac0628d", null ],
+    [ "_stdevBaroHeightBiasUnits", "classNAV_1_1LooselyCoupledKF.html#a1d032d9bd41dd4c973482bda4d4478ee", null ],
+    [ "_stdevBaroHeightScale", "classNAV_1_1LooselyCoupledKF.html#a9d3cd6b286c842c94d32b4747e6d9c71", null ],
+    [ "_stdevBaroHeightScaleUnits", "classNAV_1_1LooselyCoupledKF.html#a0e729860a3432ac46d3422b291df95c7", null ],
+    [ "_stdevGyroBiasUnits", "classNAV_1_1LooselyCoupledKF.html#ab2e0411be36c2c62248d98f9ec6b62c0", null ],
+    [ "_stdevGyroNoiseUnits", "classNAV_1_1LooselyCoupledKF.html#a4d18002980da35d8a33bfba9078bd8fa", null ],
     [ "_tau_bad", "classNAV_1_1LooselyCoupledKF.html#ab7098ba9754019cbdea0d08467880193", null ],
     [ "_tau_bgd", "classNAV_1_1LooselyCoupledKF.html#a583f910920c67632eaa373cfd204b09d", null ],
     [ "dPos", "classNAV_1_1LooselyCoupledKF.html#a2b5ae3cff40752b6d057c486556171f6", null ],
@@ -200,6 +227,7 @@ var classNAV_1_1LooselyCoupledKF =
     [ "KFGyrBias", "classNAV_1_1LooselyCoupledKF.html#ac422cda4a67b5de511b993283d9c7b12", null ],
     [ "KFPos", "classNAV_1_1LooselyCoupledKF.html#ab35a5e0ec2db6a5f05421a0233cdee13", null ],
     [ "KFPosVel", "classNAV_1_1LooselyCoupledKF.html#a9a0caa95672404f545010b00e52bb9ad", null ],
+    [ "KFPosVelAtt", "classNAV_1_1LooselyCoupledKF.html#a89e79cc3f29c75baf0e36e9d5da22603", null ],
     [ "KFVel", "classNAV_1_1LooselyCoupledKF.html#a56760b03af32f9d4f16387fb5f2783a0", null ],
     [ "Meas", "classNAV_1_1LooselyCoupledKF.html#a377b63d81af061ebbbda148bab757fde", null ],
     [ "OUTPUT_PORT_INDEX_SOLUTION", "classNAV_1_1LooselyCoupledKF.html#a8b828b01fe3ebc506f3a89a2c0610a5d", null ],

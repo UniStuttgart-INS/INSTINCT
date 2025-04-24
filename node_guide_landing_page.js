@@ -47,7 +47,6 @@ var node_guide_landing_page =
     [ "SPP Node", "single_point_positioning_node.html", null ],
     [ "ImuIntegrator Node", "imu_integrator_node.html", null ],
     [ "LooselyCoupledKf Node", "loosely_coupled_kf_node.html", null ],
-    [ "TightlyCoupledKf Node", "tightly_coupled_kf_node.html", null ],
     [ "ImuFusion Node", "imu_fusion_node.html", null ],
     [ "CsvFile Node", "csv_file_node.html", [
       [ "Introduction", "csv_file_node.html#csv_file_node_introduction", null ],

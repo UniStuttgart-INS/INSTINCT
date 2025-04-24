@@ -7,8 +7,9 @@ var searchData=
   ['colormapmasktype_4',['ColormapMaskType',['../Colormap_8hpp.html#a13929deca358cdf10c467e8dca78979c',1,'NAV']]],
   ['colors_5',['Colors',['../classNAV_1_1gui_1_1NodeEditorApplication.html#af13a1773c7a3fed299f0502281a86b7c',1,'NAV::gui::NodeEditorApplication']]],
   ['covarianceaccelunits_6',['CovarianceAccelUnits',['../GNSS_2SystemModel_2Units_8hpp.html#a3b54d26978435d0c5953f83869ca4205',1,'NAV::Units']]],
-  ['covarianceclkfrequencydriftunits_7',['CovarianceClkFrequencyDriftUnits',['../GNSS_2SystemModel_2Units_8hpp.html#afc539a9a16865417f94f9c65aec89f56',1,'NAV::Units']]],
-  ['covarianceclkphasedriftunits_8',['CovarianceClkPhaseDriftUnits',['../GNSS_2SystemModel_2Units_8hpp.html#a0e26fa2c096f7b67270331e0db6c2718',1,'NAV::Units']]],
-  ['cycleslipdetectionprobabilityunits_9',['CycleSlipDetectionProbabilityUnits',['../classNAV_1_1ErrorModel.html#a43841ff8b3e9976d9c4e333a0aa2f286',1,'NAV::ErrorModel']]],
-  ['cycleslipfrequencyunits_10',['CycleSlipFrequencyUnits',['../classNAV_1_1ErrorModel.html#a4d2ba691e3fc50847fc90f3a43e67422',1,'NAV::ErrorModel']]]
+  ['covarianceangularvelocityunits_7',['CovarianceAngularVelocityUnits',['../GNSS_2SystemModel_2Units_8hpp.html#a0b04ed7e686c63200fe9eef5026b1eab',1,'NAV::Units']]],
+  ['covarianceclkfrequencydriftunits_8',['CovarianceClkFrequencyDriftUnits',['../GNSS_2SystemModel_2Units_8hpp.html#afc539a9a16865417f94f9c65aec89f56',1,'NAV::Units']]],
+  ['covarianceclkphasedriftunits_9',['CovarianceClkPhaseDriftUnits',['../GNSS_2SystemModel_2Units_8hpp.html#a0e26fa2c096f7b67270331e0db6c2718',1,'NAV::Units']]],
+  ['cycleslipdetectionprobabilityunits_10',['CycleSlipDetectionProbabilityUnits',['../classNAV_1_1ErrorModel.html#a43841ff8b3e9976d9c4e333a0aa2f286',1,'NAV::ErrorModel']]],
+  ['cycleslipfrequencyunits_11',['CycleSlipFrequencyUnits',['../classNAV_1_1ErrorModel.html#a4d2ba691e3fc50847fc90f3a43e67422',1,'NAV::ErrorModel']]]
 ];

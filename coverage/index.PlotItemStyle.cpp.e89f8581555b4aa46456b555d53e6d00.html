@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-07 16:54:41</td>
+      <td>2025-04-24 11:37:14</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>27</td>
+      <td>31</td>
       <td>716</td>
-      <td class="coverage-low">3.8%</td>
+      <td class="coverage-low">4.3%</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l536">NAV::PlotItemStyle::plotData(char const*, NAV::ScrollingBuffer&lt;double, 0ul&gt; const&amp;, NAV::ScrollingBuffer&lt;double, 0ul&gt; const&amp;, int, int, int, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, std::array&lt;NAV::ScrollingBuffer&lt;double, 0ul&gt;, 2ul&gt; const*) const (line 536)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l95">NAV::PlotItemStyle::showLegendPopup(char const*, char const*, int, int, char const*, int, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, std::function&lt;bool (unsigned long&amp;, char const*)&gt; const&amp;, NAV::ScrollingBuffer&lt;double, 0ul&gt;*, std::vector&lt;std::tuple&lt;double, double, NAV::PlotEventTooltip&gt;, std::allocator&lt;std::tuple&lt;double, double, NAV::PlotEventTooltip&gt; &gt; &gt;*) (line 95)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l348">NAV::PlotItemStyle::showLegendPopup(char const*, char const*, int, int, char const*, int, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, NAV::ScrollingBuffer&lt;unsigned int, 0ul&gt;*, std::function&lt;bool (unsigned long&amp;, char const*)&gt; const&amp;, NAV::ScrollingBuffer&lt;double, 0ul&gt;*, std::vector&lt;std::tuple&lt;double, double, NAV::PlotEventTooltip&gt;, std::allocator&lt;std::tuple&lt;double, double, NAV::PlotEventTooltip&gt; &gt; &gt;*)::{lambda(char const*, char const*, char const*)#1}::operator()(char const*, char const*, char const*) const (line 348)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l64">NAV::from_json(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::PlotItemStyle&amp;) (line 64)</a></td><td>called 404 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l64">NAV::from_json(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::PlotItemStyle&amp;) (line 64)</a></td><td>called 289 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l29">NAV::to_json(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::PlotItemStyle const&amp;) (line 29)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
 </details>
@@ -533,7 +533,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">404</td>
+      <td class="linecount coveredLine">289</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">PlotItemStyle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">style</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -549,12 +549,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;legendName&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;legendName&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">legendName</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -563,12 +563,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;stride&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;stride&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">stride</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -577,12 +577,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;lineType&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;lineType&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">lineType</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -591,12 +591,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;color&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">color</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -605,12 +605,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;colormapMask&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;colormapMask&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">colormapMask</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -619,12 +619,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;colormapMaskDataCmpIdx&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;colormapMaskDataCmpIdx&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">colormapMaskDataCmpIdx</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -633,12 +633,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;thickness&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;thickness&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">thickness</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -648,7 +648,7 @@
           <summary class="linebranchSummary">1/6</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
@@ -656,7 +656,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;lineFlags&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">style</span><span class="p">.</span><span class="n">lineFlags</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;lineFlags&quot;</span><span class="p">).</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">uint32_t</span><span class="o">&gt;</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -665,12 +665,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerColormapMask&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerColormapMask&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerColormapMask</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -679,12 +679,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerColormapMaskDataCmpIdx&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerColormapMaskDataCmpIdx&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerColormapMaskDataCmpIdx</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -693,12 +693,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markers&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markers&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markers</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -707,12 +707,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerStyle&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerStyle&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerStyle</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -721,12 +721,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerSize&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerSize&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerSize</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -735,12 +735,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerWeight&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerWeight&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerWeight</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -749,12 +749,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerFillColor&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerFillColor&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerFillColor</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -763,69 +763,69 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;markerOutlineColor&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;markerOutlineColor&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">markerOutlineColor</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 188 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 101 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsEnabled&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsEnabled&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsEnabled</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">289</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsEnabled&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsEnabled&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsEnabled</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 188 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 101 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsDataIdx&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsDataIdx&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsDataIdx</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">289</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsDataIdx&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsDataIdx&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsDataIdx</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 188 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 101 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsAlpha&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsAlpha&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsAlpha</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">289</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsAlpha&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsAlpha&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsAlpha</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 188 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 101 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsModifierExpression&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsModifierExpression&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsModifierExpression</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">289</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;errorBoundsModifierExpression&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;errorBoundsModifierExpression&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">errorBoundsModifierExpression</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
@@ -833,12 +833,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventsEnabled&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventsEnabled&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventsEnabled</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -847,12 +847,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventMarkerStyle&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventMarkerStyle&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventMarkerStyle</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -861,12 +861,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventMarkerSize&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventMarkerSize&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventMarkerSize</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -875,12 +875,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventMarkerWeight&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventMarkerWeight&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventMarkerWeight</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -889,12 +889,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventMarkerFillColor&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventMarkerFillColor&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventMarkerFillColor</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -903,12 +903,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventMarkerOutlineColor&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventMarkerOutlineColor&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventMarkerOutlineColor</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -917,19 +917,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 404 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 289 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">404</td>
+      <td class="linecount partialCoveredLine">289</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;eventTooltipFilterRegex&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">j</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&quot;eventTooltipFilterRegex&quot;</span><span class="p">).</span><span class="n">get_to</span><span class="p">(</span><span class="n">style</span><span class="p">.</span><span class="n">eventTooltipFilterRegex</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">404</td>
+      <td class="linecount coveredLine">289</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

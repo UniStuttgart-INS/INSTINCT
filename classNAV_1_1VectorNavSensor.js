@@ -51,7 +51,7 @@ var classNAV_1_1VectorNavSensor =
     [ "_deltaThetaAndDeltaVelocityConfigurationRegister", "classNAV_1_1VectorNavSensor.html#a6d098ea0862f361abc490a3933d0eadc", null ],
     [ "_dividerFrequency", "classNAV_1_1VectorNavSensor.html#af66d42d6a2cd74c8a4b80705159d7a0f", null ],
     [ "_filterStartupGyroBias", "classNAV_1_1VectorNavSensor.html#a402579092ab591eabd20156ccdde8277", null ],
-    [ "_gnssTimeCounter", "classNAV_1_1VectorNavSensor.html#a088934fa40031212e524bcb6e14b5d06", null ],
+    [ "_gnssTimeCounter", "classNAV_1_1VectorNavSensor.html#a99bf150d8e3a24bdb77d2ed40c6b151b", null ],
     [ "_gpsAntennaOffset", "classNAV_1_1VectorNavSensor.html#abdb338f71ef65ae25ac40ac99c531bc7", null ],
     [ "_gpsCompassBaselineRegister", "classNAV_1_1VectorNavSensor.html#a8c0a7c449b895765147d090ab2def77f", null ],
     [ "_gpsConfigurationRegister", "classNAV_1_1VectorNavSensor.html#a97da985f9764d2d1ea17170efce5367e", null ],

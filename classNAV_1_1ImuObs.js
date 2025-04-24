@@ -14,6 +14,5 @@ var classNAV_1_1ImuObs =
     [ "p_acceleration", "classNAV_1_1ImuObs.html#a09e8e22c0068bf2f3c1fc36f16ff5da1", null ],
     [ "p_angularRate", "classNAV_1_1ImuObs.html#a65aefc8dbbba7614004555315fcec16e", null ],
     [ "p_magneticField", "classNAV_1_1ImuObs.html#afbf713250881369de5b453e4e9e8abfd", null ],
-    [ "temperature", "classNAV_1_1ImuObs.html#a09fb1db7b4ffde3afccebc4c813d2792", null ],
-    [ "timeSinceStartup", "classNAV_1_1ImuObs.html#a9693da29eb4f043afee57cdb5f93dc67", null ]
+    [ "temperature", "classNAV_1_1ImuObs.html#a09fb1db7b4ffde3afccebc4c813d2792", null ]
 ];

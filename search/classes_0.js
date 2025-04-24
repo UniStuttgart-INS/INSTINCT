@@ -11,5 +11,6 @@ var searchData=
   ['arma_8',['ARMA',['../classNAV_1_1experimental_1_1ARMA.html',1,'NAV::experimental']]],
   ['arubasensor_9',['ArubaSensor',['../classNAV_1_1ArubaSensor.html',1,'NAV']]],
   ['atmospheremodels_10',['AtmosphereModels',['../structNAV_1_1AtmosphereModels.html',1,'NAV']]],
-  ['attitudeoutputs_11',['AttitudeOutputs',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html',1,'NAV::vendor::vectornav']]]
+  ['attitudemodel_11',['AttitudeModel',['../classNAV_1_1AttitudeModel.html',1,'NAV']]],
+  ['attitudeoutputs_12',['AttitudeOutputs',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html',1,'NAV::vendor::vectornav']]]
 ];

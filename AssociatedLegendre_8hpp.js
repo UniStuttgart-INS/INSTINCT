@@ -1,4 +1,4 @@
 var AssociatedLegendre_8hpp =
 [
-    [ "associatedLegendre", "AssociatedLegendre_8hpp.html#aefd7d72eb1b237dba33668947657715c", null ]
+    [ "NAV::internal::associatedLegendre", "namespaceNAV_1_1internal.html#aa1c189d3326808f3ffe4b7e482cc717f", null ]
 ];

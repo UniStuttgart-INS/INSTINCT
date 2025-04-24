@@ -32,6 +32,7 @@ var classNAV_1_1ScrollingBuffer =
     [ "max", "classNAV_1_1ScrollingBuffer.html#adc1ff82e7151f31aee96b02b76fc3146", null ],
     [ "min", "classNAV_1_1ScrollingBuffer.html#aac4646d0f7b8009ec1a8533bc1646961", null ],
     [ "offset", "classNAV_1_1ScrollingBuffer.html#a3587dda9ec09602e66d1469f5f83ca9d", null ],
+    [ "pop_back", "classNAV_1_1ScrollingBuffer.html#a16344b4059038e020a87debae36961db", null ],
     [ "pop_front", "classNAV_1_1ScrollingBuffer.html#aacb95c0ab48ac944424f218bb75e57d0", null ],
     [ "push_back", "classNAV_1_1ScrollingBuffer.html#a41a7f5263015aad6ff08855a0b30478b", null ],
     [ "rbegin", "classNAV_1_1ScrollingBuffer.html#a36702432e7672f6e3c167dad0f19e1d4", null ],

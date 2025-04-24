@@ -40,7 +40,7 @@ var classNAV_1_1UlogFile =
     [ "_messageFormats", "classNAV_1_1UlogFile.html#a4373ba619eb2af45332aca674eeebd2e", null ],
     [ "_subscribedMessages", "classNAV_1_1UlogFile.html#a80e7f12682cbe3b65b0ce5e9a844b2e1", null ],
     [ "gnssTime", "classNAV_1_1UlogFile.html#a0c851b1b390f9d398c71645c74ae94a7", null ],
-    [ "lastGnssTime", "classNAV_1_1UlogFile.html#a3aa9492b52387b83de96324c2dccb84d", null ],
+    [ "lastGnssTime", "classNAV_1_1UlogFile.html#a6bd7c957919dfc400af708b137de2b74", null ],
     [ "OUTPUT_PORT_INDEX_IMUOBS_1", "classNAV_1_1UlogFile.html#a46fd36d7a910b99c8a34a3e4011c4092", null ],
     [ "OUTPUT_PORT_INDEX_IMUOBS_2", "classNAV_1_1UlogFile.html#ab113f2623b8964ec4e4149e177bd955a", null ],
     [ "OUTPUT_PORT_INDEX_POSVELATT", "classNAV_1_1UlogFile.html#a3eb637dcf7518c1b3a40eb41c6e20381", null ],

@@ -39,6 +39,6 @@ var classNAV_1_1SPP_1_1KalmanFilter =
     [ "_motionModel", "classNAV_1_1SPP_1_1KalmanFilter.html#a0599b0c0e6bbb2cec060ea43b78c1ebb", null ],
     [ "_receiverClockModel", "classNAV_1_1SPP_1_1KalmanFilter.html#a4bd717eed98deb969ebfc66c52b59e44", null ],
     [ "_systemModelCalcAlgorithm", "classNAV_1_1SPP_1_1KalmanFilter.html#a8cd38854692b23b84708ce37a069147a", null ],
-    [ "PosVelKey", "classNAV_1_1SPP_1_1KalmanFilter.html#ad0412c193a55cbec9e5956acc9d62788", null ],
-    [ "VelKey", "classNAV_1_1SPP_1_1KalmanFilter.html#af3d42bc0504bc3f6644056b89deb2683", null ]
+    [ "PosVelKey", "classNAV_1_1SPP_1_1KalmanFilter.html#a243a792b7d5ebebc2d68cb09d1cd8953", null ],
+    [ "VelKey", "classNAV_1_1SPP_1_1KalmanFilter.html#ab77f207f0056a5e3577f40ea93d24780", null ]
 ];

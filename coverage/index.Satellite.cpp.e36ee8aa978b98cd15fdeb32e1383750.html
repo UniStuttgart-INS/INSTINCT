@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-02-07 16:54:41</td>
+      <td>2025-04-24 11:37:14</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,9 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l46">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 46)</a></td><td>called 8291 times</td><td>92.0%</td></tr>
-    <tr><td><a href="#l49">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#1}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 49)</a></td><td>called 37476 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l58">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#2}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 58)</a></td><td>called 22647 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l46">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 46)</a></td><td>called 8258 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l49">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#1}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 49)</a></td><td>called 37479 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l58">NAV::Satellite::addSatNavData(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)::{lambda(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;)#2}::operator()(std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) const (line 58)</a></td><td>called 22648 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l36">NAV::Satellite::calcClockCorrections(NAV::InsTime const&amp;, double, NAV::Frequency const&amp;) const (line 36)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l16">NAV::Satellite::calcSatellitePos(NAV::InsTime const&amp;) const (line 16)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l21">NAV::Satellite::calcSatellitePosVel(NAV::InsTime const&amp;) const (line 21)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l31">NAV::Satellite::calcSatellitePositionVariance(NAV::InsTime const&amp;) const (line 31)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l66">NAV::Satellite::getNavigationData() const (line 66)</a></td><td>called 21 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l41">NAV::Satellite::isHealthy(NAV::InsTime const&amp;) const (line 41)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l71">NAV::Satellite::searchNavigationData(NAV::InsTime const&amp;) const (line 71)</a></td><td>called 58194 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l71">NAV::Satellite::searchNavigationData(NAV::InsTime const&amp;) const (line 71)</a></td><td>called 48434 times</td><td>92.0%</td></tr>
   </table>
 </details>
 
@@ -413,7 +413,7 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8291</td>
+      <td class="linecount coveredLine">8258</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Satellite</span><span class="o">::</span><span class="n">addSatNavData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">satNavData</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -436,19 +436,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 8291 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 8259 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">8291</td>
+      <td class="linecount partialCoveredLine">8258</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">find_if</span><span class="p">(</span><span class="n">m_navigationData</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">satNavData</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">navData</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">37476</td>
+      <td class="linecount coveredLine">37479</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">navData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">satNavData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -465,11 +465,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 2 taken 4663 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 3628 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 3596 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">8291</td>
+      <td class="linecount coveredLine">8259</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">iter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="c1">// Item with this time does already exist, so we update this item</span></td>
     </tr>
     <tr class="source-line">
@@ -513,19 +513,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 3628 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3596 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3628</td>
+      <td class="linecount partialCoveredLine">3596</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ranges</span><span class="o">::</span><span class="n">find_if</span><span class="p">(</span><span class="n">m_navigationData</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">satNavData</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">navData</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22647</td>
+      <td class="linecount coveredLine">22648</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">navData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">satNavData</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -548,12 +548,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 3628 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 3596 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3628</td>
+      <td class="linecount partialCoveredLine">3596</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">iter</span><span class="p">,</span><span class="w"> </span><span class="n">satNavData</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -567,7 +567,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8291</td>
+      <td class="linecount coveredLine">8259</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -616,7 +616,7 @@
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58194</td>
+      <td class="linecount coveredLine">48434</td>
       <td class="src coveredLine"><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Satellite</span><span class="o">::</span><span class="n">searchNavigationData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InsTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">time</span><span class="p">)</span><span class="w"> </span><span class="k">const</span></td>
     </tr>
     <tr class="source-line">
@@ -633,11 +633,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 58194 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 48434 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">58194</td>
+      <td class="linecount partialCoveredLine">48434</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -651,7 +651,7 @@
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58194</td>
+      <td class="linecount coveredLine">48434</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">prevDiff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="kt">long</span><span class="w"> </span><span class="kt">double</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -672,7 +672,7 @@
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58194</td>
+      <td class="linecount coveredLine">48434</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">riter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">rbegin</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -681,12 +681,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 196297 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 22930 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 186537 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 13170 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">219227</td>
+      <td class="linecount coveredLine">199707</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="n">riter</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">m_navigationData</span><span class="p">.</span><span class="n">rend</span><span class="p">();</span><span class="w"> </span><span class="n">riter</span><span class="o">++</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -702,12 +702,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 196297 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 186537 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">196297</td>
+      <td class="linecount partialCoveredLine">186537</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(((</span><span class="o">*</span><span class="n">riter</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">refTime</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">time</span><span class="p">).</span><span class="n">count</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
@@ -716,12 +716,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 161033 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 151273 times.</div>
             <div class="takenBranch">&check; Branch 1 taken 35264 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">196297</td>
+      <td class="linecount coveredLine">186537</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">diff</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">prevDiff</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -735,7 +735,7 @@
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">161033</td>
+      <td class="linecount coveredLine">151273</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">prevDiff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">diff</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -952,7 +952,7 @@
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58194</td>
+      <td class="linecount coveredLine">48434</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">--</span><span class="n">riter</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

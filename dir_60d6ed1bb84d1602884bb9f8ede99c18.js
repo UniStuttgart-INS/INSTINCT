@@ -1,5 +1,6 @@
 var dir_60d6ed1bb84d1602884bb9f8ede99c18 =
 [
+    [ "Baro", "dir_95607df3c8509bf9934f61bcd1301e0d.html", "dir_95607df3c8509bf9934f61bcd1301e0d" ],
     [ "General", "dir_2b74cbdb1fb0e23061a13ce63af51cbb.html", "dir_2b74cbdb1fb0e23061a13ce63af51cbb" ],
     [ "GNSS", "dir_fb27e4651bc2aee695b6eb7035c62052.html", "dir_fb27e4651bc2aee695b6eb7035c62052" ],
     [ "IMU", "dir_ec0ca0363908da728560a3759d0e599d.html", "dir_ec0ca0363908da728560a3759d0e599d" ],

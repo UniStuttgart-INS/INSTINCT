@@ -1,9 +1,8 @@
 var structNAV_1_1PosVelAttDerivativeConstants =
 [
-    [ "angularRateEarthRotationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#a38a410c3d75691c56c8af8b800f82eb6", null ],
-    [ "angularRateTransportRateCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#ac0637a9a7ad9b9acc5fda7c3d73f4641", null ],
-    [ "centrifgalAccelerationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#a9eeab0843fc14f33c0195b10569d350e", null ],
-    [ "coriolisAccelerationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#a47aca5e55e078a61c2a35974c91d8ae0", null ],
-    [ "gravitationModel", "structNAV_1_1PosVelAttDerivativeConstants.html#a65a1a896151275dde407231352490def", null ],
-    [ "timeDifferenceSec", "structNAV_1_1PosVelAttDerivativeConstants.html#a7ef207848c13c55ab6c1410133d9319b", null ]
+    [ "angularRateEarthRotationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#a9d7d686f79a0e9539e71f6f6147d4bb0", null ],
+    [ "angularRateTransportRateCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#ab1d0f9dbc683ad0e50db24ea0c819183", null ],
+    [ "centrifgalAccelerationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#a7bce2647f2fefeef2fdc6fea2d85a492", null ],
+    [ "coriolisAccelerationCompensationEnabled", "structNAV_1_1PosVelAttDerivativeConstants.html#aec710da6f35a211afb46161d13d130a5", null ],
+    [ "gravitationModel", "structNAV_1_1PosVelAttDerivativeConstants.html#ad7cfb5c09a509811d72e13564962f997", null ]
 ];

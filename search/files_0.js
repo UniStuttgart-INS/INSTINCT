@@ -10,5 +10,6 @@ var searchData=
   ['arubasensor_2ehpp_7',['ArubaSensor.hpp',['../ArubaSensor_8hpp.html',1,'']]],
   ['assert_2eh_8',['Assert.h',['../Assert_8h.html',1,'']]],
   ['associatedlegendre_2ehpp_9',['AssociatedLegendre.hpp',['../AssociatedLegendre_8hpp.html',1,'']]],
-  ['autopilot_5finterface_2ehpp_10',['autopilot_interface.hpp',['../autopilot__interface_8hpp.html',1,'']]]
+  ['attitudemodel_2ehpp_10',['AttitudeModel.hpp',['../AttitudeModel_8hpp.html',1,'']]],
+  ['autopilot_5finterface_2ehpp_11',['autopilot_interface.hpp',['../autopilot__interface_8hpp.html',1,'']]]
 ];

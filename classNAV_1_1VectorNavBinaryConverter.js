@@ -3,6 +3,7 @@ var classNAV_1_1VectorNavBinaryConverter =
     [ "OutputType", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67", [
       [ "ImuObs", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67ae1ae4321732ea2406f0422bf1b4bb9c1", null ],
       [ "ImuObsWDelta", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a032553d6ba6a1921a71763a1ee1b5726", null ],
+      [ "BaroPressObs", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67aa640e3cc9a431b935c1a8dd3a0c66db1", null ],
       [ "PosVelAtt", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a950841c99d24c4239f5c5634ea17c0df", null ],
       [ "GnssObs", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a465c896bb511593ec0a9fed5f8ffcd76", null ],
       [ "COUNT", "classNAV_1_1VectorNavBinaryConverter.html#a48dbe1904d755920718e4bf8dd8dcf67a4905ac9d6a22bdfc1ae096094ce6248d", null ]
@@ -18,6 +19,7 @@ var classNAV_1_1VectorNavBinaryConverter =
     [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html#a151696c0119de6d76ce65a8e80d8eb50", null ],
     [ "VectorNavBinaryConverter", "classNAV_1_1VectorNavBinaryConverter.html#ade4e40363b2806cfbdb7deaef9831fd1", null ],
     [ "category", "classNAV_1_1VectorNavBinaryConverter.html#a611aa44bb7851207408072c5cdb35932", null ],
+    [ "convert2BaroPressObs", "classNAV_1_1VectorNavBinaryConverter.html#a4512efcdd1b447ff944dafb354a28a9c", null ],
     [ "convert2GnssObs", "classNAV_1_1VectorNavBinaryConverter.html#af439493d37745232138b32b438365a01", null ],
     [ "convert2ImuObs", "classNAV_1_1VectorNavBinaryConverter.html#aed57a222e5b8125525ffd328203fa7af", null ],
     [ "convert2ImuObsWDelta", "classNAV_1_1VectorNavBinaryConverter.html#a1947ff45182a348d54921ad050d29448", null ],

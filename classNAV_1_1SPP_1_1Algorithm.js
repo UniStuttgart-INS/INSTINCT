@@ -38,7 +38,7 @@ var classNAV_1_1SPP_1_1Algorithm =
     [ "_obsEstimator", "classNAV_1_1SPP_1_1Algorithm.html#ad0ab0b2e540b2ad23a62b5e9f660dfeb", null ],
     [ "_obsFilter", "classNAV_1_1SPP_1_1Algorithm.html#a70844eb90edc8801099d6c0c4f4d9a4d", null ],
     [ "_receiver", "classNAV_1_1SPP_1_1Algorithm.html#a0cbc49591e96e859498edd0a346a9266", null ],
-    [ "PosKey", "classNAV_1_1SPP_1_1Algorithm.html#ab59fc66751f90963ee025d56192c8ec0", null ],
-    [ "PosVelKey", "classNAV_1_1SPP_1_1Algorithm.html#a237dd748644eea7cf1a105aa888c70e1", null ],
-    [ "VelKey", "classNAV_1_1SPP_1_1Algorithm.html#a5b4d96a82d803046bd06a3509e542180", null ]
+    [ "PosKey", "classNAV_1_1SPP_1_1Algorithm.html#a84e68c669b6b2e9883703b90a58aea89", null ],
+    [ "PosVelKey", "classNAV_1_1SPP_1_1Algorithm.html#ab75108e70cf823efc37b07c1551c0bb3", null ],
+    [ "VelKey", "classNAV_1_1SPP_1_1Algorithm.html#ae1350f647da1f243c783a9db3f24ac68", null ]
 ];

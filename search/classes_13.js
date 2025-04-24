@@ -33,5 +33,7 @@ var searchData=
   ['ulog_5fmessage_5fparameter_5fdefault_5fheader_5fs_30',['ulog_message_parameter_default_header_s',['../structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html',1,'NAV::vendor::pixhawk']]],
   ['ulogfile_31',['UlogFile',['../classNAV_1_1UlogFile.html',1,'NAV']]],
   ['uncertainvalue_32',['UncertainValue',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
-  ['utc_33',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
+  ['uncertainvalue_3c_20double_20_3e_33',['UncertainValue&lt; double &gt;',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
+  ['uncertainvalue_3c_20eigen_3a_3avector3d_20_3e_34',['UncertainValue&lt; Eigen::Vector3d &gt;',['../structNAV_1_1UncertainValue.html',1,'NAV']]],
+  ['utc_35',['UTC',['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html',1,'NAV::vendor::vectornav']]]
 ];

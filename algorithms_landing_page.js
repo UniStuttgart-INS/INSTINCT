@@ -97,8 +97,8 @@ var algorithms_landing_page =
       [ "Kalman-Filter Matrices", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Matrices", [
         [ "State transition matrix 𝚽 & Process noise covariance matrix Q", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q", [
           [ "State transition matrix 𝚽", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi", [
-            [ "Exponential Matrix", "LooselyCoupledKF_e.html#autotoc_md26", null ],
-            [ "Taylor series", "LooselyCoupledKF_e.html#autotoc_md27", null ]
+            [ "Exponential Matrix", "LooselyCoupledKF_e.html#autotoc_md27", null ],
+            [ "Taylor series", "LooselyCoupledKF_e.html#autotoc_md28", null ]
           ] ],
           [ "Process noise covariance matrix Q", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Q", null ],
           [ "Van Loan method", "LooselyCoupledKF_e.html#LooselyCoupledKF_e-KF-Phi-Q-Van-Loan", null ]
@@ -134,8 +134,8 @@ var algorithms_landing_page =
       [ "Kalman-Filter Matrices", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Matrices", [
         [ "State transition matrix 𝚽 & Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q", [
           [ "State transition matrix 𝚽", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi", [
-            [ "Exponential Matrix", "LooselyCoupledKF_n.html#autotoc_md28", null ],
-            [ "Taylor series", "LooselyCoupledKF_n.html#autotoc_md29", null ]
+            [ "Exponential Matrix", "LooselyCoupledKF_n.html#autotoc_md29", null ],
+            [ "Taylor series", "LooselyCoupledKF_n.html#autotoc_md30", null ]
           ] ],
           [ "Process noise covariance matrix Q", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Q", null ],
           [ "Van Loan method", "LooselyCoupledKF_n.html#LooselyCoupledKF_n-KF-Phi-Q-Van-Loan", null ]
