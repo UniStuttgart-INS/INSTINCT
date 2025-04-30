@@ -16,6 +16,7 @@
     #include <imgui_internal.h>
     #include <imgui_node_editor.h>
     #include <imgui_node_editor_internal.h>
+    #include <imgui_canvas.h>
 namespace ed = ax::NodeEditor;
 
     #include <fmt/core.h>
@@ -96,12 +97,12 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         return;
     }
 
-    const float ITEM_WIDTH = 400.0F * NodeEditorApplication::defaultFontRatio();
+    const float ITEM_WIDTH = 200.0F * NodeEditorApplication::defaultFontRatio();
     const float ITEM_WIDTH_HALF = (ITEM_WIDTH - ImGui::GetStyle().ItemInnerSpacing.x) / 2.0F;
 
     ImGui::TextUnformatted("Plot screenshot style: ");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(200.0F * NodeEditorApplication::defaultFontRatio());
+    ImGui::SetNextItemWidth(100.0F * NodeEditorApplication::defaultFontRatio());
     if (widgets::FileDialogLoad(plotScreenshotImPlotStyleFile, "Plot screenshot config file", ".json", { ".json" },
                                 flow::GetConfigPath(), 1, "ImPlotStyleEditorScreenshot"))
     {
@@ -163,6 +164,7 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
                                            editor->GetViewRect().Min.x, editor->GetViewRect().Min.y,
                                            editor->GetViewRect().Max.x, editor->GetViewRect().Max.y)
                                    .c_str());
+
         if (ImGui::Button("Set area to content")) { _screenshotNavigateRect = editor->GetContentBounds(); }
         ImGui::SameLine();
         if (ImGui::Button("Set area to current view"))
@@ -183,6 +185,19 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         {
             editor->NavigateTo(_screenshotNavigateRect, true);
         }
+        ImGui::SameLine();
+
+        static float zoomFactor = editor->GetView().Scale;
+        if (ImGui::Button("Zoom"))
+        {
+            auto targetRect = editor->GetCanvas().CalcViewRect(ImGuiEx::CanvasView(editor->GetView().Origin, zoomFactor));
+            editor->NavigateTo(targetRect, true, 0.15F);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(ITEM_WIDTH_HALF / 2.F);
+        ImGui::InputFloat("##Zoom Factor", &zoomFactor);
+        ImGui::SameLine();
+        ImGui::TextUnformatted(fmt::format("Current: {:.3f}", editor->GetView().Scale).c_str());
 
         ImGui::TreePop();
     }
