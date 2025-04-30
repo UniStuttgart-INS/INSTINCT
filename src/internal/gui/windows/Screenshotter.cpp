@@ -97,12 +97,12 @@ void NAV::gui::windows::ShowScreenshotter(bool* show /* = nullptr*/)
         return;
     }
 
-    const float ITEM_WIDTH = 200.0F * NodeEditorApplication::defaultFontRatio();
+    const float ITEM_WIDTH = 200.0F * NodeEditorApplication::windowFontRatio();
     const float ITEM_WIDTH_HALF = (ITEM_WIDTH - ImGui::GetStyle().ItemInnerSpacing.x) / 2.0F;
 
     ImGui::TextUnformatted("Plot screenshot style: ");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(100.0F * NodeEditorApplication::defaultFontRatio());
+    ImGui::SetNextItemWidth(100.0F * NodeEditorApplication::windowFontRatio());
     if (widgets::FileDialogLoad(plotScreenshotImPlotStyleFile, "Plot screenshot config file", ".json", { ".json" },
                                 flow::GetConfigPath(), 1, "ImPlotStyleEditorScreenshot"))
     {

@@ -107,17 +107,21 @@ void NAV::gui::NodeEditorApplication::OnStart()
     };
 
     m_Editor = ed::CreateEditor(&config);
+    LOG_DATA("Editor created");
     ed::SetCurrentEditor(m_Editor);
+    LOG_DATA("Editor set as current");
 
     ImGui::GetStyle().FrameRounding = 4.0F;
     ed::GetStyle().FlowDuration = 1.0F;
 
     ImPlot::CreateContext();
+    LOG_DATA("Context created");
     ImPlot::GetStyle().Use24HourClock = true;
 
     imPlotReferenceStyle = ImPlot::GetStyle();
 
     std::filesystem::path imPlotConfigFilepath = flow::GetConfigPath();
+    LOG_DATA("Config path found: {}", imPlotConfigFilepath);
     if (std::filesystem::path inputPath{ ConfigManager::Get<std::string>("implot-config") };
         inputPath.is_relative())
     {
@@ -143,6 +147,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
             j.at("implot").at("style").get_to(ImPlot::GetStyle());
         }
     }
+    LOG_DATA("Config read");
 
     // Add custom colormap and set as default. ConfigManager::LoadGlobalSettings then overrides this default selection if it is saved
     ImPlotContext& gp = *ImPlot::GetCurrentContext();
@@ -164,8 +169,10 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ImPlot::BustItemCache();
     gp.Style.Colormap = gp.ColormapData.Count - 1;
     ImPlot::BustItemCache();
+    LOG_DATA("Colormap created");
 
     ConfigManager::LoadGlobalSettings();
+    LOG_DATA("Global settings loaded");
 
     auto fs = cmrc::instinct::get_filesystem();
 
@@ -336,6 +343,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
     {
         m_RoseFigure = LoadTexture("resources/images/Rose-rhodonea-curve-7x9-chart-improved.jpg");
     }
+    LOG_DATA("Finished NodeEditorApplication OnStart()");
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()

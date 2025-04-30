@@ -307,7 +307,7 @@ void NAV::FlowExecutor::execute()
     {
         auto finish = std::chrono::steady_clock::now();
         [[maybe_unused]] std::chrono::duration<double> elapsed = finish - _startTime;
-        LOG_INFO("Elapsed time: {} s", elapsed.count());
+        LOG_INFO("Elapsed time: {:.2f} s", elapsed.count());
     }
 
     _activeNodes = 0;
