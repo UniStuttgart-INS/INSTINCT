@@ -2,20 +2,6 @@
     "bottomViewHeight": 200.0,
     "colormaps": [],
     "commonLog": {
-        "originPosition": {
-            "frame": "LLA",
-            "position": {
-                "0": {
-                    "0": 2.9086740704441076e-18
-                },
-                "1": {
-                    "0": 0.004491576411396717
-                },
-                "2": {
-                    "0": 0.019598199178490924
-                }
-            }
-        },
         "useGuiInputs": false
     },
     "fonts": {
@@ -33,6 +19,16 @@
     },
     "lightMode": false,
     "links": {
+        "link-113": {
+            "endPinId": 112,
+            "id": 113,
+            "startPinId": 6
+        },
+        "link-114": {
+            "endPinId": 111,
+            "id": 114,
+            "startPinId": 72
+        },
         "link-16": {
             "endPinId": 10,
             "id": 16,
@@ -73,11 +69,6 @@
             "id": 75,
             "startPinId": 6
         },
-        "link-78": {
-            "endPinId": 35,
-            "id": 78,
-            "startPinId": 72
-        },
         "link-8": {
             "endPinId": 2,
             "id": 8,
@@ -102,11 +93,6 @@
             "endPinId": 87,
             "id": 88,
             "startPinId": 81
-        },
-        "link-89": {
-            "endPinId": 55,
-            "id": 89,
-            "startPinId": 72
         }
     },
     "nodes": {
@@ -810,6 +796,15 @@
                                 "displayName": "Accelerometer bias b_Z [m/s^2]"
                             },
                             {
+                                "displayName": "Accelerometer bias b_X StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z StdDev [m/s^2]"
+                            },
+                            {
                                 "displayName": "Gyroscope bias b_X [rad/s]"
                             },
                             {
@@ -817,6 +812,15 @@
                             },
                             {
                                 "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z StdDev [rad/s]"
                             },
                             {
                                 "displayName": "Barometric height bias [m]"
@@ -2123,6 +2127,9 @@
                 "barometricHeightMeasurementUncertainty": 1.0,
                 "barometricHeightMeasurementUncertaintyUnit": 1,
                 "checkKalmanMatricesRanks": true,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
                 "enableBaroHgt": false,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
@@ -2151,8 +2158,10 @@
                 "gnssMeasurementUncertaintyVelocityOverride": true,
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
                 "inertialIntegrator": {
+                    "accelerationsAreAveragedMeasurements": true,
                     "integrationAlgorithm": 3,
                     "integrationFrame": 1,
+                    "lockIntegrationFrame": false,
                     "posVelAttDerivativeConstants": {
                         "angularRateEarthRotationCompensationEnabled": true,
                         "angularRateTransportRateCompensationEnabled": true,
@@ -2261,14 +2270,14 @@
                 "qCalculationAlgorithm": 0,
                 "randomProcessAccel": 0,
                 "randomProcessGyro": 0,
-                "stdevAccelBiasUnits": 1,
-                "stdevAccelNoiseUnits": 1,
+                "stdevAccelBiasUnits": "µg",
+                "stdevAccelNoiseUnits": "mg/√(Hz)",
                 "stdevBaroHeightBias": 1e-06,
                 "stdevBaroHeightBiasUnits": 0,
                 "stdevBaroHeightScale": 1e-08,
                 "stdevBaroHeightScaleUnits": 0,
-                "stdevGyroBiasUnits": 0,
-                "stdevGyroNoiseUnits": 1,
+                "stdevGyroBiasUnits": "°/h",
+                "stdevGyroNoiseUnits": "deg/hr/√(Hz)",
                 "stdev_bad": {
                     "0": {
                         "0": 1e-06
@@ -2344,12 +2353,12 @@
                     "name": "ImuObs"
                 },
                 {
-                    "id": 35,
-                    "name": "PosVel"
+                    "id": 112,
+                    "name": "Init PVA"
                 },
                 {
-                    "id": 55,
-                    "name": "Init PVA"
+                    "id": 111,
+                    "name": "PosVel"
                 }
             ],
             "kind": "Blueprint",
@@ -2373,8 +2382,10 @@
         "node-4": {
             "data": {
                 "inertialIntegrator": {
+                    "accelerationsAreAveragedMeasurements": true,
                     "integrationAlgorithm": 3,
                     "integrationFrame": 1,
+                    "lockIntegrationFrame": false,
                     "posVelAttDerivativeConstants": {
                         "angularRateEarthRotationCompensationEnabled": true,
                         "angularRateTransportRateCompensationEnabled": true,
@@ -2689,7 +2700,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -2700,57 +2711,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },

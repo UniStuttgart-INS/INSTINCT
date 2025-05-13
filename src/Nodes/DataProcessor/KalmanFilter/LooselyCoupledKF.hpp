@@ -16,6 +16,7 @@
 
 #include <cstdint>
 #include "internal/Node/Node.hpp"
+#include "internal/gui/widgets/DynamicInputPins.hpp"
 
 #include "Navigation/INS/Units.hpp"
 #include "Navigation/Time/InsTime.hpp"
@@ -119,8 +120,7 @@ class LooselyCoupledKF : public Node
 
   private:
     constexpr static size_t INPUT_PORT_INDEX_IMU = 0;              ///< @brief Flow (ImuObs)
-    constexpr static size_t INPUT_PORT_INDEX_GNSS = 1;             ///< @brief Flow (PosVel)
-    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 2; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t INPUT_PORT_INDEX_POS_VEL_ATT_INIT = 1; ///< @brief Flow (PosVelAtt)
     constexpr static size_t OUTPUT_PORT_INDEX_SOLUTION = 0;        ///< @brief Flow (InsGnssLCKFSolution)
 
     /// @brief Initialize the node
@@ -128,6 +128,10 @@ class LooselyCoupledKF : public Node
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// @brief Checks wether there is an input pin with the same time
+    /// @param[in] insTime Time to check
+    bool hasInputPinWithSameTime(const InsTime& insTime) const;
 
     /// @brief Invoke the callback with a PosVelAtt solution (without LCKF specific output)
     /// @param[in] posVelAtt PosVelAtt solution
@@ -166,9 +170,6 @@ class LooselyCoupledKF : public Node
     /// @brief Updates the predicted state from the InertialNavSol with the Baro observation
     /// @param[in] baroHgtObs Barometric height measurement triggering the update
     void looselyCoupledUpdate(const std::shared_ptr<const BaroHgt>& baroHgtObs);
-
-    /// Add or remove input pins for external PVA init and Baro
-    void updateInputPins();
 
     /// @brief Sets the covariance matrix P of the LCKF (and does the necessary unit conversions)
     /// @param[in] lckfSolution LCKF solution from prediction or update
@@ -547,6 +548,25 @@ class LooselyCoupledKF : public Node
     };
     /// GUI option for the Q calculation algorithm
     QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Taylor1;
+
+    // ###########################################################################################################
+    //                                             Dynamic Input Pins
+    // ###########################################################################################################
+    //
+    /// @brief Function to call to add a new pin
+    /// @param[in, out] node Pointer to this node
+    static void pinAddCallback(Node* node);
+    /// @brief Function to call to delete a pin
+    /// @param[in, out] node Pointer to this node
+    /// @param[in] pinIdx Input pin index to delete
+    static void pinDeleteCallback(Node* node, size_t pinIdx);
+
+    /// Update the input pins depending on the GUI
+    void updateInputPins();
+
+    /// @brief Dynamic input pins
+    /// @attention This should always be the last variable in the header, because it accesses others through the function callbacks
+    gui::widgets::DynamicInputPins _dynamicInputPins{ 1, this, pinAddCallback, pinDeleteCallback };
 
     // ###########################################################################################################
     //                                                Prediction

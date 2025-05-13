@@ -67,13 +67,9 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
             return !inputPin.queue.empty() && lckf->_inertialIntegrator.hasInitialPosition();
         },
         1); // Priority 1 ensures, that the IMU obs (prediction) is evaluated before the PosVel obs (update)
-    nm::CreateInputPin(
-        this, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvPosVelObservation,
-        [](const Node* node, const InputPin& inputPin) {
-            const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
-            return !inputPin.queue.empty() && (!lckf->_initializeStateOverExternalPin || lckf->_inertialIntegrator.hasInitialPosition());
-        },
-        2); // Initially this has higher priority than the IMU obs, to initialize the position from it
+
+    _dynamicInputPins.addPin(this); // PosVel
+    updateInputPins();
 
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::InsGnssLCKFSolution::type() });
 }
@@ -109,10 +105,12 @@ void NAV::LooselyCoupledKF::updateInputPins()
         {
             nm::CreateInputPin(this, pinName, pinType, dataIdentifier, callback,
                                firable, priority, static_cast<int>(pinIdx));
+            _dynamicInputPins.setFirstDynamicPinIdx(_dynamicInputPins.getFirstDynamicPinIdx() + 1);
         }
         else if (pinExists && !enabled)
         {
             nm::DeleteInputPin(inputPins.at(pinIdx));
+            _dynamicInputPins.setFirstDynamicPinIdx(_dynamicInputPins.getFirstDynamicPinIdx() - 1);
         }
         if (enabled) { pinIdx++; }
     };
@@ -121,6 +119,27 @@ void NAV::LooselyCoupledKF::updateInputPins()
               "Init PVA", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvPosVelAttInit, nullptr, 3);
     updatePin(std::ranges::any_of(inputPins, [](const InputPin& pin) { return pin.dataIdentifier.front() == BaroHgt::type(); }), _enableBaroHgt,
               "BaroHgt", Pin::Type::Flow, { NAV::BaroHgt::type() }, &LooselyCoupledKF::recvBaroHeight, nullptr, -1);
+
+    if (std::ranges::count_if(inputPins, [](const InputPin& pin) { return pin.dataIdentifier.front() == PosVel::type(); }) == 0)
+    {
+        _dynamicInputPins.addPin(this); // PosVel
+    }
+}
+
+void NAV::LooselyCoupledKF::pinAddCallback(Node* node)
+{
+    nm::CreateInputPin(
+        node, "PosVel", Pin::Type::Flow, { NAV::PosVel::type() }, &LooselyCoupledKF::recvPosVelObservation,
+        [](const Node* node, const InputPin& inputPin) {
+            const auto* lckf = static_cast<const LooselyCoupledKF*>(node); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
+            return !inputPin.queue.empty() && (!lckf->_initializeStateOverExternalPin || lckf->_inertialIntegrator.hasInitialPosition());
+        },
+        2); // Initially this has higher priority than the IMU obs, to initialize the position from it
+}
+
+void NAV::LooselyCoupledKF::pinDeleteCallback(Node* node, size_t pinIdx)
+{
+    nm::DeleteInputPin(node->inputPins.at(pinIdx));
 }
 
 void NAV::LooselyCoupledKF::guiConfig()
@@ -129,6 +148,11 @@ void NAV::LooselyCoupledKF::guiConfig()
     float unitWidth = 150.0F * gui::NodeEditorApplication::windowFontRatio();
 
     float taylorOrderWidth = 75.0F * gui::NodeEditorApplication::windowFontRatio();
+
+    if (_dynamicInputPins.ShowGuiWidgets(size_t(id), inputPins, this))
+    {
+        flow::ApplyChanges();
+    }
 
     if (ImGui::CollapsingHeader(fmt::format("Initialization##{}", size_t(id)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
     {
@@ -603,6 +627,7 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     json j;
 
+    j["dynamicInputPins"] = _dynamicInputPins;
     j["inertialIntegrator"] = _inertialIntegrator;
     j["preferAccelerationOverDeltaMeasurements"] = _preferAccelerationOverDeltaMeasurements;
     j["initalRollPitchYaw"] = _initalRollPitchYaw;
@@ -670,6 +695,11 @@ void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
+    if (j.contains("dynamicInputPins"))
+    {
+        gui::widgets::from_json(j.at("dynamicInputPins"), _dynamicInputPins, this);
+        updateInputPins();
+    }
     if (j.contains("inertialIntegrator"))
     {
         j.at("inertialIntegrator").get_to(_inertialIntegrator);
@@ -893,7 +923,10 @@ bool NAV::LooselyCoupledKF::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    inputPins[INPUT_PORT_INDEX_GNSS].priority = 2; // PosVel used for initialization
+    for (size_t i = _dynamicInputPins.getFirstDynamicPinIdx(); i < _dynamicInputPins.getFirstDynamicPinIdx() + _dynamicInputPins.getNumberOfDynamicPins(); i++)
+    {
+        inputPins.at(i).priority = 2; // PosVel used for initialization
+    }
 
     _inertialIntegrator.reset();
     _lastImuObs = nullptr;
@@ -1054,6 +1087,13 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
+bool NAV::LooselyCoupledKF::hasInputPinWithSameTime(const InsTime& insTime) const
+{
+    return std::ranges::any_of(inputPins, [&insTime](const InputPin& pin) {
+        return pin.dataIdentifier.front() == PosVel::type() && !pin.queue.empty() && pin.queue.front()->insTime == insTime;
+    });
+}
+
 void NAV::LooselyCoupledKF::invokeCallbackWithPosVelAtt(const PosVelAtt& posVelAtt)
 {
     auto lckfSolution = std::make_shared<InsGnssLCKFSolution>();
@@ -1151,8 +1191,8 @@ void NAV::LooselyCoupledKF::recvImuObservation(InputPin::NodeDataQueue& queue, s
         LOG_DATA("{}:   e_position   = {}", nameId(), inertialNavSol->e_position().transpose());
         LOG_DATA("{}:   e_velocity   = {}", nameId(), inertialNavSol->e_velocity().transpose());
         LOG_DATA("{}:   rollPitchYaw = {}", nameId(), rad2deg(inertialNavSol->rollPitchYaw()).transpose());
-        if (const auto& q = inputPins.at(INPUT_PORT_INDEX_GNSS).queue;
-            q.empty() || q.front()->insTime != nodeData->insTime)
+
+        if (!hasInputPinWithSameTime(nodeData->insTime))
         {
             LOG_DATA("{}: [{}] Sending out predicted solution", nameId(), inertialNavSol->insTime.toYMDHMS(GPST));
             invokeCallbackWithPosVelAtt(*inertialNavSol);
@@ -1167,7 +1207,10 @@ void NAV::LooselyCoupledKF::recvPosVelObservation(InputPin::NodeDataQueue& queue
 
     if (!_initializeStateOverExternalPin && !_inertialIntegrator.hasInitialPosition())
     {
-        inputPins[INPUT_PORT_INDEX_GNSS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+        for (size_t i = _dynamicInputPins.getFirstDynamicPinIdx(); i < _dynamicInputPins.getFirstDynamicPinIdx() + _dynamicInputPins.getNumberOfDynamicPins(); i++)
+        {
+            inputPins.at(i).priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+        }
 
         PosVelAtt posVelAtt;
         posVelAtt.insTime = obs->insTime;
@@ -1228,12 +1271,15 @@ void NAV::LooselyCoupledKF::recvBaroHeight([[maybe_unused]] InputPin::NodeDataQu
 void NAV::LooselyCoupledKF::recvPosVelAttInit(InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
     auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(queue.extract_front());
-    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queueBlocked = true;
-    inputPins[INPUT_PORT_INDEX_POS_VEL_ATT_INIT].queue.clear();
+    inputPins.at(INPUT_PORT_INDEX_POS_VEL_ATT_INIT).queueBlocked = true;
+    inputPins.at(INPUT_PORT_INDEX_POS_VEL_ATT_INIT).queue.clear();
 
     LOG_DATA("{}: recvPosVelAttInit at time [{}]", nameId(), posVelAtt->insTime.toYMDHMS());
 
-    inputPins[INPUT_PORT_INDEX_GNSS].priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+    for (size_t i = _dynamicInputPins.getFirstDynamicPinIdx(); i < _dynamicInputPins.getFirstDynamicPinIdx() + _dynamicInputPins.getNumberOfDynamicPins(); i++)
+    {
+        inputPins.at(i).priority = 0; // IMU obs (prediction) should be evaluated before the PosVel obs (update)
+    }
     _externalInitTime = posVelAtt->insTime;
 
     _inertialIntegrator.setInitialState(*posVelAtt, nameId().c_str());

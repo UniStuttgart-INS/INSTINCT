@@ -39,14 +39,14 @@
             "id": 41,
             "startPinId": 14
         },
-        "link-42": {
-            "endPinId": 8,
-            "id": 42,
+        "link-46": {
+            "endPinId": 45,
+            "id": 46,
             "startPinId": 14
         },
-        "link-43": {
-            "endPinId": 19,
-            "id": 43,
+        "link-47": {
+            "endPinId": 44,
+            "id": 47,
             "startPinId": 14
         },
         "link-6": {
@@ -58,7 +58,14 @@
     "nodes": {
         "node-10": {
             "data": {
+                "baroHeightMeasurementUncertaintyOverride": false,
+                "barometricHeightMeasurementUncertainty": 1.0,
+                "barometricHeightMeasurementUncertaintyUnit": 1,
                 "checkKalmanMatricesRanks": true,
+                "dynamicInputPins": {
+                    "nDynamicInputPins": 1
+                },
+                "enableBaroHgt": false,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
                         "0": 0.3
@@ -86,8 +93,10 @@
                 "gnssMeasurementUncertaintyVelocityOverride": false,
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
                 "inertialIntegrator": {
+                    "accelerationsAreAveragedMeasurements": true,
                     "integrationAlgorithm": 3,
                     "integrationFrame": 1,
+                    "lockIntegrationFrame": false,
                     "posVelAttDerivativeConstants": {
                         "angularRateEarthRotationCompensationEnabled": true,
                         "angularRateTransportRateCompensationEnabled": true,
@@ -156,6 +165,8 @@
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
+                "initCovarianceBiasHeight": 100.0,
+                "initCovarianceBiasHeightUnit": 0,
                 "initCovariancePosition": {
                     "0": {
                         "0": 100.0
@@ -168,6 +179,8 @@
                     }
                 },
                 "initCovariancePositionUnit": 3,
+                "initCovarianceScaleHeight": 0.01,
+                "initCovarianceScaleHeightUnit": 0,
                 "initCovarianceVelocity": {
                     "0": {
                         "0": 10.0
@@ -192,10 +205,14 @@
                 "qCalculationAlgorithm": 0,
                 "randomProcessAccel": 0,
                 "randomProcessGyro": 0,
-                "stdevAccelBiasUnits": 0,
-                "stdevAccelNoiseUnits": 0,
-                "stdevGyroBiasUnits": 0,
-                "stdevGyroNoiseUnits": 0,
+                "stdevAccelBiasUnits": "µg",
+                "stdevAccelNoiseUnits": "mg/√(Hz)",
+                "stdevBaroHeightBias": 1e-06,
+                "stdevBaroHeightBiasUnits": 0,
+                "stdevBaroHeightScale": 1e-08,
+                "stdevBaroHeightScaleUnits": 0,
+                "stdevGyroBiasUnits": "°/h",
+                "stdevGyroNoiseUnits": "deg/hr/√(Hz)",
                 "stdev_bad": {
                     "0": {
                         "0": 10.0
@@ -271,12 +288,12 @@
                     "name": "ImuObsIn"
                 },
                 {
-                    "id": 8,
-                    "name": "PosVel"
+                    "id": 45,
+                    "name": "Init PVA"
                 },
                 {
-                    "id": 19,
-                    "name": "Init PVA"
+                    "id": 44,
+                    "name": "PosVel"
                 }
             ],
             "kind": "Blueprint",
@@ -304,7 +321,7 @@
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -315,57 +332,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -443,7 +410,7 @@
                 },
                 "Imu": {
                     "imuPos": {
-                        "b_positionAccel": {
+                        "b_positionIMU_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -454,57 +421,7 @@
                                 "0": 0.0
                             }
                         },
-                        "b_positionGyro": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_positionMag": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "b_quatAccel_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatGyro_p": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "b_quatMag_p": {
+                        "b_quat_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -690,73 +607,88 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_X [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_X StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Y StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Accelerometer bias b_Z StdDev [m/s^2]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_X StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Y StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Gyroscope bias b_Z StdDev [rad/s]"
+                            },
+                            {
+                                "displayName": "Barometric height bias [m]"
+                            },
+                            {
+                                "displayName": "Barometric height bias StdDev [m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale [m/m]"
+                            },
+                            {
+                                "displayName": "Barometric height scale StdDev [m/m]"
+                            },
+                            {
                                 "displayName": "Quaternion::w"
-                            },
-                            {
-                                "displayName": "Quaternion::x"
-                            },
-                            {
-                                "displayName": "Quaternion::y"
-                            },
-                            {
-                                "displayName": "Quaternion::z"
-                            },
-                            {
-                                "displayName": "KF State Roll error [deg]"
-                            },
-                            {
-                                "displayName": "KF State Pitch error [deg]"
-                            },
-                            {
-                                "displayName": "KF State Yaw error [deg]"
-                            },
-                            {
-                                "displayName": "KF State Position North error [deg]"
-                            },
-                            {
-                                "displayName": "KF State Position East error [deg]"
-                            },
-                            {
-                                "displayName": "KF State Position Down error [m]"
-                            },
-                            {
-                                "displayName": "KF State Velocity North error [m/s]"
-                            },
-                            {
-                                "displayName": "KF State Velocity East error [m/s]"
-                            },
-                            {
-                                "displayName": "KF State Velocity Down error [m/s]"
-                            },
-                            {
-                                "displayName": "KF State Alpha_eb [deg]"
-                            },
-                            {
-                                "displayName": "KF State Beta_eb [deg]"
-                            },
-                            {
-                                "displayName": "KF State Gamma_eb [deg]"
-                            },
-                            {
-                                "displayName": "KF State Position ECEF X error [m]"
-                            },
-                            {
-                                "displayName": "KF State Position ECEF Y error [m]"
-                            },
-                            {
-                                "displayName": "KF State Position ECEF Z error [m]"
-                            },
-                            {
-                                "displayName": "KF State Velocity ECEF X error [m/s]"
-                            },
-                            {
-                                "displayName": "KF State Velocity ECEF Y error [m/s]"
-                            },
-                            {
-                                "displayName": "KF State Velocity ECEF Z error [m/s]"
-                            },
-                            {
-                                "displayName": "Roll error [deg]"
                             }
                         ],
                         "size": 0,
@@ -902,16 +834,40 @@
                                 "displayName": "Yaw [deg]"
                             },
                             {
+                                "displayName": "Roll StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Pitch StdDev [deg]"
+                            },
+                            {
+                                "displayName": "Yaw StdDev [deg]"
+                            },
+                            {
+                                "displayName": "n_Quat_b x"
+                            },
+                            {
+                                "displayName": "n_Quat_b y"
+                            },
+                            {
+                                "displayName": "n_Quat_b z"
+                            },
+                            {
+                                "displayName": "n_Quat_b w"
+                            },
+                            {
+                                "displayName": "n_Quat_b x StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b y StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b z StdDev"
+                            },
+                            {
+                                "displayName": "n_Quat_b w StdDev"
+                            },
+                            {
                                 "displayName": "Quaternion::w"
-                            },
-                            {
-                                "displayName": "Quaternion::x"
-                            },
-                            {
-                                "displayName": "Quaternion::y"
-                            },
-                            {
-                                "displayName": "Quaternion::z"
                             }
                         ],
                         "size": 0,

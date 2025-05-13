@@ -118,15 +118,15 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
             messageCounter_LCKF_ImuObs++;
         });
 
-        // INS/GNSS LCKF (10) |> Init PVA (19)
-        nm::RegisterWatcherCallbackToInputPin(19, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
+        // INS/GNSS LCKF (10) |> Init PVA (45)
+        nm::RegisterWatcherCallbackToInputPin(45, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& /* queue */, size_t /* pinIdx */) {
             LOG_DEBUG("Init PVA [{}]: ImuObsIn: {}", messageCounter_LCKF_InitPVA, node->inputPins[0].queue.size());
             LOG_DEBUG("Init PVA [{}]: PosVel:   {}", messageCounter_LCKF_InitPVA, node->inputPins[1].queue.size());
             messageCounter_LCKF_InitPVA++;
         });
 
-        // INS/GNSS LCKF (10) |> PosVel (8)
-        nm::RegisterWatcherCallbackToInputPin(8, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
+        // INS/GNSS LCKF (10) |> PosVel (44)
+        nm::RegisterWatcherCallbackToInputPin(44, [&]([[maybe_unused]] const Node* node, const InputPin::NodeDataQueue& queue, size_t /* pinIdx */) {
             LOG_DEBUG("PosVel   [{}]: ImuObsIn: {}", messageCounter_LCKF_PosVel, node->inputPins[0].queue.size());
             LOG_DEBUG("PosVel   [{}]: PosVel:   {}", messageCounter_LCKF_PosVel, node->inputPins[1].queue.size());
             messageCounter_LCKF_PosVel++;
@@ -171,8 +171,8 @@ void testLCKFwithImuFile(const char* imuFilePath, size_t MESSAGE_COUNT_GNSS, siz
         // VectorNavFile - IMU (2)           VectorNavBinaryConverter (5)
         //    (1) Binary Output |> --(6)-->  |> Binary Input (4)    (3) ImuObsWDelta |> \         INS/GNSS LCKF (10)                           Plot (26)
         //                                                                               \(36)--> |> ImuObsIn (7)   (9) PosVelAtt |> --(27)--> |> LCKF (21)
-        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(42)--> |> PosVel (8)                               -|> VectorNav (37)
-        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(43)--> |> Init PVA (19)                           /
+        // VectorNavFile - GNSS (13)            VectorNavBinaryConverter (16)           /-(46)--> |> Init PVA (45)                            -|> VectorNav (37)
+        //     (12) Binary Output |> --(17)-->  |> Binary Input (15)  (14) PosVelAtt |> --(47)--> |> PosVel (44)                             /
         //                                                                              \---------------------------(41)--------------------/
         //
         // ###########################################################################################################
