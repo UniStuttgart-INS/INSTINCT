@@ -206,33 +206,36 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         vendor::espressif::decryptWiFiObs(obs, packet, nameId());
         if (_syncInPin && inputPins.at(INPUT_PORT_INDEX_SYNC_IN).isPinLinked())
         {
-            auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);
-            if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
+            if (auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);
+                timeSyncMaster && !timeSyncMaster->v->ppsTime.empty())
             {
-                _syncOutCntCorr = 0;
-                _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+                if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
+                {
+                    _syncOutCntCorr = 0;
+                    _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+                }
+                else if (_lastSyncOutCnt > timeSyncMaster->v->syncOutCnt) // reset of the master
+                {
+                    _syncInCntCorr = 0;
+                    _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+                }
+                else if (_lastSyncOutCnt == 0 && timeSyncMaster->v->syncOutCnt > 1) // slave counter started later
+                {
+                    _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
+                }
+                else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
+                {
+                    _syncOutCntCorr = obs->timeOutputs.syncInCnt;
+                }
+                _lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
+                _lastSyncInCnt = obs->timeOutputs.syncInCnt;
+                int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->v->syncOutCnt - _syncOutCntCorr;
+                obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
+                               + std::chrono::seconds(syncCntDiff);
+                // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
+                //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+                //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
             }
-            else if (_lastSyncOutCnt > timeSyncMaster->v->syncOutCnt) // reset of the master
-            {
-                _syncInCntCorr = 0;
-                _syncOutCntCorr = obs->timeOutputs.syncInCnt;
-            }
-            else if (_lastSyncOutCnt == 0 && timeSyncMaster->v->syncOutCnt > 1) // slave counter started later
-            {
-                _syncInCntCorr = timeSyncMaster->v->syncOutCnt;
-            }
-            else if (_lastSyncOutCnt == 0 && obs->timeOutputs.syncInCnt > 1) // master counter started later
-            {
-                _syncOutCntCorr = obs->timeOutputs.syncInCnt;
-            }
-            _lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
-            _lastSyncInCnt = obs->timeOutputs.syncInCnt;
-            int64_t syncCntDiff = obs->timeOutputs.syncInCnt + _syncInCntCorr - timeSyncMaster->v->syncOutCnt - _syncOutCntCorr;
-            obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::microseconds(obs->timeOutputs.timeSyncIn)
-                           + std::chrono::seconds(syncCntDiff);
-            // LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}, syncInCntCorr {}, syncOutCntCorr {}",
-            //          nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
-            //          timeSyncMaster->syncOutCnt, obs->timeOutputs.syncInCnt, syncCntDiff, _syncInCntCorr, _syncOutCntCorr);
         }
         convertedData = obs;
     }
