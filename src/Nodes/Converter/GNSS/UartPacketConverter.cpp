@@ -204,9 +204,9 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         auto packet = uartPacket->raw;
 
         vendor::espressif::decryptWiFiObs(obs, packet, nameId());
-        if (_syncInPin && inputPins.at(1).isPinLinked())
+        if (_syncInPin && inputPins.at(INPUT_PORT_INDEX_SYNC_IN).isPinLinked())
         {
-            auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(0);
+            auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);
             if (_lastSyncInCnt > obs->timeOutputs.syncInCnt) // reset of the slave
             {
                 _syncOutCntCorr = 0;
