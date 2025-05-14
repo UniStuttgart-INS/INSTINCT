@@ -1277,287 +1277,303 @@ class VectorNavBinaryOutput : public NodeData
     [[nodiscard]] std::optional<double> getDynamicDataAt(const std::string& descriptor) const override
     {
         // Group 2 (Time)
-        if (descriptor == "Time::TimeStartup [ns]") { return static_cast<double>(timeOutputs->timeStartup); }
-        if (descriptor == "Time::TimeGps [ns]") { return static_cast<double>(timeOutputs->timeGps); }
-        if (descriptor == "Time::GpsTow [ns]") { return static_cast<double>(timeOutputs->gpsTow); }
-        if (descriptor == "Time::GpsWeek") { return static_cast<double>(timeOutputs->gpsWeek); }
-        if (descriptor == "Time::TimeSyncIn [ns]") { return static_cast<double>(timeOutputs->timeSyncIn); }
-        if (descriptor == "Time::TimeGpsPps [ns]") { return static_cast<double>(timeOutputs->timePPS); }
-        if (descriptor == "Time::TimeUTC::year") { return static_cast<double>(timeOutputs->timeUtc.year); }
-        if (descriptor == "Time::TimeUTC::month") { return static_cast<double>(timeOutputs->timeUtc.month); }
-        if (descriptor == "Time::TimeUTC::day") { return static_cast<double>(timeOutputs->timeUtc.day); }
-        if (descriptor == "Time::TimeUTC::hour") { return static_cast<double>(timeOutputs->timeUtc.hour); }
-        if (descriptor == "Time::TimeUTC::min") { return static_cast<double>(timeOutputs->timeUtc.min); }
-        if (descriptor == "Time::TimeUTC::sec") { return static_cast<double>(timeOutputs->timeUtc.sec); }
-        if (descriptor == "Time::TimeUTC::ms") { return static_cast<double>(timeOutputs->timeUtc.ms); }
-        if (descriptor == "Time::SyncInCnt") { return static_cast<double>(timeOutputs->syncInCnt); }
-        if (descriptor == "Time::SyncOutCnt") { return static_cast<double>(timeOutputs->syncOutCnt); }
-        if (descriptor == "Time::TimeStatus::timeOk") { return static_cast<double>(timeOutputs->timeStatus.timeOk()); }
-        if (descriptor == "Time::TimeStatus::dateOk") { return static_cast<double>(timeOutputs->timeStatus.dateOk()); }
-        if (descriptor == "Time::TimeStatus::utcTimeValid") { return static_cast<double>(timeOutputs->timeStatus.utcTimeValid()); }
-        // Group 3 (IMU)
-        if (descriptor == "IMU::ImuStatus") { return static_cast<double>(imuOutputs->imuStatus); }
-        if (descriptor == "IMU::UncompMag::X [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(0)); }
-        if (descriptor == "IMU::UncompMag::Y [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(1)); }
-        if (descriptor == "IMU::UncompMag::Z [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(2)); }
-        if (descriptor == "IMU::UncompAccel::X [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(0)); }
-        if (descriptor == "IMU::UncompAccel::Y [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(1)); }
-        if (descriptor == "IMU::UncompAccel::Z [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(2)); }
-        if (descriptor == "IMU::UncompGyro::X [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(0)); }
-        if (descriptor == "IMU::UncompGyro::Y [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(1)); }
-        if (descriptor == "IMU::UncompGyro::Z [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(2)); }
-        if (descriptor == "IMU::Temp [Celsius]") { return static_cast<double>(imuOutputs->temp); }
-        if (descriptor == "IMU::Pres [kPa]") { return static_cast<double>(imuOutputs->pres); }
-        if (descriptor == "IMU::DeltaTime [s]") { return static_cast<double>(imuOutputs->deltaTime); }
-        if (descriptor == "IMU::DeltaTheta::X [deg]") { return static_cast<double>(imuOutputs->deltaTheta(0)); }
-        if (descriptor == "IMU::DeltaTheta::Y [deg]") { return static_cast<double>(imuOutputs->deltaTheta(1)); }
-        if (descriptor == "IMU::DeltaTheta::Z [deg]") { return static_cast<double>(imuOutputs->deltaTheta(2)); }
-        if (descriptor == "IMU::DeltaVel::X [m/s]") { return static_cast<double>(imuOutputs->deltaV(0)); }
-        if (descriptor == "IMU::DeltaVel::Y [m/s]") { return static_cast<double>(imuOutputs->deltaV(1)); }
-        if (descriptor == "IMU::DeltaVel::Z [m/s]") { return static_cast<double>(imuOutputs->deltaV(2)); }
-        if (descriptor == "IMU::Mag::X [Gauss]") { return static_cast<double>(imuOutputs->mag(0)); }
-        if (descriptor == "IMU::Mag::Y [Gauss]") { return static_cast<double>(imuOutputs->mag(1)); }
-        if (descriptor == "IMU::Mag::Z [Gauss]") { return static_cast<double>(imuOutputs->mag(2)); }
-        if (descriptor == "IMU::Accel::X [m/s^2]") { return static_cast<double>(imuOutputs->accel(0)); }
-        if (descriptor == "IMU::Accel::Y [m/s^2]") { return static_cast<double>(imuOutputs->accel(1)); }
-        if (descriptor == "IMU::Accel::Z [m/s^2]") { return static_cast<double>(imuOutputs->accel(2)); }
-        if (descriptor == "IMU::AngularRate::X [rad/s]") { return static_cast<double>(imuOutputs->angularRate(0)); }
-        if (descriptor == "IMU::AngularRate::Y [rad/s]") { return static_cast<double>(imuOutputs->angularRate(1)); }
-        if (descriptor == "IMU::AngularRate::Z [rad/s]") { return static_cast<double>(imuOutputs->angularRate(2)); }
-        // Group 4 (GNSS1)
-        if (descriptor == "GNSS1::UTC::year") { return static_cast<double>(gnss1Outputs->timeUtc.year); }
-        if (descriptor == "GNSS1::UTC::month") { return static_cast<double>(gnss1Outputs->timeUtc.month); }
-        if (descriptor == "GNSS1::UTC::day") { return static_cast<double>(gnss1Outputs->timeUtc.day); }
-        if (descriptor == "GNSS1::UTC::hour") { return static_cast<double>(gnss1Outputs->timeUtc.hour); }
-        if (descriptor == "GNSS1::UTC::min") { return static_cast<double>(gnss1Outputs->timeUtc.min); }
-        if (descriptor == "GNSS1::UTC::sec") { return static_cast<double>(gnss1Outputs->timeUtc.sec); }
-        if (descriptor == "GNSS1::UTC::ms") { return static_cast<double>(gnss1Outputs->timeUtc.ms); }
-        if (descriptor == "GNSS1::Tow [ns]") { return static_cast<double>(gnss1Outputs->tow); }
-        if (descriptor == "GNSS1::Week") { return static_cast<double>(gnss1Outputs->week); }
-        if (descriptor == "GNSS1::NumSats") { return static_cast<double>(gnss1Outputs->numSats); }
-        if (descriptor == "GNSS1::Fix") { return static_cast<double>(gnss1Outputs->fix); }
-        if (descriptor == "GNSS1::PosLla::latitude [deg]") { return static_cast<double>(gnss1Outputs->posLla(0)); }
-        if (descriptor == "GNSS1::PosLla::longitude [deg]") { return static_cast<double>(gnss1Outputs->posLla(1)); }
-        if (descriptor == "GNSS1::PosLla::altitude [m]") { return static_cast<double>(gnss1Outputs->posLla(2)); }
-        if (descriptor == "GNSS1::PosEcef::X [m]") { return static_cast<double>(gnss1Outputs->posEcef(0)); }
-        if (descriptor == "GNSS1::PosEcef::Y [m]") { return static_cast<double>(gnss1Outputs->posEcef(1)); }
-        if (descriptor == "GNSS1::PosEcef::Z [m]") { return static_cast<double>(gnss1Outputs->posEcef(2)); }
-        if (descriptor == "GNSS1::VelNed::N [m/s]") { return static_cast<double>(gnss1Outputs->velNed(0)); }
-        if (descriptor == "GNSS1::VelNed::E [m/s]") { return static_cast<double>(gnss1Outputs->velNed(1)); }
-        if (descriptor == "GNSS1::VelNed::D [m/s]") { return static_cast<double>(gnss1Outputs->velNed(2)); }
-        if (descriptor == "GNSS1::VelEcef::X [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(0)); }
-        if (descriptor == "GNSS1::VelEcef::Y [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(1)); }
-        if (descriptor == "GNSS1::VelEcef::Z [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(2)); }
-        if (descriptor == "GNSS1::PosU::N [m]") { return static_cast<double>(gnss1Outputs->posU(0)); }
-        if (descriptor == "GNSS1::PosU::E [m]") { return static_cast<double>(gnss1Outputs->posU(1)); }
-        if (descriptor == "GNSS1::PosU::D [m]") { return static_cast<double>(gnss1Outputs->posU(2)); }
-        if (descriptor == "GNSS1::VelU [m/s]") { return static_cast<double>(gnss1Outputs->velU); }
-        if (descriptor == "GNSS1::TimeU [s]") { return static_cast<double>(gnss1Outputs->timeU); }
-        if (descriptor == "GNSS1::TimeInfo::Status::timeOk") { return static_cast<double>(gnss1Outputs->timeInfo.status.timeOk()); }
-        if (descriptor == "GNSS1::TimeInfo::Status::dateOk") { return static_cast<double>(gnss1Outputs->timeInfo.status.dateOk()); }
-        if (descriptor == "GNSS1::TimeInfo::Status::utcTimeValid") { return static_cast<double>(gnss1Outputs->timeInfo.status.utcTimeValid()); }
-        if (descriptor == "GNSS1::TimeInfo::LeapSeconds") { return static_cast<double>(gnss1Outputs->timeInfo.leapSeconds); }
-        if (descriptor == "GNSS1::DOP::g") { return static_cast<double>(gnss1Outputs->dop.gDop); }
-        if (descriptor == "GNSS1::DOP::p") { return static_cast<double>(gnss1Outputs->dop.pDop); }
-        if (descriptor == "GNSS1::DOP::t") { return static_cast<double>(gnss1Outputs->dop.tDop); }
-        if (descriptor == "GNSS1::DOP::v") { return static_cast<double>(gnss1Outputs->dop.vDop); }
-        if (descriptor == "GNSS1::DOP::h") { return static_cast<double>(gnss1Outputs->dop.hDop); }
-        if (descriptor == "GNSS1::DOP::n") { return static_cast<double>(gnss1Outputs->dop.nDop); }
-        if (descriptor == "GNSS1::DOP::e") { return static_cast<double>(gnss1Outputs->dop.eDop); }
-        if (descriptor == "GNSS1::SatInfo::NumSats") { return static_cast<double>(gnss1Outputs->satInfo.numSats); }
-        for (auto& satellite : gnss1Outputs->satInfo.satellites)
+        if (timeOutputs)
         {
-            SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Healthy", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Almanac", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Ephemeris", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag DifferentialCorrection", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag UsedForNavigation", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag AzimuthElevationValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag UsedForRTK", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - qi", satId)) { return static_cast<double>(satellite.qi); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - el", satId)) { return static_cast<double>(satellite.el); }
-            if (descriptor == fmt::format("GNSS1::SatInfo::{} - az", satId)) { return static_cast<double>(satellite.az); }
+            if (descriptor == "Time::TimeStartup [ns]") { return static_cast<double>(timeOutputs->timeStartup); }
+            if (descriptor == "Time::TimeGps [ns]") { return static_cast<double>(timeOutputs->timeGps); }
+            if (descriptor == "Time::GpsTow [ns]") { return static_cast<double>(timeOutputs->gpsTow); }
+            if (descriptor == "Time::GpsWeek") { return static_cast<double>(timeOutputs->gpsWeek); }
+            if (descriptor == "Time::TimeSyncIn [ns]") { return static_cast<double>(timeOutputs->timeSyncIn); }
+            if (descriptor == "Time::TimeGpsPps [ns]") { return static_cast<double>(timeOutputs->timePPS); }
+            if (descriptor == "Time::TimeUTC::year") { return static_cast<double>(timeOutputs->timeUtc.year); }
+            if (descriptor == "Time::TimeUTC::month") { return static_cast<double>(timeOutputs->timeUtc.month); }
+            if (descriptor == "Time::TimeUTC::day") { return static_cast<double>(timeOutputs->timeUtc.day); }
+            if (descriptor == "Time::TimeUTC::hour") { return static_cast<double>(timeOutputs->timeUtc.hour); }
+            if (descriptor == "Time::TimeUTC::min") { return static_cast<double>(timeOutputs->timeUtc.min); }
+            if (descriptor == "Time::TimeUTC::sec") { return static_cast<double>(timeOutputs->timeUtc.sec); }
+            if (descriptor == "Time::TimeUTC::ms") { return static_cast<double>(timeOutputs->timeUtc.ms); }
+            if (descriptor == "Time::SyncInCnt") { return static_cast<double>(timeOutputs->syncInCnt); }
+            if (descriptor == "Time::SyncOutCnt") { return static_cast<double>(timeOutputs->syncOutCnt); }
+            if (descriptor == "Time::TimeStatus::timeOk") { return static_cast<double>(timeOutputs->timeStatus.timeOk()); }
+            if (descriptor == "Time::TimeStatus::dateOk") { return static_cast<double>(timeOutputs->timeStatus.dateOk()); }
+            if (descriptor == "Time::TimeStatus::utcTimeValid") { return static_cast<double>(timeOutputs->timeStatus.utcTimeValid()); }
         }
-        if (descriptor == "GNSS1::RawMeas::Tow [s]") { return gnss1Outputs->raw.tow; }
-        if (descriptor == "GNSS1::RawMeas::Week") { return static_cast<double>(gnss1Outputs->raw.week); }
-        if (descriptor == "GNSS1::RawMeas::NumSats") { return static_cast<double>(gnss1Outputs->raw.numSats); }
-        for (auto& satellite : gnss1Outputs->raw.satellites)
+        // Group 3 (IMU)
+        if (imuOutputs)
         {
-            SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - freq", satId)) { return static_cast<double>(satellite.freq); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - chan", satId)) { return static_cast<double>(satellite.chan); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - slot", satId)) { return static_cast<double>(satellite.slot); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag Searching", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag Tracking", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag TimeValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag CodeLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfAmbiguity", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfSub", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseSlip", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PseudorangeSmoothed", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - pr", satId)) { return satellite.pr; }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - cp", satId)) { return satellite.cp; }
-            if (descriptor == fmt::format("GNSS1::RawMeas::{} - dp", satId)) { return static_cast<double>(satellite.dp); }
+            if (descriptor == "IMU::ImuStatus") { return static_cast<double>(imuOutputs->imuStatus); }
+            if (descriptor == "IMU::UncompMag::X [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(0)); }
+            if (descriptor == "IMU::UncompMag::Y [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(1)); }
+            if (descriptor == "IMU::UncompMag::Z [Gauss]") { return static_cast<double>(imuOutputs->uncompMag(2)); }
+            if (descriptor == "IMU::UncompAccel::X [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(0)); }
+            if (descriptor == "IMU::UncompAccel::Y [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(1)); }
+            if (descriptor == "IMU::UncompAccel::Z [m/s^2]") { return static_cast<double>(imuOutputs->uncompAccel(2)); }
+            if (descriptor == "IMU::UncompGyro::X [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(0)); }
+            if (descriptor == "IMU::UncompGyro::Y [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(1)); }
+            if (descriptor == "IMU::UncompGyro::Z [rad/s]") { return static_cast<double>(imuOutputs->uncompGyro(2)); }
+            if (descriptor == "IMU::Temp [Celsius]") { return static_cast<double>(imuOutputs->temp); }
+            if (descriptor == "IMU::Pres [kPa]") { return static_cast<double>(imuOutputs->pres); }
+            if (descriptor == "IMU::DeltaTime [s]") { return static_cast<double>(imuOutputs->deltaTime); }
+            if (descriptor == "IMU::DeltaTheta::X [deg]") { return static_cast<double>(imuOutputs->deltaTheta(0)); }
+            if (descriptor == "IMU::DeltaTheta::Y [deg]") { return static_cast<double>(imuOutputs->deltaTheta(1)); }
+            if (descriptor == "IMU::DeltaTheta::Z [deg]") { return static_cast<double>(imuOutputs->deltaTheta(2)); }
+            if (descriptor == "IMU::DeltaVel::X [m/s]") { return static_cast<double>(imuOutputs->deltaV(0)); }
+            if (descriptor == "IMU::DeltaVel::Y [m/s]") { return static_cast<double>(imuOutputs->deltaV(1)); }
+            if (descriptor == "IMU::DeltaVel::Z [m/s]") { return static_cast<double>(imuOutputs->deltaV(2)); }
+            if (descriptor == "IMU::Mag::X [Gauss]") { return static_cast<double>(imuOutputs->mag(0)); }
+            if (descriptor == "IMU::Mag::Y [Gauss]") { return static_cast<double>(imuOutputs->mag(1)); }
+            if (descriptor == "IMU::Mag::Z [Gauss]") { return static_cast<double>(imuOutputs->mag(2)); }
+            if (descriptor == "IMU::Accel::X [m/s^2]") { return static_cast<double>(imuOutputs->accel(0)); }
+            if (descriptor == "IMU::Accel::Y [m/s^2]") { return static_cast<double>(imuOutputs->accel(1)); }
+            if (descriptor == "IMU::Accel::Z [m/s^2]") { return static_cast<double>(imuOutputs->accel(2)); }
+            if (descriptor == "IMU::AngularRate::X [rad/s]") { return static_cast<double>(imuOutputs->angularRate(0)); }
+            if (descriptor == "IMU::AngularRate::Y [rad/s]") { return static_cast<double>(imuOutputs->angularRate(1)); }
+            if (descriptor == "IMU::AngularRate::Z [rad/s]") { return static_cast<double>(imuOutputs->angularRate(2)); }
+        }
+        // Group 4 (GNSS1)
+        if (gnss1Outputs)
+        {
+            if (descriptor == "GNSS1::UTC::year") { return static_cast<double>(gnss1Outputs->timeUtc.year); }
+            if (descriptor == "GNSS1::UTC::month") { return static_cast<double>(gnss1Outputs->timeUtc.month); }
+            if (descriptor == "GNSS1::UTC::day") { return static_cast<double>(gnss1Outputs->timeUtc.day); }
+            if (descriptor == "GNSS1::UTC::hour") { return static_cast<double>(gnss1Outputs->timeUtc.hour); }
+            if (descriptor == "GNSS1::UTC::min") { return static_cast<double>(gnss1Outputs->timeUtc.min); }
+            if (descriptor == "GNSS1::UTC::sec") { return static_cast<double>(gnss1Outputs->timeUtc.sec); }
+            if (descriptor == "GNSS1::UTC::ms") { return static_cast<double>(gnss1Outputs->timeUtc.ms); }
+            if (descriptor == "GNSS1::Tow [ns]") { return static_cast<double>(gnss1Outputs->tow); }
+            if (descriptor == "GNSS1::Week") { return static_cast<double>(gnss1Outputs->week); }
+            if (descriptor == "GNSS1::NumSats") { return static_cast<double>(gnss1Outputs->numSats); }
+            if (descriptor == "GNSS1::Fix") { return static_cast<double>(gnss1Outputs->fix); }
+            if (descriptor == "GNSS1::PosLla::latitude [deg]") { return static_cast<double>(gnss1Outputs->posLla(0)); }
+            if (descriptor == "GNSS1::PosLla::longitude [deg]") { return static_cast<double>(gnss1Outputs->posLla(1)); }
+            if (descriptor == "GNSS1::PosLla::altitude [m]") { return static_cast<double>(gnss1Outputs->posLla(2)); }
+            if (descriptor == "GNSS1::PosEcef::X [m]") { return static_cast<double>(gnss1Outputs->posEcef(0)); }
+            if (descriptor == "GNSS1::PosEcef::Y [m]") { return static_cast<double>(gnss1Outputs->posEcef(1)); }
+            if (descriptor == "GNSS1::PosEcef::Z [m]") { return static_cast<double>(gnss1Outputs->posEcef(2)); }
+            if (descriptor == "GNSS1::VelNed::N [m/s]") { return static_cast<double>(gnss1Outputs->velNed(0)); }
+            if (descriptor == "GNSS1::VelNed::E [m/s]") { return static_cast<double>(gnss1Outputs->velNed(1)); }
+            if (descriptor == "GNSS1::VelNed::D [m/s]") { return static_cast<double>(gnss1Outputs->velNed(2)); }
+            if (descriptor == "GNSS1::VelEcef::X [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(0)); }
+            if (descriptor == "GNSS1::VelEcef::Y [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(1)); }
+            if (descriptor == "GNSS1::VelEcef::Z [m/s]") { return static_cast<double>(gnss1Outputs->velEcef(2)); }
+            if (descriptor == "GNSS1::PosU::N [m]") { return static_cast<double>(gnss1Outputs->posU(0)); }
+            if (descriptor == "GNSS1::PosU::E [m]") { return static_cast<double>(gnss1Outputs->posU(1)); }
+            if (descriptor == "GNSS1::PosU::D [m]") { return static_cast<double>(gnss1Outputs->posU(2)); }
+            if (descriptor == "GNSS1::VelU [m/s]") { return static_cast<double>(gnss1Outputs->velU); }
+            if (descriptor == "GNSS1::TimeU [s]") { return static_cast<double>(gnss1Outputs->timeU); }
+            if (descriptor == "GNSS1::TimeInfo::Status::timeOk") { return static_cast<double>(gnss1Outputs->timeInfo.status.timeOk()); }
+            if (descriptor == "GNSS1::TimeInfo::Status::dateOk") { return static_cast<double>(gnss1Outputs->timeInfo.status.dateOk()); }
+            if (descriptor == "GNSS1::TimeInfo::Status::utcTimeValid") { return static_cast<double>(gnss1Outputs->timeInfo.status.utcTimeValid()); }
+            if (descriptor == "GNSS1::TimeInfo::LeapSeconds") { return static_cast<double>(gnss1Outputs->timeInfo.leapSeconds); }
+            if (descriptor == "GNSS1::DOP::g") { return static_cast<double>(gnss1Outputs->dop.gDop); }
+            if (descriptor == "GNSS1::DOP::p") { return static_cast<double>(gnss1Outputs->dop.pDop); }
+            if (descriptor == "GNSS1::DOP::t") { return static_cast<double>(gnss1Outputs->dop.tDop); }
+            if (descriptor == "GNSS1::DOP::v") { return static_cast<double>(gnss1Outputs->dop.vDop); }
+            if (descriptor == "GNSS1::DOP::h") { return static_cast<double>(gnss1Outputs->dop.hDop); }
+            if (descriptor == "GNSS1::DOP::n") { return static_cast<double>(gnss1Outputs->dop.nDop); }
+            if (descriptor == "GNSS1::DOP::e") { return static_cast<double>(gnss1Outputs->dop.eDop); }
+            if (descriptor == "GNSS1::SatInfo::NumSats") { return static_cast<double>(gnss1Outputs->satInfo.numSats); }
+            for (auto& satellite : gnss1Outputs->satInfo.satellites)
+            {
+                SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Healthy", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Almanac", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag Ephemeris", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag DifferentialCorrection", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag UsedForNavigation", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag AzimuthElevationValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - flag UsedForRTK", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - qi", satId)) { return static_cast<double>(satellite.qi); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - el", satId)) { return static_cast<double>(satellite.el); }
+                if (descriptor == fmt::format("GNSS1::SatInfo::{} - az", satId)) { return static_cast<double>(satellite.az); }
+            }
+            if (descriptor == "GNSS1::RawMeas::Tow [s]") { return gnss1Outputs->raw.tow; }
+            if (descriptor == "GNSS1::RawMeas::Week") { return static_cast<double>(gnss1Outputs->raw.week); }
+            if (descriptor == "GNSS1::RawMeas::NumSats") { return static_cast<double>(gnss1Outputs->raw.numSats); }
+            for (auto& satellite : gnss1Outputs->raw.satellites)
+            {
+                SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - freq", satId)) { return static_cast<double>(satellite.freq); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - chan", satId)) { return static_cast<double>(satellite.chan); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - slot", satId)) { return static_cast<double>(satellite.slot); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag Searching", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag Tracking", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag TimeValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag CodeLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfAmbiguity", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfSub", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PhaseSlip", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - flag PseudorangeSmoothed", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - pr", satId)) { return satellite.pr; }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - cp", satId)) { return satellite.cp; }
+                if (descriptor == fmt::format("GNSS1::RawMeas::{} - dp", satId)) { return static_cast<double>(satellite.dp); }
+            }
         }
         // Group 5 (Attitude)
-        if (descriptor == "Att::VpeStatus::AttitudeQuality") { return static_cast<double>(attitudeOutputs->vpeStatus.attitudeQuality()); }
-        if (descriptor == "Att::VpeStatus::GyroSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.gyroSaturation()); }
-        if (descriptor == "Att::VpeStatus::GyroSaturationRecovery") { return static_cast<double>(attitudeOutputs->vpeStatus.gyroSaturationRecovery()); }
-        if (descriptor == "Att::VpeStatus::MagDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.magDisturbance()); }
-        if (descriptor == "Att::VpeStatus::MagSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.magSaturation()); }
-        if (descriptor == "Att::VpeStatus::AccDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.accDisturbance()); }
-        if (descriptor == "Att::VpeStatus::AccSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.accSaturation()); }
-        if (descriptor == "Att::VpeStatus::KnownMagDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.knownMagDisturbance()); }
-        if (descriptor == "Att::VpeStatus::KnownAccelDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.knownAccelDisturbance()); }
-        if (descriptor == "Att::YawPitchRoll::Y [deg]") { return static_cast<double>(attitudeOutputs->ypr(0)); }
-        if (descriptor == "Att::YawPitchRoll::P [deg]") { return static_cast<double>(attitudeOutputs->ypr(1)); }
-        if (descriptor == "Att::YawPitchRoll::R [deg]") { return static_cast<double>(attitudeOutputs->ypr(2)); }
-        if (descriptor == "Att::Quaternion::w") { return static_cast<double>(attitudeOutputs->qtn.w()); }
-        if (descriptor == "Att::Quaternion::x") { return static_cast<double>(attitudeOutputs->qtn.x()); }
-        if (descriptor == "Att::Quaternion::y") { return static_cast<double>(attitudeOutputs->qtn.y()); }
-        if (descriptor == "Att::Quaternion::z") { return static_cast<double>(attitudeOutputs->qtn.z()); }
-        if (descriptor == "Att::DCM::0-0") { return static_cast<double>(attitudeOutputs->dcm(0, 0)); }
-        if (descriptor == "Att::DCM::0-1") { return static_cast<double>(attitudeOutputs->dcm(0, 1)); }
-        if (descriptor == "Att::DCM::0-2") { return static_cast<double>(attitudeOutputs->dcm(0, 2)); }
-        if (descriptor == "Att::DCM::1-0") { return static_cast<double>(attitudeOutputs->dcm(1, 0)); }
-        if (descriptor == "Att::DCM::1-1") { return static_cast<double>(attitudeOutputs->dcm(1, 1)); }
-        if (descriptor == "Att::DCM::1-2") { return static_cast<double>(attitudeOutputs->dcm(1, 2)); }
-        if (descriptor == "Att::DCM::2-0") { return static_cast<double>(attitudeOutputs->dcm(2, 0)); }
-        if (descriptor == "Att::DCM::2-1") { return static_cast<double>(attitudeOutputs->dcm(2, 1)); }
-        if (descriptor == "Att::DCM::2-2") { return static_cast<double>(attitudeOutputs->dcm(2, 2)); }
-        if (descriptor == "Att::MagNed::N [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(0)); }
-        if (descriptor == "Att::MagNed::E [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(1)); }
-        if (descriptor == "Att::MagNed::D [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(2)); }
-        if (descriptor == "Att::AccelNed::N [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(0)); }
-        if (descriptor == "Att::AccelNed::E [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(1)); }
-        if (descriptor == "Att::AccelNed::D [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(2)); }
-        if (descriptor == "Att::LinearAccelBody::X [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(0)); }
-        if (descriptor == "Att::LinearAccelBody::Y [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(1)); }
-        if (descriptor == "Att::LinearAccelBody::Z [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(2)); }
-        if (descriptor == "Att::LinearAccelNed::N [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(0)); }
-        if (descriptor == "Att::LinearAccelNed::E [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(1)); }
-        if (descriptor == "Att::LinearAccelNed::D [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(2)); }
-        if (descriptor == "Att::YprU::Y [deg]") { return static_cast<double>(attitudeOutputs->yprU(0)); }
-        if (descriptor == "Att::YprU::P [deg]") { return static_cast<double>(attitudeOutputs->yprU(1)); }
-        if (descriptor == "Att::YprU::R [deg]") { return static_cast<double>(attitudeOutputs->yprU(2)); }
-
-        // Group 6 (INS)
-        if (descriptor == "INS::InsStatus::Mode") { return static_cast<double>(insOutputs->insStatus.mode()); }
-        if (descriptor == "INS::InsStatus::GpsFix") { return static_cast<double>(insOutputs->insStatus.gpsFix()); }
-        if (descriptor == "INS::InsStatus::Error::IMU") { return static_cast<double>(insOutputs->insStatus.errorIMU()); }
-        if (descriptor == "INS::InsStatus::Error::MagPres") { return static_cast<double>(insOutputs->insStatus.errorMagPres()); }
-        if (descriptor == "INS::InsStatus::Error::GNSS") { return static_cast<double>(insOutputs->insStatus.errorGnss()); }
-        if (descriptor == "INS::InsStatus::GpsHeadingIns") { return static_cast<double>(insOutputs->insStatus.gpsHeadingIns()); }
-        if (descriptor == "INS::InsStatus::GpsCompass") { return static_cast<double>(insOutputs->insStatus.gpsCompass()); }
-        if (descriptor == "INS::PosLla::latitude [deg]") { return static_cast<double>(insOutputs->posLla(0)); }
-        if (descriptor == "INS::PosLla::longitude [deg]") { return static_cast<double>(insOutputs->posLla(1)); }
-        if (descriptor == "INS::PosLla::altitude [m]") { return static_cast<double>(insOutputs->posLla(2)); }
-        if (descriptor == "INS::PosEcef::X [m]") { return static_cast<double>(insOutputs->posEcef(0)); }
-        if (descriptor == "INS::PosEcef::Y [m]") { return static_cast<double>(insOutputs->posEcef(1)); }
-        if (descriptor == "INS::PosEcef::Z [m]") { return static_cast<double>(insOutputs->posEcef(2)); }
-        if (descriptor == "INS::VelBody::X [m/s]") { return static_cast<double>(insOutputs->velBody(0)); }
-        if (descriptor == "INS::VelBody::Y [m/s]") { return static_cast<double>(insOutputs->velBody(1)); }
-        if (descriptor == "INS::VelBody::Z [m/s]") { return static_cast<double>(insOutputs->velBody(2)); }
-        if (descriptor == "INS::VelNed::N [m/s]") { return static_cast<double>(insOutputs->velNed(0)); }
-        if (descriptor == "INS::VelNed::E [m/s]") { return static_cast<double>(insOutputs->velNed(1)); }
-        if (descriptor == "INS::VelNed::D [m/s]") { return static_cast<double>(insOutputs->velNed(2)); }
-        if (descriptor == "INS::VelEcef::X [m/s]") { return static_cast<double>(insOutputs->velEcef(0)); }
-        if (descriptor == "INS::VelEcef::Y [m/s]") { return static_cast<double>(insOutputs->velEcef(1)); }
-        if (descriptor == "INS::VelEcef::Z [m/s]") { return static_cast<double>(insOutputs->velEcef(2)); }
-        if (descriptor == "INS::MagEcef::X [Gauss]") { return static_cast<double>(insOutputs->magEcef(0)); }
-        if (descriptor == "INS::MagEcef::Y [Gauss]") { return static_cast<double>(insOutputs->magEcef(1)); }
-        if (descriptor == "INS::MagEcef::Z [Gauss]") { return static_cast<double>(insOutputs->magEcef(2)); }
-        if (descriptor == "INS::AccelEcef::X [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(0)); }
-        if (descriptor == "INS::AccelEcef::Y [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(1)); }
-        if (descriptor == "INS::AccelEcef::Z [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(2)); }
-        if (descriptor == "INS::LinearAccelEcef::X [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(0)); }
-        if (descriptor == "INS::LinearAccelEcef::Y [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(1)); }
-        if (descriptor == "INS::LinearAccelEcef::Z [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(2)); }
-        if (descriptor == "INS::PosU [m]") { return static_cast<double>(insOutputs->posU); }
-        if (descriptor == "INS::VelU [m/s]") { return static_cast<double>(insOutputs->velU); }
-
-        // Group 7 (GNSS2)
-        if (descriptor == "GNSS2::UTC::year") { return static_cast<double>(gnss2Outputs->timeUtc.year); }
-        if (descriptor == "GNSS2::UTC::month") { return static_cast<double>(gnss2Outputs->timeUtc.month); }
-        if (descriptor == "GNSS2::UTC::day") { return static_cast<double>(gnss2Outputs->timeUtc.day); }
-        if (descriptor == "GNSS2::UTC::hour") { return static_cast<double>(gnss2Outputs->timeUtc.hour); }
-        if (descriptor == "GNSS2::UTC::min") { return static_cast<double>(gnss2Outputs->timeUtc.min); }
-        if (descriptor == "GNSS2::UTC::sec") { return static_cast<double>(gnss2Outputs->timeUtc.sec); }
-        if (descriptor == "GNSS2::UTC::ms") { return static_cast<double>(gnss2Outputs->timeUtc.ms); }
-        if (descriptor == "GNSS2::Tow [ns]") { return static_cast<double>(gnss2Outputs->tow); }
-        if (descriptor == "GNSS2::Week") { return static_cast<double>(gnss2Outputs->week); }
-        if (descriptor == "GNSS2::NumSats") { return static_cast<double>(gnss2Outputs->numSats); }
-        if (descriptor == "GNSS2::Fix") { return static_cast<double>(gnss2Outputs->fix); }
-        if (descriptor == "GNSS2::PosLla::latitude [deg]") { return static_cast<double>(gnss2Outputs->posLla(0)); }
-        if (descriptor == "GNSS2::PosLla::longitude [deg]") { return static_cast<double>(gnss2Outputs->posLla(1)); }
-        if (descriptor == "GNSS2::PosLla::altitude [m]") { return static_cast<double>(gnss2Outputs->posLla(2)); }
-        if (descriptor == "GNSS2::PosEcef::X [m]") { return static_cast<double>(gnss2Outputs->posEcef(0)); }
-        if (descriptor == "GNSS2::PosEcef::Y [m]") { return static_cast<double>(gnss2Outputs->posEcef(1)); }
-        if (descriptor == "GNSS2::PosEcef::Z [m]") { return static_cast<double>(gnss2Outputs->posEcef(2)); }
-        if (descriptor == "GNSS2::VelNed::N [m/s]") { return static_cast<double>(gnss2Outputs->velNed(0)); }
-        if (descriptor == "GNSS2::VelNed::E [m/s]") { return static_cast<double>(gnss2Outputs->velNed(1)); }
-        if (descriptor == "GNSS2::VelNed::D [m/s]") { return static_cast<double>(gnss2Outputs->velNed(2)); }
-        if (descriptor == "GNSS2::VelEcef::X [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(0)); }
-        if (descriptor == "GNSS2::VelEcef::Y [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(1)); }
-        if (descriptor == "GNSS2::VelEcef::Z [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(2)); }
-        if (descriptor == "GNSS2::PosU::N [m]") { return static_cast<double>(gnss2Outputs->posU(0)); }
-        if (descriptor == "GNSS2::PosU::E [m]") { return static_cast<double>(gnss2Outputs->posU(1)); }
-        if (descriptor == "GNSS2::PosU::D [m]") { return static_cast<double>(gnss2Outputs->posU(2)); }
-        if (descriptor == "GNSS2::VelU [m/s]") { return static_cast<double>(gnss2Outputs->velU); }
-        if (descriptor == "GNSS2::TimeU [s]") { return static_cast<double>(gnss2Outputs->timeU); }
-        if (descriptor == "GNSS2::TimeInfo::Status::timeOk") { return static_cast<double>(gnss2Outputs->timeInfo.status.timeOk()); }
-        if (descriptor == "GNSS2::TimeInfo::Status::dateOk") { return static_cast<double>(gnss2Outputs->timeInfo.status.dateOk()); }
-        if (descriptor == "GNSS2::TimeInfo::Status::utcTimeValid") { return static_cast<double>(gnss2Outputs->timeInfo.status.utcTimeValid()); }
-        if (descriptor == "GNSS2::TimeInfo::LeapSeconds") { return static_cast<double>(gnss2Outputs->timeInfo.leapSeconds); }
-        if (descriptor == "GNSS2::DOP::g") { return static_cast<double>(gnss2Outputs->dop.gDop); }
-        if (descriptor == "GNSS2::DOP::p") { return static_cast<double>(gnss2Outputs->dop.pDop); }
-        if (descriptor == "GNSS2::DOP::t") { return static_cast<double>(gnss2Outputs->dop.tDop); }
-        if (descriptor == "GNSS2::DOP::v") { return static_cast<double>(gnss2Outputs->dop.vDop); }
-        if (descriptor == "GNSS2::DOP::h") { return static_cast<double>(gnss2Outputs->dop.hDop); }
-        if (descriptor == "GNSS2::DOP::n") { return static_cast<double>(gnss2Outputs->dop.nDop); }
-        if (descriptor == "GNSS2::DOP::e") { return static_cast<double>(gnss2Outputs->dop.eDop); }
-        if (descriptor == "GNSS2::SatInfo::NumSats") { return static_cast<double>(gnss2Outputs->satInfo.numSats); }
-        for (auto& satellite : gnss2Outputs->satInfo.satellites)
+        if (attitudeOutputs)
         {
-            SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Healthy", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Almanac", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Ephemeris", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag DifferentialCorrection", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag UsedForNavigation", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag AzimuthElevationValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag UsedForRTK", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - qi", satId)) { return static_cast<double>(satellite.qi); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - el", satId)) { return static_cast<double>(satellite.el); }
-            if (descriptor == fmt::format("GNSS2::SatInfo::{} - az", satId)) { return static_cast<double>(satellite.az); }
+            if (descriptor == "Att::VpeStatus::AttitudeQuality") { return static_cast<double>(attitudeOutputs->vpeStatus.attitudeQuality()); }
+            if (descriptor == "Att::VpeStatus::GyroSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.gyroSaturation()); }
+            if (descriptor == "Att::VpeStatus::GyroSaturationRecovery") { return static_cast<double>(attitudeOutputs->vpeStatus.gyroSaturationRecovery()); }
+            if (descriptor == "Att::VpeStatus::MagDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.magDisturbance()); }
+            if (descriptor == "Att::VpeStatus::MagSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.magSaturation()); }
+            if (descriptor == "Att::VpeStatus::AccDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.accDisturbance()); }
+            if (descriptor == "Att::VpeStatus::AccSaturation") { return static_cast<double>(attitudeOutputs->vpeStatus.accSaturation()); }
+            if (descriptor == "Att::VpeStatus::KnownMagDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.knownMagDisturbance()); }
+            if (descriptor == "Att::VpeStatus::KnownAccelDisturbance") { return static_cast<double>(attitudeOutputs->vpeStatus.knownAccelDisturbance()); }
+            if (descriptor == "Att::YawPitchRoll::Y [deg]") { return static_cast<double>(attitudeOutputs->ypr(0)); }
+            if (descriptor == "Att::YawPitchRoll::P [deg]") { return static_cast<double>(attitudeOutputs->ypr(1)); }
+            if (descriptor == "Att::YawPitchRoll::R [deg]") { return static_cast<double>(attitudeOutputs->ypr(2)); }
+            if (descriptor == "Att::Quaternion::w") { return static_cast<double>(attitudeOutputs->qtn.w()); }
+            if (descriptor == "Att::Quaternion::x") { return static_cast<double>(attitudeOutputs->qtn.x()); }
+            if (descriptor == "Att::Quaternion::y") { return static_cast<double>(attitudeOutputs->qtn.y()); }
+            if (descriptor == "Att::Quaternion::z") { return static_cast<double>(attitudeOutputs->qtn.z()); }
+            if (descriptor == "Att::DCM::0-0") { return static_cast<double>(attitudeOutputs->dcm(0, 0)); }
+            if (descriptor == "Att::DCM::0-1") { return static_cast<double>(attitudeOutputs->dcm(0, 1)); }
+            if (descriptor == "Att::DCM::0-2") { return static_cast<double>(attitudeOutputs->dcm(0, 2)); }
+            if (descriptor == "Att::DCM::1-0") { return static_cast<double>(attitudeOutputs->dcm(1, 0)); }
+            if (descriptor == "Att::DCM::1-1") { return static_cast<double>(attitudeOutputs->dcm(1, 1)); }
+            if (descriptor == "Att::DCM::1-2") { return static_cast<double>(attitudeOutputs->dcm(1, 2)); }
+            if (descriptor == "Att::DCM::2-0") { return static_cast<double>(attitudeOutputs->dcm(2, 0)); }
+            if (descriptor == "Att::DCM::2-1") { return static_cast<double>(attitudeOutputs->dcm(2, 1)); }
+            if (descriptor == "Att::DCM::2-2") { return static_cast<double>(attitudeOutputs->dcm(2, 2)); }
+            if (descriptor == "Att::MagNed::N [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(0)); }
+            if (descriptor == "Att::MagNed::E [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(1)); }
+            if (descriptor == "Att::MagNed::D [Gauss]") { return static_cast<double>(attitudeOutputs->magNed(2)); }
+            if (descriptor == "Att::AccelNed::N [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(0)); }
+            if (descriptor == "Att::AccelNed::E [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(1)); }
+            if (descriptor == "Att::AccelNed::D [m/s^2]") { return static_cast<double>(attitudeOutputs->accelNed(2)); }
+            if (descriptor == "Att::LinearAccelBody::X [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(0)); }
+            if (descriptor == "Att::LinearAccelBody::Y [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(1)); }
+            if (descriptor == "Att::LinearAccelBody::Z [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelBody(2)); }
+            if (descriptor == "Att::LinearAccelNed::N [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(0)); }
+            if (descriptor == "Att::LinearAccelNed::E [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(1)); }
+            if (descriptor == "Att::LinearAccelNed::D [m/s^2]") { return static_cast<double>(attitudeOutputs->linearAccelNed(2)); }
+            if (descriptor == "Att::YprU::Y [deg]") { return static_cast<double>(attitudeOutputs->yprU(0)); }
+            if (descriptor == "Att::YprU::P [deg]") { return static_cast<double>(attitudeOutputs->yprU(1)); }
+            if (descriptor == "Att::YprU::R [deg]") { return static_cast<double>(attitudeOutputs->yprU(2)); }
         }
-        if (descriptor == "GNSS2::RawMeas::Tow [s]") { return gnss2Outputs->raw.tow; }
-        if (descriptor == "GNSS2::RawMeas::Week") { return static_cast<double>(gnss2Outputs->raw.week); }
-        if (descriptor == "GNSS2::RawMeas::NumSats") { return static_cast<double>(gnss2Outputs->raw.numSats); }
-        for (auto& satellite : gnss2Outputs->raw.satellites)
+        // Group 6 (INS)
+        if (insOutputs)
         {
-            SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - freq", satId)) { return static_cast<double>(satellite.freq); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - chan", satId)) { return static_cast<double>(satellite.chan); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - slot", satId)) { return static_cast<double>(satellite.slot); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag Searching", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag Tracking", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag TimeValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag CodeLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfAmbiguity", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfSub", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseSlip", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PseudorangeSmoothed", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0); }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - pr", satId)) { return satellite.pr; }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - cp", satId)) { return satellite.cp; }
-            if (descriptor == fmt::format("GNSS2::RawMeas::{} - dp", satId)) { return static_cast<double>(satellite.dp); }
+            if (descriptor == "INS::InsStatus::Mode") { return static_cast<double>(insOutputs->insStatus.mode()); }
+            if (descriptor == "INS::InsStatus::GpsFix") { return static_cast<double>(insOutputs->insStatus.gpsFix()); }
+            if (descriptor == "INS::InsStatus::Error::IMU") { return static_cast<double>(insOutputs->insStatus.errorIMU()); }
+            if (descriptor == "INS::InsStatus::Error::MagPres") { return static_cast<double>(insOutputs->insStatus.errorMagPres()); }
+            if (descriptor == "INS::InsStatus::Error::GNSS") { return static_cast<double>(insOutputs->insStatus.errorGnss()); }
+            if (descriptor == "INS::InsStatus::GpsHeadingIns") { return static_cast<double>(insOutputs->insStatus.gpsHeadingIns()); }
+            if (descriptor == "INS::InsStatus::GpsCompass") { return static_cast<double>(insOutputs->insStatus.gpsCompass()); }
+            if (descriptor == "INS::PosLla::latitude [deg]") { return static_cast<double>(insOutputs->posLla(0)); }
+            if (descriptor == "INS::PosLla::longitude [deg]") { return static_cast<double>(insOutputs->posLla(1)); }
+            if (descriptor == "INS::PosLla::altitude [m]") { return static_cast<double>(insOutputs->posLla(2)); }
+            if (descriptor == "INS::PosEcef::X [m]") { return static_cast<double>(insOutputs->posEcef(0)); }
+            if (descriptor == "INS::PosEcef::Y [m]") { return static_cast<double>(insOutputs->posEcef(1)); }
+            if (descriptor == "INS::PosEcef::Z [m]") { return static_cast<double>(insOutputs->posEcef(2)); }
+            if (descriptor == "INS::VelBody::X [m/s]") { return static_cast<double>(insOutputs->velBody(0)); }
+            if (descriptor == "INS::VelBody::Y [m/s]") { return static_cast<double>(insOutputs->velBody(1)); }
+            if (descriptor == "INS::VelBody::Z [m/s]") { return static_cast<double>(insOutputs->velBody(2)); }
+            if (descriptor == "INS::VelNed::N [m/s]") { return static_cast<double>(insOutputs->velNed(0)); }
+            if (descriptor == "INS::VelNed::E [m/s]") { return static_cast<double>(insOutputs->velNed(1)); }
+            if (descriptor == "INS::VelNed::D [m/s]") { return static_cast<double>(insOutputs->velNed(2)); }
+            if (descriptor == "INS::VelEcef::X [m/s]") { return static_cast<double>(insOutputs->velEcef(0)); }
+            if (descriptor == "INS::VelEcef::Y [m/s]") { return static_cast<double>(insOutputs->velEcef(1)); }
+            if (descriptor == "INS::VelEcef::Z [m/s]") { return static_cast<double>(insOutputs->velEcef(2)); }
+            if (descriptor == "INS::MagEcef::X [Gauss]") { return static_cast<double>(insOutputs->magEcef(0)); }
+            if (descriptor == "INS::MagEcef::Y [Gauss]") { return static_cast<double>(insOutputs->magEcef(1)); }
+            if (descriptor == "INS::MagEcef::Z [Gauss]") { return static_cast<double>(insOutputs->magEcef(2)); }
+            if (descriptor == "INS::AccelEcef::X [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(0)); }
+            if (descriptor == "INS::AccelEcef::Y [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(1)); }
+            if (descriptor == "INS::AccelEcef::Z [m/s^2]") { return static_cast<double>(insOutputs->accelEcef(2)); }
+            if (descriptor == "INS::LinearAccelEcef::X [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(0)); }
+            if (descriptor == "INS::LinearAccelEcef::Y [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(1)); }
+            if (descriptor == "INS::LinearAccelEcef::Z [m/s^2]") { return static_cast<double>(insOutputs->linearAccelEcef(2)); }
+            if (descriptor == "INS::PosU [m]") { return static_cast<double>(insOutputs->posU); }
+            if (descriptor == "INS::VelU [m/s]") { return static_cast<double>(insOutputs->velU); }
+        }
+        // Group 7 (GNSS2)
+        if (gnss2Outputs)
+        {
+            if (descriptor == "GNSS2::UTC::year") { return static_cast<double>(gnss2Outputs->timeUtc.year); }
+            if (descriptor == "GNSS2::UTC::month") { return static_cast<double>(gnss2Outputs->timeUtc.month); }
+            if (descriptor == "GNSS2::UTC::day") { return static_cast<double>(gnss2Outputs->timeUtc.day); }
+            if (descriptor == "GNSS2::UTC::hour") { return static_cast<double>(gnss2Outputs->timeUtc.hour); }
+            if (descriptor == "GNSS2::UTC::min") { return static_cast<double>(gnss2Outputs->timeUtc.min); }
+            if (descriptor == "GNSS2::UTC::sec") { return static_cast<double>(gnss2Outputs->timeUtc.sec); }
+            if (descriptor == "GNSS2::UTC::ms") { return static_cast<double>(gnss2Outputs->timeUtc.ms); }
+            if (descriptor == "GNSS2::Tow [ns]") { return static_cast<double>(gnss2Outputs->tow); }
+            if (descriptor == "GNSS2::Week") { return static_cast<double>(gnss2Outputs->week); }
+            if (descriptor == "GNSS2::NumSats") { return static_cast<double>(gnss2Outputs->numSats); }
+            if (descriptor == "GNSS2::Fix") { return static_cast<double>(gnss2Outputs->fix); }
+            if (descriptor == "GNSS2::PosLla::latitude [deg]") { return static_cast<double>(gnss2Outputs->posLla(0)); }
+            if (descriptor == "GNSS2::PosLla::longitude [deg]") { return static_cast<double>(gnss2Outputs->posLla(1)); }
+            if (descriptor == "GNSS2::PosLla::altitude [m]") { return static_cast<double>(gnss2Outputs->posLla(2)); }
+            if (descriptor == "GNSS2::PosEcef::X [m]") { return static_cast<double>(gnss2Outputs->posEcef(0)); }
+            if (descriptor == "GNSS2::PosEcef::Y [m]") { return static_cast<double>(gnss2Outputs->posEcef(1)); }
+            if (descriptor == "GNSS2::PosEcef::Z [m]") { return static_cast<double>(gnss2Outputs->posEcef(2)); }
+            if (descriptor == "GNSS2::VelNed::N [m/s]") { return static_cast<double>(gnss2Outputs->velNed(0)); }
+            if (descriptor == "GNSS2::VelNed::E [m/s]") { return static_cast<double>(gnss2Outputs->velNed(1)); }
+            if (descriptor == "GNSS2::VelNed::D [m/s]") { return static_cast<double>(gnss2Outputs->velNed(2)); }
+            if (descriptor == "GNSS2::VelEcef::X [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(0)); }
+            if (descriptor == "GNSS2::VelEcef::Y [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(1)); }
+            if (descriptor == "GNSS2::VelEcef::Z [m/s]") { return static_cast<double>(gnss2Outputs->velEcef(2)); }
+            if (descriptor == "GNSS2::PosU::N [m]") { return static_cast<double>(gnss2Outputs->posU(0)); }
+            if (descriptor == "GNSS2::PosU::E [m]") { return static_cast<double>(gnss2Outputs->posU(1)); }
+            if (descriptor == "GNSS2::PosU::D [m]") { return static_cast<double>(gnss2Outputs->posU(2)); }
+            if (descriptor == "GNSS2::VelU [m/s]") { return static_cast<double>(gnss2Outputs->velU); }
+            if (descriptor == "GNSS2::TimeU [s]") { return static_cast<double>(gnss2Outputs->timeU); }
+            if (descriptor == "GNSS2::TimeInfo::Status::timeOk") { return static_cast<double>(gnss2Outputs->timeInfo.status.timeOk()); }
+            if (descriptor == "GNSS2::TimeInfo::Status::dateOk") { return static_cast<double>(gnss2Outputs->timeInfo.status.dateOk()); }
+            if (descriptor == "GNSS2::TimeInfo::Status::utcTimeValid") { return static_cast<double>(gnss2Outputs->timeInfo.status.utcTimeValid()); }
+            if (descriptor == "GNSS2::TimeInfo::LeapSeconds") { return static_cast<double>(gnss2Outputs->timeInfo.leapSeconds); }
+            if (descriptor == "GNSS2::DOP::g") { return static_cast<double>(gnss2Outputs->dop.gDop); }
+            if (descriptor == "GNSS2::DOP::p") { return static_cast<double>(gnss2Outputs->dop.pDop); }
+            if (descriptor == "GNSS2::DOP::t") { return static_cast<double>(gnss2Outputs->dop.tDop); }
+            if (descriptor == "GNSS2::DOP::v") { return static_cast<double>(gnss2Outputs->dop.vDop); }
+            if (descriptor == "GNSS2::DOP::h") { return static_cast<double>(gnss2Outputs->dop.hDop); }
+            if (descriptor == "GNSS2::DOP::n") { return static_cast<double>(gnss2Outputs->dop.nDop); }
+            if (descriptor == "GNSS2::DOP::e") { return static_cast<double>(gnss2Outputs->dop.eDop); }
+            if (descriptor == "GNSS2::SatInfo::NumSats") { return static_cast<double>(gnss2Outputs->satInfo.numSats); }
+            for (auto& satellite : gnss2Outputs->satInfo.satellites)
+            {
+                SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Healthy", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Healthy) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Almanac", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Almanac) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag Ephemeris", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::Ephemeris) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag DifferentialCorrection", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::DifferentialCorrection) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag UsedForNavigation", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForNavigation) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag AzimuthElevationValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::AzimuthElevationValid) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - flag UsedForRTK", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::SatInfo::SatInfoElement::Flags::UsedForRTK) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - qi", satId)) { return static_cast<double>(satellite.qi); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - el", satId)) { return static_cast<double>(satellite.el); }
+                if (descriptor == fmt::format("GNSS2::SatInfo::{} - az", satId)) { return static_cast<double>(satellite.az); }
+            }
+            if (descriptor == "GNSS2::RawMeas::Tow [s]") { return gnss2Outputs->raw.tow; }
+            if (descriptor == "GNSS2::RawMeas::Week") { return static_cast<double>(gnss2Outputs->raw.week); }
+            if (descriptor == "GNSS2::RawMeas::NumSats") { return static_cast<double>(gnss2Outputs->raw.numSats); }
+            for (auto& satellite : gnss2Outputs->raw.satellites)
+            {
+                SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - freq", satId)) { return static_cast<double>(satellite.freq); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - chan", satId)) { return static_cast<double>(satellite.chan); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - slot", satId)) { return static_cast<double>(satellite.slot); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - cno", satId)) { return static_cast<double>(satellite.cno); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag Searching", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Searching) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag Tracking", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::Tracking) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag TimeValid", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::TimeValid) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag CodeLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::CodeLock) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseLock", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseLock) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfAmbiguity", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfAmbiguity) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfSub", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseHalfSub) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PhaseSlip", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PhaseSlip) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - flag PseudorangeSmoothed", satId)) { return static_cast<double>(static_cast<unsigned int>(satellite.flags & NAV::vendor::vectornav::RawMeas::SatRawElement::Flags::PseudorangeSmoothed) ? 1 : 0); }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - pr", satId)) { return satellite.pr; }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - cp", satId)) { return satellite.cp; }
+                if (descriptor == fmt::format("GNSS2::RawMeas::{} - dp", satId)) { return static_cast<double>(satellite.dp); }
+            }
         }
 
         return std::nullopt;
