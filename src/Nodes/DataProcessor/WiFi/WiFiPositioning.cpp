@@ -846,6 +846,11 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
                 LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> lsqSolution = WiFiPositioning::lsqSolution();
                 wifiPositioningSolution->setPositionAndCov_e(lsqSolution.solution.block<3, 1>(0, 0),
                                                              lsqSolution.variance.block<3, 3>(0, 0));
+                if (wifiPositioningSolution->lla_position().hasNaN())
+                {
+                    LOG_WARN("{}: WiFi LSQ calculation failed, invalid position", nameId());
+                    return;
+                }
                 if (_estimateBias)
                 {
                     wifiPositioningSolution->bias = _state.bias;
@@ -861,6 +866,11 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             wifiPositioningSolution->setPosVelAndCov_e(_kalmanFilter.x.block<3, 1>(0, 0),
                                                        _kalmanFilter.x.block<3, 1>(3, 0),
                                                        _kalmanFilter.P.block<6, 6>(0, 0));
+            if (wifiPositioningSolution->lla_position().hasNaN())
+            {
+                LOG_WARN("{}: WiFi KF calculation failed, invalid position", nameId());
+                return;
+            }
             if (_estimateBias)
             {
                 wifiPositioningSolution->bias = _kalmanFilter.x(6);

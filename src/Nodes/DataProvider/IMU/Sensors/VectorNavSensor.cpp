@@ -5813,9 +5813,6 @@ bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    // Some settings need to be wrote to the device and reset afterwards
-    bool deviceNeedsResetAfterInitialization = false;
-
     // ###########################################################################################################
     //                                                Connecting
     // ###########################################################################################################
@@ -6012,14 +6009,8 @@ bool NAV::VectorNavSensor::initialize()
     // _vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
     // _vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
 
-    auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
-    if (vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
-    {
-        deviceNeedsResetAfterInitialization = true;
-    }
-
     _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
-    if (vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+    if (auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
         vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
     {
         LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull.\n"
@@ -6435,11 +6426,8 @@ bool NAV::VectorNavSensor::initialize()
     LOG_DEBUG("{}: writing settings", nameId());
     _vs.writeSettings();
 
-    if (deviceNeedsResetAfterInitialization)
-    {
-        LOG_DEBUG("{}: Resetting device to apply permenent settings", nameId());
-        _vs.reset();
-    }
+    LOG_DEBUG("{}: Resetting device to apply permenent settings", nameId());
+    _vs.reset();
 
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
     // TODO: Implement in vnproglib: _vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)

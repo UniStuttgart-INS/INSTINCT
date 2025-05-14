@@ -84,10 +84,18 @@ CommonLog::LocalPosition CommonLog::calcLocalPosition(const Eigen::Vector3d& lla
         std::scoped_lock lk(_mutex);
         if (!_originPosition.has_value())
         {
-            _originPosition = gui::widgets::PositionWithFrame();
-            _originPosition->e_position = trafo::lla2ecef_WGS84(lla_position);
-            LOG_DEBUG("Common log setting position of origin to {}, {}, {} [deg, deg, m]",
-                      rad2deg(lla_position.x()), rad2deg(lla_position.y()), lla_position.z());
+            if (lla_position.hasNaN())
+            {
+                LOG_WARN("Not setting common log origin to {}, {}, {} [deg, deg, m]",
+                         rad2deg(lla_position.x()), rad2deg(lla_position.y()), lla_position.z());
+            }
+            else
+            {
+                _originPosition = gui::widgets::PositionWithFrame();
+                _originPosition->e_position = trafo::lla2ecef_WGS84(lla_position);
+                LOG_DEBUG("Common log setting position of origin to {}, {}, {} [deg, deg, m]",
+                          rad2deg(lla_position.x()), rad2deg(lla_position.y()), lla_position.z());
+            }
         }
     }
 
