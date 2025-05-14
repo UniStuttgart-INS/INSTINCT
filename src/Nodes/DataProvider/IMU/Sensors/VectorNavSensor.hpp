@@ -188,6 +188,15 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Show the SyncIn Pin
     bool _syncInPin = false;
 
+    /// Last received syncInCnt
+    int64_t _lastSyncInCnt = 0;
+
+    /// Last received syncOutCnt
+    int64_t _lastSyncOutCnt = 0;
+
+    /// Offset between syncIn and syncOut
+    int64_t _syncCntOffset = 0;
+
     /// Couple the ImuFilter's rate (window size of moving-average filter) to the output rate (rateDivisor)
     bool _coupleImuRateOutput = true;
 

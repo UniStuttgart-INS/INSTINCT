@@ -183,6 +183,11 @@ bool NAV::UartPacketConverter::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    _lastSyncInCnt = 0;
+    _lastSyncOutCnt = 0;
+    _syncOutCntCorr = 0;
+    _syncInCntCorr = 0;
+
     return true;
 }
 
@@ -255,15 +260,8 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         convertedData = obs;
     }
 
-    if (!convertedData->insTime.empty())
-    {
-        if (util::time::GetMode() == util::time::Mode::REAL_TIME)
-        {
-            util::time::SetCurrentTime(convertedData->insTime);
-        }
-    }
-    else if (auto currentTime = util::time::GetCurrentInsTime();
-             !currentTime.empty())
+    if (auto currentTime = util::time::GetCurrentInsTime();
+        !currentTime.empty())
     {
         convertedData->insTime = currentTime;
     }

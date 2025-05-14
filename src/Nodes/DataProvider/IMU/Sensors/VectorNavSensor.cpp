@@ -16,6 +16,7 @@
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
+#include <vn/types.h>
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
@@ -5797,6 +5798,10 @@ bool NAV::VectorNavSensor::resetNode()
     std::ranges::for_each(_lastMessageTimeSinceStartup, [](uint64_t& value) { value = 0; });
     _gnssTimeCounter = {};
 
+    _lastSyncInCnt = 0;
+    _lastSyncOutCnt = 0;
+    _syncCntOffset = 0;
+
     _timeSyncOut.ppsTime.reset();
     _timeSyncOut.syncOutCnt = 0;
     _binaryOutputRegisterMergeObservation = nullptr;
@@ -6681,181 +6686,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             {
                 auto obs = std::make_shared<VectorNavBinaryOutput>(vnSensor->_imuPos);
 
-                // // Group 1 (Common)
-                // if (vnSensor->_binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
-                // {
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
-                //     {
-                //         if (!obs->timeOutputs)
-                //         {
-                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                //         }
-                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
-                //         obs->timeOutputs->timeStartup = p.extractUint64();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
-                //     {
-                //         if (!obs->timeOutputs)
-                //         {
-                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                //         }
-                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
-                //         obs->timeOutputs->timeStartup = p.extractUint64();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
-                //     {
-                //         if (!obs->timeOutputs)
-                //         {
-                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                //         }
-                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
-                //         obs->timeOutputs->timeSyncIn = p.extractUint64();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
-                //     {
-                //         if (!obs->attitudeOutputs)
-                //         {
-                //             obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
-                //             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
-                //         }
-                //         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
-                //         auto vec = p.extractVec3f();
-                //         obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
-                //     {
-                //         if (!obs->attitudeOutputs)
-                //         {
-                //             obs->attitudeOutputs = std::make_shared<NAV::vendor::vectornav::AttitudeOutputs>();
-                //             obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
-                //         }
-                //         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
-                //         auto vec = p.extractVec4f();
-                //         obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
-                //     {
-                //         if (!obs->imuOutputs)
-                //         {
-                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                //         }
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
-                //         auto vec = p.extractVec3f();
-                //         obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
-                //     {
-                //         if (!obs->insOutputs)
-                //         {
-                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                //         }
-                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
-                //         auto vec = p.extractVec3d();
-                //         obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
-                //     {
-                //         if (!obs->insOutputs)
-                //         {
-                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                //         }
-                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
-                //         auto vec = p.extractVec3f();
-                //         obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
-                //     {
-                //         if (!obs->imuOutputs)
-                //         {
-                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                //         }
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
-                //         auto vec = p.extractVec3f();
-                //         obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
-                //     {
-                //         if (!obs->imuOutputs)
-                //         {
-                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                //         }
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
-                //         auto vec = p.extractVec3f();
-                //         obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO;
-                //         vec = p.extractVec3f();
-                //         obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
-                //     {
-                //         if (!obs->imuOutputs)
-                //         {
-                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                //         }
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
-                //         auto vec = p.extractVec3f();
-                //         obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_TEMP;
-                //         obs->imuOutputs->temp = p.extractFloat();
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_PRES;
-                //         obs->imuOutputs->pres = p.extractFloat();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
-                //     {
-                //         if (!obs->imuOutputs)
-                //         {
-                //             obs->imuOutputs = std::make_shared<NAV::vendor::vectornav::ImuOutputs>();
-                //             obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
-                //         }
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
-                //         obs->imuOutputs->deltaTime = p.extractFloat();
-                //         auto vec = p.extractVec3f();
-                //         obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
-                //         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL;
-                //         vec = p.extractVec3f();
-                //         obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
-                //     {
-                //         if (!obs->insOutputs)
-                //         {
-                //             obs->insOutputs = std::make_shared<NAV::vendor::vectornav::InsOutputs>();
-                //             obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
-                //         }
-                //         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
-                //         obs->insOutputs->insStatus = p.extractUint16();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
-                //     {
-                //         if (!obs->timeOutputs)
-                //         {
-                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                //         }
-                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
-                //         obs->timeOutputs->syncInCnt = p.extractUint32();
-                //     }
-                //     if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
-                //     {
-                //         if (!obs->timeOutputs)
-                //         {
-                //             obs->timeOutputs = std::make_shared<NAV::vendor::vectornav::TimeOutputs>();
-                //             obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
-                //         }
-                //         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
-                //         obs->timeOutputs->timePPS = p.extractUint64();
-                //     }
-                // }
-
                 // Group 2 (Time)
                 if (vnSensor->_binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
                 {
@@ -7362,13 +7192,16 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         {
                             if (vnSensor->_timeSyncOut.syncOutCnt == 0)
                             {
-                                LOG_INFO("{}: Found PPS time {} and is providing it to its connected nodes", vnSensor->nameId(), ppsTime.toYMDHMS());
+                                LOG_INFO("{}: Found PPS time {} and is providing it to its connected nodes", vnSensor->nameId(), ppsTime.toYMDHMS(GPST));
+                            }
+                            if (vnSensor->_timeSyncOut.ppsTime != ppsTime || vnSensor->_timeSyncOut.syncOutCnt != obs->timeOutputs->syncOutCnt)
+                            {
+                                LOG_DATA("{}: SyncOut time {}, pps {}, syncOutCnt {}",
+                                         vnSensor->nameId(), obs->insTime.toYMDHMS(GPST),
+                                         ppsTime.toYMDHMS(GPST), obs->timeOutputs->syncOutCnt);
                             }
                             vnSensor->_timeSyncOut.ppsTime = ppsTime;
                             vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
-                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
-                                     vnSensor->nameId(), obs->insTime.toGPSweekTow(),
-                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
                         }
                     }
                 };
@@ -7398,6 +7231,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
 
                 if (obs->insTime.empty()                                                        // Look for master to give GNSS time
+                    && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_SYNCINCNT)  // We need syncin cnt for this
                     && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
                     && vnSensor->_syncInPin && vnSensor->inputPins.front().isPinLinked())       // Try to get a sync from the master
                 {
@@ -7408,12 +7242,26 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         // - -1: PPS -> VN310 message -> VN100 message (which happened before the VN310 message)
                         // -  0: PPS -> VN310 message -> VN100 message
                         // -  1: PPS -> VN100 message -> VN310 message
-                        int64_t syncCntDiff = obs->timeOutputs->syncInCnt - timeSyncMaster->v->syncOutCnt;
+                        int64_t syncCntDiff = obs->timeOutputs->syncInCnt - timeSyncMaster->v->syncOutCnt - vnSensor->_syncCntOffset;
+
+                        if (std::abs(syncCntDiff) > 1) // Counters did not start at the same time
+                        {
+                            vnSensor->_syncCntOffset = obs->timeOutputs->syncInCnt - timeSyncMaster->v->syncOutCnt;
+                            syncCntDiff -= vnSensor->_syncCntOffset;
+                            LOG_DEBUG("{}: Counters did not start at the same time (_syncCntOffset = {})", vnSensor->nameId(), vnSensor->_syncCntOffset);
+                        }
+                        vnSensor->_lastSyncOutCnt = timeSyncMaster->v->syncOutCnt;
+                        vnSensor->_lastSyncInCnt = obs->timeOutputs->syncInCnt;
+
                         obs->insTime = timeSyncMaster->v->ppsTime + std::chrono::nanoseconds(obs->timeOutputs->timeSyncIn)
                                        + std::chrono::seconds(syncCntDiff);
-                        LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
-                                 vnSensor->nameId(), obs->insTime.toGPSweekTow(), timeSyncMaster->v->ppsTime.toGPSweekTow(),
+                        LOG_DATA("{}: SyncIn   time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
+                                 vnSensor->nameId(), obs->insTime.toYMDHMS(GPST), timeSyncMaster->v->ppsTime.toYMDHMS(GPST),
                                  timeSyncMaster->v->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
+                    }
+                    else
+                    {
+                        return;
                     }
                 }
 
