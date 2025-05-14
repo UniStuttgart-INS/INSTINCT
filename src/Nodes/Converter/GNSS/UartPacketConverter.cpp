@@ -208,7 +208,11 @@ void NAV::UartPacketConverter::receiveObs(NAV::InputPin::NodeDataQueue& queue, s
         auto obs = std::make_shared<WiFiObs>();
         auto packet = uartPacket->raw;
 
-        if (!vendor::espressif::decryptWiFiObs(obs, packet, nameId())) { return; };
+        if (!vendor::espressif::decryptWiFiObs(obs, packet, nameId()))
+        {
+            LOG_WARN("{}: Decoding WiFi Obs failed", nameId());
+            return;
+        };
         if (_syncInPin && inputPins.at(INPUT_PORT_INDEX_SYNC_IN).isPinLinked())
         {
             if (auto timeSyncMaster = getInputValue<const NAV::VectorNavSensor::TimeSync>(INPUT_PORT_INDEX_SYNC_IN);

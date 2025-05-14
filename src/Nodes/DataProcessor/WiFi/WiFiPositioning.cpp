@@ -94,23 +94,30 @@ void NAV::WiFiPositioning::guiConfig()
     // ###########################################################################################################
     //                                        Frames
     // ###########################################################################################################
-    if (_numOfDevices == 0)
-    {
-        if (auto frame = static_cast<int>(_frame);
-            ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), &frame, "ECEF\0LLA\0\0"))
-        {
-            _frame = static_cast<decltype(_frame)>(frame);
-            switch (_frame)
-            {
-            case Frame::ECEF:
-                LOG_DEBUG("{}: Frame changed to ECEF", nameId());
-                break;
-            case Frame::LLA:
-                LOG_DEBUG("{}: Frame changed to LLA", nameId());
-                break;
-            }
-        }
 
+    if (auto frame = static_cast<int>(_frame);
+        ImGui::Combo(fmt::format("Frame##{}", size_t(id)).c_str(), &frame, "ECEF\0LLA\0\0"))
+    {
+        _frame = static_cast<decltype(_frame)>(frame);
+        switch (_frame)
+        {
+        case Frame::ECEF:
+            LOG_DEBUG("{}: Frame changed to ECEF", nameId());
+            for (auto& devPos : _devicePositions)
+            {
+                devPos = trafo::lla2ecef_WGS84(Eigen::Vector3d(deg2rad(devPos.x()), deg2rad(devPos.y()), devPos.z()));
+            }
+            break;
+        case Frame::LLA:
+            LOG_DEBUG("{}: Frame changed to LLA", nameId());
+            for (auto& devPos : _devicePositions)
+            {
+                devPos = trafo::ecef2lla_WGS84(devPos);
+                devPos.x() = rad2deg(devPos.x());
+                devPos.y() = rad2deg(devPos.y());
+            }
+            break;
+        }
         flow::ApplyChanges();
     }
 
@@ -252,8 +259,8 @@ void NAV::WiFiPositioning::guiConfig()
             LOG_DEBUG("{}: Solution changed to Kalman Filter", nameId());
             break;
         }
+        flow::ApplyChanges();
     }
-    flow::ApplyChanges();
 
     // ###########################################################################################################
     //                                        Least Squares
@@ -487,8 +494,8 @@ void NAV::WiFiPositioning::guiConfig()
             LOG_DEBUG("{}: Estimate Bias changed to No", nameId());
             _numStates = 6;
         }
+        flow::ApplyChanges();
     }
-    flow::ApplyChanges();
     // ###########################################################################################################
     //                                        Weighted Solution
     // ###########################################################################################################
@@ -502,8 +509,8 @@ void NAV::WiFiPositioning::guiConfig()
         {
             LOG_DEBUG("{}: Weighted Solution changed to No", nameId());
         }
+        flow::ApplyChanges();
     }
-    flow::ApplyChanges();
 
     // ###########################################################################################################
     //                                        Use Initial Values
@@ -520,9 +527,9 @@ void NAV::WiFiPositioning::guiConfig()
             {
                 LOG_DEBUG("{}: Use Initial Values changed to No", nameId());
             }
+            flow::ApplyChanges();
         }
     }
-    flow::ApplyChanges();
 }
 
 [[nodiscard]] json NAV::WiFiPositioning::save() const
@@ -879,7 +886,8 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
         }
 
-        LOG_DATA("{}: Received distance to device {} at position {} with distance {}", nameId(), obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
+        LOG_DEBUG("{}: [{}] Received distance to device {} at position {} with distance {}", nameId(), obs->insTime.toYMDHMS(GPST),
+                  obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
     }
 }
 
@@ -891,11 +899,11 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     // Check if the number of devices is sufficient to compute the position
     if ((_estimateBias && _devices.size() < 5) || (!_estimateBias && _devices.size() < 4))
     {
-        LOG_DATA("{}: Received less than {} observations. Can't compute position", nameId(), (_estimateBias ? 5 : 4));
+        LOG_WARN("{}: Received less than {} observations. Can't compute position", nameId(), (_estimateBias ? 5 : 4));
         return lsq;
     }
 
-    LOG_DATA("{}: Received {} observations", nameId(), _devices.size());
+    LOG_DEBUG("{}: Received {} observations", nameId(), _devices.size());
 
     Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(_devices.size()), n);
     Eigen::MatrixXd W = Eigen::MatrixXd::Identity(static_cast<int>(_devices.size()), static_cast<int>(_devices.size()));
@@ -978,7 +986,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
         }
         if (o == 14)
         {
-            LOG_DATA("{}: Solution did not converge", nameId());
+            LOG_DEBUG("{}: Solution did not converge", nameId());
             lsq.solution.setConstant(std::numeric_limits<double>::quiet_NaN());
             lsq.variance.setConstant(std::numeric_limits<double>::quiet_NaN());
             if (_estimateBias)
@@ -994,7 +1002,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     }
 
     _devices.clear();
-    LOG_DATA("{}: Position: {}", nameId(), _state.e_position.transpose());
+    LOG_DEBUG("{}: Position: {}", nameId(), _state.e_position.transpose());
 
     return lsq;
 }
