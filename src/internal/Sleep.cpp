@@ -30,6 +30,7 @@ std::mutex cv_m;
 
 void handler(int signum)
 {
+#if !_WIN32
     switch (signum)
     {
     case SIGUSR1:
@@ -44,6 +45,9 @@ void handler(int signum)
     default:
         LOG_DEBUG("Unexpected signal caught: {}", signum);
     }
+#else
+    LOG_DEBUG("Signal caught");
+#endif
     {
         std::lock_guard lk(cv_m);
         usr_interrupt = true;
