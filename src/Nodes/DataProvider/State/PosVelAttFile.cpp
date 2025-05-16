@@ -94,17 +94,17 @@ void NAV::PosVelAttFile::guiConfig()
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsCycle");
         TextColoredIfExists(1, "Pos ECEF X [m]");
-        TextColoredIfExists(2, "Vel ECEF X [m/s]");
+        TextColoredIfExists(2, "X velocity ECEF [m/s]");
         TextColoredIfExists(3, "n_Quat_b w");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsWeek");
         TextColoredIfExists(1, "Pos ECEF Y [m]");
-        TextColoredIfExists(2, "Vel ECEF Y [m/s]");
+        TextColoredIfExists(2, "Y velocity ECEF [m/s]");
         TextColoredIfExists(3, "n_Quat_b x");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsToW [s]");
         TextColoredIfExists(1, "Pos ECEF Z [m]");
-        TextColoredIfExists(2, "Vel ECEF Z [m/s]");
+        TextColoredIfExists(2, "Z velocity ECEF [m/s]");
         TextColoredIfExists(3, "n_Quat_b y");
         ImGui::TableNextRow();
         TextColoredIfExists(1, "Latitude [deg]");
@@ -184,7 +184,8 @@ bool NAV::PosVelAttFile::initialize()
         outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier = std::vector{ Pos::type() };
 
         if ((hasCol("Vel ECEF X [m/s]") && hasCol("Vel ECEF Y [m/s]") && hasCol("Vel ECEF Z [m/s]"))
-            || (hasCol("Vel N [m/s]") && hasCol("Vel E [m/s]") && hasCol("Vel D [m/s]")))
+            || (hasCol("Vel N [m/s]") && hasCol("Vel E [m/s]") && hasCol("Vel D [m/s]"))
+            || (hasCol("X velocity ECEF [m/s]") && hasCol("Y velocity ECEF [m/s]") && hasCol("Z velocity ECEF [m/s]")))
         {
             _fileContent = FileContent::PosVel;
             outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier = std::vector{ PosVel::type() };
@@ -322,9 +323,9 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
             else if (column == "Pos StdDev E [m]") { n_positionStdDev_e = deg2rad(std::stod(cell)); }
             else if (column == "Pos StdDev D [m]") { n_positionStdDev_d = std::stod(cell); }
 
-            else if (column == "Vel ECEF X [m/s]") { e_velocity_x = std::stod(cell); }
-            else if (column == "Vel ECEF Y [m/s]") { e_velocity_y = std::stod(cell); }
-            else if (column == "Vel ECEF Z [m/s]") { e_velocity_z = std::stod(cell); }
+            else if (column == "X velocity ECEF [m/s]") { e_velocity_x = std::stod(cell); }
+            else if (column == "Y velocity ECEF [m/s]") { e_velocity_y = std::stod(cell); }
+            else if (column == "Z velocity ECEF [m/s]") { e_velocity_z = std::stod(cell); }
             else if (column == "Vel StdDev ECEF X [m/s]") { e_velocityStdDev_x = std::stod(cell); }
             else if (column == "Vel StdDev ECEF Y [m/s]") { e_velocityStdDev_y = std::stod(cell); }
             else if (column == "Vel StdDev ECEF Z [m/s]") { e_velocityStdDev_z = std::stod(cell); }
@@ -359,6 +360,27 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
 
     if (_fileContent == FileContent::PosVel || _fileContent == FileContent::PosVelAtt)
     {
+        if (e_velocity_x.has_value() && e_velocity_y.has_value() && e_velocity_z.has_value())
+        {
+            auto lla_pos = lla_position_x.has_value() && lla_position_y.has_value() && lla_position_z.has_value()
+                               ? Eigen::Vector3d(*lla_position_x, *lla_position_y, *lla_position_z)
+                               : trafo::ecef2lla_WGS84(Eigen::Vector3d(*e_position_x, *e_position_y, *e_position_z));
+            auto n_vel = trafo::n_Quat_e(lla_pos.x(), lla_pos.y()) * Eigen::Vector3d(*e_velocity_x, *e_velocity_y, *e_velocity_z);
+            n_velocity_n = n_vel.x();
+            n_velocity_e = n_vel.y();
+            n_velocity_d = n_vel.z();
+        }
+        else if (n_velocity_n.has_value() && n_velocity_e.has_value() && n_velocity_d.has_value())
+        {
+            auto lla_pos = lla_position_x.has_value() && lla_position_y.has_value() && lla_position_z.has_value()
+                               ? Eigen::Vector3d(*lla_position_x, *lla_position_y, *lla_position_z)
+                               : trafo::ecef2lla_WGS84(Eigen::Vector3d(*e_position_x, *e_position_y, *e_position_z));
+            auto e_vel = trafo::e_Quat_n(lla_pos.x(), lla_pos.y()) * Eigen::Vector3d(*e_velocity_x, *e_velocity_y, *e_velocity_z);
+            e_velocity_x = e_vel.x();
+            e_velocity_y = e_vel.y();
+            e_velocity_z = e_vel.z();
+        }
+
         if (e_position_x.has_value() && e_position_y.has_value() && e_position_z.has_value()
             && e_velocity_x.has_value() && e_velocity_y.has_value() && e_velocity_z.has_value())
         {

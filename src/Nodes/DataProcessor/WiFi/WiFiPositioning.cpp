@@ -886,8 +886,8 @@ void NAV::WiFiPositioning::recvWiFiObs(NAV::InputPin::NodeDataQueue& queue, size
             invokeCallbacks(OUTPUT_PORT_INDEX_WIFISOL, wifiPositioningSolution);
         }
 
-        LOG_DEBUG("{}: [{}] Received distance to device {} at position {} with distance {}", nameId(), obs->insTime.toYMDHMS(GPST),
-                  obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
+        LOG_DATA("{}: [{}] Received distance to device {} at position {} with distance {}", nameId(), obs->insTime.toYMDHMS(GPST),
+                 obs->macAddress, _devicePositions.at(index).transpose(), obs->distance);
     }
 }
 
@@ -903,7 +903,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
         return lsq;
     }
 
-    LOG_DEBUG("{}: Received {} observations", nameId(), _devices.size());
+    LOG_DATA("{}: Received {} observations", nameId(), _devices.size());
 
     Eigen::MatrixXd e_H = Eigen::MatrixXd::Zero(static_cast<int>(_devices.size()), n);
     Eigen::MatrixXd W = Eigen::MatrixXd::Identity(static_cast<int>(_devices.size()), static_cast<int>(_devices.size()));
@@ -986,7 +986,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
         }
         if (o == 14)
         {
-            LOG_DEBUG("{}: Solution did not converge", nameId());
+            LOG_DATA("{}: Solution did not converge", nameId());
             lsq.solution.setConstant(std::numeric_limits<double>::quiet_NaN());
             lsq.variance.setConstant(std::numeric_limits<double>::quiet_NaN());
             if (_estimateBias)
@@ -1002,7 +1002,7 @@ NAV::LeastSquaresResult<Eigen::VectorXd, Eigen::MatrixXd> NAV::WiFiPositioning::
     }
 
     _devices.clear();
-    LOG_DEBUG("{}: Position: {}", nameId(), _state.e_position.transpose());
+    LOG_DATA("{}: Position: {}", nameId(), _state.e_position.transpose());
 
     return lsq;
 }
