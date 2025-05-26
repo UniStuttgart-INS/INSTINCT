@@ -68,20 +68,6 @@ class ErrorModel : public Node
 
   private:
     constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 0; ///< @brief Flow
-    constexpr static size_t INPUT_PORT_INDEX_FLOW = 0;  ///< @brief Flow
-
-    /// Input type
-    enum class InputType : uint8_t
-    {
-        None,         ///< None
-        ImuObs,       ///< ImuObs
-        ImuObsWDelta, ///< ImuObsWDelta
-        PosVelAtt,    ///< PosVelAtt
-        GnssObs,      ///< GnssObs
-    };
-
-    /// Input type
-    InputType _inputType = InputType::None;
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
@@ -125,7 +111,13 @@ class ErrorModel : public Node
                                                                     const Eigen::Vector3d& accelerometerNoiseStd,
                                                                     const Eigen::Vector3d& gyroscopeNoiseStd);
 
-    /// @brief Callback when receiving an ImuObs
+    /// @brief Callback when receiving an PosObs
+    /// @param[in] pos Copied data to modify and send out again
+    [[nodiscard]] std::shared_ptr<Pos> receivePos(const std::shared_ptr<Pos>& pos);
+    /// @brief Callback when receiving an PosVelObs
+    /// @param[in] posVel Copied data to modify and send out again
+    [[nodiscard]] std::shared_ptr<PosVel> receivePosVel(const std::shared_ptr<PosVel>& posVel);
+    /// @brief Callback when receiving an PosVelAttObs
     /// @param[in] posVelAtt Copied data to modify and send out again
     [[nodiscard]] std::shared_ptr<PosVelAtt> receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
 

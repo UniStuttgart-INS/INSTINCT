@@ -41,7 +41,11 @@ namespace nm = NAV::NodeManager;
 namespace NAV
 {
 /// List of supported data identifiers
-const std::vector<std::string> supportedDataIdentifier{ ImuObs::type(), ImuObsWDelta::type(), PosVelAtt::type(), GnssObs::type() };
+const std::vector<std::string> supportedDataIdentifier{
+    ImuObs::type(), ImuObsWDelta::type(),
+    Pos::type(), PosVel::type(), PosVelAtt::type(),
+    GnssObs::type()
+};
 
 } // namespace NAV
 
@@ -102,7 +106,8 @@ std::string NAV::ErrorModel::category()
 
 void NAV::ErrorModel::guiConfig()
 {
-    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.size() != 1)
+    if (outputPins.front().dataIdentifier.size() != 1
+        || !inputPins.front().isPinLinked())
     {
         ImGui::TextUnformatted("Please connect the input pin to show the options");
         return;
@@ -165,17 +170,18 @@ void NAV::ErrorModel::guiConfig()
         rngInput(title, rng);
     };
 
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta || _inputType == InputType::PosVelAtt)
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() })
+        || NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { Pos::type() }))
     {
         ImGui::TextUnformatted("Offsets:");
         ImGui::Indent();
         {
-            if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+            if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() }))
             {
                 inputVector3WithUnit("Accelerometer Bias (platform)", _imuAccelerometerBias_p, _imuAccelerometerBiasUnit, MakeComboItems<Units::ImuAccelerometerUnits>().c_str(), "%.2g");
                 inputVector3WithUnit("Gyroscope Bias (platform)", _imuGyroscopeBias_p, _imuGyroscopeBiasUnit, MakeComboItems<Units::ImuGyroscopeUnits>().c_str(), "%.2g");
             }
-            else if (_inputType == InputType::PosVelAtt)
+            else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { Pos::type() }))
             {
                 inputVector3WithUnit(fmt::format("Position Bias ({})", _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt").c_str(),
                                      _positionBias, _positionBiasUnit, "m, m, m\0\0", "%.2g");
@@ -186,17 +192,19 @@ void NAV::ErrorModel::guiConfig()
         ImGui::Unindent();
     }
 
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta || _inputType == InputType::PosVelAtt || _inputType == InputType::GnssObs)
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() })
+        || NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { Pos::type() })
+        || NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { GnssObs::type() }))
     {
         ImGui::TextUnformatted("Measurement noise:");
         ImGui::Indent();
         {
-            if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+            if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() }))
             {
                 noiseGuiInput("Accelerometer Noise (Std. dev)", _imuAccelerometerNoise, _imuAccelerometerNoiseUnit, MakeComboItems<Units::ImuAccelerometerNoiseUnits>().c_str(), "%.2g", _imuAccelerometerRng);
                 noiseGuiInput("Gyroscope Noise (Std. dev)", _imuGyroscopeNoise, _imuGyroscopeNoiseUnit, MakeComboItems<Units::ImuGyroscopeNoiseUnits>().c_str(), "%.2g", _imuGyroscopeRng);
             }
-            else if (_inputType == InputType::PosVelAtt)
+            else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { Pos::type() }))
             {
                 noiseGuiInput(fmt::format("Position Noise ({})", _positionNoiseUnit == PositionNoiseUnits::meter
                                                                      ? "Standard deviation"
@@ -214,7 +222,7 @@ void NAV::ErrorModel::guiConfig()
                                   .c_str(),
                               _attitudeNoise, _attitudeNoiseUnit, "rad\0deg\0rad^2\0deg^2\0\0", "%.2g", _attitudeRng);
             }
-            else if (_inputType == InputType::GnssObs)
+            else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { GnssObs::type() }))
             {
                 noiseGuiInput("Pseudorange Noise", _gui_pseudorangeNoise, _gui_pseudorangeNoiseUnit, "m\0\0", "%.3g", _pseudorangeRng);
                 noiseGuiInput("Carrier-phase Noise", _gui_carrierPhaseNoise, _gui_carrierPhaseNoiseUnit, "m\0\0", "%.3g", _carrierPhaseRng);
@@ -223,7 +231,7 @@ void NAV::ErrorModel::guiConfig()
         }
         ImGui::Unindent();
     }
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() }))
     {
         ImGui::TextUnformatted("Random walk noise:");
         ImGui::Indent();
@@ -237,7 +245,7 @@ void NAV::ErrorModel::guiConfig()
         ImGui::Unindent();
     }
 
-    if (_inputType == InputType::GnssObs)
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { GnssObs::type() }))
     {
         ImGui::TextUnformatted("Ambiguities:");
         ImGui::Indent();
@@ -536,41 +544,34 @@ bool NAV::ErrorModel::resetNode()
     _lastObservationTime.reset();
     _dt = 0.0;
 
-    if (_inputType == InputType::ImuObs || _inputType == InputType::ImuObsWDelta)
-    {
-        _imuAccelerometerRng.resetSeed(size_t(id));
-        _imuGyroscopeRng.resetSeed(size_t(id));
+    // ImuObs
+    _imuAccelerometerRng.resetSeed(size_t(id));
+    _imuGyroscopeRng.resetSeed(size_t(id));
+    _imuAccelerometerRWRng.resetSeed(size_t(id));
+    _imuGyroscopeRWRng.resetSeed(size_t(id));
+    _imuAccelerometerIRWRng.resetSeed(size_t(id));
+    _imuGyroscopeIRWRng.resetSeed(size_t(id));
+    _randomWalkAccelerometer.setZero();
+    _randomWalkGyroscope.setZero();
+    _integratedRandomWalkAccelerometer.setZero();
+    _integratedRandomWalkGyroscope.setZero();
+    _integratedRandomWalkAccelerometer_velocity.setZero();
+    _integratedRandomWalkGyroscope_velocity.setZero();
 
-        _imuAccelerometerRWRng.resetSeed(size_t(id));
-        _imuGyroscopeRWRng.resetSeed(size_t(id));
-        _imuAccelerometerIRWRng.resetSeed(size_t(id));
-        _imuGyroscopeIRWRng.resetSeed(size_t(id));
+    // PosVelAtt
+    _positionRng.resetSeed(size_t(id));
+    _velocityRng.resetSeed(size_t(id));
+    _attitudeRng.resetSeed(size_t(id));
 
-        _randomWalkAccelerometer.setZero();
-        _randomWalkGyroscope.setZero();
-
-        _integratedRandomWalkAccelerometer.setZero();
-        _integratedRandomWalkGyroscope.setZero();
-        _integratedRandomWalkAccelerometer_velocity.setZero();
-        _integratedRandomWalkGyroscope_velocity.setZero();
-    }
-    else if (_inputType == InputType::PosVelAtt)
-    {
-        _positionRng.resetSeed(size_t(id));
-        _velocityRng.resetSeed(size_t(id));
-        _attitudeRng.resetSeed(size_t(id));
-    }
-    else if (_inputType == InputType::GnssObs)
-    {
-        _pseudorangeRng.resetSeed(size_t(id));
-        _carrierPhaseRng.resetSeed(size_t(id));
-        _dopplerRng.resetSeed(size_t(id));
-        _ambiguityRng.resetSeed(size_t(id));
-        _ambiguities.clear();
-        _cycleSlips.clear();
-        _cycleSlipRng.resetSeed(size_t(id));
-        _cycleSlipWindowStartTime.reset();
-    }
+    // GnssObs
+    _pseudorangeRng.resetSeed(size_t(id));
+    _carrierPhaseRng.resetSeed(size_t(id));
+    _dopplerRng.resetSeed(size_t(id));
+    _ambiguityRng.resetSeed(size_t(id));
+    _ambiguities.clear();
+    _cycleSlips.clear();
+    _cycleSlipRng.resetSeed(size_t(id));
+    _cycleSlipWindowStartTime.reset();
 
     return true;
 }
@@ -585,50 +586,33 @@ void NAV::ErrorModel::afterCreateLink(OutputPin& startPin, InputPin& endPin)
     }
 
     // Store previous output pin identifier
-    auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
+    auto previousOutputPinDataIdentifier = outputPins.front().dataIdentifier;
     // Overwrite output pin identifier with input pin identifier
-    outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin.dataIdentifier;
+    outputPins.front().dataIdentifier = startPin.dataIdentifier;
 
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsWDelta::type() }))
-    {
-        _inputType = InputType::ImuObsWDelta;
-    }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObs::type() }))
-    {
-        _inputType = InputType::ImuObs;
-    }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { PosVelAtt::type() }))
-    {
-        _inputType = InputType::PosVelAtt;
-    }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { GnssObs::type() }))
-    {
-        _inputType = InputType::GnssObs;
-    }
-
-    if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
+    if (previousOutputPinDataIdentifier != outputPins.front().dataIdentifier) // If the identifier changed
     {
         // Check if connected links on output port are still valid
-        for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
+        for (auto& link : outputPins.front().links)
         {
             if (auto* endPin = link.getConnectedPin())
             {
-                if (!outputPins.at(OUTPUT_PORT_INDEX_FLOW).canCreateLink(*endPin))
+                if (!outputPins.front().canCreateLink(*endPin))
                 {
                     // If the link is not valid anymore, delete it
-                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).deleteLink(*endPin);
+                    outputPins.front().deleteLink(*endPin);
                 }
             }
         }
 
         // Refresh all links connected to the output pin if the type changed
-        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
+        if (outputPins.front().dataIdentifier != previousOutputPinDataIdentifier)
         {
-            for (auto& link : outputPins.at(OUTPUT_PORT_INDEX_FLOW).links)
+            for (auto& link : outputPins.front().links)
             {
                 if (auto* connectedPin = link.getConnectedPin())
                 {
-                    outputPins.at(OUTPUT_PORT_INDEX_FLOW).recreateLink(*connectedPin);
+                    outputPins.front().recreateLink(*connectedPin);
                 }
             }
         }
@@ -639,12 +623,12 @@ void NAV::ErrorModel::afterDeleteLink(OutputPin& startPin, InputPin& endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin.id), size_t(endPin.id));
 
-    if ((endPin.parentNode->id != id                                  // Link on Output port is removed
-         && !inputPins.at(INPUT_PORT_INDEX_FLOW).isPinLinked())       //     and the Input port is not linked
-        || (startPin.parentNode->id != id                             // Link on Input port is removed
-            && !outputPins.at(OUTPUT_PORT_INDEX_FLOW).isPinLinked())) //     and the Output port is not linked
+    if ((endPin.parentNode->id != id               // Link on Output port is removed
+         && !inputPins.front().isPinLinked())      //     and the Input port is not linked
+        || (startPin.parentNode->id != id          // Link on Input port is removed
+            && !outputPins.front().isPinLinked())) //     and the Output port is not linked
     {
-        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
+        outputPins.front().dataIdentifier = supportedDataIdentifier;
     }
 }
 
@@ -672,7 +656,7 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
     LOG_DATA("{}: gyroscopeNoiseStd = {} [rad/s/sqrt(s)]", nameId(), gyroscopeNoiseStd.transpose());
 
     // Select the correct data type and make a copy of the node data to modify
-    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsSimulated::type() }))
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObsSimulated::type() }))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
                         receiveImuObsWDelta(std::make_shared<ImuObsSimulated>(*std::static_pointer_cast<const ImuObsSimulated>(obs)),
@@ -681,7 +665,7 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
                                             accelerometerNoiseStd,
                                             gyroscopeNoiseStd));
     }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObsWDelta::type() }))
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObsWDelta::type() }))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
                         receiveImuObsWDelta(std::make_shared<ImuObsWDelta>(*std::static_pointer_cast<const ImuObsWDelta>(obs)),
@@ -690,7 +674,7 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
                                             accelerometerNoiseStd,
                                             gyroscopeNoiseStd));
     }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { ImuObs::type() }))
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { ImuObs::type() }))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_FLOW,
                         receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(obs)),
@@ -699,11 +683,19 @@ void NAV::ErrorModel::receiveObs(NAV::InputPin::NodeDataQueue& queue, size_t /* 
                                       accelerometerNoiseStd,
                                       gyroscopeNoiseStd));
     }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { PosVelAtt::type() }))
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVelAtt::type() }))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(obs))));
     }
-    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier, { GnssObs::type() }))
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVel::type() }))
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, receivePosVel(std::make_shared<PosVel>(*std::static_pointer_cast<const PosVel>(obs))));
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { Pos::type() }))
+    {
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, receivePos(std::make_shared<Pos>(*std::static_pointer_cast<const Pos>(obs))));
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { GnssObs::type() }))
     {
         invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, receiveGnssObs(std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(obs))));
     }
@@ -822,6 +814,184 @@ std::shared_ptr<NAV::ImuObsWDelta> NAV::ErrorModel::receiveImuObsWDelta(const st
     }
 
     return imuObsWDelta;
+}
+
+std::shared_ptr<NAV::Pos> NAV::ErrorModel::receivePos(const std::shared_ptr<Pos>& pos)
+{
+    // Position Bias in latLonAlt in [rad, rad, m]
+    Eigen::Vector3d lla_positionBias = Eigen::Vector3d::Zero();
+    switch (_positionBiasUnit)
+    {
+    case PositionBiasUnits::meter:
+    {
+        Eigen::Vector3d e_positionBias = trafo::e_Quat_n(pos->latitude(), pos->longitude()) * _positionBias;
+        if (!e_positionBias.isZero())
+        {
+            lla_positionBias = trafo::ecef2lla_WGS84(pos->e_position() + e_positionBias) - pos->lla_position();
+        }
+        break;
+    }
+    }
+    LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
+
+    // Velocity bias in local-navigation coordinates in [m/s]
+    Eigen::Vector3d n_velocityBias = Eigen::Vector3d::Zero();
+    switch (_velocityBiasUnit)
+    {
+    case VelocityBiasUnits::m_s:
+        n_velocityBias = _velocityBias;
+        break;
+    }
+    LOG_DATA("{}: n_velocityBias = {} [m/s]", nameId(), n_velocityBias.transpose());
+
+    // Roll, pitch, yaw bias in [rad]
+    Eigen::Vector3d attitudeBias = Eigen::Vector3d::Zero();
+    switch (_attitudeBiasUnit)
+    {
+    case AttitudeBiasUnits::rad:
+        attitudeBias = _attitudeBias;
+        break;
+    case AttitudeBiasUnits::deg:
+        attitudeBias = deg2rad(_attitudeBias);
+        break;
+    }
+    LOG_DATA("{}: attitudeBias = {} [rad]", nameId(), attitudeBias.transpose());
+
+    // #########################################################################################################################################
+
+    // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
+    Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
+    Eigen::Vector3d NED_pos_variance = Eigen::Vector3d::Zero();
+    switch (_positionNoiseUnit)
+    {
+    case PositionNoiseUnits::meter:
+    {
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(pos->latitude(), pos->longitude()) * _positionNoise;
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(pos->e_position() + e_positionNoiseStd) - pos->lla_position();
+        }
+        NED_pos_variance = _positionNoise.cwiseAbs2();
+        break;
+    }
+    case PositionNoiseUnits::meter2:
+    {
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(pos->latitude(), pos->longitude()) * _positionNoise.cwiseSqrt();
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(pos->e_position() + e_positionNoiseStd) - pos->lla_position();
+        }
+        NED_pos_variance = _positionNoise;
+        break;
+    }
+    }
+    LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
+
+    // #########################################################################################################################################
+
+    pos->setPositionAndCov_n(pos->lla_position()
+                                 + lla_positionBias
+                                 + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
+                                                    _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
+                                                    _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
+                             NED_pos_variance.asDiagonal().toDenseMatrix());
+
+    return pos;
+}
+
+std::shared_ptr<NAV::PosVel> NAV::ErrorModel::receivePosVel(const std::shared_ptr<PosVel>& posVel)
+{
+    // Position Bias in latLonAlt in [rad, rad, m]
+    Eigen::Vector3d lla_positionBias = Eigen::Vector3d::Zero();
+    switch (_positionBiasUnit)
+    {
+    case PositionBiasUnits::meter:
+    {
+        Eigen::Vector3d e_positionBias = trafo::e_Quat_n(posVel->latitude(), posVel->longitude()) * _positionBias;
+        if (!e_positionBias.isZero())
+        {
+            lla_positionBias = trafo::ecef2lla_WGS84(posVel->e_position() + e_positionBias) - posVel->lla_position();
+        }
+        break;
+    }
+    }
+    LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
+
+    // Velocity bias in local-navigation coordinates in [m/s]
+    Eigen::Vector3d n_velocityBias = Eigen::Vector3d::Zero();
+    switch (_velocityBiasUnit)
+    {
+    case VelocityBiasUnits::m_s:
+        n_velocityBias = _velocityBias;
+        break;
+    }
+    LOG_DATA("{}: n_velocityBias = {} [m/s]", nameId(), n_velocityBias.transpose());
+
+    // #########################################################################################################################################
+
+    // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
+    Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
+    Eigen::Vector3d NED_pos_variance = Eigen::Vector3d::Zero();
+    Eigen::Vector3d NED_velocity_variance = Eigen::Vector3d::Zero();
+    switch (_positionNoiseUnit)
+    {
+    case PositionNoiseUnits::meter:
+    {
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVel->latitude(), posVel->longitude()) * _positionNoise;
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVel->e_position() + e_positionNoiseStd) - posVel->lla_position();
+        }
+        NED_pos_variance = _positionNoise.cwiseAbs2();
+        break;
+    }
+    case PositionNoiseUnits::meter2:
+    {
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVel->latitude(), posVel->longitude()) * _positionNoise.cwiseSqrt();
+        if (!e_positionNoiseStd.isZero())
+        {
+            lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVel->e_position() + e_positionNoiseStd) - posVel->lla_position();
+        }
+        NED_pos_variance = _positionNoise;
+        break;
+    }
+    }
+    LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
+
+    // Velocity Noise standard deviation in local-navigation coordinates in [m/s]
+    Eigen::Vector3d n_velocityNoiseStd = Eigen::Vector3d::Zero();
+    switch (_velocityNoiseUnit)
+    {
+    case VelocityNoiseUnits::m_s:
+        n_velocityNoiseStd = _velocityNoise;
+        NED_velocity_variance = _velocityNoise.cwiseAbs2();
+        break;
+    case VelocityNoiseUnits::m2_s2:
+        n_velocityNoiseStd = _velocityNoise.cwiseSqrt();
+        NED_velocity_variance = _velocityNoise;
+        break;
+    }
+    LOG_DATA("{}: n_velocityNoiseStd = {} [m/s]", nameId(), n_velocityNoiseStd.transpose());
+
+    // #########################################################################################################################################
+
+    Eigen::Matrix<double, 6, 6> cov_n = Eigen::Matrix<double, 6, 6>::Zero();
+    cov_n.block<3, 3>(0, 0).diagonal() = NED_pos_variance;
+    cov_n.block<3, 3>(3, 3).diagonal() = NED_velocity_variance;
+
+    posVel->setPosVelAndCov_n(posVel->lla_position()
+                                  + lla_positionBias
+                                  + Eigen::Vector3d{ _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(0)),
+                                                     _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(1)),
+                                                     _positionRng.getRand_normalDist(0.0, lla_positionNoiseStd(2)) },
+                              posVel->n_velocity()
+                                  + n_velocityBias
+                                  + Eigen::Vector3d{ _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(0)),
+                                                     _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(1)),
+                                                     _velocityRng.getRand_normalDist(0.0, n_velocityNoiseStd(2)) },
+                              cov_n);
+
+    return posVel;
 }
 
 std::shared_ptr<NAV::PosVelAtt> NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
