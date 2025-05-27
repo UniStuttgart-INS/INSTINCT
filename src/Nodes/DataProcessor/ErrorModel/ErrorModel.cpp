@@ -185,8 +185,14 @@ void NAV::ErrorModel::guiConfig()
             {
                 inputVector3WithUnit(fmt::format("Position Bias ({})", _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt").c_str(),
                                      _positionBias, _positionBiasUnit, "m, m, m\0\0", "%.2g");
-                inputVector3WithUnit("Velocity Bias (NED)", _velocityBias, _velocityBiasUnit, "m/s\0\0", "%.2g");
-                inputVector3WithUnit("RollPitchYaw Bias", _attitudeBias, _attitudeBiasUnit, "rad\0deg\0\0", "%.2g");
+                if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVel::type() }))
+                {
+                    inputVector3WithUnit("Velocity Bias (NED)", _velocityBias, _velocityBiasUnit, "m/s\0\0", "%.2g");
+                    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVelAtt::type() }))
+                    {
+                        inputVector3WithUnit("RollPitchYaw Bias", _attitudeBias, _attitudeBiasUnit, "rad\0deg\0\0", "%.2g");
+                    }
+                }
             }
         }
         ImGui::Unindent();
@@ -212,15 +218,21 @@ void NAV::ErrorModel::guiConfig()
                                   .c_str(),
                               _positionNoise, _positionNoiseUnit, "m, m, m\0m^2, m^2, m^2\0\0",
                               "%.2g", _positionRng);
-                noiseGuiInput(fmt::format("Velocity Noise ({})", _velocityNoiseUnit == VelocityNoiseUnits::m_s ? "Standard deviation"
-                                                                                                               : "Variance")
-                                  .c_str(),
-                              _velocityNoise, _velocityNoiseUnit, "m/s\0m^2/s^2\0\0", "%.2g", _velocityRng);
-                noiseGuiInput(fmt::format("Attitude Noise ({})", _attitudeNoiseUnit == AttitudeNoiseUnits::rad || _attitudeNoiseUnit == AttitudeNoiseUnits::deg
-                                                                     ? "Standard deviation"
-                                                                     : "Variance")
-                                  .c_str(),
-                              _attitudeNoise, _attitudeNoiseUnit, "rad\0deg\0rad^2\0deg^2\0\0", "%.2g", _attitudeRng);
+                if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVel::type() }))
+                {
+                    noiseGuiInput(fmt::format("Velocity Noise ({})", _velocityNoiseUnit == VelocityNoiseUnits::m_s ? "Standard deviation"
+                                                                                                                   : "Variance")
+                                      .c_str(),
+                                  _velocityNoise, _velocityNoiseUnit, "m/s\0m^2/s^2\0\0", "%.2g", _velocityRng);
+                    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { PosVelAtt::type() }))
+                    {
+                        noiseGuiInput(fmt::format("Attitude Noise ({})", _attitudeNoiseUnit == AttitudeNoiseUnits::rad || _attitudeNoiseUnit == AttitudeNoiseUnits::deg
+                                                                             ? "Standard deviation"
+                                                                             : "Variance")
+                                          .c_str(),
+                                      _attitudeNoise, _attitudeNoiseUnit, "rad\0deg\0rad^2\0deg^2\0\0", "%.2g", _attitudeRng);
+                    }
+                }
             }
             else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(outputPins.front().dataIdentifier, { GnssObs::type() }))
             {
