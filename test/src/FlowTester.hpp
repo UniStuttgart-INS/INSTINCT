@@ -21,8 +21,9 @@ namespace NAV::TESTS
 /// @brief Loads and executes the flow
 /// @param[in] path Path to the flow file
 /// @param[in] useTestDirectories Whether to set the paths to 'test/..' or to the root folder
+/// @param[in] duration Duration in seconds to run the flow (negative disables this feature)
 /// @return true if the execution was successful
-bool testFlow(const char* path, bool useTestDirectories = true);
+bool testFlow(const char* path, bool useTestDirectories = true, int duration = -1);
 
 /// @brief Runs general purpose cleanup checks
 void runGeneralFlowCleanupChecks();

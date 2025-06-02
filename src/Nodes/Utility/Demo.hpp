@@ -17,6 +17,8 @@
 
 #include "util/Eigen.hpp"
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include "util/CallbackTimer.hpp"
 
 namespace NAV
@@ -67,10 +69,10 @@ class Demo : public Node
     /// @return True if link is allowed, false if link is rejected
     bool onCreateLink(OutputPin& startPin, InputPin& endPin) override;
 
-    /// @brief Called when a link is to be deleted
+    /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(OutputPin& startPin, InputPin& endPin) override;
+    void afterDeleteLink(OutputPin& startPin, InputPin& endPin) override;
 
     /// @brief Data struct transmitted over an output port
     struct DemoData
@@ -79,24 +81,7 @@ class Demo : public Node
         bool boolean = false;                       ///< Boolean inside the DemoData
     };
 
-  private:
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOW = 1;      ///< @brief Flow
-    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 2;      ///< @brief Bool
-    constexpr static size_t OUTPUT_PORT_INDEX_INT = 3;       ///< @brief Int
-    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 4;     ///< @brief Float
-    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 5;    ///< @brief Double
-    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 6;    ///< @brief String
-    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 7; ///< @brief DemoData
-    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 8;    ///< @brief Matrix
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;  ///< @brief Delegate (Demo)
-    constexpr static size_t INPUT_PORT_INDEX_FLOW = 1;       ///< @brief Flow
-    constexpr static size_t INPUT_PORT_INDEX_BOOL = 2;       ///< @brief Bool
-    constexpr static size_t INPUT_PORT_INDEX_INT = 3;        ///< @brief Int
-    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 4;      ///< @brief Float
-    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 5;     ///< @brief Double
-    constexpr static size_t INPUT_PORT_INDEX_STRING = 6;     ///< @brief String
-    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 7;  ///< @brief DemoData
-    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 8;     ///< @brief Matrix
+    // private: // All this would be usually private. The Demo node however does not include private items to generate a complete Doxygen documentation
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -104,12 +89,35 @@ class Demo : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// Update the pins depending on the GUI
+    void updatePins();
+
+    /// Pin types used in this demo
+    enum class DemoPins : uint8_t
+    {
+        Delegate, ///< Delegate pins giving access to the complete connected node
+        Flow,     ///< Flow pins transmitting data as timestamped shared pointers
+        Bool,     ///< Booleans
+        Int,      ///< Integer numbers
+        Float,    ///< Float numbers
+        Double,   ///< Double numbers
+        String,   ///< Strings
+        Object,   ///< Custom objects
+        Matrix,   ///< Matrix objects
+    };
+
+    /// @brief Calculates the pin index for the given type
+    /// @param[in] pinType Pin type to use
+    /// @return Index of the pin (input and output pins have same indices)
+    std::optional<size_t> getPinIdx(DemoPins pinType) const;
+
     /// @brief Receive callback on the Flow pin
     /// @param[in] queue Queue with all the received data messages
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
     /// @brief Polls data from the file. This function is needed, if we have multiple output pins, polling data.
+    /// @note Not used in the node as only one output flow pin which does not need peeking and therefore utilizes the NAV::Demo::pollData() function
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<const NodeData> peekPollData(bool peek = false);
@@ -140,6 +148,16 @@ class Demo : public Node
     int _iPollData = 0;
     /// Amount of Observations to be read
     int _nPollData = 20;
+
+    bool _enableDelegate = false; ///< Switch to enable the delegate pin
+    bool _enableFlow = true;      ///< Switch to enable the flow pin
+    bool _enableBool = false;     ///< Switch to enable the bool pin
+    bool _enableInt = false;      ///< Switch to enable the int pin
+    bool _enableFloat = false;    ///< Switch to enable the float pin
+    bool _enableDouble = false;   ///< Switch to enable the double pin
+    bool _enableString = false;   ///< Switch to enable the string pin
+    bool _enableObject = false;   ///< Switch to enable the object pin
+    bool _enableMatrix = false;   ///< Switch to enable the matrix pin
 
     bool _valueBool = true;                                         ///< Value which is represented over the Bool pin
     int _valueInt = -1;                                             ///< Value which is represented over the Int pin

@@ -1,0 +1,640 @@
+{
+    "bottomViewHeight": 200.0,
+    "colormaps": [],
+    "commonLog": {
+        "useGuiInputs": false
+    },
+    "fonts": {
+        "useBigDefaultFont": false,
+        "useBigMonoFont": false,
+        "useBigPanelFont": false,
+        "useBigWindowFont": false
+    },
+    "gridLinesEnabled": 0.1568627506494522,
+    "hideFPS": false,
+    "leftPane": {
+        "hide": false,
+        "leftWidth": 350.0,
+        "rightWidth": 850.0
+    },
+    "lightMode": false,
+    "links": {
+        "link-100": {
+            "endPinId": 78,
+            "id": 100,
+            "startPinId": 10
+        },
+        "link-101": {
+            "endPinId": 51,
+            "id": 101,
+            "startPinId": 2
+        },
+        "link-109": {
+            "endPinId": 106,
+            "id": 109,
+            "startPinId": 105
+        },
+        "link-13": {
+            "endPinId": 11,
+            "id": 13,
+            "startPinId": 10
+        },
+        "link-42": {
+            "endPinId": 40,
+            "id": 42,
+            "startPinId": 27
+        },
+        "link-43": {
+            "endPinId": 5,
+            "id": 43,
+            "startPinId": 2
+        },
+        "link-44": {
+            "endPinId": 36,
+            "id": 44,
+            "startPinId": 25
+        },
+        "link-45": {
+            "endPinId": 38,
+            "id": 45,
+            "startPinId": 23
+        },
+        "link-47": {
+            "endPinId": 34,
+            "id": 47,
+            "startPinId": 21
+        },
+        "link-48": {
+            "endPinId": 32,
+            "id": 48,
+            "startPinId": 19
+        },
+        "link-49": {
+            "endPinId": 30,
+            "id": 49,
+            "startPinId": 17
+        },
+        "link-50": {
+            "endPinId": 28,
+            "id": 50,
+            "startPinId": 15
+        }
+    },
+    "nodes": {
+        "node-104": {
+            "data": {
+                "enableBool": false,
+                "enableDelegate": false,
+                "enableDouble": false,
+                "enableFloat": false,
+                "enableFlow": true,
+                "enableInt": false,
+                "enableMatrix": false,
+                "enableObject": false,
+                "enableString": false,
+                "fileReaderInsteadSensor": true,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 104,
+            "inputPins": [
+                {
+                    "id": 102,
+                    "name": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 105,
+                    "name": "FileReader\n Data"
+                }
+            ],
+            "pos": {
+                "x": 324.0,
+                "y": 648.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        },
+        "node-108": {
+            "data": {
+                "enableBool": false,
+                "enableDelegate": false,
+                "enableDouble": false,
+                "enableFloat": false,
+                "enableFlow": true,
+                "enableInt": false,
+                "enableMatrix": false,
+                "enableObject": false,
+                "enableString": false,
+                "fileReaderInsteadSensor": false,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 108,
+            "inputPins": [
+                {
+                    "id": 106,
+                    "name": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 107,
+                    "name": "Sensor\nData"
+                }
+            ],
+            "pos": {
+                "x": 590.0,
+                "y": 654.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        },
+        "node-3": {
+            "data": {
+                "enableBool": true,
+                "enableDelegate": true,
+                "enableDouble": true,
+                "enableFloat": true,
+                "enableFlow": true,
+                "enableInt": true,
+                "enableMatrix": true,
+                "enableObject": true,
+                "enableString": true,
+                "fileReaderInsteadSensor": false,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 3,
+            "inputPins": [
+                {
+                    "id": 26,
+                    "name": "Demo Node"
+                },
+                {
+                    "id": 1,
+                    "name": "Flow"
+                },
+                {
+                    "id": 24,
+                    "name": "Bool"
+                },
+                {
+                    "id": 22,
+                    "name": "Int"
+                },
+                {
+                    "id": 20,
+                    "name": "Float"
+                },
+                {
+                    "id": 18,
+                    "name": "Double"
+                },
+                {
+                    "id": 9,
+                    "name": "String"
+                },
+                {
+                    "id": 16,
+                    "name": "Object"
+                },
+                {
+                    "id": 14,
+                    "name": "Matrix"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 27,
+                    "name": "Demo Node"
+                },
+                {
+                    "id": 2,
+                    "name": "Sensor\nData"
+                },
+                {
+                    "id": 25,
+                    "name": "Bool"
+                },
+                {
+                    "id": 23,
+                    "name": "Int"
+                },
+                {
+                    "id": 21,
+                    "name": "Float"
+                },
+                {
+                    "id": 19,
+                    "name": "Double"
+                },
+                {
+                    "id": 10,
+                    "name": "String"
+                },
+                {
+                    "id": 17,
+                    "name": "Object"
+                },
+                {
+                    "id": 15,
+                    "name": "Matrix"
+                }
+            ],
+            "pos": {
+                "x": 299.0,
+                "y": 246.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        },
+        "node-53": {
+            "data": {
+                "enableBool": false,
+                "enableDelegate": false,
+                "enableDouble": false,
+                "enableFloat": false,
+                "enableFlow": true,
+                "enableInt": false,
+                "enableMatrix": false,
+                "enableObject": false,
+                "enableString": false,
+                "fileReaderInsteadSensor": false,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 53,
+            "inputPins": [
+                {
+                    "id": 51,
+                    "name": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 52,
+                    "name": "Sensor\nData"
+                }
+            ],
+            "pos": {
+                "x": 590.0,
+                "y": 158.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        },
+        "node-58": {
+            "data": {
+                "enableBool": false,
+                "enableDelegate": false,
+                "enableDouble": false,
+                "enableFloat": false,
+                "enableFlow": false,
+                "enableInt": false,
+                "enableMatrix": false,
+                "enableObject": false,
+                "enableString": true,
+                "fileReaderInsteadSensor": false,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 58,
+            "inputPins": [
+                {
+                    "id": 78,
+                    "name": "String"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 79,
+                    "name": "String"
+                }
+            ],
+            "pos": {
+                "x": 586.0,
+                "y": 558.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        },
+        "node-7": {
+            "data": {
+                "enableBool": true,
+                "enableDelegate": true,
+                "enableDouble": true,
+                "enableFloat": true,
+                "enableFlow": true,
+                "enableInt": true,
+                "enableMatrix": true,
+                "enableObject": true,
+                "enableString": true,
+                "fileReaderInsteadSensor": false,
+                "nPollData": 20,
+                "outputFrequency": 1,
+                "valueBool": true,
+                "valueDouble": 1242.342,
+                "valueFloat": 65.4000015258789,
+                "valueInt": -1,
+                "valueMatrix": {
+                    "0": {
+                        "0": 1.0,
+                        "1": 0.0,
+                        "2": 0.0
+                    },
+                    "1": {
+                        "0": 0.0,
+                        "1": 1.0,
+                        "2": 0.0
+                    },
+                    "2": {
+                        "0": 0.0,
+                        "1": 0.0,
+                        "2": 1.0
+                    }
+                },
+                "valueObject": {
+                    "boolean": false,
+                    "integer": [
+                        12,
+                        -2,
+                        2
+                    ]
+                },
+                "valueString": "Demo"
+            },
+            "enabled": true,
+            "id": 7,
+            "inputPins": [
+                {
+                    "id": 40,
+                    "name": "Demo Node"
+                },
+                {
+                    "id": 5,
+                    "name": "Flow"
+                },
+                {
+                    "id": 36,
+                    "name": "Bool"
+                },
+                {
+                    "id": 38,
+                    "name": "Int"
+                },
+                {
+                    "id": 34,
+                    "name": "Float"
+                },
+                {
+                    "id": 32,
+                    "name": "Double"
+                },
+                {
+                    "id": 11,
+                    "name": "String"
+                },
+                {
+                    "id": 30,
+                    "name": "Object"
+                },
+                {
+                    "id": 28,
+                    "name": "Matrix"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Demo",
+            "outputPins": [
+                {
+                    "id": 41,
+                    "name": "Demo Node"
+                },
+                {
+                    "id": 6,
+                    "name": "Sensor\nData"
+                },
+                {
+                    "id": 37,
+                    "name": "Bool"
+                },
+                {
+                    "id": 39,
+                    "name": "Int"
+                },
+                {
+                    "id": 35,
+                    "name": "Float"
+                },
+                {
+                    "id": 33,
+                    "name": "Double"
+                },
+                {
+                    "id": 12,
+                    "name": "String"
+                },
+                {
+                    "id": 31,
+                    "name": "Object"
+                },
+                {
+                    "id": 29,
+                    "name": "Matrix"
+                }
+            ],
+            "pos": {
+                "x": 590.0,
+                "y": 248.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Demo"
+        }
+    },
+    "transparentWindows": 0.9399999976158142
+}

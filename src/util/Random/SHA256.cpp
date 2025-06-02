@@ -35,6 +35,8 @@ SOFTWARE.
     #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
 
+#ifndef DOXYGEN_IGNORE
+
 namespace NAV
 {
 constexpr std::array<uint32_t, 64> SHA256::K;
@@ -213,6 +215,8 @@ std::string SHA256::toString(const uint8_t* digest)
 }
 
 } // namespace NAV
+
+#endif
 
 #if defined(__clang__)
     #pragma GCC diagnostic pop

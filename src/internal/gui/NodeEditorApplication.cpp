@@ -980,13 +980,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         ed::PinPivotSize(ImVec2(0, 0));
                         ImGui::BeginHorizontal(output.id.AsPointer());
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
-                        if (!output.name.empty())
-                        {
-                            ImGui::PushStyleColor(ImGuiCol_Text, textColor);
-                            ImGui::TextUnformatted(output.name.c_str());
-                            ImGui::PopStyleColor();
-                            ImGui::Spring(0);
-                        }
+                        // if (!output.name.empty())
+                        // {
+                        //     ImGui::PushStyleColor(ImGuiCol_Text, textColor);
+                        //     ImGui::TextUnformatted(output.name.c_str());
+                        //     ImGui::PopStyleColor();
+                        //     ImGui::Spring(0);
+                        // }
                         output.drawPinIcon(output.isPinLinked(), static_cast<int>(alpha * 255));
                         ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
                         ImGui::EndHorizontal();

@@ -1,0 +1,180 @@
+// This file is part of INSTINCT, the INS Toolkit for Integrated
+// Navigation Concepts and Training by the Institute of Navigation of
+// the University of Stuttgart, Germany.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+// @file getting_started.dox
+// @brief Getting started for developers
+// @author T. Topp (topp@ins.uni-stuttgart.de)
+// @date 2025-05-27
+
+namespace Instinct {
+
+/** \page Dev_Getting_Started Getting Started
+
+\tableofcontents
+
+\section Dev_Getting_Started_Install Development Environment and Building
+
+Please use the [Getting started](https://github.com/UniStuttgart-INS/INSTINCT?tab=readme-ov-file#getting-started) on GitHub to set up your development environment and to look up the commands to build the software.
+
+\section Dev_Getting_Started_Structure Repository structure
+
+Understanding the project folder structure is important for working with it. The following gives a brief overview of the folders and a small description of their content.
+
+- <i class="fa fa-folder"></i> `.vscode` - *VSCode project files. Includes tasks for building, running and debugging the executable, tests and documentation.*
+- <i class="fa fa-folder"></i> `cmake` - *CMake related files used to build the project. Start with the `CMakeLists.txt` in the main folder to understand the build process.*
+- <i class="fa fa-folder"></i> `config` - *Includes settings loaded by INSTINCT on startup `globals.json` and color scheme for the plots which can be switched in the software.*
+- <i class="fa fa-folder"></i> `data` - *The default directory where INSTINCT searches for data files.*
+- <i class="fa fa-folder"></i> `doc` - *Contains the Doxygen documentation.*
+- <i class="fa fa-folder"></i> `flow` - *The default directory where INSTINCT searches for flow files. Also contains example flows.*
+- <i class="fa fa-folder"></i> `lib` - *Libraries used during the build process. Contains Git submodules so make sure to clone/pull them accordingly.*
+- <i class="fa fa-folder"></i> `logs` - *Folder created by INSTINCT. Default directory for saving log files if a relative path is specified in nodes.*
+- <i class="fa fa-folder"></i> `resources` - *Resources used by INSTINCT like fonts and images.*
+  - <i class="fa fa-folder"></i> `gnss/antex` - *Folder containing [ANTEX](https://igs.org/wg/antenna/) files. All files within this directory are loaded upon start of INSTINCT.*
+- <i class="fa fa-folder"></i> `src` - *C++ source code.*
+  - <i class="fa fa-folder"></i> `internal` - Internal logic of INSTINCT. Usually developers do not need to modify the content of this folder.
+  - <i class="fa fa-folder"></i> `Navigation` - Classes and algorithms related to Navigation. Nodes make use of these algorithms.
+  - <i class="fa fa-folder"></i> `NodeData` - Classes used to pass data between nodes.
+  - <i class="fa fa-folder"></i> `Nodes` - Contains all nodes available in the software.
+    - <i class="fa fa-folder"></i> `Converter` - Converter nodes convert one type of NodeData into another.
+    - <i class="fa fa-folder"></i> `DataLink` - Nodes communicating over the network.
+    - <i class="fa fa-folder"></i> `DataLogger` - Nodes used for logging NodeData to files in different formats. Nodes in here usually act as a data sink and only have input ports.
+    - <i class="fa fa-folder"></i> `DataProcessor` - Nodes used to analyze data, calculate navigation solutions and many more.
+    - <i class="fa fa-folder"></i> `DataProvider` - File readers, sensors, network receivers and simulation nodes. Nodes in here usually act as a data source and only have output ports.
+    - <i class="fa fa-folder"></i> `Experimental` - Nodes which are not properly tested and maintained. Use with caution.
+    - <i class="fa fa-folder"></i> `Plotting` - Nodes used for plotting data in the software.
+    - <i class="fa fa-folder"></i> `State` - Nodes for initializing the state (position, velocity, attitude).
+    - <i class="fa fa-folder"></i> `Utility` - Nodes used for various tasks not related to a specific NodeData type.
+  - <i class="fa fa-folder"></i> `util` -
+- <i class="fa fa-folder"></i> `test` - *Contains all unit and integration tests. Folder structure within mirrors approximately the `src` folder structure.*
+- <i class="fa fa-folder"></i> `tools` - *Collection of scripts, mostly used in CI.*
+
+\section Dev_Getting_Started_Nodes The Demo Node
+
+\note Before starting here, make sure to read the \ref getting_started page from the \ref user_manual_landing_page to get a basic understanding of how the software works.
+
+Let's start by looking at the NAV::Demo node. It is a node showcasing a lot of functionality a node can have and is also a good starting point for creating own nodes later on. The code is also well documented so it is recommended to look into the source code ([Demo.hpp](https://github.com/UniStuttgart-INS/INSTINCT/blob/main/src/Nodes/Utility/Demo.hpp) / [Demo.cpp](https://github.com/UniStuttgart-INS/INSTINCT/blob/main/src/Nodes/Utility/Demo.cpp)) while following along this tutorial. In the project directory there is the `flow/_Demo.flow` example file depicted below
+\image html dev_getting-started_flow-boxes.png
+
+This example flow shows 6 NAV::Demo nodes connected to each other, each showing a different feature. The node in the yellow box shows all possible output pin types nodes can have. In general pins can have 2 different types/functions, flow pins and data pins.
+- Flow pins: Transport time tagged data via shared pointers between nodes. The data is put into a queue upon arrival, so the next node can process the date when it is ready.
+- Data pins: All other pins in the example are data pins. They have a pointer to the data they represent, so the connected node can directly access the data. There are certain functions which can notify the connected node that the data was changed and also to block the sending node to ensure the connected node processes the data before we alter it again. More on this later on.
+
+\image html dev_getting-started_flow-boxes-yellow.png
+
+The pins seen in the yellow node are:
+1. *Delegate*: Gives access to the entire node via a pointer to the node class itself
+2. *Flow*: Transport time tagged data via shared pointers between nodes
+3. *Bool*: Pointer to a boolean value
+4. *Int*: Pointer to an integer value
+5. *Float/Double*: Pointer to either a float or double value
+6. *String*: Pointer to a string value
+7. *Object*: Pointer to a custom object
+8. *Matrix*: Pointer to a matrix
+
+In order to create pins, one calls functions from the NodeManager namespace like NAV::NodeManager::CreateInputPin() and NAV::NodeManager::CreateOutputPin(). There are multiple overloads of both functions depending what purpose the pin serves. More can be read in the code documentation.
+
+All pins from the yellow node are connected to the teal node. We can see in the configuration window, that the input values of teal coincide with the output values of the yellow node. When changing the GUI, you could instantaneously see the changes in the connected node.
+
+\image html dev_getting-started_flow-boxes-teal.png
+
+The flow pin of the yellow node is set to simulate a sensor with output frequency of 1 Hertz. When running the flow it sends out packages regularly to the teal and pink nodes. In the configuration window of the receiving nodes a counter will count up every time data is received. This is done by a function which is called every time data becomes available. Instead of simply increasing a counter usually the incoming data would be processed and potentially new data sent out. While a node has no input data available its thread is put to sleep to not waste resources.
+
+\image html dev_getting-started_flow-boxes-pink.png
+
+The teal and green nodes are also connected to the string pin of the yellow node. In the GUI we cannot only see the connected string, but also a counter showing how often the string was updated. This is done by the notification logic mentioned before. Every time the yellow node's string get updated, it notifies the connected nodes. These have a function which then can process the data and also acknowledge that the data was processed. All connected nodes need to acknowledge the notification before the yellow node could change the data again. This is useful in e.g. the plot node to ensure all the data gets plotted and not altered multiple times because the plot node was busy processing other data.
+
+\image html dev_getting-started_flow-boxes-green.png
+
+On the bottom of the flow, the blue node is connected to the red node. The blue node simulates a typical file reader. When running the flow it sends out a certain amount of data, and then it stops when no more data is available. When only data files are used, INSTINCT enters a post-processing mode which then stops the execution of the whole flow upon completion. In the example flow the post-processing mode can be achieved by deleting or disabling the yellow, pink, teal and green node.
+
+\image html dev_getting-started_flow-boxes-blue.png
+
+In general reading files is also done by the worker thread of the node. When creating the output pin, the developer has to specify either a NAV::OutputPin::PollDataFunc when the node has only one flow output pin or a NAV::OutputPin::PeekPollDataFunc when the node has multiple flow output pins in order to call the functions in correct order. In the NAV::Demo node a NAV::OutputPin::PollDataFunc is used, as there is only one output flow pin. In the output pin creation the function NAV::Demo::pollData() is passed. The demo node however includes a function NAV::Demo::peekPollData() to illustrate how this functionality could be used.
+
+\image html dev_getting-started_flow-boxes-red.png
+
+\section Dev_Getting_Started_Create_Node Creating your first node
+
+In order to create your own node you need to create a class which derives from NAV::Node. There are multiple functions which need to be overridden and some which provide default implementations in case you do not need a specific behavior.
+
+\note The easiest way to create a new node is to copy the NAV::Demo node and delete all functionality which is not needed.
+
+After creating the node it needs to be registered in the software in the NAV::NodeRegistry::RegisterNodeTypes() function. Afterward, it should be available in the GUI.
+
+\subsection Dev_Getting_Started_Create_Node_Data Creating own data types
+
+Flow pins can only pass data which is derived from NAV::NodeData. This ensures that each package contains an absolute time.
+Similar to new nodes, new data types need also to be registered in the NAV::NodeRegistry::RegisterNodeDataTypes() function.
+
+The data classes can have C++ inheritance, however additionally they need a static function `parentTypes()` which tells the software about the inheritance. This makes it possible to connect e.g. a NAV::PosVel output pin to a NAV::Pos input pin, because NAV::PosVel is derived from NAV::Pos. As an example please see NAV::PosVel::parentTypes() and NAV::Pos::parentTypes()
+
+\section Dev_Getting_Started_Cmd Command line arguments
+
+The following table shows all command line arguments available
+
+| Option | Default | Description |
+| --- | :-: | --- |
+| `config`            | -           | List of configuration files to read command line arguments from (instead of providing them directly) |
+| `version,v`         | -           | Display the version number |
+| `help,h`            | -           | Display this help message |
+| `sigterm`           | -           | Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM |
+| `duration`          | 0           | Program execution duration [sec] |
+| `nogui`             | -           | Launch without the gui |
+| `noinit`            | -           | Do not initialize flows after loading them |
+| `load,l`            |             | Flow file to load |
+| `rotate-output`     | -           | Create new folders for output files |
+| `output-path,o`     | logs        | Directory path for logs and output files |
+| `input-path,i`      | data        | Directory path for searching input files |
+| `flow-path,f`       | flow        | Directory path for searching flow files |
+| `implot-config`     | implot.json | Config file to read implot settings from |
+| `global-log-level`  | trace       | Global log level of all sinks (possible values: trace/debug/info/warning/error/critical/off) |
+| `console-log-level` | info        | Log level on the console      (possible values: trace/debug/info/warning/error/critical/off) |
+| `file-log-level`    | debug       | Log level to the log file     (possible values: trace/debug/info/warning/error/critical/off) |
+| `flush-log-level`   | info        | Log level to flush on         (possible values: trace/debug/info/warning/error/critical/off) |
+| `log-filter`        |             | Filter/Regex for log messages |
+
+Some combinations of arguments for use cases
+- **Unit tests:** Tests use the folders `test/flow`, `test/data` and `test/logs` instead of their equivalents in the main directory. To write flow files using these paths you can use the command line arguments `--flow-path=test/flow --input-path=test/data --output-path=test/logs`
+- **Headless sensor logging:** To run the software without GUI on a test platform, pass `--nogui --sigterm --rotate-output`. This ensures the software keeps running and no log files get overridden.
+- **Debugging a Node:** To debug a certain node we usually want to compile in `LOG_DATA` mode. This however produces a lot of log output from nodes we are not interested in. To compensate this, you can use e.g. `--console-log-level=debug --file-log-level=trace --flush-log-level=trace --log-filter=SinglePointPositioning` to only log into file (console logging slows down) and to filter logs for the given Regex.
+
+If you are using VSCode there are predefined tasks for running and debugging which also include a lot of command line arguments either set to some default value or commented out for ease of use. See for example the `MAIN: Build & run project` task inside the `tasks.json`.
+
+\section Dev_Getting_Started_VSCode VSCode workflow
+
+INSTINCT is mainly developed with [VSCode](https://code.visualstudio.com/) and includes its project files.
+
+\subsection Dev_Getting_Started_VSCode_tasks How to work with the project (tasks.json)
+
+The most used tasks are
+
+- `MAIN: Build & run project`: Builds the project and runs the executable with the given arguments
+- `TEST: Build & run`: Runs all test. Here also a Regex can be specified to run only certain tests
+- `COVERAGE: Create & Show`: Runs all tests and creates a coverage report. Opens a browser to show it.
+- `DOXYGEN: Create & Show`: Creates the Doxygen documentation and opens a browser afterwards showing it.
+- `CLEAN: Remove Build Files`: Removes all build files within `build/`
+- `CLEAN: Tests`: Removes the content inside `tests/logs`
+- `Gperftools: Run profiler`: Runs the INSTINCT executable with the Gperftools profiler attached. Afterwards run `Gperftools: Show profiled output` to show the output
+- `VALGRIND: Run profiler`: Runs the INSTINCT executable with the Valgrind profiler attached. Afterwards run `VALGRIND: Show profiled output` to show the output
+- `VALGRIND: Memory Leak Check`: Runs the INSTINCT executable with the Valgrind memory leak check attached.
+
+The tasks make use of the `Status Bar Parameter` extension, which allows setting certain parameters directly in the VSCode status bar without adapting the `tasks.json`
+\image html dev_getting-started_vscode-status-bar-parameter.png
+
+\subsection Dev_Getting_Started_VSCode_launch How to Debug (launch.json)
+
+In the `launch.json` file various debugging tasks are defined
+
+- `Linux Debug`: Debugging the main executable (Linux with the 'C/C++' extension and `cppdbg`). Arguments for INSTINCT can be specified.
+- `Linux Debug Tests`: Debugs all tests which have a `[Debug]` tag specified (Linux with the 'C/C++' extension and `cppdbg`)
+- `LLDB Debug`/`LLDB Debug Tests`: Similar to the tasks above but use the `lldb` debugger.
+- `Windows Debug`/`Windows Debug Tests`: Debug tasks for windows using `cppvsdbg`
+
+*/
+
+}

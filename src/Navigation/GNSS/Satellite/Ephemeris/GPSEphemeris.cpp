@@ -106,7 +106,7 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
     // Relativistic constant F for clock corrections [s/√m] (-2*√µ/c²)
     const auto F = InsConst::GPS::F;
 
-    LOG_DATA("    toe {} (Time of ephemeris)", toe.toGPSweekTow());
+    LOG_DATA("    toe {} [{}] (Time of ephemeris)", toe.toGPSweekTow(), toe.toYMDHMS(GPST));
 
     const auto A = sqrt_A * sqrt_A; // Semi-major axis [m]
     LOG_DATA("    A {} [m] (Semi-major axis)", A);
@@ -125,7 +125,8 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
 
     for (size_t i = 0; i < 2; i++)
     {
-        LOG_DATA("      transTime {} (Time at transmission)", transTime.toGPSweekTow());
+        LOG_DATA("     [{}]", i);
+        LOG_DATA("      transTime {} [{}] (Time at transmission)", transTime.toGPSweekTow(), transTime.toYMDHMS(GPST));
 
         // [s]
         auto t_minus_toc = static_cast<double>((transTime - toc).count());
@@ -168,7 +169,7 @@ Clock::Corrections GPSEphemeris::calcClockCorrections(const InsTime& recvTime, d
         // Correct transmit time for the satellite clock bias
         transTime = transTime0 - std::chrono::duration<double>(dt_sv);
     }
-    LOG_DATA("      transTime {} (Time at transmission)", transTime.toGPSweekTow());
+    LOG_DATA("      transTime {} [{}] (Time at transmission)", transTime.toGPSweekTow(), transTime.toYMDHMS(GPST));
 
     return { .transmitTime = transTime, .bias = dt_sv, .drift = clkDrift };
 }

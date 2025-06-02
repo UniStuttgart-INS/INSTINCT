@@ -92,7 +92,7 @@ InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const 
     return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::FlowFirableCallbackFunc>(callback)), firable, priority, idx);
 }
 
-/// @brief Create an Input Pin object
+/// @brief Create an Input Pin object for data pins. The additional notify function gets called when the connected data was changed and the connected node calls NAV::Node::notifyOutputValueChanged
 /// @tparam T Node Class where the function is member of
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
@@ -105,7 +105,7 @@ template<std::derived_from<Node> T>
 InputPin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier,
                          void (T::*notifyFunc)(const InsTime&, size_t), int idx = -1)
 {
-    assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Delegate);
+    assert(pinType != Pin::Type::Flow);
 
     return CreateInputPin(node, name, pinType, dataIdentifier, InputPin::Callback(static_cast<InputPin::DataChangedNotifyFunc>(notifyFunc)), nullptr, 0, idx);
 }

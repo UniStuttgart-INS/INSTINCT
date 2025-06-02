@@ -229,6 +229,13 @@ class Node
     virtual void restoreAtferLink(const json& j);
 
     /// @brief Initialize the Node
+    ///
+    /// Here a node can do things like
+    /// - connecting to a sensor
+    /// - read a static data file which needs to be read completely (e.g. RINEX nav files)
+    /// - reset variables in case the NAV::Node::resetNode() is not used
+    /// @attention This function is called in the default implementation of the NAV::Node::resetNode() function.
+    ///            If the initialize function should not be called more than once, make sure to override the NAV::Node::resetNode() function.
     virtual bool initialize();
 
     /// @brief Deinitialize the Node
@@ -269,7 +276,7 @@ class Node
     /// @param[in] pinIdx Output Port index where to set the value
     /// @param[in] insTime Time the value was generated
     /// @param[in] guard Lock guard of the output data
-    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>& guard);
+    void notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>&& guard);
 
     /// @brief Blocks the thread till the output values was read by all connected nodes
     /// @param[in] pinIdx Output Pin index where to request the lock

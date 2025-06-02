@@ -16,9 +16,11 @@
 #include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 
+#include "Navigation/Constants.hpp"
 #include "Navigation/GNSS/Core/Frequency.hpp"
 #include "Navigation/GNSS/Positioning/Observation.hpp"
 #include "Navigation/GNSS/Positioning/SPP/Keys.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Logger.hpp"
 #include <fmt/format.h>
 
@@ -123,7 +125,9 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                      _receiver.gnssObs->insTime.toYMDHMS(GPST), freq.first, freq.second.value, freq.second.stdDev);
         }
 
-        bool firstEpoch = e_oldPos.isZero();
+        auto posNorm = e_oldPos.norm();
+        bool ignoreElevationMask = posNorm < 0.5 * InsConst::WGS84::a || posNorm > 1.5 * InsConst::WGS84::a;
+        LOG_DATA("{}: [{}]   ignoreElevationMask = {} (posNorm = {} [m])", nameId, _receiver.gnssObs->insTime.toYMDHMS(GPST), ignoreElevationMask, posNorm);
         Observations observations;
         _obsFilter.selectObservationsForCalculation(Rover,
                                                     _receiver.e_posMarker,
@@ -133,7 +137,8 @@ std::shared_ptr<SppSolution> Algorithm::calcSppSolution(const std::shared_ptr<co
                                                     observations,
                                                     nullptr,
                                                     nameId,
-                                                    firstEpoch);
+                                                    ignoreElevationMask);
+
         if (observations.signals.empty())
         {
             LOG_TRACE("{}: [{}] SPP cannot calculate position because no valid observations. Try changing filter settings or reposition your antenna.",

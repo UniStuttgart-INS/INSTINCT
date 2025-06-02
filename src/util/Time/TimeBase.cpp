@@ -74,7 +74,7 @@ void NAV::util::time::SetCurrentTimeToComputerTime()
 
     currentTimeComputer = std::chrono::steady_clock::now();
     currentTime = InsTime{ static_cast<uint16_t>(now->tm_year + 1900), static_cast<uint16_t>(now->tm_mon) + 1, static_cast<uint16_t>(now->tm_mday),
-                           static_cast<uint16_t>(now->tm_hour), static_cast<uint16_t>(now->tm_min), static_cast<long double>(now->tm_sec) };
+                           static_cast<uint16_t>(now->tm_hour), static_cast<uint16_t>(now->tm_min), static_cast<long double>(now->tm_sec), UTC };
 }
 
 void NAV::util::time::ClearCurrentTime()

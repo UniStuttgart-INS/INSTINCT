@@ -20,6 +20,12 @@
 namespace NAV::TESTS::ExampleFlowTests
 {
 
+TEST_CASE("[ExampleFlow] Test _Demo.flow", "[ExampleFlow][flow]")
+{
+    auto logger = initializeTestLogger();
+    REQUIRE(testFlow("flow/_Demo.flow", false, 5));
+}
+
 TEST_CASE("[ExampleFlow] Test _ImuFusion.flow", "[ExampleFlow][flow]")
 {
     auto logger = initializeTestLogger();

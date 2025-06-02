@@ -142,7 +142,7 @@ TEST_CASE("[ScrollingBuffer] push_back (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.back() == 6);
 }
 
-TEST_CASE("[ScrollingBuffer] Repeated growing", "[ScrollingBuffer][Debug]")
+TEST_CASE("[ScrollingBuffer] Repeated growing", "[ScrollingBuffer]")
 {
     auto logger = initializeTestLogger();
 

@@ -10,6 +10,7 @@
 
 #include <stdexcept>
 
+#include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 #include "util/Assert.h"
 
@@ -89,7 +90,7 @@ void NAV::Node::afterCreateLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {
 
 void NAV::Node::afterDeleteLink(OutputPin& /*startPin*/, InputPin& /*endPin*/) {}
 
-void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>& /* guard */)
+void NAV::Node::notifyOutputValueChanged(size_t pinIdx, const InsTime& insTime, const std::scoped_lock<std::mutex>&& /* guard */)
 {
     if (callbacksEnabled && isInitialized())
     {
@@ -585,7 +586,7 @@ void NAV::Node::workerThread(Node* node)
             }
             LOG_DATA("{}: Worker woke up", node->nameId());
 
-            if (node->isInitialized() && (node->callbacksEnabled || node->_mode == Node::Mode::REAL_TIME))
+            if (node->isInitialized() && node->callbacksEnabled)
             {
                 if (timeout && node->callbacksEnabled) // Timeout reached
                 {

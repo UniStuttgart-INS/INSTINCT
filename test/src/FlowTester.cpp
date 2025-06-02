@@ -35,7 +35,7 @@ std::vector<const char*> argv = { "",
 
 } // namespace NAV::TESTS
 
-bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
+bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories, int duration)
 {
     // Config Manager object
     NAV::ConfigManager::initialize();
@@ -47,6 +47,9 @@ bool NAV::TESTS::testFlow(const char* path, bool useTestDirectories)
     argv.at(3) = path;
     argv.at(4) = inputPath.c_str();
     argv.at(5) = outputPath.c_str();
+
+    std::string durationArg = fmt::format("--duration={}", duration);
+    if (duration >= 0) { argv.insert(argv.cend() - 1, durationArg.c_str()); }
 
     int executionFailure = NAV::AppLogic::processCommandLineArguments(static_cast<int>(argv.size() - 1), argv.data());
 
