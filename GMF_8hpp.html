@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('GMF_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">GMF.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,12 +130,17 @@ $(function(){initNavTree('GMF_8hpp.html',''); initResizable(true); });
 
 <p><a href="GMF_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a40b8c3231d067e1083681c783bba531c" id="r_a40b8c3231d067e1083681c783bba531c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40b8c3231d067e1083681c783bba531c">NAV::calcTropoMapFunc_GMFH</a> (double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</td></tr>
+<tr class="memitem:a40b8c3231d067e1083681c783bba531c" id="r_a40b8c3231d067e1083681c783bba531c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a40b8c3231d067e1083681c783bba531c">NAV::calcTropoMapFunc_GMFH</a> (double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</td></tr>
 <tr class="memdesc:a40b8c3231d067e1083681c783bba531c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Global Mapping Function (GMF) for the hydrostatic delay.  <br /></td></tr>
 <tr class="separator:a40b8c3231d067e1083681c783bba531c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a479979ed494d8cadc181f29d61f41e7e" id="r_a479979ed494d8cadc181f29d61f41e7e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a479979ed494d8cadc181f29d61f41e7e">NAV::calcTropoMapFunc_GMFW</a> (double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</td></tr>
+<tr class="memitem:a479979ed494d8cadc181f29d61f41e7e" id="r_a479979ed494d8cadc181f29d61f41e7e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a479979ed494d8cadc181f29d61f41e7e">NAV::calcTropoMapFunc_GMFW</a> (double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</td></tr>
 <tr class="memdesc:a479979ed494d8cadc181f29d61f41e7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Global Mapping Function (GMF) for the wet delay.  <br /></td></tr>
 <tr class="separator:a479979ed494d8cadc181f29d61f41e7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -144,82 +151,9 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_böhm2006a">[7]</a> Böhm2006: Global Mapping Function (GMF): A new empirical mapping function based on numerical weather model data </dd>
 <dd>
 See <a href="https://vmf.geo.tuwien.ac.at/codes/">https://vmf.geo.tuwien.ac.at/codes/</a> for code sources in matlab. </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a40b8c3231d067e1083681c783bba531c" name="a40b8c3231d067e1083681c783bba531c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40b8c3231d067e1083681c783bba531c">&#9670;&#160;</a></span>calcTropoMapFunc_GMFH()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcTropoMapFunc_GMFH </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mjd</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_pos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the Global Mapping Function (GMF) for the hydrostatic delay. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">mjd</td><td>Modified julian date </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_pos</td><td>[𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Angle between the user and satellite [rad] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Hydrostatic mapping function </dd></dl>
-
-</div>
-</div>
-<a id="a479979ed494d8cadc181f29d61f41e7e" name="a479979ed494d8cadc181f29d61f41e7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a479979ed494d8cadc181f29d61f41e7e">&#9670;&#160;</a></span>calcTropoMapFunc_GMFW()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcTropoMapFunc_GMFW </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>mjd</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_pos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the Global Mapping Function (GMF) for the wet delay. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">mjd</td><td>Modified julian date </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_pos</td><td>[𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Angle between the user and satellite [rad] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Wet mapping function </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="GMF_8hpp_source.html">GMF.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

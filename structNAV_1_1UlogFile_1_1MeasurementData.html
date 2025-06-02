@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1UlogFile_1_1MeasurementData.html',''); in
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1UlogFile_1_1MeasurementData-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::UlogFile::MeasurementData Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,23 +128,77 @@ $(function(){initNavTree('structNAV_1_1UlogFile_1_1MeasurementData.html',''); in
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a8d624efef01607384ccd9844710b4736" id="r_a8d624efef01607384ccd9844710b4736"><td class="memItemLeft" align="right" valign="top"><a id="a8d624efef01607384ccd9844710b4736" name="a8d624efef01607384ccd9844710b4736"></a>
-std::variant&lt; <a class="el" href="structNAV_1_1UlogFile_1_1SensorAccel.html">SensorAccel</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorGyro.html">SensorGyro</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorMag.html">SensorMag</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleGpsPosition.html">VehicleGpsPosition</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleAttitude.html">VehicleAttitude</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
-<tr class="memdesc:a8d624efef01607384ccd9844710b4736"><td class="mdescLeft">&#160;</td><td class="mdescRight">measurement data <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a8d624efef01607384ccd9844710b4736" id="r_a8d624efef01607384ccd9844710b4736"><td class="memItemLeft" align="right" valign="top">std::variant&lt; <a class="el" href="structNAV_1_1UlogFile_1_1SensorAccel.html">SensorAccel</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorGyro.html">SensorGyro</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorMag.html">SensorMag</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleGpsPosition.html">VehicleGpsPosition</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleAttitude.html">VehicleAttitude</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d624efef01607384ccd9844710b4736">data</a></td></tr>
+<tr class="memdesc:a8d624efef01607384ccd9844710b4736"><td class="mdescLeft">&#160;</td><td class="mdescRight">measurement data  <br /></td></tr>
 <tr class="separator:a8d624efef01607384ccd9844710b4736"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2e58dac21a04392848568b167baceb1" id="r_aa2e58dac21a04392848568b167baceb1"><td class="memItemLeft" align="right" valign="top"><a id="aa2e58dac21a04392848568b167baceb1" name="aa2e58dac21a04392848568b167baceb1"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>message_name</b></td></tr>
-<tr class="memdesc:aa2e58dac21a04392848568b167baceb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">message name to subscribe to <br /></td></tr>
+<tr class="memitem:aa2e58dac21a04392848568b167baceb1" id="r_aa2e58dac21a04392848568b167baceb1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2e58dac21a04392848568b167baceb1">message_name</a></td></tr>
+<tr class="memdesc:aa2e58dac21a04392848568b167baceb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">message name to subscribe to  <br /></td></tr>
 <tr class="separator:aa2e58dac21a04392848568b167baceb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1946638f102f1a4573033137a9fdca3" id="r_ae1946638f102f1a4573033137a9fdca3"><td class="memItemLeft" align="right" valign="top"><a id="ae1946638f102f1a4573033137a9fdca3" name="ae1946638f102f1a4573033137a9fdca3"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>multi_id</b></td></tr>
-<tr class="memdesc:ae1946638f102f1a4573033137a9fdca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiple instances of the same message format, for example if the system has two sensors of the same type. The default and first instance must be 0 <br /></td></tr>
+<tr class="memitem:ae1946638f102f1a4573033137a9fdca3" id="r_ae1946638f102f1a4573033137a9fdca3"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1946638f102f1a4573033137a9fdca3">multi_id</a></td></tr>
+<tr class="memdesc:ae1946638f102f1a4573033137a9fdca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiple instances of the same message format, for example if the system has two sensors of the same type. The default and first instance must be 0  <br /></td></tr>
 <tr class="separator:ae1946638f102f1a4573033137a9fdca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Combined (sensor-)message name with unique ID and data. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="UlogFile_8hpp_source.html#l00301">301</a> of file <a class="el" href="UlogFile_8hpp_source.html">UlogFile.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a8d624efef01607384ccd9844710b4736" name="a8d624efef01607384ccd9844710b4736"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d624efef01607384ccd9844710b4736">&#9670;&#160;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::variant&lt;<a class="el" href="structNAV_1_1UlogFile_1_1SensorAccel.html">SensorAccel</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorGyro.html">SensorGyro</a>, <a class="el" href="structNAV_1_1UlogFile_1_1SensorMag.html">SensorMag</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleGpsPosition.html">VehicleGpsPosition</a>, <a class="el" href="structNAV_1_1UlogFile_1_1VehicleAttitude.html">VehicleAttitude</a>&gt; NAV::UlogFile::MeasurementData::data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>measurement data </p>
+
+<p class="definition">Definition at line <a class="el" href="UlogFile_8hpp_source.html#l00305">305</a> of file <a class="el" href="UlogFile_8hpp_source.html">UlogFile.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa2e58dac21a04392848568b167baceb1" name="aa2e58dac21a04392848568b167baceb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2e58dac21a04392848568b167baceb1">&#9670;&#160;</a></span>message_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::UlogFile::MeasurementData::message_name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>message name to subscribe to </p>
+
+<p class="definition">Definition at line <a class="el" href="UlogFile_8hpp_source.html#l00304">304</a> of file <a class="el" href="UlogFile_8hpp_source.html">UlogFile.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae1946638f102f1a4573033137a9fdca3" name="ae1946638f102f1a4573033137a9fdca3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1946638f102f1a4573033137a9fdca3">&#9670;&#160;</a></span>multi_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::UlogFile::MeasurementData::multi_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>multiple instances of the same message format, for example if the system has two sensors of the same type. The default and first instance must be 0 </p>
+
+<p class="definition">Definition at line <a class="el" href="UlogFile_8hpp_source.html#l00303">303</a> of file <a class="el" href="UlogFile_8hpp_source.html">UlogFile.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Nodes/DataProvider/IMU/FileReader/<a class="el" href="UlogFile_8hpp_source.html">UlogFile.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -152,7 +206,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>multi_id</b></td><
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1UlogFile.html">UlogFile</a></li><li class="navelem"><a class="el" href="structNAV_1_1UlogFile_1_1MeasurementData.html">MeasurementData</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1UlogFile.html">UlogFile</a></li><li class="navelem"><a class="el" href="structNAV_1_1UlogFile_1_1MeasurementData.html">MeasurementData</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

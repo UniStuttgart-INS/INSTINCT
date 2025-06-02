@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['j01_0',['J01',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaa0c2090825299a2958f4f1b978eb88b24',1,'NAV']]],
-  ['j02_1',['J02',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaada5dbc2b7c8ed2dfc967006855b1f350',1,'NAV']]],
-  ['j05_2',['J05',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaad720f604b232ae45f3113be75df831ee',1,'NAV']]],
-  ['j06_3',['J06',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaae6fe71d15bc1621fc9cec811a9a36629',1,'NAV']]],
+  ['j01_0',['J01',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaa0c2090825299a2958f4f1b978eb88b24',1,'NAV']]],
+  ['j02_1',['J02',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaada5dbc2b7c8ed2dfc967006855b1f350',1,'NAV']]],
+  ['j05_2',['J05',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaad720f604b232ae45f3113be75df831ee',1,'NAV']]],
+  ['j06_3',['J06',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaae6fe71d15bc1621fc9cec811a9a36629',1,'NAV']]],
   ['j1c_4',['J1C',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a7117649080ce90fa2ed232839437e030',1,'NAV::Code']]],
   ['j1l_5',['J1L',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a57f7544f7e4d641793953b5c0af2429c',1,'NAV::Code']]],
   ['j1s_6',['J1S',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a5b466076f027681081f5f8943e60dcfe',1,'NAV::Code']]],
@@ -30,8 +30,10 @@ var searchData=
   ['jekeli_27',['Jekeli',['../ImuIntegrator_n.html#ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison-Jekeli',1,'']]],
   ['jerkunit_28',['JerkUnit',['../structNAV_1_1PinDataIRWKF.html#a8ace04c3f446faf54f94e959f8070db1',1,'NAV::PinDataIRWKF']]],
   ['jerkvarianceunit_29',['JerkVarianceUnit',['../structNAV_1_1PinDataIRWKF.html#a8900a66ba88896c23c8d729c7f0ff573',1,'NAV::PinDataIRWKF']]],
-  ['jointostring_30',['joinToString',['../STL_8hpp.html#a00abdc3773016ac516231674be60bf77',1,'NAV']]],
-  ['jointostringcustom_31',['joinToStringCustom',['../STL_8hpp.html#ae56b8de9d380ef2d8147a6951ec1904f',1,'NAV']]],
-  ['json_32',['json',['../FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d',1,'FlowManager.hpp']]],
-  ['json_2ehpp_33',['Json.hpp',['../Json_8hpp.html',1,'']]]
+  ['jet_30',['jet',['../namespacejet.html',1,'']]],
+  ['jointostring_31',['joinToString',['../namespaceNAV.html#a00abdc3773016ac516231674be60bf77',1,'NAV']]],
+  ['jointostringcustom_32',['joinToStringCustom',['../namespaceNAV.html#ae56b8de9d380ef2d8147a6951ec1904f',1,'NAV']]],
+  ['json_33',['json',['../Dev_Getting_Started.html#Dev_Getting_Started_VSCode_launch',1,'How to Debug (launch.json)'],['../Dev_Getting_Started.html#Dev_Getting_Started_VSCode_tasks',1,'How to work with the project (tasks.json)'],['../FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d',1,'json:&#160;FlowManager.hpp']]],
+  ['json_2ecpp_34',['Json.cpp',['../Json_8cpp.html',1,'']]],
+  ['json_2ehpp_35',['Json.hpp',['../Json_8hpp.html',1,'']]]
 ];

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,25 +128,37 @@ $(function(){initNavTree('NodeEditorStyleEditor_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file NodeEditorStyleEditor.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Style Editor window</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2020-12-14</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;imgui.h&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>NAV::gui::windows</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="NodeEditorStyleEditor_8hpp.html#af95ba245b2c456ddb46ef2db628b934a">   25</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="NodeEditorStyleEditor_8hpp.html#af95ba245b2c456ddb46ef2db628b934a">ShowNodeEditorStyleEditor</a>(<span class="keywordtype">bool</span>* show, std::vector&lt;ImVec4&gt;&amp; colors, <span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; colorNames);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="NodeEditorStyleEditor_8hpp.html#a174f9977dec3f7a4c052135cb7b99f53">   29</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="NodeEditorStyleEditor_8hpp.html#a174f9977dec3f7a4c052135cb7b99f53">ApplyDarkLightMode</a>(std::vector&lt;ImVec4&gt;&amp; colors);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="NodeEditorStyleEditor_8hpp.html#a296a261b4a39de939ccab88a75281fd1">nodeEditorLightMode</a>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui_1_1windows.html">NAV::gui::windows</a></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// @brief Shows a window for editing the style of the Node Editor</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @param[in, out] show Flag which indicates whether the window is shown</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in, out] colors Colors of the GUI</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] colorNames Names for the colors</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#af95ba245b2c456ddb46ef2db628b934a">ShowNodeEditorStyleEditor</a>(<span class="keywordtype">bool</span>* show, std::vector&lt;ImVec4&gt;&amp; colors, <span class="keyword">const</span> std::vector&lt;const char*&gt;&amp; colorNames);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"></span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// Applies the currently selected mode</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">/// @param[in, out] colors Colors of the GUI</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">ApplyDarkLightMode</a>(std::vector&lt;ImVec4&gt;&amp; colors);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment"></span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/// If true, light mode is selected</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">nodeEditorLightMode</a>;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>} <span class="comment">// namespace NAV::gui::windows</span></div>
-<div class="ttc" id="aNodeEditorStyleEditor_8hpp_html_a174f9977dec3f7a4c052135cb7b99f53"><div class="ttname"><a href="NodeEditorStyleEditor_8hpp.html#a174f9977dec3f7a4c052135cb7b99f53">NAV::gui::windows::ApplyDarkLightMode</a></div><div class="ttdeci">void ApplyDarkLightMode(std::vector&lt; ImVec4 &gt; &amp;colors)</div></div>
-<div class="ttc" id="aNodeEditorStyleEditor_8hpp_html_a296a261b4a39de939ccab88a75281fd1"><div class="ttname"><a href="NodeEditorStyleEditor_8hpp.html#a296a261b4a39de939ccab88a75281fd1">NAV::gui::windows::nodeEditorLightMode</a></div><div class="ttdeci">bool nodeEditorLightMode</div><div class="ttdoc">If true, light mode is selected.</div></div>
-<div class="ttc" id="aNodeEditorStyleEditor_8hpp_html_af95ba245b2c456ddb46ef2db628b934a"><div class="ttname"><a href="NodeEditorStyleEditor_8hpp.html#af95ba245b2c456ddb46ef2db628b934a">NAV::gui::windows::ShowNodeEditorStyleEditor</a></div><div class="ttdeci">void ShowNodeEditorStyleEditor(bool *show, std::vector&lt; ImVec4 &gt; &amp;colors, const std::vector&lt; const char * &gt; &amp;colorNames)</div><div class="ttdoc">Shows a window for editing the style of the Node Editor.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html">NAV::gui::windows</a></div><div class="ttdef"><b>Definition</b> <a href="ColormapEditor_8hpp_source.html#l00016">ColormapEditor.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a174f9977dec3f7a4c052135cb7b99f53"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a174f9977dec3f7a4c052135cb7b99f53">NAV::gui::windows::ApplyDarkLightMode</a></div><div class="ttdeci">void ApplyDarkLightMode(std::vector&lt; ImVec4 &gt; &amp;colors)</div><div class="ttdef"><b>Definition</b> <a href="NodeEditorStyleEditor_8cpp_source.html#l00114">NodeEditorStyleEditor.cpp:114</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a296a261b4a39de939ccab88a75281fd1"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a296a261b4a39de939ccab88a75281fd1">NAV::gui::windows::nodeEditorLightMode</a></div><div class="ttdeci">bool nodeEditorLightMode</div><div class="ttdoc">If true, light mode is selected.</div><div class="ttdef"><b>Definition</b> <a href="NodeEditorStyleEditor_8cpp_source.html#l00020">NodeEditorStyleEditor.cpp:20</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_af95ba245b2c456ddb46ef2db628b934a"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#af95ba245b2c456ddb46ef2db628b934a">NAV::gui::windows::ShowNodeEditorStyleEditor</a></div><div class="ttdeci">void ShowNodeEditorStyleEditor(bool *show, std::vector&lt; ImVec4 &gt; &amp;colors, const std::vector&lt; const char * &gt; &amp;colorNames)</div><div class="ttdoc">Shows a window for editing the style of the Node Editor.</div><div class="ttdef"><b>Definition</b> <a href="NodeEditorStyleEditor_8cpp_source.html#l00024">NodeEditorStyleEditor.cpp:24</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

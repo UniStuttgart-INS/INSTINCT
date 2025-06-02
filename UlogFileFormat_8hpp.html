@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('UlogFileFormat_8hpp.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle"><div class="title">UlogFileFormat.hpp File Reference</div></div>
 </div><!--header-->
@@ -130,7 +132,7 @@ $(function(){initNavTree('UlogFileFormat_8hpp.html',''); initResizable(true); })
 <p><a href="UlogFileFormat_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s.html">NAV::vendor::pixhawk::message_add_logged_s</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscribed log message with name and ID. This must come before the first corresponding <a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__data__s.html" title="contains logged data">message_data_s</a>.  <a href="structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -174,31 +176,40 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">parameter default message. If a parameter dynamically changes during runtime, this message can also be used in the Data section. The data type is restricted to: int32_t, float  <a href="structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html">NAV::vendor::pixhawk</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ac919c4254e378ff6a7aa1686e9e8b0f8" id="r_ac919c4254e378ff6a7aa1686e9e8b0f8"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8">NAV::vendor::pixhawk::ulog_tag</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7">unassigned</a>
+<tr class="memitem:ac919c4254e378ff6a7aa1686e9e8b0f8" id="r_ac919c4254e378ff6a7aa1686e9e8b0f8"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8">NAV::vendor::pixhawk::ulog_tag</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7">NAV::vendor::pixhawk::unassigned</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474">mavlink_handler</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474">NAV::vendor::pixhawk::mavlink_handler</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829">ppk_handler</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829">NAV::vendor::pixhawk::ppk_handler</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01">camera_handler</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01">NAV::vendor::pixhawk::camera_handler</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404">ptp_handler</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404">NAV::vendor::pixhawk::ptp_handler</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04">serial_handler</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04">NAV::vendor::pixhawk::serial_handler</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc">watchdog</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc">NAV::vendor::pixhawk::watchdog</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda">io_service</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda">NAV::vendor::pixhawk::io_service</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7">cbuf</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7">NAV::vendor::pixhawk::cbuf</a>
 , <br />
-&#160;&#160;<a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116">ulg</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116">NAV::vendor::pixhawk::ulg</a>
 <br />
  }</td></tr>
-<tr class="memdesc:ac919c4254e378ff6a7aa1686e9e8b0f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">tag attributes of message_logging_tagged_s  <a href="#ac919c4254e378ff6a7aa1686e9e8b0f8">More...</a><br /></td></tr>
+<tr class="memdesc:ac919c4254e378ff6a7aa1686e9e8b0f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">tag attributes of message_logging_tagged_s  <a href="namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8">More...</a><br /></td></tr>
 <tr class="separator:ac919c4254e378ff6a7aa1686e9e8b0f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -206,54 +217,9 @@ Enumerations</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>M. Maier (<a href="#" onclick="location.href='mai'+'lto:'+'mar'+'ce'+'l.m'+'ai'+'er@'+'in'+'s.u'+'ni'+'-st'+'ut'+'tga'+'rt'+'.de'; return false;">marce<span class="obfuscator">.nosp@m.</span>l.ma<span class="obfuscator">.nosp@m.</span>ier@i<span class="obfuscator">.nosp@m.</span>ns.u<span class="obfuscator">.nosp@m.</span>ni-st<span class="obfuscator">.nosp@m.</span>uttg<span class="obfuscator">.nosp@m.</span>art.d<span class="obfuscator">.nosp@m.</span>e</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-01-03 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See PX4 User Guide - ULog File Format (<a href="https://docs.px4.io/master/en/dev_log/ulog_file_format.html">https://docs.px4.io/master/en/dev_log/ulog_file_format.html</a>) </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="ac919c4254e378ff6a7aa1686e9e8b0f8" name="ac919c4254e378ff6a7aa1686e9e8b0f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac919c4254e378ff6a7aa1686e9e8b0f8">&#9670;&#160;</a></span>ulog_tag</h2>
 
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#ac919c4254e378ff6a7aa1686e9e8b0f8">NAV::vendor::pixhawk::ulog_tag</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>tag attributes of message_logging_tagged_s </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7" name="ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7"></a>unassigned&#160;</td><td class="fielddoc"><p>Unassigned. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474" name="ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474"></a>mavlink_handler&#160;</td><td class="fielddoc"><p>MAVLink handler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829" name="ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829"></a>ppk_handler&#160;</td><td class="fielddoc"><p>PPK handler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01" name="ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01"></a>camera_handler&#160;</td><td class="fielddoc"><p>Camera handler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404" name="ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404"></a>ptp_handler&#160;</td><td class="fielddoc"><p>PTP handler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04" name="ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04"></a>serial_handler&#160;</td><td class="fielddoc"><p>Serial handler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc" name="ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc"></a>watchdog&#160;</td><td class="fielddoc"><p>Watchdog. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda" name="ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda"></a>io_service&#160;</td><td class="fielddoc"><p>IO service. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7" name="ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7"></a>cbuf&#160;</td><td class="fielddoc"><p>cbuf </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116" name="ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116"></a>ulg&#160;</td><td class="fielddoc"><p>ulg </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="UlogFileFormat_8hpp_source.html">UlogFileFormat.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

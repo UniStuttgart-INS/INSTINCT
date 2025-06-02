@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -232,7 +233,7 @@ Angular Rate Measurements</h1>
                                      0 &amp; -\sin{R} &amp; \cos{R} \end{bmatrix} $" src="form_208.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ R $" src="form_205.svg" width="14" height="14"/> about the x-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)</li>
 <li><img class="formulaInl" alt="$ \mathbf{C_2} = \begin{bmatrix} \cos{P} &amp; 0 &amp; -\sin{P} \\
                                         0    &amp; 1 &amp;     0    \\
-                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_209.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_161.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
+                                     \sin{P} &amp; 0 &amp;  \cos{P} \end{bmatrix} $" src="form_209.svg" width="203" height="63"/> is the rotation <img class="formulaInl" alt="$ P $" src="form_150.svg" width="14" height="14"/> about the y-axis (see <a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)</li>
 </ul>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.6.3.3, eq. 3.52, p. 42</li>
@@ -448,14 +449,14 @@ Roll angle</h2>
 </p>
 <h2><a class="anchor" id="ImuSimulator-Flight-Angles-Pitch"></a>
 Pitch angle</h2>
-<p>The pitch angle is calculated with the local navigation frame velocity after formula <a class="el" href="INS_2Functions_8hpp.html#eq-INS-Mechanization-Pitch"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Pitch}" src="form_486.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-pitch"></a>  </p><p class="formulaDsp">
+<p>The pitch angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Pitch"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Pitch}" src="form_486.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-pitch"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-pitch}
   P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
 \end{equation}" src="form_487.svg" width="592" height="53"/>
 </p>
 <h2><a class="anchor" id="ImuSimulator-Flight-Angles-Yaw"></a>
 Yaw angle</h2>
-<p>The yaw angle is calculated with the local navigation frame velocity after formula <a class="el" href="INS_2Functions_8hpp.html#eq-INS-Mechanization-Yaw"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Yaw}" src="form_488.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-yaw"></a>  </p><p class="formulaDsp">
+<p>The yaw angle is calculated with the local navigation frame velocity after formula <a class="el" href="namespaceNAV.html#eq-INS-Mechanization-Yaw"><img class="formulaInl" alt="\eqref{eq:eq-INS-Mechanization-Yaw}" src="form_488.svg" width="33" height="19"/> </a> <a class="anchor" id="eq-ImuSimulator-yaw"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-ImuSimulator-yaw}
   Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
 \end{equation}" src="form_489.svg" width="562" height="42"/>

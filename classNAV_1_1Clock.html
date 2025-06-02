@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,9 +119,8 @@ $(function(){initNavTree('classNAV_1_1Clock.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classNAV_1_1Clock-members.html">List of all members</a>  </div>
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle"><div class="title">NAV::Clock Class Reference<span class="mlabels"><span class="mlabel abstract">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
@@ -129,7 +129,7 @@ $(function(){initNavTree('classNAV_1_1Clock.html',''); initResizable(true); });
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Corrections</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> clock corrections.  <a href="structNAV_1_1Clock_1_1Corrections.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,34 +139,139 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aab564c989566d0ec480eb1d9c9aa32d5" id="r_aab564c989566d0ec480eb1d9c9aa32d5"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Corrections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab564c989566d0ec480eb1d9c9aa32d5">calcClockCorrections</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;recvTime, double dist, const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;freq) const =0</td></tr>
 <tr class="memdesc:aab564c989566d0ec480eb1d9c9aa32d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates clock bias and drift of the satellite.  <br /></td></tr>
 <tr class="separator:aab564c989566d0ec480eb1d9c9aa32d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ae97fd68ce2b48597492e32253d49f0" id="r_a5ae97fd68ce2b48597492e32253d49f0"><td class="memItemLeft" align="right" valign="top"><a id="a5ae97fd68ce2b48597492e32253d49f0" name="a5ae97fd68ce2b48597492e32253d49f0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> ()=default</td></tr>
-<tr class="memdesc:a5ae97fd68ce2b48597492e32253d49f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:a5ae97fd68ce2b48597492e32253d49f0" id="r_a5ae97fd68ce2b48597492e32253d49f0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ae97fd68ce2b48597492e32253d49f0">Clock</a> ()=default</td></tr>
+<tr class="memdesc:a5ae97fd68ce2b48597492e32253d49f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:a5ae97fd68ce2b48597492e32253d49f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa12905d12fa1651f1f3db1201eec6d08" id="r_aa12905d12fa1651f1f3db1201eec6d08"><td class="memItemLeft" align="right" valign="top"><a id="aa12905d12fa1651f1f3db1201eec6d08" name="aa12905d12fa1651f1f3db1201eec6d08"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:aa12905d12fa1651f1f3db1201eec6d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:aa12905d12fa1651f1f3db1201eec6d08" id="r_aa12905d12fa1651f1f3db1201eec6d08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa12905d12fa1651f1f3db1201eec6d08">Clock</a> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:aa12905d12fa1651f1f3db1201eec6d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:aa12905d12fa1651f1f3db1201eec6d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a880814251d928041ed058b50506b46d6" id="r_a880814251d928041ed058b50506b46d6"><td class="memItemLeft" align="right" valign="top"><a id="a880814251d928041ed058b50506b46d6" name="a880814251d928041ed058b50506b46d6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=default</td></tr>
-<tr class="memdesc:a880814251d928041ed058b50506b46d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:a880814251d928041ed058b50506b46d6" id="r_a880814251d928041ed058b50506b46d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a880814251d928041ed058b50506b46d6">Clock</a> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=default</td></tr>
+<tr class="memdesc:a880814251d928041ed058b50506b46d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:a880814251d928041ed058b50506b46d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10d6ed76105116b3997985e4491bf7e7" id="r_a10d6ed76105116b3997985e4491bf7e7"><td class="memItemLeft" align="right" valign="top"><a id="a10d6ed76105116b3997985e4491bf7e7" name="a10d6ed76105116b3997985e4491bf7e7"></a>
-<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:a10d6ed76105116b3997985e4491bf7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a10d6ed76105116b3997985e4491bf7e7" id="r_a10d6ed76105116b3997985e4491bf7e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10d6ed76105116b3997985e4491bf7e7">operator=</a> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:a10d6ed76105116b3997985e4491bf7e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a10d6ed76105116b3997985e4491bf7e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b75ebc765919b6ad99a222067900f8c" id="r_a3b75ebc765919b6ad99a222067900f8c"><td class="memItemLeft" align="right" valign="top"><a id="a3b75ebc765919b6ad99a222067900f8c" name="a3b75ebc765919b6ad99a222067900f8c"></a>
-<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a3b75ebc765919b6ad99a222067900f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a3b75ebc765919b6ad99a222067900f8c" id="r_a3b75ebc765919b6ad99a222067900f8c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b75ebc765919b6ad99a222067900f8c">operator=</a> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a3b75ebc765919b6ad99a222067900f8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a3b75ebc765919b6ad99a222067900f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3775bd2df81ad8bc6a331a7ee9da618e" id="r_a3775bd2df81ad8bc6a331a7ee9da618e"><td class="memItemLeft" align="right" valign="top"><a id="a3775bd2df81ad8bc6a331a7ee9da618e" name="a3775bd2df81ad8bc6a331a7ee9da618e"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Clock</b> ()=default</td></tr>
-<tr class="memdesc:a3775bd2df81ad8bc6a331a7ee9da618e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a3775bd2df81ad8bc6a331a7ee9da618e" id="r_a3775bd2df81ad8bc6a331a7ee9da618e"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3775bd2df81ad8bc6a331a7ee9da618e">~Clock</a> ()=default</td></tr>
+<tr class="memdesc:a3775bd2df81ad8bc6a331a7ee9da618e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a3775bd2df81ad8bc6a331a7ee9da618e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract satellite clock information. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="Clock_8hpp_source.html#l00023">23</a> of file <a class="el" href="Clock_8hpp_source.html">Clock.hpp</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a5ae97fd68ce2b48597492e32253d49f0" name="a5ae97fd68ce2b48597492e32253d49f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ae97fd68ce2b48597492e32253d49f0">&#9670;&#160;</a></span>Clock() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::Clock::Clock </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Constructor. </p>
+
+</div>
+</div>
+<a id="a3775bd2df81ad8bc6a331a7ee9da618e" name="a3775bd2df81ad8bc6a331a7ee9da618e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3775bd2df81ad8bc6a331a7ee9da618e">&#9670;&#160;</a></span>~Clock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual NAV::Clock::~Clock </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel virtual">virtual</span><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+</div>
+</div>
+<a id="a880814251d928041ed058b50506b46d6" name="a880814251d928041ed058b50506b46d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a880814251d928041ed058b50506b46d6">&#9670;&#160;</a></span>Clock() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::Clock::Clock </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="aa12905d12fa1651f1f3db1201eec6d08" name="aa12905d12fa1651f1f3db1201eec6d08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa12905d12fa1651f1f3db1201eec6d08">&#9670;&#160;</a></span>Clock() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::Clock::Clock </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="aab564c989566d0ec480eb1d9c9aa32d5" name="aab564c989566d0ec480eb1d9c9aa32d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aab564c989566d0ec480eb1d9c9aa32d5">&#9670;&#160;</a></span>calcClockCorrections()</h2>
 
@@ -209,7 +314,61 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Clock</b> ()=defa
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classNAV_1_1BDSEphemeris.html#a5ad1083f1738a4fa7b9e107c9d043070">NAV::BDSEphemeris</a>, <a class="el" href="classNAV_1_1GalileoEphemeris.html#a5e555bc9469367d2d28e13d84683d3e1">NAV::GalileoEphemeris</a>, <a class="el" href="classNAV_1_1GLONASSEphemeris.html#ad1cafe8d74918c94ea73820aecca9144">NAV::GLONASSEphemeris</a>, <a class="el" href="classNAV_1_1GPSEphemeris.html#a59d860832e41104a12977e8a265b0897">NAV::GPSEphemeris</a>, <a class="el" href="classNAV_1_1IRNSSEphemeris.html#a411d5020d0f16151b68402f1b61e27d5">NAV::IRNSSEphemeris</a>, and <a class="el" href="classNAV_1_1QZSSEphemeris.html#aec7594f6a64393ebadf9b8cfdb4cd917">NAV::QZSSEphemeris</a>.</p>
+<p>Implemented in <a class="el" href="classNAV_1_1BDSEphemeris.html#a9219fbe500f2f83e077ea9e0d5627450">NAV::BDSEphemeris</a>, <a class="el" href="classNAV_1_1GalileoEphemeris.html#aa55d0bb1127af246929caec2dd41918d">NAV::GalileoEphemeris</a>, <a class="el" href="classNAV_1_1GLONASSEphemeris.html#ad1820412d525a20dcae8f9a27578ebbb">NAV::GLONASSEphemeris</a>, <a class="el" href="classNAV_1_1GPSEphemeris.html#a581158e74d64f08642376b8fb8c354b7">NAV::GPSEphemeris</a>, <a class="el" href="classNAV_1_1IRNSSEphemeris.html#a1f3e44d902bf55b939c0ac35bdc63ba3">NAV::IRNSSEphemeris</a>, and <a class="el" href="classNAV_1_1QZSSEphemeris.html#a7d84e6823f0e0a36e2fd6c1fd69fb4c0">NAV::QZSSEphemeris</a>.</p>
+
+</div>
+</div>
+<a id="a10d6ed76105116b3997985e4491bf7e7" name="a10d6ed76105116b3997985e4491bf7e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d6ed76105116b3997985e4491bf7e7">&#9670;&#160;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp; NAV::Clock::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment operator. </p>
+
+</div>
+</div>
+<a id="a3b75ebc765919b6ad99a222067900f8c" name="a3b75ebc765919b6ad99a222067900f8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b75ebc765919b6ad99a222067900f8c">&#9670;&#160;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp; NAV::Clock::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment operator. </p>
 
 </div>
 </div>
@@ -221,7 +380,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Clock</b> ()=defa
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Clock.html">Clock</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1Clock.html">Clock</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

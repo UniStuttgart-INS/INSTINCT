@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('EGM96_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">EGM96.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,50 +130,35 @@ $(function(){initNavTree('EGM96_8hpp.html',''); initResizable(true); });
 
 <p><a href="EGM96_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a54b5c6cd8314625b13d5f19f894e1d5a" id="r_a54b5c6cd8314625b13d5f19f894e1d5a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54b5c6cd8314625b13d5f19f894e1d5a">NAV::egm96_compute_altitude_offset</a> (double lat, double lon)</td></tr>
+<tr class="memitem:a54b5c6cd8314625b13d5f19f894e1d5a" id="r_a54b5c6cd8314625b13d5f19f894e1d5a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a54b5c6cd8314625b13d5f19f894e1d5a">NAV::egm96_compute_altitude_offset</a> (double lat, double lon)</td></tr>
 <tr class="memdesc:a54b5c6cd8314625b13d5f19f894e1d5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the geoid undulation from the EGM96 potential coefficient model to The WGS84 ellipsoid.  <br /></td></tr>
 <tr class="separator:a54b5c6cd8314625b13d5f19f894e1d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>EGM96 geoid model. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2024-07-05</dd></dl>
+<p>Source code: <a href="https://github.com/emericg/EGM96/blob/master/EGM96.c">https://github.com/emericg/EGM96/blob/master/EGM96.c</a> Copyright (c) 2006 D.Ineiev <a href="#" onclick="location.href='mai'+'lto:'+'ine'+'ie'+'v@y'+'ah'+'oo.'+'co'+'.uk'; return false;">ineie<span class="obfuscator">.nosp@m.</span>v@ya<span class="obfuscator">.nosp@m.</span>hoo.c<span class="obfuscator">.nosp@m.</span>o.uk</a> Copyright (c) 2020 Emeric Grange <a href="#" onclick="location.href='mai'+'lto:'+'eme'+'ri'+'c.g'+'ra'+'nge'+'@g'+'mai'+'l.'+'com'; return false;">emeri<span class="obfuscator">.nosp@m.</span>c.gr<span class="obfuscator">.nosp@m.</span>ange@<span class="obfuscator">.nosp@m.</span>gmai<span class="obfuscator">.nosp@m.</span>l.com</a></p>
+<p>This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.</p>
+<p>Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:</p>
+<ol type="1">
+<li>The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.</li>
+<li>Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.</li>
+<li>This notice may not be removed or altered from any source distribution.</li>
+</ol>
+<dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2024-07-05 </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See <a href="https://github.com/emericg/EGM96/blob/master/EGM96.c">https://github.com/emericg/EGM96/blob/master/EGM96.c</a> </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a54b5c6cd8314625b13d5f19f894e1d5a" name="a54b5c6cd8314625b13d5f19f894e1d5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54b5c6cd8314625b13d5f19f894e1d5a">&#9670;&#160;</a></span>egm96_compute_altitude_offset()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::egm96_compute_altitude_offset </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>lat</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>lon</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Compute the geoid undulation from the EGM96 potential coefficient model to The WGS84 ellipsoid. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lat</td><td>Latitude in [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lon</td><td>Longitude in [rad] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The geoid undulation / altitude offset in [m] </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="EGM96_8hpp_source.html">EGM96.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

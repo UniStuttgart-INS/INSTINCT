@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-04-24 11:37:14</td>
+      <td>2025-06-02 15:19:59</td>
     </tr>
   </table>
 </div>
@@ -72,11 +72,11 @@
     </tr>
     <tr><td><a href="#l181">Logger::GetRingBufferSink() (line 181)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l149">Logger::Logger() (line 149)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l56">Logger::Logger(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 56)</a></td><td>called 273 times</td><td>47.0%</td></tr>
-    <tr><td><a href="#l206">Logger::writeFooter() (line 206)</a></td><td>called 273 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l191">Logger::writeHeader() (line 191)</a></td><td>called 273 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l186">Logger::writeSeparator() (line 186)</a></td><td>called 819 times</td><td>90.0%</td></tr>
-    <tr><td><a href="#l174">Logger::~Logger() (line 174)</a></td><td>called 273 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l56">Logger::Logger(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 56)</a></td><td>called 274 times</td><td>47.0%</td></tr>
+    <tr><td><a href="#l206">Logger::writeFooter() (line 206)</a></td><td>called 274 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l191">Logger::writeHeader() (line 191)</a></td><td>called 274 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l186">Logger::writeSeparator() (line 186)</a></td><td>called 822 times</td><td>90.0%</td></tr>
+    <tr><td><a href="#l174">Logger::~Logger() (line 174)</a></td><td>called 274 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -479,7 +479,7 @@
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="n">Logger</span><span class="o">::</span><span class="n">Logger</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">logpath</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -705,12 +705,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">file_sink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">spdlog</span><span class="o">::</span><span class="n">sinks</span><span class="o">::</span><span class="n">basic_file_sink_mt</span><span class="o">&gt;</span><span class="p">(</span><span class="n">logpath</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -726,18 +726,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1365</td>
+      <td class="linecount partialCoveredLine">1370</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">file_sink</span><span class="o">-&gt;</span><span class="n">set_level</span><span class="p">(</span><span class="n">spdlog</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">from_str</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;file-log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;trace&quot;</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
@@ -746,20 +746,20 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/10</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 14 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 15 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1092</td>
+      <td class="linecount partialCoveredLine">1096</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">spdlog</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">from_str</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;file-log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;trace&quot;</span><span class="p">)))</span></td>
     </tr>
     <tr class="source-line">
@@ -773,7 +773,7 @@
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">spdlog</span><span class="o">::</span><span class="no">level</span><span class="o">::</span><span class="no">trace</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -824,21 +824,21 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">546</td>
+      <td class="linecount partialCoveredLine">548</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">file_sink</span><span class="o">-&gt;</span><span class="n">set_pattern</span><span class="p">(</span><span class="n">logPatternDebug</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -931,12 +931,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">_ringBufferSink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">spdlog</span><span class="o">::</span><span class="n">sinks</span><span class="o">::</span><span class="n">ringbuffer_sink_mt</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4096</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -945,12 +945,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">_ringBufferSink</span><span class="o">-&gt;</span><span class="n">set_level</span><span class="p">(</span><span class="n">spdlog</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">trace</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -959,14 +959,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">546</td>
+      <td class="linecount partialCoveredLine">548</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">_ringBufferSink</span><span class="o">-&gt;</span><span class="n">set_pattern</span><span class="p">(</span><span class="n">logPatternInfo</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -980,7 +980,7 @@
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">546</td>
+      <td class="linecount coveredLine">548</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">spdlog</span><span class="o">::</span><span class="n">sinks</span><span class="o">::</span><span class="n">dist_sink_mt</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dist_filter_sink</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -989,16 +989,16 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 274 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">546</td>
+      <td class="linecount partialCoveredLine">548</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">HasKey</span><span class="p">(</span><span class="s">&quot;log-filter&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -1042,12 +1042,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">dist_filter_sink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">spdlog</span><span class="o">::</span><span class="n">sinks</span><span class="o">::</span><span class="n">dist_sink_mt</span><span class="o">&gt;</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1084,12 +1084,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">dist_filter_sink</span><span class="o">-&gt;</span><span class="n">add_sink</span><span class="p">(</span><span class="n">file_sink</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1098,12 +1098,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">dist_filter_sink</span><span class="o">-&gt;</span><span class="n">add_sink</span><span class="p">(</span><span class="n">_ringBufferSink</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1126,14 +1126,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">273</td>
+      <td class="linecount partialCoveredLine">274</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">spdlog</span><span class="o">::</span><span class="n">set_default_logger</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">spdlog</span><span class="o">::</span><span class="n">logger</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;multi_sink&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dist_filter_sink</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -1156,18 +1156,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1092</td>
+      <td class="linecount partialCoveredLine">1096</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">spdlog</span><span class="o">::</span><span class="n">set_level</span><span class="p">(</span><span class="n">spdlog</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">from_str</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;global-log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;trace&quot;</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
@@ -1183,18 +1183,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
-            <div class="takenBranch">&check; Branch 11 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">819</td>
+      <td class="linecount partialCoveredLine">822</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">spdlog</span><span class="o">::</span><span class="n">flush_on</span><span class="p">(</span><span class="n">spdlog</span><span class="o">::</span><span class="n">level</span><span class="o">::</span><span class="n">from_str</span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;flush-log-level&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;info&quot;</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
@@ -1215,7 +1215,7 @@
       <td class="lineno"><a id="l142" href="#l142">142</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">writeHeader</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1224,14 +1224,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 273 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 274 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">546</td>
+      <td class="linecount partialCoveredLine">548</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NAV</span><span class="o">::</span><span class="n">ConfigManager</span><span class="o">::</span><span class="n">HasKey</span><span class="p">(</span><span class="s">&quot;log-filter&quot;</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
@@ -1259,7 +1259,7 @@
       <td class="lineno"><a id="l147" href="#l147">147</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1448,7 +1448,7 @@
       <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="n">Logger</span><span class="o">::~</span><span class="n">Logger</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -1462,7 +1462,7 @@
       <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">writeFooter</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1476,14 +1476,14 @@
       <td class="lineno"><a id="l178" href="#l178">178</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">spdlog</span><span class="o">::</span><span class="n">default_logger</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">flush</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l179" href="#l179">179</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1532,7 +1532,7 @@
       <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">819</td>
+      <td class="linecount coveredLine">822</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Logger</span><span class="o">::</span><span class="n">writeSeparator</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span></td>
     </tr>
     <tr class="source-line">
@@ -1546,14 +1546,14 @@
       <td class="lineno"><a id="l188" href="#l188">188</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1638</td>
+      <td class="linecount coveredLine">1644</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">LOG_INFO</span><span class="p">(</span><span class="s">&quot;========================================================================&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">819</td>
+      <td class="linecount coveredLine">822</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1567,7 +1567,7 @@
       <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Logger</span><span class="o">::</span><span class="n">writeHeader</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span></td>
     </tr>
     <tr class="source-line">
@@ -1581,21 +1581,21 @@
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">time_t</span><span class="w"> </span><span class="n">now_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">to_time_t</span><span class="p">(</span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">tm</span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">now_c</span><span class="p">);</span><span class="w"> </span><span class="c1">// NOLINT(concurrency-mt-unsafe)</span></td>
     </tr>
     <tr class="source-line">
@@ -1630,7 +1630,7 @@
       <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1365</td>
+      <td class="linecount coveredLine">1370</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">LOG_INFO</span><span class="p">(</span><span class="s">&quot;INSTINCT v{} started in Debug on {:04d}-{:02d}-{:02d}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">PROJECT_VERSION_STRING</span><span class="p">,</span><span class="w"> </span><span class="mi">1900</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_year</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_mon</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_mday</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1651,14 +1651,14 @@
       <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">writeSeparator</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1672,7 +1672,7 @@
       <td class="lineno"><a id="l206" href="#l206">206</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Logger</span><span class="o">::</span><span class="n">writeFooter</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span></td>
     </tr>
     <tr class="source-line">
@@ -1686,7 +1686,7 @@
       <td class="lineno"><a id="l208" href="#l208">208</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">writeSeparator</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1700,21 +1700,21 @@
       <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l211" href="#l211">211</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="kt">time_t</span><span class="w"> </span><span class="n">now_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">to_time_t</span><span class="p">(</span><span class="n">now</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">tm</span><span class="o">*</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">now_c</span><span class="p">);</span><span class="w"> </span><span class="c1">// NOLINT(concurrency-mt-unsafe)</span></td>
     </tr>
     <tr class="source-line">
@@ -1728,7 +1728,7 @@
       <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">LOG_INFO</span><span class="p">(</span><span class="s">&quot;Program finished on {:04d}-{:02d}-{:02d}&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1900</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_year</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_mon</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="o">-&gt;</span><span class="n">tm_mday</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1742,14 +1742,14 @@
       <td class="lineno"><a id="l216" href="#l216">216</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">writeSeparator</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l217" href="#l217">217</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">273</td>
+      <td class="linecount coveredLine">274</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

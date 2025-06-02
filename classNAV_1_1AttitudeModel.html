@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('classNAV_1_1AttitudeModel.html',''); initResizable(tru
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1AttitudeModel-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::AttitudeModel&lt; StateKeyType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -133,12 +133,11 @@ $(function(){initNavTree('classNAV_1_1AttitudeModel.html',''); initResizable(tru
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1749dab546c68cccce16dcf5d65ce00c" id="r_a1749dab546c68cccce16dcf5d65ce00c"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:a1749dab546c68cccce16dcf5d65ce00c"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;, <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1749dab546c68cccce16dcf5d65ce00c">calcPhiAndQ</a> (double dt, const double &amp;latitude, const double &amp;longitude, const Eigen::QuaternionBase&lt; Derived &gt; &amp;n_quat_b)</td></tr>
+<tr class="memitem:a1749dab546c68cccce16dcf5d65ce00c"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;, <a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1749dab546c68cccce16dcf5d65ce00c">calcPhiAndQ</a> (double dt, const double &amp;latitude, const double &amp;longitude, const Eigen::QuaternionBase&lt; Derived &gt; &amp;n_quat_b)</td></tr>
 <tr class="memdesc:a1749dab546c68cccce16dcf5d65ce00c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the state transition matrix (𝚽) and the process noise covariance matrix (𝐐)  <br /></td></tr>
 <tr class="separator:a1749dab546c68cccce16dcf5d65ce00c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17d632d4e70a1d3a42e59d886bfe61e1" id="r_a17d632d4e70a1d3a42e59d886bfe61e1"><td class="memItemLeft" align="right" valign="top"><a id="a17d632d4e70a1d3a42e59d886bfe61e1" name="a17d632d4e70a1d3a42e59d886bfe61e1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td></tr>
-<tr class="memdesc:a17d632d4e70a1d3a42e59d886bfe61e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the attitude model. <br /></td></tr>
+<tr class="memitem:a17d632d4e70a1d3a42e59d886bfe61e1" id="r_a17d632d4e70a1d3a42e59d886bfe61e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17d632d4e70a1d3a42e59d886bfe61e1">initialize</a> ()</td></tr>
+<tr class="memdesc:a17d632d4e70a1d3a42e59d886bfe61e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the attitude model.  <br /></td></tr>
 <tr class="separator:a17d632d4e70a1d3a42e59d886bfe61e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a865fa6e5bf14ff20591973974ad07d6e" id="r_a865fa6e5bf14ff20591973974ad07d6e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a865fa6e5bf14ff20591973974ad07d6e">ShowGui</a> (float itemWidth, float unitWidth, const char *id)</td></tr>
 <tr class="memdesc:a865fa6e5bf14ff20591973974ad07d6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a GUI.  <br /></td></tr>
@@ -151,27 +150,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:ac96df7bb68a277e961f22b40172d20eb" id="r_ac96df7bb68a277e961f22b40172d20eb"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:ac96df7bb68a277e961f22b40172d20eb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac96df7bb68a277e961f22b40172d20eb">calcProcessNoiseMatrix</a> (double dt, double latitude, double longitude, const Eigen::QuaternionBase&lt; Derived &gt; &amp;n_quat_b) const</td></tr>
+<tr class="memitem:ac96df7bb68a277e961f22b40172d20eb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac96df7bb68a277e961f22b40172d20eb">calcProcessNoiseMatrix</a> (double dt, double latitude, double longitude, const Eigen::QuaternionBase&lt; Derived &gt; &amp;n_quat_b) const</td></tr>
 <tr class="memdesc:ac96df7bb68a277e961f22b40172d20eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the process noise matrix Q.  <br /></td></tr>
 <tr class="separator:ac96df7bb68a277e961f22b40172d20eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a79e7b9052d00c973f8f04d78b0890460" id="r_a79e7b9052d00c973f8f04d78b0890460"><td class="memItemLeft" align="right" valign="top"><a id="a79e7b9052d00c973f8f04d78b0890460" name="a79e7b9052d00c973f8f04d78b0890460"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_covarianceAngularVelocity</b></td></tr>
-<tr class="memdesc:a79e7b9052d00c973f8f04d78b0890460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance of the angular velocity due to user motion (Roll, Pitch, Yaw) [rad²/s]. <br /></td></tr>
+<tr class="memitem:a79e7b9052d00c973f8f04d78b0890460" id="r_a79e7b9052d00c973f8f04d78b0890460"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79e7b9052d00c973f8f04d78b0890460">_covarianceAngularVelocity</a></td></tr>
+<tr class="memdesc:a79e7b9052d00c973f8f04d78b0890460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance of the angular velocity due to user motion (Roll, Pitch, Yaw) [rad²/s].  <br /></td></tr>
 <tr class="separator:a79e7b9052d00c973f8f04d78b0890460"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cef2923bba8d4d58d5041a08de1cee7" id="r_a2cef2923bba8d4d58d5041a08de1cee7"><td class="memItemLeft" align="right" valign="top"><a id="a2cef2923bba8d4d58d5041a08de1cee7" name="a2cef2923bba8d4d58d5041a08de1cee7"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_gui_covarianceAngularVelocity</b></td></tr>
-<tr class="memdesc:a2cef2923bba8d4d58d5041a08de1cee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI selection for the Standard deviation of the angular velocity due to user motion (Roll, Pitch, Yaw) <br /></td></tr>
+<tr class="memitem:a2cef2923bba8d4d58d5041a08de1cee7" id="r_a2cef2923bba8d4d58d5041a08de1cee7"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cef2923bba8d4d58d5041a08de1cee7">_gui_covarianceAngularVelocity</a></td></tr>
+<tr class="memdesc:a2cef2923bba8d4d58d5041a08de1cee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI selection for the Standard deviation of the angular velocity due to user motion (Roll, Pitch, Yaw)  <br /></td></tr>
 <tr class="separator:a2cef2923bba8d4d58d5041a08de1cee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a5a5b6d88313117dd115964889ca4f0" id="r_a9a5a5b6d88313117dd115964889ca4f0"><td class="memItemLeft" align="right" valign="top"><a id="a9a5a5b6d88313117dd115964889ca4f0" name="a9a5a5b6d88313117dd115964889ca4f0"></a>
-<a class="el" href="GNSS_2SystemModel_2Units_8hpp.html#a0b04ed7e686c63200fe9eef5026b1eab">Units::CovarianceAngularVelocityUnits</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_gui_covarianceAngularVelocityUnit</b></td></tr>
-<tr class="memdesc:a9a5a5b6d88313117dd115964889ca4f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gui selection for the Unit of the input covarianceAngularVelocity. <br /></td></tr>
+<tr class="memitem:a9a5a5b6d88313117dd115964889ca4f0" id="r_a9a5a5b6d88313117dd115964889ca4f0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV_1_1Units.html#a0b04ed7e686c63200fe9eef5026b1eab">Units::CovarianceAngularVelocityUnits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a5a5b6d88313117dd115964889ca4f0">_gui_covarianceAngularVelocityUnit</a></td></tr>
+<tr class="memdesc:a9a5a5b6d88313117dd115964889ca4f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gui selection for the Unit of the input covarianceAngularVelocity.  <br /></td></tr>
 <tr class="separator:a9a5a5b6d88313117dd115964889ca4f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac17dbb56a64b930721cf2c9cd7de1308" id="r_ac17dbb56a64b930721cf2c9cd7de1308"><td class="memItemLeft" align="right" valign="top"><a id="ac17dbb56a64b930721cf2c9cd7de1308" name="ac17dbb56a64b930721cf2c9cd7de1308"></a>
-const std::array&lt; StateKeyType, 4 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Att</b></td></tr>
-<tr class="memdesc:ac17dbb56a64b930721cf2c9cd7de1308"><td class="mdescLeft">&#160;</td><td class="mdescRight">All attitude keys. <br /></td></tr>
+<tr class="memitem:ac17dbb56a64b930721cf2c9cd7de1308" id="r_ac17dbb56a64b930721cf2c9cd7de1308"><td class="memItemLeft" align="right" valign="top">const std::array&lt; StateKeyType, 4 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac17dbb56a64b930721cf2c9cd7de1308">Att</a></td></tr>
+<tr class="memdesc:ac17dbb56a64b930721cf2c9cd7de1308"><td class="mdescLeft">&#160;</td><td class="mdescRight">All attitude keys.  <br /></td></tr>
 <tr class="separator:ac17dbb56a64b930721cf2c9cd7de1308"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -186,6 +181,8 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename StateKeyType&gt;<br />
 class NAV::AttitudeModel&lt; StateKeyType &gt;</div><p>Attitude System Model. </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00034">34</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a1749dab546c68cccce16dcf5d65ce00c" name="a1749dab546c68cccce16dcf5d65ce00c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1749dab546c68cccce16dcf5d65ce00c">&#9670;&#160;</a></span>calcPhiAndQ()</h2>
@@ -201,7 +198,7 @@ template&lt;typename Derived&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;, <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; &gt; <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::calcPhiAndQ </td>
+          <td class="memname">std::pair&lt; <a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt;, <a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; &gt; <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::calcPhiAndQ </td>
           <td>(</td>
           <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>, </td>
         </tr>
@@ -240,6 +237,8 @@ template&lt;typename Derived&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Phi and Q matrix </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00073">73</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ac96df7bb68a277e961f22b40172d20eb" name="ac96df7bb68a277e961f22b40172d20eb"></a>
@@ -256,7 +255,7 @@ template&lt;typename Derived&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::calcProcessNoiseMatrix </td>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a521dc4e4d524238eb205da68f6d52c88">KeyedMatrix4d</a>&lt; StateKeyType &gt; <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::calcProcessNoiseMatrix </td>
           <td>(</td>
           <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>, </td>
         </tr>
@@ -293,6 +292,39 @@ template&lt;typename Derived&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00122">122</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a17d632d4e70a1d3a42e59d886bfe61e1" name="a17d632d4e70a1d3a42e59d886bfe61e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d632d4e70a1d3a42e59d886bfe61e1">&#9670;&#160;</a></span>initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::initialize </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the attitude model. </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00038">38</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -335,11 +367,13 @@ template&lt;typename StateKeyType&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">itemWidth</td><td>Width of the space for the config items </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">unitWidth</td><td>Width of the units </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a> </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if something was changed </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00087">87</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -407,6 +441,8 @@ template&lt;typename Scalar, int Size, typename Derived&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00054">54</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
@@ -448,6 +484,8 @@ template&lt;typename StateKeyType&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00157">157</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a78ba515a7821a76349c4c4926139af0f" name="a78ba515a7821a76349c4c4926139af0f"></a>
@@ -488,6 +526,121 @@ template&lt;typename StateKeyType&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00147">147</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a79e7b9052d00c973f8f04d78b0890460" name="a79e7b9052d00c973f8f04d78b0890460"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79e7b9052d00c973f8f04d78b0890460">&#9670;&#160;</a></span>_covarianceAngularVelocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::_covarianceAngularVelocity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Covariance of the angular velocity due to user motion (Roll, Pitch, Yaw) [rad²/s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00142">142</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2cef2923bba8d4d58d5041a08de1cee7" name="a2cef2923bba8d4d58d5041a08de1cee7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cef2923bba8d4d58d5041a08de1cee7">&#9670;&#160;</a></span>_gui_covarianceAngularVelocity</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::_gui_covarianceAngularVelocity</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>GUI selection for the Standard deviation of the angular velocity due to user motion (Roll, Pitch, Yaw) </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00139">139</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9a5a5b6d88313117dd115964889ca4f0" name="a9a5a5b6d88313117dd115964889ca4f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a5a5b6d88313117dd115964889ca4f0">&#9670;&#160;</a></span>_gui_covarianceAngularVelocityUnit</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV_1_1Units.html#a0b04ed7e686c63200fe9eef5026b1eab">Units::CovarianceAngularVelocityUnits</a> <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::_gui_covarianceAngularVelocityUnit</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gui selection for the Unit of the input covarianceAngularVelocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00137">137</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac17dbb56a64b930721cf2c9cd7de1308" name="ac17dbb56a64b930721cf2c9cd7de1308"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac17dbb56a64b930721cf2c9cd7de1308">&#9670;&#160;</a></span>Att</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;StateKeyType, 4&gt;&amp; <a class="el" href="classNAV_1_1AttitudeModel.html">NAV::AttitudeModel</a>&lt; StateKeyType &gt;::Att</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All attitude keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="AttitudeModel_8hpp_source.html#l00113">113</a> of file <a class="el" href="AttitudeModel_8hpp_source.html">AttitudeModel.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -498,7 +651,7 @@ template&lt;typename StateKeyType&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1AttitudeModel.html">AttitudeModel</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1AttitudeModel.html">AttitudeModel</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

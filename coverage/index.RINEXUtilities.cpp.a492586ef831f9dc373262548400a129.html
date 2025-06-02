@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-04-24 11:37:14</td>
+      <td>2025-06-02 15:19:59</td>
     </tr>
   </table>
 </div>
@@ -99,8 +99,8 @@
     <tr><td><a href="#l28">NAV::vendor::RINEX::ObsHeader::reset() (line 28)</a></td><td>called 36 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l333">NAV::vendor::RINEX::from_json(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;, NAV::vendor::RINEX::ObsHeader&amp;) (line 333)</a></td><td>called 12 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l441">NAV::vendor::RINEX::getFrequencyFromBand(NAV::SatelliteSystem, int) (line 441)</a></td><td>called 2747 times</td><td>84.0%</td></tr>
-    <tr><td><a href="#l353">NAV::vendor::RINEX::obsTypeFromChar(char) (line 353)</a></td><td>called 2766 times</td><td>78.0%</td></tr>
-    <tr><td><a href="#l374">NAV::vendor::RINEX::obsTypeToChar(NAV::vendor::RINEX::ObsType) (line 374)</a></td><td>called 3275 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l353">NAV::vendor::RINEX::obsTypeFromChar(char) (line 353)</a></td><td>called 2760 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l374">NAV::vendor::RINEX::obsTypeToChar(NAV::vendor::RINEX::ObsType) (line 374)</a></td><td>called 3276 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l419">NAV::vendor::RINEX::timeSystem(NAV::SatelliteSystem) (line 419)</a></td><td>called 13 times</td><td>40.0%</td></tr>
     <tr><td><a href="#l395">NAV::vendor::RINEX::timeSystemString[abi:cxx11](NAV::TimeSystem) (line 395)</a></td><td>called 110 times</td><td>33.0%</td></tr>
     <tr><td><a href="#l310">NAV::vendor::RINEX::to_json(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt;&amp;, NAV::vendor::RINEX::ObsHeader const&amp;) (line 310)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -3800,7 +3800,7 @@
       <td class="lineno"><a id="l353" href="#l353">353</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2766</td>
+      <td class="linecount coveredLine">2760</td>
       <td class="src coveredLine"><span class="n">ObsType</span><span class="w"> </span><span class="nf">obsTypeFromChar</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3816,17 +3816,17 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 764 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 752 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 586 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 668 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 763 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 751 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 585 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 665 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2766</td>
+      <td class="linecount partialCoveredLine">2760</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">c</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3840,56 +3840,56 @@
       <td class="lineno"><a id="l357" href="#l357">357</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">764</td>
+      <td class="linecount coveredLine">763</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;C&#39;</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l358" href="#l358">358</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">764</td>
+      <td class="linecount coveredLine">763</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ObsType</span><span class="o">::</span><span class="n">C</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l359" href="#l359">359</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">752</td>
+      <td class="linecount coveredLine">751</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;L&#39;</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l360" href="#l360">360</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">752</td>
+      <td class="linecount coveredLine">751</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ObsType</span><span class="o">::</span><span class="n">L</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l361" href="#l361">361</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">586</td>
+      <td class="linecount coveredLine">585</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;D&#39;</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l362" href="#l362">362</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">586</td>
+      <td class="linecount coveredLine">585</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ObsType</span><span class="o">::</span><span class="n">D</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l363" href="#l363">363</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">668</td>
+      <td class="linecount coveredLine">665</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="sc">&#39;S&#39;</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l364" href="#l364">364</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">668</td>
+      <td class="linecount coveredLine">665</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ObsType</span><span class="o">::</span><span class="n">S</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -3959,7 +3959,7 @@
       <td class="lineno"><a id="l374" href="#l374">374</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3275</td>
+      <td class="linecount coveredLine">3276</td>
       <td class="src coveredLine"><span class="kt">char</span><span class="w"> </span><span class="nf">obsTypeToChar</span><span class="p">(</span><span class="n">ObsType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3975,17 +3975,17 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 915 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 898 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 912 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 896 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 685 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 793 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 794 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3275</td>
+      <td class="linecount partialCoveredLine">3276</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -3999,28 +3999,28 @@
       <td class="lineno"><a id="l378" href="#l378">378</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">915</td>
+      <td class="linecount coveredLine">912</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">ObsType</span><span class="o">::</span><span class="no">C</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l379" href="#l379">379</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">915</td>
+      <td class="linecount coveredLine">912</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="sc">&#39;C&#39;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l380" href="#l380">380</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">898</td>
+      <td class="linecount coveredLine">896</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">ObsType</span><span class="o">::</span><span class="no">L</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l381" href="#l381">381</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">898</td>
+      <td class="linecount coveredLine">896</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="sc">&#39;L&#39;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4041,14 +4041,14 @@
       <td class="lineno"><a id="l384" href="#l384">384</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">793</td>
+      <td class="linecount coveredLine">794</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">ObsType</span><span class="o">::</span><span class="no">S</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l385" href="#l385">385</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">793</td>
+      <td class="linecount coveredLine">794</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="sc">&#39;S&#39;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4501,14 +4501,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">8/11</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1023 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 618 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 1019 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 617 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 80 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 60 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 419 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 418 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 164 times.</div>
             <div class="takenBranch">&check; Branch 6 taken 322 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 76 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 75 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
@@ -4529,7 +4529,7 @@
       <td class="lineno"><a id="l445" href="#l445">445</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1023</td>
+      <td class="linecount coveredLine">1019</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -4567,11 +4567,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 307 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 719 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 717 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1023</td>
+      <td class="linecount coveredLine">1019</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GPS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4602,11 +4602,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 212 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 507 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 506 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">719</td>
+      <td class="linecount coveredLine">717</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">QZSS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4637,11 +4637,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 60 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 447 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 443 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">507</td>
+      <td class="linecount coveredLine">506</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SBAS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4672,11 +4672,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 48 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 397 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 392 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">447</td>
+      <td class="linecount coveredLine">443</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BDS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4706,12 +4706,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 191 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 205 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 190 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 206 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">397</td>
+      <td class="linecount coveredLine">392</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GLO</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4725,7 +4725,7 @@
       <td class="lineno"><a id="l468" href="#l468">468</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">191</td>
+      <td class="linecount coveredLine">190</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">R01</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4741,12 +4741,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 211 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 209 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">205</td>
+      <td class="linecount partialCoveredLine">206</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GAL</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4760,7 +4760,7 @@
       <td class="lineno"><a id="l472" href="#l472">472</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">211</td>
+      <td class="linecount coveredLine">209</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">E01</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4781,7 +4781,7 @@
       <td class="lineno"><a id="l475" href="#l475">475</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">618</td>
+      <td class="linecount coveredLine">617</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -4811,12 +4811,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 278 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 338 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 279 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 334 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">618</td>
+      <td class="linecount coveredLine">617</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GPS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4830,7 +4830,7 @@
       <td class="lineno"><a id="l481" href="#l481">481</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">278</td>
+      <td class="linecount coveredLine">279</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">G02</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -4847,11 +4847,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 32 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 306 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 305 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">338</td>
+      <td class="linecount coveredLine">334</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">QZSS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4882,11 +4882,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 166 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 138 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 137 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">306</td>
+      <td class="linecount coveredLine">305</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GLO</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4916,12 +4916,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 137 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 136 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">138</td>
+      <td class="linecount partialCoveredLine">137</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BDS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -4935,7 +4935,7 @@
       <td class="lineno"><a id="l493" href="#l493">493</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">137</td>
+      <td class="linecount coveredLine">136</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">B02</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5068,7 +5068,7 @@
       <td class="lineno"><a id="l510" href="#l510">510</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">419</td>
+      <td class="linecount coveredLine">418</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">5</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -5098,12 +5098,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 84 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 336 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 83 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 334 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">419</td>
+      <td class="linecount coveredLine">418</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GPS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5117,7 +5117,7 @@
       <td class="lineno"><a id="l516" href="#l516">516</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">84</td>
+      <td class="linecount coveredLine">83</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">G05</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5133,12 +5133,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 120 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 119 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 216 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">336</td>
+      <td class="linecount coveredLine">334</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">QZSS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5152,7 +5152,7 @@
       <td class="lineno"><a id="l520" href="#l520">520</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">120</td>
+      <td class="linecount coveredLine">119</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">J05</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5169,7 +5169,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 32 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 184 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 183 times.</div>
           </div>
         </details>
       </td>
@@ -5204,11 +5204,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 32 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 152 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 151 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">183</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">IRNSS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5238,12 +5238,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 104 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 103 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 48 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">152</td>
+      <td class="linecount coveredLine">151</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GAL</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5257,7 +5257,7 @@
       <td class="lineno"><a id="l532" href="#l532">532</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">104</td>
+      <td class="linecount coveredLine">103</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">E05</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5518,8 +5518,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 171 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 151 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 169 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 152 times.</div>
           </div>
         </details>
       </td>
@@ -5537,7 +5537,7 @@
       <td class="lineno"><a id="l566" href="#l566">566</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">171</td>
+      <td class="linecount coveredLine">169</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Frequency_</span><span class="o">::</span><span class="n">E07</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5558,7 +5558,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">151</td>
+      <td class="linecount partialCoveredLine">152</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BDS</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -5593,7 +5593,7 @@
       <td class="lineno"><a id="l573" href="#l573">573</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">76</td>
+      <td class="linecount coveredLine">75</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">8</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -5621,7 +5621,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">76</td>
+      <td class="linecount partialCoveredLine">75</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">satSys</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GAL</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">

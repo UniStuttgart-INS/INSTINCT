@@ -345,6 +345,7 @@ var hierarchy =
       [ "NAV::VectorNavBinaryOutput", "classNAV_1_1VectorNavBinaryOutput.html", null ],
       [ "NAV::WiFiObs", "classNAV_1_1WiFiObs.html", null ]
     ] ],
+    [ "NAV::gui::NodeIdLess", "structNAV_1_1gui_1_1NodeIdLess.html", null ],
     [ "NAV::NodeRegistry::NodeInfo", "structNAV_1_1NodeRegistry_1_1NodeInfo.html", null ],
     [ "NAV::Observations::SignalObservation::ReceiverSpecificData::Observation", "structNAV_1_1Observations_1_1SignalObservation_1_1ReceiverSpecificData_1_1Observation.html", null ],
     [ "NAV::GnssObs::ObservationData", "structNAV_1_1GnssObs_1_1ObservationData.html", null ],

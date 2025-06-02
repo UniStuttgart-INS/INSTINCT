@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,22 +128,39 @@ $(function(){initNavTree('GMF_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file GMF.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Global Mapping Function (GMF)</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2024-04-21</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/// @note See \cite Böhm2006a Böhm2006: Global Mapping Function (GMF): A new empirical mapping function based on numerical weather model data</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/// @note See https://vmf.geo.tuwien.ac.at/codes/ for code sources in matlab.</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="GMF_8hpp.html#a40b8c3231d067e1083681c783bba531c">   28</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="GMF_8hpp.html#a40b8c3231d067e1083681c783bba531c">calcTropoMapFunc_GMFH</a>(<span class="keywordtype">double</span> mjd, <span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos, <span class="keywordtype">double</span> elevation);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="GMF_8hpp.html#a479979ed494d8cadc181f29d61f41e7e">   35</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="GMF_8hpp.html#a479979ed494d8cadc181f29d61f41e7e">calcTropoMapFunc_GMFW</a>(<span class="keywordtype">double</span> mjd, <span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos, <span class="keywordtype">double</span> elevation);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"></span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @brief Calculates the Global Mapping Function (GMF) for the hydrostatic delay</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] mjd Modified julian date</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @param[in] elevation Angle between the user and satellite [rad]</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @return Hydrostatic mapping function</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keywordtype">double</span> <a class="code hl_function" href="namespaceNAV.html#a40b8c3231d067e1083681c783bba531c">calcTropoMapFunc_GMFH</a>(<span class="keywordtype">double</span> mjd, <span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos, <span class="keywordtype">double</span> elevation);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"></span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">/// @brief Calculates the Global Mapping Function (GMF) for the wet delay</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/// @param[in] mjd Modified julian date</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">/// @param[in] lla_pos [𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m]</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">/// @param[in] elevation Angle between the user and satellite [rad]</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/// @return Wet mapping function</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keywordtype">double</span> <a class="code hl_function" href="namespaceNAV.html#a479979ed494d8cadc181f29d61f41e7e">calcTropoMapFunc_GMFW</a>(<span class="keywordtype">double</span> mjd, <span class="keyword">const</span> Eigen::Vector3d&amp; lla_pos, <span class="keywordtype">double</span> elevation);</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aGMF_8hpp_html_a40b8c3231d067e1083681c783bba531c"><div class="ttname"><a href="GMF_8hpp.html#a40b8c3231d067e1083681c783bba531c">NAV::calcTropoMapFunc_GMFH</a></div><div class="ttdeci">double calcTropoMapFunc_GMFH(double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</div><div class="ttdoc">Calculates the Global Mapping Function (GMF) for the hydrostatic delay.</div></div>
-<div class="ttc" id="aGMF_8hpp_html_a479979ed494d8cadc181f29d61f41e7e"><div class="ttname"><a href="GMF_8hpp.html#a479979ed494d8cadc181f29d61f41e7e">NAV::calcTropoMapFunc_GMFW</a></div><div class="ttdeci">double calcTropoMapFunc_GMFW(double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</div><div class="ttdoc">Calculates the Global Mapping Function (GMF) for the wet delay.</div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a40b8c3231d067e1083681c783bba531c"><div class="ttname"><a href="namespaceNAV.html#a40b8c3231d067e1083681c783bba531c">NAV::calcTropoMapFunc_GMFH</a></div><div class="ttdeci">double calcTropoMapFunc_GMFH(double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</div><div class="ttdoc">Calculates the Global Mapping Function (GMF) for the hydrostatic delay.</div><div class="ttdef"><b>Definition</b> <a href="GMF_8cpp_source.html#l00075">GMF.cpp:75</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a479979ed494d8cadc181f29d61f41e7e"><div class="ttname"><a href="namespaceNAV.html#a479979ed494d8cadc181f29d61f41e7e">NAV::calcTropoMapFunc_GMFW</a></div><div class="ttdeci">double calcTropoMapFunc_GMFW(double mjd, const Eigen::Vector3d &amp;lla_pos, double elevation)</div><div class="ttdoc">Calculates the Global Mapping Function (GMF) for the wet delay.</div><div class="ttdef"><b>Definition</b> <a href="GMF_8cpp_source.html#l00140">GMF.cpp:140</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,19 +128,27 @@ $(function(){initNavTree('Vector_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file Vector.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Vector Utility functions</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2022-03-07</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;span&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"></span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @brief Moves an element within a vector to a new position</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in, out] v Vector with the elements</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] sourceIdx Old index which will be moved</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] targetIdx New index which is the target</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00027" data-start="{" data-end="}">
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="Vector_8hpp.html#a851a8e7d0ad9d873eee9667ab88c5abf">   27</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="Vector_8hpp.html#a851a8e7d0ad9d873eee9667ab88c5abf">move</a>(std::vector&lt;T&gt;&amp; v, <span class="keywordtype">size_t</span> sourceIdx, <span class="keywordtype">size_t</span> targetIdx)</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a851a8e7d0ad9d873eee9667ab88c5abf">   27</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV.html#a851a8e7d0ad9d873eee9667ab88c5abf">move</a>(std::vector&lt;T&gt;&amp; v, <span class="keywordtype">size_t</span> sourceIdx, <span class="keywordtype">size_t</span> targetIdx)</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">if</span> (sourceIdx &gt; targetIdx)</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    {</div>
@@ -153,10 +162,14 @@ $(function(){initNavTree('Vector_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>}</div>
 </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment"></span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">/// @brief Returns a container filled with the given range</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/// @param start Inclusive start value of the range</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">/// @param stepSize Step size of the range</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">/// @param end Exclusive end value of the range</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Scalar&gt;</div>
 <div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="Vector_8hpp.html#a1add9b7bbeb34256136193f83b3cb314">   46</a></span>std::vector&lt;Scalar&gt; <a class="code hl_function" href="Vector_8hpp.html#a1add9b7bbeb34256136193f83b3cb314">genRangeVector</a>(Scalar start, Scalar stepSize, Scalar end)</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a1add9b7bbeb34256136193f83b3cb314">   46</a></span>std::vector&lt;Scalar&gt; <a class="code hl_function" href="namespaceNAV.html#a1add9b7bbeb34256136193f83b3cb314">genRangeVector</a>(Scalar start, Scalar stepSize, Scalar end)</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    std::vector&lt;Scalar&gt; container;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    container.reserve(<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(std::ceil((end - start) / stepSize)));</div>
@@ -170,10 +183,14 @@ $(function(){initNavTree('Vector_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> container;</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>};</div>
 </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment"></span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">/// @brief Comparison operator for span and vector</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">/// @param lhs Left-hand side</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">/// @param rhs Right-hand side</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">/// @return True if all elements are equal</span></div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="Vector_8hpp.html#aa496e7c47d653d5c87c7f2b81849f453">   65</a></span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="Node_8hpp.html#abf436df115aaa28c9053cab9cb934542">operator==</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; lhs, std::span&lt;const T&gt; rhs)</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="namespaceNAV.html#aa496e7c47d653d5c87c7f2b81849f453">   65</a></span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV.html#abf436df115aaa28c9053cab9cb934542">operator==</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; lhs, std::span&lt;const T&gt; rhs)</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>{</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">if</span> (lhs.size() != rhs.size()) { <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; lhs.size(); i++)</div>
@@ -183,19 +200,24 @@ $(function(){initNavTree('Vector_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>}</div>
 </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment"></span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment">/// @brief Comparison operator for span and vector</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">/// @param lhs Left-hand side</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">/// @param rhs Right-hand side</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">/// @return True if all elements are equal</span></div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="Vector_8hpp.html#ad459304e7eeb4ab73c0e8a5054f8fd38">   80</a></span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="Node_8hpp.html#abf436df115aaa28c9053cab9cb934542">operator==</a>(std::span&lt;const T&gt; lhs, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; rhs)</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="namespaceNAV.html#ad459304e7eeb4ab73c0e8a5054f8fd38">   80</a></span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV.html#abf436df115aaa28c9053cab9cb934542">operator==</a>(std::span&lt;const T&gt; lhs, <span class="keyword">const</span> std::vector&lt;T&gt;&amp; rhs)</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>{</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">return</span> rhs == lhs;</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>}</div>
 </div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aNode_8hpp_html_abf436df115aaa28c9053cab9cb934542"><div class="ttname"><a href="Node_8hpp.html#abf436df115aaa28c9053cab9cb934542">NAV::operator==</a></div><div class="ttdeci">constexpr bool operator==(const Node::Kind &amp;lhs, const Node::Kind &amp;rhs)</div><div class="ttdoc">Equal compares Node::Kind values.</div><div class="ttdef"><b>Definition</b> Node.hpp:494</div></div>
-<div class="ttc" id="aVector_8hpp_html_a1add9b7bbeb34256136193f83b3cb314"><div class="ttname"><a href="Vector_8hpp.html#a1add9b7bbeb34256136193f83b3cb314">NAV::genRangeVector</a></div><div class="ttdeci">std::vector&lt; Scalar &gt; genRangeVector(Scalar start, Scalar stepSize, Scalar end)</div><div class="ttdoc">Returns a container filled with the given range.</div><div class="ttdef"><b>Definition</b> Vector.hpp:46</div></div>
-<div class="ttc" id="aVector_8hpp_html_a851a8e7d0ad9d873eee9667ab88c5abf"><div class="ttname"><a href="Vector_8hpp.html#a851a8e7d0ad9d873eee9667ab88c5abf">NAV::move</a></div><div class="ttdeci">void move(std::vector&lt; T &gt; &amp;v, size_t sourceIdx, size_t targetIdx)</div><div class="ttdoc">Moves an element within a vector to a new position.</div><div class="ttdef"><b>Definition</b> Vector.hpp:27</div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a1add9b7bbeb34256136193f83b3cb314"><div class="ttname"><a href="namespaceNAV.html#a1add9b7bbeb34256136193f83b3cb314">NAV::genRangeVector</a></div><div class="ttdeci">std::vector&lt; Scalar &gt; genRangeVector(Scalar start, Scalar stepSize, Scalar end)</div><div class="ttdoc">Returns a container filled with the given range.</div><div class="ttdef"><b>Definition</b> <a href="#l00046">Vector.hpp:46</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a851a8e7d0ad9d873eee9667ab88c5abf"><div class="ttname"><a href="namespaceNAV.html#a851a8e7d0ad9d873eee9667ab88c5abf">NAV::move</a></div><div class="ttdeci">void move(std::vector&lt; T &gt; &amp;v, size_t sourceIdx, size_t targetIdx)</div><div class="ttdoc">Moves an element within a vector to a new position.</div><div class="ttdef"><b>Definition</b> <a href="#l00027">Vector.hpp:27</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_abf436df115aaa28c9053cab9cb934542"><div class="ttname"><a href="namespaceNAV.html#abf436df115aaa28c9053cab9cb934542">NAV::operator==</a></div><div class="ttdeci">constexpr bool operator==(const Node::Kind &amp;lhs, const Node::Kind &amp;rhs)</div><div class="ttdoc">Equal compares Node::Kind values.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00501">Node.hpp:501</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

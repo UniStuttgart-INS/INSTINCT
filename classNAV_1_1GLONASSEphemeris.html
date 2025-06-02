@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,10 +120,9 @@ $(function(){initNavTree('classNAV_1_1GLONASSEphemeris.html',''); initResizable(
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-attribs">Data Fields</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="classNAV_1_1GLONASSEphemeris-members.html">List of all members</a>  </div>
+<a href="#pri-static-attribs">Static Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::GLONASSEphemeris Class Reference<span class="mlabels"><span class="mlabel final">final</span></span></div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,181 +132,147 @@ $(function(){initNavTree('classNAV_1_1GLONASSEphemeris.html',''); initResizable(
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad1cafe8d74918c94ea73820aecca9144" id="r_ad1cafe8d74918c94ea73820aecca9144"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Corrections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1cafe8d74918c94ea73820aecca9144">calcClockCorrections</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;recvTime, double dist, const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;freq) const final</td></tr>
-<tr class="memdesc:ad1cafe8d74918c94ea73820aecca9144"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates clock bias and drift of the satellite.  <br /></td></tr>
-<tr class="separator:ad1cafe8d74918c94ea73820aecca9144"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1820412d525a20dcae8f9a27578ebbb" id="r_ad1820412d525a20dcae8f9a27578ebbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Corrections</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1820412d525a20dcae8f9a27578ebbb">calcClockCorrections</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;recvTime, double dist, const <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> &amp;freq) const final</td></tr>
+<tr class="memdesc:ad1820412d525a20dcae8f9a27578ebbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates clock bias and drift of the satellite.  <br /></td></tr>
+<tr class="separator:ad1820412d525a20dcae8f9a27578ebbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86c9c5c1a6eeaac5df0f82fb2b3ae711" id="r_a86c9c5c1a6eeaac5df0f82fb2b3ae711"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86c9c5c1a6eeaac5df0f82fb2b3ae711">calcSatellitePositionVariance</a> () const final</td></tr>
 <tr class="memdesc:a86c9c5c1a6eeaac5df0f82fb2b3ae711"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Variance of the satellite position in [m^2].  <br /></td></tr>
 <tr class="separator:a86c9c5c1a6eeaac5df0f82fb2b3ae711"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35b3fe61273a18992ef0937926bf4afc" id="r_a35b3fe61273a18992ef0937926bf4afc"><td class="memItemLeft" align="right" valign="top"><a id="a35b3fe61273a18992ef0937926bf4afc" name="a35b3fe61273a18992ef0937926bf4afc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GLONASSEphemeris</b> (const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;)=default</td></tr>
-<tr class="memdesc:a35b3fe61273a18992ef0937926bf4afc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:a35b3fe61273a18992ef0937926bf4afc" id="r_a35b3fe61273a18992ef0937926bf4afc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35b3fe61273a18992ef0937926bf4afc">GLONASSEphemeris</a> (const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;)=default</td></tr>
+<tr class="memdesc:a35b3fe61273a18992ef0937926bf4afc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:a35b3fe61273a18992ef0937926bf4afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1293a1450dc8086bd5ce441e78b8911" id="r_ae1293a1450dc8086bd5ce441e78b8911"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1293a1450dc8086bd5ce441e78b8911">GLONASSEphemeris</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;<a class="el" href="#aff0379b9728e9a7c28f69496309c6980">toc</a>, double <a class="el" href="#a24fca4c9fcc40edbb4a243026df74fac">tau_c</a>, double <a class="el" href="#a976b37d339825d7836bccd6c9607672e">tau_n</a>, double <a class="el" href="#aeb9a750b3d6930a70235a462df9e18da">gamma_n</a>, bool <a class="el" href="#a005037ed90fc746748138d276d48950a">health</a>, Eigen::Vector3d pos, Eigen::Vector3d vel, Eigen::Vector3d accelLuniSolar, int8_t <a class="el" href="#ae8a6b4162cc1c0764e21193afd2e8d00">frequencyNumber</a>)</td></tr>
 <tr class="memdesc:ae1293a1450dc8086bd5ce441e78b8911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:ae1293a1450dc8086bd5ce441e78b8911"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5607e5b2900553a60b301a6d86ee24c" id="r_ad5607e5b2900553a60b301a6d86ee24c"><td class="memItemLeft" align="right" valign="top"><a id="ad5607e5b2900553a60b301a6d86ee24c" name="ad5607e5b2900553a60b301a6d86ee24c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GLONASSEphemeris</b> (<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:ad5607e5b2900553a60b301a6d86ee24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:ad5607e5b2900553a60b301a6d86ee24c" id="r_ad5607e5b2900553a60b301a6d86ee24c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5607e5b2900553a60b301a6d86ee24c">GLONASSEphemeris</a> (<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:ad5607e5b2900553a60b301a6d86ee24c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:ad5607e5b2900553a60b301a6d86ee24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f74bc0e3787dded86eb61718cea0d5b" id="r_a4f74bc0e3787dded86eb61718cea0d5b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f74bc0e3787dded86eb61718cea0d5b">isHealthy</a> () const final</td></tr>
 <tr class="memdesc:a4f74bc0e3787dded86eb61718cea0d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the signal is healthy.  <br /></td></tr>
 <tr class="separator:a4f74bc0e3787dded86eb61718cea0d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d449b876ed8bdca7efb41c87df54279" id="r_a0d449b876ed8bdca7efb41c87df54279"><td class="memItemLeft" align="right" valign="top"><a id="a0d449b876ed8bdca7efb41c87df54279" name="a0d449b876ed8bdca7efb41c87df54279"></a>
-<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a0d449b876ed8bdca7efb41c87df54279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a0d449b876ed8bdca7efb41c87df54279" id="r_a0d449b876ed8bdca7efb41c87df54279"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d449b876ed8bdca7efb41c87df54279">operator=</a> (const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a0d449b876ed8bdca7efb41c87df54279"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a0d449b876ed8bdca7efb41c87df54279"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab795955a0faeabed52af1978f2647bc6" id="r_ab795955a0faeabed52af1978f2647bc6"><td class="memItemLeft" align="right" valign="top"><a id="ab795955a0faeabed52af1978f2647bc6" name="ab795955a0faeabed52af1978f2647bc6"></a>
-<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:ab795955a0faeabed52af1978f2647bc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:ab795955a0faeabed52af1978f2647bc6" id="r_ab795955a0faeabed52af1978f2647bc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab795955a0faeabed52af1978f2647bc6">operator=</a> (<a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:ab795955a0faeabed52af1978f2647bc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:ab795955a0faeabed52af1978f2647bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff93928d295e848aee57caa26e16f858" id="r_aff93928d295e848aee57caa26e16f858"><td class="memItemLeft" align="right" valign="top"><a id="aff93928d295e848aee57caa26e16f858" name="aff93928d295e848aee57caa26e16f858"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~GLONASSEphemeris</b> () final=default</td></tr>
-<tr class="memdesc:aff93928d295e848aee57caa26e16f858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:aff93928d295e848aee57caa26e16f858" id="r_aff93928d295e848aee57caa26e16f858"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff93928d295e848aee57caa26e16f858">~GLONASSEphemeris</a> () final=default</td></tr>
+<tr class="memdesc:aff93928d295e848aee57caa26e16f858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:aff93928d295e848aee57caa26e16f858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1SatNavData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1SatNavData')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1SatNavData.html">NAV::SatNavData</a></td></tr>
-<tr class="memitem:a1b1730e064125d696facf2e9bd4b7597 inherit pub_methods_classNAV_1_1SatNavData" id="r_a1b1730e064125d696facf2e9bd4b7597"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a1b1730e064125d696facf2e9bd4b7597 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a1b1730e064125d696facf2e9bd4b7597 inherit pub_methods_classNAV_1_1SatNavData" id="r_a1b1730e064125d696facf2e9bd4b7597"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a1b1730e064125d696facf2e9bd4b7597">operator=</a> (const <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a1b1730e064125d696facf2e9bd4b7597 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a1b1730e064125d696facf2e9bd4b7597 inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3649ac2406d879c1c62d2e6e9dc70a7 inherit pub_methods_classNAV_1_1SatNavData" id="r_ad3649ac2406d879c1c62d2e6e9dc70a7"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:ad3649ac2406d879c1c62d2e6e9dc70a7 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:ad3649ac2406d879c1c62d2e6e9dc70a7 inherit pub_methods_classNAV_1_1SatNavData" id="r_ad3649ac2406d879c1c62d2e6e9dc70a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#ad3649ac2406d879c1c62d2e6e9dc70a7">operator=</a> (<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:ad3649ac2406d879c1c62d2e6e9dc70a7 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:ad3649ac2406d879c1c62d2e6e9dc70a7 inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac796af3e042cce8c176e65798d5a40c3 inherit pub_methods_classNAV_1_1SatNavData" id="r_ac796af3e042cce8c176e65798d5a40c3"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>SatNavData</b> (const <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;)=default</td></tr>
-<tr class="memdesc:ac796af3e042cce8c176e65798d5a40c3 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:ac796af3e042cce8c176e65798d5a40c3 inherit pub_methods_classNAV_1_1SatNavData" id="r_ac796af3e042cce8c176e65798d5a40c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#ac796af3e042cce8c176e65798d5a40c3">SatNavData</a> (const <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;)=default</td></tr>
+<tr class="memdesc:ac796af3e042cce8c176e65798d5a40c3 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:ac796af3e042cce8c176e65798d5a40c3 inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97118da2bb5173026e2912175515d984 inherit pub_methods_classNAV_1_1SatNavData" id="r_a97118da2bb5173026e2912175515d984"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>SatNavData</b> (<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a97118da2bb5173026e2912175515d984 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a97118da2bb5173026e2912175515d984 inherit pub_methods_classNAV_1_1SatNavData" id="r_a97118da2bb5173026e2912175515d984"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a97118da2bb5173026e2912175515d984">SatNavData</a> (<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a97118da2bb5173026e2912175515d984 inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a97118da2bb5173026e2912175515d984 inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13887c487c4dd00dc7178413be342a1f inherit pub_methods_classNAV_1_1SatNavData" id="r_a13887c487c4dd00dc7178413be342a1f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a13887c487c4dd00dc7178413be342a1f">SatNavData</a> (<a class="el" href="classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341">Type</a> <a class="el" href="classNAV_1_1SatNavData.html#a620048b1447848e7a619daeb640ecb9e">type</a>, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;<a class="el" href="classNAV_1_1SatNavData.html#a4c6dbdf8021bdb44b918e7f400cf9839">refTime</a>)</td></tr>
 <tr class="memdesc:a13887c487c4dd00dc7178413be342a1f inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a13887c487c4dd00dc7178413be342a1f inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a821732705b9d502826c4d423ed91d4bf inherit pub_methods_classNAV_1_1SatNavData" id="r_a821732705b9d502826c4d423ed91d4bf"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>~SatNavData</b> () override=default</td></tr>
-<tr class="memdesc:a821732705b9d502826c4d423ed91d4bf inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a821732705b9d502826c4d423ed91d4bf inherit pub_methods_classNAV_1_1SatNavData" id="r_a821732705b9d502826c4d423ed91d4bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a821732705b9d502826c4d423ed91d4bf">~SatNavData</a> () override=default</td></tr>
+<tr class="memdesc:a821732705b9d502826c4d423ed91d4bf inherit pub_methods_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a821732705b9d502826c4d423ed91d4bf inherit pub_methods_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1Clock"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1Clock')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1Clock.html">NAV::Clock</a></td></tr>
-<tr class="memitem:a5ae97fd68ce2b48597492e32253d49f0 inherit pub_methods_classNAV_1_1Clock" id="r_a5ae97fd68ce2b48597492e32253d49f0"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> ()=default</td></tr>
-<tr class="memdesc:a5ae97fd68ce2b48597492e32253d49f0 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:a5ae97fd68ce2b48597492e32253d49f0 inherit pub_methods_classNAV_1_1Clock" id="r_a5ae97fd68ce2b48597492e32253d49f0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#a5ae97fd68ce2b48597492e32253d49f0">Clock</a> ()=default</td></tr>
+<tr class="memdesc:a5ae97fd68ce2b48597492e32253d49f0 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:a5ae97fd68ce2b48597492e32253d49f0 inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa12905d12fa1651f1f3db1201eec6d08 inherit pub_methods_classNAV_1_1Clock" id="r_aa12905d12fa1651f1f3db1201eec6d08"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:aa12905d12fa1651f1f3db1201eec6d08 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:aa12905d12fa1651f1f3db1201eec6d08 inherit pub_methods_classNAV_1_1Clock" id="r_aa12905d12fa1651f1f3db1201eec6d08"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#aa12905d12fa1651f1f3db1201eec6d08">Clock</a> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:aa12905d12fa1651f1f3db1201eec6d08 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:aa12905d12fa1651f1f3db1201eec6d08 inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a880814251d928041ed058b50506b46d6 inherit pub_methods_classNAV_1_1Clock" id="r_a880814251d928041ed058b50506b46d6"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Clock</b> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=default</td></tr>
-<tr class="memdesc:a880814251d928041ed058b50506b46d6 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:a880814251d928041ed058b50506b46d6 inherit pub_methods_classNAV_1_1Clock" id="r_a880814251d928041ed058b50506b46d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#a880814251d928041ed058b50506b46d6">Clock</a> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=default</td></tr>
+<tr class="memdesc:a880814251d928041ed058b50506b46d6 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:a880814251d928041ed058b50506b46d6 inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10d6ed76105116b3997985e4491bf7e7 inherit pub_methods_classNAV_1_1Clock" id="r_a10d6ed76105116b3997985e4491bf7e7"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:a10d6ed76105116b3997985e4491bf7e7 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a10d6ed76105116b3997985e4491bf7e7 inherit pub_methods_classNAV_1_1Clock" id="r_a10d6ed76105116b3997985e4491bf7e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#a10d6ed76105116b3997985e4491bf7e7">operator=</a> (<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:a10d6ed76105116b3997985e4491bf7e7 inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a10d6ed76105116b3997985e4491bf7e7 inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b75ebc765919b6ad99a222067900f8c inherit pub_methods_classNAV_1_1Clock" id="r_a3b75ebc765919b6ad99a222067900f8c"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a3b75ebc765919b6ad99a222067900f8c inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a3b75ebc765919b6ad99a222067900f8c inherit pub_methods_classNAV_1_1Clock" id="r_a3b75ebc765919b6ad99a222067900f8c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#a3b75ebc765919b6ad99a222067900f8c">operator=</a> (const <a class="el" href="classNAV_1_1Clock.html">Clock</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a3b75ebc765919b6ad99a222067900f8c inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a3b75ebc765919b6ad99a222067900f8c inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3775bd2df81ad8bc6a331a7ee9da618e inherit pub_methods_classNAV_1_1Clock" id="r_a3775bd2df81ad8bc6a331a7ee9da618e"><td class="memItemLeft" align="right" valign="top">
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Clock</b> ()=default</td></tr>
-<tr class="memdesc:a3775bd2df81ad8bc6a331a7ee9da618e inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a3775bd2df81ad8bc6a331a7ee9da618e inherit pub_methods_classNAV_1_1Clock" id="r_a3775bd2df81ad8bc6a331a7ee9da618e"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Clock.html#a3775bd2df81ad8bc6a331a7ee9da618e">~Clock</a> ()=default</td></tr>
+<tr class="memdesc:a3775bd2df81ad8bc6a331a7ee9da618e inherit pub_methods_classNAV_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a3775bd2df81ad8bc6a331a7ee9da618e inherit pub_methods_classNAV_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classNAV_1_1Orbit"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classNAV_1_1Orbit')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classNAV_1_1Orbit.html">NAV::Orbit</a></td></tr>
-<tr class="memitem:ab3ae6a5f8461713414bf44b455b35ff1 inherit pub_methods_classNAV_1_1Orbit" id="r_ab3ae6a5f8461713414bf44b455b35ff1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1Pos.html">Pos</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#ab3ae6a5f8461713414bf44b455b35ff1">calcSatellitePos</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
-<tr class="memdesc:ab3ae6a5f8461713414bf44b455b35ff1 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position of the satellite at transmission time.  <br /></td></tr>
-<tr class="separator:ab3ae6a5f8461713414bf44b455b35ff1 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07db010f06b2b1740557a33232d49ffb inherit pub_methods_classNAV_1_1Orbit" id="r_a07db010f06b2b1740557a33232d49ffb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVel.html">PosVel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a07db010f06b2b1740557a33232d49ffb">calcSatellitePosVel</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
-<tr class="memdesc:a07db010f06b2b1740557a33232d49ffb inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position and velocity of the satellite at transmission time.  <br /></td></tr>
-<tr class="separator:a07db010f06b2b1740557a33232d49ffb inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e38837112e19a4a42e13dab13266ae7 inherit pub_methods_classNAV_1_1Orbit" id="r_a4e38837112e19a4a42e13dab13266ae7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">PosVelAccel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a4e38837112e19a4a42e13dab13266ae7">calcSatellitePosVelAccel</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
-<tr class="memdesc:a4e38837112e19a4a42e13dab13266ae7 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position, velocity and acceleration of the satellite at transmission time.  <br /></td></tr>
-<tr class="separator:a4e38837112e19a4a42e13dab13266ae7 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a538acc50bfa8530e02f323f1fdbd4fdb inherit pub_methods_classNAV_1_1Orbit" id="r_a538acc50bfa8530e02f323f1fdbd4fdb"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a538acc50bfa8530e02f323f1fdbd4fdb inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:aea7c23a82cb14f97b442333c219f63ae inherit pub_methods_classNAV_1_1Orbit" id="r_aea7c23a82cb14f97b442333c219f63ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1Pos.html">Pos</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#aea7c23a82cb14f97b442333c219f63ae">calcSatellitePos</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
+<tr class="memdesc:aea7c23a82cb14f97b442333c219f63ae inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position of the satellite at transmission time.  <br /></td></tr>
+<tr class="separator:aea7c23a82cb14f97b442333c219f63ae inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc351e1f98b387e95973d9bc2e927656 inherit pub_methods_classNAV_1_1Orbit" id="r_afc351e1f98b387e95973d9bc2e927656"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVel.html">PosVel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#afc351e1f98b387e95973d9bc2e927656">calcSatellitePosVel</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
+<tr class="memdesc:afc351e1f98b387e95973d9bc2e927656 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position and velocity of the satellite at transmission time.  <br /></td></tr>
+<tr class="separator:afc351e1f98b387e95973d9bc2e927656 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98d4ac0732ebaf035260bf53621e1aed inherit pub_methods_classNAV_1_1Orbit" id="r_a98d4ac0732ebaf035260bf53621e1aed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">PosVelAccel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a98d4ac0732ebaf035260bf53621e1aed">calcSatellitePosVelAccel</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
+<tr class="memdesc:a98d4ac0732ebaf035260bf53621e1aed inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position, velocity and acceleration of the satellite at transmission time.  <br /></td></tr>
+<tr class="separator:a98d4ac0732ebaf035260bf53621e1aed inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a538acc50bfa8530e02f323f1fdbd4fdb inherit pub_methods_classNAV_1_1Orbit" id="r_a538acc50bfa8530e02f323f1fdbd4fdb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a538acc50bfa8530e02f323f1fdbd4fdb">operator=</a> (const <a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a538acc50bfa8530e02f323f1fdbd4fdb inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a538acc50bfa8530e02f323f1fdbd4fdb inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73217c68b36ebfe765b267a23b2094c2 inherit pub_methods_classNAV_1_1Orbit" id="r_a73217c68b36ebfe765b267a23b2094c2"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:a73217c68b36ebfe765b267a23b2094c2 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a73217c68b36ebfe765b267a23b2094c2 inherit pub_methods_classNAV_1_1Orbit" id="r_a73217c68b36ebfe765b267a23b2094c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a73217c68b36ebfe765b267a23b2094c2">operator=</a> (<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:a73217c68b36ebfe765b267a23b2094c2 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a73217c68b36ebfe765b267a23b2094c2 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6a36c998c4b22f51ecf0b4756e8fd3a inherit pub_methods_classNAV_1_1Orbit" id="r_ac6a36c998c4b22f51ecf0b4756e8fd3a"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Orbit</b> ()=default</td></tr>
-<tr class="memdesc:ac6a36c998c4b22f51ecf0b4756e8fd3a inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:ac6a36c998c4b22f51ecf0b4756e8fd3a inherit pub_methods_classNAV_1_1Orbit" id="r_ac6a36c998c4b22f51ecf0b4756e8fd3a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#ac6a36c998c4b22f51ecf0b4756e8fd3a">Orbit</a> ()=default</td></tr>
+<tr class="memdesc:ac6a36c998c4b22f51ecf0b4756e8fd3a inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:ac6a36c998c4b22f51ecf0b4756e8fd3a inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae793baf92e734fae44ddd429bd176736 inherit pub_methods_classNAV_1_1Orbit" id="r_ae793baf92e734fae44ddd429bd176736"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Orbit</b> (const <a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;)=default</td></tr>
-<tr class="memdesc:ae793baf92e734fae44ddd429bd176736 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:ae793baf92e734fae44ddd429bd176736 inherit pub_methods_classNAV_1_1Orbit" id="r_ae793baf92e734fae44ddd429bd176736"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#ae793baf92e734fae44ddd429bd176736">Orbit</a> (const <a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;)=default</td></tr>
+<tr class="memdesc:ae793baf92e734fae44ddd429bd176736 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:ae793baf92e734fae44ddd429bd176736 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6888de50914d3abd3a639e969e65f3c4 inherit pub_methods_classNAV_1_1Orbit" id="r_a6888de50914d3abd3a639e969e65f3c4"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>Orbit</b> (<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a6888de50914d3abd3a639e969e65f3c4 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a6888de50914d3abd3a639e969e65f3c4 inherit pub_methods_classNAV_1_1Orbit" id="r_a6888de50914d3abd3a639e969e65f3c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a6888de50914d3abd3a639e969e65f3c4">Orbit</a> (<a class="el" href="classNAV_1_1Orbit.html">Orbit</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a6888de50914d3abd3a639e969e65f3c4 inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a6888de50914d3abd3a639e969e65f3c4 inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ca64728a2d857c899e6318e455d1aba inherit pub_methods_classNAV_1_1Orbit" id="r_a9ca64728a2d857c899e6318e455d1aba"><td class="memItemLeft" align="right" valign="top">
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~Orbit</b> ()=default</td></tr>
-<tr class="memdesc:a9ca64728a2d857c899e6318e455d1aba inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a9ca64728a2d857c899e6318e455d1aba inherit pub_methods_classNAV_1_1Orbit" id="r_a9ca64728a2d857c899e6318e455d1aba"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1Orbit.html#a9ca64728a2d857c899e6318e455d1aba">~Orbit</a> ()=default</td></tr>
+<tr class="memdesc:a9ca64728a2d857c899e6318e455d1aba inherit pub_methods_classNAV_1_1Orbit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a9ca64728a2d857c899e6318e455d1aba inherit pub_methods_classNAV_1_1Orbit"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:ae8a6b4162cc1c0764e21193afd2e8d00" id="r_ae8a6b4162cc1c0764e21193afd2e8d00"><td class="memItemLeft" align="right" valign="top"><a id="ae8a6b4162cc1c0764e21193afd2e8d00" name="ae8a6b4162cc1c0764e21193afd2e8d00"></a>
-const int8_t&#160;</td><td class="memItemRight" valign="bottom"><b>frequencyNumber</b></td></tr>
-<tr class="memdesc:ae8a6b4162cc1c0764e21193afd2e8d00"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> number (-7 ... +13) (-7 ...+6 (ICD 5.1)) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:ae8a6b4162cc1c0764e21193afd2e8d00" id="r_ae8a6b4162cc1c0764e21193afd2e8d00"><td class="memItemLeft" align="right" valign="top">const int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8a6b4162cc1c0764e21193afd2e8d00">frequencyNumber</a></td></tr>
+<tr class="memdesc:ae8a6b4162cc1c0764e21193afd2e8d00"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> number (-7 ... +13) (-7 ...+6 (ICD 5.1))  <br /></td></tr>
 <tr class="separator:ae8a6b4162cc1c0764e21193afd2e8d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb9a750b3d6930a70235a462df9e18da" id="r_aeb9a750b3d6930a70235a462df9e18da"><td class="memItemLeft" align="right" valign="top"><a id="aeb9a750b3d6930a70235a462df9e18da" name="aeb9a750b3d6930a70235a462df9e18da"></a>
-const double&#160;</td><td class="memItemRight" valign="bottom"><b>gamma_n</b></td></tr>
-<tr class="memdesc:aeb9a750b3d6930a70235a462df9e18da"><td class="mdescLeft">&#160;</td><td class="mdescRight">SV relative frequency bias. <br /></td></tr>
+<tr class="memitem:aeb9a750b3d6930a70235a462df9e18da" id="r_aeb9a750b3d6930a70235a462df9e18da"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb9a750b3d6930a70235a462df9e18da">gamma_n</a></td></tr>
+<tr class="memdesc:aeb9a750b3d6930a70235a462df9e18da"><td class="mdescLeft">&#160;</td><td class="mdescRight">SV relative frequency bias.  <br /></td></tr>
 <tr class="separator:aeb9a750b3d6930a70235a462df9e18da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005037ed90fc746748138d276d48950a" id="r_a005037ed90fc746748138d276d48950a"><td class="memItemLeft" align="right" valign="top"><a id="a005037ed90fc746748138d276d48950a" name="a005037ed90fc746748138d276d48950a"></a>
-const bool&#160;</td><td class="memItemRight" valign="bottom"><b>health</b></td></tr>
-<tr class="memdesc:a005037ed90fc746748138d276d48950a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Health. <br /></td></tr>
+<tr class="memitem:a005037ed90fc746748138d276d48950a" id="r_a005037ed90fc746748138d276d48950a"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a005037ed90fc746748138d276d48950a">health</a></td></tr>
+<tr class="memdesc:a005037ed90fc746748138d276d48950a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Health.  <br /></td></tr>
 <tr class="separator:a005037ed90fc746748138d276d48950a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67c3a56bbf13dc913d19e619fa81b225" id="r_a67c3a56bbf13dc913d19e619fa81b225"><td class="memItemLeft" align="right" valign="top"><a id="a67c3a56bbf13dc913d19e619fa81b225" name="a67c3a56bbf13dc913d19e619fa81b225"></a>
-const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>PZ90_accelLuniSolar</b></td></tr>
-<tr class="memdesc:a67c3a56bbf13dc913d19e619fa81b225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accelerations due to lunar-solar gravitational perturbation in PZ90 frame [m/s^2]. <br /></td></tr>
+<tr class="memitem:a67c3a56bbf13dc913d19e619fa81b225" id="r_a67c3a56bbf13dc913d19e619fa81b225"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67c3a56bbf13dc913d19e619fa81b225">PZ90_accelLuniSolar</a></td></tr>
+<tr class="memdesc:a67c3a56bbf13dc913d19e619fa81b225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accelerations due to lunar-solar gravitational perturbation in PZ90 frame [m/s^2].  <br /></td></tr>
 <tr class="separator:a67c3a56bbf13dc913d19e619fa81b225"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82cef95e4f5ec8fda20fb45861ac676e" id="r_a82cef95e4f5ec8fda20fb45861ac676e"><td class="memItemLeft" align="right" valign="top"><a id="a82cef95e4f5ec8fda20fb45861ac676e" name="a82cef95e4f5ec8fda20fb45861ac676e"></a>
-const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>PZ90_pos</b></td></tr>
-<tr class="memdesc:a82cef95e4f5ec8fda20fb45861ac676e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position at reference time in PZ90 frame [m]. <br /></td></tr>
+<tr class="memitem:a82cef95e4f5ec8fda20fb45861ac676e" id="r_a82cef95e4f5ec8fda20fb45861ac676e"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82cef95e4f5ec8fda20fb45861ac676e">PZ90_pos</a></td></tr>
+<tr class="memdesc:a82cef95e4f5ec8fda20fb45861ac676e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position at reference time in PZ90 frame [m].  <br /></td></tr>
 <tr class="separator:a82cef95e4f5ec8fda20fb45861ac676e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1609c2fb6350a075b1bc09517d9cf124" id="r_a1609c2fb6350a075b1bc09517d9cf124"><td class="memItemLeft" align="right" valign="top"><a id="a1609c2fb6350a075b1bc09517d9cf124" name="a1609c2fb6350a075b1bc09517d9cf124"></a>
-const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>PZ90_vel</b></td></tr>
-<tr class="memdesc:a1609c2fb6350a075b1bc09517d9cf124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity at reference time in PZ90 frame [m/s]. <br /></td></tr>
+<tr class="memitem:a1609c2fb6350a075b1bc09517d9cf124" id="r_a1609c2fb6350a075b1bc09517d9cf124"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1609c2fb6350a075b1bc09517d9cf124">PZ90_vel</a></td></tr>
+<tr class="memdesc:a1609c2fb6350a075b1bc09517d9cf124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity at reference time in PZ90 frame [m/s].  <br /></td></tr>
 <tr class="separator:a1609c2fb6350a075b1bc09517d9cf124"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24fca4c9fcc40edbb4a243026df74fac" id="r_a24fca4c9fcc40edbb4a243026df74fac"><td class="memItemLeft" align="right" valign="top"><a id="a24fca4c9fcc40edbb4a243026df74fac" name="a24fca4c9fcc40edbb4a243026df74fac"></a>
-const double&#160;</td><td class="memItemRight" valign="bottom"><b>tau_c</b></td></tr>
-<tr class="memdesc:a24fca4c9fcc40edbb4a243026df74fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coefficient of linear polynomial of time system difference [s]. <br /></td></tr>
+<tr class="memitem:a24fca4c9fcc40edbb4a243026df74fac" id="r_a24fca4c9fcc40edbb4a243026df74fac"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24fca4c9fcc40edbb4a243026df74fac">tau_c</a></td></tr>
+<tr class="memdesc:a24fca4c9fcc40edbb4a243026df74fac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coefficient of linear polynomial of time system difference [s].  <br /></td></tr>
 <tr class="separator:a24fca4c9fcc40edbb4a243026df74fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a976b37d339825d7836bccd6c9607672e" id="r_a976b37d339825d7836bccd6c9607672e"><td class="memItemLeft" align="right" valign="top"><a id="a976b37d339825d7836bccd6c9607672e" name="a976b37d339825d7836bccd6c9607672e"></a>
-const double&#160;</td><td class="memItemRight" valign="bottom"><b>tau_n</b></td></tr>
-<tr class="memdesc:a976b37d339825d7836bccd6c9607672e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SV clock bias [s]. <br /></td></tr>
+<tr class="memitem:a976b37d339825d7836bccd6c9607672e" id="r_a976b37d339825d7836bccd6c9607672e"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a976b37d339825d7836bccd6c9607672e">tau_n</a></td></tr>
+<tr class="memdesc:a976b37d339825d7836bccd6c9607672e"><td class="mdescLeft">&#160;</td><td class="mdescRight">SV clock bias [s].  <br /></td></tr>
 <tr class="separator:a976b37d339825d7836bccd6c9607672e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff0379b9728e9a7c28f69496309c6980" id="r_aff0379b9728e9a7c28f69496309c6980"><td class="memItemLeft" align="right" valign="top"><a id="aff0379b9728e9a7c28f69496309c6980" name="aff0379b9728e9a7c28f69496309c6980"></a>
-const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>toc</b></td></tr>
-<tr class="memdesc:aff0379b9728e9a7c28f69496309c6980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toe Time of clock [s] (Reference time, ephemeris parameters) <br /></td></tr>
+<tr class="memitem:aff0379b9728e9a7c28f69496309c6980" id="r_aff0379b9728e9a7c28f69496309c6980"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff0379b9728e9a7c28f69496309c6980">toc</a></td></tr>
+<tr class="memdesc:aff0379b9728e9a7c28f69496309c6980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toe Time of clock [s] (Reference time, ephemeris parameters)  <br /></td></tr>
 <tr class="separator:aff0379b9728e9a7c28f69496309c6980"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1SatNavData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1SatNavData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1SatNavData.html">NAV::SatNavData</a></td></tr>
-<tr class="memitem:a4c6dbdf8021bdb44b918e7f400cf9839 inherit pub_attribs_classNAV_1_1SatNavData" id="r_a4c6dbdf8021bdb44b918e7f400cf9839"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>refTime</b></td></tr>
-<tr class="memdesc:a4c6dbdf8021bdb44b918e7f400cf9839 inherit pub_attribs_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference time of the information. <br /></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1SatNavData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1SatNavData')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1SatNavData.html">NAV::SatNavData</a></td></tr>
+<tr class="memitem:a4c6dbdf8021bdb44b918e7f400cf9839 inherit pub_attribs_classNAV_1_1SatNavData" id="r_a4c6dbdf8021bdb44b918e7f400cf9839"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a4c6dbdf8021bdb44b918e7f400cf9839">refTime</a></td></tr>
+<tr class="memdesc:a4c6dbdf8021bdb44b918e7f400cf9839 inherit pub_attribs_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference time of the information.  <br /></td></tr>
 <tr class="separator:a4c6dbdf8021bdb44b918e7f400cf9839 inherit pub_attribs_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a620048b1447848e7a619daeb640ecb9e inherit pub_attribs_classNAV_1_1SatNavData" id="r_a620048b1447848e7a619daeb640ecb9e"><td class="memItemLeft" align="right" valign="top">
-const <a class="el" href="classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type</b></td></tr>
-<tr class="memdesc:a620048b1447848e7a619daeb640ecb9e inherit pub_attribs_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Child type (for down-casting) <br /></td></tr>
+<tr class="memitem:a620048b1447848e7a619daeb640ecb9e inherit pub_attribs_classNAV_1_1SatNavData" id="r_a620048b1447848e7a619daeb640ecb9e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classNAV_1_1SatNavData.html#ab8ee23e943f90f953e0092d31b7a8341">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1SatNavData.html#a620048b1447848e7a619daeb640ecb9e">type</a></td></tr>
+<tr class="memdesc:a620048b1447848e7a619daeb640ecb9e inherit pub_attribs_classNAV_1_1SatNavData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Child type (for down-casting)  <br /></td></tr>
 <tr class="separator:a620048b1447848e7a619daeb640ecb9e inherit pub_attribs_classNAV_1_1SatNavData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a74d2e83f06c7ed77c74c5f378ee298f9" id="r_a74d2e83f06c7ed77c74c5f378ee298f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">PosVelAccel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74d2e83f06c7ed77c74c5f378ee298f9">calcSatelliteData</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime, <a class="el" href="classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585e">Orbit::Calc</a> calc) const final</td></tr>
-<tr class="memdesc:a74d2e83f06c7ed77c74c5f378ee298f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position, velocity and acceleration of the satellite at transmission time.  <br /></td></tr>
-<tr class="separator:a74d2e83f06c7ed77c74c5f378ee298f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8231ed3921d9f0f758917b657717283" id="r_ab8231ed3921d9f0f758917b657717283"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">PosVelAccel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8231ed3921d9f0f758917b657717283">calcSatelliteData</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime, <a class="el" href="classNAV_1_1Orbit.html#ae8c8f8913e3a12d52b0385d22e22585e">Orbit::Calc</a> calc) const final</td></tr>
+<tr class="memdesc:ab8231ed3921d9f0f758917b657717283"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position, velocity and acceleration of the satellite at transmission time.  <br /></td></tr>
+<tr class="separator:ab8231ed3921d9f0f758917b657717283"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:acc57c35b342c39c2462193494d96caff" id="r_acc57c35b342c39c2462193494d96caff"><td class="memItemLeft" align="right" valign="top"><a id="acc57c35b342c39c2462193494d96caff" name="acc57c35b342c39c2462193494d96caff"></a>
-static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><b>_h</b></td></tr>
-<tr class="memdesc:acc57c35b342c39c2462193494d96caff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration step size in [s]. <br /></td></tr>
+<tr class="memitem:acc57c35b342c39c2462193494d96caff" id="r_acc57c35b342c39c2462193494d96caff"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc57c35b342c39c2462193494d96caff">_h</a></td></tr>
+<tr class="memdesc:acc57c35b342c39c2462193494d96caff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration step size in [s].  <br /></td></tr>
 <tr class="separator:acc57c35b342c39c2462193494d96caff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
@@ -347,9 +313,11 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Broadcasted ephemeris message data. </p>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_glo-icd-5.1">[15]</a> GLO-ICD-5.1, ch. 4., p. 25ff </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00025">25</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae1293a1450dc8086bd5ce441e78b8911" name="ae1293a1450dc8086bd5ce441e78b8911"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1293a1450dc8086bd5ce441e78b8911">&#9670;&#160;</a></span>GLONASSEphemeris()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1293a1450dc8086bd5ce441e78b8911">&#9670;&#160;</a></span>GLONASSEphemeris() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -418,11 +386,12 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8cpp_source.html#l00021">21</a> of file <a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a>.</p>
+
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad1cafe8d74918c94ea73820aecca9144" name="ad1cafe8d74918c94ea73820aecca9144"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1cafe8d74918c94ea73820aecca9144">&#9670;&#160;</a></span>calcClockCorrections()</h2>
+<a id="aff93928d295e848aee57caa26e16f858" name="aff93928d295e848aee57caa26e16f858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff93928d295e848aee57caa26e16f858">&#9670;&#160;</a></span>~GLONASSEphemeris()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -431,7 +400,89 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Corrections</a> NAV::GLONASSEphemeris::calcClockCorrections </td>
+          <td class="memname">NAV::GLONASSEphemeris::~GLONASSEphemeris </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel final">final</span><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+</div>
+</div>
+<a id="a35b3fe61273a18992ef0937926bf4afc" name="a35b3fe61273a18992ef0937926bf4afc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35b3fe61273a18992ef0937926bf4afc">&#9670;&#160;</a></span>GLONASSEphemeris() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::GLONASSEphemeris::GLONASSEphemeris </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="ad5607e5b2900553a60b301a6d86ee24c" name="ad5607e5b2900553a60b301a6d86ee24c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5607e5b2900553a60b301a6d86ee24c">&#9670;&#160;</a></span>GLONASSEphemeris() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::GLONASSEphemeris::GLONASSEphemeris </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad1820412d525a20dcae8f9a27578ebbb" name="ad1820412d525a20dcae8f9a27578ebbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1820412d525a20dcae8f9a27578ebbb">&#9670;&#160;</a></span>calcClockCorrections()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1Clock_1_1Corrections.html">Clock::Corrections</a> NAV::GLONASSEphemeris::calcClockCorrections </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>recvTime</em></span>, </td>
         </tr>
@@ -466,10 +517,12 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1Clock.html#aab564c989566d0ec480eb1d9c9aa32d5">NAV::Clock</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8cpp_source.html#l00059">59</a> of file <a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a74d2e83f06c7ed77c74c5f378ee298f9" name="a74d2e83f06c7ed77c74c5f378ee298f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74d2e83f06c7ed77c74c5f378ee298f9">&#9670;&#160;</a></span>calcSatelliteData()</h2>
+<a id="ab8231ed3921d9f0f758917b657717283" name="ab8231ed3921d9f0f758917b657717283"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8231ed3921d9f0f758917b657717283">&#9670;&#160;</a></span>calcSatelliteData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,7 +531,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">PosVelAccel</a> NAV::GLONASSEphemeris::calcSatelliteData </td>
+          <td class="memname"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">Orbit::PosVelAccel</a> NAV::GLONASSEphemeris::calcSatelliteData </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>transTime</em></span>, </td>
         </tr>
@@ -506,6 +559,8 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_glo-icd-cdma-1.0">[16]</a> GLO-ICD-CDMA-1.0, J2, p. 53ff </dd></dl>
 
 <p>Implements <a class="el" href="classNAV_1_1Orbit.html#aadbb5d3aef27f06235f9566af6be697c">NAV::Orbit</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8cpp_source.html#l00077">77</a> of file <a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a>.</p>
 
 </div>
 </div>
@@ -536,6 +591,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1Orbit.html#ad7be1885ded54c925b4705e113a6da46">NAV::Orbit</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8cpp_source.html#l00169">169</a> of file <a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a4f74bc0e3787dded86eb61718cea0d5b" name="a4f74bc0e3787dded86eb61718cea0d5b"></a>
@@ -565,17 +622,263 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classNAV_1_1SatNavData.html#a4c6a7ce6bee92e6efff1663e711f8ef0">NAV::SatNavData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8cpp_source.html#l00164">164</a> of file <a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a id="a0d449b876ed8bdca7efb41c87df54279" name="a0d449b876ed8bdca7efb41c87df54279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d449b876ed8bdca7efb41c87df54279">&#9670;&#160;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp; NAV::GLONASSEphemeris::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment operator. </p>
+
+</div>
+</div>
+<a id="ab795955a0faeabed52af1978f2647bc6" name="ab795955a0faeabed52af1978f2647bc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab795955a0faeabed52af1978f2647bc6">&#9670;&#160;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp; NAV::GLONASSEphemeris::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment operator. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="acc57c35b342c39c2462193494d96caff" name="acc57c35b342c39c2462193494d96caff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc57c35b342c39c2462193494d96caff">&#9670;&#160;</a></span>_h</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::GLONASSEphemeris::_h</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integration step size in [s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00134">134</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae8a6b4162cc1c0764e21193afd2e8d00" name="ae8a6b4162cc1c0764e21193afd2e8d00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8a6b4162cc1c0764e21193afd2e8d00">&#9670;&#160;</a></span>frequencyNumber</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int8_t NAV::GLONASSEphemeris::frequencyNumber</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> number (-7 ... +13) (-7 ...+6 (ICD 5.1)) </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00050">50</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aeb9a750b3d6930a70235a462df9e18da" name="aeb9a750b3d6930a70235a462df9e18da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb9a750b3d6930a70235a462df9e18da">&#9670;&#160;</a></span>gamma_n</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double NAV::GLONASSEphemeris::gamma_n</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SV relative frequency bias. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00040">40</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a005037ed90fc746748138d276d48950a" name="a005037ed90fc746748138d276d48950a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a005037ed90fc746748138d276d48950a">&#9670;&#160;</a></span>health</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool NAV::GLONASSEphemeris::health</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Health. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00042">42</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a67c3a56bbf13dc913d19e619fa81b225" name="a67c3a56bbf13dc913d19e619fa81b225"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67c3a56bbf13dc913d19e619fa81b225">&#9670;&#160;</a></span>PZ90_accelLuniSolar</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d NAV::GLONASSEphemeris::PZ90_accelLuniSolar</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Accelerations due to lunar-solar gravitational perturbation in PZ90 frame [m/s^2]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00048">48</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a82cef95e4f5ec8fda20fb45861ac676e" name="a82cef95e4f5ec8fda20fb45861ac676e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82cef95e4f5ec8fda20fb45861ac676e">&#9670;&#160;</a></span>PZ90_pos</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d NAV::GLONASSEphemeris::PZ90_pos</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Position at reference time in PZ90 frame [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00044">44</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1609c2fb6350a075b1bc09517d9cf124" name="a1609c2fb6350a075b1bc09517d9cf124"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1609c2fb6350a075b1bc09517d9cf124">&#9670;&#160;</a></span>PZ90_vel</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d NAV::GLONASSEphemeris::PZ90_vel</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Velocity at reference time in PZ90 frame [m/s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00046">46</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a24fca4c9fcc40edbb4a243026df74fac" name="a24fca4c9fcc40edbb4a243026df74fac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24fca4c9fcc40edbb4a243026df74fac">&#9670;&#160;</a></span>tau_c</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double NAV::GLONASSEphemeris::tau_c</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Coefficient of linear polynomial of time system difference [s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00033">33</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a976b37d339825d7836bccd6c9607672e" name="a976b37d339825d7836bccd6c9607672e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a976b37d339825d7836bccd6c9607672e">&#9670;&#160;</a></span>tau_n</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double NAV::GLONASSEphemeris::tau_n</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SV clock bias [s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00038">38</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aff0379b9728e9a7c28f69496309c6980" name="aff0379b9728e9a7c28f69496309c6980"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff0379b9728e9a7c28f69496309c6980">&#9670;&#160;</a></span>toc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::GLONASSEphemeris::toc</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Toe Time of clock [s] (Reference time, ephemeris parameters) </p>
+
+<p class="definition">Definition at line <a class="el" href="GLONASSEphemeris_8hpp_source.html#l00036">36</a> of file <a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Satellite/Ephemeris/<a class="el" href="GLONASSEphemeris_8hpp_source.html">GLONASSEphemeris.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Satellite/Ephemeris/<a class="el" href="GLONASSEphemeris_8cpp_source.html">GLONASSEphemeris.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1GLONASSEphemeris.html">GLONASSEphemeris</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

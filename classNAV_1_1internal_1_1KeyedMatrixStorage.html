@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,8 +120,7 @@ $(function(){initNavTree('classNAV_1_1internal_1_1KeyedMatrixStorage.html',''); 
 <div class="header">
   <div class="summary">
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1internal_1_1KeyedMatrixStorage-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::internal::KeyedMatrixStorage&lt; Scalar, Rows, Cols &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -130,28 +130,23 @@ $(function(){initNavTree('classNAV_1_1internal_1_1KeyedMatrixStorage.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a8680ee47aa99ed62fa929c3845b1c809" id="r_a8680ee47aa99ed62fa929c3845b1c809"><td class="memItemLeft" align="right" valign="top"><a id="a8680ee47aa99ed62fa929c3845b1c809" name="a8680ee47aa99ed62fa929c3845b1c809"></a>
-std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>_sliceMutex</b></td></tr>
-<tr class="memdesc:a8680ee47aa99ed62fa929c3845b1c809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex for accessing the slices. <br /></td></tr>
+<tr class="memitem:a8680ee47aa99ed62fa929c3845b1c809" id="r_a8680ee47aa99ed62fa929c3845b1c809"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8680ee47aa99ed62fa929c3845b1c809">_sliceMutex</a></td></tr>
+<tr class="memdesc:a8680ee47aa99ed62fa929c3845b1c809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex for accessing the slices.  <br /></td></tr>
 <tr class="separator:a8680ee47aa99ed62fa929c3845b1c809"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63421dea5ac4389fb191e76af3102584" id="r_a63421dea5ac4389fb191e76af3102584"><td class="memItemLeft" align="right" valign="top"><a id="a63421dea5ac4389fb191e76af3102584" name="a63421dea5ac4389fb191e76af3102584"></a>
-Eigen::Matrix&lt; Scalar, Rows, Cols &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>matrix</b></td></tr>
-<tr class="memdesc:a63421dea5ac4389fb191e76af3102584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data storage of the type. <br /></td></tr>
+<tr class="memitem:a63421dea5ac4389fb191e76af3102584" id="r_a63421dea5ac4389fb191e76af3102584"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix&lt; Scalar, Rows, Cols &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63421dea5ac4389fb191e76af3102584">matrix</a></td></tr>
+<tr class="memdesc:a63421dea5ac4389fb191e76af3102584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data storage of the type.  <br /></td></tr>
 <tr class="separator:a63421dea5ac4389fb191e76af3102584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a73717266439110760c28720edb3fdbb1" id="r_a73717266439110760c28720edb3fdbb1"><td class="memTemplParams" colspan="2"><a id="a73717266439110760c28720edb3fdbb1" name="a73717266439110760c28720edb3fdbb1"></a>
-template&lt;typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_&gt; </td></tr>
-<tr class="memitem:a73717266439110760c28720edb3fdbb1"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>KeyedMatrixBase</b></td></tr>
+<tr class="memitem:a73717266439110760c28720edb3fdbb1" id="r_a73717266439110760c28720edb3fdbb1"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_&gt; </td></tr>
+<tr class="memitem:a73717266439110760c28720edb3fdbb1"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a73717266439110760c28720edb3fdbb1">KeyedMatrixBase</a></td></tr>
 <tr class="separator:a73717266439110760c28720edb3fdbb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae934aeb7734324ec22edaba7325a5354" id="r_ae934aeb7734324ec22edaba7325a5354"><td class="memTemplParams" colspan="2"><a id="ae934aeb7734324ec22edaba7325a5354" name="ae934aeb7734324ec22edaba7325a5354"></a>
-template&lt;typename Scalar_, typename ColKeyType_, int Cols_&gt; </td></tr>
-<tr class="memitem:ae934aeb7734324ec22edaba7325a5354"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>KeyedRowVectorBase</b></td></tr>
+<tr class="memitem:ae934aeb7734324ec22edaba7325a5354" id="r_ae934aeb7734324ec22edaba7325a5354"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_, typename ColKeyType_, int Cols_&gt; </td></tr>
+<tr class="memitem:ae934aeb7734324ec22edaba7325a5354"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae934aeb7734324ec22edaba7325a5354">KeyedRowVectorBase</a></td></tr>
 <tr class="separator:ae934aeb7734324ec22edaba7325a5354"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c36bf5692fef9a6ec7263137a0c7fcd" id="r_a9c36bf5692fef9a6ec7263137a0c7fcd"><td class="memTemplParams" colspan="2"><a id="a9c36bf5692fef9a6ec7263137a0c7fcd" name="a9c36bf5692fef9a6ec7263137a0c7fcd"></a>
-template&lt;typename Scalar_, typename RowKeyType_, int Rows_&gt; </td></tr>
-<tr class="memitem:a9c36bf5692fef9a6ec7263137a0c7fcd"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>KeyedVectorBase</b></td></tr>
+<tr class="memitem:a9c36bf5692fef9a6ec7263137a0c7fcd" id="r_a9c36bf5692fef9a6ec7263137a0c7fcd"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_, typename RowKeyType_, int Rows_&gt; </td></tr>
+<tr class="memitem:a9c36bf5692fef9a6ec7263137a0c7fcd"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9c36bf5692fef9a6ec7263137a0c7fcd">KeyedVectorBase</a></td></tr>
 <tr class="separator:a9c36bf5692fef9a6ec7263137a0c7fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -165,7 +160,151 @@ class NAV::internal::KeyedMatrixStorage&lt; Scalar, Rows, Cols &gt;</div><p><a c
   </table>
   </dd>
 </dl>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00050">50</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+</div><h2 class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="a73717266439110760c28720edb3fdbb1" name="a73717266439110760c28720edb3fdbb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73717266439110760c28720edb3fdbb1">&#9670;&#160;</a></span>KeyedMatrixBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, int Rows, int Cols&gt; </div>
+<div class="memtemplate">
+template&lt;typename Scalar_, typename RowKeyType_, typename ColKeyType_, int Rows_, int Cols_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classNAV_1_1internal_1_1KeyedMatrixBase.html">KeyedMatrixBase</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00058">58</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae934aeb7734324ec22edaba7325a5354" name="ae934aeb7734324ec22edaba7325a5354"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae934aeb7734324ec22edaba7325a5354">&#9670;&#160;</a></span>KeyedRowVectorBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, int Rows, int Cols&gt; </div>
+<div class="memtemplate">
+template&lt;typename Scalar_, typename ColKeyType_, int Cols_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classNAV_1_1internal_1_1KeyedRowVectorBase.html">KeyedRowVectorBase</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00062">62</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9c36bf5692fef9a6ec7263137a0c7fcd" name="a9c36bf5692fef9a6ec7263137a0c7fcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c36bf5692fef9a6ec7263137a0c7fcd">&#9670;&#160;</a></span>KeyedVectorBase</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, int Rows, int Cols&gt; </div>
+<div class="memtemplate">
+template&lt;typename Scalar_, typename RowKeyType_, int Rows_&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classNAV_1_1internal_1_1KeyedVectorBase.html">KeyedVectorBase</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00060">60</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a8680ee47aa99ed62fa929c3845b1c809" name="a8680ee47aa99ed62fa929c3845b1c809"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8680ee47aa99ed62fa929c3845b1c809">&#9670;&#160;</a></span>_sliceMutex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, int Rows, int Cols&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex <a class="el" href="classNAV_1_1internal_1_1KeyedMatrixStorage.html">NAV::internal::KeyedMatrixStorage</a>&lt; Scalar, Rows, Cols &gt;::_sliceMutex</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Mutex for accessing the slices. </p>
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00054">54</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a63421dea5ac4389fb191e76af3102584" name="a63421dea5ac4389fb191e76af3102584"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63421dea5ac4389fb191e76af3102584">&#9670;&#160;</a></span>matrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, int Rows, int Cols&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix&lt;Scalar, Rows, Cols&gt; <a class="el" href="classNAV_1_1internal_1_1KeyedMatrixStorage.html">NAV::internal::KeyedMatrixStorage</a>&lt; Scalar, Rows, Cols &gt;::matrix</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Data storage of the type. </p>
+
+<p class="definition">Definition at line <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html#l00053">53</a> of file <a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Container/<a class="el" href="util_2Container_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -173,7 +312,7 @@ class NAV::internal::KeyedMatrixStorage&lt; Scalar, Rows, Cols &gt;</div><p><a c
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="namespaceNAV_1_1internal.html">internal</a></li><li class="navelem"><a class="el" href="classNAV_1_1internal_1_1KeyedMatrixStorage.html">KeyedMatrixStorage</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1internal.html">internal</a></li><li class="navelem"><a class="el" href="classNAV_1_1internal_1_1KeyedMatrixStorage.html">KeyedMatrixStorage</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

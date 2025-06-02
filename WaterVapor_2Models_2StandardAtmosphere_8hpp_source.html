@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,24 +128,34 @@ $(function(){initNavTree('WaterVapor_2Models_2StandardAtmosphere_8hpp_source.htm
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file StandardAtmosphere.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Standard Atmosphere water vapor model</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2023-01-31</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;gcem.hpp&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment"></span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// @brief Calculates the standard atmosphere partial pressure of water vapor</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @param[in] temp The absolute temperature in [K]</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in] humidity_rel The relative humidity</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @return The partial pressure [hPa] of water vapor</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @note See \cite RTKLIB RTKLIB ch. E.5, eq. E.5.3, p. 149</span></div>
 <div class="foldopen" id="foldopen00026" data-start="{" data-end="}">
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="WaterVapor_2Models_2StandardAtmosphere_8hpp.html#a1821828f5947915d77234e049120cbdd">   26</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keywordtype">double</span> <a class="code hl_function" href="WaterVapor_2Models_2StandardAtmosphere_8hpp.html#a1821828f5947915d77234e049120cbdd">calcWaterVaporPartialPressureStAtm</a>(<span class="keywordtype">double</span> temp, <span class="keywordtype">double</span> humidity_rel)</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a1821828f5947915d77234e049120cbdd">   26</a></span>[[nodiscard]] <span class="keyword">constexpr</span> <span class="keywordtype">double</span> <a class="code hl_function" href="namespaceNAV.html#a1821828f5947915d77234e049120cbdd">calcWaterVaporPartialPressureStAtm</a>(<span class="keywordtype">double</span> temp, <span class="keywordtype">double</span> humidity_rel)</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">return</span> 6.108 * gcem::exp((17.15 * temp - 4684.0) / (temp - 38.45)) * humidity_rel;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
 </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aWaterVapor_2Models_2StandardAtmosphere_8hpp_html_a1821828f5947915d77234e049120cbdd"><div class="ttname"><a href="WaterVapor_2Models_2StandardAtmosphere_8hpp.html#a1821828f5947915d77234e049120cbdd">NAV::calcWaterVaporPartialPressureStAtm</a></div><div class="ttdeci">constexpr double calcWaterVaporPartialPressureStAtm(double temp, double humidity_rel)</div><div class="ttdoc">Calculates the standard atmosphere partial pressure of water vapor.</div><div class="ttdef"><b>Definition</b> StandardAtmosphere.hpp:26</div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a1821828f5947915d77234e049120cbdd"><div class="ttname"><a href="namespaceNAV.html#a1821828f5947915d77234e049120cbdd">NAV::calcWaterVaporPartialPressureStAtm</a></div><div class="ttdeci">constexpr double calcWaterVaporPartialPressureStAtm(double temp, double humidity_rel)</div><div class="ttdoc">Calculates the standard atmosphere partial pressure of water vapor.</div><div class="ttdef"><b>Definition</b> <a href="#l00026">StandardAtmosphere.hpp:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

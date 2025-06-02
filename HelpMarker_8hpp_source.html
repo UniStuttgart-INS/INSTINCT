@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,22 +128,35 @@ $(function(){initNavTree('HelpMarker_8hpp_source.html',''); initResizable(true);
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file HelpMarker.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Text Help Marker (?) with Tooltip</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2020-12-13</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>NAV::gui::widgets</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="HelpMarker_8hpp.html#ab86988e86b4c90bc36dbea966b8d8540">   21</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="HelpMarker_8hpp.html#ab86988e86b4c90bc36dbea966b8d8540">HelpMarker</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* desc, <span class="keyword">const</span> <span class="keywordtype">char</span>* symbol = <span class="stringliteral">&quot;(?)&quot;</span>);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="HelpMarker_8hpp.html#a024d949f0d2e0b725cdb6809920cd5b1">   26</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="HelpMarker_8hpp.html#a024d949f0d2e0b725cdb6809920cd5b1">BeginHelpMarker</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* symbol = <span class="stringliteral">&quot;(?)&quot;</span>, <span class="keywordtype">float</span> textWrapLength = 35.0F);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="HelpMarker_8hpp.html#a520ad36d82e3f853152828fc94872264">   30</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="HelpMarker_8hpp.html#a520ad36d82e3f853152828fc94872264">EndHelpMarker</a>(<span class="keywordtype">bool</span> wrapText = <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">/// @brief Text Help Marker, e.g. &#39;(?)&#39;, with Tooltip</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">/// @param[in] desc Text to display as tooltip</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">/// @param[in] symbol Symbol to display</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1widgets.html#ab86988e86b4c90bc36dbea966b8d8540">HelpMarker</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* desc, <span class="keyword">const</span> <span class="keywordtype">char</span>* symbol = <span class="stringliteral">&quot;(?)&quot;</span>);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"></span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @brief Begins a Text Help Marker, e.g. &#39;(?)&#39;, with custom content</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] symbol Symbol to display</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] textWrapLength Length to wrap symbols after (set to 0.0F to disable)</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1widgets.html#a024d949f0d2e0b725cdb6809920cd5b1">BeginHelpMarker</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* symbol = <span class="stringliteral">&quot;(?)&quot;</span>, <span class="keywordtype">float</span> textWrapLength = 35.0F);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"></span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">/// @brief Ends a Text Help Marker with custom content</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">/// @param[in] wrapText Wether text was wrapped</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1widgets.html#a520ad36d82e3f853152828fc94872264">EndHelpMarker</a>(<span class="keywordtype">bool</span> wrapText = <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>} <span class="comment">// namespace NAV::gui::widgets</span></div>
-<div class="ttc" id="aHelpMarker_8hpp_html_a024d949f0d2e0b725cdb6809920cd5b1"><div class="ttname"><a href="HelpMarker_8hpp.html#a024d949f0d2e0b725cdb6809920cd5b1">NAV::gui::widgets::BeginHelpMarker</a></div><div class="ttdeci">bool BeginHelpMarker(const char *symbol=&quot;(?)&quot;, float textWrapLength=35.0F)</div><div class="ttdoc">Begins a Text Help Marker, e.g. &#39;(?)&#39;, with custom content.</div></div>
-<div class="ttc" id="aHelpMarker_8hpp_html_a520ad36d82e3f853152828fc94872264"><div class="ttname"><a href="HelpMarker_8hpp.html#a520ad36d82e3f853152828fc94872264">NAV::gui::widgets::EndHelpMarker</a></div><div class="ttdeci">void EndHelpMarker(bool wrapText=true)</div><div class="ttdoc">Ends a Text Help Marker with custom content.</div></div>
-<div class="ttc" id="aHelpMarker_8hpp_html_ab86988e86b4c90bc36dbea966b8d8540"><div class="ttname"><a href="HelpMarker_8hpp.html#ab86988e86b4c90bc36dbea966b8d8540">NAV::gui::widgets::HelpMarker</a></div><div class="ttdeci">void HelpMarker(const char *desc, const char *symbol=&quot;(?)&quot;)</div><div class="ttdoc">Text Help Marker, e.g. &#39;(?)&#39;, with Tooltip.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></div><div class="ttdef"><b>Definition</b> <a href="DynamicInputPins_8cpp_source.html#l00022">DynamicInputPins.cpp:23</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html_a024d949f0d2e0b725cdb6809920cd5b1"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html#a024d949f0d2e0b725cdb6809920cd5b1">NAV::gui::widgets::BeginHelpMarker</a></div><div class="ttdeci">bool BeginHelpMarker(const char *symbol=&quot;(?)&quot;, float textWrapLength=35.0F)</div><div class="ttdoc">Begins a Text Help Marker, e.g. &#39;(?)&#39;, with custom content.</div><div class="ttdef"><b>Definition</b> <a href="HelpMarker_8cpp_source.html#l00028">HelpMarker.cpp:28</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html_a520ad36d82e3f853152828fc94872264"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html#a520ad36d82e3f853152828fc94872264">NAV::gui::widgets::EndHelpMarker</a></div><div class="ttdeci">void EndHelpMarker(bool wrapText=true)</div><div class="ttdoc">Ends a Text Help Marker with custom content.</div><div class="ttdef"><b>Definition</b> <a href="HelpMarker_8cpp_source.html#l00044">HelpMarker.cpp:44</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html_ab86988e86b4c90bc36dbea966b8d8540"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html#ab86988e86b4c90bc36dbea966b8d8540">NAV::gui::widgets::HelpMarker</a></div><div class="ttdeci">void HelpMarker(const char *desc, const char *symbol=&quot;(?)&quot;)</div><div class="ttdoc">Text Help Marker, e.g. &#39;(?)&#39;, with Tooltip.</div><div class="ttdef"><b>Definition</b> <a href="HelpMarker_8cpp_source.html#l00014">HelpMarker.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

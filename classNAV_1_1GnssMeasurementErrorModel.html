@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,15 +119,14 @@ $(function(){initNavTree('classNAV_1_1GnssMeasurementErrorModel.html',''); initR
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1GnssMeasurementErrorModel-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::GnssMeasurementErrorModel Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -135,7 +135,7 @@ $(function(){initNavTree('classNAV_1_1GnssMeasurementErrorModel.html',''); initR
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersCosineType.html">ModelParametersCosineType</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'cosine - type' model.  <a href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersCosineType.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,9 +191,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6be98f79022e76deb4507324ff3bd485" id="r_a6be98f79022e76deb4507324ff3bd485"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6be98f79022e76deb4507324ff3bd485">codeBiasErrorVar</a> () const</td></tr>
 <tr class="memdesc:a6be98f79022e76deb4507324ff3bd485"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the <a class="el" href="classNAV_1_1Code.html" title="Enumerate for GNSS Codes.">Code</a> Bias Error Variance.  <br /></td></tr>
 <tr class="separator:a6be98f79022e76deb4507324ff3bd485"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a225750502dd1a75b932cb6f4844710" id="r_a3a225750502dd1a75b932cb6f4844710"><td class="memItemLeft" align="right" valign="top"><a id="a3a225750502dd1a75b932cb6f4844710" name="a3a225750502dd1a75b932cb6f4844710"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GnssMeasurementErrorModel</b> ()</td></tr>
-<tr class="memdesc:a3a225750502dd1a75b932cb6f4844710"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:a3a225750502dd1a75b932cb6f4844710" id="r_a3a225750502dd1a75b932cb6f4844710"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a225750502dd1a75b932cb6f4844710">GnssMeasurementErrorModel</a> ()</td></tr>
+<tr class="memdesc:a3a225750502dd1a75b932cb6f4844710"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:a3a225750502dd1a75b932cb6f4844710"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb2d4d98b1902c2dab2cbe5f34c1e88e" id="r_abb2d4d98b1902c2dab2cbe5f34c1e88e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb2d4d98b1902c2dab2cbe5f34c1e88e">psrMeasErrorVar</a> (const <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &amp;satSys, double elevation, double cn0) const</td></tr>
 <tr class="memdesc:abb2d4d98b1902c2dab2cbe5f34c1e88e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement Error Variance for pseudorange observations.  <br /></td></tr>
@@ -216,78 +215,62 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a8f54d387bf760ca0d7e1ea53abb787fb" id="r_a8f54d387bf760ca0d7e1ea53abb787fb"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f54d387bf760ca0d7e1ea53abb787fb">satSysErrorFactorVariance</a> (const <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &amp;satSys)</td></tr>
-<tr class="memdesc:a8f54d387bf760ca0d7e1ea53abb787fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an error factor for the variance depending on the satellite system.  <br /></td></tr>
-<tr class="separator:a8f54d387bf760ca0d7e1ea53abb787fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acec376fdf3ab920aca312ddbe455494d" id="r_acec376fdf3ab920aca312ddbe455494d"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acec376fdf3ab920aca312ddbe455494d">satSysErrorFactorVariance</a> (const <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &amp;satSys)</td></tr>
+<tr class="memdesc:acec376fdf3ab920aca312ddbe455494d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an error factor for the variance depending on the satellite system.  <br /></td></tr>
+<tr class="separator:acec376fdf3ab920aca312ddbe455494d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a0e581f9a31c53eeea8ea51324db2288f" id="r_a0e581f9a31c53eeea8ea51324db2288f"><td class="memItemLeft" align="right" valign="top"><a id="a0e581f9a31c53eeea8ea51324db2288f" name="a0e581f9a31c53eeea8ea51324db2288f"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_carrierStdDev</b></td></tr>
-<tr class="memdesc:a0e581f9a31c53eeea8ea51324db2288f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Carrier Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m]. <br /></td></tr>
+<tr class="memitem:a0e581f9a31c53eeea8ea51324db2288f" id="r_a0e581f9a31c53eeea8ea51324db2288f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e581f9a31c53eeea8ea51324db2288f">_carrierStdDev</a></td></tr>
+<tr class="memdesc:a0e581f9a31c53eeea8ea51324db2288f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Carrier Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m].  <br /></td></tr>
 <tr class="separator:a0e581f9a31c53eeea8ea51324db2288f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a310972907b9531aee9eef3066c2b32e1" id="r_a310972907b9531aee9eef3066c2b32e1"><td class="memItemLeft" align="right" valign="top"><a id="a310972907b9531aee9eef3066c2b32e1" name="a310972907b9531aee9eef3066c2b32e1"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_codeStdDev</b></td></tr>
-<tr class="memdesc:a310972907b9531aee9eef3066c2b32e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Code/Pseudorange Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m]. <br /></td></tr>
+<tr class="memitem:a310972907b9531aee9eef3066c2b32e1" id="r_a310972907b9531aee9eef3066c2b32e1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a310972907b9531aee9eef3066c2b32e1">_codeStdDev</a></td></tr>
+<tr class="memdesc:a310972907b9531aee9eef3066c2b32e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Code/Pseudorange Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m].  <br /></td></tr>
 <tr class="separator:a310972907b9531aee9eef3066c2b32e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ae6212984c95ca02851bac038f50bc" id="r_ad9ae6212984c95ca02851bac038f50bc"><td class="memItemLeft" align="right" valign="top"><a id="ad9ae6212984c95ca02851bac038f50bc" name="ad9ae6212984c95ca02851bac038f50bc"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_dopplerStdDev</b></td></tr>
-<tr class="memdesc:ad9ae6212984c95ca02851bac038f50bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Doppler <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> error factor [Hz] - Measurement error standard deviation. <br /></td></tr>
+<tr class="memitem:ad9ae6212984c95ca02851bac038f50bc" id="r_ad9ae6212984c95ca02851bac038f50bc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9ae6212984c95ca02851bac038f50bc">_dopplerStdDev</a></td></tr>
+<tr class="memdesc:ad9ae6212984c95ca02851bac038f50bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Doppler <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> error factor [Hz] - Measurement error standard deviation.  <br /></td></tr>
 <tr class="separator:ad9ae6212984c95ca02851bac038f50bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96d2a3e960b43aa76fc3552ae89a8333" id="r_a96d2a3e960b43aa76fc3552ae89a8333"><td class="memItemLeft" align="right" valign="top"><a id="a96d2a3e960b43aa76fc3552ae89a8333" name="a96d2a3e960b43aa76fc3552ae89a8333"></a>
-<a class="el" href="#a6c4922fc8b3918cde911154173f394d4">Model</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_model</b></td></tr>
-<tr class="memdesc:a96d2a3e960b43aa76fc3552ae89a8333"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> to use. <br /></td></tr>
+<tr class="memitem:a96d2a3e960b43aa76fc3552ae89a8333" id="r_a96d2a3e960b43aa76fc3552ae89a8333"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4">Model</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96d2a3e960b43aa76fc3552ae89a8333">_model</a></td></tr>
+<tr class="memdesc:a96d2a3e960b43aa76fc3552ae89a8333"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> to use.  <br /></td></tr>
 <tr class="separator:a96d2a3e960b43aa76fc3552ae89a8333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08842faeb1c845b23a9262a9d2ce6f3e" id="r_a08842faeb1c845b23a9262a9d2ce6f3e"><td class="memItemLeft" align="right" valign="top"><a id="a08842faeb1c845b23a9262a9d2ce6f3e" name="a08842faeb1c845b23a9262a9d2ce6f3e"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersCosineType.html">ModelParametersCosineType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersCosineType</b></td></tr>
-<tr class="memdesc:a08842faeb1c845b23a9262a9d2ce6f3e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'cosine - type' model. <br /></td></tr>
+<tr class="memitem:a08842faeb1c845b23a9262a9d2ce6f3e" id="r_a08842faeb1c845b23a9262a9d2ce6f3e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersCosineType.html">ModelParametersCosineType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08842faeb1c845b23a9262a9d2ce6f3e">_modelParametersCosineType</a></td></tr>
+<tr class="memdesc:a08842faeb1c845b23a9262a9d2ce6f3e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'cosine - type' model.  <br /></td></tr>
 <tr class="separator:a08842faeb1c845b23a9262a9d2ce6f3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0901a584890099240e63bddeb70685c0" id="r_a0901a584890099240e63bddeb70685c0"><td class="memItemLeft" align="right" valign="top"><a id="a0901a584890099240e63bddeb70685c0" name="a0901a584890099240e63bddeb70685c0"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersExponential.html">ModelParametersExponential</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersExponential</b></td></tr>
-<tr class="memdesc:a0901a584890099240e63bddeb70685c0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'exponential' model. <br /></td></tr>
+<tr class="memitem:a0901a584890099240e63bddeb70685c0" id="r_a0901a584890099240e63bddeb70685c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersExponential.html">ModelParametersExponential</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0901a584890099240e63bddeb70685c0">_modelParametersExponential</a></td></tr>
+<tr class="memdesc:a0901a584890099240e63bddeb70685c0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'exponential' model.  <br /></td></tr>
 <tr class="separator:a0901a584890099240e63bddeb70685c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee909ccf5327ac60a469e5edbd1326d6" id="r_aee909ccf5327ac60a469e5edbd1326d6"><td class="memItemLeft" align="right" valign="top"><a id="aee909ccf5327ac60a469e5edbd1326d6" name="aee909ccf5327ac60a469e5edbd1326d6"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersRtklib.html">ModelParametersRtklib</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersRtklib</b></td></tr>
-<tr class="memdesc:aee909ccf5327ac60a469e5edbd1326d6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'RTKLIB' model. <br /></td></tr>
+<tr class="memitem:aee909ccf5327ac60a469e5edbd1326d6" id="r_aee909ccf5327ac60a469e5edbd1326d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersRtklib.html">ModelParametersRtklib</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee909ccf5327ac60a469e5edbd1326d6">_modelParametersRtklib</a></td></tr>
+<tr class="memdesc:aee909ccf5327ac60a469e5edbd1326d6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'RTKLIB' model.  <br /></td></tr>
 <tr class="separator:aee909ccf5327ac60a469e5edbd1326d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f68ff90c842767090ad69d4768e95fb" id="r_a3f68ff90c842767090ad69d4768e95fb"><td class="memItemLeft" align="right" valign="top"><a id="a3f68ff90c842767090ad69d4768e95fb" name="a3f68ff90c842767090ad69d4768e95fb"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSine.html">ModelParametersSine</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersSine</b></td></tr>
-<tr class="memdesc:a3f68ff90c842767090ad69d4768e95fb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine' model. <br /></td></tr>
+<tr class="memitem:a3f68ff90c842767090ad69d4768e95fb" id="r_a3f68ff90c842767090ad69d4768e95fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSine.html">ModelParametersSine</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f68ff90c842767090ad69d4768e95fb">_modelParametersSine</a></td></tr>
+<tr class="memdesc:a3f68ff90c842767090ad69d4768e95fb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine' model.  <br /></td></tr>
 <tr class="separator:a3f68ff90c842767090ad69d4768e95fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabf3fd5b756a2ef84b666eba39847c59" id="r_aabf3fd5b756a2ef84b666eba39847c59"><td class="memItemLeft" align="right" valign="top"><a id="aabf3fd5b756a2ef84b666eba39847c59" name="aabf3fd5b756a2ef84b666eba39847c59"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineCN0.html">ModelParametersSineCN0</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersSineCN0</b></td></tr>
-<tr class="memdesc:aabf3fd5b756a2ef84b666eba39847c59"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + CN0' model. <br /></td></tr>
+<tr class="memitem:aabf3fd5b756a2ef84b666eba39847c59" id="r_aabf3fd5b756a2ef84b666eba39847c59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineCN0.html">ModelParametersSineCN0</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabf3fd5b756a2ef84b666eba39847c59">_modelParametersSineCN0</a></td></tr>
+<tr class="memdesc:aabf3fd5b756a2ef84b666eba39847c59"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + CN0' model.  <br /></td></tr>
 <tr class="separator:aabf3fd5b756a2ef84b666eba39847c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c3d897f79d17c651ad17cdbb84e08bc" id="r_a5c3d897f79d17c651ad17cdbb84e08bc"><td class="memItemLeft" align="right" valign="top"><a id="a5c3d897f79d17c651ad17cdbb84e08bc" name="a5c3d897f79d17c651ad17cdbb84e08bc"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineOffset.html">ModelParametersSineOffset</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersSineOffset</b></td></tr>
-<tr class="memdesc:a5c3d897f79d17c651ad17cdbb84e08bc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + offset' model. <br /></td></tr>
+<tr class="memitem:a5c3d897f79d17c651ad17cdbb84e08bc" id="r_a5c3d897f79d17c651ad17cdbb84e08bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineOffset.html">ModelParametersSineOffset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c3d897f79d17c651ad17cdbb84e08bc">_modelParametersSineOffset</a></td></tr>
+<tr class="memdesc:a5c3d897f79d17c651ad17cdbb84e08bc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + offset' model.  <br /></td></tr>
 <tr class="separator:a5c3d897f79d17c651ad17cdbb84e08bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbe3a613eb227d6d742c922893925ebf" id="r_afbe3a613eb227d6d742c922893925ebf"><td class="memItemLeft" align="right" valign="top"><a id="afbe3a613eb227d6d742c922893925ebf" name="afbe3a613eb227d6d742c922893925ebf"></a>
-<a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineSqrt.html">ModelParametersSineSqrt</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_modelParametersSineSqrt</b></td></tr>
-<tr class="memdesc:afbe3a613eb227d6d742c922893925ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine - sqrt' model. <br /></td></tr>
+<tr class="memitem:afbe3a613eb227d6d742c922893925ebf" id="r_afbe3a613eb227d6d742c922893925ebf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineSqrt.html">ModelParametersSineSqrt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afbe3a613eb227d6d742c922893925ebf">_modelParametersSineSqrt</a></td></tr>
+<tr class="memdesc:afbe3a613eb227d6d742c922893925ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine - sqrt' model.  <br /></td></tr>
 <tr class="separator:afbe3a613eb227d6d742c922893925ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d8a434f8987c2127302e1ebe9edf208" id="r_a5d8a434f8987c2127302e1ebe9edf208"><td class="memItemLeft" align="right" valign="top"><a id="a5d8a434f8987c2127302e1ebe9edf208" name="a5d8a434f8987c2127302e1ebe9edf208"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_plotCN0</b></td></tr>
-<tr class="memdesc:a5d8a434f8987c2127302e1ebe9edf208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Carrier-to-Noise density [dB-Hz] to use in the plot. <br /></td></tr>
+<tr class="memitem:a5d8a434f8987c2127302e1ebe9edf208" id="r_a5d8a434f8987c2127302e1ebe9edf208"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d8a434f8987c2127302e1ebe9edf208">_plotCN0</a></td></tr>
+<tr class="memdesc:a5d8a434f8987c2127302e1ebe9edf208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Carrier-to-Noise density [dB-Hz] to use in the plot.  <br /></td></tr>
 <tr class="separator:a5d8a434f8987c2127302e1ebe9edf208"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67444896610e8d6e6209b0123eea3988" id="r_a67444896610e8d6e6209b0123eea3988"><td class="memItemLeft" align="right" valign="top"><a id="a67444896610e8d6e6209b0123eea3988" name="a67444896610e8d6e6209b0123eea3988"></a>
-std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_stdDevCurvePlot</b></td></tr>
-<tr class="memdesc:a67444896610e8d6e6209b0123eea3988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard deviations for plotting. <br /></td></tr>
+<tr class="memitem:a67444896610e8d6e6209b0123eea3988" id="r_a67444896610e8d6e6209b0123eea3988"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67444896610e8d6e6209b0123eea3988">_stdDevCurvePlot</a></td></tr>
+<tr class="memdesc:a67444896610e8d6e6209b0123eea3988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard deviations for plotting.  <br /></td></tr>
 <tr class="separator:a67444896610e8d6e6209b0123eea3988"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:afc94f2825f287f6c1aec6cc7cb1d977b" id="r_afc94f2825f287f6c1aec6cc7cb1d977b"><td class="memItemLeft" align="right" valign="top"><a id="afc94f2825f287f6c1aec6cc7cb1d977b" name="afc94f2825f287f6c1aec6cc7cb1d977b"></a>
-static constexpr std::array&lt; double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_elevation</b></td></tr>
-<tr class="memdesc:afc94f2825f287f6c1aec6cc7cb1d977b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevation data for plotting [rad]. <br /></td></tr>
+<tr class="memitem:afc94f2825f287f6c1aec6cc7cb1d977b" id="r_afc94f2825f287f6c1aec6cc7cb1d977b"><td class="memItemLeft" align="right" valign="top">static constexpr std::array&lt; double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc94f2825f287f6c1aec6cc7cb1d977b">_elevation</a></td></tr>
+<tr class="memdesc:afc94f2825f287f6c1aec6cc7cb1d977b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevation data for plotting [rad].  <br /></td></tr>
 <tr class="separator:afc94f2825f287f6c1aec6cc7cb1d977b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7a7ae4b59f46acc24e9781d9106628b" id="r_ab7a7ae4b59f46acc24e9781d9106628b"><td class="memItemLeft" align="right" valign="top"><a id="ab7a7ae4b59f46acc24e9781d9106628b" name="ab7a7ae4b59f46acc24e9781d9106628b"></a>
-static constexpr std::array&lt; double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_elevation_deg</b></td></tr>
-<tr class="memdesc:ab7a7ae4b59f46acc24e9781d9106628b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevation data for plotting [rad]. <br /></td></tr>
+<tr class="memitem:ab7a7ae4b59f46acc24e9781d9106628b" id="r_ab7a7ae4b59f46acc24e9781d9106628b"><td class="memItemLeft" align="right" valign="top">static constexpr std::array&lt; double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7a7ae4b59f46acc24e9781d9106628b">_elevation_deg</a></td></tr>
+<tr class="memdesc:ab7a7ae4b59f46acc24e9781d9106628b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevation data for plotting [rad].  <br /></td></tr>
 <tr class="separator:ab7a7ae4b59f46acc24e9781d9106628b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa8ac24b4368d663dc543a9105cac91f" id="r_aaa8ac24b4368d663dc543a9105cac91f"><td class="memItemLeft" align="right" valign="top"><a id="aaa8ac24b4368d663dc543a9105cac91f" name="aaa8ac24b4368d663dc543a9105cac91f"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PLOT_SAMPLES</b></td></tr>
-<tr class="memdesc:aaa8ac24b4368d663dc543a9105cac91f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Amount of samples for the plot. <br /></td></tr>
+<tr class="memitem:aaa8ac24b4368d663dc543a9105cac91f" id="r_aaa8ac24b4368d663dc543a9105cac91f"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a></td></tr>
+<tr class="memdesc:aaa8ac24b4368d663dc543a9105cac91f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Amount of samples for the plot.  <br /></td></tr>
 <tr class="separator:aaa8ac24b4368d663dc543a9105cac91f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -343,6 +326,8 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Errors concerning GNSS observations. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00030">30</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a6c4922fc8b3918cde911154173f394d4" name="a6c4922fc8b3918cde911154173f394d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c4922fc8b3918cde911154173f394d4">&#9670;&#160;</a></span>Model</h2>
@@ -377,6 +362,30 @@ Friends</h2></td></tr>
 <tr><td class="fieldname"><a id="a6c4922fc8b3918cde911154173f394d4a24fcfe3ab42b47d3922010d36a1ca97a" name="a6c4922fc8b3918cde911154173f394d4a24fcfe3ab42b47d3922010d36a1ca97a"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
 </td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00037">37</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a3a225750502dd1a75b932cb6f4844710" name="a3a225750502dd1a75b932cb6f4844710"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a225750502dd1a75b932cb6f4844710">&#9670;&#160;</a></span>GnssMeasurementErrorModel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::GnssMeasurementErrorModel::GnssMeasurementErrorModel </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00027">27</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -424,6 +433,8 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Variance of the measurement error [m^2] </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00040">40</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a6be98f79022e76deb4507324ff3bd485" name="a6be98f79022e76deb4507324ff3bd485"></a>
@@ -451,6 +462,8 @@ Friends</h2></td></tr>
 
 <p>Returns the <a class="el" href="classNAV_1_1Code.html" title="Enumerate for GNSS Codes.">Code</a> Bias Error Variance. </p>
 <dl class="section return"><dt>Returns</dt><dd>Variance of the code bias error [m^2] </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00051">51</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -496,6 +509,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Variance of the measurement error [m^2] </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00035">35</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -548,10 +563,12 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Variance of the Pseudo-range rate error [m^2/s^2] </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00045">45</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a8f54d387bf760ca0d7e1ea53abb787fb" name="a8f54d387bf760ca0d7e1ea53abb787fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f54d387bf760ca0d7e1ea53abb787fb">&#9670;&#160;</a></span>satSysErrorFactorVariance()</h2>
+<a id="acec376fdf3ab920aca312ddbe455494d" name="acec376fdf3ab920aca312ddbe455494d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acec376fdf3ab920aca312ddbe455494d">&#9670;&#160;</a></span>satSysErrorFactorVariance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -560,7 +577,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static double NAV::GnssMeasurementErrorModel::satSysErrorFactorVariance </td>
+          <td class="memname">double NAV::GnssMeasurementErrorModel::satSysErrorFactorVariance </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>satSys</em></span></td><td>)</td>
           <td></td>
@@ -580,6 +597,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00059">59</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -605,11 +624,13 @@ Friends</h2></td></tr>
 <p>Shows a GUI widgets. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a>. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Width of the widgets </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00120">120</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -643,6 +664,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00112">112</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -688,6 +711,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00083">83</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Symbol Documentation</h2>
@@ -727,6 +752,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00372">372</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="aeb0455d172be80be8070d309f7ee85db" name="aeb0455d172be80be8070d309f7ee85db"></a>
@@ -764,6 +791,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00476">476</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -803,6 +832,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00461">461</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="aebff6921fa8111c49b7c473813e63aac" name="aebff6921fa8111c49b7c473813e63aac"></a>
@@ -840,6 +871,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00434">434</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -879,6 +912,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00394">394</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a407080e667a158124980c337102c0045" name="a407080e667a158124980c337102c0045"></a>
@@ -916,6 +951,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00420">420</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -955,6 +992,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00406">406</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a2d96ef06fda08b53aaba614edf54277a" name="a2d96ef06fda08b53aaba614edf54277a"></a>
@@ -992,6 +1031,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00447">447</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -1031,6 +1072,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00354">354</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a702344a1de23ac4db37ecd8e486b0bc3" name="a702344a1de23ac4db37ecd8e486b0bc3"></a>
@@ -1068,6 +1111,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00468">468</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -1107,6 +1152,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00453">453</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="ad8995e5bef85173ad3f0b936ab9cf483" name="ad8995e5bef85173ad3f0b936ab9cf483"></a>
@@ -1144,6 +1191,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00427">427</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -1183,6 +1232,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00388">388</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a2a531bc8b68b027e739a291872a15996" name="a2a531bc8b68b027e739a291872a15996"></a>
@@ -1220,6 +1271,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00412">412</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
 
 </div>
 </div>
@@ -1259,6 +1312,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00399">399</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
 <a id="ae1c84c71679cde03709961a427564ff1" name="ae1c84c71679cde03709961a427564ff1"></a>
@@ -1297,17 +1352,437 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8cpp_source.html#l00440">440</a> of file <a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a0e581f9a31c53eeea8ea51324db2288f" name="a0e581f9a31c53eeea8ea51324db2288f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e581f9a31c53eeea8ea51324db2288f">&#9670;&#160;</a></span>_carrierStdDev</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::GnssMeasurementErrorModel::_carrierStdDev</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Carrier Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00086">86</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a310972907b9531aee9eef3066c2b32e1" name="a310972907b9531aee9eef3066c2b32e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a310972907b9531aee9eef3066c2b32e1">&#9670;&#160;</a></span>_codeStdDev</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::GnssMeasurementErrorModel::_codeStdDev</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Code/Pseudorange Measurement error standard deviation per <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00088">88</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad9ae6212984c95ca02851bac038f50bc" name="ad9ae6212984c95ca02851bac038f50bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9ae6212984c95ca02851bac038f50bc">&#9670;&#160;</a></span>_dopplerStdDev</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::GnssMeasurementErrorModel::_dopplerStdDev</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Doppler <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> error factor [Hz] - Measurement error standard deviation. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00090">90</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afc94f2825f287f6c1aec6cc7cb1d977b" name="afc94f2825f287f6c1aec6cc7cb1d977b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc94f2825f287f6c1aec6cc7cb1d977b">&#9670;&#160;</a></span>_elevation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a>&gt; NAV::GnssMeasurementErrorModel::_elevation</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Elevation data for plotting [rad]. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00167">167</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab7a7ae4b59f46acc24e9781d9106628b" name="ab7a7ae4b59f46acc24e9781d9106628b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7a7ae4b59f46acc24e9781d9106628b">&#9670;&#160;</a></span>_elevation_deg</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, <a class="el" href="#aaa8ac24b4368d663dc543a9105cac91f">PLOT_SAMPLES</a>&gt; NAV::GnssMeasurementErrorModel::_elevation_deg</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Elevation data for plotting [rad]. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00169">169</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a96d2a3e960b43aa76fc3552ae89a8333" name="a96d2a3e960b43aa76fc3552ae89a8333"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96d2a3e960b43aa76fc3552ae89a8333">&#9670;&#160;</a></span>_model</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a6c4922fc8b3918cde911154173f394d4">Model</a> NAV::GnssMeasurementErrorModel::_model</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> to use. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00083">83</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a08842faeb1c845b23a9262a9d2ce6f3e" name="a08842faeb1c845b23a9262a9d2ce6f3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08842faeb1c845b23a9262a9d2ce6f3e">&#9670;&#160;</a></span>_modelParametersCosineType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersCosineType.html">ModelParametersCosineType</a> NAV::GnssMeasurementErrorModel::_modelParametersCosineType</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'cosine - type' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00160">160</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0901a584890099240e63bddeb70685c0" name="a0901a584890099240e63bddeb70685c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0901a584890099240e63bddeb70685c0">&#9670;&#160;</a></span>_modelParametersExponential</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersExponential.html">ModelParametersExponential</a> NAV::GnssMeasurementErrorModel::_modelParametersExponential</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'exponential' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00150">150</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aee909ccf5327ac60a469e5edbd1326d6" name="aee909ccf5327ac60a469e5edbd1326d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee909ccf5327ac60a469e5edbd1326d6">&#9670;&#160;</a></span>_modelParametersRtklib</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersRtklib.html">ModelParametersRtklib</a> NAV::GnssMeasurementErrorModel::_modelParametersRtklib</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'RTKLIB' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00131">131</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3f68ff90c842767090ad69d4768e95fb" name="a3f68ff90c842767090ad69d4768e95fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f68ff90c842767090ad69d4768e95fb">&#9670;&#160;</a></span>_modelParametersSine</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSine.html">ModelParametersSine</a> NAV::GnssMeasurementErrorModel::_modelParametersSine</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00103">103</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aabf3fd5b756a2ef84b666eba39847c59" name="aabf3fd5b756a2ef84b666eba39847c59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabf3fd5b756a2ef84b666eba39847c59">&#9670;&#160;</a></span>_modelParametersSineCN0</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineCN0.html">ModelParametersSineCN0</a> NAV::GnssMeasurementErrorModel::_modelParametersSineCN0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + CN0' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00122">122</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5c3d897f79d17c651ad17cdbb84e08bc" name="a5c3d897f79d17c651ad17cdbb84e08bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c3d897f79d17c651ad17cdbb84e08bc">&#9670;&#160;</a></span>_modelParametersSineOffset</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineOffset.html">ModelParametersSineOffset</a> NAV::GnssMeasurementErrorModel::_modelParametersSineOffset</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine + offset' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00112">112</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afbe3a613eb227d6d742c922893925ebf" name="afbe3a613eb227d6d742c922893925ebf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbe3a613eb227d6d742c922893925ebf">&#9670;&#160;</a></span>_modelParametersSineSqrt</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1GnssMeasurementErrorModel_1_1ModelParametersSineSqrt.html">ModelParametersSineSqrt</a> NAV::GnssMeasurementErrorModel::_modelParametersSineSqrt</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="#a6c4922fc8b3918cde911154173f394d4" title="Models.">Model</a> parameters for the 'sine - sqrt' model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00140">140</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5d8a434f8987c2127302e1ebe9edf208" name="a5d8a434f8987c2127302e1ebe9edf208"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d8a434f8987c2127302e1ebe9edf208">&#9670;&#160;</a></span>_plotCN0</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::GnssMeasurementErrorModel::_plotCN0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Carrier-to-Noise density [dB-Hz] to use in the plot. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00093">93</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a67444896610e8d6e6209b0123eea3988" name="a67444896610e8d6e6209b0123eea3988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67444896610e8d6e6209b0123eea3988">&#9670;&#160;</a></span>_stdDevCurvePlot</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::vector&lt;double&gt; &gt; NAV::GnssMeasurementErrorModel::_stdDevCurvePlot</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Standard deviations for plotting. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00171">171</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aaa8ac24b4368d663dc543a9105cac91f" name="aaa8ac24b4368d663dc543a9105cac91f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa8ac24b4368d663dc543a9105cac91f">&#9670;&#160;</a></span>PLOT_SAMPLES</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::GnssMeasurementErrorModel::PLOT_SAMPLES</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Amount of samples for the plot. </p>
+
+<p class="definition">Definition at line <a class="el" href="MeasurementErrors_8hpp_source.html#l00165">165</a> of file <a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Errors/<a class="el" href="MeasurementErrors_8hpp_source.html">MeasurementErrors.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Errors/<a class="el" href="MeasurementErrors_8cpp_source.html">MeasurementErrors.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html">GnssMeasurementErrorModel</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1GnssMeasurementErrorModel.html">GnssMeasurementErrorModel</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

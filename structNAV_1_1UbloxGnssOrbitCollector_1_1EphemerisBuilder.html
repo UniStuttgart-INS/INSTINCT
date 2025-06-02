@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,8 +120,7 @@ $(function(){initNavTree('structNAV_1_1UbloxGnssOrbitCollector_1_1EphemerisBuild
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1UbloxGnssOrbitCollector_1_1EphemerisBuilder-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::UbloxGnssOrbitCollector::EphemerisBuilder Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -135,22 +135,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3c382fc7416d68f94a8c9b5490955d87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a0b036e4fc4a31c642e25e8cb6116725e" id="r_a0b036e4fc4a31c642e25e8cb6116725e"><td class="memItemLeft" align="right" valign="top"><a id="a0b036e4fc4a31c642e25e8cb6116725e" name="a0b036e4fc4a31c642e25e8cb6116725e"></a>
-std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>navData</b></td></tr>
-<tr class="memdesc:a0b036e4fc4a31c642e25e8cb6116725e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Navigation data pointer. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a0b036e4fc4a31c642e25e8cb6116725e" id="r_a0b036e4fc4a31c642e25e8cb6116725e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b036e4fc4a31c642e25e8cb6116725e">navData</a></td></tr>
+<tr class="memdesc:a0b036e4fc4a31c642e25e8cb6116725e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Navigation data pointer.  <br /></td></tr>
 <tr class="separator:a0b036e4fc4a31c642e25e8cb6116725e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d16530c18a3df4fb2d246260216df53" id="r_a5d16530c18a3df4fb2d246260216df53"><td class="memItemLeft" align="right" valign="top"><a id="a5d16530c18a3df4fb2d246260216df53" name="a5d16530c18a3df4fb2d246260216df53"></a>
-<a class="el" href="structNAV_1_1SatId.html">SatId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>satId</b></td></tr>
-<tr class="memdesc:a5d16530c18a3df4fb2d246260216df53"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> Identifier. <br /></td></tr>
+<tr class="memitem:a5d16530c18a3df4fb2d246260216df53" id="r_a5d16530c18a3df4fb2d246260216df53"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1SatId.html">SatId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d16530c18a3df4fb2d246260216df53">satId</a></td></tr>
+<tr class="memdesc:a5d16530c18a3df4fb2d246260216df53"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> Identifier.  <br /></td></tr>
 <tr class="separator:a5d16530c18a3df4fb2d246260216df53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a156c34cff85b580d74cbad6812c82e4e" id="r_a156c34cff85b580d74cbad6812c82e4e"><td class="memItemLeft" align="right" valign="top"><a id="a156c34cff85b580d74cbad6812c82e4e" name="a156c34cff85b580d74cbad6812c82e4e"></a>
-std::bitset&lt; 5 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>subframes</b></td></tr>
-<tr class="memdesc:a156c34cff85b580d74cbad6812c82e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags for which subframes were received already. e.g. Subframes 1, 2, 3 for GPS. <br /></td></tr>
+<tr class="memitem:a156c34cff85b580d74cbad6812c82e4e" id="r_a156c34cff85b580d74cbad6812c82e4e"><td class="memItemLeft" align="right" valign="top">std::bitset&lt; 5 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a156c34cff85b580d74cbad6812c82e4e">subframes</a></td></tr>
+<tr class="memdesc:a156c34cff85b580d74cbad6812c82e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags for which subframes were received already. e.g. Subframes 1, 2, 3 for GPS.  <br /></td></tr>
 <tr class="separator:a156c34cff85b580d74cbad6812c82e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Ephemeris builder to store unfinished ephemeris data till all subframes are collected. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html#l00077">77</a> of file <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html">UbloxGnssOrbitCollector.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3c382fc7416d68f94a8c9b5490955d87" name="a3c382fc7416d68f94a8c9b5490955d87"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3c382fc7416d68f94a8c9b5490955d87">&#9670;&#160;</a></span>EphemerisBuilder()</h2>
@@ -188,6 +187,63 @@ std::bitset&lt; 5 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sub
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html#l00082">82</a> of file <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html">UbloxGnssOrbitCollector.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a0b036e4fc4a31c642e25e8cb6116725e" name="a0b036e4fc4a31c642e25e8cb6116725e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b036e4fc4a31c642e25e8cb6116725e">&#9670;&#160;</a></span>navData</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a>&gt; NAV::UbloxGnssOrbitCollector::EphemerisBuilder::navData</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Navigation data pointer. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html#l00089">89</a> of file <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html">UbloxGnssOrbitCollector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5d16530c18a3df4fb2d246260216df53" name="a5d16530c18a3df4fb2d246260216df53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d16530c18a3df4fb2d246260216df53">&#9670;&#160;</a></span>satId</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1SatId.html">SatId</a> NAV::UbloxGnssOrbitCollector::EphemerisBuilder::satId</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> Identifier. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html#l00088">88</a> of file <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html">UbloxGnssOrbitCollector.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a156c34cff85b580d74cbad6812c82e4e" name="a156c34cff85b580d74cbad6812c82e4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a156c34cff85b580d74cbad6812c82e4e">&#9670;&#160;</a></span>subframes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::bitset&lt;5&gt; NAV::UbloxGnssOrbitCollector::EphemerisBuilder::subframes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flags for which subframes were received already. e.g. Subframes 1, 2, 3 for GPS. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html#l00090">90</a> of file <a class="el" href="UbloxGnssOrbitCollector_8hpp_source.html">UbloxGnssOrbitCollector.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
@@ -198,7 +254,7 @@ std::bitset&lt; 5 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>sub
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1UbloxGnssOrbitCollector.html">UbloxGnssOrbitCollector</a></li><li class="navelem"><a class="el" href="structNAV_1_1UbloxGnssOrbitCollector_1_1EphemerisBuilder.html">EphemerisBuilder</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1UbloxGnssOrbitCollector.html">UbloxGnssOrbitCollector</a></li><li class="navelem"><a class="el" href="structNAV_1_1UbloxGnssOrbitCollector_1_1EphemerisBuilder.html">EphemerisBuilder</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

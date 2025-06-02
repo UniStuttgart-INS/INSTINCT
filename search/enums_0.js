@@ -10,6 +10,6 @@ var searchData=
   ['attitudebiasunits_7',['AttitudeBiasUnits',['../classNAV_1_1ErrorModel.html#afa361ad4c7c267dc125b55fb65a7319b',1,'NAV::ErrorModel']]],
   ['attitudemode_8',['AttitudeMode',['../classNAV_1_1PosVelAttInitializer.html#a59d0589b2c65c6bc13ad329be7f750bc',1,'NAV::PosVelAttInitializer']]],
   ['attitudenoiseunits_9',['AttitudeNoiseUnits',['../classNAV_1_1ErrorModel.html#a535f9a961016e8c29dd773935f6ba6ec',1,'NAV::ErrorModel']]],
-  ['attitudeuncertaintyunits_10',['AttitudeUncertaintyUnits',['../GNSS_2Positioning_2Units_8hpp.html#a07660f6aa4acb59d2f9363da4c626d4a',1,'NAV::Units']]],
-  ['attitudeunits_11',['AttitudeUnits',['../GNSS_2Positioning_2Units_8hpp.html#ad291607d80ede54293eeba7d892c518c',1,'NAV::Units']]]
+  ['attitudeuncertaintyunits_10',['AttitudeUncertaintyUnits',['../namespaceNAV_1_1Units.html#a07660f6aa4acb59d2f9363da4c626d4a',1,'NAV::Units']]],
+  ['attitudeunits_11',['AttitudeUnits',['../namespaceNAV_1_1Units.html#ad291607d80ede54293eeba7d892c518c',1,'NAV::Units']]]
 ];

@@ -5,6 +5,6 @@ var searchData=
   ['velocitybiasunits_2',['VelocityBiasUnits',['../classNAV_1_1ErrorModel.html#a0d2b70d1197a08012235b2ed1bdb5e20',1,'NAV::ErrorModel']]],
   ['velocitynoiseunits_3',['VelocityNoiseUnits',['../classNAV_1_1ErrorModel.html#adb88179a193c29e2222bd36996707431',1,'NAV::ErrorModel']]],
   ['velocityoverride_4',['VelocityOverride',['../classNAV_1_1PosVelAttInitializer.html#a08d2db5229eb0a9cfc644ccbe13d1368',1,'NAV::PosVelAttInitializer']]],
-  ['velocityuncertaintyunits_5',['VelocityUncertaintyUnits',['../GNSS_2Positioning_2Units_8hpp.html#a734863abb017a8c533fc3793fb7b2566',1,'NAV::Units']]],
-  ['velocityunits_6',['VelocityUnits',['../GNSS_2Positioning_2Units_8hpp.html#add6f48cbe749bc26b3fb7817d353f7e0',1,'NAV::Units']]]
+  ['velocityuncertaintyunits_5',['VelocityUncertaintyUnits',['../namespaceNAV_1_1Units.html#a734863abb017a8c533fc3793fb7b2566',1,'NAV::Units']]],
+  ['velocityunits_6',['VelocityUnits',['../namespaceNAV_1_1Units.html#add6f48cbe749bc26b3fb7817d353f7e0',1,'NAV::Units']]]
 ];

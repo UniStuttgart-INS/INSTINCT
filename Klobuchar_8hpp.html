@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Klobuchar_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Klobuchar.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,9 +130,14 @@ $(function(){initNavTree('Klobuchar_8hpp.html',''); initResizable(true); });
 
 <p><a href="Klobuchar_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af967ddaa8c6bdb4c810bd1e652b576e9" id="r_af967ddaa8c6bdb4c810bd1e652b576e9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af967ddaa8c6bdb4c810bd1e652b576e9">NAV::calcIonosphericTimeDelay_Klobuchar</a> (double tow, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t freqNum, double latitude, double longitude, double elevation, double azimuth, const std::array&lt; double, 4 &gt; &amp;alpha, const std::array&lt; double, 4 &gt; &amp;beta)</td></tr>
+<tr class="memitem:af967ddaa8c6bdb4c810bd1e652b576e9" id="r_af967ddaa8c6bdb4c810bd1e652b576e9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#af967ddaa8c6bdb4c810bd1e652b576e9">NAV::calcIonosphericTimeDelay_Klobuchar</a> (double tow, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t freqNum, double latitude, double longitude, double elevation, double azimuth, const std::array&lt; double, 4 &gt; &amp;alpha, const std::array&lt; double, 4 &gt; &amp;beta)</td></tr>
 <tr class="memdesc:af967ddaa8c6bdb4c810bd1e652b576e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ionospheric time delay with the Klobuchar model.  <br /></td></tr>
 <tr class="separator:af967ddaa8c6bdb4c810bd1e652b576e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -138,153 +145,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Klobuchar Ionospheric correction model. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-05-26 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="af967ddaa8c6bdb4c810bd1e652b576e9" name="af967ddaa8c6bdb4c810bd1e652b576e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af967ddaa8c6bdb4c810bd1e652b576e9">&#9670;&#160;</a></span>calcIonosphericTimeDelay_Klobuchar()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcIonosphericTimeDelay_Klobuchar </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>tow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>freqNum</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>latitude</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>longitude</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>azimuth</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::array&lt; double, 4 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>alpha</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::array&lt; double, 4 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>beta</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the ionospheric time delay with the Klobuchar model. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">tow</td><td>GPS time of week in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency of the signal </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freqNum</td><td>Frequency number. Only used for GLONASS G1 and G2 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">latitude</td><td>𝜙 Geodetic latitude in [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">longitude</td><td>λ Geodetic longitude in [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Angle between the user and satellite [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">azimuth</td><td>Angle between the user and satellite, measured clockwise positive from the true North [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">alpha</td><td>The coefficients of a cubic equation representing the amplitude of the vertical delay </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">beta</td><td>The coefficients of a cubic equation representing the period of the model </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Ionospheric time delay in [s] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_klobuchar1987">[27]</a> Klobuchar p. 329 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_is-gps-200m">[21]</a> IS-GPS-200 ch. 20.3.3.5.2.5 Figure 20-4 p.131-134 <a class="anchor" id="Ionosphere-Model-Klobuchar"></a> </dd></dl>
-<h4><a class="anchor" id="autotoc_md0"></a>
-Algorithm description</h4>
-<p>Given the approximate position <img class="formulaInl" alt="$ \phi, \lambda $" src="form_0.svg" width="28" height="18"/>, the elevation angle <img class="formulaInl" alt="$ \varepsilon $" src="form_1.svg" width="9" height="11"/>, the azimuth <img class="formulaInl" alt="$ \alpha $" src="form_2.svg" width="12" height="11"/> as well as the 8 Klobuchar coefficients <img class="formulaInl" alt="$ \alpha_i, \beta_i, i = 0,...,3 $" src="form_3.svg" width="126" height="18"/> one can compute the following:</p>
-<ul>
-<li>earth-centred angle (elevation in semicircles) <a class="anchor" id="eq-klobuchar-earthCentredAngle"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-earthCentredAngle}
-    \psi = \frac{0.0137}{\varepsilon + 0.11} - 0.022
-\end{equation}" src="form_4.svg" width="574" height="39"/>
-</p>
-</li>
-<li>latitude of the Ionospheric Pierce Point IPP (semicircles) <a class="anchor" id="eq-klobuchar-latIPP"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-latIPP}
-    \phi_\mathrm{IPP} = \phi + \psi \cos(\alpha)
-\end{equation}" src="form_5.svg" width="571" height="19"/>
-</p>
- If <img class="formulaInl" alt="$ \phi_\mathrm{IPP} &gt; 0.416 $" src="form_6.svg" width="98" height="18"/>, then <img class="formulaInl" alt="$ \phi_\mathrm{IPP} = 0.416 $" src="form_7.svg" width="98" height="18"/> and if <img class="formulaInl" alt="$ \phi_\mathrm{IPP} &lt; -0.416 $" src="form_8.svg" width="112" height="18"/>, then <img class="formulaInl" alt="$ \phi_\mathrm{IPP} = -0.416 $" src="form_9.svg" width="112" height="18"/> .</li>
-<li>longitude of the Ionospheric Pierce Point IPP (semicircles) <a class="anchor" id="eq-klobuchar-longIPP"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-longIPP}
-    \lambda_\mathrm{IPP} = \lambda + \frac{\psi \sin(\alpha)}{\cos(\phi_\mathrm{IPP})}
-\end{equation}" src="form_10.svg" width="576" height="42"/>
-</p>
-</li>
-<li>geomagnetic latitude of IPP <a class="anchor" id="eq-klobuchar-latIPP-geomag"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-latIPP-geomag}
-    \phi_\mathrm{mag} = \phi_\mathrm{IPP} + 0.064 \cos(\lambda_\mathrm{IPP}-1.617)
-\end{equation}" src="form_11.svg" width="639" height="19"/>
-</p>
-</li>
-<li>local time at IPP in [s] <a class="anchor" id="eq-klobuchar-localTimeIPP"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-localTimeIPP}
-    t = 43200 \lambda_\mathrm{IPP} + t_\mathrm{GPS}
-\end{equation}" src="form_12.svg" width="576" height="19"/>
-</p>
- where the local time at IPP is <img class="formulaInl" alt="$ 0 \leq t &lt; 86400 $" src="form_13.svg" width="105" height="16"/>, so if <img class="formulaInl" alt="$ t \geq 86400 $" src="form_14.svg" width="74" height="16"/>, <img class="formulaInl" alt="$ t = t - 86400 $" src="form_15.svg" width="102" height="14"/> and if <img class="formulaInl" alt="$ t &lt; 0 $" src="form_16.svg" width="39" height="14"/>, <img class="formulaInl" alt="$ t = t + 86400 $" src="form_17.svg" width="102" height="14"/>.</li>
-<li>slant factor (elevation in semicircles) <a class="anchor" id="eq-klobuchar-slantFactor"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-slantFactor}
-    F = 1.0 + 16.0 (0.53-\varepsilon)^{3}
-\end{equation}" src="form_18.svg" width="590" height="21"/>
-</p>
-</li>
-<li>amplitude of ionospheric delay in [s] <a class="anchor" id="eq-klobuchar-amp"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-amp}
-    A_\mathrm{I}=\sum_{n=0}^{3} \alpha_{n} \phi_{mag}^{n}
-\end{equation}" src="form_19.svg" width="558" height="53"/>
-</p>
-</li>
-<li>period of ionospheric delay in [s] <a class="anchor" id="eq-klobuchar-period"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-period}
-    P_\mathrm{I}=\sum_{n=0}^{3} \beta_{n} \phi_{mag}^{n}
-\end{equation}" src="form_20.svg" width="557" height="53"/>
-</p>
- If <img class="formulaInl" alt="$ P_\mathrm{I} &lt; 72000 $" src="form_21.svg" width="84" height="16"/>, set it to <img class="formulaInl" alt="$ P_\mathrm{I} = 72000 $" src="form_22.svg" width="84" height="16"/>.</li>
-<li>phase of ionospheric delay in [rad] <a class="anchor" id="eq-klobuchar-phase"></a>  <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-phase}
-    X_\mathrm{I} = \frac{2\pi (t-50400)}{P_\mathrm{I}}
-\end{equation}" src="form_23.svg" width="569" height="40"/>
-</p>
-</li>
-<li>ionospheric time delay in [s] <a class="anchor" id="eq-klobuchar-ionoTimeDelay"></a>     <p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-klobuchar-ionoTimeDelay}
-    I_{L1_{GPS}}= \begin{cases}{
-    \left[5 \cdot 10^{-9}+ A_\mathrm{I} \cdot\left(1-\frac{X_{I}^{2}}{2}+\frac{X_{I}^{4}}{24}\right)\right] \cdot F} &amp; , \text{if} \left|X_{I}\right| &lt; 1.57 \\
-    5 \cdot 10^{-9} \cdot F &amp; , \text{if} \left|X_{I}\right| \geq 1.57
-    \end{cases}
-\end{equation}" src="form_24.svg" width="739" height="58"/>
-</p>
-</li>
-<li>The ionospheric time delay <img class="formulaInl" alt="$ I_{L1_{GPS}} $" src="form_25.svg" width="51" height="18"/> refers to the GPS L1 frequency and gets adapted to the given frequency automatically. </li>
-</ul>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Klobuchar_8hpp_source.html">Klobuchar.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

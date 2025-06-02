@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('Troposphere_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Troposphere.hpp File Reference</div></div>
@@ -131,7 +133,7 @@ $(function(){initNavTree('Troposphere_8hpp.html',''); initResizable(true); });
 <p><a href="Troposphere_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1AtmosphereModels.html">NAV::AtmosphereModels</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atmospheric model selection for temperature, pressure and water vapor.  <a href="structNAV_1_1AtmosphereModels.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,68 +141,73 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of troposphere model selections.  <a href="structNAV_1_1TroposphereModelSelection.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a3ca06f3cfd77aba6471e9881df3a1fcd" id="r_a3ca06f3cfd77aba6471e9881df3a1fcd"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcd">NAV::MappingFunction</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcda6adf97f83acf6453d4a6a4b1070f3754">None</a>
+<tr class="memitem:a3ca06f3cfd77aba6471e9881df3a1fcd" id="r_a3ca06f3cfd77aba6471e9881df3a1fcd"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcd">NAV::MappingFunction</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcda6adf97f83acf6453d4a6a4b1070f3754">NAV::None</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcda73671849db21f65ba4842184c366e9e7">Cosecant</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcda73671849db21f65ba4842184c366e9e7">NAV::Cosecant</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcda6cfb8208d5bf0f63de2ed35f05fe2d02">GMF</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcda6cfb8208d5bf0f63de2ed35f05fe2d02">NAV::GMF</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcda6069da7e4b41acb59062ba2bdd789e64">NMF</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcda6069da7e4b41acb59062ba2bdd789e64">NAV::NMF</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcdac1a78bb04fa487692bc1cc0352eb9f51">VMF_GPT2</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcdac1a78bb04fa487692bc1cc0352eb9f51">NAV::VMF_GPT2</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcdad845695e4e392d0adaa3dfad5759f7c4">VMF_GPT3</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcdad845695e4e392d0adaa3dfad5759f7c4">NAV::VMF_GPT3</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcda4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcda4905ac9d6a22bdfc1ae096094ce6248d">NAV::COUNT</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a3ca06f3cfd77aba6471e9881df3a1fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Mapping Functions.  <a href="#a3ca06f3cfd77aba6471e9881df3a1fcd">More...</a><br /></td></tr>
+<tr class="memdesc:a3ca06f3cfd77aba6471e9881df3a1fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Mapping Functions.  <a href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcd">More...</a><br /></td></tr>
 <tr class="separator:a3ca06f3cfd77aba6471e9881df3a1fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa860003b748e378ac37bcfdaf8d1e6cc" id="r_aa860003b748e378ac37bcfdaf8d1e6cc"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cc">NAV::TroposphereModel</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cca6adf97f83acf6453d4a6a4b1070f3754">None</a>
+<tr class="memitem:aa860003b748e378ac37bcfdaf8d1e6cc" id="r_aa860003b748e378ac37bcfdaf8d1e6cc"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cc">NAV::TroposphereModel</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cca6adf97f83acf6453d4a6a4b1070f3754">NAV::None</a>
 , <br />
-&#160;&#160;<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cca6c51fd11589fde1995a1fc64d9c540ac">Saastamoinen</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cca6c51fd11589fde1995a1fc64d9c540ac">NAV::Saastamoinen</a>
 , <br />
-&#160;&#160;<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6ccaa09388a7c034c082e91b292222d13c36">GPT2</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6ccaa09388a7c034c082e91b292222d13c36">NAV::GPT2</a>
 , <br />
-&#160;&#160;<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6ccaa611d1b6beee75c8ef1a5258fe160eba">GPT3</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6ccaa611d1b6beee75c8ef1a5258fe160eba">NAV::GPT3</a>
 , <br />
-&#160;&#160;<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cca4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cca4905ac9d6a22bdfc1ae096094ce6248d">NAV::COUNT</a>
 <br />
  }</td></tr>
-<tr class="memdesc:aa860003b748e378ac37bcfdaf8d1e6cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Troposphere delay models.  <a href="#aa860003b748e378ac37bcfdaf8d1e6cc">More...</a><br /></td></tr>
+<tr class="memdesc:aa860003b748e378ac37bcfdaf8d1e6cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Troposphere delay models.  <a href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cc">More...</a><br /></td></tr>
 <tr class="separator:aa860003b748e378ac37bcfdaf8d1e6cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9ed43213eb7e52c37b7c306383734a81" id="r_a9ed43213eb7e52c37b7c306383734a81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1ZenithDelay.html">ZenithDelay</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ed43213eb7e52c37b7c306383734a81">NAV::calcTroposphericDelayAndMapping</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const Eigen::Vector3d &amp;lla_pos, double elevation, double azimuth, const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;troposphereModels, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:a9ed43213eb7e52c37b7c306383734a81" id="r_a9ed43213eb7e52c37b7c306383734a81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1ZenithDelay.html">ZenithDelay</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a9ed43213eb7e52c37b7c306383734a81">NAV::calcTroposphericDelayAndMapping</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const Eigen::Vector3d &amp;lla_pos, double elevation, double azimuth, const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;troposphereModels, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:a9ed43213eb7e52c37b7c306383734a81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the tropospheric zenith hydrostatic and wet delays and corresponding mapping factors.  <br /></td></tr>
 <tr class="separator:a9ed43213eb7e52c37b7c306383734a81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2be03eba00316ef26d97478d024622c0" id="r_a2be03eba00316ef26d97478d024622c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2be03eba00316ef26d97478d024622c0">NAV::ComboTroposphereModel</a> (const char *label, <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;troposphereModelSelection, float width=0.0F)</td></tr>
+<tr class="memitem:a2be03eba00316ef26d97478d024622c0" id="r_a2be03eba00316ef26d97478d024622c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a2be03eba00316ef26d97478d024622c0">NAV::ComboTroposphereModel</a> (const char *label, <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;troposphereModelSelection, float width=0.0F)</td></tr>
 <tr class="memdesc:a2be03eba00316ef26d97478d024622c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a ComboBox and button for advanced configuration to select the troposphere models.  <br /></td></tr>
 <tr class="separator:a2be03eba00316ef26d97478d024622c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac25e3fa67bd276b4940037482e142b10" id="r_ac25e3fa67bd276b4940037482e142b10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac25e3fa67bd276b4940037482e142b10">NAV::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;obj)</td></tr>
+<tr class="memitem:ac25e3fa67bd276b4940037482e142b10" id="r_ac25e3fa67bd276b4940037482e142b10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ac25e3fa67bd276b4940037482e142b10">NAV::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;obj)</td></tr>
 <tr class="memdesc:ac25e3fa67bd276b4940037482e142b10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided json object into a node object.  <br /></td></tr>
 <tr class="separator:ac25e3fa67bd276b4940037482e142b10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f9e876d389d3c893a99705e5dca8f4d" id="r_a2f9e876d389d3c893a99705e5dca8f4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f9e876d389d3c893a99705e5dca8f4d">NAV::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;obj)</td></tr>
+<tr class="memitem:a2f9e876d389d3c893a99705e5dca8f4d" id="r_a2f9e876d389d3c893a99705e5dca8f4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a2f9e876d389d3c893a99705e5dca8f4d">NAV::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;obj)</td></tr>
 <tr class="memdesc:a2f9e876d389d3c893a99705e5dca8f4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided json object into a node object.  <br /></td></tr>
 <tr class="separator:a2f9e876d389d3c893a99705e5dca8f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf662382aafcd349a2e024055df7fe90" id="r_abf662382aafcd349a2e024055df7fe90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf662382aafcd349a2e024055df7fe90">NAV::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;obj)</td></tr>
+<tr class="memitem:abf662382aafcd349a2e024055df7fe90" id="r_abf662382aafcd349a2e024055df7fe90"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#abf662382aafcd349a2e024055df7fe90">NAV::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;obj)</td></tr>
 <tr class="memdesc:abf662382aafcd349a2e024055df7fe90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided object into json.  <br /></td></tr>
 <tr class="separator:abf662382aafcd349a2e024055df7fe90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6449f662a44e364bc8bbbfe5789e825" id="r_aa6449f662a44e364bc8bbbfe5789e825"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6449f662a44e364bc8bbbfe5789e825">NAV::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;obj)</td></tr>
+<tr class="memitem:aa6449f662a44e364bc8bbbfe5789e825" id="r_aa6449f662a44e364bc8bbbfe5789e825"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#aa6449f662a44e364bc8bbbfe5789e825">NAV::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;obj)</td></tr>
 <tr class="memdesc:aa6449f662a44e364bc8bbbfe5789e825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided object into json.  <br /></td></tr>
 <tr class="separator:aa6449f662a44e364bc8bbbfe5789e825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69a5651ccffacd8f2f436b27221425cd" id="r_a69a5651ccffacd8f2f436b27221425cd"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69a5651ccffacd8f2f436b27221425cd">NAV::to_string</a> (<a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcd">MappingFunction</a> mappingFunction)</td></tr>
+<tr class="memitem:a69a5651ccffacd8f2f436b27221425cd" id="r_a69a5651ccffacd8f2f436b27221425cd"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a69a5651ccffacd8f2f436b27221425cd">NAV::to_string</a> (<a class="el" href="namespaceNAV.html#a3ca06f3cfd77aba6471e9881df3a1fcd">MappingFunction</a> mappingFunction)</td></tr>
 <tr class="memdesc:a69a5651ccffacd8f2f436b27221425cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
 <tr class="separator:a69a5651ccffacd8f2f436b27221425cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6160a32d6c26eebe5966c2d922f50607" id="r_a6160a32d6c26eebe5966c2d922f50607"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6160a32d6c26eebe5966c2d922f50607">NAV::to_string</a> (<a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cc">TroposphereModel</a> troposphereZhdModel)</td></tr>
+<tr class="memitem:a6160a32d6c26eebe5966c2d922f50607" id="r_a6160a32d6c26eebe5966c2d922f50607"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a6160a32d6c26eebe5966c2d922f50607">NAV::to_string</a> (<a class="el" href="namespaceNAV.html#aa860003b748e378ac37bcfdaf8d1e6cc">TroposphereModel</a> troposphereZhdModel)</td></tr>
 <tr class="memdesc:a6160a32d6c26eebe5966c2d922f50607"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
 <tr class="separator:a6160a32d6c26eebe5966c2d922f50607"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a681975a95eead7c6e98787cfb41a0e4f" id="r_a681975a95eead7c6e98787cfb41a0e4f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a681975a95eead7c6e98787cfb41a0e4f">NAV::tropoErrorVar</a> (double dpsr_T, double elevation)</td></tr>
+<tr class="memitem:a681975a95eead7c6e98787cfb41a0e4f" id="r_a681975a95eead7c6e98787cfb41a0e4f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a681975a95eead7c6e98787cfb41a0e4f">NAV::tropoErrorVar</a> (double dpsr_T, double elevation)</td></tr>
 <tr class="memdesc:a681975a95eead7c6e98787cfb41a0e4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the tropospheric error variance.  <br /></td></tr>
 <tr class="separator:a681975a95eead7c6e98787cfb41a0e4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -210,379 +217,9 @@ Functions</h2></td></tr>
 <dd>
 Rui Wang (<a href="#" onclick="location.href='mai'+'lto:'+'rui'+'.w'+'ang'+'@i'+'ns.'+'un'+'i-s'+'tu'+'ttg'+'ar'+'t.d'+'e'; return false;">rui.w<span class="obfuscator">.nosp@m.</span>ang@<span class="obfuscator">.nosp@m.</span>ins.u<span class="obfuscator">.nosp@m.</span>ni-s<span class="obfuscator">.nosp@m.</span>tuttg<span class="obfuscator">.nosp@m.</span>art.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-05-26 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a3ca06f3cfd77aba6471e9881df3a1fcd" name="a3ca06f3cfd77aba6471e9881df3a1fcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ca06f3cfd77aba6471e9881df3a1fcd">&#9670;&#160;</a></span>MappingFunction</h2>
 
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcd">NAV::MappingFunction</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Available Mapping Functions. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcda6adf97f83acf6453d4a6a4b1070f3754" name="a3ca06f3cfd77aba6471e9881df3a1fcda6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>Mapping Function turned off (= 1) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcda73671849db21f65ba4842184c366e9e7" name="a3ca06f3cfd77aba6471e9881df3a1fcda73671849db21f65ba4842184c366e9e7"></a>Cosecant&#160;</td><td class="fielddoc"><p>Cosecant of elevation. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcda6cfb8208d5bf0f63de2ed35f05fe2d02" name="a3ca06f3cfd77aba6471e9881df3a1fcda6cfb8208d5bf0f63de2ed35f05fe2d02"></a>GMF&#160;</td><td class="fielddoc"><p>Global Mapping Function (GMF) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcda6069da7e4b41acb59062ba2bdd789e64" name="a3ca06f3cfd77aba6471e9881df3a1fcda6069da7e4b41acb59062ba2bdd789e64"></a>NMF&#160;</td><td class="fielddoc"><p>Niell Mapping Function (NMF) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcdac1a78bb04fa487692bc1cc0352eb9f51" name="a3ca06f3cfd77aba6471e9881df3a1fcdac1a78bb04fa487692bc1cc0352eb9f51"></a>VMF_GPT2&#160;</td><td class="fielddoc"><p>Vienna Mapping Function based on the GPT2 grid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcdad845695e4e392d0adaa3dfad5759f7c4" name="a3ca06f3cfd77aba6471e9881df3a1fcdad845695e4e392d0adaa3dfad5759f7c4"></a>VMF_GPT3&#160;</td><td class="fielddoc"><p>Vienna Mapping Function based on the GPT3 grid. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3ca06f3cfd77aba6471e9881df3a1fcda4905ac9d6a22bdfc1ae096094ce6248d" name="a3ca06f3cfd77aba6471e9881df3a1fcda4905ac9d6a22bdfc1ae096094ce6248d"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<a id="aa860003b748e378ac37bcfdaf8d1e6cc" name="aa860003b748e378ac37bcfdaf8d1e6cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa860003b748e378ac37bcfdaf8d1e6cc">&#9670;&#160;</a></span>TroposphereModel</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cc">NAV::TroposphereModel</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Available Troposphere delay models. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa860003b748e378ac37bcfdaf8d1e6cca6adf97f83acf6453d4a6a4b1070f3754" name="aa860003b748e378ac37bcfdaf8d1e6cca6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>Troposphere Model turned off. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa860003b748e378ac37bcfdaf8d1e6cca6c51fd11589fde1995a1fc64d9c540ac" name="aa860003b748e378ac37bcfdaf8d1e6cca6c51fd11589fde1995a1fc64d9c540ac"></a>Saastamoinen&#160;</td><td class="fielddoc"><p>Saastamoinen model. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa860003b748e378ac37bcfdaf8d1e6ccaa09388a7c034c082e91b292222d13c36" name="aa860003b748e378ac37bcfdaf8d1e6ccaa09388a7c034c082e91b292222d13c36"></a>GPT2&#160;</td><td class="fielddoc"><p>GPT2. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa860003b748e378ac37bcfdaf8d1e6ccaa611d1b6beee75c8ef1a5258fe160eba" name="aa860003b748e378ac37bcfdaf8d1e6ccaa611d1b6beee75c8ef1a5258fe160eba"></a>GPT3&#160;</td><td class="fielddoc"><p>GPT3. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa860003b748e378ac37bcfdaf8d1e6cca4905ac9d6a22bdfc1ae096094ce6248d" name="aa860003b748e378ac37bcfdaf8d1e6cca4905ac9d6a22bdfc1ae096094ce6248d"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a9ed43213eb7e52c37b7c306383734a81" name="a9ed43213eb7e52c37b7c306383734a81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ed43213eb7e52c37b7c306383734a81">&#9670;&#160;</a></span>calcTroposphericDelayAndMapping()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ZenithDelay NAV::calcTroposphericDelayAndMapping </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>insTime</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_pos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>azimuth</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>troposphereModels</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the tropospheric zenith hydrostatic and wet delays and corresponding mapping factors. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">insTime</td><td>Time to calculate the values for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_pos</td><td>[𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Satellite elevation [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">azimuth</td><td>Satellite azimuth [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">troposphereModels</td><td>Models to use for each calculation </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name and Id of the node used for log messages only </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>ZHD, ZWD and mapping factors for ZHD and ZWD </dd></dl>
-
-</div>
-</div>
-<a id="a2be03eba00316ef26d97478d024622c0" name="a2be03eba00316ef26d97478d024622c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2be03eba00316ef26d97478d024622c0">&#9670;&#160;</a></span>ComboTroposphereModel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::ComboTroposphereModel </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>troposphereModelSelection</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>width</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0F</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows a ComboBox and button for advanced configuration to select the troposphere models. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show beside the combo box. This has to be a unique id for ImGui. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">troposphereModelSelection</td><td>Reference to the troposphere model to select </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Width of the widget </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac25e3fa67bd276b4940037482e142b10" name="ac25e3fa67bd276b4940037482e142b10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac25e3fa67bd276b4940037482e142b10">&#9670;&#160;</a></span>from_json() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::from_json </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided json object into a node object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Json object with the needed values </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">obj</td><td>Object to fill from the json </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2f9e876d389d3c893a99705e5dca8f4d" name="a2f9e876d389d3c893a99705e5dca8f4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f9e876d389d3c893a99705e5dca8f4d">&#9670;&#160;</a></span>from_json() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::from_json </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided json object into a node object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Json object with the needed values </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">obj</td><td>Object to fill from the json </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="abf662382aafcd349a2e024055df7fe90" name="abf662382aafcd349a2e024055df7fe90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf662382aafcd349a2e024055df7fe90">&#9670;&#160;</a></span>to_json() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::to_json </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structNAV_1_1AtmosphereModels.html">AtmosphereModels</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided object into json. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">j</td><td>Json object which gets filled with the info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to convert into json </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aa6449f662a44e364bc8bbbfe5789e825" name="aa6449f662a44e364bc8bbbfe5789e825"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6449f662a44e364bc8bbbfe5789e825">&#9670;&#160;</a></span>to_json() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::to_json </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structNAV_1_1TroposphereModelSelection.html">TroposphereModelSelection</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided object into json. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">j</td><td>Json object which gets filled with the info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to convert into json </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a69a5651ccffacd8f2f436b27221425cd" name="a69a5651ccffacd8f2f436b27221425cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69a5651ccffacd8f2f436b27221425cd">&#9670;&#160;</a></span>to_string() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::to_string </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#a3ca06f3cfd77aba6471e9881df3a1fcd">MappingFunction</a></td>          <td class="paramname"><span class="paramname"><em>mappingFunction</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">mappingFunction</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
-
-</div>
-</div>
-<a id="a6160a32d6c26eebe5966c2d922f50607" name="a6160a32d6c26eebe5966c2d922f50607"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6160a32d6c26eebe5966c2d922f50607">&#9670;&#160;</a></span>to_string() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::to_string </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#aa860003b748e378ac37bcfdaf8d1e6cc">TroposphereModel</a></td>          <td class="paramname"><span class="paramname"><em>troposphereZhdModel</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">troposphereZhdModel</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
-
-</div>
-</div>
-<a id="a681975a95eead7c6e98787cfb41a0e4f" name="a681975a95eead7c6e98787cfb41a0e4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a681975a95eead7c6e98787cfb41a0e4f">&#9670;&#160;</a></span>tropoErrorVar()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::tropoErrorVar </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dpsr_T</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the tropospheric error variance. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">dpsr_T</td><td>Tropospheric propagation error [m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Satellite elevation in [rad] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Variance of the error [m^2] </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Troposphere_8hpp_source.html">Troposphere.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('VanLoan_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">VanLoan.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,14 +130,19 @@ $(function(){initNavTree('VanLoan_8hpp.html',''); initResizable(true); });
 
 <p><a href="VanLoan_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0929f164bcf1effd2215706f84a4e0c8" id="r_a0929f164bcf1effd2215706f84a4e0c8"><td class="memTemplParams" colspan="2">template&lt;typename DerivedF, typename DerivedG, typename DerivedW&gt; </td></tr>
-<tr class="memitem:a0929f164bcf1effd2215706f84a4e0c8"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0929f164bcf1effd2215706f84a4e0c8">NAV::calcPhiAndQWithVanLoanMethod</a> (const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt)</td></tr>
+<tr class="memitem:a0929f164bcf1effd2215706f84a4e0c8"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a0929f164bcf1effd2215706f84a4e0c8">NAV::calcPhiAndQWithVanLoanMethod</a> (const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt)</td></tr>
 <tr class="memdesc:a0929f164bcf1effd2215706f84a4e0c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐  <br /></td></tr>
 <tr class="separator:a0929f164bcf1effd2215706f84a4e0c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6688b90d89d8328c824985705524cfc2" id="r_a6688b90d89d8328c824985705524cfc2"><td class="memTemplParams" colspan="2">template&lt;typename DerivedF, typename DerivedG, typename DerivedW&gt; </td></tr>
-<tr class="memitem:a6688b90d89d8328c824985705524cfc2"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6688b90d89d8328c824985705524cfc2">NAV::calcPhiAndQWithVanLoanMethod</a> (const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt, size_t expmOrder)</td></tr>
+<tr class="memitem:a6688b90d89d8328c824985705524cfc2"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a6688b90d89d8328c824985705524cfc2">NAV::calcPhiAndQWithVanLoanMethod</a> (const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt, size_t expmOrder)</td></tr>
 <tr class="memdesc:a6688b90d89d8328c824985705524cfc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐  <br /></td></tr>
 <tr class="separator:a6688b90d89d8328c824985705524cfc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -178,136 +185,9 @@ Algorithm description</h4>
 </li>
 </ol>
 <dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_loan1978">[48]</a> </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a0929f164bcf1effd2215706f84a4e0c8" name="a0929f164bcf1effd2215706f84a4e0c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0929f164bcf1effd2215706f84a4e0c8">&#9670;&#160;</a></span>calcPhiAndQWithVanLoanMethod() <span class="overload">[1/2]</span></h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DerivedF, typename DerivedG, typename DerivedW&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt; NAV::calcPhiAndQWithVanLoanMethod </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedF &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>F</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedG &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>G</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedW &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>W</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐 </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">DerivedF</td><td>Matrix type of the F matrix </td></tr>
-    <tr><td class="paramname">DerivedG</td><td>Matrix type of the G matrix </td></tr>
-    <tr><td class="paramname">DerivedW</td><td>Matrix type of the W matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">F</td><td>System model matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">G</td><td>Noise model matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">W</td><td>Noise scale factors </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>Time step in [s] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pair with the matrices {𝚽, 𝐐} </dd></dl>
-
-</div>
-</div>
-<a id="a6688b90d89d8328c824985705524cfc2" name="a6688b90d89d8328c824985705524cfc2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6688b90d89d8328c824985705524cfc2">&#9670;&#160;</a></span>calcPhiAndQWithVanLoanMethod() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DerivedF, typename DerivedG, typename DerivedW&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt; NAV::calcPhiAndQWithVanLoanMethod </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedF &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>F</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedG &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>G</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedW &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>W</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>expmOrder</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐 </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">DerivedF</td><td>Matrix type of the F matrix </td></tr>
-    <tr><td class="paramname">DerivedG</td><td>Matrix type of the G matrix </td></tr>
-    <tr><td class="paramname">DerivedW</td><td>Matrix type of the W matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">F</td><td>System model matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">G</td><td>Noise model matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">W</td><td>Noise scale factors </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>Time step in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">expmOrder</td><td>Order to use to calculate the exponential matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pair with the matrices {𝚽, 𝐐} </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="VanLoan_8hpp_source.html">VanLoan.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

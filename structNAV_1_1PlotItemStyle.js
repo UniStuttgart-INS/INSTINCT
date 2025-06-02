@@ -6,7 +6,7 @@ var structNAV_1_1PlotItemStyle =
       [ "Line", "structNAV_1_1PlotItemStyle.html#a977565f3f4c2886ddd560a2cb53718a9a4803e6b9e63dabf04de980788d6a13c4", null ]
     ] ],
     [ "plotData", "structNAV_1_1PlotItemStyle.html#a1b05a239e4aab7e558dd38e06ba34e5a", null ],
-    [ "showLegendPopup", "structNAV_1_1PlotItemStyle.html#aa041b246732ffaf203ec7a6a7311b9ac", null ],
+    [ "showLegendPopup", "structNAV_1_1PlotItemStyle.html#a69adcb5b8636a2292ddcabdac963ce81", null ],
     [ "color", "structNAV_1_1PlotItemStyle.html#a3ae30f9b566a99ed692f29aa78b71a7c", null ],
     [ "colormapMask", "structNAV_1_1PlotItemStyle.html#af592732d09825eb1fd92f773c49c5c03", null ],
     [ "colormapMaskDataCmpIdx", "structNAV_1_1PlotItemStyle.html#ac94d095965112858f46fc2dc17696a9c", null ],

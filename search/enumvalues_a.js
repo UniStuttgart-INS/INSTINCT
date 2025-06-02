@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['j01_0',['J01',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaa0c2090825299a2958f4f1b978eb88b24',1,'NAV']]],
-  ['j02_1',['J02',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaada5dbc2b7c8ed2dfc967006855b1f350',1,'NAV']]],
-  ['j05_2',['J05',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaad720f604b232ae45f3113be75df831ee',1,'NAV']]],
-  ['j06_3',['J06',['../Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6ebaae6fe71d15bc1621fc9cec811a9a36629',1,'NAV']]],
+  ['j01_0',['J01',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaa0c2090825299a2958f4f1b978eb88b24',1,'NAV']]],
+  ['j02_1',['J02',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaada5dbc2b7c8ed2dfc967006855b1f350',1,'NAV']]],
+  ['j05_2',['J05',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaad720f604b232ae45f3113be75df831ee',1,'NAV']]],
+  ['j06_3',['J06',['../namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6ebaae6fe71d15bc1621fc9cec811a9a36629',1,'NAV']]],
   ['j1c_4',['J1C',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a7117649080ce90fa2ed232839437e030',1,'NAV::Code']]],
   ['j1l_5',['J1L',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a57f7544f7e4d641793953b5c0af2429c',1,'NAV::Code']]],
   ['j1s_6',['J1S',['../classNAV_1_1Code.html#a3d0d11b809730f0d1d31ec3efa69f8f0a5b466076f027681081f5f8943e60dcfe',1,'NAV::Code']]],

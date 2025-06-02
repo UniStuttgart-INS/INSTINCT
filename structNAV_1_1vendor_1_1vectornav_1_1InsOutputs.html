@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html','
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::vectornav::InsOutputs Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,13 +128,12 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html','
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
+Data Fields</h2></td></tr>
 <tr class="memitem:a554ae98bb42f87cb26e459e603e7a105" id="r_a554ae98bb42f87cb26e459e603e7a105"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a554ae98bb42f87cb26e459e603e7a105">accelEcef</a></td></tr>
 <tr class="memdesc:a554ae98bb42f87cb26e459e603e7a105"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compensated acceleration (ECEF)  <br /></td></tr>
 <tr class="separator:a554ae98bb42f87cb26e459e603e7a105"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96a4b9ee37992f594da9f39097e7e4b3" id="r_a96a4b9ee37992f594da9f39097e7e4b3"><td class="memItemLeft" align="right" valign="top"><a id="a96a4b9ee37992f594da9f39097e7e4b3" name="a96a4b9ee37992f594da9f39097e7e4b3"></a>
-vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom"><b>insField</b></td></tr>
-<tr class="memdesc:a96a4b9ee37992f594da9f39097e7e4b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available data in this struct. <br /></td></tr>
+<tr class="memitem:a96a4b9ee37992f594da9f39097e7e4b3" id="r_a96a4b9ee37992f594da9f39097e7e4b3"><td class="memItemLeft" align="right" valign="top">vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96a4b9ee37992f594da9f39097e7e4b3">insField</a></td></tr>
+<tr class="memdesc:a96a4b9ee37992f594da9f39097e7e4b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available data in this struct.  <br /></td></tr>
 <tr class="separator:a96a4b9ee37992f594da9f39097e7e4b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac822a90777bd06cfb8955c7d7faffd83" id="r_ac822a90777bd06cfb8955c7d7faffd83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1vendor_1_1vectornav_1_1InsStatus.html">InsStatus</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac822a90777bd06cfb8955c7d7faffd83">insStatus</a></td></tr>
 <tr class="memdesc:ac822a90777bd06cfb8955c7d7faffd83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ins Status.  <br /></td></tr>
@@ -169,7 +168,9 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Binary Group 6 - INS Outputs. </p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00025">25</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a554ae98bb42f87cb26e459e603e7a105" name="a554ae98bb42f87cb26e459e603e7a105"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a554ae98bb42f87cb26e459e603e7a105">&#9670;&#160;</a></span>accelEcef</h2>
 
@@ -184,6 +185,26 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Compensated acceleration (ECEF) </p>
 <p>The estimated acceleration (with gravity) reported in m/s^2, given in the Earth centered Earth fixed (ECEF) frame. The acceleration measurement has been bias compensated by the onboard INS filter. This measurement is attitude dependent, since the attitude is used to map the measurement from the body frame into the inertial (ECEF) frame. If the device is stationary and the INS filter is tracking, the measurement should be nominally equivalent to the gravity reference vector in the inertial frame (ECEF). </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00073">73</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a96a4b9ee37992f594da9f39097e7e4b3" name="a96a4b9ee37992f594da9f39097e7e4b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96a4b9ee37992f594da9f39097e7e4b3">&#9670;&#160;</a></span>insField</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vn::protocol::uart::InsGroup NAV::vendor::vectornav::InsOutputs::insField</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Available data in this struct. </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00028">28</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -202,6 +223,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Ins Status. </p>
 <p>The INS status bitfield. See the INS Solution - LLA Register in the INS subsystem for more information on the individual bits in this field. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00034">34</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="af47f55fd2c22f7a890182aa95104b5cc" name="af47f55fd2c22f7a890182aa95104b5cc"></a>
@@ -218,6 +241,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Compensated linear acceleration (no gravity) (ECEF) </p>
 <p>The estimated linear acceleration (without gravity) reported in m/s^2, and given in the Earth centered Earth fixed (ECEF) frame. This measurement is attitude dependent as the attitude solution is used to map the measurement from the body frame into the inertial (ECEF) frame. This acceleration measurement has been bias compensated by the onboard INS filter, and the gravity component has been removed using the current gravity reference vector estimate. If the device is stationary and the onboard INS filter is tracking, the measurement will nominally read 0 in all three axes. </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00083">83</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -236,6 +261,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Compensated magnetic (ECEF) </p>
 <p>The compensated magnetic measurement in the Earth centered Earth fixed (ECEF) frame, given in Gauss. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00064">64</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a0a30bd5286ed0ef5457df30d9e350946" name="a0a30bd5286ed0ef5457df30d9e350946"></a>
@@ -252,6 +279,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Ins Position (ECEF) </p>
 <p>The estimated position given in the Earth centered Earth fixed (ECEF) frame, reported in meters. </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00044">44</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -270,6 +299,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Ins Position (latitude, longitude, altitude) </p>
 <p>The estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00039">39</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a524409e18fdabc360aabf091dfa3989a" name="a524409e18fdabc360aabf091dfa3989a"></a>
@@ -286,6 +317,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Ins Position Uncertainty. </p>
 <p>The estimated uncertainty (1 Sigma) in the current position estimate, given in meters. </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00088">88</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -304,6 +337,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Ins Velocity (Body) </p>
 <p>The estimated velocity in the body frame, given in m/s. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00049">49</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a0e66ab973e10191195e04601754d7d6d" name="a0e66ab973e10191195e04601754d7d6d"></a>
@@ -320,6 +355,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Ins Velocity (ECEF) </p>
 <p>The estimated velocity in the Earth centered Earth fixed (ECEF) frame, given in m/s. </p>
+
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00059">59</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -338,6 +375,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Ins Velocity (NED) </p>
 <p>The estimated velocity in the North East Down (NED) frame, given in m/s. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00054">54</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ad49fba82e9e9da8c9df87de2b790b15b" name="ad49fba82e9e9da8c9df87de2b790b15b"></a>
@@ -355,6 +394,8 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Ins Velocity Uncertainty. </p>
 <p>The estimated uncertainty (1 Sigma) in the current velocity estimate, given in m/s. </p>
 
+<p class="definition">Definition at line <a class="el" href="InsOutputs_8hpp_source.html#l00093">93</a> of file <a class="el" href="InsOutputs_8hpp_source.html">InsOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
@@ -365,7 +406,7 @@ vn::protocol::uart::InsGroup&#160;</td><td class="memItemRight" valign="bottom">
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>vectornav</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html">InsOutputs</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1vectornav.html">vectornav</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html">InsOutputs</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

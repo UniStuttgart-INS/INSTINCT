@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,20 +128,39 @@ $(function(){initNavTree('ViennaMappingFunction_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file ViennaMappingFunction.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Gridded Vienna Mapping Function</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author Rui Wang (rui.wang@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/// @date 2023-02-22</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/// @note See https://vmf.geo.tuwien.ac.at/codes/ for code sources in matlab.</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">/// @note See \cite Böhm2006 Böhm2006</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>NAV</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="ViennaMappingFunction_8hpp.html#ad579081c06ceedd79dbe5494d23167db">   28</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="ViennaMappingFunction_8hpp.html#ad579081c06ceedd79dbe5494d23167db">vmf1h</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; ah, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; dmjd,</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// @brief mapping functions with height correction</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @param[in] ah hydrostatic coefficient a</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in] dmjd modified julian date</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] dlat ellipsoidal latitude in radians</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] ht ellipsoidal height in meter</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @param[in] zd zenith distance in radians</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @return vmf1h: hydrostatic mapping function</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keywordtype">double</span> <a class="code hl_function" href="namespaceNAV.html#ad579081c06ceedd79dbe5494d23167db">vmf1h</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; ah, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; dmjd,</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>             <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; dlat, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; ht, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; zd);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="ViennaMappingFunction_8hpp.html#a72e1575bbd6745d4b563ab72aa576528">   35</a></span><span class="keywordtype">double</span> <a class="code hl_function" href="ViennaMappingFunction_8hpp.html#a72e1575bbd6745d4b563ab72aa576528">vmf1w</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; aw, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; zd);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment"></span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/// @brief mapping functions with height correction</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">/// @param[in] aw wet coefficient a</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">/// @param[in] zd zenith distance in radians</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/// @return vmf1w: wet mapping function</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keywordtype">double</span> <a class="code hl_function" href="namespaceNAV.html#a72e1575bbd6745d4b563ab72aa576528">vmf1w</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; aw, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; zd);</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aViennaMappingFunction_8hpp_html_a72e1575bbd6745d4b563ab72aa576528"><div class="ttname"><a href="ViennaMappingFunction_8hpp.html#a72e1575bbd6745d4b563ab72aa576528">NAV::vmf1w</a></div><div class="ttdeci">double vmf1w(const double &amp;aw, const double &amp;zd)</div><div class="ttdoc">mapping functions with height correction</div></div>
-<div class="ttc" id="aViennaMappingFunction_8hpp_html_ad579081c06ceedd79dbe5494d23167db"><div class="ttname"><a href="ViennaMappingFunction_8hpp.html#ad579081c06ceedd79dbe5494d23167db">NAV::vmf1h</a></div><div class="ttdeci">double vmf1h(const double &amp;ah, const double &amp;dmjd, const double &amp;dlat, const double &amp;ht, const double &amp;zd)</div><div class="ttdoc">mapping functions with height correction</div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a72e1575bbd6745d4b563ab72aa576528"><div class="ttname"><a href="namespaceNAV.html#a72e1575bbd6745d4b563ab72aa576528">NAV::vmf1w</a></div><div class="ttdeci">double vmf1w(const double &amp;aw, const double &amp;zd)</div><div class="ttdoc">mapping functions with height correction</div><div class="ttdef"><b>Definition</b> <a href="ViennaMappingFunction_8cpp_source.html#l00049">ViennaMappingFunction.cpp:49</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_ad579081c06ceedd79dbe5494d23167db"><div class="ttname"><a href="namespaceNAV.html#ad579081c06ceedd79dbe5494d23167db">NAV::vmf1h</a></div><div class="ttdeci">double vmf1h(const double &amp;ah, const double &amp;dmjd, const double &amp;dlat, const double &amp;ht, const double &amp;zd)</div><div class="ttdoc">mapping functions with height correction</div><div class="ttdef"><b>Definition</b> <a href="ViennaMappingFunction_8cpp_source.html#l00015">ViennaMappingFunction.cpp:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

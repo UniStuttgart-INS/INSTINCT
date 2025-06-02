@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['l_0',['L',['../RINEXUtilities_8hpp.html#a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587',1,'NAV::vendor::RINEX']]],
+  ['l_0',['L',['../namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587',1,'NAV::vendor::RINEX']]],
   ['l1_1',['L1',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a9ec4c0afd450ceac7adb81c3bcfc9732',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l2_2',['L2',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a7e6aa2d53f6ee2b1a34b017fa403cb76',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l5_3',['L5',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#a247c769adc4c27fc42453348df186a57a25d6c78aa672ad5603fb0b7da416f90a',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['l_5fchan_4',['L_Chan',['../structNAV_1_1vendor_1_1vectornav_1_1RawMeas_1_1SatRawElement.html#ae50a0a89ae7ab6d97a7c9b54771205bba842223a7ef45cafd8712123ac116b778',1,'NAV::vendor::vectornav::RawMeas::SatRawElement']]],
   ['leastsquares_5',['LeastSquares',['../classNAV_1_1SPP_1_1Algorithm.html#ad6bd47f691f902d1828abde86ec92b63ad143c366b3274edc1e5496e302795a46',1,'NAV::SPP::Algorithm::LeastSquares'],['../classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fcad143c366b3274edc1e5496e302795a46',1,'NAV::PolynomialRegressor::LeastSquares']]],
-  ['lessdatathanwindowsize_6',['LessDataThanWindowSize',['../PolynomialCycleSlipDetector_8hpp.html#a166bacce8e517be943258a35964626a1aaa7e68801c2142245b0f1a6caf51c16e',1,'NAV']]],
+  ['lessdatathanwindowsize_6',['LessDataThanWindowSize',['../namespaceNAV.html#a166bacce8e517be943258a35964626a1aaa7e68801c2142245b0f1a6caf51c16e',1,'NAV']]],
   ['line_7',['Line',['../structNAV_1_1PlotItemStyle.html#a977565f3f4c2886ddd560a2cb53718a9a4803e6b9e63dabf04de980788d6a13c4',1,'NAV::PlotItemStyle']]],
   ['linear_8',['Linear',['../classNAV_1_1LowPassFilter.html#a8d1db7dbeacec53ee245c8c676e0991aa32a843da6ea40ab3b17a3421ccdf671b',1,'NAV::LowPassFilter::Linear'],['../classNAV_1_1ImuSimulator.html#a18a915dcefec7aedb766ab4bd2ce9e09a32a843da6ea40ab3b17a3421ccdf671b',1,'NAV::ImuSimulator::Linear']]],
   ['lla_9',['LLA',['../structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html#a0702d2b71c0d57125fa299bfae86430ea12606487276650180570ece64f6c41dc',1,'NAV::gui::widgets::PositionWithFrame::LLA'],['../classNAV_1_1WiFiPositioning.html#a2d661c978e5ab7ab43bf87eae2347b5ba12606487276650180570ece64f6c41dc',1,'NAV::WiFiPositioning::LLA']]],

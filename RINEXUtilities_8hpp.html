@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('RINEXUtilities_8hpp.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">RINEXUtilities.hpp File Reference</div></div>
@@ -131,7 +133,7 @@ $(function(){initNavTree('RINEXUtilities_8hpp.html',''); initResizable(true); })
 <p><a href="RINEXUtilities_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html">NAV::vendor::RINEX::ObservationDescription</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Description of the observations from the 'SYS / # / OBS TYPES' header.  <a href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,54 +141,63 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rinex Observation File Header information.  <a href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">NAV::vendor::RINEX</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a3af6b14d1a0cbe84768bffd15ff83bcd" id="r_a3af6b14d1a0cbe84768bffd15ff83bcd"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd">NAV::vendor::RINEX::ObsType</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcda902b0d55fddef6f8d651fe1035b7d4bd">Error</a>
+<tr class="memitem:a3af6b14d1a0cbe84768bffd15ff83bcd" id="r_a3af6b14d1a0cbe84768bffd15ff83bcd"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">NAV::vendor::RINEX::ObsType</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcda902b0d55fddef6f8d651fe1035b7d4bd">NAV::vendor::RINEX::Error</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcda0d61f8370cad1d412f80b84d143e1257">C</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcda0d61f8370cad1d412f80b84d143e1257">NAV::vendor::RINEX::C</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587">L</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587">NAV::vendor::RINEX::L</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcdaf623e75af30e62bbd73d6df5b50bb7b5">D</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcdaf623e75af30e62bbd73d6df5b50bb7b5">NAV::vendor::RINEX::D</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcda5dbc98dcc983a70728bd082d1a47546e">S</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcda5dbc98dcc983a70728bd082d1a47546e">NAV::vendor::RINEX::S</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcdadd7536794b63bf90eccfd37f9b147d7f">I</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcdadd7536794b63bf90eccfd37f9b147d7f">NAV::vendor::RINEX::I</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcda02129bb861061d1a052c592e2dc6b383">X</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcda02129bb861061d1a052c592e2dc6b383">NAV::vendor::RINEX::X</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a3af6b14d1a0cbe84768bffd15ff83bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation types of the 'SYS / # / OBS TYPES' header.  <a href="#a3af6b14d1a0cbe84768bffd15ff83bcd">More...</a><br /></td></tr>
+<tr class="memdesc:a3af6b14d1a0cbe84768bffd15ff83bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation types of the 'SYS / # / OBS TYPES' header.  <a href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">More...</a><br /></td></tr>
 <tr class="separator:a3af6b14d1a0cbe84768bffd15ff83bcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0adafced57118cc737b5aae1265e9acc" id="r_a0adafced57118cc737b5aae1265e9acc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0adafced57118cc737b5aae1265e9acc">NAV::vendor::RINEX::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;obj)</td></tr>
+<tr class="memitem:a0adafced57118cc737b5aae1265e9acc" id="r_a0adafced57118cc737b5aae1265e9acc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a0adafced57118cc737b5aae1265e9acc">NAV::vendor::RINEX::from_json</a> (const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;obj)</td></tr>
 <tr class="memdesc:a0adafced57118cc737b5aae1265e9acc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided json object into a struct.  <br /></td></tr>
 <tr class="separator:a0adafced57118cc737b5aae1265e9acc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afce9d5a1a2ffa527cda8bd876216ac15" id="r_afce9d5a1a2ffa527cda8bd876216ac15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afce9d5a1a2ffa527cda8bd876216ac15">NAV::vendor::RINEX::getFrequencyFromBand</a> (<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> satSys, int band)</td></tr>
+<tr class="memitem:afce9d5a1a2ffa527cda8bd876216ac15" id="r_afce9d5a1a2ffa527cda8bd876216ac15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#afce9d5a1a2ffa527cda8bd876216ac15">NAV::vendor::RINEX::getFrequencyFromBand</a> (<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> satSys, int band)</td></tr>
 <tr class="memdesc:afce9d5a1a2ffa527cda8bd876216ac15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classNAV_1_1Frequency.html" title="Frequency definition for different satellite systems.">Frequency</a> from the provided satellite system and band in the 'SYS / # / OBS TYPES' header.  <br /></td></tr>
 <tr class="separator:afce9d5a1a2ffa527cda8bd876216ac15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe80a722e070eaa2ce622d674a44b2be" id="r_afe80a722e070eaa2ce622d674a44b2be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe80a722e070eaa2ce622d674a44b2be">NAV::vendor::RINEX::obsTypeFromChar</a> (char c)</td></tr>
-<tr class="memdesc:afe80a722e070eaa2ce622d674a44b2be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a character to an <a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd" title="Observation types of the &#39;SYS / # / OBS TYPES&#39; header.">ObsType</a>.  <br /></td></tr>
+<tr class="memitem:afe80a722e070eaa2ce622d674a44b2be" id="r_afe80a722e070eaa2ce622d674a44b2be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#afe80a722e070eaa2ce622d674a44b2be">NAV::vendor::RINEX::obsTypeFromChar</a> (char c)</td></tr>
+<tr class="memdesc:afe80a722e070eaa2ce622d674a44b2be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a character to an <a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd" title="Observation types of the &#39;SYS / # / OBS TYPES&#39; header.">ObsType</a>.  <br /></td></tr>
 <tr class="separator:afe80a722e070eaa2ce622d674a44b2be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe14c27080b6582e4d594d371e83b6f0" id="r_abe14c27080b6582e4d594d371e83b6f0"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe14c27080b6582e4d594d371e83b6f0">NAV::vendor::RINEX::obsTypeToChar</a> (<a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a> type)</td></tr>
-<tr class="memdesc:abe14c27080b6582e4d594d371e83b6f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an <a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd" title="Observation types of the &#39;SYS / # / OBS TYPES&#39; header.">ObsType</a> to char.  <br /></td></tr>
+<tr class="memitem:abe14c27080b6582e4d594d371e83b6f0" id="r_abe14c27080b6582e4d594d371e83b6f0"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#abe14c27080b6582e4d594d371e83b6f0">NAV::vendor::RINEX::obsTypeToChar</a> (<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a> type)</td></tr>
+<tr class="memdesc:abe14c27080b6582e4d594d371e83b6f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an <a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd" title="Observation types of the &#39;SYS / # / OBS TYPES&#39; header.">ObsType</a> to char.  <br /></td></tr>
 <tr class="separator:abe14c27080b6582e4d594d371e83b6f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd279b145a28e561884713377b10d362" id="r_acd279b145a28e561884713377b10d362"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd279b145a28e561884713377b10d362">NAV::vendor::RINEX::timeSystem</a> (<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> satSys)</td></tr>
+<tr class="memitem:acd279b145a28e561884713377b10d362" id="r_acd279b145a28e561884713377b10d362"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#acd279b145a28e561884713377b10d362">NAV::vendor::RINEX::timeSystem</a> (<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> satSys)</td></tr>
 <tr class="memdesc:acd279b145a28e561884713377b10d362"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the satellite system(s) to the time system.  <br /></td></tr>
 <tr class="separator:acd279b145a28e561884713377b10d362"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa10ba642b99f49c3eff1698aeb355571" id="r_aa10ba642b99f49c3eff1698aeb355571"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa10ba642b99f49c3eff1698aeb355571">NAV::vendor::RINEX::timeSystemString</a> (<a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a> timeSys)</td></tr>
+<tr class="memitem:aa10ba642b99f49c3eff1698aeb355571" id="r_aa10ba642b99f49c3eff1698aeb355571"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#aa10ba642b99f49c3eff1698aeb355571">NAV::vendor::RINEX::timeSystemString</a> (<a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a> timeSys)</td></tr>
 <tr class="memdesc:aa10ba642b99f49c3eff1698aeb355571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the satellite system(s) to 3 characters representation of the time system.  <br /></td></tr>
 <tr class="separator:aa10ba642b99f49c3eff1698aeb355571"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5b2a2ee0b667c6dc0b37374a27b0687" id="r_ac5b2a2ee0b667c6dc0b37374a27b0687"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5b2a2ee0b667c6dc0b37374a27b0687">NAV::vendor::RINEX::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;obj)</td></tr>
+<tr class="memitem:ac5b2a2ee0b667c6dc0b37374a27b0687" id="r_ac5b2a2ee0b667c6dc0b37374a27b0687"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#ac5b2a2ee0b667c6dc0b37374a27b0687">NAV::vendor::RINEX::to_json</a> (<a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;j, const <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;obj)</td></tr>
 <tr class="memdesc:ac5b2a2ee0b667c6dc0b37374a27b0687"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the provided struct into a json object.  <br /></td></tr>
 <tr class="separator:ac5b2a2ee0b667c6dc0b37374a27b0687"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b638f0abfdaacfdba2b8bdd73aa4e67" id="r_a7b638f0abfdaacfdba2b8bdd73aa4e67"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b638f0abfdaacfdba2b8bdd73aa4e67">NAV::to_string</a> (<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a> markerType)</td></tr>
+<tr class="memitem:a7b638f0abfdaacfdba2b8bdd73aa4e67" id="r_a7b638f0abfdaacfdba2b8bdd73aa4e67"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a7b638f0abfdaacfdba2b8bdd73aa4e67">NAV::to_string</a> (<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a> markerType)</td></tr>
 <tr class="memdesc:a7b638f0abfdaacfdba2b8bdd73aa4e67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
 <tr class="separator:a7b638f0abfdaacfdba2b8bdd73aa4e67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47074abdfa8fb31fd8d90d82dc4fc781" id="r_a47074abdfa8fb31fd8d90d82dc4fc781"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47074abdfa8fb31fd8d90d82dc4fc781">NAV::tooltip</a> (<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a> markerType)</td></tr>
+<tr class="memitem:a47074abdfa8fb31fd8d90d82dc4fc781" id="r_a47074abdfa8fb31fd8d90d82dc4fc781"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a47074abdfa8fb31fd8d90d82dc4fc781">NAV::tooltip</a> (<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a> markerType)</td></tr>
 <tr class="memdesc:a47074abdfa8fb31fd8d90d82dc4fc781"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string tooltip.  <br /></td></tr>
 <tr class="separator:a47074abdfa8fb31fd8d90d82dc4fc781"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -196,299 +207,9 @@ Functions</h2></td></tr>
 <dd>
 N. Stahl (HiWi: Moved from <a class="el" href="RinexObsFile_8hpp.html" title="File reader for RINEX Observation messages.">RinexObsFile.hpp</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>18.12.2023 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a3af6b14d1a0cbe84768bffd15ff83bcd" name="a3af6b14d1a0cbe84768bffd15ff83bcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3af6b14d1a0cbe84768bffd15ff83bcd">&#9670;&#160;</a></span>ObsType</h2>
 
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd">NAV::vendor::RINEX::ObsType</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Observation types of the 'SYS / # / OBS TYPES' header. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcda902b0d55fddef6f8d651fe1035b7d4bd" name="a3af6b14d1a0cbe84768bffd15ff83bcda902b0d55fddef6f8d651fe1035b7d4bd"></a>Error&#160;</td><td class="fielddoc"><p>Error Type. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcda0d61f8370cad1d412f80b84d143e1257" name="a3af6b14d1a0cbe84768bffd15ff83bcda0d61f8370cad1d412f80b84d143e1257"></a>C&#160;</td><td class="fielddoc"><p><a class="el" href="classNAV_1_1Code.html" title="Enumerate for GNSS Codes.">Code</a> / Pseudorange. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587" name="a3af6b14d1a0cbe84768bffd15ff83bcdad20caec3b48a1eef164cb4ca81ba2587"></a>L&#160;</td><td class="fielddoc"><p>Phase. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcdaf623e75af30e62bbd73d6df5b50bb7b5" name="a3af6b14d1a0cbe84768bffd15ff83bcdaf623e75af30e62bbd73d6df5b50bb7b5"></a>D&#160;</td><td class="fielddoc"><p>Doppler. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcda5dbc98dcc983a70728bd082d1a47546e" name="a3af6b14d1a0cbe84768bffd15ff83bcda5dbc98dcc983a70728bd082d1a47546e"></a>S&#160;</td><td class="fielddoc"><p>Raw signal strength(carrier to noise ratio) </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcdadd7536794b63bf90eccfd37f9b147d7f" name="a3af6b14d1a0cbe84768bffd15ff83bcdadd7536794b63bf90eccfd37f9b147d7f"></a>I&#160;</td><td class="fielddoc"><p>Ionosphere phase delay. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3af6b14d1a0cbe84768bffd15ff83bcda02129bb861061d1a052c592e2dc6b383" name="a3af6b14d1a0cbe84768bffd15ff83bcda02129bb861061d1a052c592e2dc6b383"></a>X&#160;</td><td class="fielddoc"><p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> channel numbers. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a0adafced57118cc737b5aae1265e9acc" name="a0adafced57118cc737b5aae1265e9acc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0adafced57118cc737b5aae1265e9acc">&#9670;&#160;</a></span>from_json()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::vendor::RINEX::from_json </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided json object into a struct. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">j</td><td>Json object with the color values </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">obj</td><td>Object to return </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="afce9d5a1a2ffa527cda8bd876216ac15" name="afce9d5a1a2ffa527cda8bd876216ac15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afce9d5a1a2ffa527cda8bd876216ac15">&#9670;&#160;</a></span>getFrequencyFromBand()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Frequency NAV::vendor::RINEX::getFrequencyFromBand </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a></td>          <td class="paramname"><span class="paramname"><em>satSys</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>band</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the Frequency from the provided satellite system and band in the 'SYS / # / OBS TYPES' header. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">satSys</td><td>Satellite System </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">band</td><td>Band (1...9, 0) </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="afe80a722e070eaa2ce622d674a44b2be" name="afe80a722e070eaa2ce622d674a44b2be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe80a722e070eaa2ce622d674a44b2be">&#9670;&#160;</a></span>obsTypeFromChar()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ObsType NAV::vendor::RINEX::obsTypeFromChar </td>
-          <td>(</td>
-          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>c</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts a character to an ObsType. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">c</td><td>Character for the ObsType </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="abe14c27080b6582e4d594d371e83b6f0" name="abe14c27080b6582e4d594d371e83b6f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe14c27080b6582e4d594d371e83b6f0">&#9670;&#160;</a></span>obsTypeToChar()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char NAV::vendor::RINEX::obsTypeToChar </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts an ObsType to char. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>ObsType to convert </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="acd279b145a28e561884713377b10d362" name="acd279b145a28e561884713377b10d362"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd279b145a28e561884713377b10d362">&#9670;&#160;</a></span>timeSystem()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">TimeSystem NAV::vendor::RINEX::timeSystem </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a></td>          <td class="paramname"><span class="paramname"><em>satSys</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the satellite system(s) to the time system. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">satSys</td><td>Satellite System </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aa10ba642b99f49c3eff1698aeb355571" name="aa10ba642b99f49c3eff1698aeb355571"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa10ba642b99f49c3eff1698aeb355571">&#9670;&#160;</a></span>timeSystemString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string NAV::vendor::RINEX::timeSystemString </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a></td>          <td class="paramname"><span class="paramname"><em>timeSys</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the satellite system(s) to 3 characters representation of the time system. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">timeSys</td><td>Time system </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ac5b2a2ee0b667c6dc0b37374a27b0687" name="ac5b2a2ee0b667c6dc0b37374a27b0687"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5b2a2ee0b667c6dc0b37374a27b0687">&#9670;&#160;</a></span>to_json()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::vendor::RINEX::to_json </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>j</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>obj</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the provided struct into a json object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">j</td><td>Return Json object </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">obj</td><td>Object to convert </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a7b638f0abfdaacfdba2b8bdd73aa4e67" name="a7b638f0abfdaacfdba2b8bdd73aa4e67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b638f0abfdaacfdba2b8bdd73aa4e67">&#9670;&#160;</a></span>to_string()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::to_string </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a></td>          <td class="paramname"><span class="paramname"><em>markerType</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">markerType</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
-
-</div>
-</div>
-<a id="a47074abdfa8fb31fd8d90d82dc4fc781" name="a47074abdfa8fb31fd8d90d82dc4fc781"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47074abdfa8fb31fd8d90d82dc4fc781">&#9670;&#160;</a></span>tooltip()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::tooltip </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html#a84b392d54932436e79da84fd1872e6ba">vendor::RINEX::ObsHeader::MarkerTypes</a></td>          <td class="paramname"><span class="paramname"><em>markerType</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string tooltip. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">markerType</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Tooltip for the enum </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('EmlidUtilities_8hpp.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">EmlidUtilities.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,12 +130,21 @@ $(function(){initNavTree('EmlidUtilities_8hpp.html',''); initResizable(true); })
 
 <p><a href="EmlidUtilities_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html">NAV::vendor::emlid</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8fbeecdfe4e31dd0c5cc71f21d5eba99" id="r_a8fbeecdfe4e31dd0c5cc71f21d5eba99"><td class="memItemLeft" align="right" valign="top">std::pair&lt; uint8_t, uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8fbeecdfe4e31dd0c5cc71f21d5eba99">NAV::vendor::emlid::checksumUBX</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
+<tr class="memitem:a8fbeecdfe4e31dd0c5cc71f21d5eba99" id="r_a8fbeecdfe4e31dd0c5cc71f21d5eba99"><td class="memItemLeft" align="right" valign="top">std::pair&lt; uint8_t, uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a8fbeecdfe4e31dd0c5cc71f21d5eba99">NAV::vendor::emlid::checksumUBX</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
 <tr class="memdesc:a8fbeecdfe4e31dd0c5cc71f21d5eba99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the two UBX checksums for the provided data vector.  <br /></td></tr>
 <tr class="separator:a8fbeecdfe4e31dd0c5cc71f21d5eba99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae460bf8626174a80c3f353fed905d98f" id="r_ae460bf8626174a80c3f353fed905d98f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae460bf8626174a80c3f353fed905d98f">NAV::vendor::emlid::decryptEmlidObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1EmlidObs.html">NAV::EmlidObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet)</td></tr>
+<tr class="memitem:ae460bf8626174a80c3f353fed905d98f" id="r_ae460bf8626174a80c3f353fed905d98f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#ae460bf8626174a80c3f353fed905d98f">NAV::vendor::emlid::decryptEmlidObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1EmlidObs.html">NAV::EmlidObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet)</td></tr>
 <tr class="memdesc:ae460bf8626174a80c3f353fed905d98f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypts the provided Emlid observation.  <br /></td></tr>
 <tr class="separator:ae460bf8626174a80c3f353fed905d98f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -141,64 +152,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Helper Functions to work with Emlid Sensors. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2020-07-22 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a8fbeecdfe4e31dd0c5cc71f21d5eba99" name="a8fbeecdfe4e31dd0c5cc71f21d5eba99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8fbeecdfe4e31dd0c5cc71f21d5eba99">&#9670;&#160;</a></span>checksumUBX()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::pair&lt; uint8_t, uint8_t &gt; NAV::vendor::emlid::checksumUBX </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; uint8_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the two UBX checksums for the provided data vector. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Data Vector for which the checksum should be calculated </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The checksums CK_A and CK_B </dd></dl>
-
-</div>
-</div>
-<a id="ae460bf8626174a80c3f353fed905d98f" name="ae460bf8626174a80c3f353fed905d98f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae460bf8626174a80c3f353fed905d98f">&#9670;&#160;</a></span>decryptEmlidObs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::vendor::emlid::decryptEmlidObs </td>
-          <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classNAV_1_1EmlidObs.html">NAV::EmlidObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>obs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Decrypts the provided Emlid observation. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">obs</td><td>Emlid Observation to decrypt </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">packet</td><td>Uart packet with the data (content gets changed because data gets extracted) </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="EmlidUtilities_8hpp_source.html">EmlidUtilities.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

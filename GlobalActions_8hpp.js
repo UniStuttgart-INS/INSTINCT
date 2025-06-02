@@ -9,15 +9,15 @@ var GlobalActions_8hpp =
       [ "Load", "GlobalActions_8hpp.html#acb05681edc8f1a3eca100c56e424281cac40ec5db2990469fc236f4c5dea23edb", null ],
       [ "RunFlow", "GlobalActions_8hpp.html#acb05681edc8f1a3eca100c56e424281ca37da3b966d5243f983b9081b0e5387d2", null ]
     ] ],
-    [ "NAV::gui::canCutOrCopyFlowElements", "GlobalActions_8hpp.html#a1cf1beb9f35d64067b4c3ac7f370d30b", null ],
-    [ "NAV::gui::canPasteFlowElements", "GlobalActions_8hpp.html#a07dd6e96db07367be9ff81773473ba46", null ],
-    [ "NAV::gui::canRedoLastAction", "GlobalActions_8hpp.html#a1da703d3ab24f9e073c8ee0744ba0a66", null ],
-    [ "NAV::gui::canUndoLastAction", "GlobalActions_8hpp.html#a12efb02e4e938067ec7f2f21555af6f5", null ],
-    [ "NAV::gui::clearLastActionList", "GlobalActions_8hpp.html#a6c110715ea3346fd25f3742311772fe1", null ],
-    [ "NAV::gui::copyFlowElements", "GlobalActions_8hpp.html#a0d996faeb202391389a4f43e4282225a", null ],
-    [ "NAV::gui::cutFlowElements", "GlobalActions_8hpp.html#a9d323d92d7f9623bbdcbb91f14cf8929", null ],
-    [ "NAV::gui::pasteFlowElements", "GlobalActions_8hpp.html#a2edaa5426a01711a13a8ab157166d00d", null ],
-    [ "NAV::gui::redoLastAction", "GlobalActions_8hpp.html#ad08372bbb296bf2cc49d9947f5b9cc9e", null ],
-    [ "NAV::gui::saveLastAction", "GlobalActions_8hpp.html#afc1118d6cf6257e5d4ac04b7b3d51531", null ],
-    [ "NAV::gui::undoLastAction", "GlobalActions_8hpp.html#ad57f5c585ba1eaba627cdfe566a44a10", null ]
+    [ "NAV::gui::canCutOrCopyFlowElements", "namespaceNAV_1_1gui.html#a1cf1beb9f35d64067b4c3ac7f370d30b", null ],
+    [ "NAV::gui::canPasteFlowElements", "namespaceNAV_1_1gui.html#a07dd6e96db07367be9ff81773473ba46", null ],
+    [ "NAV::gui::canRedoLastAction", "namespaceNAV_1_1gui.html#a1da703d3ab24f9e073c8ee0744ba0a66", null ],
+    [ "NAV::gui::canUndoLastAction", "namespaceNAV_1_1gui.html#a12efb02e4e938067ec7f2f21555af6f5", null ],
+    [ "NAV::gui::clearLastActionList", "namespaceNAV_1_1gui.html#a6c110715ea3346fd25f3742311772fe1", null ],
+    [ "NAV::gui::copyFlowElements", "namespaceNAV_1_1gui.html#a0d996faeb202391389a4f43e4282225a", null ],
+    [ "NAV::gui::cutFlowElements", "namespaceNAV_1_1gui.html#a9d323d92d7f9623bbdcbb91f14cf8929", null ],
+    [ "NAV::gui::pasteFlowElements", "namespaceNAV_1_1gui.html#a2edaa5426a01711a13a8ab157166d00d", null ],
+    [ "NAV::gui::redoLastAction", "namespaceNAV_1_1gui.html#ad08372bbb296bf2cc49d9947f5b9cc9e", null ],
+    [ "NAV::gui::saveLastAction", "namespaceNAV_1_1gui.html#afc1118d6cf6257e5d4ac04b7b3d51531", null ],
+    [ "NAV::gui::undoLastAction", "namespaceNAV_1_1gui.html#ad57f5c585ba1eaba627cdfe566a44a10", null ]
 ];

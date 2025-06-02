@@ -16,12 +16,12 @@ var classNAV_1_1UartSensor =
     [ "UartSensor", "classNAV_1_1UartSensor.html#a24b3b9d528b10cbb057ae17eee3f636c", null ],
     [ "UartSensor", "classNAV_1_1UartSensor.html#adc3db40bd88dc9ec7740ceb371f08c19", null ],
     [ "UartSensor", "classNAV_1_1UartSensor.html#a4669ae5b3b48c21b616f426539b6a7a4", null ],
-    [ "baudrate2Selection", "classNAV_1_1UartSensor.html#ab19ab87d03b01fc874582715b4df8e4b", null ],
+    [ "baudrate2Selection", "classNAV_1_1UartSensor.html#a02faeee16256ea21fa77d75b4581d41c", null ],
     [ "operator=", "classNAV_1_1UartSensor.html#ab6711c4fef2591ccb4b144ec660d5b22", null ],
     [ "operator=", "classNAV_1_1UartSensor.html#a987e58335c505410bf86523fe40517d0", null ],
     [ "restore", "classNAV_1_1UartSensor.html#aad5c8b2ff9c39953191f99587570fb74", null ],
     [ "save", "classNAV_1_1UartSensor.html#af80a529ff33e969de8ed35fad1df43c6", null ],
-    [ "sensorBaudrate", "classNAV_1_1UartSensor.html#a0496103c3b9916eeab72d455715acac2", null ],
+    [ "sensorBaudrate", "classNAV_1_1UartSensor.html#aebd64abf6375f481c830a149d0d3f4d5", null ],
     [ "_selectedBaudrate", "classNAV_1_1UartSensor.html#a1b8a6c7adcf09d40f345cdea20a759ca", null ],
     [ "_sensorPort", "classNAV_1_1UartSensor.html#a3cfdaab83e004d672aedec756755e475", null ]
 ];

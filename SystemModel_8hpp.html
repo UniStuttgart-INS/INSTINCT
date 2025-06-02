@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('SystemModel_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">SystemModel.hpp File Reference</div></div>
@@ -129,20 +131,25 @@ $(function(){initNavTree('SystemModel_8hpp.html',''); initResizable(true); });
 
 <p><a href="SystemModel_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:af9dfa55265a2621969573da06b1576d6" id="r_af9dfa55265a2621969573da06b1576d6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9dfa55265a2621969573da06b1576d6">NAV::SystemModelCalcAlgorithm</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#af9dfa55265a2621969573da06b1576d6a7907e131b48fe66a584049afcc3b6bc5">VanLoan</a>
+<tr class="memitem:af9dfa55265a2621969573da06b1576d6" id="r_af9dfa55265a2621969573da06b1576d6"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">NAV::SystemModelCalcAlgorithm</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6a7907e131b48fe66a584049afcc3b6bc5">NAV::VanLoan</a>
 , <br />
-&#160;&#160;<a class="el" href="#af9dfa55265a2621969573da06b1576d6a57fe7ef4d625c4c15dbc2956e28e31c2">Taylor1</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6a57fe7ef4d625c4c15dbc2956e28e31c2">NAV::Taylor1</a>
 <br />
  }</td></tr>
-<tr class="memdesc:af9dfa55265a2621969573da06b1576d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Algorithms to calculate the system model with.  <a href="#af9dfa55265a2621969573da06b1576d6">More...</a><br /></td></tr>
+<tr class="memdesc:af9dfa55265a2621969573da06b1576d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Algorithms to calculate the system model with.  <a href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">More...</a><br /></td></tr>
 <tr class="separator:af9dfa55265a2621969573da06b1576d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a04d119b27cc28b122422dfbb1cbef76e" id="r_a04d119b27cc28b122422dfbb1cbef76e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04d119b27cc28b122422dfbb1cbef76e">NAV::SystemModelGui</a> (<a class="el" href="#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> &amp;algorithm, float itemWidth, const char *id)</td></tr>
+<tr class="memitem:a04d119b27cc28b122422dfbb1cbef76e" id="r_a04d119b27cc28b122422dfbb1cbef76e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a04d119b27cc28b122422dfbb1cbef76e">NAV::SystemModelGui</a> (<a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> &amp;algorithm, float itemWidth, const char *id)</td></tr>
 <tr class="memdesc:a04d119b27cc28b122422dfbb1cbef76e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a GUI.  <br /></td></tr>
 <tr class="separator:a04d119b27cc28b122422dfbb1cbef76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -150,76 +157,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>System Model. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2024-08-20 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="af9dfa55265a2621969573da06b1576d6" name="af9dfa55265a2621969573da06b1576d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9dfa55265a2621969573da06b1576d6">&#9670;&#160;</a></span>SystemModelCalcAlgorithm</h2>
 
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#af9dfa55265a2621969573da06b1576d6">NAV::SystemModelCalcAlgorithm</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Algorithms to calculate the system model with. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="af9dfa55265a2621969573da06b1576d6a7907e131b48fe66a584049afcc3b6bc5" name="af9dfa55265a2621969573da06b1576d6a7907e131b48fe66a584049afcc3b6bc5"></a>VanLoan&#160;</td><td class="fielddoc"><p>Van-Loan. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="af9dfa55265a2621969573da06b1576d6a57fe7ef4d625c4c15dbc2956e28e31c2" name="af9dfa55265a2621969573da06b1576d6a57fe7ef4d625c4c15dbc2956e28e31c2"></a>Taylor1&#160;</td><td class="fielddoc"><p>Taylor. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a04d119b27cc28b122422dfbb1cbef76e" name="a04d119b27cc28b122422dfbb1cbef76e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04d119b27cc28b122422dfbb1cbef76e">&#9670;&#160;</a></span>SystemModelGui()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::SystemModelGui </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>itemWidth</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>id</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows a GUI. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">algorithm</td><td>Algorithm to calculate the system model with </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">itemWidth</td><td>Width of the displayed items </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if something was changed </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="SystemModel_8hpp_source.html">SystemModel.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

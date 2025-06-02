@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,12 +119,11 @@ $(function(){initNavTree('classNAV_1_1AntexReader.html',''); initResizable(true)
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classNAV_1_1AntexReader-members.html">List of all members</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::AntexReader Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,7 +132,7 @@ $(function(){initNavTree('classNAV_1_1AntexReader.html',''); initResizable(true)
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html">Antenna</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html" title="Antenna information.">Antenna</a> information.  <a href="structNAV_1_1AntexReader_1_1Antenna.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,43 +142,38 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2232340682e9b688cfe77ba7aab6f967" id="r_a2232340682e9b688cfe77ba7aab6f967"><td class="memItemLeft" align="right" valign="top"><a id="a2232340682e9b688cfe77ba7aab6f967" name="a2232340682e9b688cfe77ba7aab6f967"></a>
-const std::set&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>antennas</b> () const</td></tr>
-<tr class="memdesc:a2232340682e9b688cfe77ba7aab6f967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antennas read from the ANTEX files. <br /></td></tr>
+<tr class="memitem:a2232340682e9b688cfe77ba7aab6f967" id="r_a2232340682e9b688cfe77ba7aab6f967"><td class="memItemLeft" align="right" valign="top">const std::set&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2232340682e9b688cfe77ba7aab6f967">antennas</a> () const</td></tr>
+<tr class="memdesc:a2232340682e9b688cfe77ba7aab6f967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antennas read from the ANTEX files.  <br /></td></tr>
 <tr class="separator:a2232340682e9b688cfe77ba7aab6f967"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebfd6f1e7105bd7de06bce62ff551ecc" id="r_aebfd6f1e7105bd7de06bce62ff551ecc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebfd6f1e7105bd7de06bce62ff551ecc">getAntennaPhaseCenterOffsetToARP</a> (const std::string &amp;antennaType, <a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:aebfd6f1e7105bd7de06bce62ff551ecc" id="r_aebfd6f1e7105bd7de06bce62ff551ecc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebfd6f1e7105bd7de06bce62ff551ecc">getAntennaPhaseCenterOffsetToARP</a> (const std::string &amp;antennaType, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:aebfd6f1e7105bd7de06bce62ff551ecc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html" title="Antenna information.">Antenna</a> Phase Center Offset To ARP if it is found in the ANTEX file.  <br /></td></tr>
 <tr class="separator:aebfd6f1e7105bd7de06bce62ff551ecc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11981979212ae66bedda6cb64dc72367" id="r_a11981979212ae66bedda6cb64dc72367"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:a11981979212ae66bedda6cb64dc72367"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a11981979212ae66bedda6cb64dc72367">getAntennaPhaseCenterVariation</a> (const std::string &amp;antennaType, <a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const T &amp;elevation, std::optional&lt; double &gt; azimuth, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a11981979212ae66bedda6cb64dc72367"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a11981979212ae66bedda6cb64dc72367">getAntennaPhaseCenterVariation</a> (const std::string &amp;antennaType, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const T &amp;elevation, std::optional&lt; double &gt; azimuth, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a11981979212ae66bedda6cb64dc72367"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the phase center variation for given elevation and azimuth.  <br /></td></tr>
 <tr class="separator:a11981979212ae66bedda6cb64dc72367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3735255ca5a819be7cafb1b5b089502" id="r_aa3735255ca5a819be7cafb1b5b089502"><td class="memItemLeft" align="right" valign="top"><a id="aa3735255ca5a819be7cafb1b5b089502" name="aa3735255ca5a819be7cafb1b5b089502"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td></tr>
-<tr class="memdesc:aa3735255ca5a819be7cafb1b5b089502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize from ANTEX file. <br /></td></tr>
+<tr class="memitem:aa3735255ca5a819be7cafb1b5b089502" id="r_aa3735255ca5a819be7cafb1b5b089502"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3735255ca5a819be7cafb1b5b089502">initialize</a> ()</td></tr>
+<tr class="memdesc:aa3735255ca5a819be7cafb1b5b089502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize from ANTEX file.  <br /></td></tr>
 <tr class="separator:aa3735255ca5a819be7cafb1b5b089502"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff8234109e784c48f0cc6e6966f3bc99" id="r_aff8234109e784c48f0cc6e6966f3bc99"><td class="memItemLeft" align="right" valign="top"><a id="aff8234109e784c48f0cc6e6966f3bc99" name="aff8234109e784c48f0cc6e6966f3bc99"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-<tr class="memdesc:aff8234109e784c48f0cc6e6966f3bc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the temporary variables. <br /></td></tr>
+<tr class="memitem:aff8234109e784c48f0cc6e6966f3bc99" id="r_aff8234109e784c48f0cc6e6966f3bc99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff8234109e784c48f0cc6e6966f3bc99">reset</a> ()</td></tr>
+<tr class="memdesc:aff8234109e784c48f0cc6e6966f3bc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the temporary variables.  <br /></td></tr>
 <tr class="separator:aff8234109e784c48f0cc6e6966f3bc99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a713dd6cf5592e3962babb80cdeaa09f1" id="r_a713dd6cf5592e3962babb80cdeaa09f1"><td class="memItemLeft" align="right" valign="top"><a id="a713dd6cf5592e3962babb80cdeaa09f1" name="a713dd6cf5592e3962babb80cdeaa09f1"></a>
-static <a class="el" href="classNAV_1_1AntexReader.html">AntexReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Get</b> ()</td></tr>
-<tr class="memdesc:a713dd6cf5592e3962babb80cdeaa09f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the static Instance of the reader. <br /></td></tr>
+<tr class="memitem:a713dd6cf5592e3962babb80cdeaa09f1" id="r_a713dd6cf5592e3962babb80cdeaa09f1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classNAV_1_1AntexReader.html">AntexReader</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a713dd6cf5592e3962babb80cdeaa09f1">Get</a> ()</td></tr>
+<tr class="memdesc:a713dd6cf5592e3962babb80cdeaa09f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the static Instance of the reader.  <br /></td></tr>
 <tr class="separator:a713dd6cf5592e3962babb80cdeaa09f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a2b0c6ccbd44e63ccaee1b87951221884" id="r_a2b0c6ccbd44e63ccaee1b87951221884"><td class="memItemLeft" align="right" valign="top"><a id="a2b0c6ccbd44e63ccaee1b87951221884" name="a2b0c6ccbd44e63ccaee1b87951221884"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>AntexReader</b> ()=default</td></tr>
-<tr class="memdesc:a2b0c6ccbd44e63ccaee1b87951221884"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="memitem:a2b0c6ccbd44e63ccaee1b87951221884" id="r_a2b0c6ccbd44e63ccaee1b87951221884"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b0c6ccbd44e63ccaee1b87951221884">AntexReader</a> ()=default</td></tr>
+<tr class="memdesc:a2b0c6ccbd44e63ccaee1b87951221884"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a2b0c6ccbd44e63ccaee1b87951221884"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9be1f7bea43c5054de76f4b9807f3ffc" id="r_a9be1f7bea43c5054de76f4b9807f3ffc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="structNAV_1_1AntexReader_1_1AntennaFreqInfo.html">AntennaFreqInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9be1f7bea43c5054de76f4b9807f3ffc">getAntennaFrequencyInfo</a> (const <a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html">Antenna::AntennaInfo</a> &amp;antInfo, const std::string &amp;antennaType, <a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a9be1f7bea43c5054de76f4b9807f3ffc" id="r_a9be1f7bea43c5054de76f4b9807f3ffc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="structNAV_1_1AntexReader_1_1AntennaFreqInfo.html">AntennaFreqInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9be1f7bea43c5054de76f4b9807f3ffc">getAntennaFrequencyInfo</a> (const <a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html">Antenna::AntennaInfo</a> &amp;antInfo, const std::string &amp;antennaType, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a9be1f7bea43c5054de76f4b9807f3ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the antenna frequency info object.  <br /></td></tr>
 <tr class="separator:a9be1f7bea43c5054de76f4b9807f3ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91a0561188a510cc69d19b04b6b4bbaf" id="r_a91a0561188a510cc69d19b04b6b4bbaf"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="structNAV_1_1AntexReader_1_1AntennaFreqInfo.html">AntennaFreqInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91a0561188a510cc69d19b04b6b4bbaf">getAntennaFrequencyInfo</a> (const std::string &amp;antennaType, <a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a91a0561188a510cc69d19b04b6b4bbaf" id="r_a91a0561188a510cc69d19b04b6b4bbaf"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="structNAV_1_1AntexReader_1_1AntennaFreqInfo.html">AntennaFreqInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91a0561188a510cc69d19b04b6b4bbaf">getAntennaFrequencyInfo</a> (const std::string &amp;antennaType, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> freq, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a91a0561188a510cc69d19b04b6b4bbaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the antenna frequency info object.  <br /></td></tr>
 <tr class="separator:a91a0561188a510cc69d19b04b6b4bbaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3299959acba7ff73ac378e1ffae8129b" id="r_a3299959acba7ff73ac378e1ffae8129b"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="structNAV_1_1AntexReader_1_1Antenna_1_1AntennaInfo.html">Antenna::AntennaInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3299959acba7ff73ac378e1ffae8129b">getAntennaInfo</a> (const std::string &amp;antennaType, const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;insTime, const std::string &amp;nameId) const</td></tr>
@@ -187,26 +182,110 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a5ba4f8fec52fb7fafaa9819a151095bb" id="r_a5ba4f8fec52fb7fafaa9819a151095bb"><td class="memItemLeft" align="right" valign="top"><a id="a5ba4f8fec52fb7fafaa9819a151095bb" name="a5ba4f8fec52fb7fafaa9819a151095bb"></a>
-std::set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_antennaNames</b></td></tr>
-<tr class="memdesc:a5ba4f8fec52fb7fafaa9819a151095bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordered names of all antennas. <br /></td></tr>
+<tr class="memitem:a5ba4f8fec52fb7fafaa9819a151095bb" id="r_a5ba4f8fec52fb7fafaa9819a151095bb"><td class="memItemLeft" align="right" valign="top">std::set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ba4f8fec52fb7fafaa9819a151095bb">_antennaNames</a></td></tr>
+<tr class="memdesc:a5ba4f8fec52fb7fafaa9819a151095bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ordered names of all antennas.  <br /></td></tr>
 <tr class="separator:a5ba4f8fec52fb7fafaa9819a151095bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbf7cf7140263d5c3c71b030eecc72f8" id="r_acbf7cf7140263d5c3c71b030eecc72f8"><td class="memItemLeft" align="right" valign="top"><a id="acbf7cf7140263d5c3c71b030eecc72f8" name="acbf7cf7140263d5c3c71b030eecc72f8"></a>
-std::unordered_map&lt; std::string, <a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html">Antenna</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_antennas</b></td></tr>
-<tr class="memdesc:acbf7cf7140263d5c3c71b030eecc72f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antennas read from the ANTEX files. <br /></td></tr>
+<tr class="memitem:acbf7cf7140263d5c3c71b030eecc72f8" id="r_acbf7cf7140263d5c3c71b030eecc72f8"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, <a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html">Antenna</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbf7cf7140263d5c3c71b030eecc72f8">_antennas</a></td></tr>
+<tr class="memdesc:acbf7cf7140263d5c3c71b030eecc72f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antennas read from the ANTEX files.  <br /></td></tr>
 <tr class="separator:acbf7cf7140263d5c3c71b030eecc72f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6800c4f272e4088ed453cdafa8d4ee9b" id="r_a6800c4f272e4088ed453cdafa8d4ee9b"><td class="memItemLeft" align="right" valign="top"><a id="a6800c4f272e4088ed453cdafa8d4ee9b" name="a6800c4f272e4088ed453cdafa8d4ee9b"></a>
-std::unordered_set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_notFoundAnt</b></td></tr>
-<tr class="memdesc:a6800c4f272e4088ed453cdafa8d4ee9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of Antennas not found to emit a warning. <br /></td></tr>
+<tr class="memitem:a6800c4f272e4088ed453cdafa8d4ee9b" id="r_a6800c4f272e4088ed453cdafa8d4ee9b"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6800c4f272e4088ed453cdafa8d4ee9b">_notFoundAnt</a></td></tr>
+<tr class="memdesc:a6800c4f272e4088ed453cdafa8d4ee9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of Antennas not found to emit a warning.  <br /></td></tr>
 <tr class="separator:a6800c4f272e4088ed453cdafa8d4ee9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9485ece73f10aa13426800226e30801a" id="r_a9485ece73f10aa13426800226e30801a"><td class="memItemLeft" align="right" valign="top"><a id="a9485ece73f10aa13426800226e30801a" name="a9485ece73f10aa13426800226e30801a"></a>
-std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_notFoundFreq</b></td></tr>
-<tr class="memdesc:a9485ece73f10aa13426800226e30801a"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of Frequencies not found to emit a warning. <br /></td></tr>
+<tr class="memitem:a9485ece73f10aa13426800226e30801a" id="r_a9485ece73f10aa13426800226e30801a"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9485ece73f10aa13426800226e30801a">_notFoundFreq</a></td></tr>
+<tr class="memdesc:a9485ece73f10aa13426800226e30801a"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of Frequencies not found to emit a warning.  <br /></td></tr>
 <tr class="separator:a9485ece73f10aa13426800226e30801a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>ANTEX file reader. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00045">45</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a2b0c6ccbd44e63ccaee1b87951221884" name="a2b0c6ccbd44e63ccaee1b87951221884"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b0c6ccbd44e63ccaee1b87951221884">&#9670;&#160;</a></span>AntexReader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::AntexReader::AntexReader </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a2232340682e9b688cfe77ba7aab6f967" name="a2232340682e9b688cfe77ba7aab6f967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2232340682e9b688cfe77ba7aab6f967">&#9670;&#160;</a></span>antennas()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::set&lt; std::string &gt; &amp; NAV::AntexReader::antennas </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Antennas read from the ANTEX files. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00480">480</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a713dd6cf5592e3962babb80cdeaa09f1" name="a713dd6cf5592e3962babb80cdeaa09f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a713dd6cf5592e3962babb80cdeaa09f1">&#9670;&#160;</a></span>Get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classNAV_1_1AntexReader.html">AntexReader</a> &amp; NAV::AntexReader::Get </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the static Instance of the reader. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00098">98</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a9be1f7bea43c5054de76f4b9807f3ffc" name="a9be1f7bea43c5054de76f4b9807f3ffc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9be1f7bea43c5054de76f4b9807f3ffc">&#9670;&#160;</a></span>getAntennaFrequencyInfo() <span class="overload">[1/2]</span></h2>
 
@@ -229,7 +308,7 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -255,6 +334,8 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00565">565</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a91a0561188a510cc69d19b04b6b4bbaf" name="a91a0561188a510cc69d19b04b6b4bbaf"></a>
@@ -274,7 +355,7 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -304,6 +385,8 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00548">548</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
 
 </div>
 </div>
@@ -349,6 +432,8 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00505">505</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aebfd6f1e7105bd7de06bce62ff551ecc" name="aebfd6f1e7105bd7de06bce62ff551ecc"></a>
@@ -368,7 +453,7 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -400,6 +485,8 @@ std::unordered_set&lt; std::pair&lt; std::string, <a class="el" href="Frequency_
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Phase center offset in north, east, up components in [m] </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00375">375</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a11981979212ae66bedda6cb64dc72367" name="a11981979212ae66bedda6cb64dc72367"></a>
@@ -421,7 +508,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="Frequency_8hpp.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -465,6 +552,171 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The interpolated phase center variation in [m] </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00395">395</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa3735255ca5a819be7cafb1b5b089502" name="aa3735255ca5a819be7cafb1b5b089502"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3735255ca5a819be7cafb1b5b089502">&#9670;&#160;</a></span>initialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::AntexReader::initialize </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize from ANTEX file. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00105">105</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aff8234109e784c48f0cc6e6966f3bc99" name="aff8234109e784c48f0cc6e6966f3bc99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff8234109e784c48f0cc6e6966f3bc99">&#9670;&#160;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::AntexReader::reset </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reset the temporary variables. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00363">363</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a5ba4f8fec52fb7fafaa9819a151095bb" name="a5ba4f8fec52fb7fafaa9819a151095bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ba4f8fec52fb7fafaa9819a151095bb">&#9670;&#160;</a></span>_antennaNames</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::set&lt;std::string&gt; NAV::AntexReader::_antennaNames</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ordered names of all antennas. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00493">493</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acbf7cf7140263d5c3c71b030eecc72f8" name="acbf7cf7140263d5c3c71b030eecc72f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbf7cf7140263d5c3c71b030eecc72f8">&#9670;&#160;</a></span>_antennas</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;std::string, <a class="el" href="structNAV_1_1AntexReader_1_1Antenna.html">Antenna</a>&gt; NAV::AntexReader::_antennas</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Antennas read from the ANTEX files. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00490">490</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6800c4f272e4088ed453cdafa8d4ee9b" name="a6800c4f272e4088ed453cdafa8d4ee9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6800c4f272e4088ed453cdafa8d4ee9b">&#9670;&#160;</a></span>_notFoundAnt</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_set&lt;std::string&gt; NAV::AntexReader::_notFoundAnt</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>List of Antennas not found to emit a warning. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00496">496</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9485ece73f10aa13426800226e30801a" name="a9485ece73f10aa13426800226e30801a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9485ece73f10aa13426800226e30801a">&#9670;&#160;</a></span>_notFoundFreq</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_set&lt;std::pair&lt;std::string, <a class="el" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a>&gt; &gt; NAV::AntexReader::_notFoundFreq</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>List of Frequencies not found to emit a warning. </p>
+
+<p class="definition">Definition at line <a class="el" href="AntexReader_8hpp_source.html#l00499">499</a> of file <a class="el" href="AntexReader_8hpp_source.html">AntexReader.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -475,7 +727,7 @@ template&lt;typename T&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1AntexReader.html">AntexReader</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1AntexReader.html">AntexReader</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

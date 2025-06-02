@@ -19,6 +19,8 @@ var classNAV_1_1PolynomialCycleSlipDetector =
     [ "setFitStrategy", "classNAV_1_1PolynomialCycleSlipDetector.html#a150a74d718463350804f867cb16e7851", null ],
     [ "setPolynomialDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#a967d078c52ad86d6ed6bfa0140946967", null ],
     [ "setWindowSize", "classNAV_1_1PolynomialCycleSlipDetector.html#a26078e2c85d1cd62102f944c8e3a1576", null ],
+    [ "CycleSlipDetector", "classNAV_1_1PolynomialCycleSlipDetector.html#a6694c4d95c42b6d4de1ff42bc90c02e8", null ],
+    [ "GnssAnalyzer", "classNAV_1_1PolynomialCycleSlipDetector.html#ae70edf7aa641b37ae28135ed659dd62f", null ],
     [ "_detectors", "classNAV_1_1PolynomialCycleSlipDetector.html#ad06dcafc7863c9c36c40ad1eb857e0a5", null ],
     [ "_enabled", "classNAV_1_1PolynomialCycleSlipDetector.html#ac7c736e81a26526971da6f6e0fcb796e", null ],
     [ "_polyDegree", "classNAV_1_1PolynomialCycleSlipDetector.html#acd8634283375e6163672815c39822f08", null ],

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -120,13 +121,12 @@ $(function(){initNavTree('classNAV_1_1SPP_1_1Algorithm.html',''); initResizable(
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-attribs">Data Fields</a> &#124;
 <a href="#pri-types">Private Types</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1SPP_1_1Algorithm-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::SPP::Algorithm Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -146,7 +146,7 @@ Public Types</h2></td></tr>
 &#160;&#160;<a class="el" href="#ad6bd47f691f902d1828abde86ec92b63a4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>
 <br />
  }</td></tr>
-<tr class="memdesc:ad6bd47f691f902d1828abde86ec92b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Possible SPP estimation algorithms.  <a href="#ad6bd47f691f902d1828abde86ec92b63">More...</a><br /></td></tr>
+<tr class="memdesc:ad6bd47f691f902d1828abde86ec92b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Possible <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> estimation algorithms.  <a href="#ad6bd47f691f902d1828abde86ec92b63">More...</a><br /></td></tr>
 <tr class="separator:ad6bd47f691f902d1828abde86ec92b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae60517f4671adb48fc384122e03ed867" id="r_ae60517f4671adb48fc384122e03ed867"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae60517f4671adb48fc384122e03ed867">ReceiverType</a> : uint8_t { <br />
 &#160;&#160;<a class="el" href="#ae60517f4671adb48fc384122e03ed867a409f58348b961ba9e30f3adb09a65b2a">Rover</a>
@@ -160,71 +160,63 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a819f437f02aea5766ee08cf345fb2dd7" id="r_a819f437f02aea5766ee08cf345fb2dd7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1SppSolution.html">SppSolution</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a819f437f02aea5766ee08cf345fb2dd7">calcSppSolution</a> (const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, const std::vector&lt; const <a class="el" href="classNAV_1_1GnssNavInfo.html">GnssNavInfo</a> * &gt; &amp;gnssNavInfos, const std::string &amp;nameId)</td></tr>
-<tr class="memdesc:a819f437f02aea5766ee08cf345fb2dd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the SPP solution.  <br /></td></tr>
+<tr class="memdesc:a819f437f02aea5766ee08cf345fb2dd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> solution.  <br /></td></tr>
 <tr class="separator:a819f437f02aea5766ee08cf345fb2dd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9464850232377ae8ec09470d6bee3e69" id="r_a9464850232377ae8ec09470d6bee3e69"><td class="memItemLeft" align="right" valign="top"><a id="a9464850232377ae8ec09470d6bee3e69" name="a9464850232377ae8ec09470d6bee3e69"></a>
-<a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getEstimatorType</b> () const</td></tr>
-<tr class="memdesc:a9464850232377ae8ec09470d6bee3e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Estimator Type. <br /></td></tr>
+<tr class="memitem:a9464850232377ae8ec09470d6bee3e69" id="r_a9464850232377ae8ec09470d6bee3e69"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9464850232377ae8ec09470d6bee3e69">getEstimatorType</a> () const</td></tr>
+<tr class="memdesc:a9464850232377ae8ec09470d6bee3e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Estimator Type.  <br /></td></tr>
 <tr class="separator:a9464850232377ae8ec09470d6bee3e69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d1fc38582f2ae8282bf190e9e2216fe" id="r_a7d1fc38582f2ae8282bf190e9e2216fe"><td class="memItemLeft" align="right" valign="top"><a id="a7d1fc38582f2ae8282bf190e9e2216fe" name="a7d1fc38582f2ae8282bf190e9e2216fe"></a>
-const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getLastUpdateTime</b> () const</td></tr>
-<tr class="memdesc:a7d1fc38582f2ae8282bf190e9e2216fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the last update time. <br /></td></tr>
+<tr class="memitem:a7d1fc38582f2ae8282bf190e9e2216fe" id="r_a7d1fc38582f2ae8282bf190e9e2216fe"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d1fc38582f2ae8282bf190e9e2216fe">getLastUpdateTime</a> () const</td></tr>
+<tr class="memdesc:a7d1fc38582f2ae8282bf190e9e2216fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the last update time.  <br /></td></tr>
 <tr class="separator:a7d1fc38582f2ae8282bf190e9e2216fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12149c9fdaf9f1f48135f725a0b51e2e" id="r_a12149c9fdaf9f1f48135f725a0b51e2e"><td class="memItemLeft" align="right" valign="top"><a id="a12149c9fdaf9f1f48135f725a0b51e2e" name="a12149c9fdaf9f1f48135f725a0b51e2e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-<tr class="memdesc:a12149c9fdaf9f1f48135f725a0b51e2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the algorithm. <br /></td></tr>
+<tr class="memitem:a12149c9fdaf9f1f48135f725a0b51e2e" id="r_a12149c9fdaf9f1f48135f725a0b51e2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12149c9fdaf9f1f48135f725a0b51e2e">reset</a> ()</td></tr>
+<tr class="memdesc:a12149c9fdaf9f1f48135f725a0b51e2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset the algorithm.  <br /></td></tr>
 <tr class="separator:a12149c9fdaf9f1f48135f725a0b51e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afffc8d658617179243f496d909f571e8" id="r_afffc8d658617179243f496d909f571e8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afffc8d658617179243f496d909f571e8">ShowGuiWidgets</a> (const char *id, float itemWidth, float unitWidth)</td></tr>
 <tr class="memdesc:afffc8d658617179243f496d909f571e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows the GUI input to select the options.  <br /></td></tr>
 <tr class="separator:afffc8d658617179243f496d909f571e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a7763a2c8bc3d8553b6c342666af2ec81" id="r_a7763a2c8bc3d8553b6c342666af2ec81"><td class="memItemLeft" align="right" valign="top"><a id="a7763a2c8bc3d8553b6c342666af2ec81" name="a7763a2c8bc3d8553b6c342666af2ec81"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_estimateInterFreqBiases</b></td></tr>
-<tr class="memdesc:a7763a2c8bc3d8553b6c342666af2ec81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate Inter-frequency biases. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a7763a2c8bc3d8553b6c342666af2ec81" id="r_a7763a2c8bc3d8553b6c342666af2ec81"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7763a2c8bc3d8553b6c342666af2ec81">_estimateInterFreqBiases</a></td></tr>
+<tr class="memdesc:a7763a2c8bc3d8553b6c342666af2ec81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate Inter-frequency biases.  <br /></td></tr>
 <tr class="separator:a7763a2c8bc3d8553b6c342666af2ec81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0ab0b2e540b2ad23a62b5e9f660dfeb" id="r_ad0ab0b2e540b2ad23a62b5e9f660dfeb"><td class="memItemLeft" align="right" valign="top"><a id="ad0ab0b2e540b2ad23a62b5e9f660dfeb" name="ad0ab0b2e540b2ad23a62b5e9f660dfeb"></a>
-<a class="el" href="classNAV_1_1ObservationEstimator.html">ObservationEstimator</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_obsEstimator</b></td></tr>
-<tr class="memdesc:ad0ab0b2e540b2ad23a62b5e9f660dfeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation Estimator. <br /></td></tr>
+<tr class="memitem:ad0ab0b2e540b2ad23a62b5e9f660dfeb" id="r_ad0ab0b2e540b2ad23a62b5e9f660dfeb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ObservationEstimator.html">ObservationEstimator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0ab0b2e540b2ad23a62b5e9f660dfeb">_obsEstimator</a></td></tr>
+<tr class="memdesc:ad0ab0b2e540b2ad23a62b5e9f660dfeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation Estimator.  <br /></td></tr>
 <tr class="separator:ad0ab0b2e540b2ad23a62b5e9f660dfeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70844eb90edc8801099d6c0c4f4d9a4d" id="r_a70844eb90edc8801099d6c0c4f4d9a4d"><td class="memItemLeft" align="right" valign="top"><a id="a70844eb90edc8801099d6c0c4f4d9a4d" name="a70844eb90edc8801099d6c0c4f4d9a4d"></a>
-<a class="el" href="classNAV_1_1ObservationFilter.html">ObservationFilter</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_obsFilter</b></td></tr>
-<tr class="memdesc:a70844eb90edc8801099d6c0c4f4d9a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation Filter. <br /></td></tr>
+<tr class="memitem:a70844eb90edc8801099d6c0c4f4d9a4d" id="r_a70844eb90edc8801099d6c0c4f4d9a4d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ObservationFilter.html">ObservationFilter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70844eb90edc8801099d6c0c4f4d9a4d">_obsFilter</a></td></tr>
+<tr class="memdesc:a70844eb90edc8801099d6c0c4f4d9a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation Filter.  <br /></td></tr>
 <tr class="separator:a70844eb90edc8801099d6c0c4f4d9a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:a37d2de151a839dc35831b12ad8deddfe" id="r_a37d2de151a839dc35831b12ad8deddfe"><td class="memItemLeft" align="right" valign="top"><a id="a37d2de151a839dc35831b12ad8deddfe" name="a37d2de151a839dc35831b12ad8deddfe"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>Receiver</b></td></tr>
-<tr class="memdesc:a37d2de151a839dc35831b12ad8deddfe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>. <br /></td></tr>
+<tr class="memitem:a37d2de151a839dc35831b12ad8deddfe" id="r_a37d2de151a839dc35831b12ad8deddfe"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37d2de151a839dc35831b12ad8deddfe">Receiver</a></td></tr>
+<tr class="memdesc:a37d2de151a839dc35831b12ad8deddfe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>.  <br /></td></tr>
 <tr class="separator:a37d2de151a839dc35831b12ad8deddfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a6b5170f881733d218de8e9e5e1b55b84" id="r_a6b5170f881733d218de8e9e5e1b55b84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b5170f881733d218de8e9e5e1b55b84">assignKalmanFilterResult</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;state, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;variance, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:a6b5170f881733d218de8e9e5e1b55b84" id="r_a6b5170f881733d218de8e9e5e1b55b84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b5170f881733d218de8e9e5e1b55b84">assignKalmanFilterResult</a> (const <a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;state, const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;variance, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:a6b5170f881733d218de8e9e5e1b55b84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns the result to the receiver variable.  <br /></td></tr>
 <tr class="separator:a6b5170f881733d218de8e9e5e1b55b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd6e8d2d72efea61d80a49e5d140f615" id="r_acd6e8d2d72efea61d80a49e5d140f615"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd6e8d2d72efea61d80a49e5d140f615">assignLeastSquaresResult</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;state, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;variance, const Eigen::Vector3d &amp;e_oldPos, size_t nParams, size_t nUniqueDopplerMeas, double dt, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:acd6e8d2d72efea61d80a49e5d140f615" id="r_acd6e8d2d72efea61d80a49e5d140f615"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acd6e8d2d72efea61d80a49e5d140f615">assignLeastSquaresResult</a> (const <a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;state, const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;variance, const Eigen::Vector3d &amp;e_oldPos, size_t nParams, size_t nUniqueDopplerMeas, double dt, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:acd6e8d2d72efea61d80a49e5d140f615"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns the result to the receiver variable.  <br /></td></tr>
 <tr class="separator:acd6e8d2d72efea61d80a49e5d140f615"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01a42b310c7e03fb947d7802b14eef5e" id="r_a01a42b310c7e03fb947d7802b14eef5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01a42b310c7e03fb947d7802b14eef5e">calcMatrixH</a> (const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;stateKeys, const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a01a42b310c7e03fb947d7802b14eef5e" id="r_a01a42b310c7e03fb947d7802b14eef5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01a42b310c7e03fb947d7802b14eef5e">calcMatrixH</a> (const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;stateKeys, const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a01a42b310c7e03fb947d7802b14eef5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement sensitivity matrix 𝐇  <br /></td></tr>
 <tr class="separator:a01a42b310c7e03fb947d7802b14eef5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa518c0ad7fef7bbee92529831488c08" id="r_aaa518c0ad7fef7bbee92529831488c08"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaa518c0ad7fef7bbee92529831488c08">canCalculateVelocity</a> (size_t nDoppMeas) const</td></tr>
-<tr class="memdesc:aaa518c0ad7fef7bbee92529831488c08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the SPP algorithm can calculate the position (always true for Kalman filter)  <br /></td></tr>
+<tr class="memdesc:aaa518c0ad7fef7bbee92529831488c08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> algorithm can calculate the position (always true for Kalman filter)  <br /></td></tr>
 <tr class="separator:aaa518c0ad7fef7bbee92529831488c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e848320c56094b9aa3adc0d9a3b1e58" id="r_a0e848320c56094b9aa3adc0d9a3b1e58"><td class="memItemLeft" align="right" valign="top"><a id="a0e848320c56094b9aa3adc0d9a3b1e58" name="a0e848320c56094b9aa3adc0d9a3b1e58"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>canEstimateInterFrequencyBias</b> () const</td></tr>
-<tr class="memdesc:a0e848320c56094b9aa3adc0d9a3b1e58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the SPP algorithm can estimate inter-frequency biases. <br /></td></tr>
+<tr class="memitem:a0e848320c56094b9aa3adc0d9a3b1e58" id="r_a0e848320c56094b9aa3adc0d9a3b1e58"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e848320c56094b9aa3adc0d9a3b1e58">canEstimateInterFrequencyBias</a> () const</td></tr>
+<tr class="memdesc:a0e848320c56094b9aa3adc0d9a3b1e58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> algorithm can estimate inter-frequency biases.  <br /></td></tr>
 <tr class="separator:a0e848320c56094b9aa3adc0d9a3b1e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48c195ebb7f8569736d8d3312536b5b8" id="r_a48c195ebb7f8569736d8d3312536b5b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48c195ebb7f8569736d8d3312536b5b8">computeDOPs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1SppSolution.html">SppSolution</a> &gt; &amp;sppSol, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;H, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:a48c195ebb7f8569736d8d3312536b5b8" id="r_a48c195ebb7f8569736d8d3312536b5b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48c195ebb7f8569736d8d3312536b5b8">computeDOPs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1SppSolution.html">SppSolution</a> &gt; &amp;sppSol, const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;H, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:a48c195ebb7f8569736d8d3312536b5b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes all DOP values (by reference)  <br /></td></tr>
 <tr class="separator:a48c195ebb7f8569736d8d3312536b5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5808b18aa06a58a76b2bf68f3315943b" id="r_a5808b18aa06a58a76b2bf68f3315943b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5808b18aa06a58a76b2bf68f3315943b">determineMeasKeys</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, size_t nPsrMeas, size_t nDoppMeas, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a5808b18aa06a58a76b2bf68f3315943b" id="r_a5808b18aa06a58a76b2bf68f3315943b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5808b18aa06a58a76b2bf68f3315943b">determineMeasKeys</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, size_t nPsrMeas, size_t nDoppMeas, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a5808b18aa06a58a76b2bf68f3315943b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of measurement keys.  <br /></td></tr>
 <tr class="separator:a5808b18aa06a58a76b2bf68f3315943b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a026eb30977dda702dc872de45fa75116" id="r_a026eb30977dda702dc872de45fa75116"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a026eb30977dda702dc872de45fa75116">determineStateKeys</a> (const std::set&lt; <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &gt; &amp;usedSatSystems, size_t nDoppMeas, const std::string &amp;nameId) const</td></tr>
+<tr class="memitem:a026eb30977dda702dc872de45fa75116" id="r_a026eb30977dda702dc872de45fa75116"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a026eb30977dda702dc872de45fa75116">determineStateKeys</a> (const std::set&lt; <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &gt; &amp;usedSatSystems, size_t nDoppMeas, const std::string &amp;nameId) const</td></tr>
 <tr class="memdesc:a026eb30977dda702dc872de45fa75116"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of state keys.  <br /></td></tr>
 <tr class="separator:a026eb30977dda702dc872de45fa75116"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49edfb208a1c97fb26ebfe463df8a27d" id="r_a49edfb208a1c97fb26ebfe463df8a27d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49edfb208a1c97fb26ebfe463df8a27d">updateInterFrequencyBiases</a> (const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId)</td></tr>
@@ -233,50 +225,41 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>canEstimateInterFrequ
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:afdcd3b8e4eaf1f0a37f953abcab6627b" id="r_afdcd3b8e4eaf1f0a37f953abcab6627b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afdcd3b8e4eaf1f0a37f953abcab6627b">calcMatrixR</a> (const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId)</td></tr>
-<tr class="memdesc:afdcd3b8e4eaf1f0a37f953abcab6627b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement noise covariance matrix 𝐑  <br /></td></tr>
-<tr class="separator:afdcd3b8e4eaf1f0a37f953abcab6627b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a746ae0dc73c812fc422cfbe4795bee43" id="r_a746ae0dc73c812fc422cfbe4795bee43"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a746ae0dc73c812fc422cfbe4795bee43">calcMeasInnovation</a> (const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId)</td></tr>
-<tr class="memdesc:a746ae0dc73c812fc422cfbe4795bee43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement innovation vector 𝜹𝐳  <br /></td></tr>
-<tr class="separator:a746ae0dc73c812fc422cfbe4795bee43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abae742ccb415952abdbf780e82887dfe" id="r_abae742ccb415952abdbf780e82887dfe"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abae742ccb415952abdbf780e82887dfe">calcMatrixR</a> (const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId)</td></tr>
+<tr class="memdesc:abae742ccb415952abdbf780e82887dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement noise covariance matrix 𝐑  <br /></td></tr>
+<tr class="separator:abae742ccb415952abdbf780e82887dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79d985e9e9b0bec86c50820fbd0b812a" id="r_a79d985e9e9b0bec86c50820fbd0b812a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79d985e9e9b0bec86c50820fbd0b812a">calcMeasInnovation</a> (const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;measKeys, const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;observations, const std::string &amp;nameId)</td></tr>
+<tr class="memdesc:a79d985e9e9b0bec86c50820fbd0b812a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the measurement innovation vector 𝜹𝐳  <br /></td></tr>
+<tr class="separator:a79d985e9e9b0bec86c50820fbd0b812a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a64e46f0dd5cb4307e94d0e7057f519a9" id="r_a64e46f0dd5cb4307e94d0e7057f519a9"><td class="memItemLeft" align="right" valign="top"><a id="a64e46f0dd5cb4307e94d0e7057f519a9" name="a64e46f0dd5cb4307e94d0e7057f519a9"></a>
-Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><b>_e_lastPositionCovarianceMatrix</b></td></tr>
-<tr class="memdesc:a64e46f0dd5cb4307e94d0e7057f519a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last position covariance matrix. <br /></td></tr>
+<tr class="memitem:a64e46f0dd5cb4307e94d0e7057f519a9" id="r_a64e46f0dd5cb4307e94d0e7057f519a9"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64e46f0dd5cb4307e94d0e7057f519a9">_e_lastPositionCovarianceMatrix</a></td></tr>
+<tr class="memdesc:a64e46f0dd5cb4307e94d0e7057f519a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last position covariance matrix.  <br /></td></tr>
 <tr class="separator:a64e46f0dd5cb4307e94d0e7057f519a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef87c5d0d2537e656d88cba93739054f" id="r_aef87c5d0d2537e656d88cba93739054f"><td class="memItemLeft" align="right" valign="top"><a id="aef87c5d0d2537e656d88cba93739054f" name="aef87c5d0d2537e656d88cba93739054f"></a>
-Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><b>_e_lastVelocityCovarianceMatrix</b></td></tr>
-<tr class="memdesc:aef87c5d0d2537e656d88cba93739054f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last velocity covariance matrix. <br /></td></tr>
+<tr class="memitem:aef87c5d0d2537e656d88cba93739054f" id="r_aef87c5d0d2537e656d88cba93739054f"><td class="memItemLeft" align="right" valign="top">Eigen::Matrix3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef87c5d0d2537e656d88cba93739054f">_e_lastVelocityCovarianceMatrix</a></td></tr>
+<tr class="memdesc:aef87c5d0d2537e656d88cba93739054f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Last velocity covariance matrix.  <br /></td></tr>
 <tr class="separator:aef87c5d0d2537e656d88cba93739054f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec9686c5a3cf41e533a531b241f4746b" id="r_aec9686c5a3cf41e533a531b241f4746b"><td class="memItemLeft" align="right" valign="top"><a id="aec9686c5a3cf41e533a531b241f4746b" name="aec9686c5a3cf41e533a531b241f4746b"></a>
-<a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_estimatorType</b></td></tr>
-<tr class="memdesc:aec9686c5a3cf41e533a531b241f4746b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimator type used for the calculations. <br /></td></tr>
+<tr class="memitem:aec9686c5a3cf41e533a531b241f4746b" id="r_aec9686c5a3cf41e533a531b241f4746b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec9686c5a3cf41e533a531b241f4746b">_estimatorType</a></td></tr>
+<tr class="memdesc:aec9686c5a3cf41e533a531b241f4746b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimator type used for the calculations.  <br /></td></tr>
 <tr class="separator:aec9686c5a3cf41e533a531b241f4746b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf1fcdd7ba78cc602cd1979e6d7f69fc" id="r_abf1fcdd7ba78cc602cd1979e6d7f69fc"><td class="memItemLeft" align="right" valign="top"><a id="abf1fcdd7ba78cc602cd1979e6d7f69fc" name="abf1fcdd7ba78cc602cd1979e6d7f69fc"></a>
-<a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html">SPP::KalmanFilter</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_kalmanFilter</b></td></tr>
-<tr class="memdesc:abf1fcdd7ba78cc602cd1979e6d7f69fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SPP specific Kalman filter. <br /></td></tr>
+<tr class="memitem:abf1fcdd7ba78cc602cd1979e6d7f69fc" id="r_abf1fcdd7ba78cc602cd1979e6d7f69fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html">SPP::KalmanFilter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf1fcdd7ba78cc602cd1979e6d7f69fc">_kalmanFilter</a></td></tr>
+<tr class="memdesc:abf1fcdd7ba78cc602cd1979e6d7f69fc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> specific Kalman filter.  <br /></td></tr>
 <tr class="separator:abf1fcdd7ba78cc602cd1979e6d7f69fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75f07721e8b0be52c88465e86bf594fc" id="r_a75f07721e8b0be52c88465e86bf594fc"><td class="memItemLeft" align="right" valign="top"><a id="a75f07721e8b0be52c88465e86bf594fc" name="a75f07721e8b0be52c88465e86bf594fc"></a>
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_lastUpdate</b></td></tr>
-<tr class="memdesc:a75f07721e8b0be52c88465e86bf594fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of last update. <br /></td></tr>
+<tr class="memitem:a75f07721e8b0be52c88465e86bf594fc" id="r_a75f07721e8b0be52c88465e86bf594fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75f07721e8b0be52c88465e86bf594fc">_lastUpdate</a></td></tr>
+<tr class="memdesc:a75f07721e8b0be52c88465e86bf594fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of last update.  <br /></td></tr>
 <tr class="separator:a75f07721e8b0be52c88465e86bf594fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cbc49591e96e859498edd0a346a9266" id="r_a0cbc49591e96e859498edd0a346a9266"><td class="memItemLeft" align="right" valign="top"><a id="a0cbc49591e96e859498edd0a346a9266" name="a0cbc49591e96e859498edd0a346a9266"></a>
-<a class="el" href="#a37d2de151a839dc35831b12ad8deddfe">Receiver</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_receiver</b></td></tr>
-<tr class="memdesc:a0cbc49591e96e859498edd0a346a9266"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>. <br /></td></tr>
+<tr class="memitem:a0cbc49591e96e859498edd0a346a9266" id="r_a0cbc49591e96e859498edd0a346a9266"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a37d2de151a839dc35831b12ad8deddfe">Receiver</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cbc49591e96e859498edd0a346a9266">_receiver</a></td></tr>
+<tr class="memdesc:a0cbc49591e96e859498edd0a346a9266"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>.  <br /></td></tr>
 <tr class="separator:a0cbc49591e96e859498edd0a346a9266"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84e68c669b6b2e9883703b90a58aea89" id="r_a84e68c669b6b2e9883703b90a58aea89"><td class="memItemLeft" align="right" valign="top"><a id="a84e68c669b6b2e9883703b90a58aea89" name="a84e68c669b6b2e9883703b90a58aea89"></a>
-const std::array&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>PosKey</b></td></tr>
-<tr class="memdesc:a84e68c669b6b2e9883703b90a58aea89"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position keys. <br /></td></tr>
+<tr class="memitem:a84e68c669b6b2e9883703b90a58aea89" id="r_a84e68c669b6b2e9883703b90a58aea89"><td class="memItemLeft" align="right" valign="top">const std::array&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a84e68c669b6b2e9883703b90a58aea89">PosKey</a></td></tr>
+<tr class="memdesc:a84e68c669b6b2e9883703b90a58aea89"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position keys.  <br /></td></tr>
 <tr class="separator:a84e68c669b6b2e9883703b90a58aea89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab75108e70cf823efc37b07c1551c0bb3" id="r_ab75108e70cf823efc37b07c1551c0bb3"><td class="memItemLeft" align="right" valign="top"><a id="ab75108e70cf823efc37b07c1551c0bb3" name="ab75108e70cf823efc37b07c1551c0bb3"></a>
-const std::array&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 6 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>PosVelKey</b></td></tr>
-<tr class="memdesc:ab75108e70cf823efc37b07c1551c0bb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position and velocity keys. <br /></td></tr>
+<tr class="memitem:ab75108e70cf823efc37b07c1551c0bb3" id="r_ab75108e70cf823efc37b07c1551c0bb3"><td class="memItemLeft" align="right" valign="top">const std::array&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 6 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab75108e70cf823efc37b07c1551c0bb3">PosVelKey</a></td></tr>
+<tr class="memdesc:ab75108e70cf823efc37b07c1551c0bb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position and velocity keys.  <br /></td></tr>
 <tr class="separator:ab75108e70cf823efc37b07c1551c0bb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1350f647da1f243c783a9db3f24ac68" id="r_ae1350f647da1f243c783a9db3f24ac68"><td class="memItemLeft" align="right" valign="top"><a id="ae1350f647da1f243c783a9db3f24ac68" name="ae1350f647da1f243c783a9db3f24ac68"></a>
-const std::array&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>VelKey</b></td></tr>
-<tr class="memdesc:ae1350f647da1f243c783a9db3f24ac68"><td class="mdescLeft">&#160;</td><td class="mdescRight">All velocity keys. <br /></td></tr>
+<tr class="memitem:ae1350f647da1f243c783a9db3f24ac68" id="r_ae1350f647da1f243c783a9db3f24ac68"><td class="memItemLeft" align="right" valign="top">const std::array&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1350f647da1f243c783a9db3f24ac68">VelKey</a></td></tr>
+<tr class="memdesc:ae1350f647da1f243c783a9db3f24ac68"><td class="mdescLeft">&#160;</td><td class="mdescRight">All velocity keys.  <br /></td></tr>
 <tr class="separator:ae1350f647da1f243c783a9db3f24ac68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -290,7 +273,36 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Single Point Positioning <a class="el" href="classNAV_1_1SPP_1_1Algorithm.html" title="Single Point Positioning Algorithm.">Algorithm</a>. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00037">37</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a37d2de151a839dc35831b12ad8deddfe" name="a37d2de151a839dc35831b12ad8deddfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37d2de151a839dc35831b12ad8deddfe">&#9670;&#160;</a></span>Receiver</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a37d2de151a839dc35831b12ad8deddfe">NAV::SPP::Algorithm::Receiver</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00092">92</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="ad6bd47f691f902d1828abde86ec92b63" name="ad6bd47f691f902d1828abde86ec92b63"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad6bd47f691f902d1828abde86ec92b63">&#9670;&#160;</a></span>EstimatorType</h2>
 
@@ -311,7 +323,7 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Possible SPP estimation algorithms. </p>
+<p>Possible <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> estimation algorithms. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad6bd47f691f902d1828abde86ec92b63ad143c366b3274edc1e5496e302795a46" name="ad6bd47f691f902d1828abde86ec92b63ad143c366b3274edc1e5496e302795a46"></a>LeastSquares&#160;</td><td class="fielddoc"><p>Linear Least Squares. </p>
 </td></tr>
@@ -322,6 +334,8 @@ Friends</h2></td></tr>
 <tr><td class="fieldname"><a id="ad6bd47f691f902d1828abde86ec92b63a4905ac9d6a22bdfc1ae096094ce6248d" name="ad6bd47f691f902d1828abde86ec92b63a4905ac9d6a22bdfc1ae096094ce6248d"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
 </td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00041">41</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
 
 </div>
 </div>
@@ -345,6 +359,8 @@ Friends</h2></td></tr>
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00050">50</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -360,12 +376,12 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">void NAV::SPP::Algorithm::assignKalmanFilterResult </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>variance</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>variance</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -390,6 +406,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00695">695</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="acd6e8d2d72efea61d80a49e5d140f615" name="acd6e8d2d72efea61d80a49e5d140f615"></a>
@@ -404,12 +422,12 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">void NAV::SPP::Algorithm::assignLeastSquaresResult </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>variance</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>variance</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -458,6 +476,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00593">593</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a01a42b310c7e03fb947d7802b14eef5e" name="a01a42b310c7e03fb947d7802b14eef5e"></a>
@@ -470,14 +490,14 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; NAV::SPP::Algorithm::calcMatrixH </td>
+          <td class="memname"><a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; NAV::SPP::Algorithm::calcMatrixH </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stateKeys</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stateKeys</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -500,8 +520,8 @@ Friends</h2></td></tr>
 <p>Calculates the measurement sensitivity matrix 𝐇 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">stateKeys</td><td>State Keys </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement Keys </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">stateKeys</td><td>State <a class="el" href="namespaceNAV_1_1Keys.html">Keys</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement <a class="el" href="namespaceNAV_1_1Keys.html">Keys</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">observations</td><td>List of GNSS observation data used for the calculation </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name and id of the node calling this (only used for logging purposes) </td></tr>
   </table>
@@ -509,10 +529,12 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The 𝐇 matrix </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00485">485</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
-<a id="afdcd3b8e4eaf1f0a37f953abcab6627b" name="afdcd3b8e4eaf1f0a37f953abcab6627b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdcd3b8e4eaf1f0a37f953abcab6627b">&#9670;&#160;</a></span>calcMatrixR()</h2>
+<a id="abae742ccb415952abdbf780e82887dfe" name="abae742ccb415952abdbf780e82887dfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abae742ccb415952abdbf780e82887dfe">&#9670;&#160;</a></span>calcMatrixR()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -521,9 +543,9 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::calcMatrixR </td>
+          <td class="memname"><a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::calcMatrixR </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -546,7 +568,7 @@ Friends</h2></td></tr>
 <p>Calculates the measurement noise covariance matrix 𝐑 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement Keys </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement <a class="el" href="namespaceNAV_1_1Keys.html">Keys</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">observations</td><td>List of GNSS observation data used for the calculation </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name and id of the node calling this (only used for logging purposes) </td></tr>
   </table>
@@ -554,10 +576,12 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The 𝐑 matrix </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00529">529</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a746ae0dc73c812fc422cfbe4795bee43" name="a746ae0dc73c812fc422cfbe4795bee43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a746ae0dc73c812fc422cfbe4795bee43">&#9670;&#160;</a></span>calcMeasInnovation()</h2>
+<a id="a79d985e9e9b0bec86c50820fbd0b812a" name="a79d985e9e9b0bec86c50820fbd0b812a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79d985e9e9b0bec86c50820fbd0b812a">&#9670;&#160;</a></span>calcMeasInnovation()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -566,9 +590,9 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::calcMeasInnovation </td>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a501aba9e5e5fa761485009ed111cbf6b">KeyedVectorXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::calcMeasInnovation </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>measKeys</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -591,13 +615,15 @@ Friends</h2></td></tr>
 <p>Calculates the measurement innovation vector 𝜹𝐳 </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement Keys </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">measKeys</td><td>Measurement <a class="el" href="namespaceNAV_1_1Keys.html">Keys</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">observations</td><td>List of GNSS observation data used for the calculation </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name and id of the node calling this (only used for logging purposes) </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The measurement innovation 𝜹𝐳 vector </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00562">562</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
 
 </div>
 </div>
@@ -625,7 +651,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculate the SPP solution. </p>
+<p>Calculate the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> solution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">gnssObs</td><td>GNSS observation </td></tr>
@@ -634,7 +660,9 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The SPP Solution if it could be calculated, otherwise nullptr </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> Solution if it could be calculated, otherwise nullptr </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00073">73</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
 
 </div>
 </div>
@@ -661,13 +689,44 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Checks if the SPP algorithm can calculate the position (always true for Kalman filter) </p>
+<p>Checks if the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> algorithm can calculate the position (always true for Kalman filter) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">nDoppMeas</td><td>Amount of Doppler measurements </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00378">378</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a0e848320c56094b9aa3adc0d9a3b1e58" name="a0e848320c56094b9aa3adc0d9a3b1e58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e848320c56094b9aa3adc0d9a3b1e58">&#9670;&#160;</a></span>canEstimateInterFrequencyBias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::SPP::Algorithm::canEstimateInterFrequencyBias </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if the <a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> algorithm can estimate inter-frequency biases. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00385">385</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
 
 </div>
 </div>
@@ -688,7 +747,7 @@ Friends</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a>, <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -713,6 +772,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00769">769</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a5808b18aa06a58a76b2bf68f3315943b" name="a5808b18aa06a58a76b2bf68f3315943b"></a>
@@ -725,7 +786,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::determineMeasKeys </td>
+          <td class="memname">std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1Meas.html#af49677bfd2d66d3b05e3a61198cda77b">Meas::MeasKeyTypes</a> &gt; NAV::SPP::Algorithm::determineMeasKeys </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structNAV_1_1Observations.html">Observations</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>observations</em></span>, </td>
         </tr>
@@ -763,6 +824,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00455">455</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a026eb30977dda702dc872de45fa75116" name="a026eb30977dda702dc872de45fa75116"></a>
@@ -775,7 +838,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="GNSS_2Positioning_2SPP_2Keys_8hpp.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; NAV::SPP::Algorithm::determineStateKeys </td>
+          <td class="memname">std::vector&lt; <a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">States::StateKeyType</a> &gt; NAV::SPP::Algorithm::determineStateKeys </td>
           <td>(</td>
           <td class="paramtype">const std::set&lt; <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>usedSatSystems</em></span>, </td>
         </tr>
@@ -807,6 +870,87 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00421">421</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9464850232377ae8ec09470d6bee3e69" name="a9464850232377ae8ec09470d6bee3e69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9464850232377ae8ec09470d6bee3e69">&#9670;&#160;</a></span>getEstimatorType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a> NAV::SPP::Algorithm::getEstimatorType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Estimator Type. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00066">66</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7d1fc38582f2ae8282bf190e9e2216fe" name="a7d1fc38582f2ae8282bf190e9e2216fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d1fc38582f2ae8282bf190e9e2216fe">&#9670;&#160;</a></span>getLastUpdateTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp; NAV::SPP::Algorithm::getLastUpdateTime </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the last update time. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00069">69</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a12149c9fdaf9f1f48135f725a0b51e2e" name="a12149c9fdaf9f1f48135f725a0b51e2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12149c9fdaf9f1f48135f725a0b51e2e">&#9670;&#160;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::SPP::Algorithm::reset </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset the algorithm. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00065">65</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="afffc8d658617179243f496d909f571e8" name="afffc8d658617179243f496d909f571e8"></a>
@@ -836,12 +980,14 @@ Friends</h2></td></tr>
 <p>Shows the GUI input to select the options. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a>. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">itemWidth</td><td>Width of the widgets </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">unitWidth</td><td>Width on unit inputs </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00040">40</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
 
 </div>
 </div>
@@ -880,6 +1026,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00396">396</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
 
 </div>
 </div>
@@ -920,6 +1068,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00806">806</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a0806a9de4b825215a3a98872d538bdc2" name="a0806a9de4b825215a3a98872d538bdc2"></a>
@@ -958,17 +1108,309 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Algorithm_8cpp_source.html#l00793">793</a> of file <a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a64e46f0dd5cb4307e94d0e7057f519a9" name="a64e46f0dd5cb4307e94d0e7057f519a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64e46f0dd5cb4307e94d0e7057f519a9">&#9670;&#160;</a></span>_e_lastPositionCovarianceMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix3d NAV::SPP::Algorithm::_e_lastPositionCovarianceMatrix</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Last position covariance matrix. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00196">196</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aef87c5d0d2537e656d88cba93739054f" name="aef87c5d0d2537e656d88cba93739054f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef87c5d0d2537e656d88cba93739054f">&#9670;&#160;</a></span>_e_lastVelocityCovarianceMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Matrix3d NAV::SPP::Algorithm::_e_lastVelocityCovarianceMatrix</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Last velocity covariance matrix. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00197">197</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7763a2c8bc3d8553b6c342666af2ec81" name="a7763a2c8bc3d8553b6c342666af2ec81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7763a2c8bc3d8553b6c342666af2ec81">&#9670;&#160;</a></span>_estimateInterFreqBiases</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::SPP::Algorithm::_estimateInterFreqBiases</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estimate Inter-frequency biases. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00089">89</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aec9686c5a3cf41e533a531b241f4746b" name="aec9686c5a3cf41e533a531b241f4746b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec9686c5a3cf41e533a531b241f4746b">&#9670;&#160;</a></span>_estimatorType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ad6bd47f691f902d1828abde86ec92b63">EstimatorType</a> NAV::SPP::Algorithm::_estimatorType</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Estimator type used for the calculations. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00188">188</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abf1fcdd7ba78cc602cd1979e6d7f69fc" name="abf1fcdd7ba78cc602cd1979e6d7f69fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf1fcdd7ba78cc602cd1979e6d7f69fc">&#9670;&#160;</a></span>_kalmanFilter</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1SPP_1_1KalmanFilter.html">SPP::KalmanFilter</a> NAV::SPP::Algorithm::_kalmanFilter</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceNAV_1_1SPP.html">SPP</a> specific Kalman filter. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00191">191</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a75f07721e8b0be52c88465e86bf594fc" name="a75f07721e8b0be52c88465e86bf594fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75f07721e8b0be52c88465e86bf594fc">&#9670;&#160;</a></span>_lastUpdate</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::SPP::Algorithm::_lastUpdate</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Time of last update. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00194">194</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad0ab0b2e540b2ad23a62b5e9f660dfeb" name="ad0ab0b2e540b2ad23a62b5e9f660dfeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0ab0b2e540b2ad23a62b5e9f660dfeb">&#9670;&#160;</a></span>_obsEstimator</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ObservationEstimator.html">ObservationEstimator</a> NAV::SPP::Algorithm::_obsEstimator</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Observation Estimator. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00086">86</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a70844eb90edc8801099d6c0c4f4d9a4d" name="a70844eb90edc8801099d6c0c4f4d9a4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70844eb90edc8801099d6c0c4f4d9a4d">&#9670;&#160;</a></span>_obsFilter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ObservationFilter.html">ObservationFilter</a> NAV::SPP::Algorithm::_obsFilter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Observation Filter. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00081">81</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0cbc49591e96e859498edd0a346a9266" name="a0cbc49591e96e859498edd0a346a9266"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cbc49591e96e859498edd0a346a9266">&#9670;&#160;</a></span>_receiver</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a37d2de151a839dc35831b12ad8deddfe">Receiver</a> NAV::SPP::Algorithm::_receiver</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00185">185</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a84e68c669b6b2e9883703b90a58aea89" name="a84e68c669b6b2e9883703b90a58aea89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84e68c669b6b2e9883703b90a58aea89">&#9670;&#160;</a></span>PosKey</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;<a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3&gt;&amp; NAV::SPP::Algorithm::PosKey</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All position keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00095">95</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab75108e70cf823efc37b07c1551c0bb3" name="ab75108e70cf823efc37b07c1551c0bb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab75108e70cf823efc37b07c1551c0bb3">&#9670;&#160;</a></span>PosVelKey</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;<a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 6&gt;&amp; NAV::SPP::Algorithm::PosVelKey</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All position and velocity keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00099">99</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae1350f647da1f243c783a9db3f24ac68" name="ae1350f647da1f243c783a9db3f24ac68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1350f647da1f243c783a9db3f24ac68">&#9670;&#160;</a></span>VelKey</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;<a class="el" href="namespaceNAV_1_1SPP_1_1States.html#a21e312e0e8a84c7b4de77444193ad683">SPP::States::StateKeyType</a>, 3&gt;&amp; NAV::SPP::Algorithm::VelKey</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All velocity keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="Algorithm_8hpp_source.html#l00097">97</a> of file <a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Positioning/SPP/<a class="el" href="Algorithm_8hpp_source.html">Algorithm.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Positioning/SPP/<a class="el" href="Algorithm_8cpp_source.html">Algorithm.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>SPP</b></li><li class="navelem"><a class="el" href="classNAV_1_1SPP_1_1Algorithm.html">Algorithm</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1SPP.html">SPP</a></li><li class="navelem"><a class="el" href="classNAV_1_1SPP_1_1Algorithm.html">Algorithm</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

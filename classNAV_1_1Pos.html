@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('classNAV_1_1Pos.html',''); initResizable(true); });
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classNAV_1_1Pos-members.html">List of all members</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::Pos Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,21 +132,17 @@ $(function(){initNavTree('classNAV_1_1Pos.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af7cffacdd7a708e5b469755a0fd0eca0" id="r_af7cffacdd7a708e5b469755a0fd0eca0"><td class="memItemLeft" align="right" valign="top"><a id="af7cffacdd7a708e5b469755a0fd0eca0" name="af7cffacdd7a708e5b469755a0fd0eca0"></a>
-const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>altitude</b> () const</td></tr>
-<tr class="memdesc:af7cffacdd7a708e5b469755a0fd0eca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the altitude (height above ground) in [m]. <br /></td></tr>
+<tr class="memitem:af7cffacdd7a708e5b469755a0fd0eca0" id="r_af7cffacdd7a708e5b469755a0fd0eca0"><td class="memItemLeft" align="right" valign="top">const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7cffacdd7a708e5b469755a0fd0eca0">altitude</a> () const</td></tr>
+<tr class="memdesc:af7cffacdd7a708e5b469755a0fd0eca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the altitude (height above ground) in [m].  <br /></td></tr>
 <tr class="separator:af7cffacdd7a708e5b469755a0fd0eca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41fbc40488afb9490dd86f6f789258e0" id="r_a41fbc40488afb9490dd86f6f789258e0"><td class="memItemLeft" align="right" valign="top"><a id="a41fbc40488afb9490dd86f6f789258e0" name="a41fbc40488afb9490dd86f6f789258e0"></a>
-std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_CovarianceMatrix</b> () const</td></tr>
-<tr class="memdesc:a41fbc40488afb9490dd86f6f789258e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in ECEF frame. <br /></td></tr>
+<tr class="memitem:a41fbc40488afb9490dd86f6f789258e0" id="r_a41fbc40488afb9490dd86f6f789258e0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41fbc40488afb9490dd86f6f789258e0">e_CovarianceMatrix</a> () const</td></tr>
+<tr class="memdesc:a41fbc40488afb9490dd86f6f789258e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in ECEF frame.  <br /></td></tr>
 <tr class="separator:a41fbc40488afb9490dd86f6f789258e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab40818b92e6497dfc38b024179466918" id="r_ab40818b92e6497dfc38b024179466918"><td class="memItemLeft" align="right" valign="top"><a id="ab40818b92e6497dfc38b024179466918" name="ab40818b92e6497dfc38b024179466918"></a>
-const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>e_position</b> () const</td></tr>
-<tr class="memdesc:ab40818b92e6497dfc38b024179466918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the coordinates in [m]. <br /></td></tr>
+<tr class="memitem:ab40818b92e6497dfc38b024179466918" id="r_ab40818b92e6497dfc38b024179466918"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab40818b92e6497dfc38b024179466918">e_position</a> () const</td></tr>
+<tr class="memdesc:ab40818b92e6497dfc38b024179466918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the coordinates in [m].  <br /></td></tr>
 <tr class="separator:ab40818b92e6497dfc38b024179466918"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad28a8b4c889a9308482a76b67b0057bc" id="r_ad28a8b4c889a9308482a76b67b0057bc"><td class="memItemLeft" align="right" valign="top"><a id="ad28a8b4c889a9308482a76b67b0057bc" name="ad28a8b4c889a9308482a76b67b0057bc"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>e_positionStdev</b> () const</td></tr>
-<tr class="memdesc:ad28a8b4c889a9308482a76b67b0057bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in ECEF frame coordinates in [m]. <br /></td></tr>
+<tr class="memitem:ad28a8b4c889a9308482a76b67b0057bc" id="r_ad28a8b4c889a9308482a76b67b0057bc"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad28a8b4c889a9308482a76b67b0057bc">e_positionStdev</a> () const</td></tr>
+<tr class="memdesc:ad28a8b4c889a9308482a76b67b0057bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in ECEF frame coordinates in [m].  <br /></td></tr>
 <tr class="separator:ad28a8b4c889a9308482a76b67b0057bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82b60003dbeabbe4ce59ff9f7f93d577" id="r_a82b60003dbeabbe4ce59ff9f7f93d577"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82b60003dbeabbe4ce59ff9f7f93d577">e_Quat_n</a> () const</td></tr>
 <tr class="memdesc:a82b60003dbeabbe4ce59ff9f7f93d577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from navigation to Earth-fixed frame.  <br /></td></tr>
@@ -157,25 +153,20 @@ std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign
 <tr class="memitem:a11b1c2287ad76471034cfaaa32fd8f64" id="r_a11b1c2287ad76471034cfaaa32fd8f64"><td class="memItemLeft" align="right" valign="top">std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11b1c2287ad76471034cfaaa32fd8f64">getValueAt</a> (size_t idx) const override</td></tr>
 <tr class="memdesc:a11b1c2287ad76471034cfaaa32fd8f64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the value at the index.  <br /></td></tr>
 <tr class="separator:a11b1c2287ad76471034cfaaa32fd8f64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a553493d30cf12827e1e4e833c37f50fa" id="r_a553493d30cf12827e1e4e833c37f50fa"><td class="memItemLeft" align="right" valign="top"><a id="a553493d30cf12827e1e4e833c37f50fa" name="a553493d30cf12827e1e4e833c37f50fa"></a>
-const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>latitude</b> () const</td></tr>
-<tr class="memdesc:a553493d30cf12827e1e4e833c37f50fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the latitude 𝜙 in [rad]. <br /></td></tr>
+<tr class="memitem:a553493d30cf12827e1e4e833c37f50fa" id="r_a553493d30cf12827e1e4e833c37f50fa"><td class="memItemLeft" align="right" valign="top">const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a553493d30cf12827e1e4e833c37f50fa">latitude</a> () const</td></tr>
+<tr class="memdesc:a553493d30cf12827e1e4e833c37f50fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the latitude 𝜙 in [rad].  <br /></td></tr>
 <tr class="separator:a553493d30cf12827e1e4e833c37f50fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe7fbe77f4fd525dcd2b7f923fc24c6" id="r_abbe7fbe77f4fd525dcd2b7f923fc24c6"><td class="memItemLeft" align="right" valign="top"><a id="abbe7fbe77f4fd525dcd2b7f923fc24c6" name="abbe7fbe77f4fd525dcd2b7f923fc24c6"></a>
-const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>lla_position</b> () const</td></tr>
-<tr class="memdesc:abbe7fbe77f4fd525dcd2b7f923fc24c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]. <br /></td></tr>
+<tr class="memitem:abbe7fbe77f4fd525dcd2b7f923fc24c6" id="r_abbe7fbe77f4fd525dcd2b7f923fc24c6"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbe7fbe77f4fd525dcd2b7f923fc24c6">lla_position</a> () const</td></tr>
+<tr class="memdesc:abbe7fbe77f4fd525dcd2b7f923fc24c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m].  <br /></td></tr>
 <tr class="separator:abbe7fbe77f4fd525dcd2b7f923fc24c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afaf68f4b7c48bdd5eb5b4375c591ec38" id="r_afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="memItemLeft" align="right" valign="top"><a id="afaf68f4b7c48bdd5eb5b4375c591ec38" name="afaf68f4b7c48bdd5eb5b4375c591ec38"></a>
-const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>longitude</b> () const</td></tr>
-<tr class="memdesc:afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the longitude λ in [rad]. <br /></td></tr>
+<tr class="memitem:afaf68f4b7c48bdd5eb5b4375c591ec38" id="r_afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="memItemLeft" align="right" valign="top">const double &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afaf68f4b7c48bdd5eb5b4375c591ec38">longitude</a> () const</td></tr>
+<tr class="memdesc:afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the longitude λ in [rad].  <br /></td></tr>
 <tr class="separator:afaf68f4b7c48bdd5eb5b4375c591ec38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d25382d480bda7e4ff6aaf224ca66df" id="r_a5d25382d480bda7e4ff6aaf224ca66df"><td class="memItemLeft" align="right" valign="top"><a id="a5d25382d480bda7e4ff6aaf224ca66df" name="a5d25382d480bda7e4ff6aaf224ca66df"></a>
-std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_CovarianceMatrix</b> () const</td></tr>
-<tr class="memdesc:a5d25382d480bda7e4ff6aaf224ca66df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in local navigation frame. <br /></td></tr>
+<tr class="memitem:a5d25382d480bda7e4ff6aaf224ca66df" id="r_a5d25382d480bda7e4ff6aaf224ca66df"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d25382d480bda7e4ff6aaf224ca66df">n_CovarianceMatrix</a> () const</td></tr>
+<tr class="memdesc:a5d25382d480bda7e4ff6aaf224ca66df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Covariance matrix in local navigation frame.  <br /></td></tr>
 <tr class="separator:a5d25382d480bda7e4ff6aaf224ca66df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb6d54f7f508bcf8796b5654204a5ab6" id="r_acb6d54f7f508bcf8796b5654204a5ab6"><td class="memItemLeft" align="right" valign="top"><a id="acb6d54f7f508bcf8796b5654204a5ab6" name="acb6d54f7f508bcf8796b5654204a5ab6"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>n_positionStdev</b> () const</td></tr>
-<tr class="memdesc:acb6d54f7f508bcf8796b5654204a5ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in local navigation frame coordinates in [m]. <br /></td></tr>
+<tr class="memitem:acb6d54f7f508bcf8796b5654204a5ab6" id="r_acb6d54f7f508bcf8796b5654204a5ab6"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb6d54f7f508bcf8796b5654204a5ab6">n_positionStdev</a> () const</td></tr>
+<tr class="memdesc:acb6d54f7f508bcf8796b5654204a5ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the standard deviation of the position in local navigation frame coordinates in [m].  <br /></td></tr>
 <tr class="separator:acb6d54f7f508bcf8796b5654204a5ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab9530d76d0352ca3f4370e69a67d9d2" id="r_aab9530d76d0352ca3f4370e69a67d9d2"><td class="memItemLeft" align="right" valign="top">Eigen::Quaterniond&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab9530d76d0352ca3f4370e69a67d9d2">n_Quat_e</a> () const</td></tr>
 <tr class="memdesc:aab9530d76d0352ca3f4370e69a67d9d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Quaternion from Earth-fixed frame to navigation.  <br /></td></tr>
@@ -220,9 +211,8 @@ std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">dynamicDataDescriptors</a> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data.  <br /></td></tr>
 <tr class="separator:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">
-const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>events</b> () const</td></tr>
-<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data. <br /></td></tr>
+<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">events</a> () const</td></tr>
+<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data.  <br /></td></tr>
 <tr class="separator:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a613b6fa87e8d772747843a94c989d835 inherit pub_methods_classNAV_1_1NodeData" id="r_a613b6fa87e8d772747843a94c989d835"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::pair&lt; std::string, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835">getDynamicData</a> () const</td></tr>
 <tr class="memdesc:a613b6fa87e8d772747843a94c989d835 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors and values for the dynamic data.  <br /></td></tr>
@@ -239,43 +229,35 @@ const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" 
 <tr class="memitem:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData" id="r_a7951ae5f522e7aa323a092d5711f3411"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7951ae5f522e7aa323a092d5711f3411">hasTooltip</a> () const</td></tr>
 <tr class="memdesc:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether this data has a tooltip.  <br /></td></tr>
 <tr class="separator:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData" id="r_a4ccba55ef2a96c8abaa7104001338531"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a4ccba55ef2a96c8abaa7104001338531">setDynamicDataAt</a> (const std::string &amp;, double)</td></tr>
 <tr class="memdesc:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value for the descriptor.  <br /></td></tr>
 <tr class="separator:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1">~NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a232b27e6d0645c9b5d4377d3145a3577" id="r_a232b27e6d0645c9b5d4377d3145a3577"><td class="memItemLeft" align="right" valign="top"><a id="a232b27e6d0645c9b5d4377d3145a3577" name="a232b27e6d0645c9b5d4377d3145a3577"></a>
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a232b27e6d0645c9b5d4377d3145a3577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a232b27e6d0645c9b5d4377d3145a3577" id="r_a232b27e6d0645c9b5d4377d3145a3577"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a232b27e6d0645c9b5d4377d3145a3577">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a232b27e6d0645c9b5d4377d3145a3577"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a232b27e6d0645c9b5d4377d3145a3577"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47440b0849c16df0374ed6256b2c12e8" id="r_a47440b0849c16df0374ed6256b2c12e8"><td class="memItemLeft" align="right" valign="top"><a id="a47440b0849c16df0374ed6256b2c12e8" name="a47440b0849c16df0374ed6256b2c12e8"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:a47440b0849c16df0374ed6256b2c12e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:a47440b0849c16df0374ed6256b2c12e8" id="r_a47440b0849c16df0374ed6256b2c12e8"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47440b0849c16df0374ed6256b2c12e8">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:a47440b0849c16df0374ed6256b2c12e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:a47440b0849c16df0374ed6256b2c12e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55feb7f57aaa3305ab458713ef50182b" id="r_a55feb7f57aaa3305ab458713ef50182b"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55feb7f57aaa3305ab458713ef50182b">parentTypes</a> ()</td></tr>
 <tr class="memdesc:a55feb7f57aaa3305ab458713ef50182b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -284,13 +266,11 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="memdesc:a8437c9297534e7b9c0e416b0759fe2b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a8437c9297534e7b9c0e416b0759fe2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a74c5f9a3be5207ef0c62acd233be3664">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ae312b7542fc8dc22c23516b1941ab560">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ab097672ac2646837e26f9be73b7a98b7"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ab097672ac2646837e26f9be73b7a98b7">parentTypes</a> ()</td></tr>
 <tr class="memdesc:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -301,42 +281,154 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a8a8393d0a0b56a897b0b3bd3730b366b" id="r_a8a8393d0a0b56a897b0b3bd3730b366b"><td class="memItemLeft" align="right" valign="top"><a id="a8a8393d0a0b56a897b0b3bd3730b366b" name="a8a8393d0a0b56a897b0b3bd3730b366b"></a>
-std::optional&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_e_covarianceMatrix</b></td></tr>
-<tr class="memdesc:a8a8393d0a0b56a897b0b3bd3730b366b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance matrix in ECEF coordinates. <br /></td></tr>
+<tr class="memitem:a8a8393d0a0b56a897b0b3bd3730b366b" id="r_a8a8393d0a0b56a897b0b3bd3730b366b"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a8393d0a0b56a897b0b3bd3730b366b">_e_covarianceMatrix</a></td></tr>
+<tr class="memdesc:a8a8393d0a0b56a897b0b3bd3730b366b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance matrix in ECEF coordinates.  <br /></td></tr>
 <tr class="separator:a8a8393d0a0b56a897b0b3bd3730b366b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91711e6fadeb32ef9a4daa51855151f5" id="r_a91711e6fadeb32ef9a4daa51855151f5"><td class="memItemLeft" align="right" valign="top"><a id="a91711e6fadeb32ef9a4daa51855151f5" name="a91711e6fadeb32ef9a4daa51855151f5"></a>
-std::optional&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="MotionModel_8hpp.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_n_covarianceMatrix</b></td></tr>
-<tr class="memdesc:a91711e6fadeb32ef9a4daa51855151f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance matrix in local navigation coordinates. <br /></td></tr>
+<tr class="memitem:a91711e6fadeb32ef9a4daa51855151f5" id="r_a91711e6fadeb32ef9a4daa51855151f5"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91711e6fadeb32ef9a4daa51855151f5">_n_covarianceMatrix</a></td></tr>
+<tr class="memdesc:a91711e6fadeb32ef9a4daa51855151f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance matrix in local navigation coordinates.  <br /></td></tr>
 <tr class="separator:a91711e6fadeb32ef9a4daa51855151f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_events</b></td></tr>
-<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events. <br /></td></tr>
+<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7e3d71ea9991be6289c3ccc02d6b5825">_events</a></td></tr>
+<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events.  <br /></td></tr>
 <tr class="separator:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2be7f07f740b2714888c809b71cac459" id="r_a2be7f07f740b2714888c809b71cac459"><td class="memItemLeft" align="right" valign="top"><a id="a2be7f07f740b2714888c809b71cac459" name="a2be7f07f740b2714888c809b71cac459"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_e_position</b></td></tr>
-<tr class="memdesc:a2be7f07f740b2714888c809b71cac459"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in ECEF coordinates [m]. <br /></td></tr>
+<tr class="memitem:a2be7f07f740b2714888c809b71cac459" id="r_a2be7f07f740b2714888c809b71cac459"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2be7f07f740b2714888c809b71cac459">_e_position</a></td></tr>
+<tr class="memdesc:a2be7f07f740b2714888c809b71cac459"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in ECEF coordinates [m].  <br /></td></tr>
 <tr class="separator:a2be7f07f740b2714888c809b71cac459"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae03fb83d254a6fd87a2779db1a5f684e" id="r_ae03fb83d254a6fd87a2779db1a5f684e"><td class="memItemLeft" align="right" valign="top"><a id="ae03fb83d254a6fd87a2779db1a5f684e" name="ae03fb83d254a6fd87a2779db1a5f684e"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_lla_position</b></td></tr>
-<tr class="memdesc:ae03fb83d254a6fd87a2779db1a5f684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in LatLonAlt coordinates [rad, rad, m]. <br /></td></tr>
+<tr class="memitem:ae03fb83d254a6fd87a2779db1a5f684e" id="r_ae03fb83d254a6fd87a2779db1a5f684e"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae03fb83d254a6fd87a2779db1a5f684e">_lla_position</a></td></tr>
+<tr class="memdesc:ae03fb83d254a6fd87a2779db1a5f684e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in LatLonAlt coordinates [rad, rad, m].  <br /></td></tr>
 <tr class="separator:ae03fb83d254a6fd87a2779db1a5f684e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>insTime</b></td></tr>
-<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received. <br /></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td></tr>
+<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received.  <br /></td></tr>
 <tr class="separator:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Position Storage Class. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00031">31</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="af7cffacdd7a708e5b469755a0fd0eca0" name="af7cffacdd7a708e5b469755a0fd0eca0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7cffacdd7a708e5b469755a0fd0eca0">&#9670;&#160;</a></span>altitude()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double &amp; NAV::Pos::altitude </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the altitude (height above ground) in [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00246">246</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a41fbc40488afb9490dd86f6f789258e0" name="a41fbc40488afb9490dd86f6f789258e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41fbc40488afb9490dd86f6f789258e0">&#9670;&#160;</a></span>e_CovarianceMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt; NAV::Pos::e_CovarianceMatrix </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the Covariance matrix in ECEF frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00272">272</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab40818b92e6497dfc38b024179466918" name="ab40818b92e6497dfc38b024179466918"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab40818b92e6497dfc38b024179466918">&#9670;&#160;</a></span>e_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d &amp; NAV::Pos::e_position </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the coordinates in [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00249">249</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad28a8b4c889a9308482a76b67b0057bc" name="ad28a8b4c889a9308482a76b67b0057bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad28a8b4c889a9308482a76b67b0057bc">&#9670;&#160;</a></span>e_positionStdev()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Eigen::Vector3d &gt; NAV::Pos::e_positionStdev </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the standard deviation of the position in ECEF frame coordinates in [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00252">252</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a82b60003dbeabbe4ce59ff9f7f93d577" name="a82b60003dbeabbe4ce59ff9f7f93d577"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a82b60003dbeabbe4ce59ff9f7f93d577">&#9670;&#160;</a></span>e_Quat_n()</h2>
 
@@ -362,6 +454,66 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Returns the Quaternion from navigation to Earth-fixed frame. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Quaternion for the rotation from navigation to earth coordinates </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00220">220</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a232b27e6d0645c9b5d4377d3145a3577" name="a232b27e6d0645c9b5d4377d3145a3577"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a232b27e6d0645c9b5d4377d3145a3577">&#9670;&#160;</a></span>GetStaticDataDescriptors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::vector&lt; std::string &gt; NAV::Pos::GetStaticDataDescriptors </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a vector of data descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00053">53</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a47440b0849c16df0374ed6256b2c12e8" name="a47440b0849c16df0374ed6256b2c12e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47440b0849c16df0374ed6256b2c12e8">&#9670;&#160;</a></span>GetStaticDescriptorCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t NAV::Pos::GetStaticDescriptorCount </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the amount of descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00080">80</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -394,6 +546,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#a73c0a13eeb9216ee894266d587c7c84f">NAV::NodeData</a>.</p>
 
 <p>Reimplemented in <a class="el" href="classNAV_1_1PosVel.html#a35f9cdfb6bf266e07068feb932a2df1d">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#ad2480fb2b2973da92d6be813a2de4874">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#a4eacc1ae431a3a0691a7502129de349c">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a54f855993341e551de2aeaf1f708779f">NAV::SppSolution</a>, and <a class="el" href="classNAV_1_1WiFiPositioningSolution.html#a37096c6398e569c6c08f94a52689a32e">NAV::WiFiPositioningSolution</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00043">43</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -433,6 +587,153 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classNAV_1_1PosVel.html#acc148dc0272cd4b2449ccc0ff6eab9ec">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#a625bb32f1010b73f75696ed147700411">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#af4a7e40f97c0b54e6fdd66212a1fb32a">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a35c4e473d9f5b4a515f6a25af21e467e">NAV::SppSolution</a>, and <a class="el" href="classNAV_1_1WiFiPositioningSolution.html#a625a8b33ff409adb7ea35956315d8075">NAV::WiFiPositioningSolution</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00091">91</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a553493d30cf12827e1e4e833c37f50fa" name="a553493d30cf12827e1e4e833c37f50fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a553493d30cf12827e1e4e833c37f50fa">&#9670;&#160;</a></span>latitude()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double &amp; NAV::Pos::latitude </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the latitude 𝜙 in [rad]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00240">240</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abbe7fbe77f4fd525dcd2b7f923fc24c6" name="abbe7fbe77f4fd525dcd2b7f923fc24c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbe7fbe77f4fd525dcd2b7f923fc24c6">&#9670;&#160;</a></span>lla_position()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d &amp; NAV::Pos::lla_position </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00237">237</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afaf68f4b7c48bdd5eb5b4375c591ec38" name="afaf68f4b7c48bdd5eb5b4375c591ec38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaf68f4b7c48bdd5eb5b4375c591ec38">&#9670;&#160;</a></span>longitude()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double &amp; NAV::Pos::longitude </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the longitude λ in [rad]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00243">243</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5d25382d480bda7e4ff6aaf224ca66df" name="a5d25382d480bda7e4ff6aaf224ca66df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d25382d480bda7e4ff6aaf224ca66df">&#9670;&#160;</a></span>n_CovarianceMatrix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt; <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a> &gt; &gt; &gt; NAV::Pos::n_CovarianceMatrix </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the Covariance matrix in local navigation frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00275">275</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acb6d54f7f508bcf8796b5654204a5ab6" name="acb6d54f7f508bcf8796b5654204a5ab6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb6d54f7f508bcf8796b5654204a5ab6">&#9670;&#160;</a></span>n_positionStdev()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Eigen::Vector3d &gt; NAV::Pos::n_positionStdev </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the standard deviation of the position in local navigation frame coordinates in [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00262">262</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aab9530d76d0352ca3f4370e69a67d9d2" name="aab9530d76d0352ca3f4370e69a67d9d2"></a>
@@ -461,6 +762,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Returns the Quaternion from Earth-fixed frame to navigation. </p>
 <dl class="section return"><dt>Returns</dt><dd>The Quaternion for the rotation from earth navigation coordinates </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00227">227</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a55feb7f57aaa3305ab458713ef50182b" name="a55feb7f57aaa3305ab458713ef50182b"></a>
@@ -488,6 +791,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Returns the parent types of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The parent data types </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00047">47</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -525,6 +830,8 @@ template&lt;typename Derived&gt; </div>
 </dl>
 <dl class="section attention"><dt>Attention</dt><dd>Position has to be set before calling this </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00323">323</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a99993ef71f1978ee758da707f61c7051" name="a99993ef71f1978ee758da707f61c7051"></a>
@@ -561,6 +868,8 @@ template&lt;typename Derived&gt; </div>
 </dl>
 <dl class="section attention"><dt>Attention</dt><dd>Position has to be set before calling this </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00341">341</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ab8c4892f7fea00db518598708e525371" name="ab8c4892f7fea00db518598708e525371"></a>
@@ -596,6 +905,8 @@ template&lt;typename Derived&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00284">284</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="afa7c626f9ff0f465e37d71da274193ad" name="afa7c626f9ff0f465e37d71da274193ad"></a>
@@ -630,6 +941,8 @@ template&lt;typename Derived&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00293">293</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -671,6 +984,8 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00303">303</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aa7217baa696d95111269bb0f790da56c" name="aa7217baa696d95111269bb0f790da56c"></a>
@@ -710,6 +1025,8 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00313">313</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -754,6 +1071,8 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classNAV_1_1PosVel.html#a113ef50fd261ebff0d6d7cb244407b6c">NAV::PosVel</a>, and <a class="el" href="classNAV_1_1PosVelAtt.html#a7a1882cabedef89272fb15071d6e6bb9">NAV::PosVelAtt</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00158">158</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="af94c0b03e09a94ea872b3e97efb6fd64" name="af94c0b03e09a94ea872b3e97efb6fd64"></a>
@@ -784,6 +1103,8 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#ae6329391dfa5640c57c0f043865bc476">NAV::NodeData</a>.</p>
 
 <p>Reimplemented in <a class="el" href="classNAV_1_1PosVel.html#a669583c78a1e11e65689a86fbd69a7a0">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#a271e76a6e61414d5546cdd5ff2a30461">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#aedc9de04a44ba0a5206470c576ccc502">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#ad20a1ff7812676f803baf929acc04cd6">NAV::SppSolution</a>, and <a class="el" href="classNAV_1_1WiFiPositioningSolution.html#ae944b38f9718ed55d0af23688fc4cbaa">NAV::WiFiPositioningSolution</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00083">83</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
 
 </div>
 </div>
@@ -816,6 +1137,8 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classNAV_1_1PosVel.html#a875c06ed9f58f471578148efa3ad5b77">NAV::PosVel</a>, <a class="el" href="classNAV_1_1PosVelAtt.html#a19af55d93503925b2e0a8f8970aeafa2">NAV::PosVelAtt</a>, <a class="el" href="classNAV_1_1RtklibPosObs.html#ab570d7cb85dd799f0a214346a543fa60">NAV::RtklibPosObs</a>, <a class="el" href="classNAV_1_1SppSolution.html#a18e4602da57e77829b9e6284e9dcae19">NAV::SppSolution</a>, and <a class="el" href="classNAV_1_1WiFiPositioningSolution.html#a01f28103825fffc5877a34b5bfeb6e6c">NAV::WiFiPositioningSolution</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00086">86</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a8437c9297534e7b9c0e416b0759fe2b1" name="a8437c9297534e7b9c0e416b0759fe2b1"></a>
@@ -844,6 +1167,113 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
 <p>Returns the type of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The data type </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00036">36</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a8a8393d0a0b56a897b0b3bd3730b366b" name="a8a8393d0a0b56a897b0b3bd3730b366b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a8393d0a0b56a897b0b3bd3730b366b">&#9670;&#160;</a></span>_e_covarianceMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;<a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt;<a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>&gt; &gt; NAV::Pos::_e_covarianceMatrix</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Covariance matrix in ECEF coordinates. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00361">361</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2be7f07f740b2714888c809b71cac459" name="a2be7f07f740b2714888c809b71cac459"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2be7f07f740b2714888c809b71cac459">&#9670;&#160;</a></span>_e_position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::Pos::_e_position</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Position in ECEF coordinates [m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00368">368</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae03fb83d254a6fd87a2779db1a5f684e" name="ae03fb83d254a6fd87a2779db1a5f684e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae03fb83d254a6fd87a2779db1a5f684e">&#9670;&#160;</a></span>_lla_position</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::Pos::_lla_position</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Position in LatLonAlt coordinates [rad, rad, m]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00370">370</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a91711e6fadeb32ef9a4daa51855151f5" name="a91711e6fadeb32ef9a4daa51855151f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91711e6fadeb32ef9a4daa51855151f5">&#9670;&#160;</a></span>_n_covarianceMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;<a class="el" href="namespaceNAV.html#ae6f7689c60d92883c45b54678a902ce4">KeyedMatrixXd</a>&lt;<a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>, <a class="el" href="namespaceNAV_1_1Keys.html#a5388b862fa9d5bd21ea1ae7ecc3790c3">Keys::MotionModelKey</a>&gt; &gt; NAV::Pos::_n_covarianceMatrix</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Covariance matrix in local navigation coordinates. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pos_8hpp_source.html#l00364">364</a> of file <a class="el" href="Pos_8hpp_source.html">Pos.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -854,7 +1284,7 @@ template&lt;typename DerivedP, typename Derived&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Pos.html">Pos</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1Pos.html">Pos</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

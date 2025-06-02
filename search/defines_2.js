@@ -1,4 +1,20 @@
 var searchData=
 [
-  ['project_5fversion_5fstring_0',['PROJECT_VERSION_STRING',['../Version_8hpp.html#a9398fbe6e2dc864a6a442417d3f8774d',1,'Version.hpp']]]
+  ['c_5fblack_0',['C_BLACK',['../Logger_8cpp.html#a22a9543e081938a146a8bce60a84200a',1,'Logger.cpp']]],
+  ['c_5fblue_1',['C_BLUE',['../Logger_8cpp.html#a2e4dd0b4af70107f36c2aa60b1195f01',1,'Logger.cpp']]],
+  ['c_5fcyan_2',['C_CYAN',['../Logger_8cpp.html#a8318e037c99fbf82089b68ba5d603cd0',1,'Logger.cpp']]],
+  ['c_5fdark_5fgray_3',['C_DARK_GRAY',['../Logger_8cpp.html#a191bb1b929ce0fca1c60b0453fbb2cec',1,'Logger.cpp']]],
+  ['c_5fgreen_4',['C_GREEN',['../Logger_8cpp.html#a448d973f9ee30250ec93e600f5d89ed1',1,'Logger.cpp']]],
+  ['c_5flight_5fblue_5',['C_LIGHT_BLUE',['../Logger_8cpp.html#a4fbea35e7668826079099d7e51de1f86',1,'Logger.cpp']]],
+  ['c_5flight_5fcyan_6',['C_LIGHT_CYAN',['../Logger_8cpp.html#a8200a23c68147041ab3fa441e64f5cb2',1,'Logger.cpp']]],
+  ['c_5flight_5fgray_7',['C_LIGHT_GRAY',['../Logger_8cpp.html#af7f7f2860eacf35b8339fac31dfe2154',1,'Logger.cpp']]],
+  ['c_5flight_5fgreen_8',['C_LIGHT_GREEN',['../Logger_8cpp.html#aaea99d50ca73239f90d77b27db37e41f',1,'Logger.cpp']]],
+  ['c_5flight_5fpurple_9',['C_LIGHT_PURPLE',['../Logger_8cpp.html#aaa2e25d04b1a4a5460cfef8111d7f0a5',1,'Logger.cpp']]],
+  ['c_5flight_5fred_10',['C_LIGHT_RED',['../Logger_8cpp.html#ac84a0efe54ceca6e884f0be50737322d',1,'Logger.cpp']]],
+  ['c_5fno_11',['C_NO',['../Logger_8cpp.html#aa916130f46be31317a83e5f834318165',1,'Logger.cpp']]],
+  ['c_5forange_12',['C_ORANGE',['../Logger_8cpp.html#ad0da755001370ae88a57535d806cfef5',1,'Logger.cpp']]],
+  ['c_5fpurple_13',['C_PURPLE',['../Logger_8cpp.html#a35741706cb362e5f88b597c777518b66',1,'Logger.cpp']]],
+  ['c_5fred_14',['C_RED',['../Logger_8cpp.html#a7adb9aaa1eed15caecd92e3837581b53',1,'Logger.cpp']]],
+  ['c_5fwhite_15',['C_WHITE',['../Logger_8cpp.html#a67fead37547ff67ca0a269d712e87822',1,'Logger.cpp']]],
+  ['c_5fyellow_16',['C_YELLOW',['../Logger_8cpp.html#a7749aa942f59b07d1e951066e0aeca73',1,'Logger.cpp']]]
 ];

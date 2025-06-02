@@ -1,6 +1,6 @@
 var GNSS_2Positioning_2SPP_2KalmanFilter_8hpp =
 [
     [ "NAV::SPP::KalmanFilter", "classNAV_1_1SPP_1_1KalmanFilter.html", "classNAV_1_1SPP_1_1KalmanFilter" ],
-    [ "NAV::SPP::from_json", "GNSS_2Positioning_2SPP_2KalmanFilter_8hpp.html#a6bbad0905e611dae7891a38ea404c6e2", null ],
-    [ "NAV::SPP::to_json", "GNSS_2Positioning_2SPP_2KalmanFilter_8hpp.html#a94adac256970e41fa7f8b51cd0ed74dd", null ]
+    [ "NAV::SPP::from_json", "namespaceNAV_1_1SPP.html#a6bbad0905e611dae7891a38ea404c6e2", null ],
+    [ "NAV::SPP::to_json", "namespaceNAV_1_1SPP.html#a94adac256970e41fa7f8b51cd0ed74dd", null ]
 ];

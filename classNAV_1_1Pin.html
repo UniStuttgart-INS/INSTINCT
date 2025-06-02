@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,14 +119,13 @@ $(function(){initNavTree('classNAV_1_1Pin.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-attribs">Data Fields</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="classNAV_1_1Pin-members.html">List of all members</a>  </div>
+<a href="#pri-static-attribs">Static Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::Pin Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -134,7 +134,7 @@ $(function(){initNavTree('classNAV_1_1Pin.html',''); initResizable(true); });
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1Pin_1_1Kind.html">Kind</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pin_1_1Kind.html" title="Kind of the Pin (Input/Output)">Kind</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> (Input/Output)  <a href="structNAV_1_1Pin_1_1Kind.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,71 +159,65 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a0c36bf8b59c9164c4cdd24ca9402fb6e" id="r_a0c36bf8b59c9164c4cdd24ca9402fb6e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c36bf8b59c9164c4cdd24ca9402fb6e">canCreateLink</a> (const <a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, const <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
-<tr class="memdesc:a0c36bf8b59c9164c4cdd24ca9402fb6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if pins can connect.  <br /></td></tr>
-<tr class="separator:a0c36bf8b59c9164c4cdd24ca9402fb6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae06978e64d3cda99b0694ba09303c741" id="r_ae06978e64d3cda99b0694ba09303c741"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae06978e64d3cda99b0694ba09303c741">dataIdentifierHaveCommon</a> (const std::vector&lt; std::string &gt; &amp;a, const std::vector&lt; std::string &gt; &amp;b)</td></tr>
-<tr class="memdesc:ae06978e64d3cda99b0694ba09303c741"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the first list of data identifiers has a common entry with the second.  <br /></td></tr>
-<tr class="separator:ae06978e64d3cda99b0694ba09303c741"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af22fe25073184fcb92451754c4361bba" id="r_af22fe25073184fcb92451754c4361bba"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af22fe25073184fcb92451754c4361bba">canCreateLink</a> (const <a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, const <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
+<tr class="memdesc:af22fe25073184fcb92451754c4361bba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if pins can connect.  <br /></td></tr>
+<tr class="separator:af22fe25073184fcb92451754c4361bba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93925cd0197384dff9d3e2ce3992f979" id="r_a93925cd0197384dff9d3e2ce3992f979"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93925cd0197384dff9d3e2ce3992f979">dataIdentifierHaveCommon</a> (const std::vector&lt; std::string &gt; &amp;a, const std::vector&lt; std::string &gt; &amp;b)</td></tr>
+<tr class="memdesc:a93925cd0197384dff9d3e2ce3992f979"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the first list of data identifiers has a common entry with the second.  <br /></td></tr>
+<tr class="separator:a93925cd0197384dff9d3e2ce3992f979"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a7798827c1ce1047caa6a9e0b7d7df2fe" id="r_a7798827c1ce1047caa6a9e0b7d7df2fe"><td class="memItemLeft" align="right" valign="top"><a id="a7798827c1ce1047caa6a9e0b7d7df2fe" name="a7798827c1ce1047caa6a9e0b7d7df2fe"></a>
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dataIdentifier</b></td></tr>
-<tr class="memdesc:a7798827c1ce1047caa6a9e0b7d7df2fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">One or multiple Data Identifiers (Unique name which is used for data flows) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a7798827c1ce1047caa6a9e0b7d7df2fe" id="r_a7798827c1ce1047caa6a9e0b7d7df2fe"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7798827c1ce1047caa6a9e0b7d7df2fe">dataIdentifier</a></td></tr>
+<tr class="memdesc:a7798827c1ce1047caa6a9e0b7d7df2fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">One or multiple Data Identifiers (Unique name which is used for data flows)  <br /></td></tr>
 <tr class="separator:a7798827c1ce1047caa6a9e0b7d7df2fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7463ec952829a93c672f37b38f9451af" id="r_a7463ec952829a93c672f37b38f9451af"><td class="memItemLeft" align="right" valign="top"><a id="a7463ec952829a93c672f37b38f9451af" name="a7463ec952829a93c672f37b38f9451af"></a>
-ax::NodeEditor::PinId&#160;</td><td class="memItemRight" valign="bottom"><b>id</b></td></tr>
-<tr class="memdesc:a7463ec952829a93c672f37b38f9451af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique Id of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. <br /></td></tr>
+<tr class="memitem:a7463ec952829a93c672f37b38f9451af" id="r_a7463ec952829a93c672f37b38f9451af"><td class="memItemLeft" align="right" valign="top">ax::NodeEditor::PinId&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7463ec952829a93c672f37b38f9451af">id</a></td></tr>
+<tr class="memdesc:a7463ec952829a93c672f37b38f9451af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique Id of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>.  <br /></td></tr>
 <tr class="separator:a7463ec952829a93c672f37b38f9451af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae871e8d9f5c066bbc5c5389af43ec9fb" id="r_ae871e8d9f5c066bbc5c5389af43ec9fb"><td class="memItemLeft" align="right" valign="top"><a id="ae871e8d9f5c066bbc5c5389af43ec9fb" name="ae871e8d9f5c066bbc5c5389af43ec9fb"></a>
-<a class="el" href="structNAV_1_1Pin_1_1Kind.html">Kind</a>&#160;</td><td class="memItemRight" valign="bottom"><b>kind</b></td></tr>
-<tr class="memdesc:ae871e8d9f5c066bbc5c5389af43ec9fb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pin_1_1Kind.html" title="Kind of the Pin (Input/Output)">Kind</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> (Input/Output) <br /></td></tr>
+<tr class="memitem:ae871e8d9f5c066bbc5c5389af43ec9fb" id="r_ae871e8d9f5c066bbc5c5389af43ec9fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Pin_1_1Kind.html">Kind</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae871e8d9f5c066bbc5c5389af43ec9fb">kind</a></td></tr>
+<tr class="memdesc:ae871e8d9f5c066bbc5c5389af43ec9fb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pin_1_1Kind.html" title="Kind of the Pin (Input/Output)">Kind</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> (Input/Output)  <br /></td></tr>
 <tr class="separator:ae871e8d9f5c066bbc5c5389af43ec9fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3712500dcc13207c821726378398aea2" id="r_a3712500dcc13207c821726378398aea2"><td class="memItemLeft" align="right" valign="top"><a id="a3712500dcc13207c821726378398aea2" name="a3712500dcc13207c821726378398aea2"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>name</b></td></tr>
-<tr class="memdesc:a3712500dcc13207c821726378398aea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. <br /></td></tr>
+<tr class="memitem:a3712500dcc13207c821726378398aea2" id="r_a3712500dcc13207c821726378398aea2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3712500dcc13207c821726378398aea2">name</a></td></tr>
+<tr class="memdesc:a3712500dcc13207c821726378398aea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>.  <br /></td></tr>
 <tr class="separator:a3712500dcc13207c821726378398aea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ca56da66c88fa588399fdc7e6a63b80" id="r_a0ca56da66c88fa588399fdc7e6a63b80"><td class="memItemLeft" align="right" valign="top"><a id="a0ca56da66c88fa588399fdc7e6a63b80" name="a0ca56da66c88fa588399fdc7e6a63b80"></a>
-<a class="el" href="classNAV_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>parentNode</b></td></tr>
-<tr class="memdesc:a0ca56da66c88fa588399fdc7e6a63b80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference to the parent node. <br /></td></tr>
+<tr class="memitem:a0ca56da66c88fa588399fdc7e6a63b80" id="r_a0ca56da66c88fa588399fdc7e6a63b80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1Node.html">Node</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ca56da66c88fa588399fdc7e6a63b80">parentNode</a></td></tr>
+<tr class="memdesc:a0ca56da66c88fa588399fdc7e6a63b80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference to the parent node.  <br /></td></tr>
 <tr class="separator:a0ca56da66c88fa588399fdc7e6a63b80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79b38dd0427dd55e6ada031030b4264b" id="r_a79b38dd0427dd55e6ada031030b4264b"><td class="memItemLeft" align="right" valign="top"><a id="a79b38dd0427dd55e6ada031030b4264b" name="a79b38dd0427dd55e6ada031030b4264b"></a>
-<a class="el" href="structNAV_1_1Pin_1_1Type.html">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>type</b></td></tr>
-<tr class="memdesc:a79b38dd0427dd55e6ada031030b4264b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pin_1_1Type.html" title="Type of the data on the Pin.">Type</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. <br /></td></tr>
+<tr class="memitem:a79b38dd0427dd55e6ada031030b4264b" id="r_a79b38dd0427dd55e6ada031030b4264b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Pin_1_1Type.html">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79b38dd0427dd55e6ada031030b4264b">type</a></td></tr>
+<tr class="memdesc:a79b38dd0427dd55e6ada031030b4264b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Pin_1_1Type.html" title="Type of the data on the Pin.">Type</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>.  <br /></td></tr>
 <tr class="separator:a79b38dd0427dd55e6ada031030b4264b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:af5f542978fc86b05b9e6610cf5e5c92d" id="r_af5f542978fc86b05b9e6610cf5e5c92d"><td class="memItemLeft" align="right" valign="top"><a id="af5f542978fc86b05b9e6610cf5e5c92d" name="af5f542978fc86b05b9e6610cf5e5c92d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Pin</b> ()=default</td></tr>
-<tr class="memdesc:af5f542978fc86b05b9e6610cf5e5c92d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:af5f542978fc86b05b9e6610cf5e5c92d" id="r_af5f542978fc86b05b9e6610cf5e5c92d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5f542978fc86b05b9e6610cf5e5c92d">Pin</a> ()=default</td></tr>
+<tr class="memdesc:af5f542978fc86b05b9e6610cf5e5c92d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:af5f542978fc86b05b9e6610cf5e5c92d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
 Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa7f4c8503045c406bde63e2b36373830" id="r_aa7f4c8503045c406bde63e2b36373830"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7f4c8503045c406bde63e2b36373830">createLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin, ax::NodeEditor::LinkId linkId=0)</td></tr>
-<tr class="memdesc:aa7f4c8503045c406bde63e2b36373830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="structNAV_1_1Pin_1_1Link.html" title="Link between two pins.">Link</a> between the two given pins.  <br /></td></tr>
-<tr class="separator:aa7f4c8503045c406bde63e2b36373830"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac79bf605a2dba802169862cee11d953e" id="r_ac79bf605a2dba802169862cee11d953e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac79bf605a2dba802169862cee11d953e">deleteLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
-<tr class="memdesc:ac79bf605a2dba802169862cee11d953e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnects the link.  <br /></td></tr>
-<tr class="separator:ac79bf605a2dba802169862cee11d953e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af562b89c7503be9204a07d7a991a50e3" id="r_af562b89c7503be9204a07d7a991a50e3"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af562b89c7503be9204a07d7a991a50e3">recreateLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
-<tr class="memdesc:af562b89c7503be9204a07d7a991a50e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys and recreates a link from this pin to another.  <br /></td></tr>
-<tr class="separator:af562b89c7503be9204a07d7a991a50e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6b08e9e6f10e27b5f667209ea77577e" id="r_ab6b08e9e6f10e27b5f667209ea77577e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6b08e9e6f10e27b5f667209ea77577e">createLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin, ax::NodeEditor::LinkId linkId=0)</td></tr>
+<tr class="memdesc:ab6b08e9e6f10e27b5f667209ea77577e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="structNAV_1_1Pin_1_1Link.html" title="Link between two pins.">Link</a> between the two given pins.  <br /></td></tr>
+<tr class="separator:ab6b08e9e6f10e27b5f667209ea77577e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10dcb816e1b50711b9b7ac39f90f8e43" id="r_a10dcb816e1b50711b9b7ac39f90f8e43"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10dcb816e1b50711b9b7ac39f90f8e43">deleteLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
+<tr class="memdesc:a10dcb816e1b50711b9b7ac39f90f8e43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnects the link.  <br /></td></tr>
+<tr class="separator:a10dcb816e1b50711b9b7ac39f90f8e43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a144bdd60056ee891d3471efb4f51f12b" id="r_a144bdd60056ee891d3471efb4f51f12b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a144bdd60056ee891d3471efb4f51f12b">recreateLink</a> (<a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;startPin, <a class="el" href="classNAV_1_1InputPin.html">InputPin</a> &amp;endPin)</td></tr>
+<tr class="memdesc:a144bdd60056ee891d3471efb4f51f12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys and recreates a link from this pin to another.  <br /></td></tr>
+<tr class="separator:a144bdd60056ee891d3471efb4f51f12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a64d3ae1b68d6256a74aad4826cdb1fa0" id="r_a64d3ae1b68d6256a74aad4826cdb1fa0"><td class="memItemLeft" align="right" valign="top"><a id="a64d3ae1b68d6256a74aad4826cdb1fa0" name="a64d3ae1b68d6256a74aad4826cdb1fa0"></a>
-static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_PinIconSize</b></td></tr>
-<tr class="memdesc:a64d3ae1b68d6256a74aad4826cdb1fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> Icons in [px]. <br /></td></tr>
+<tr class="memitem:a64d3ae1b68d6256a74aad4826cdb1fa0" id="r_a64d3ae1b68d6256a74aad4826cdb1fa0"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64d3ae1b68d6256a74aad4826cdb1fa0">m_PinIconSize</a></td></tr>
+<tr class="memdesc:a64d3ae1b68d6256a74aad4826cdb1fa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> Icons in [px].  <br /></td></tr>
 <tr class="separator:a64d3ae1b68d6256a74aad4826cdb1fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Pins in the GUI for information exchange. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00042">42</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="adcb4dabcb050a833890eb536759205f9" name="adcb4dabcb050a833890eb536759205f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcb4dabcb050a833890eb536759205f9">&#9670;&#160;</a></span>Pin()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adcb4dabcb050a833890eb536759205f9">&#9670;&#160;</a></span>Pin() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,11 +270,12 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00272">272</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0c36bf8b59c9164c4cdd24ca9402fb6e" name="a0c36bf8b59c9164c4cdd24ca9402fb6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c36bf8b59c9164c4cdd24ca9402fb6e">&#9670;&#160;</a></span>canCreateLink()</h2>
+<a id="af5f542978fc86b05b9e6610cf5e5c92d" name="af5f542978fc86b05b9e6610cf5e5c92d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5f542978fc86b05b9e6610cf5e5c92d">&#9670;&#160;</a></span>Pin() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -289,7 +284,35 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::Pin::canCreateLink </td>
+          <td class="memname">NAV::Pin::Pin </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel protected">protected</span><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="af22fe25073184fcb92451754c4361bba" name="af22fe25073184fcb92451754c4361bba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af22fe25073184fcb92451754c4361bba">&#9670;&#160;</a></span>canCreateLink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::Pin::canCreateLink </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>startPin</em></span>, </td>
         </tr>
@@ -316,10 +339,12 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the pins can create a link </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00029">29</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
-<a id="aa7f4c8503045c406bde63e2b36373830" name="aa7f4c8503045c406bde63e2b36373830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7f4c8503045c406bde63e2b36373830">&#9670;&#160;</a></span>createLink()</h2>
+<a id="ab6b08e9e6f10e27b5f667209ea77577e" name="ab6b08e9e6f10e27b5f667209ea77577e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6b08e9e6f10e27b5f667209ea77577e">&#9670;&#160;</a></span>createLink()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -328,7 +353,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::Pin::createLink </td>
+          <td class="memname">bool NAV::Pin::createLink </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>startPin</em></span>, </td>
         </tr>
@@ -361,10 +386,12 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the link could be created </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00143">143</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
-<a id="ae06978e64d3cda99b0694ba09303c741" name="ae06978e64d3cda99b0694ba09303c741"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae06978e64d3cda99b0694ba09303c741">&#9670;&#160;</a></span>dataIdentifierHaveCommon()</h2>
+<a id="a93925cd0197384dff9d3e2ce3992f979" name="a93925cd0197384dff9d3e2ce3992f979"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93925cd0197384dff9d3e2ce3992f979">&#9670;&#160;</a></span>dataIdentifierHaveCommon()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,7 +400,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::Pin::dataIdentifierHaveCommon </td>
+          <td class="memname">bool NAV::Pin::dataIdentifierHaveCommon </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
         </tr>
@@ -400,10 +427,12 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if they have a common entry </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00059">59</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
-<a id="ac79bf605a2dba802169862cee11d953e" name="ac79bf605a2dba802169862cee11d953e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac79bf605a2dba802169862cee11d953e">&#9670;&#160;</a></span>deleteLink()</h2>
+<a id="a10dcb816e1b50711b9b7ac39f90f8e43" name="a10dcb816e1b50711b9b7ac39f90f8e43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10dcb816e1b50711b9b7ac39f90f8e43">&#9670;&#160;</a></span>deleteLink()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -412,7 +441,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void NAV::Pin::deleteLink </td>
+          <td class="memname">void NAV::Pin::deleteLink </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>startPin</em></span>, </td>
         </tr>
@@ -437,6 +466,8 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00206">206</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
 
 </div>
 </div>
@@ -468,6 +499,8 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00098">98</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
 <a id="af0cf15a1d02ad4d2ee2bc5f8b3768d4d" name="af0cf15a1d02ad4d2ee2bc5f8b3768d4d"></a>
@@ -496,10 +529,12 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
 <p>Get the Icon Color object. </p>
 <dl class="section return"><dt>Returns</dt><dd>Color struct </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00065">65</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
-<a id="af562b89c7503be9204a07d7a991a50e3" name="af562b89c7503be9204a07d7a991a50e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af562b89c7503be9204a07d7a991a50e3">&#9670;&#160;</a></span>recreateLink()</h2>
+<a id="a144bdd60056ee891d3471efb4f51f12b" name="a144bdd60056ee891d3471efb4f51f12b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a144bdd60056ee891d3471efb4f51f12b">&#9670;&#160;</a></span>recreateLink()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -508,7 +543,7 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::Pin::recreateLink </td>
+          <td class="memname">bool NAV::Pin::recreateLink </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classNAV_1_1OutputPin.html">OutputPin</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>startPin</em></span>, </td>
         </tr>
@@ -535,17 +570,155 @@ static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>m_Pin
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the link could be created </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Pin_8cpp_source.html#l00196">196</a> of file <a class="el" href="Pin_8cpp_source.html">Pin.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a7798827c1ce1047caa6a9e0b7d7df2fe" name="a7798827c1ce1047caa6a9e0b7d7df2fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7798827c1ce1047caa6a9e0b7d7df2fe">&#9670;&#160;</a></span>dataIdentifier</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; NAV::Pin::dataIdentifier</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One or multiple Data Identifiers (Unique name which is used for data flows) </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00305">305</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7463ec952829a93c672f37b38f9451af" name="a7463ec952829a93c672f37b38f9451af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7463ec952829a93c672f37b38f9451af">&#9670;&#160;</a></span>id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ax::NodeEditor::PinId NAV::Pin::id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Unique Id of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00297">297</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae871e8d9f5c066bbc5c5389af43ec9fb" name="ae871e8d9f5c066bbc5c5389af43ec9fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae871e8d9f5c066bbc5c5389af43ec9fb">&#9670;&#160;</a></span>kind</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1Pin_1_1Kind.html">Kind</a> NAV::Pin::kind</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Pin_1_1Kind.html" title="Kind of the Pin (Input/Output)">Kind</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> (Input/Output) </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00303">303</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a64d3ae1b68d6256a74aad4826cdb1fa0" name="a64d3ae1b68d6256a74aad4826cdb1fa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64d3ae1b68d6256a74aad4826cdb1fa0">&#9670;&#160;</a></span>m_PinIconSize</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int NAV::Pin::m_PinIconSize</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Size of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a> Icons in [px]. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00333">333</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3712500dcc13207c821726378398aea2" name="a3712500dcc13207c821726378398aea2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3712500dcc13207c821726378398aea2">&#9670;&#160;</a></span>name</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::Pin::name</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00299">299</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0ca56da66c88fa588399fdc7e6a63b80" name="a0ca56da66c88fa588399fdc7e6a63b80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ca56da66c88fa588399fdc7e6a63b80">&#9670;&#160;</a></span>parentNode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1Node.html">Node</a>* NAV::Pin::parentNode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reference to the parent node. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00307">307</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a79b38dd0427dd55e6ada031030b4264b" name="a79b38dd0427dd55e6ada031030b4264b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79b38dd0427dd55e6ada031030b4264b">&#9670;&#160;</a></span>type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1Pin_1_1Type.html">Type</a> NAV::Pin::type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Pin_1_1Type.html" title="Type of the data on the Pin.">Type</a> of the <a class="el" href="classNAV_1_1Pin.html" title="Pins in the GUI for information exchange.">Pin</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Pin_8hpp_source.html#l00301">301</a> of file <a class="el" href="Pin_8hpp_source.html">Pin.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/internal/Node/<a class="el" href="Pin_8hpp_source.html">Pin.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/internal/Node/<a class="el" href="Pin_8cpp_source.html">Pin.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Pin.html">Pin</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1Pin.html">Pin</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,24 +128,36 @@ $(function(){initNavTree('TouchTracker_8hpp_source.html',''); initResizable(true
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file TouchTracker.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Touch Event Tracker</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2020-12-14</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;imgui_node_editor.h&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>NAV::gui</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="TouchTracker_8hpp.html#acd2d14e43736a992c54ea5063d153f5b">   22</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="TouchTracker_8hpp.html#acd2d14e43736a992c54ea5063d153f5b">TouchNode</a>(ax::NodeEditor::NodeId <span class="keywordtype">id</span>);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="TouchTracker_8hpp.html#aaecac69025eb7d36acef7b4e80e66137">   27</a></span><span class="keywordtype">float</span> <a class="code hl_function" href="TouchTracker_8hpp.html#aaecac69025eb7d36acef7b4e80e66137">GetTouchProgress</a>(ax::NodeEditor::NodeId <span class="keywordtype">id</span>);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="TouchTracker_8hpp.html#adc53e3863eba0a02bdde65d94e5ea8cd">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="TouchTracker_8hpp.html#adc53e3863eba0a02bdde65d94e5ea8cd">UpdateTouch</a>(<span class="keywordtype">float</span> deltaTime);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui.html">NAV::gui</a></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">/// @brief  Trigger a touch event on the specified node</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// @param[in] id Id of the node to trigger the event on</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui.html#acd2d14e43736a992c54ea5063d153f5b">TouchNode</a>(ax::NodeEditor::NodeId <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"></span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @brief Get the Touch Progress for the specified node</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] id Id of the Node to check</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @return The Touch progress towards the touch time</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keywordtype">float</span> <a class="code hl_function" href="namespaceNAV_1_1gui.html#aaecac69025eb7d36acef7b4e80e66137">GetTouchProgress</a>(ax::NodeEditor::NodeId <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"></span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">/// @brief Updates the touch events for all nodes</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">/// @param[in] deltaTime Time elapsed since last frame, in [seconds]</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui.html#adc53e3863eba0a02bdde65d94e5ea8cd">UpdateTouch</a>(<span class="keywordtype">float</span> deltaTime);</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <span class="comment">// namespace NAV::gui</span></div>
-<div class="ttc" id="aTouchTracker_8hpp_html_aaecac69025eb7d36acef7b4e80e66137"><div class="ttname"><a href="TouchTracker_8hpp.html#aaecac69025eb7d36acef7b4e80e66137">NAV::gui::GetTouchProgress</a></div><div class="ttdeci">float GetTouchProgress(ax::NodeEditor::NodeId id)</div><div class="ttdoc">Get the Touch Progress for the specified node.</div></div>
-<div class="ttc" id="aTouchTracker_8hpp_html_acd2d14e43736a992c54ea5063d153f5b"><div class="ttname"><a href="TouchTracker_8hpp.html#acd2d14e43736a992c54ea5063d153f5b">NAV::gui::TouchNode</a></div><div class="ttdeci">void TouchNode(ax::NodeEditor::NodeId id)</div><div class="ttdoc">Trigger a touch event on the specified node.</div></div>
-<div class="ttc" id="aTouchTracker_8hpp_html_adc53e3863eba0a02bdde65d94e5ea8cd"><div class="ttname"><a href="TouchTracker_8hpp.html#adc53e3863eba0a02bdde65d94e5ea8cd">NAV::gui::UpdateTouch</a></div><div class="ttdeci">void UpdateTouch(float deltaTime)</div><div class="ttdoc">Updates the touch events for all nodes.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_html"><div class="ttname"><a href="namespaceNAV_1_1gui.html">NAV::gui</a></div><div class="ttdef"><b>Definition</b> <a href="GlobalActions_8cpp_source.html#l00033">GlobalActions.cpp:34</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_html_aaecac69025eb7d36acef7b4e80e66137"><div class="ttname"><a href="namespaceNAV_1_1gui.html#aaecac69025eb7d36acef7b4e80e66137">NAV::gui::GetTouchProgress</a></div><div class="ttdeci">float GetTouchProgress(ax::NodeEditor::NodeId id)</div><div class="ttdoc">Get the Touch Progress for the specified node.</div><div class="ttdef"><b>Definition</b> <a href="TouchTracker_8cpp_source.html#l00047">TouchTracker.cpp:47</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_html_acd2d14e43736a992c54ea5063d153f5b"><div class="ttname"><a href="namespaceNAV_1_1gui.html#acd2d14e43736a992c54ea5063d153f5b">NAV::gui::TouchNode</a></div><div class="ttdeci">void TouchNode(ax::NodeEditor::NodeId id)</div><div class="ttdoc">Trigger a touch event on the specified node.</div><div class="ttdef"><b>Definition</b> <a href="TouchTracker_8cpp_source.html#l00039">TouchTracker.cpp:39</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_html_adc53e3863eba0a02bdde65d94e5ea8cd"><div class="ttname"><a href="namespaceNAV_1_1gui.html#adc53e3863eba0a02bdde65d94e5ea8cd">NAV::gui::UpdateTouch</a></div><div class="ttdeci">void UpdateTouch(float deltaTime)</div><div class="ttdoc">Updates the touch events for all nodes.</div><div class="ttdef"><b>Definition</b> <a href="TouchTracker_8cpp_source.html#l00060">TouchTracker.cpp:60</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

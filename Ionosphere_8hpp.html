@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Ionosphere_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Ionosphere.hpp File Reference</div></div>
@@ -129,31 +131,36 @@ $(function(){initNavTree('Ionosphere_8hpp.html',''); initResizable(true); });
 
 <p><a href="Ionosphere_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a3c6a3f17c27803840eecce1fb73f21e2" id="r_a3c6a3f17c27803840eecce1fb73f21e2"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">NAV::IonosphereModel</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754">None</a>
+<tr class="memitem:a3c6a3f17c27803840eecce1fb73f21e2" id="r_a3c6a3f17c27803840eecce1fb73f21e2"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2">NAV::IonosphereModel</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754">NAV::None</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2acb81b67f958f1adc8f5840eda45f0778">Klobuchar</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2acb81b67f958f1adc8f5840eda45f0778">NAV::Klobuchar</a>
 , <br />
-&#160;&#160;<a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>
+&#160;&#160;<a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">NAV::COUNT</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a3c6a3f17c27803840eecce1fb73f21e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Ionosphere Models.  <a href="#a3c6a3f17c27803840eecce1fb73f21e2">More...</a><br /></td></tr>
+<tr class="memdesc:a3c6a3f17c27803840eecce1fb73f21e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Ionosphere Models.  <a href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2">More...</a><br /></td></tr>
 <tr class="separator:a3c6a3f17c27803840eecce1fb73f21e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ad29e4fa72143038b3e011e352e7c2de8" id="r_ad29e4fa72143038b3e011e352e7c2de8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad29e4fa72143038b3e011e352e7c2de8">NAV::calcIonosphericDelay</a> (double tow, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t freqNum, const Eigen::Vector3d &amp;lla_pos, double elevation, double azimuth, <a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> ionosphereModel=<a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754">IonosphereModel::None</a>, const <a class="el" href="classNAV_1_1IonosphericCorrections.html">IonosphericCorrections</a> *corrections=nullptr)</td></tr>
+<tr class="memitem:ad29e4fa72143038b3e011e352e7c2de8" id="r_ad29e4fa72143038b3e011e352e7c2de8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ad29e4fa72143038b3e011e352e7c2de8">NAV::calcIonosphericDelay</a> (double tow, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t freqNum, const Eigen::Vector3d &amp;lla_pos, double elevation, double azimuth, <a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> ionosphereModel=<a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754">IonosphereModel::None</a>, const <a class="el" href="classNAV_1_1IonosphericCorrections.html">IonosphericCorrections</a> *corrections=nullptr)</td></tr>
 <tr class="memdesc:ad29e4fa72143038b3e011e352e7c2de8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ionospheric delay.  <br /></td></tr>
 <tr class="separator:ad29e4fa72143038b3e011e352e7c2de8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71df6b973550e202c08108ccecf3da9d" id="r_a71df6b973550e202c08108ccecf3da9d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71df6b973550e202c08108ccecf3da9d">NAV::ComboIonosphereModel</a> (const char *label, <a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> &amp;ionosphereModel)</td></tr>
+<tr class="memitem:a71df6b973550e202c08108ccecf3da9d" id="r_a71df6b973550e202c08108ccecf3da9d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a71df6b973550e202c08108ccecf3da9d">NAV::ComboIonosphereModel</a> (const char *label, <a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> &amp;ionosphereModel)</td></tr>
 <tr class="memdesc:a71df6b973550e202c08108ccecf3da9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a ComboBox to select the ionosphere model.  <br /></td></tr>
 <tr class="separator:a71df6b973550e202c08108ccecf3da9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50b554966b9fade0a5ad03fccd89c85c" id="r_a50b554966b9fade0a5ad03fccd89c85c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50b554966b9fade0a5ad03fccd89c85c">NAV::ionoErrorVar</a> (double dpsr_I, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
+<tr class="memitem:a50b554966b9fade0a5ad03fccd89c85c" id="r_a50b554966b9fade0a5ad03fccd89c85c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a50b554966b9fade0a5ad03fccd89c85c">NAV::ionoErrorVar</a> (double dpsr_I, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
 <tr class="memdesc:a50b554966b9fade0a5ad03fccd89c85c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ionospheric error variance.  <br /></td></tr>
 <tr class="separator:a50b554966b9fade0a5ad03fccd89c85c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2975ef6f6f8424374851aea84c19225" id="r_ae2975ef6f6f8424374851aea84c19225"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2975ef6f6f8424374851aea84c19225">NAV::to_string</a> (<a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> ionosphereModel)</td></tr>
+<tr class="memitem:ae2975ef6f6f8424374851aea84c19225" id="r_ae2975ef6f6f8424374851aea84c19225"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ae2975ef6f6f8424374851aea84c19225">NAV::to_string</a> (<a class="el" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> ionosphereModel)</td></tr>
 <tr class="memdesc:ae2975ef6f6f8424374851aea84c19225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts the enum to a string.  <br /></td></tr>
 <tr class="separator:ae2975ef6f6f8424374851aea84c19225"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -161,201 +168,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Ionosphere Models. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-05-26 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a3c6a3f17c27803840eecce1fb73f21e2" name="a3c6a3f17c27803840eecce1fb73f21e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c6a3f17c27803840eecce1fb73f21e2">&#9670;&#160;</a></span>IonosphereModel</h2>
 
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum class <a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">NAV::IonosphereModel</a> : uint8_t</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Available Ionosphere Models. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754" name="a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754"></a>None&#160;</td><td class="fielddoc"><p>Ionosphere model turned off. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3c6a3f17c27803840eecce1fb73f21e2acb81b67f958f1adc8f5840eda45f0778" name="a3c6a3f17c27803840eecce1fb73f21e2acb81b67f958f1adc8f5840eda45f0778"></a>Klobuchar&#160;</td><td class="fielddoc"><p>Klobuchar model (GPS), also called Broadcast sometimes. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d" name="a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d"></a>COUNT&#160;</td><td class="fielddoc"><p>Amount of items in the enum. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ad29e4fa72143038b3e011e352e7c2de8" name="ad29e4fa72143038b3e011e352e7c2de8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad29e4fa72143038b3e011e352e7c2de8">&#9670;&#160;</a></span>calcIonosphericDelay()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcIonosphericDelay </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>tow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>freqNum</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_pos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>elevation</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>azimuth</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a></td>          <td class="paramname"><span class="paramname"><em>ionosphereModel</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2a6adf97f83acf6453d4a6a4b1070f3754">IonosphereModel::None</a></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1IonosphericCorrections.html">IonosphericCorrections</a> *</td>          <td class="paramname"><span class="paramname"><em>corrections</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the ionospheric delay. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">tow</td><td>GPS time of week in [s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency of the signal </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freqNum</td><td>Frequency number. Only used for GLONASS G1 and G2 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_pos</td><td>[𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">elevation</td><td>Angle between the user and satellite [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">azimuth</td><td>Angle between the user and satellite, measured clockwise positive from the true North [rad] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ionosphereModel</td><td>Ionosphere model to use </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">corrections</td><td>Ionospheric correction parameters </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Ionospheric time delay in [m] </dd></dl>
-
-</div>
-</div>
-<a id="a71df6b973550e202c08108ccecf3da9d" name="a71df6b973550e202c08108ccecf3da9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71df6b973550e202c08108ccecf3da9d">&#9670;&#160;</a></span>ComboIonosphereModel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::ComboIonosphereModel </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>ionosphereModel</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows a ComboBox to select the ionosphere model. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show beside the combo box. This has to be a unique id for ImGui. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">ionosphereModel</td><td>Reference to the ionosphere model to select </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a50b554966b9fade0a5ad03fccd89c85c" name="a50b554966b9fade0a5ad03fccd89c85c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50b554966b9fade0a5ad03fccd89c85c">&#9670;&#160;</a></span>ionoErrorVar()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::ionoErrorVar </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dpsr_I</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>num</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the ionospheric error variance. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">dpsr_I</td><td>Ionosphere propagation error [m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Frequency number. Only used for GLONASS G1 and G2 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Variance of the error [m^2] </dd></dl>
-
-</div>
-</div>
-<a id="ae2975ef6f6f8424374851aea84c19225" name="ae2975ef6f6f8424374851aea84c19225"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2975ef6f6f8424374851aea84c19225">&#9670;&#160;</a></span>to_string()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const char * NAV::to_string </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="#a3c6a3f17c27803840eecce1fb73f21e2">IonosphereModel</a></td>          <td class="paramname"><span class="paramname"><em>ionosphereModel</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Converts the enum to a string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ionosphereModel</td><td>Enum value to convert into text </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Ionosphere_8hpp_source.html">Ionosphere.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

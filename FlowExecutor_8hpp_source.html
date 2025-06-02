@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,37 +128,49 @@ $(function(){initNavTree('FlowExecutor_8hpp_source.html',''); initResizable(true
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file FlowExecutor.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Flow Executor Thread</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2021-01-02</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">class </span><a class="code hl_class" href="classNAV_1_1Node.html">Node</a>;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>FlowExecutor</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1FlowExecutor.html">FlowExecutor</a></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="FlowExecutor_8hpp.html#a11abe1f9f87da360d8b75dc40bdb83b9">   25</a></span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#a11abe1f9f87da360d8b75dc40bdb83b9">isRunning</a>() noexcept;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="FlowExecutor_8hpp.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">   28</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">start</a>();</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="FlowExecutor_8hpp.html#ac0638d4f5a6dcc410e29ab8c59c123b9">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>();</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="FlowExecutor_8hpp.html#ab80f0906dc77cb55e7383e27c83402ca">   34</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#ab80f0906dc77cb55e7383e27c83402ca">waitForFinish</a>();</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="FlowExecutor_8hpp.html#a1da0d76b8c9cebde9e739e50cefd376e">   38</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#a1da0d76b8c9cebde9e739e50cefd376e">deregisterNode</a>(const <a class="code hl_class" href="classNAV_1_1Node.html">Node</a>* node);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"></span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @brief Checks if the thread is running</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>[[nodiscard]] <span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">isRunning</a>() noexcept;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment"></span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @brief Starts the Thread</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">start</a>();</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"></span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">/// @brief Stops the Thread</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>();</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment"></span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">/// @brief Waits for a thread to finish its execution</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">waitForFinish</a>();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment"></span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">/// @brief Called by nodes when they finished with sending data</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">/// @param[in] node The node to deregister</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">deregisterNode</a>(const Node* node);</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <span class="comment">// namespace FlowExecutor</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="FlowExecutor_8hpp.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_a1da0d76b8c9cebde9e739e50cefd376e"><div class="ttname"><a href="FlowExecutor_8hpp.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a></div><div class="ttdeci">void deregisterNode(const Node *node)</div><div class="ttdoc">Called by nodes when they finished with sending data.</div></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="FlowExecutor_8hpp.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_ab80f0906dc77cb55e7383e27c83402ca"><div class="ttname"><a href="FlowExecutor_8hpp.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a></div><div class="ttdeci">void waitForFinish()</div><div class="ttdoc">Waits for a thread to finish its execution.</div></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="FlowExecutor_8hpp.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:92</div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00091">Node.hpp:92</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html">NAV::FlowExecutor</a></div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00049">FlowExecutor.cpp:50</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a11abe1f9f87da360d8b75dc40bdb83b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a11abe1f9f87da360d8b75dc40bdb83b9">NAV::FlowExecutor::isRunning</a></div><div class="ttdeci">bool isRunning() noexcept</div><div class="ttdoc">Checks if the thread is running.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00085">FlowExecutor.cpp:85</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a1da0d76b8c9cebde9e739e50cefd376e"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a1da0d76b8c9cebde9e739e50cefd376e">NAV::FlowExecutor::deregisterNode</a></div><div class="ttdeci">void deregisterNode(const Node *node)</div><div class="ttdoc">Called by nodes when they finished with sending data.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00141">FlowExecutor.cpp:141</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00091">FlowExecutor.cpp:91</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ab80f0906dc77cb55e7383e27c83402ca"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ab80f0906dc77cb55e7383e27c83402ca">NAV::FlowExecutor::waitForFinish</a></div><div class="ttdeci">void waitForFinish()</div><div class="ttdoc">Waits for a thread to finish its execution.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00126">FlowExecutor.cpp:126</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00105">FlowExecutor.cpp:105</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

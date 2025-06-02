@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,8 +120,7 @@ $(function(){initNavTree('structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html',''); i
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::Plot::PlotInfo::PlotItem Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -133,9 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a82836294e156473c67f9461b2e223426" id="r_a82836294e156473c67f9461b2e223426"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82836294e156473c67f9461b2e223426">operator==</a> (const <a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html">PlotItem</a> &amp;rhs) const</td></tr>
 <tr class="memdesc:a82836294e156473c67f9461b2e223426"><td class="mdescLeft">&#160;</td><td class="mdescRight">Equal comparison operator (needed to search the vector with std::find)  <br /></td></tr>
 <tr class="separator:a82836294e156473c67f9461b2e223426"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a108ddb73d8854c30c3da841fda2937d3" id="r_a108ddb73d8854c30c3da841fda2937d3"><td class="memItemLeft" align="right" valign="top"><a id="a108ddb73d8854c30c3da841fda2937d3" name="a108ddb73d8854c30c3da841fda2937d3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PlotItem</b> ()=default</td></tr>
-<tr class="memdesc:a108ddb73d8854c30c3da841fda2937d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor (needed to make serialization with json working) <br /></td></tr>
+<tr class="memitem:a108ddb73d8854c30c3da841fda2937d3" id="r_a108ddb73d8854c30c3da841fda2937d3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a108ddb73d8854c30c3da841fda2937d3">PlotItem</a> ()=default</td></tr>
+<tr class="memdesc:a108ddb73d8854c30c3da841fda2937d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor (needed to make serialization with json working)  <br /></td></tr>
 <tr class="separator:a108ddb73d8854c30c3da841fda2937d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac36759b9798c7cc37b5e5b632acdaecc" id="r_ac36759b9798c7cc37b5e5b632acdaecc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac36759b9798c7cc37b5e5b632acdaecc">PlotItem</a> (size_t <a class="el" href="#a15246c49e6e8e756f78ff058aea617ed">pinIndex</a>, size_t <a class="el" href="#a77c4240a7a612b5aa5e893c828c0e442">dataIndex</a>, std::string <a class="el" href="#a0c43f5050bf7a1abf9095ccc2ad928b0">displayName</a>)</td></tr>
 <tr class="memdesc:ac36759b9798c7cc37b5e5b632acdaecc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
@@ -145,59 +144,77 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a55f79aa1ed99a8263ca6b6af2cdfb14b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:adeecc2f68a5c0a007770df7a1b567982" id="r_adeecc2f68a5c0a007770df7a1b567982"><td class="memItemLeft" align="right" valign="top"><a id="adeecc2f68a5c0a007770df7a1b567982" name="adeecc2f68a5c0a007770df7a1b567982"></a>
-ImAxis&#160;</td><td class="memItemRight" valign="bottom"><b>axis</b></td></tr>
-<tr class="memdesc:adeecc2f68a5c0a007770df7a1b567982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Axis to plot the data on (Y1, Y2, Y3) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:adeecc2f68a5c0a007770df7a1b567982" id="r_adeecc2f68a5c0a007770df7a1b567982"><td class="memItemLeft" align="right" valign="top">ImAxis&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adeecc2f68a5c0a007770df7a1b567982">axis</a></td></tr>
+<tr class="memdesc:adeecc2f68a5c0a007770df7a1b567982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Axis to plot the data on (Y1, Y2, Y3)  <br /></td></tr>
 <tr class="separator:adeecc2f68a5c0a007770df7a1b567982"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65ae3c136afb9af368fda0602d209b98" id="r_a65ae3c136afb9af368fda0602d209b98"><td class="memItemLeft" align="right" valign="top"><a id="a65ae3c136afb9af368fda0602d209b98" name="a65ae3c136afb9af368fda0602d209b98"></a>
-<a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; ImU32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>colormapMaskColors</b></td></tr>
-<tr class="memdesc:a65ae3c136afb9af368fda0602d209b98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for the colormap mask. <br /></td></tr>
+<tr class="memitem:a65ae3c136afb9af368fda0602d209b98" id="r_a65ae3c136afb9af368fda0602d209b98"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; ImU32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a65ae3c136afb9af368fda0602d209b98">colormapMaskColors</a></td></tr>
+<tr class="memdesc:a65ae3c136afb9af368fda0602d209b98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for the colormap mask.  <br /></td></tr>
 <tr class="separator:a65ae3c136afb9af368fda0602d209b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cc8165c9b897eca954c534c2fe3b378" id="r_a6cc8165c9b897eca954c534c2fe3b378"><td class="memItemLeft" align="right" valign="top"><a id="a6cc8165c9b897eca954c534c2fe3b378" name="a6cc8165c9b897eca954c534c2fe3b378"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>colormapMaskVersion</b></td></tr>
-<tr class="memdesc:a6cc8165c9b897eca954c534c2fe3b378"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap) <br /></td></tr>
+<tr class="memitem:a6cc8165c9b897eca954c534c2fe3b378" id="r_a6cc8165c9b897eca954c534c2fe3b378"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cc8165c9b897eca954c534c2fe3b378">colormapMaskVersion</a></td></tr>
+<tr class="memdesc:a6cc8165c9b897eca954c534c2fe3b378"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap)  <br /></td></tr>
 <tr class="separator:a6cc8165c9b897eca954c534c2fe3b378"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77c4240a7a612b5aa5e893c828c0e442" id="r_a77c4240a7a612b5aa5e893c828c0e442"><td class="memItemLeft" align="right" valign="top"><a id="a77c4240a7a612b5aa5e893c828c0e442" name="a77c4240a7a612b5aa5e893c828c0e442"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>dataIndex</b></td></tr>
-<tr class="memdesc:a77c4240a7a612b5aa5e893c828c0e442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the data on the pin. <br /></td></tr>
+<tr class="memitem:a77c4240a7a612b5aa5e893c828c0e442" id="r_a77c4240a7a612b5aa5e893c828c0e442"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77c4240a7a612b5aa5e893c828c0e442">dataIndex</a></td></tr>
+<tr class="memdesc:a77c4240a7a612b5aa5e893c828c0e442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the data on the pin.  <br /></td></tr>
 <tr class="separator:a77c4240a7a612b5aa5e893c828c0e442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c43f5050bf7a1abf9095ccc2ad928b0" id="r_a0c43f5050bf7a1abf9095ccc2ad928b0"><td class="memItemLeft" align="right" valign="top"><a id="a0c43f5050bf7a1abf9095ccc2ad928b0" name="a0c43f5050bf7a1abf9095ccc2ad928b0"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>displayName</b></td></tr>
-<tr class="memdesc:a0c43f5050bf7a1abf9095ccc2ad928b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display name of the data (not changing and unique) <br /></td></tr>
+<tr class="memitem:a0c43f5050bf7a1abf9095ccc2ad928b0" id="r_a0c43f5050bf7a1abf9095ccc2ad928b0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c43f5050bf7a1abf9095ccc2ad928b0">displayName</a></td></tr>
+<tr class="memdesc:a0c43f5050bf7a1abf9095ccc2ad928b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Display name of the data (not changing and unique)  <br /></td></tr>
 <tr class="separator:a0c43f5050bf7a1abf9095ccc2ad928b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e0aee145cf7749e247fd2707e207cbc" id="r_a9e0aee145cf7749e247fd2707e207cbc"><td class="memItemLeft" align="right" valign="top"><a id="a9e0aee145cf7749e247fd2707e207cbc" name="a9e0aee145cf7749e247fd2707e207cbc"></a>
-std::array&lt; <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt;, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>errorBoundsData</b></td></tr>
-<tr class="memdesc:a9e0aee145cf7749e247fd2707e207cbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error bounds lower and upper data. <br /></td></tr>
+<tr class="memitem:a9e0aee145cf7749e247fd2707e207cbc" id="r_a9e0aee145cf7749e247fd2707e207cbc"><td class="memItemLeft" align="right" valign="top">std::array&lt; <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt;, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e0aee145cf7749e247fd2707e207cbc">errorBoundsData</a></td></tr>
+<tr class="memdesc:a9e0aee145cf7749e247fd2707e207cbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error bounds lower and upper data.  <br /></td></tr>
 <tr class="separator:a9e0aee145cf7749e247fd2707e207cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40d7ca68a20edfe07bd8fc80cde7bbfb" id="r_a40d7ca68a20edfe07bd8fc80cde7bbfb"><td class="memItemLeft" align="right" valign="top"><a id="a40d7ca68a20edfe07bd8fc80cde7bbfb" name="a40d7ca68a20edfe07bd8fc80cde7bbfb"></a>
-<a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eventMarker</b></td></tr>
-<tr class="memdesc:a40d7ca68a20edfe07bd8fc80cde7bbfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for event markers. <br /></td></tr>
+<tr class="memitem:a40d7ca68a20edfe07bd8fc80cde7bbfb" id="r_a40d7ca68a20edfe07bd8fc80cde7bbfb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a40d7ca68a20edfe07bd8fc80cde7bbfb">eventMarker</a></td></tr>
+<tr class="memdesc:a40d7ca68a20edfe07bd8fc80cde7bbfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for event markers.  <br /></td></tr>
 <tr class="separator:a40d7ca68a20edfe07bd8fc80cde7bbfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ca60aafa320e06a1fb43504ad397a31" id="r_a1ca60aafa320e06a1fb43504ad397a31"><td class="memItemLeft" align="right" valign="top"><a id="a1ca60aafa320e06a1fb43504ad397a31" name="a1ca60aafa320e06a1fb43504ad397a31"></a>
-std::vector&lt; std::tuple&lt; double, double, <a class="el" href="structNAV_1_1PlotEventTooltip.html">PlotEventTooltip</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eventTooltips</b></td></tr>
-<tr class="memdesc:a1ca60aafa320e06a1fb43504ad397a31"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of tooltips (x,y, tooltip) <br /></td></tr>
+<tr class="memitem:a1ca60aafa320e06a1fb43504ad397a31" id="r_a1ca60aafa320e06a1fb43504ad397a31"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::tuple&lt; double, double, <a class="el" href="structNAV_1_1PlotEventTooltip.html">PlotEventTooltip</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ca60aafa320e06a1fb43504ad397a31">eventTooltips</a></td></tr>
+<tr class="memdesc:a1ca60aafa320e06a1fb43504ad397a31"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of tooltips (x,y, tooltip)  <br /></td></tr>
 <tr class="separator:a1ca60aafa320e06a1fb43504ad397a31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f4c5f769496fc33b9a1b2bd7b4ceb89" id="r_a0f4c5f769496fc33b9a1b2bd7b4ceb89"><td class="memItemLeft" align="right" valign="top"><a id="a0f4c5f769496fc33b9a1b2bd7b4ceb89" name="a0f4c5f769496fc33b9a1b2bd7b4ceb89"></a>
-<a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; ImU32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>markerColormapMaskColors</b></td></tr>
-<tr class="memdesc:a0f4c5f769496fc33b9a1b2bd7b4ceb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for the colormap mask. <br /></td></tr>
+<tr class="memitem:a0f4c5f769496fc33b9a1b2bd7b4ceb89" id="r_a0f4c5f769496fc33b9a1b2bd7b4ceb89"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; ImU32 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f4c5f769496fc33b9a1b2bd7b4ceb89">markerColormapMaskColors</a></td></tr>
+<tr class="memdesc:a0f4c5f769496fc33b9a1b2bd7b4ceb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer for the colormap mask.  <br /></td></tr>
 <tr class="separator:a0f4c5f769496fc33b9a1b2bd7b4ceb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdfe1aef65aaaa8a4dd7df55e5ee03cb" id="r_abdfe1aef65aaaa8a4dd7df55e5ee03cb"><td class="memItemLeft" align="right" valign="top"><a id="abdfe1aef65aaaa8a4dd7df55e5ee03cb" name="abdfe1aef65aaaa8a4dd7df55e5ee03cb"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>markerColormapMaskVersion</b></td></tr>
-<tr class="memdesc:abdfe1aef65aaaa8a4dd7df55e5ee03cb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap) <br /></td></tr>
+<tr class="memitem:abdfe1aef65aaaa8a4dd7df55e5ee03cb" id="r_abdfe1aef65aaaa8a4dd7df55e5ee03cb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdfe1aef65aaaa8a4dd7df55e5ee03cb">markerColormapMaskVersion</a></td></tr>
+<tr class="memdesc:abdfe1aef65aaaa8a4dd7df55e5ee03cb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap)  <br /></td></tr>
 <tr class="separator:abdfe1aef65aaaa8a4dd7df55e5ee03cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15246c49e6e8e756f78ff058aea617ed" id="r_a15246c49e6e8e756f78ff058aea617ed"><td class="memItemLeft" align="right" valign="top"><a id="a15246c49e6e8e756f78ff058aea617ed" name="a15246c49e6e8e756f78ff058aea617ed"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></tr>
-<tr class="memdesc:a15246c49e6e8e756f78ff058aea617ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the pin where the data came in. <br /></td></tr>
+<tr class="memitem:a15246c49e6e8e756f78ff058aea617ed" id="r_a15246c49e6e8e756f78ff058aea617ed"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15246c49e6e8e756f78ff058aea617ed">pinIndex</a></td></tr>
+<tr class="memdesc:a15246c49e6e8e756f78ff058aea617ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the pin where the data came in.  <br /></td></tr>
 <tr class="separator:a15246c49e6e8e756f78ff058aea617ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a645b90d97118e6fe924549fcf125f7c6" id="r_a645b90d97118e6fe924549fcf125f7c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1PlotItemStyle.html">PlotItemStyle</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a645b90d97118e6fe924549fcf125f7c6">style</a></td></tr>
 <tr class="separator:a645b90d97118e6fe924549fcf125f7c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Info needed to draw a data set. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00183">183</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a108ddb73d8854c30c3da841fda2937d3" name="a108ddb73d8854c30c3da841fda2937d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a108ddb73d8854c30c3da841fda2937d3">&#9670;&#160;</a></span>PlotItem() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::Plot::PlotInfo::PlotItem::PlotItem </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor (needed to make serialization with json working) </p>
+
+</div>
+</div>
 <a id="ac36759b9798c7cc37b5e5b632acdaecc" name="ac36759b9798c7cc37b5e5b632acdaecc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac36759b9798c7cc37b5e5b632acdaecc">&#9670;&#160;</a></span>PlotItem() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac36759b9798c7cc37b5e5b632acdaecc">&#9670;&#160;</a></span>PlotItem() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -238,10 +255,12 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00192">192</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a55f79aa1ed99a8263ca6b6af2cdfb14b" name="a55f79aa1ed99a8263ca6b6af2cdfb14b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55f79aa1ed99a8263ca6b6af2cdfb14b">&#9670;&#160;</a></span>PlotItem() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a55f79aa1ed99a8263ca6b6af2cdfb14b">&#9670;&#160;</a></span>PlotItem() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -288,6 +307,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00204">204</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -323,9 +344,209 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the pin and data indices match </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00213">213</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="adeecc2f68a5c0a007770df7a1b567982" name="adeecc2f68a5c0a007770df7a1b567982"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adeecc2f68a5c0a007770df7a1b567982">&#9670;&#160;</a></span>axis</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ImAxis NAV::Plot::PlotInfo::PlotItem::axis</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Axis to plot the data on (Y1, Y2, Y3) </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00221">221</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a65ae3c136afb9af368fda0602d209b98" name="a65ae3c136afb9af368fda0602d209b98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65ae3c136afb9af368fda0602d209b98">&#9670;&#160;</a></span>colormapMaskColors</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt;ImU32&gt; NAV::Plot::PlotInfo::PlotItem::colormapMaskColors</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Buffer for the colormap mask. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00224">224</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6cc8165c9b897eca954c534c2fe3b378" name="a6cc8165c9b897eca954c534c2fe3b378"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cc8165c9b897eca954c534c2fe3b378">&#9670;&#160;</a></span>colormapMaskVersion</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::Plot::PlotInfo::PlotItem::colormapMaskVersion</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap) </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00226">226</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a77c4240a7a612b5aa5e893c828c0e442" name="a77c4240a7a612b5aa5e893c828c0e442"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77c4240a7a612b5aa5e893c828c0e442">&#9670;&#160;</a></span>dataIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::Plot::PlotInfo::PlotItem::dataIndex</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Index of the data on the pin. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00219">219</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0c43f5050bf7a1abf9095ccc2ad928b0" name="a0c43f5050bf7a1abf9095ccc2ad928b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c43f5050bf7a1abf9095ccc2ad928b0">&#9670;&#160;</a></span>displayName</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::Plot::PlotInfo::PlotItem::displayName</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Display name of the data (not changing and unique) </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00220">220</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9e0aee145cf7749e247fd2707e207cbc" name="a9e0aee145cf7749e247fd2707e207cbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e0aee145cf7749e247fd2707e207cbc">&#9670;&#160;</a></span>errorBoundsData</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;<a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt;double&gt;, 2&gt; NAV::Plot::PlotInfo::PlotItem::errorBoundsData</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Error bounds lower and upper data. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00236">236</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a40d7ca68a20edfe07bd8fc80cde7bbfb" name="a40d7ca68a20edfe07bd8fc80cde7bbfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40d7ca68a20edfe07bd8fc80cde7bbfb">&#9670;&#160;</a></span>eventMarker</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt;double&gt; NAV::Plot::PlotInfo::PlotItem::eventMarker</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Buffer for event markers. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00233">233</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1ca60aafa320e06a1fb43504ad397a31" name="a1ca60aafa320e06a1fb43504ad397a31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ca60aafa320e06a1fb43504ad397a31">&#9670;&#160;</a></span>eventTooltips</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::tuple&lt;double, double, <a class="el" href="structNAV_1_1PlotEventTooltip.html">PlotEventTooltip</a>&gt; &gt; NAV::Plot::PlotInfo::PlotItem::eventTooltips</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>List of tooltips (x,y, tooltip) </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00239">239</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0f4c5f769496fc33b9a1b2bd7b4ceb89" name="a0f4c5f769496fc33b9a1b2bd7b4ceb89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f4c5f769496fc33b9a1b2bd7b4ceb89">&#9670;&#160;</a></span>markerColormapMaskColors</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt;ImU32&gt; NAV::Plot::PlotInfo::PlotItem::markerColormapMaskColors</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Buffer for the colormap mask. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00228">228</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abdfe1aef65aaaa8a4dd7df55e5ee03cb" name="abdfe1aef65aaaa8a4dd7df55e5ee03cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdfe1aef65aaaa8a4dd7df55e5ee03cb">&#9670;&#160;</a></span>markerColormapMaskVersion</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::Plot::PlotInfo::PlotItem::markerColormapMaskVersion</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1Colormap.html" title="Colormap class.">Colormap</a> version (to track updates of the colormap) </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00230">230</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a15246c49e6e8e756f78ff058aea617ed" name="a15246c49e6e8e756f78ff058aea617ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15246c49e6e8e756f78ff058aea617ed">&#9670;&#160;</a></span>pinIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::Plot::PlotInfo::PlotItem::pinIndex</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Index of the pin where the data came in. </p>
+
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00218">218</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a645b90d97118e6fe924549fcf125f7c6" name="a645b90d97118e6fe924549fcf125f7c6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a645b90d97118e6fe924549fcf125f7c6">&#9670;&#160;</a></span>style</h2>
 
@@ -339,6 +560,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></
 </div><div class="memdoc">
 <p>Defines how the data should be plotted </p>
 
+<p class="definition">Definition at line <a class="el" href="Plot_8hpp_source.html#l00222">222</a> of file <a class="el" href="Plot_8hpp_source.html">Plot.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
@@ -349,7 +572,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pinIndex</b></td></
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Plot.html">Plot</a></li><li class="navelem"><a class="el" href="structNAV_1_1Plot_1_1PlotInfo.html">PlotInfo</a></li><li class="navelem"><a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html">PlotItem</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1Plot.html">Plot</a></li><li class="navelem"><a class="el" href="structNAV_1_1Plot_1_1PlotInfo.html">PlotInfo</a></li><li class="navelem"><a class="el" href="structNAV_1_1Plot_1_1PlotInfo_1_1PlotItem.html">PlotItem</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

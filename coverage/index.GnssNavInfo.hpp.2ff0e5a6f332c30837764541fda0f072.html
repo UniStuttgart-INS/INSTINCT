@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-04-24 11:37:14</td>
+      <td>2025-06-02 15:19:59</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l90">NAV::GnssNavInfo::addSatelliteNavData(NAV::SatId const&amp;, std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 90)</a></td><td>called 8258 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l90">NAV::GnssNavInfo::addSatelliteNavData(NAV::SatId const&amp;, std::shared_ptr&lt;NAV::SatNavData&gt; const&amp;) (line 90)</a></td><td>called 8259 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l122">NAV::GnssNavInfo::nSatellites() const (line 122)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l135">NAV::GnssNavInfo::reset() (line 135)</a></td><td>called 56 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l129">NAV::GnssNavInfo::satellites() const (line 129)</a></td><td>called 1645 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l98">NAV::GnssNavInfo::searchNavigationData(NAV::SatId const&amp;, NAV::InsTime const&amp;) const (line 98)</a></td><td>called 48434 times</td><td>85.0%</td></tr>
-    <tr><td><a href="#l34">NAV::GnssNavInfo::type[abi:cxx11]() (line 34)</a></td><td>called 780 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l34">NAV::GnssNavInfo::type[abi:cxx11]() (line 34)</a></td><td>called 786 times</td><td>78.0%</td></tr>
   </table>
 </details>
 
@@ -324,7 +324,7 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">780</td>
+      <td class="linecount coveredLine">786</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">()</span></td>
     </tr>
     <tr class="source-line">
@@ -340,12 +340,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 780 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 786 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1560</td>
+      <td class="linecount partialCoveredLine">1572</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;GnssNavInfo&quot;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -723,7 +723,7 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8258</td>
+      <td class="linecount coveredLine">8259</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">addSatelliteNavData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SatId</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satId</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SatNavData</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">satNavData</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -737,7 +737,7 @@
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8258</td>
+      <td class="linecount coveredLine">8259</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">m_satellites</span><span class="p">[</span><span class="n">satId</span><span class="p">].</span><span class="n">addSatNavData</span><span class="p">(</span><span class="n">satNavData</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html','
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::vectornav::ImuOutputs Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,7 +128,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html','
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
+Data Fields</h2></td></tr>
 <tr class="memitem:a49a20824258d73e37fb473098a476ad5" id="r_a49a20824258d73e37fb473098a476ad5"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49a20824258d73e37fb473098a476ad5">accel</a></td></tr>
 <tr class="memdesc:a49a20824258d73e37fb473098a476ad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compensated acceleration measurement.  <br /></td></tr>
 <tr class="separator:a49a20824258d73e37fb473098a476ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,9 +144,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a8f46d5c6cc2d16aa71aa2f82186023e5" id="r_a8f46d5c6cc2d16aa71aa2f82186023e5"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f46d5c6cc2d16aa71aa2f82186023e5">deltaV</a></td></tr>
 <tr class="memdesc:a8f46d5c6cc2d16aa71aa2f82186023e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delta velocity.  <br /></td></tr>
 <tr class="separator:a8f46d5c6cc2d16aa71aa2f82186023e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a314d363ad97e27c97286ac690b5b4fd7" id="r_a314d363ad97e27c97286ac690b5b4fd7"><td class="memItemLeft" align="right" valign="top"><a id="a314d363ad97e27c97286ac690b5b4fd7" name="a314d363ad97e27c97286ac690b5b4fd7"></a>
-vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom"><b>imuField</b></td></tr>
-<tr class="memdesc:a314d363ad97e27c97286ac690b5b4fd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available data in this struct. <br /></td></tr>
+<tr class="memitem:a314d363ad97e27c97286ac690b5b4fd7" id="r_a314d363ad97e27c97286ac690b5b4fd7"><td class="memItemLeft" align="right" valign="top">vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a314d363ad97e27c97286ac690b5b4fd7">imuField</a></td></tr>
+<tr class="memdesc:a314d363ad97e27c97286ac690b5b4fd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available data in this struct.  <br /></td></tr>
 <tr class="separator:a314d363ad97e27c97286ac690b5b4fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b0cf01efb147763ba2639b7ba2c4639" id="r_a4b0cf01efb147763ba2639b7ba2c4639"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b0cf01efb147763ba2639b7ba2c4639">imuStatus</a></td></tr>
 <tr class="memdesc:a4b0cf01efb147763ba2639b7ba2c4639"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for future use.  <br /></td></tr>
@@ -172,7 +171,9 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Binary Group 3 - IMU Outputs. </p>
-</div><h2 class="groupheader">Member Data Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00024">24</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
 <a id="a49a20824258d73e37fb473098a476ad5" name="a49a20824258d73e37fb473098a476ad5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49a20824258d73e37fb473098a476ad5">&#9670;&#160;</a></span>accel</h2>
 
@@ -187,6 +188,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Compensated acceleration measurement. </p>
 <p>The compensated acceleration measured in units of m/s^2, and given in the body frame. This measurement is compensated by the static calibration (individual factory calibration stored in flash), the user compensation, and the dynamic bias compensation from the onboard INS Kalman filter. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00112">112</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -205,6 +208,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Compensated angular rate measurement. </p>
 <p>The compensated angular rate measured in units of rad/s, and given in the body frame. This measurement is compensated by the static calibration (individual factor calibration stored in flash), the user compensation, and the dynamic bias compensation from the onboard INS Kalman filter. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00119">119</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ab2937fa5b74edd00d0deb426e9553053" name="ab2937fa5b74edd00d0deb426e9553053"></a>
@@ -221,6 +226,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Delta theta angles. </p>
 <p>The delta time (dtime) is the time interval that the delta angle and velocities are integrated over. The delta theta (dtheta) is the delta rotation angles incurred due to rotation, by the local body reference frame, since the last time the values were outputted by the device. The delta velocity (dvel) is the delta velocity incurred due to motion, by the local body reference frame, since the last time the values were outputted by the device. The frame of reference of these delta measurements are determined by the IntegrationFrame field in the Delta Theta and Delta Velocity Configuration Register (Register 82). These delta angles and delta velocities are calculated based upon the onboard coning and sculling integration performed onboard the sensor at the full IMU rate (default 800Hz). The integration for both the delta angles and velocities are reset each time either of the values are either polled or sent out due to a scheduled asynchronous ASCII or binary output. Delta Theta and Delta Velocity values correctly capture the nonlinearities involved in measuring motion from a rotating strapdown platform (as opposed to the older mechanically inertial navigation systems), thus providing you with the ability to integrate velocity and angular rate at much lower speeds (say for example 10 Hz, reducing bandwidth and computational complexity), while still maintaining the same numeric precision as if you had performed the integration at the full IMU measurement rate of 800Hz. Time is given in seconds. Delta angles are given in degrees. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00089">89</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -239,6 +246,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Delta time. </p>
 <p>The delta time (dtime) is the time interval that the delta angle and velocities are integrated over. Delta time is given in seconds. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00070">70</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a8f46d5c6cc2d16aa71aa2f82186023e5" name="a8f46d5c6cc2d16aa71aa2f82186023e5"></a>
@@ -255,6 +264,26 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Delta velocity. </p>
 <p>The delta velocity (dvel) is the delta velocity incurred due to motion, since the last time the values were output by the device. The delta velocities are calculated based upon the onboard conning and sculling integration performed onboard the sensor at the IMU sampling rate (nominally 800Hz). The integration for the delta velocities are reset each time the values are either polled or sent out due to a scheduled asynchronous ASCII or binary output. Delta velocity is given in meters per second. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00098">98</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a314d363ad97e27c97286ac690b5b4fd7" name="a314d363ad97e27c97286ac690b5b4fd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a314d363ad97e27c97286ac690b5b4fd7">&#9670;&#160;</a></span>imuField</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vn::protocol::uart::ImuGroup NAV::vendor::vectornav::ImuOutputs::imuField</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Available data in this struct. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00027">27</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -273,6 +302,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Reserved for future use. </p>
 <p>Status is reserved for future use. Not currently used in the current code, as such will always report 0. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00032">32</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a82205ae231c6bff296f7b584921c6cea" name="a82205ae231c6bff296f7b584921c6cea"></a>
@@ -289,6 +320,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Compensated magnetic measurement. </p>
 <p>The IMU compensated magnetic field measured units of Gauss, and given in the body frame. This measurement is compensated by the static calibration (individual factory calibration stored in flash), the user compensation, and the dynamic calibration from the onboard Hard/Soft Iron estimator. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00105">105</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -307,6 +340,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Pressure measurement. </p>
 <p>The IMU pressure measured in kilopascals. This is an absolute pressure measurement. Typical pressure at sea level would be around 100 kPa. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00064">64</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ad180675f8fe3ca6199b334e439064f49" name="ad180675f8fe3ca6199b334e439064f49"></a>
@@ -323,6 +358,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Temperature measurement. </p>
 <p>The IMU temperature measured in units of Celsius. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00058">58</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -341,6 +378,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Uncompensated acceleration measurement. </p>
 <p>The IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is compensated by the static calibration (individual factory calibration stored in flash), however it is not compensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00046">46</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a2bb5208f122c8d479e53a86e86f486bd" name="a2bb5208f122c8d479e53a86e86f486bd"></a>
@@ -357,6 +396,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 
 <p>Uncompensated angular rate measurement. </p>
 <p>The IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated by the static calibration (individual factory calibration stored in flash), however it is not compensated by any dynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00053">53</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
 
 </div>
 </div>
@@ -375,6 +416,8 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <p>Uncompensated magnetic measurement. </p>
 <p>The IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is compensated by the static calibration (individual factory calibration stored in flash), and the user compensation, however it is not compensated by the onboard Hard/Soft Iron estimator. </p>
 
+<p class="definition">Definition at line <a class="el" href="ImuOutputs_8hpp_source.html#l00039">39</a> of file <a class="el" href="ImuOutputs_8hpp_source.html">ImuOutputs.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
@@ -385,7 +428,7 @@ vn::protocol::uart::ImuGroup&#160;</td><td class="memItemRight" valign="bottom">
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>vectornav</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html">ImuOutputs</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1vectornav.html">vectornav</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html">ImuOutputs</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

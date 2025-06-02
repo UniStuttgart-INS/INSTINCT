@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,12 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file IncrementalLeastSquares.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Incremental Least Squares Curve Fit</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2023-10-26</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/// @note See https://blog.demofox.org/2016/12/22/incremental-least-squares-curve-fitting/</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
@@ -137,21 +143,27 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="Assert_8h.html">util/Assert.h</a>&quot;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;<a class="code" href="Eigen_8hpp.html">util/Eigen.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment"></span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @brief Incremental Least Squares Curve Fitting</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @tparam Scalar Data type to store</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Scalar&gt;</div>
 <div class="foldopen" id="foldopen00029" data-start="{" data-end="};">
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html">   29</a></span><span class="keyword">class </span><a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">IncrementalLeastSquares</a></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">    /// @brief Constructor</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">    /// @param[in] polynomialDegree Degree of the polynomial to fit</span></div>
 <div class="foldopen" id="foldopen00034" data-start="{" data-end="}">
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">   34</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">IncrementalLeastSquares</a>(<span class="keywordtype">size_t</span> polynomialDegree)</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    {</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#abdc04c4aecf4cd5dfbcb1e23ccffe4db">setPolynomialDegree</a>(polynomialDegree);</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
 </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment"></span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">    /// @brief Set the Polynomial Degree</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">    /// @param[in] polynomialDegree Degree of the polynomial to fit</span></div>
 <div class="foldopen" id="foldopen00041" data-start="{" data-end="}">
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#abdc04c4aecf4cd5dfbcb1e23ccffe4db">   41</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#abdc04c4aecf4cd5dfbcb1e23ccffe4db">setPolynomialDegree</a>(<span class="keywordtype">size_t</span> polynomialDegree)</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    {</div>
@@ -160,7 +172,10 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">_summedPowersXTimesY</a> = Eigen::VectorX&lt;Scalar&gt;::Zero(<span class="keyword">static_cast&lt;</span>Eigen::Index<span class="keyword">&gt;</span>(polynomialDegree) + 1);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    }</div>
 </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment"></span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment">    /// @brief Add a data point to the polynomial</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">    /// @param[in] x X Value</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">    /// @param[in] y Y Value</span></div>
 <div class="foldopen" id="foldopen00051" data-start="{" data-end="}">
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#acbafba837c5e2ab47ac2de2416c0f40f">   51</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#acbafba837c5e2ab47ac2de2416c0f40f">addDataPoint</a>(<span class="keyword">const</span> Scalar&amp; x, <span class="keyword">const</span> Scalar&amp; y)</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    {</div>
@@ -179,7 +194,10 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        }</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment"></span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">    /// @brief Removes a data point from the polynomial fit</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">    /// @param[in] x X Value</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">    /// @param[in] y Y Value</span></div>
 <div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a2eb9ceea7bf99a7e1bfad59c6a290a96">   71</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#a2eb9ceea7bf99a7e1bfad59c6a290a96">removeDataPoint</a>(<span class="keyword">const</span> Scalar&amp; x, <span class="keyword">const</span> Scalar&amp; y)</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    {</div>
@@ -198,7 +216,8 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        }</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
 </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="comment"></span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="comment">    /// @brief Reset the saved data</span></div>
 <div class="foldopen" id="foldopen00089" data-start="{" data-end="}">
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a05e98e931f082e25dac55b3ae46661fc">   89</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#a05e98e931f082e25dac55b3ae46661fc">reset</a>()</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    {</div>
@@ -206,7 +225,8 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">_summedPowersXTimesY</a>.setZero();</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    }</div>
 </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="comment"></span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="comment">    /// @brief Calculates the polynomial coefficients in order a0 + a1 * x + a2 * x^2 + ...</span></div>
 <div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#ab259c5abf70a928657f4e166502abfba">   96</a></span>    [[nodiscard]] Eigen::VectorX&lt;Scalar&gt; <a class="code hl_function" href="classNAV_1_1IncrementalLeastSquares.html#ab259c5abf70a928657f4e166502abfba">calcCoefficients</a>()<span class="keyword"> const</span></div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">    </span>{</div>
@@ -226,24 +246,25 @@ $(function(){initNavTree('IncrementalLeastSquares_8hpp_source.html',''); initRes
 </div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">  113</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">_polyDegree</a> = 2;                      </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">  114</a></span>    Eigen::VectorX&lt;Scalar&gt; <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">_summedPowersX</a>;       </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">  115</a></span>    Eigen::VectorX&lt;Scalar&gt; <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">_summedPowersXTimesY</a>; </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">  113</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">_polyDegree</a> = 2;                      <span class="comment">///&lt; Polynomial degree to fit</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">  114</a></span>    Eigen::VectorX&lt;Scalar&gt; <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">_summedPowersX</a>;       <span class="comment">///&lt; Sum{x^2}. (DEGREE + 1) * 2 - 1 values</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">  115</a></span>    Eigen::VectorX&lt;Scalar&gt; <a class="code hl_variable" href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">_summedPowersXTimesY</a>; <span class="comment">///&lt; Sum{x^2 * y}. DEGREE + 1 values</span></div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>};</div>
 </div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aAssert_8h_html"><div class="ttname"><a href="Assert_8h.html">Assert.h</a></div><div class="ttdoc">Assertion helpers.</div></div>
 <div class="ttc" id="aEigen_8hpp_html"><div class="ttname"><a href="Eigen_8hpp.html">Eigen.hpp</a></div><div class="ttdoc">Vector space operations.</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a05e98e931f082e25dac55b3ae46661fc"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a05e98e931f082e25dac55b3ae46661fc">NAV::IncrementalLeastSquares::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Reset the saved data.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:89</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a1a65d992c2bb7c82ecc9ad3810845a9e"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">NAV::IncrementalLeastSquares::_polyDegree</a></div><div class="ttdeci">size_t _polyDegree</div><div class="ttdoc">Polynomial degree to fit.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:113</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a2eb9ceea7bf99a7e1bfad59c6a290a96"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a2eb9ceea7bf99a7e1bfad59c6a290a96">NAV::IncrementalLeastSquares::removeDataPoint</a></div><div class="ttdeci">void removeDataPoint(const Scalar &amp;x, const Scalar &amp;y)</div><div class="ttdoc">Removes a data point from the polynomial fit.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:71</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a5a80b14ce93301485ad6f12dcfecfb99"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">NAV::IncrementalLeastSquares::_summedPowersXTimesY</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; _summedPowersXTimesY</div><div class="ttdoc">Sum{x^2 * y}. DEGREE + 1 values.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:115</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a5c3926a9d67b12f7df2ad21824d6241c"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">NAV::IncrementalLeastSquares::_summedPowersX</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; _summedPowersX</div><div class="ttdoc">Sum{x^2}. (DEGREE + 1) * 2 - 1 values.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:114</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a6d3239cc58b1408269088f8336fdf60c"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">NAV::IncrementalLeastSquares::IncrementalLeastSquares</a></div><div class="ttdeci">IncrementalLeastSquares(size_t polynomialDegree)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:34</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_ab259c5abf70a928657f4e166502abfba"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#ab259c5abf70a928657f4e166502abfba">NAV::IncrementalLeastSquares::calcCoefficients</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; calcCoefficients() const</div><div class="ttdoc">Calculates the polynomial coefficients in order a0 + a1 * x + a2 * x^2 + ...</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:96</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_abdc04c4aecf4cd5dfbcb1e23ccffe4db"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#abdc04c4aecf4cd5dfbcb1e23ccffe4db">NAV::IncrementalLeastSquares::setPolynomialDegree</a></div><div class="ttdeci">void setPolynomialDegree(size_t polynomialDegree)</div><div class="ttdoc">Set the Polynomial Degree.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:41</div></div>
-<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_acbafba837c5e2ab47ac2de2416c0f40f"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#acbafba837c5e2ab47ac2de2416c0f40f">NAV::IncrementalLeastSquares::addDataPoint</a></div><div class="ttdeci">void addDataPoint(const Scalar &amp;x, const Scalar &amp;y)</div><div class="ttdoc">Add a data point to the polynomial.</div><div class="ttdef"><b>Definition</b> IncrementalLeastSquares.hpp:51</div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a05e98e931f082e25dac55b3ae46661fc"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a05e98e931f082e25dac55b3ae46661fc">NAV::IncrementalLeastSquares::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Reset the saved data.</div><div class="ttdef"><b>Definition</b> <a href="#l00089">IncrementalLeastSquares.hpp:89</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a1a65d992c2bb7c82ecc9ad3810845a9e"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a1a65d992c2bb7c82ecc9ad3810845a9e">NAV::IncrementalLeastSquares::_polyDegree</a></div><div class="ttdeci">size_t _polyDegree</div><div class="ttdoc">Polynomial degree to fit.</div><div class="ttdef"><b>Definition</b> <a href="#l00113">IncrementalLeastSquares.hpp:113</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a2eb9ceea7bf99a7e1bfad59c6a290a96"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a2eb9ceea7bf99a7e1bfad59c6a290a96">NAV::IncrementalLeastSquares::removeDataPoint</a></div><div class="ttdeci">void removeDataPoint(const Scalar &amp;x, const Scalar &amp;y)</div><div class="ttdoc">Removes a data point from the polynomial fit.</div><div class="ttdef"><b>Definition</b> <a href="#l00071">IncrementalLeastSquares.hpp:71</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a5a80b14ce93301485ad6f12dcfecfb99"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a5a80b14ce93301485ad6f12dcfecfb99">NAV::IncrementalLeastSquares::_summedPowersXTimesY</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; _summedPowersXTimesY</div><div class="ttdoc">Sum{x^2 * y}. DEGREE + 1 values.</div><div class="ttdef"><b>Definition</b> <a href="#l00115">IncrementalLeastSquares.hpp:115</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a5c3926a9d67b12f7df2ad21824d6241c"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a5c3926a9d67b12f7df2ad21824d6241c">NAV::IncrementalLeastSquares::_summedPowersX</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; _summedPowersX</div><div class="ttdoc">Sum{x^2}. (DEGREE + 1) * 2 - 1 values.</div><div class="ttdef"><b>Definition</b> <a href="#l00114">IncrementalLeastSquares.hpp:114</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_a6d3239cc58b1408269088f8336fdf60c"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#a6d3239cc58b1408269088f8336fdf60c">NAV::IncrementalLeastSquares::IncrementalLeastSquares</a></div><div class="ttdeci">IncrementalLeastSquares(size_t polynomialDegree)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00034">IncrementalLeastSquares.hpp:34</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_ab259c5abf70a928657f4e166502abfba"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#ab259c5abf70a928657f4e166502abfba">NAV::IncrementalLeastSquares::calcCoefficients</a></div><div class="ttdeci">Eigen::VectorX&lt; Scalar &gt; calcCoefficients() const</div><div class="ttdoc">Calculates the polynomial coefficients in order a0 + a1 * x + a2 * x^2 + ...</div><div class="ttdef"><b>Definition</b> <a href="#l00096">IncrementalLeastSquares.hpp:96</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_abdc04c4aecf4cd5dfbcb1e23ccffe4db"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#abdc04c4aecf4cd5dfbcb1e23ccffe4db">NAV::IncrementalLeastSquares::setPolynomialDegree</a></div><div class="ttdeci">void setPolynomialDegree(size_t polynomialDegree)</div><div class="ttdoc">Set the Polynomial Degree.</div><div class="ttdef"><b>Definition</b> <a href="#l00041">IncrementalLeastSquares.hpp:41</a></div></div>
+<div class="ttc" id="aclassNAV_1_1IncrementalLeastSquares_html_acbafba837c5e2ab47ac2de2416c0f40f"><div class="ttname"><a href="classNAV_1_1IncrementalLeastSquares.html#acbafba837c5e2ab47ac2de2416c0f40f">NAV::IncrementalLeastSquares::addDataPoint</a></div><div class="ttdeci">void addDataPoint(const Scalar &amp;x, const Scalar &amp;y)</div><div class="ttdoc">Add a data point to the polynomial.</div><div class="ttdef"><b>Definition</b> <a href="#l00051">IncrementalLeastSquares.hpp:51</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

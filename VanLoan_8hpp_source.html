@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,40 @@ $(function(){initNavTree('VanLoan_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file VanLoan.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Van Loan Method \cite Loan1978</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2022-01-11</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">///</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/// #### Algorithm description</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">/// 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">/// \anchor eq-Loan-A \f{equation}{ \label{eq:eq-Loan-A}</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">///   \mathbf{A} = \begin{bmatrix} -\mathbf{F} &amp; \mathbf{G} \mathbf{W} \mathbf{G} \\</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">///                                 \mathbf{0} &amp;            \mathbf{F}^T          \end{bmatrix} \Delta t</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">/// \f}</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">///</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// 2. Calculate the exponential of \f$ \mathbf{A} \f$</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// \anchor eq-Loan-B \f{equation}{ \label{eq:eq-Loan-B}</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">///   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">///                                             \dots          &amp; \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">///                                             \hdashline[2pt/2pt] &amp;                                  \\[-2mm]</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">///                                             \mathbf{0}          &amp; \mathbf{\Phi}^T                     \end{array} \right]</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">///                                        = \begin{bmatrix} \mathbf{B}_{11} &amp; \mathbf{B}_{12} \\</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">///                                                          \mathbf{B}_{21} &amp; \mathbf{B}_{22} \end{bmatrix}</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">/// \f}</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">///</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/// 3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">/// \anchor eq-Loan-Phi \f{equation}{ \label{eq:eq-Loan-Phi}</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">///   \mathbf{\Phi} = \mathbf{B}_{22}^T</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/// \f}</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">///</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">/// 4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">/// \anchor eq-Loan-Q \f{equation}{ \label{eq:eq-Loan-Q}</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">///   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">/// \f}</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">///</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">/// @note See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential \cite Loan1978</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
@@ -137,13 +171,22 @@ $(function(){initNavTree('VanLoan_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &quot;<a class="code" href="Math_8hpp.html">Navigation/Math/Math.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>{</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment"></span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">/// @brief Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">/// @tparam DerivedF Matrix type of the F matrix</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">/// @tparam DerivedG Matrix type of the G matrix</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">/// @tparam DerivedW Matrix type of the W matrix</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="comment">/// @param[in] F System model matrix</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment">/// @param[in] G Noise model matrix</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">/// @param[in] W Noise scale factors</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">/// @param[in] dt Time step in [s]</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">/// @return A pair with the matrices {𝚽, 𝐐}</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> DerivedF, <span class="keyword">typename</span> DerivedG, <span class="keyword">typename</span> DerivedW&gt;</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>[[nodiscard]] std::pair&lt;typename DerivedF::PlainObject, typename DerivedF::PlainObject&gt;</div>
 <div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="VanLoan_8hpp.html#a0929f164bcf1effd2215706f84a4e0c8">   65</a></span>    <a class="code hl_function" href="VanLoan_8hpp.html#a0929f164bcf1effd2215706f84a4e0c8">calcPhiAndQWithVanLoanMethod</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedF&gt;&amp; F,</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a0929f164bcf1effd2215706f84a4e0c8">   65</a></span>    <a class="code hl_function" href="namespaceNAV.html#a0929f164bcf1effd2215706f84a4e0c8">calcPhiAndQWithVanLoanMethod</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedF&gt;&amp; F,</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                                 <span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedG&gt;&amp; G,</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                                 <span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedW&gt;&amp; W,</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                                 <span class="keywordtype">double</span> dt)</div>
@@ -175,11 +218,21 @@ $(function(){initNavTree('VanLoan_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordflow">return</span> { Phi, Q };</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>}</div>
 </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="comment"></span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="comment">/// @brief Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matrix 𝐐</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="comment">/// @tparam DerivedF Matrix type of the F matrix</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="comment">/// @tparam DerivedG Matrix type of the G matrix</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="comment">/// @tparam DerivedW Matrix type of the W matrix</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="comment">/// @param[in] F System model matrix</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="comment">/// @param[in] G Noise model matrix</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="comment">/// @param[in] W Noise scale factors</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="comment">/// @param[in] dt Time step in [s]</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="comment">/// @param[in] expmOrder Order to use to calculate the exponential matrix</span></div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="comment">/// @return A pair with the matrices {𝚽, 𝐐}</span></div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> DerivedF, <span class="keyword">typename</span> DerivedG, <span class="keyword">typename</span> DerivedW&gt;</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>[[nodiscard]] std::pair&lt;typename DerivedF::PlainObject, typename DerivedF::PlainObject&gt;</div>
 <div class="foldopen" id="foldopen00109" data-start="{" data-end="}">
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="VanLoan_8hpp.html#a6688b90d89d8328c824985705524cfc2">  109</a></span>    <a class="code hl_function" href="VanLoan_8hpp.html#a0929f164bcf1effd2215706f84a4e0c8">calcPhiAndQWithVanLoanMethod</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedF&gt;&amp; F,</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a6688b90d89d8328c824985705524cfc2">  109</a></span>    <a class="code hl_function" href="namespaceNAV.html#a0929f164bcf1effd2215706f84a4e0c8">calcPhiAndQWithVanLoanMethod</a>(<span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedF&gt;&amp; F,</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                                 <span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedG&gt;&amp; G,</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                                 <span class="keyword">const</span> Eigen::MatrixBase&lt;DerivedW&gt;&amp; W,</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>                                 <span class="keywordtype">double</span> dt,</div>
@@ -199,7 +252,7 @@ $(function(){initNavTree('VanLoan_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    A *= <span class="keyword">typename</span> DerivedF::Scalar(dt);</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    <span class="comment">// Exponential Matrix of A (https://eigen.tuxfamily.org/dox/unsupported/group__MatrixFunctions__Module.html#matrixbase_exp)</span></div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    Eigen::Matrix&lt;typename DerivedF::Scalar, Eigen::Dynamic, Eigen::Dynamic&gt; B = <a class="code hl_function" href="Math_8hpp.html#a2434274094c750fa59d0abc24f950455">math::expm</a>(A, expmOrder);</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    Eigen::Matrix&lt;typename DerivedF::Scalar, Eigen::Dynamic, Eigen::Dynamic&gt; B = <a class="code hl_function" href="namespaceNAV_1_1math.html#a2434274094c750fa59d0abc24f950455">math::expm</a>(A, expmOrder);</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    <span class="comment">//               ┌                ┐</span></div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    <span class="comment">//               │ ... ┊ Phi^-1 Q │</span></div>
@@ -215,8 +268,9 @@ $(function(){initNavTree('VanLoan_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span> </div>
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aMath_8hpp_html"><div class="ttname"><a href="Math_8hpp.html">Math.hpp</a></div><div class="ttdoc">Simple Math functions.</div></div>
-<div class="ttc" id="aMath_8hpp_html_a2434274094c750fa59d0abc24f950455"><div class="ttname"><a href="Math_8hpp.html#a2434274094c750fa59d0abc24f950455">NAV::math::expm</a></div><div class="ttdeci">Derived::PlainObject expm(const Eigen::MatrixBase&lt; Derived &gt; &amp;X, size_t order)</div><div class="ttdoc">Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ</div><div class="ttdef"><b>Definition</b> Math.hpp:149</div></div>
-<div class="ttc" id="aVanLoan_8hpp_html_a0929f164bcf1effd2215706f84a4e0c8"><div class="ttname"><a href="VanLoan_8hpp.html#a0929f164bcf1effd2215706f84a4e0c8">NAV::calcPhiAndQWithVanLoanMethod</a></div><div class="ttdeci">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt; calcPhiAndQWithVanLoanMethod(const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt)</div><div class="ttdoc">Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matri...</div><div class="ttdef"><b>Definition</b> VanLoan.hpp:65</div></div>
+<div class="ttc" id="anamespaceNAV_1_1math_html_a2434274094c750fa59d0abc24f950455"><div class="ttname"><a href="namespaceNAV_1_1math.html#a2434274094c750fa59d0abc24f950455">NAV::math::expm</a></div><div class="ttdeci">Derived::PlainObject expm(const Eigen::MatrixBase&lt; Derived &gt; &amp;X, size_t order)</div><div class="ttdoc">Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ</div><div class="ttdef"><b>Definition</b> <a href="Math_8hpp_source.html#l00149">Math.hpp:149</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a0929f164bcf1effd2215706f84a4e0c8"><div class="ttname"><a href="namespaceNAV.html#a0929f164bcf1effd2215706f84a4e0c8">NAV::calcPhiAndQWithVanLoanMethod</a></div><div class="ttdeci">std::pair&lt; typename DerivedF::PlainObject, typename DerivedF::PlainObject &gt; calcPhiAndQWithVanLoanMethod(const Eigen::MatrixBase&lt; DerivedF &gt; &amp;F, const Eigen::MatrixBase&lt; DerivedG &gt; &amp;G, const Eigen::MatrixBase&lt; DerivedW &gt; &amp;W, double dt)</div><div class="ttdoc">Numerical Method to calculate the State transition matrix 𝚽 and System/Process noise covariance matri...</div><div class="ttdef"><b>Definition</b> <a href="#l00065">VanLoan.hpp:65</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

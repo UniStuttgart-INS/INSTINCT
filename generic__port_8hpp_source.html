@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -156,7 +157,20 @@ $(function(){initNavTree('generic__port_8hpp_source.html',''); initResizable(tru
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment"> * POSSIBILITY OF SUCH DAMAGE.</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment"> ****************************************************************************/</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment"></span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment"> * @file generic_port.hpp</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment"> * @brief Generic interface definition</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment"> * Abstract port definition</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment"> * @author Hannes Diethelm, &lt;hannes.diethelm@gmail.com&gt;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment"> * @author Trent Lukaczyk, &lt;aerialhedgehog@gmail.com&gt;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment"> * @author Jaycee Lock,    &lt;jaycee.lock@gmail.com&gt;</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"> * @author Lorenz Meier,   &lt;lm@inf.ethz.ch&gt;</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
@@ -179,32 +193,47 @@ $(function(){initNavTree('generic__port_8hpp_source.html',''); initResizable(tru
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">// ----------------------------------------------------------------------------------</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">//   Generic Port Manager Class</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment">// ----------------------------------------------------------------------------------</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment"></span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">/// @brief Generic Port Class (This is an abstract port definition to handle both serial and UDP ports)</span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keyword">class </span>Generic_Port</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>{</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">bool</span> cabelCheck = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    Generic_Port() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">virtual</span> ~Generic_Port() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    Generic_Port(<span class="keyword">const</span> Generic_Port&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    Generic_Port(Generic_Port&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    Generic_Port&amp; operator=(<span class="keyword">const</span> Generic_Port&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">    /// @brief Variable to de-initialize node if cable is pulled</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">bool</span> cabelCheck = <span class="keyword">false</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">    /// @brief Default constructor</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    Generic_Port() = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="comment">    /// @brief Destructor</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keyword">virtual</span> ~Generic_Port() = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="comment">    /// @brief Copy constructor</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    Generic_Port(<span class="keyword">const</span> Generic_Port&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="comment">    /// @brief Move constructor</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    Generic_Port(Generic_Port&amp;&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="comment">    /// @brief Copy assignment operator</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    Generic_Port&amp; operator=(<span class="keyword">const</span> Generic_Port&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment">    /// @brief Move assignment operator</span></div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    Generic_Port&amp; operator=(Generic_Port&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="comment"></span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment">    /// @brief Read Mavlink message</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="comment">    /// @param[in] message Mavlink message to read</span></div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keyword">virtual</span> <span class="keywordtype">int</span> read_message(mavlink_message_t&amp; message) = 0;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="comment"></span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="comment">    /// @brief Write Mavlink message</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="comment">    /// @param[in] message Mavlink message to write</span></div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">virtual</span> <span class="keywordtype">int</span> write_message(<span class="keyword">const</span> mavlink_message_t&amp; message) = 0;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="comment"></span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="comment">    /// @brief Is running</span></div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> is_running() = 0;</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">start</a>() = 0;</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span></div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="FlowExecutor_8hpp.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>() = 0;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="comment"></span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="comment">    /// @brief Start</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">start</a>() = 0;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="comment"></span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="comment">    /// @brief Stop</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">stop</a>() = 0;</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>};</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="FlowExecutor_8hpp.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div></div>
-<div class="ttc" id="aFlowExecutor_8hpp_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="FlowExecutor_8hpp.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_a9b2d37e9e778dc2e4e28f9d39a6e3aa3"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#a9b2d37e9e778dc2e4e28f9d39a6e3aa3">NAV::FlowExecutor::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00091">FlowExecutor.cpp:91</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1FlowExecutor_html_ac0638d4f5a6dcc410e29ab8c59c123b9"><div class="ttname"><a href="namespaceNAV_1_1FlowExecutor.html#ac0638d4f5a6dcc410e29ab8c59c123b9">NAV::FlowExecutor::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the Thread.</div><div class="ttdef"><b>Definition</b> <a href="FlowExecutor_8cpp_source.html#l00105">FlowExecutor.cpp:105</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

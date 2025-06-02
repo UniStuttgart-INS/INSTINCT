@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Saastamoinen_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Saastamoinen.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,12 +130,17 @@ $(function(){initNavTree('Saastamoinen_8hpp.html',''); initResizable(true); });
 
 <p><a href="Saastamoinen_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5e58c2d235c8d57e3b15b8b6d7a36308" id="r_a5e58c2d235c8d57e3b15b8b6d7a36308"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e58c2d235c8d57e3b15b8b6d7a36308">NAV::calcZHD_Saastamoinen</a> (const Eigen::Vector3d &amp;lla_pos, double p)</td></tr>
+<tr class="memitem:a5e58c2d235c8d57e3b15b8b6d7a36308" id="r_a5e58c2d235c8d57e3b15b8b6d7a36308"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a5e58c2d235c8d57e3b15b8b6d7a36308">NAV::calcZHD_Saastamoinen</a> (const Eigen::Vector3d &amp;lla_pos, double p)</td></tr>
 <tr class="memdesc:a5e58c2d235c8d57e3b15b8b6d7a36308"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the tropospheric zenith hydrostatic delay with the Saastamoinen model.  <br /></td></tr>
 <tr class="separator:a5e58c2d235c8d57e3b15b8b6d7a36308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b5b2a361bbce3b81dfa45a559122955" id="r_a5b5b2a361bbce3b81dfa45a559122955"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b5b2a361bbce3b81dfa45a559122955">NAV::calcZWD_Saastamoinen</a> (double T, double e)</td></tr>
+<tr class="memitem:a5b5b2a361bbce3b81dfa45a559122955" id="r_a5b5b2a361bbce3b81dfa45a559122955"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a5b5b2a361bbce3b81dfa45a559122955">NAV::calcZWD_Saastamoinen</a> (double T, double e)</td></tr>
 <tr class="memdesc:a5b5b2a361bbce3b81dfa45a559122955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the tropospheric zenith wet delay with the Saastamoinen model.  <br /></td></tr>
 <tr class="separator:a5b5b2a361bbce3b81dfa45a559122955"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -192,84 +199,9 @@ Algorithm description</h4>
 <p class="startli">where <img class="formulaInl" alt="$ zd $" src="form_39.svg" width="19" height="14"/> is the zenith angle as <img class="formulaInl" alt="$ \varepsilon=\frac{\pi}{2} - z d $" src="form_40.svg" width="84" height="19"/> in [rad] </p>
 </li>
 </ul>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a5e58c2d235c8d57e3b15b8b6d7a36308" name="a5e58c2d235c8d57e3b15b8b6d7a36308"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e58c2d235c8d57e3b15b8b6d7a36308">&#9670;&#160;</a></span>calcZHD_Saastamoinen()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcZHD_Saastamoinen </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_pos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the tropospheric zenith hydrostatic delay with the Saastamoinen model. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_pos</td><td>[𝜙, λ, h]^T Geodetic latitude, longitude and height in [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>Total barometric pressure in [millibar] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Range correction for troposphere and stratosphere for radio ranging in [m] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_saastamoinen1973">[41]</a> Saastamoinen, p. 32 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_davis1985">[11]</a> Davis, Appendix A, p. 1604 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_böhm2006">[8]</a> Böhm ch. 1, p. 1 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_rtklib">[44]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
-
-</div>
-</div>
-<a id="a5b5b2a361bbce3b81dfa45a559122955" name="a5b5b2a361bbce3b81dfa45a559122955"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5b5b2a361bbce3b81dfa45a559122955">&#9670;&#160;</a></span>calcZWD_Saastamoinen()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::calcZWD_Saastamoinen </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>T</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>e</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the tropospheric zenith wet delay with the Saastamoinen model. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">T</td><td>Absolute temperature in [K] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e</td><td>Partial pressure of water vapour in [millibar] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Range correction for troposphere and stratosphere for radio ranging in [m] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_saastamoinen1973">[41]</a> Saastamoinen, p. 32 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_davis1985">[11]</a> Davis, Appendix A, p. 1604 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_böhm2006">[8]</a> Böhm ch. 1, p. 1 </dd>
-<dd>
-See <a class="el" href="citelist.html#CITEREF_rtklib">[44]</a> RTKLIB ch. E.5 Troposphere and Ionosphere Models, sec. (1), p. 149 </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Saastamoinen_8hpp_source.html">Saastamoinen.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

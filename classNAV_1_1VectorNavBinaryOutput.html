@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -120,8 +121,7 @@ $(function(){initNavTree('classNAV_1_1VectorNavBinaryOutput.html',''); initResiz
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="classNAV_1_1VectorNavBinaryOutput-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::VectorNavBinaryOutput Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -159,9 +159,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData" id="r_a6ed7c326d258f7b91e957195f1ac0eee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a6ed7c326d258f7b91e957195f1ac0eee">addEvent</a> (const std::string &amp;text)</td></tr>
 <tr class="memdesc:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the event to the list.  <br /></td></tr>
 <tr class="separator:a6ed7c326d258f7b91e957195f1ac0eee inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">
-const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>events</b> () const</td></tr>
-<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data. <br /></td></tr>
+<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">events</a> () const</td></tr>
+<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data.  <br /></td></tr>
 <tr class="separator:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbf7dc114849b62234d8da3f2d220c8a inherit pub_methods_classNAV_1_1NodeData" id="r_acbf7dc114849b62234d8da3f2d220c8a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#acbf7dc114849b62234d8da3f2d220c8a">getValueAtOrNaN</a> (size_t idx) const</td></tr>
 <tr class="memdesc:acbf7dc114849b62234d8da3f2d220c8a inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the value at the index or NaN if not in the observation.  <br /></td></tr>
@@ -172,25 +171,20 @@ const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" 
 <tr class="memitem:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData" id="r_a7951ae5f522e7aa323a092d5711f3411"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7951ae5f522e7aa323a092d5711f3411">hasTooltip</a> () const</td></tr>
 <tr class="memdesc:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether this data has a tooltip.  <br /></td></tr>
 <tr class="separator:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData" id="r_a4ccba55ef2a96c8abaa7104001338531"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a4ccba55ef2a96c8abaa7104001338531">setDynamicDataAt</a> (const std::string &amp;, double)</td></tr>
 <tr class="memdesc:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value for the descriptor.  <br /></td></tr>
@@ -198,23 +192,20 @@ const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" 
 <tr class="memitem:a5c71deb36bc60056ce720b14d0d25764 inherit pub_methods_classNAV_1_1NodeData" id="r_a5c71deb36bc60056ce720b14d0d25764"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a5c71deb36bc60056ce720b14d0d25764">setValueAt</a> (size_t, double)</td></tr>
 <tr class="memdesc:a5c71deb36bc60056ce720b14d0d25764 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value at the index.  <br /></td></tr>
 <tr class="separator:a5c71deb36bc60056ce720b14d0d25764 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1">~NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a58e999d9ebe330b2ccaccdc8d3f472e0" id="r_a58e999d9ebe330b2ccaccdc8d3f472e0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58e999d9ebe330b2ccaccdc8d3f472e0">getSatSys</a> (<a class="el" href="VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5">vendor::vectornav::SatSys</a> &amp;sys)</td></tr>
+<tr class="memitem:a58e999d9ebe330b2ccaccdc8d3f472e0" id="r_a58e999d9ebe330b2ccaccdc8d3f472e0"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58e999d9ebe330b2ccaccdc8d3f472e0">getSatSys</a> (<a class="el" href="namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5">vendor::vectornav::SatSys</a> &amp;sys)</td></tr>
 <tr class="memdesc:a58e999d9ebe330b2ccaccdc8d3f472e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Sat Sys object in "INSTINCT" format.  <br /></td></tr>
 <tr class="separator:a58e999d9ebe330b2ccaccdc8d3f472e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4902921223609b05d1343e07494d3911" id="r_a4902921223609b05d1343e07494d3911"><td class="memItemLeft" align="right" valign="top"><a id="a4902921223609b05d1343e07494d3911" name="a4902921223609b05d1343e07494d3911"></a>
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a4902921223609b05d1343e07494d3911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a4902921223609b05d1343e07494d3911" id="r_a4902921223609b05d1343e07494d3911"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4902921223609b05d1343e07494d3911">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a4902921223609b05d1343e07494d3911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a4902921223609b05d1343e07494d3911"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c4323364b794cb30a89c3701c3134d3" id="r_a3c4323364b794cb30a89c3701c3134d3"><td class="memItemLeft" align="right" valign="top"><a id="a3c4323364b794cb30a89c3701c3134d3" name="a3c4323364b794cb30a89c3701c3134d3"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:a3c4323364b794cb30a89c3701c3134d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:a3c4323364b794cb30a89c3701c3134d3" id="r_a3c4323364b794cb30a89c3701c3134d3"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c4323364b794cb30a89c3701c3134d3">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:a3c4323364b794cb30a89c3701c3134d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:a3c4323364b794cb30a89c3701c3134d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6214b2a48d53c07bd2b4c5ac740164dd" id="r_a6214b2a48d53c07bd2b4c5ac740164dd"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6214b2a48d53c07bd2b4c5ac740164dd">parentTypes</a> ()</td></tr>
 <tr class="memdesc:a6214b2a48d53c07bd2b4c5ac740164dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -223,13 +214,11 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="memdesc:a4fbf6fc2eb5e95a3693ed2f463bd666c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a4fbf6fc2eb5e95a3693ed2f463bd666c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a74c5f9a3be5207ef0c62acd233be3664">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ae312b7542fc8dc22c23516b1941ab560">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ab097672ac2646837e26f9be73b7a98b7"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ab097672ac2646837e26f9be73b7a98b7">parentTypes</a> ()</td></tr>
 <tr class="memdesc:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -239,51 +228,44 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="separator:a957391e1adfd8edb28c8ccced8b0dde3 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:afe0491de4f73cb373b8ce00a1bfbdb71" id="r_afe0491de4f73cb373b8ce00a1bfbdb71"><td class="memItemLeft" align="right" valign="top"><a id="afe0491de4f73cb373b8ce00a1bfbdb71" name="afe0491de4f73cb373b8ce00a1bfbdb71"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html">vendor::vectornav::AttitudeOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>attitudeOutputs</b></td></tr>
-<tr class="memdesc:afe0491de4f73cb373b8ce00a1bfbdb71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 5 - Attitude Outputs. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:afe0491de4f73cb373b8ce00a1bfbdb71" id="r_afe0491de4f73cb373b8ce00a1bfbdb71"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html">vendor::vectornav::AttitudeOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe0491de4f73cb373b8ce00a1bfbdb71">attitudeOutputs</a></td></tr>
+<tr class="memdesc:afe0491de4f73cb373b8ce00a1bfbdb71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 5 - Attitude Outputs.  <br /></td></tr>
 <tr class="separator:afe0491de4f73cb373b8ce00a1bfbdb71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af691a5aecae014dd780e79b8037183b6" id="r_af691a5aecae014dd780e79b8037183b6"><td class="memItemLeft" align="right" valign="top"><a id="af691a5aecae014dd780e79b8037183b6" name="af691a5aecae014dd780e79b8037183b6"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gnss1Outputs</b></td></tr>
-<tr class="memdesc:af691a5aecae014dd780e79b8037183b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 4 - GNSS1 Outputs. <br /></td></tr>
+<tr class="memitem:af691a5aecae014dd780e79b8037183b6" id="r_af691a5aecae014dd780e79b8037183b6"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af691a5aecae014dd780e79b8037183b6">gnss1Outputs</a></td></tr>
+<tr class="memdesc:af691a5aecae014dd780e79b8037183b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 4 - GNSS1 Outputs.  <br /></td></tr>
 <tr class="separator:af691a5aecae014dd780e79b8037183b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2fce553fe150d99aeac40d508e9b480" id="r_ad2fce553fe150d99aeac40d508e9b480"><td class="memItemLeft" align="right" valign="top"><a id="ad2fce553fe150d99aeac40d508e9b480" name="ad2fce553fe150d99aeac40d508e9b480"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gnss2Outputs</b></td></tr>
-<tr class="memdesc:ad2fce553fe150d99aeac40d508e9b480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 7 - GNSS2 Outputs. <br /></td></tr>
+<tr class="memitem:ad2fce553fe150d99aeac40d508e9b480" id="r_ad2fce553fe150d99aeac40d508e9b480"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2fce553fe150d99aeac40d508e9b480">gnss2Outputs</a></td></tr>
+<tr class="memdesc:ad2fce553fe150d99aeac40d508e9b480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 7 - GNSS2 Outputs.  <br /></td></tr>
 <tr class="separator:ad2fce553fe150d99aeac40d508e9b480"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32ae2b4ccd82060aef4a8fe32f25ccbc" id="r_a32ae2b4ccd82060aef4a8fe32f25ccbc"><td class="memItemLeft" align="right" valign="top"><a id="a32ae2b4ccd82060aef4a8fe32f25ccbc" name="a32ae2b4ccd82060aef4a8fe32f25ccbc"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html">vendor::vectornav::ImuOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>imuOutputs</b></td></tr>
-<tr class="memdesc:a32ae2b4ccd82060aef4a8fe32f25ccbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 3 - IMU Outputs. <br /></td></tr>
+<tr class="memitem:a32ae2b4ccd82060aef4a8fe32f25ccbc" id="r_a32ae2b4ccd82060aef4a8fe32f25ccbc"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html">vendor::vectornav::ImuOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32ae2b4ccd82060aef4a8fe32f25ccbc">imuOutputs</a></td></tr>
+<tr class="memdesc:a32ae2b4ccd82060aef4a8fe32f25ccbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 3 - IMU Outputs.  <br /></td></tr>
 <tr class="separator:a32ae2b4ccd82060aef4a8fe32f25ccbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acad3888e50896168632ad628a13eca04" id="r_acad3888e50896168632ad628a13eca04"><td class="memItemLeft" align="right" valign="top"><a id="acad3888e50896168632ad628a13eca04" name="acad3888e50896168632ad628a13eca04"></a>
-const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>imuPos</b></td></tr>
-<tr class="memdesc:acad3888e50896168632ad628a13eca04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame. <br /></td></tr>
+<tr class="memitem:acad3888e50896168632ad628a13eca04" id="r_acad3888e50896168632ad628a13eca04"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acad3888e50896168632ad628a13eca04">imuPos</a></td></tr>
+<tr class="memdesc:acad3888e50896168632ad628a13eca04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame.  <br /></td></tr>
 <tr class="separator:acad3888e50896168632ad628a13eca04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a477525da76b6989d840fe56b943f4276" id="r_a477525da76b6989d840fe56b943f4276"><td class="memItemLeft" align="right" valign="top"><a id="a477525da76b6989d840fe56b943f4276" name="a477525da76b6989d840fe56b943f4276"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html">vendor::vectornav::InsOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>insOutputs</b></td></tr>
-<tr class="memdesc:a477525da76b6989d840fe56b943f4276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 6 - INS Outputs. <br /></td></tr>
+<tr class="memitem:a477525da76b6989d840fe56b943f4276" id="r_a477525da76b6989d840fe56b943f4276"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html">vendor::vectornav::InsOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a477525da76b6989d840fe56b943f4276">insOutputs</a></td></tr>
+<tr class="memdesc:a477525da76b6989d840fe56b943f4276"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 6 - INS Outputs.  <br /></td></tr>
 <tr class="separator:a477525da76b6989d840fe56b943f4276"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a239f4eaa763067b30fc87f5543f48f67" id="r_a239f4eaa763067b30fc87f5543f48f67"><td class="memItemLeft" align="right" valign="top"><a id="a239f4eaa763067b30fc87f5543f48f67" name="a239f4eaa763067b30fc87f5543f48f67"></a>
-std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html">vendor::vectornav::TimeOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>timeOutputs</b></td></tr>
-<tr class="memdesc:a239f4eaa763067b30fc87f5543f48f67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 2 - Time Outputs. <br /></td></tr>
+<tr class="memitem:a239f4eaa763067b30fc87f5543f48f67" id="r_a239f4eaa763067b30fc87f5543f48f67"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html">vendor::vectornav::TimeOutputs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a239f4eaa763067b30fc87f5543f48f67">timeOutputs</a></td></tr>
+<tr class="memdesc:a239f4eaa763067b30fc87f5543f48f67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary Group 2 - Time Outputs.  <br /></td></tr>
 <tr class="separator:a239f4eaa763067b30fc87f5543f48f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>insTime</b></td></tr>
-<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received. <br /></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td></tr>
+<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received.  <br /></td></tr>
 <tr class="separator:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_events</b></td></tr>
-<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events. <br /></td></tr>
+<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7e3d71ea9991be6289c3ccc02d6b5825">_events</a></td></tr>
+<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events.  <br /></td></tr>
 <tr class="separator:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>IMU Observation storage class. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00038">38</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2f248b8acf9a8ccacc4a4a1bd66611db" name="a2f248b8acf9a8ccacc4a4a1bd66611db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2f248b8acf9a8ccacc4a4a1bd66611db">&#9670;&#160;</a></span>VectorNavBinaryOutput()</h2>
@@ -316,6 +298,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00043">43</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -346,6 +330,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">NAV::NodeData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00751">751</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ab4309db607ba69d04321024bc46d3bb5" name="ab4309db607ba69d04321024bc46d3bb5"></a>
@@ -374,6 +360,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <p>Returns a vector of data descriptors and values for the dynamic data. </p>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835">NAV::NodeData</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l01583">1583</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
 
 </div>
 </div>
@@ -405,6 +393,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#aee2a0ad51ba50c9f76736457fc1f6fa3">NAV::NodeData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l01277">1277</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a58e999d9ebe330b2ccaccdc8d3f472e0" name="a58e999d9ebe330b2ccaccdc8d3f472e0"></a>
@@ -419,7 +409,7 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
         <tr>
           <td class="memname">static <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> NAV::VectorNavBinaryOutput::getSatSys </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5">vendor::vectornav::SatSys</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>sys</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5">vendor::vectornav::SatSys</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>sys</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -438,6 +428,66 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> System in "INSTINCT" format </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00717">717</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a4902921223609b05d1343e07494d3911" name="a4902921223609b05d1343e07494d3911"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4902921223609b05d1343e07494d3911">&#9670;&#160;</a></span>GetStaticDataDescriptors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::vector&lt; std::string &gt; NAV::VectorNavBinaryOutput::GetStaticDataDescriptors </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a vector of data descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00065">65</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3c4323364b794cb30a89c3701c3134d3" name="a3c4323364b794cb30a89c3701c3134d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c4323364b794cb30a89c3701c3134d3">&#9670;&#160;</a></span>GetStaticDescriptorCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t NAV::VectorNavBinaryOutput::GetStaticDescriptorCount </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the amount of descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00071">71</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
 
 </div>
 </div>
@@ -468,6 +518,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <dl class="section return"><dt>Returns</dt><dd>The data type </dd></dl>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#a73c0a13eeb9216ee894266d587c7c84f">NAV::NodeData</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00055">55</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
 
 </div>
 </div>
@@ -505,6 +557,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#ab3ac4652b4aa47783833f4cd53c19506">NAV::NodeData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00082">82</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a6214b2a48d53c07bd2b4c5ac740164dd" name="a6214b2a48d53c07bd2b4c5ac740164dd"></a>
@@ -532,6 +586,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Returns the parent types of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The parent data types </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00059">59</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
 
 </div>
 </div>
@@ -562,6 +618,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#ae6329391dfa5640c57c0f043865bc476">NAV::NodeData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00074">74</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <a id="af18cdd5f322ce858a2edae3d879ab2d2" name="af18cdd5f322ce858a2edae3d879ab2d2"></a>
@@ -591,6 +649,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1NodeData.html#aee6028b6b6d3156fdf5a811f925064f4">NAV::NodeData</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00077">77</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a4fbf6fc2eb5e95a3693ed2f463bd666c" name="a4fbf6fc2eb5e95a3693ed2f463bd666c"></a>
@@ -619,6 +679,135 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <p>Returns the type of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The data type </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l00048">48</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="afe0491de4f73cb373b8ce00a1bfbdb71" name="afe0491de4f73cb373b8ce00a1bfbdb71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe0491de4f73cb373b8ce00a1bfbdb71">&#9670;&#160;</a></span>attitudeOutputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html">vendor::vectornav::AttitudeOutputs</a>&gt; NAV::VectorNavBinaryOutput::attitudeOutputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 5 - Attitude Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02125">2125</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af691a5aecae014dd780e79b8037183b6" name="af691a5aecae014dd780e79b8037183b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af691a5aecae014dd780e79b8037183b6">&#9670;&#160;</a></span>gnss1Outputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a>&gt; NAV::VectorNavBinaryOutput::gnss1Outputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 4 - GNSS1 Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02122">2122</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad2fce553fe150d99aeac40d508e9b480" name="ad2fce553fe150d99aeac40d508e9b480"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2fce553fe150d99aeac40d508e9b480">&#9670;&#160;</a></span>gnss2Outputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html">vendor::vectornav::GnssOutputs</a>&gt; NAV::VectorNavBinaryOutput::gnss2Outputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 7 - GNSS2 Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02131">2131</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a32ae2b4ccd82060aef4a8fe32f25ccbc" name="a32ae2b4ccd82060aef4a8fe32f25ccbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32ae2b4ccd82060aef4a8fe32f25ccbc">&#9670;&#160;</a></span>imuOutputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1ImuOutputs.html">vendor::vectornav::ImuOutputs</a>&gt; NAV::VectorNavBinaryOutput::imuOutputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 3 - IMU Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02119">2119</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="acad3888e50896168632ad628a13eca04" name="acad3888e50896168632ad628a13eca04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acad3888e50896168632ad628a13eca04">&#9670;&#160;</a></span>imuPos</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a>&amp; NAV::VectorNavBinaryOutput::imuPos</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Position and rotation information for conversion from platform to body frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02134">2134</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a477525da76b6989d840fe56b943f4276" name="a477525da76b6989d840fe56b943f4276"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a477525da76b6989d840fe56b943f4276">&#9670;&#160;</a></span>insOutputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1InsOutputs.html">vendor::vectornav::InsOutputs</a>&gt; NAV::VectorNavBinaryOutput::insOutputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 6 - INS Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02128">2128</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a239f4eaa763067b30fc87f5543f48f67" name="a239f4eaa763067b30fc87f5543f48f67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a239f4eaa763067b30fc87f5543f48f67">&#9670;&#160;</a></span>timeOutputs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1TimeOutputs.html">vendor::vectornav::TimeOutputs</a>&gt; NAV::VectorNavBinaryOutput::timeOutputs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binary Group 2 - Time Outputs. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavBinaryOutput_8hpp_source.html#l02116">2116</a> of file <a class="el" href="VectorNavBinaryOutput_8hpp_source.html">VectorNavBinaryOutput.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -629,7 +818,7 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1VectorNavBinaryOutput.html">VectorNavBinaryOutput</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1VectorNavBinaryOutput.html">VectorNavBinaryOutput</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

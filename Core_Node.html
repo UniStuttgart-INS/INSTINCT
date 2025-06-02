@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -137,8 +138,8 @@ Worker Thread</h1>
 <h1><a class="anchor" id="Core_Node_State"></a>
 Node States</h1>
 <p>The <a class="el" href="classNAV_1_1Node.html#a174753f74e1f2eb8d4f16b8c82ddbea3">State </a> enum defines all possible state a node can be in within its lifetime. To change from one state to the next, the user can call certain functions:</p><ul>
-<li><a class="el" href="classNAV_1_1Node.html#a6998700af1bcac4501b9ee1d800eafaf">doInitialize(bool wait) </a>: Initializes the node by calling <a class="el" href="classNAV_1_1Node.html#a44b546c8c838cd149053ccd352a51c19">initialize() </a>. Also tries to initialize all nodes which are connected over none <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Flow </a> input pins as the node depends on the pin data.</li>
-<li><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize(bool wait) </a>: Deinitializes the node by calling <a class="el" href="classNAV_1_1Node.html#a404838b9d0296ee94a93391bcb2cd406">deinitialize() </a>. Also deinitializes all nodes which are connected over none <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Flow </a> output pins as they depend on the pin data.</li>
+<li><a class="el" href="classNAV_1_1Node.html#a6998700af1bcac4501b9ee1d800eafaf">doInitialize(bool wait) </a>: Initializes the node by calling <a class="el" href="classNAV_1_1Node.html#affdb065780fd29abe64b2fb2731e8080">initialize() </a>. Also tries to initialize all nodes which are connected over none <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Flow </a> input pins as the node depends on the pin data.</li>
+<li><a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize(bool wait) </a>: Deinitializes the node by calling <a class="el" href="classNAV_1_1Node.html#a672f89aaab8b8a18998d994e8e05b7f2">deinitialize() </a>. Also deinitializes all nodes which are connected over none <a class="el" href="structNAV_1_1Pin_1_1Type.html#a279e3676818f11aa004d931727122b07ab68345d692cc18f6dd15ecbcb06a1924">Flow </a> output pins as they depend on the pin data.</li>
 <li><a class="el" href="classNAV_1_1Node.html#aad9eee968f213576b9d007dc8a999aa6">doReinitialize(bool wait) </a>: Calls <a class="el" href="classNAV_1_1Node.html#a05d65fed1964daf2e8e588de7bbbe136">doDeinitialize(bool wait) </a> and afterwards <a class="el" href="classNAV_1_1Node.html#a6998700af1bcac4501b9ee1d800eafaf">doInitialize(bool wait) </a>.</li>
 <li><a class="el" href="classNAV_1_1Node.html#a15e8cdd4b182aa39bdd4e62897a744cf">doDisable(bool wait) </a>: Disables the node. Also performs deinitialization first and therefore can wait for it to finish.</li>
 <li><a class="el" href="classNAV_1_1Node.html#aa1ecb07b0631ad1704824c3945c9631c">doEnable() </a>: Enables the node. Enabling is not handled by the worker thread, so this function does not need to wait.</li>

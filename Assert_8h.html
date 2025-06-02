@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -130,20 +131,67 @@ $(function(){initNavTree('Assert_8h.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a0a57fbe0ff187d7d46f3448c15ed88da" id="r_a0a57fbe0ff187d7d46f3448c15ed88da"><td class="memItemLeft" align="right" valign="top"><a id="a0a57fbe0ff187d7d46f3448c15ed88da" name="a0a57fbe0ff187d7d46f3448c15ed88da"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>INS_ASSERT</b>(_EXPR)</td></tr>
-<tr class="memdesc:a0a57fbe0ff187d7d46f3448c15ed88da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert function wrapper. <br /></td></tr>
+<tr class="memitem:a0a57fbe0ff187d7d46f3448c15ed88da" id="r_a0a57fbe0ff187d7d46f3448c15ed88da"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a57fbe0ff187d7d46f3448c15ed88da">INS_ASSERT</a>(_EXPR)</td></tr>
+<tr class="memdesc:a0a57fbe0ff187d7d46f3448c15ed88da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert function wrapper.  <br /></td></tr>
 <tr class="separator:a0a57fbe0ff187d7d46f3448c15ed88da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45532da602b4922a478b7d7eef4a8b3e" id="r_a45532da602b4922a478b7d7eef4a8b3e"><td class="memItemLeft" align="right" valign="top"><a id="a45532da602b4922a478b7d7eef4a8b3e" name="a45532da602b4922a478b7d7eef4a8b3e"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>INS_ASSERT_USER_ERROR</b>(_EXP,  _MSG)</td></tr>
-<tr class="memdesc:a45532da602b4922a478b7d7eef4a8b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert function with message. <br /></td></tr>
+<tr class="memitem:a45532da602b4922a478b7d7eef4a8b3e" id="r_a45532da602b4922a478b7d7eef4a8b3e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a45532da602b4922a478b7d7eef4a8b3e">INS_ASSERT_USER_ERROR</a>(_EXP,  _MSG)</td></tr>
+<tr class="memdesc:a45532da602b4922a478b7d7eef4a8b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assert function with message.  <br /></td></tr>
 <tr class="separator:a45532da602b4922a478b7d7eef4a8b3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Assertion helpers. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-04-22 </dd></dl>
-</div></div><!-- contents -->
+
+<p class="definition">Definition in file <a class="el" href="Assert_8h_source.html">Assert.h</a>.</p>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a0a57fbe0ff187d7d46f3448c15ed88da" name="a0a57fbe0ff187d7d46f3448c15ed88da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a57fbe0ff187d7d46f3448c15ed88da">&#9670;&#160;</a></span>INS_ASSERT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INS_ASSERT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>_EXPR</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assert function wrapper. </p>
+
+<p class="definition">Definition at line <a class="el" href="Assert_8h_source.html#l00019">19</a> of file <a class="el" href="Assert_8h_source.html">Assert.h</a>.</p>
+
+</div>
+</div>
+<a id="a45532da602b4922a478b7d7eef4a8b3e" name="a45532da602b4922a478b7d7eef4a8b3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45532da602b4922a478b7d7eef4a8b3e">&#9670;&#160;</a></span>INS_ASSERT_USER_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INS_ASSERT_USER_ERROR</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>_EXP</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>_MSG</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assert function with message. </p>
+
+<p class="definition">Definition at line <a class="el" href="Assert_8h_source.html#l00021">21</a> of file <a class="el" href="Assert_8h_source.html">Assert.h</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

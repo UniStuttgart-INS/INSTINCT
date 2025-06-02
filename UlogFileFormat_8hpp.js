@@ -14,16 +14,16 @@ var UlogFileFormat_8hpp =
     [ "NAV::vendor::pixhawk::ulog_message_flag_bits_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__flag__bits__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__flag__bits__s" ],
     [ "NAV::vendor::pixhawk::ulog_message_info_multiple_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s" ],
     [ "NAV::vendor::pixhawk::ulog_message_parameter_default_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s" ],
-    [ "NAV::vendor::pixhawk::ulog_tag", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8", [
-      [ "unassigned", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7", null ],
-      [ "mavlink_handler", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474", null ],
-      [ "ppk_handler", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829", null ],
-      [ "camera_handler", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01", null ],
-      [ "ptp_handler", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404", null ],
-      [ "serial_handler", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04", null ],
-      [ "watchdog", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc", null ],
-      [ "io_service", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda", null ],
-      [ "cbuf", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7", null ],
-      [ "ulg", "UlogFileFormat_8hpp.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116", null ]
+    [ "NAV::vendor::pixhawk::ulog_tag", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8", [
+      [ "NAV::vendor::pixhawk::ulog_tag::unassigned", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8abad097494597a4e092c1524102eeaea7", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::mavlink_handler", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a825fb2ed0a1f378cb750511cd3ff0474", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::ppk_handler", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a174fdc806ca90323bc395eec929ec829", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::camera_handler", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a37ac5d1ae1c5ed53ee12d3ba66754b01", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::ptp_handler", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8aafa752293e7cba9584dfff4224497404", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::serial_handler", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9126425b1eeda3c38b230d48da9b7f04", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::watchdog", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a779c708ac0843f43a54f0695e3271fdc", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::io_service", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8ab4465ba76661d57b0b5e3ef5908cbdda", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::cbuf", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a000d179e46648e6731ebe7ce11447bb7", null ],
+      [ "NAV::vendor::pixhawk::ulog_tag::ulg", "namespaceNAV_1_1vendor_1_1pixhawk.html#ac919c4254e378ff6a7aa1686e9e8b0f8a9dc981b68c66c6d2fe3f14fb61bbd116", null ]
     ] ]
 ];

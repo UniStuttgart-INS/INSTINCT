@@ -79,25 +79,7 @@
 \_form#41=543x21:\begin{equation} \label{eq:eq-GNSS-freqRatio}
   \gamma = (f_1 / f_2)^2
 \end{equation}
-\_form#42=653x47:\begin{equation} \label{eq:eq-INS-Mechanization-TransportRate}
-  \boldsymbol{\omega}_{en}^n = \begin{bmatrix} \dfrac{v_E}{R_E + h} & \dfrac{-v_N}{R_N + h} & \dfrac{-v_E \tan{\phi}}{R_E + h} \end{bmatrix}^T
-\end{equation}
-\_form#43=555x19:\begin{equation} \label{eq:eq-INS-Mechanization-CentrifugalAcceleration}
-  \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ]
-\end{equation}
-\_form#44=562x19:\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration}
-  (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n
-\end{equation}
-\_form#45=530x19:\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration-e}
-  2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
-\end{equation}
-\_form#46=562x42:\begin{equation} \label{eq:eq-INS-Mechanization-Yaw}
-  Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
-\end{equation}
-\_form#47=592x53:\begin{equation} \label{eq:eq-INS-Mechanization-Pitch}
-  P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
-\end{equation}
-\_form#48=702x89:\begin{equation} \label{eq:eq-INS-Mechanization-e_Quat_b-dot}
+\_form#42=702x89:\begin{equation} \label{eq:eq-INS-Mechanization-e_Quat_b-dot}
   \mathbf{\dot{q}}_b^e
    = \begin{bmatrix} \dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{w} \end{bmatrix}
    = \frac{1}{2} \begin{bmatrix}        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b & \omega_{eb,x}^b \\
@@ -106,19 +88,37 @@
                                  -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b &        0        \end{bmatrix}
                  \begin{bmatrix} x \\ y \\ z \\ w \end{bmatrix}
 \end{equation}
-\_form#49=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
-\_form#50=714x70:\begin{equation} \label{eq:eq-INS-Mechanization-v_e-dot}
+\_form#43=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
+\_form#44=714x70:\begin{equation} \label{eq:eq-INS-Mechanization-v_e-dot}
   \boldsymbol{\dot{v}}^e
       = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravitation}\hidewidth}
         -\ \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \end{equation}
-\_form#51=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Velocity}
-\_form#52=523x19:\begin{equation} \label{eq:eq-INS-Mechanization-x_e-dot}
+\_form#45=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Velocity}
+\_form#46=523x19:\begin{equation} \label{eq:eq-INS-Mechanization-x_e-dot}
   \boldsymbol{\dot{x}}^e = \boldsymbol{v}^e
 \end{equation}
-\_form#53=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Position}
+\_form#47=44x19:\eqref{eq:eq-ImuIntegrator-Mechanization-e-Position}
+\_form#48=653x47:\begin{equation} \label{eq:eq-INS-Mechanization-TransportRate}
+  \boldsymbol{\omega}_{en}^n = \begin{bmatrix} \dfrac{v_E}{R_E + h} & \dfrac{-v_N}{R_N + h} & \dfrac{-v_E \tan{\phi}}{R_E + h} \end{bmatrix}^T
+\end{equation}
+\_form#49=555x19:\begin{equation} \label{eq:eq-INS-Mechanization-CentrifugalAcceleration}
+  \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ]
+\end{equation}
+\_form#50=562x19:\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration}
+  (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n
+\end{equation}
+\_form#51=530x19:\begin{equation} \label{eq:eq-INS-Mechanization-CoriolisAcceleration-e}
+  2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e
+\end{equation}
+\_form#52=562x42:\begin{equation} \label{eq:eq-INS-Mechanization-Yaw}
+  Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
+\end{equation}
+\_form#53=592x53:\begin{equation} \label{eq:eq-INS-Mechanization-Pitch}
+  P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
+\end{equation}
 \_form#54=707x89:\begin{equation} \label{eq:eq-INS-Mechanization-n_Quat_b-dot}
   \mathbf{\dot{q}}_b^n
    = \begin{bmatrix} \dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{w} \end{bmatrix}
@@ -346,125 +346,22 @@
 \_form#120=576x49:\begin{equation} \label{eq:eq-SppBasics-measurementModel-sensitivityMatrix-general}
 \mathbf{H}_k = \left.\frac{\delta\mathbf{h}(\mathbf{x}, t_k)}{\delta\mathbf{x}}\right|_{x=\hat{x}_k^-}
 \end{equation}
-\_form#121=572x21:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Q}
-    \boldsymbol{Q} = \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \boldsymbol{H}(\boldsymbol{x})
-\end{equation}
-\_form#122=599x21:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-dx}
-    \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
-\end{equation}
-\_form#123=537x19:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-xhat}
-    \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
-\end{equation}
-\_form#124=581x19:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-e}
-    \boldsymbol{e} = \delta\boldsymbol{z}(\boldsymbol{x}) - \boldsymbol{H}(\boldsymbol{x}) \cdot \delta\boldsymbol{x}
-\end{equation}
-\_form#125=651x40:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Sigma}
-    \boldsymbol{\Sigma}_{x} = \hat{\sigma}_{apost}^2 \cdot \boldsymbol{Q}^{-1} \text{ where } \hat{\sigma}_{apost}^2 = \frac{\boldsymbol{e}^T\boldsymbol{W}\boldsymbol{e}}{m-n}
-\end{equation}
-\_form#126=93x21:$ \mid \delta \boldsymbol{x} \mid < 10^{-4} $
-\_form#127=46x16:$ \boldsymbol{x} = \hat{\boldsymbol{x}} $
-\_form#128=770x189:\begin{equation} \label{eq:eq-SppLSE-unknowns-pseudorange}
-\mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{r}^e \\
-    dt_R \\
-    dt_{ISB}^{S_2 \rightarrow S_1} \\
-    \vdots \\
-    dt_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Position [m]} \\
-    \text{Receiver clock error [m]} \\
-    \text{Inter-system clock error (System 2 to 1) [m]} \\
-    \vdots \\
-    \text{Inter-system clock error (System o to 1) [m]} \\
-    };
-
-  \end{tikzpicture}
-\end{equation}
-\_form#129=770x189:\begin{equation} \label{eq:eq-SppLSE-unknowns-doppler}
-\mathbf{x} =
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-    \mathbf{v}^e \\
-    d\dotup{t}_R \\
-    d\dotup{t}_{ISB}^{S_2 \rightarrow S_1} \\
-    \vdots \\
-    d\dotup{t}_{ISB}^{S_o \rightarrow S_1} \\
-    };
-
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
-                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
-    \text{Velocity [m/s]} \\
-    \text{Receiver clock drift [m/s]} \\
-    \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
-    \vdots \\
-    \text{Inter-system clock drift (System o to 1)  [m/s]} \\
-    };
-
-  \end{tikzpicture}
-\end{equation}
-\_form#130=674x145:\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorange}
-\begin{aligned}
-\mathbf{H}_k
-&=
-\left[\begin{array}{ccccc}
-  \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 0 \\
-  \frac{-x^s+x_r}{\rho_r^s} & \frac{-y^s+y_r}{\rho_r^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 1 \\
-  \ldots & \ldots & \ldots & \ldots & \ldots
-\end{array}\right] \\
-&=
-\left[\begin{array}{ccccc}
-  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
-  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
-  \ldots & \ldots & \ldots & \ldots & \ldots
-\end{array}\right]
-\end{aligned}
-\end{equation}
-\_form#131=679x145:\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
-\begin{aligned}
-\mathbf{H}_k
-&=
-\left[\begin{array}{ccccc}
-    -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 0 \\
-    -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 1 \\
-    \ldots & \ldots & \ldots & \ldots & \ldots
-  \end{array}\right] \\
-  &=
-  \left[\begin{array}{ccccc}
-    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
-    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
-    \ldots & \ldots & \ldots & \ldots & \ldots
-  \end{array}\right]
-  \end{aligned}
-\end{equation}
-\_form#132=660x51:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-prediction}
+\_form#121=660x51:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-prediction}
 \begin{aligned}
   \hat{\boldsymbol{x}}_{n \mid n-1} &=\boldsymbol{\Phi}_{n-1 \mid n-1} \cdot \hat{\boldsymbol{x}}_{n-1 \mid n-1} \\
   \boldsymbol{P}_{n \mid n-1} &=\boldsymbol{\Phi}_{n-1 \mid n-1} \boldsymbol{P}_{n-1 \mid n-1} \boldsymbol{\Phi}_{n-1 \mid n-1}^{T}+\boldsymbol{Q}
 \end{aligned}
 \end{equation}
-\_form#133=662x39:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-gain}
+\_form#122=662x39:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-gain}
 \boldsymbol{K}_{n}=\boldsymbol{P}_{n \mid n-1} \boldsymbol{H}_{n}^{T}\left(\boldsymbol{H}_{n} \boldsymbol{P}_{n \mid n-1} \boldsymbol{H}_{n}^{T}+\boldsymbol{R}_{n}\right)^{-1}
 \end{equation}
-\_form#134=707x47:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-update}
+\_form#123=707x47:\begin{equation} \label{eq:eq-SppKF-KfAlgorithm-update}
 \begin{aligned}
   \hat{\boldsymbol{x}}_{n \mid n}&=\hat{\boldsymbol{x}}_{n \mid n-1}+\boldsymbol{K}_{n}\left(\Delta \boldsymbol{y}_{n}-\boldsymbol{H}_{n} \left(\hat{\boldsymbol{x}}_{n \mid n-1} - \hat{\boldsymbol{x}}_{n-1 \mid n-1}\right)\right) \\
   \boldsymbol{P}_{n \mid n}&=\left(\boldsymbol{I}-\boldsymbol{K}_{n} \boldsymbol{H}_{n}\right) \boldsymbol{P}_{n \mid n-1}
 \end{aligned}
 \end{equation}
-\_form#135=774x326:\begin{equation} \label{eq:eq-SppKF-unknowns}
+\_form#124=774x326:\begin{equation} \label{eq:eq-SppKF-unknowns}
 \mathbf{x}^e =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
@@ -500,7 +397,7 @@
 
   \end{tikzpicture}
 \end{equation}
-\_form#136=957x354:\begin{equation} \label{eq:eq-SppKF-processModel-systemModel}
+\_form#125=957x354:\begin{equation} \label{eq:eq-SppKF-processModel-systemModel}
 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
   {
@@ -560,17 +457,17 @@
 +
 \mathbf{G} \cdot \boldsymbol{w}
 \end{equation}
-\_form#137=586x19:\begin{equation} \label{eq:eq-SppKF-processModel-stateTransitionMatrix}
+\_form#126=586x19:\begin{equation} \label{eq:eq-SppKF-processModel-stateTransitionMatrix}
 \mathbf{\Phi} = \text{exp}(\mathbf{F} \tau_s) = \mathbf{I} + \mathbf{F}\tau_s
 \end{equation}
-\_form#138=25x14:$ \sigma_{c\phi} $
-\_form#139=25x14:$ \sigma_{cf} $
-\_form#140=793x44:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-clock}
+\_form#127=25x14:$ \sigma_{c\phi} $
+\_form#128=25x14:$ \sigma_{cf} $
+\_form#129=793x44:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-clock}
 S_{c f}^a = \frac{\sigma^2\left(\delta \dotup{\rho}_c^a\left(t+\tau_s\right)-\delta \dotup{\rho}_c^a(t)\right)}{\tau_s} \quad S_{c \phi}^a = \frac{\sigma^2\left(\delta \rho_c^a\left(t+tau_s\right)-\delta \rho_c^a(t)-\delta \dotup{\rho}_c^a(t) \tau_s\right)}{\tau_s}
 \end{equation}
-\_form#141=133x21:$ S_{cf} \approx 0.04 \text{ m}^2 \text{s}^{-3} $
-\_form#142=133x21:$ S_{c\phi} \approx 0.01 \text{ m}^2 \text{s}^{-1} $
-\_form#143=191x63:$  \mathbf{S}_a^n
+\_form#130=133x21:$ S_{cf} \approx 0.04 \text{ m}^2 \text{s}^{-3} $
+\_form#131=133x21:$ S_{c\phi} \approx 0.01 \text{ m}^2 \text{s}^{-1} $
+\_form#132=191x63:$  \mathbf{S}_a^n
   =
   \begin{bmatrix}
     S_{aH} & 0 & 0 \\
@@ -578,18 +475,18 @@ S_{c f}^a = \frac{\sigma^2\left(\delta \dotup{\rho}_c^a\left(t+\tau_s\right)-\de
     0 & 0 & S_{aV} \\
   \end{bmatrix}
 $
-\_form#144=754x114:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-userMotion}
+\_form#133=754x114:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-userMotion}
 \begin{aligned}
 & S_{a H}=\frac{\sigma^2\left(v_{e b, N}^n\left(t+\tau_s\right)-v_{e b, N}^n(t)\right)}{\tau_s}=\frac{\sigma^2\left(v_{e b, E}^n\left(t+\tau_s\right)-v_{e b, E}^n(t)\right)}{\tau_s} \\
 & S_{a V}=\frac{\sigma^2\left(v_{e b, D}^n\left(t+\tau_s\right)-v_{e b, D}^n(t)\right)}{\tau_s}
 \end{aligned}
 \end{equation}
-\_form#145=32x18:$ S_{aH} $
-\_form#146=61x18:$ 1 \text{ m}^2 \text{s}^{-3} $
-\_form#147=70x18:$ 10 \text{ m}^2 \text{s}^{-3} $
-\_form#148=79x18:$ 100 \text{ m}^2 \text{s}^{-3} $
-\_form#149=30x18:$ S_{aV} $
-\_form#150=809x315:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-vanLoan-noiseInput}
+\_form#134=32x18:$ S_{aH} $
+\_form#135=61x18:$ 1 \text{ m}^2 \text{s}^{-3} $
+\_form#136=70x18:$ 10 \text{ m}^2 \text{s}^{-3} $
+\_form#137=79x18:$ 100 \text{ m}^2 \text{s}^{-3} $
+\_form#138=30x18:$ S_{aV} $
+\_form#139=809x315:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-vanLoan-noiseInput}
 \mathbf{G}
 =
 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -611,7 +508,7 @@ $
 
 \end{tikzpicture}
 \end{equation}
-\_form#151=812x368:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-vanLoan-noiseScale}
+\_form#140=812x368:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-vanLoan-noiseScale}
 \mathbf{W}
 =
 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -633,11 +530,11 @@ $
 
 \end{tikzpicture}
 \end{equation}
-\_form#152=586x42:\begin{equation} \label{eq:ep-SppKF-processNoise-vanLoan-A}
+\_form#141=586x42:\begin{equation} \label{eq:ep-SppKF-processNoise-vanLoan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \end{equation}
-\_form#153=690x54:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-expA}
+\_form#142=690x54:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-expA}
 \mathbf{B} = \text{expm}(\mathbf{A})
 = \left[ \begin{array}{c:c}
     \dots      & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
@@ -650,15 +547,15 @@ $
     \mathbf{B}_{21} & \mathbf{B}_{22}
   \end{array} \right]
 \end{equation}
-\_form#154=527x21:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-Phi}
+\_form#143=527x21:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
 \end{equation}
-\_form#155=534x19:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-Q}
+\_form#144=534x19:\begin{equation} \label{eq:eq-SppKF-processNoise-vanLoan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \end{equation}
-\_form#156=25x19:$ S_{cf} $
-\_form#157=26x19:$ S_{c\phi} $
-\_form#158=693x89:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-groves}
+\_form#145=25x19:$ S_{cf} $
+\_form#146=26x19:$ S_{c\phi} $
+\_form#147=693x89:\begin{equation} \label{eq:eq-SppKF-processModel-processNoise-groves}
 \mathbf{Q} =
 \left[\begin{array}{cc:cc}
   \frac{1}{3} S_a^\gamma \tau_s^3 & \frac{1}{2} S_a^\gamma \tau_s^2 & 0_{3,1} & 0_{3,1} \\
@@ -668,7 +565,7 @@ $
   0_{1,3} & 0_{1,3} & \frac{1}{2} S_{c f}^a \tau_s^2 & S_{c f}^a \tau_s
   \end{array}\right]
 \end{equation}
-\_form#159=847x439:\begin{equation} \label{eq:eq-SppKF-measurementModel-sensitivityMatrix}
+\_form#148=847x439:\begin{equation} \label{eq:eq-SppKF-measurementModel-sensitivityMatrix}
 \begin{aligned}
 \mathbf{H}_k
 &=
@@ -703,17 +600,17 @@ $
 \end{array}\right]
 \end{aligned}
 \end{equation}
-\_form#160=11x11:$ x $
-\_form#161=14x14:$ P $
-\_form#162=18x18:$ S_2 $
-\_form#163=18x18:$ S_3 $
-\_form#164=18x18:$ S_4 $
-\_form#165=18x18:$ S_1 $
-\_form#166=60x25:$ { dt_{ISB}^{S_1 \rightarrow S_2}} $
-\_form#167=60x25:$ { d\dotup{t}_{ISB}^{S_1 \rightarrow S_2}} $
-\_form#168=16x14:$ \mathbf{D} $
-\_form#169=116x16:$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $
-\_form#170=975x296:\begin{equation}\begin{bmatrix}
+\_form#149=11x11:$ x $
+\_form#150=14x14:$ P $
+\_form#151=18x18:$ S_2 $
+\_form#152=18x18:$ S_3 $
+\_form#153=18x18:$ S_4 $
+\_form#154=18x18:$ S_1 $
+\_form#155=60x25:$ { dt_{ISB}^{S_1 \rightarrow S_2}} $
+\_form#156=60x25:$ { d\dotup{t}_{ISB}^{S_1 \rightarrow S_2}} $
+\_form#157=16x14:$ \mathbf{D} $
+\_form#158=116x16:$ \mathbf{x}_{\text{new}} = \mathbf{D} \cdot \mathbf{x}_{\text{old}} $
+\_form#159=975x296:\begin{equation}\begin{bmatrix}
     { \mathbf{r}_{r} } \\
     { \mathbf{v}_{r} } \\
     { dt_r} \\
@@ -757,7 +654,7 @@ $
     { dt_{IFB}^{F_2 \rightarrow F_1}}
 \end{bmatrix}_{\text{old}}
 \end{equation}
-\_form#171=975x296:\begin{equation}\begin{bmatrix}
+\_form#160=975x296:\begin{equation}\begin{bmatrix}
     { \mathbf{r}_{r} } \\
     { \mathbf{v}_{r} } \\
     { dt_r} \\
@@ -801,7 +698,110 @@ $
     { dt_{IFB}^{F_2 \rightarrow F_1}}
 \end{bmatrix}_{\text{old}}
 \end{equation}
-\_form#172=574x21:\begin{equation}\mathbf{P}_{\text{new}} = \mathbf{D} \cdot \mathbf{P}_{\text{old}} \cdot \mathbf{D}^T
+\_form#161=574x21:\begin{equation}\mathbf{P}_{\text{new}} = \mathbf{D} \cdot \mathbf{P}_{\text{old}} \cdot \mathbf{D}^T
+\end{equation}
+\_form#162=572x21:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Q}
+    \boldsymbol{Q} = \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \boldsymbol{H}(\boldsymbol{x})
+\end{equation}
+\_form#163=599x21:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-dx}
+    \delta \boldsymbol{x} = (\boldsymbol{Q})^{-1} \boldsymbol{H}(\boldsymbol{x})^T \boldsymbol{W} \delta \boldsymbol{z}(\boldsymbol{x})
+\end{equation}
+\_form#164=537x19:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-xhat}
+    \hat{\boldsymbol{x}} = \boldsymbol{x} + \delta \boldsymbol{x}
+\end{equation}
+\_form#165=581x19:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-e}
+    \boldsymbol{e} = \delta\boldsymbol{z}(\boldsymbol{x}) - \boldsymbol{H}(\boldsymbol{x}) \cdot \delta\boldsymbol{x}
+\end{equation}
+\_form#166=651x40:\begin{equation} \label{eq:eq-SPP-LseAlgorithm-Sigma}
+    \boldsymbol{\Sigma}_{x} = \hat{\sigma}_{apost}^2 \cdot \boldsymbol{Q}^{-1} \text{ where } \hat{\sigma}_{apost}^2 = \frac{\boldsymbol{e}^T\boldsymbol{W}\boldsymbol{e}}{m-n}
+\end{equation}
+\_form#167=93x21:$ \mid \delta \boldsymbol{x} \mid < 10^{-4} $
+\_form#168=46x16:$ \boldsymbol{x} = \hat{\boldsymbol{x}} $
+\_form#169=770x189:\begin{equation} \label{eq:eq-SppLSE-unknowns-pseudorange}
+\mathbf{x} =
+    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
+                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \mathbf{r}^e \\
+    dt_R \\
+    dt_{ISB}^{S_2 \rightarrow S_1} \\
+    \vdots \\
+    dt_{ISB}^{S_o \rightarrow S_1} \\
+    };
+
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
+                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
+    \text{Position [m]} \\
+    \text{Receiver clock error [m]} \\
+    \text{Inter-system clock error (System 2 to 1) [m]} \\
+    \vdots \\
+    \text{Inter-system clock error (System o to 1) [m]} \\
+    };
+
+  \end{tikzpicture}
+\end{equation}
+\_form#170=770x189:\begin{equation} \label{eq:eq-SppLSE-unknowns-doppler}
+\mathbf{x} =
+    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+        \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
+                    nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \mathbf{v}^e \\
+    d\dotup{t}_R \\
+    d\dotup{t}_{ISB}^{S_2 \rightarrow S_1} \\
+    \vdots \\
+    d\dotup{t}_{ISB}^{S_o \rightarrow S_1} \\
+    };
+
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={[},right delimiter={]},
+                nodes={rectangle,text width=20em,align=center},row sep=0.3em, column sep=0.4em] {
+    \text{Velocity [m/s]} \\
+    \text{Receiver clock drift [m/s]} \\
+    \text{Inter-system clock drift (System 2 to 1)  [m/s]} \\
+    \vdots \\
+    \text{Inter-system clock drift (System o to 1)  [m/s]} \\
+    };
+
+  \end{tikzpicture}
+\end{equation}
+\_form#171=674x145:\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorange}
+\begin{aligned}
+\mathbf{H}_k
+&=
+\left[\begin{array}{ccccc}
+  \frac{-x^s+x_r}{\rho_s^s} & \frac{-y^s+y_r}{\rho_s^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 0 \\
+  \frac{-x^s+x_r}{\rho_r^s} & \frac{-y^s+y_r}{\rho_r^s} & \frac{-z^s+z_r}{\rho_r^s} & 1 & 1 \\
+  \ldots & \ldots & \ldots & \ldots & \ldots
+\end{array}\right] \\
+&=
+\left[\begin{array}{ccccc}
+  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
+  -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
+  \ldots & \ldots & \ldots & \ldots & \ldots
+\end{array}\right]
+\end{aligned}
+\end{equation}
+\_form#172=679x145:\begin{equation} \label{eq:eq-SppLSE-measurementModel-designMatrix-pseudorangeRate}
+\begin{aligned}
+\mathbf{H}_k
+&=
+\left[\begin{array}{ccccc}
+    -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 0 \\
+    -\frac{x^s-x_r}{\rho_r^s} & -\frac{y^s-y_r}{\rho_r^s} & -\frac{z^s-z_r}{\rho_r^s} & 1 & 1 \\
+    \ldots & \ldots & \ldots & \ldots & \ldots
+  \end{array}\right] \\
+  &=
+  \left[\begin{array}{ccccc}
+    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 0 \\
+    -u_{rs,x} & -u_{rs,y} & -u_{rs,z} & 1 & 1 \\
+    \ldots & \ldots & \ldots & \ldots & \ldots
+  \end{array}\right]
+  \end{aligned}
 \end{equation}
 \_form#173=541x23:\begin{equation} \label{eq:eq-ImuIntegrator-Mechanization-e-Attitude-DCM}
   \mathbf{\dotup{C}}_b^e = \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b
@@ -1424,49 +1424,23 @@ $
 \_form#273=32x14:$ \sigma_{bgd} $
 \_form#274=30x12:$\tau_{bad} $
 \_form#275=12x14:$\mathbf{F}$
-\_form#276=11x11:$n$
-\_form#277=709x42:\begin{equation} \label{eq:eq-Gaussian}
-p(\boldsymbol{x})=\det((2\pi)^n\boldsymbol{\Sigma})^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right)
-\end{equation}
-\_form#278=548x19:\begin{equation} \label{eq:eq-LCKF_e-Phi-exp}
+\_form#276=548x19:\begin{equation} \label{eq:eq-LCKF_e-Phi-exp}
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
 \end{equation}
-\_form#279=679x51:\begin{equation} \label{eq:eq-LCKF_e-Phi-Taylor}
+\_form#277=679x51:\begin{equation} \label{eq:eq-LCKF_e-Phi-Taylor}
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
 \end{equation}
-\_form#280=772x47:\begin{equation} \label{eq:eq-LCKF_e-Q-exact}
+\_form#278=772x47:\begin{equation} \label{eq:eq-LCKF_e-Q-exact}
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
 \end{equation}
-\_form#281=592x42:\begin{equation} \label{eq:eq-predictation_and_observation_model}
-\begin{aligned}
-\boldsymbol{x}_t&=\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\varepsilon}_t\\
-\boldsymbol{z}_t&=\boldsymbol{H}_t\boldsymbol{x}_t+\boldsymbol{\upsilon}_t
-\end{aligned}
-\end{equation}
-\_form#282=599x21:\begin{equation} \label{eq:eq-LCKF_e-Q-approx}
+\_form#279=599x21:\begin{equation} \label{eq:eq-LCKF_e-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \end{equation}
-\_form#283=19x16:$\boldsymbol{\Phi}_t$
-\_form#284=54x19:$(n\times n)$
-\_form#285=49x19:$(t-1)$
-\_form#286=7x14:$t$
-\_form#287=21x16:$\boldsymbol{B}_t$
-\_form#288=18x12:$ \boldsymbol{u}_t$
-\_form#289=25x16:$\boldsymbol{H}_t$
-\_form#290=14x12:$\boldsymbol{\varepsilon}_t$
-\_form#291=21x18:$ \boldsymbol{Q}_t $
-\_form#292=107x19:$ \boldsymbol{\varepsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{Q}_t )$
-\_form#293=18x12:$\boldsymbol{\upsilon}_t$
-\_form#294=21x16:$ \boldsymbol{R}_t $
-\_form#295=110x19:$ \boldsymbol{\upsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{R}_t )$
-\_form#296=586x42:\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
+\_form#280=586x42:\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \end{equation}
-\_form#297=868x42:\begin{equation} \label{eq:eq-prediction}
-    p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})=\det((2\pi)^n\boldsymbol{Q}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right).
-\end{equation}
-\_form#298=683x67:\begin{equation} \label{eq:eq-LCKF_e-Loan-B}
+\_form#281=683x67:\begin{equation} \label{eq:eq-LCKF_e-Loan-B}
   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
@@ -1474,27 +1448,13 @@ p(\boldsymbol{x})=\det((2\pi)^n\boldsymbol{\Sigma})^{-\frac{1}{2}}\cdot \exp\lef
                                        = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
 \end{equation}
-\_form#299=767x42:\begin{equation} \label{eq:eq-measurement}
-    p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)=\det((2\pi)^m\boldsymbol{R}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)\right)
-\end{equation}
-\_form#300=527x21:\begin{equation} \label{eq:eq-LCKF_e-Loan-Phi}
+\_form#282=527x21:\begin{equation} \label{eq:eq-LCKF_e-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
 \end{equation}
-\_form#301=534x19:\begin{equation} \label{eq:eq-LCKF_e-Loan-Q}
+\_form#283=534x19:\begin{equation} \label{eq:eq-LCKF_e-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \end{equation}
-\_form#302=51x19:$ bel(\boldsymbol{x}_t)$
-\_form#303=674x42:\begin{equation} \label{eq:eq-Bayes-prediction}
-bel^-(\boldsymbol{x}_t)=\int {p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})}\cdot {bel(\boldsymbol{x}_{t-1})}\cdot d\boldsymbol{x}_{t-1}
-\end{equation}
-\_form#304=11x2:${\,}^{-}$
-\_form#305=620x21:\begin{equation} \label{eq:eq-Bayes-update}
-bel(\boldsymbol{x}_t)^+=\eta\cdot p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)\cdot bel^-(\boldsymbol{x}_t)
-\end{equation}
-\_form#306=11x11:${\,}^{+}$
-\_form#307=9x14:$\eta$
-\_form#308=23x14:$1.0$
-\_form#309=691x233:\begin{equation} \label{eq:eq-LCKF_e-P}
+\_form#284=691x233:\begin{equation} \label{eq:eq-LCKF_e-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -1515,41 +1475,17 @@ bel(\boldsymbol{x}_t)^+=\eta\cdot p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)\cdot
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#310=987x61:\begin{equation} \label{eq:eq-Bayes-prediction01}
-bel^-(\boldsymbol{x}_t) =\eta\int \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right) \exp\left(-\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\right)\cdot d\boldsymbol{x}_{t-1}
-\end{equation}
-\_form#311=35x14:$ \boldsymbol{\mu}_{t-1}$
-\_form#312=618x42:\begin{equation} \label{eq:eq-Bayes-prediction02}
-bel^-(\boldsymbol{x}_t)=\eta\int \exp(-L_t)\cdot d\boldsymbol{x}_{t-1}
-\end{equation}
-\_form#313=669x44:\begin{equation} \label{eq:eq-LCKF_e-deltaz}
+\_form#285=669x44:\begin{equation} \label{eq:eq-LCKF_e-deltaz}
   \boldsymbol{\delta} \mathbf{z}^e = \begin{pmatrix} \tilde{\mathbf{r}}_{b,G}^e - \hat{\mathbf{r}}_{b}^e - \mathbf{C}_b^e \mathbf{l}_{ba}^b \\
                                       \tilde{\mathbf{v}}^e_{G} - \hat{\mathbf{v}}^e - \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{pmatrix}
 \end{equation}
-\_form#314=14x16:$ G $
-\_form#315=19x21:$ \mathbf{l}_{ba}^b $
-\_form#316=865x39:\begin{equation} \label{eq:eq-Bayes-prediction03}
-L_t=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
-+\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1}).
-\end{equation}
-\_form#317=18x16:$ L_t$
-\_form#318=18x12:$\boldsymbol{x}_t$
-\_form#319=599x19:\begin{equation} \label{eq:eq-Bayes-prediction04}
-L_t=L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)+L_t(\boldsymbol{x}_t).
-\end{equation}
-\_form#320=646x49:\begin{equation} \label{eq:eq-LCKF_e-H-general}
+\_form#286=14x16:$ G $
+\_form#287=19x21:$ \mathbf{l}_{ba}^b $
+\_form#288=646x49:\begin{equation} \label{eq:eq-LCKF_e-H-general}
   \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
                = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
 \end{equation}
-\_form#321=693x42:\begin{equation} \label{eq:eq-Bayes-prediction05}
-bel^-(\boldsymbol{x}_t)=\eta\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)-L_t(\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
-\end{equation}
-\_form#322=719x42:\begin{equation} \label{eq:eq-Bayes-prediction06}
-bel^-(\boldsymbol{x}_t)=\eta\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
-\end{equation}
-\_form#323=49x19:$ L_t(\boldsymbol{x}_t)$
-\_form#324=35x12:$ \boldsymbol{x}_{t-1}$
-\_form#325=693x96:\begin{equation} \label{eq:eq-LCKF_e-H}
+\_form#289=693x96:\begin{equation} \label{eq:eq-LCKF_e-H}
   \mathbf{H}^e =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -1567,28 +1503,14 @@ bel^-(\boldsymbol{x}_t)=\eta\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}\int
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#326=606x21:\begin{equation} \label{eq:eq-Bayes-prediction07}
-bel^-(\boldsymbol{x}_t)=\eta'\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}
-\end{equation}
-\_form#327=656x110:\begin{equation} \label{eq:eq-LCKF_e-H-sub}
+\_form#290=656x110:\begin{equation} \label{eq:eq-LCKF_e-H-sub}
 \begin{aligned}
   \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^e}    &\approx \left[ (\mathbf{C}_b^e \mathbf{l}_{ba}^b) \times \right] \\
   \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^e}    &\approx \left[ \left\{ \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^e} &\approx \mathbf{C}_b^e \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
 \end{equation}
-\_form#328=751x42:\begin{equation} \label{eq:eq-Bayes-prediction08}
-\frac{\partial L_t}{\partial \boldsymbol{x}_{t-1}} = \boldsymbol{0} =-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
-\end{equation}
-\_form#329=691x23:\begin{equation} \label{eq:eq-Bayes-prediction09}
-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\\[2mm]
-\end{equation}
-\_form#330=751x81:\begin{eqnarray} \label{eq:eq-Bayes-prediction10}
-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}-\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
-(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
-\end{eqnarray}
-\_form#331=691x96:\begin{equation} \label{eq:eq-LCKF_e-R}
+\_form#291=691x96:\begin{equation} \label{eq:eq-LCKF_e-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -1603,176 +1525,74 @@ bel^-(\boldsymbol{x}_t)=\eta'\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#332=632x46:\begin{equation} \label{eq:eq-Bayes-prediction11}
-\frac{\partial^2 L_t}{\partial \boldsymbol{x}^2_{t-1}}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}^T_t+\boldsymbol{\Sigma}^{-1}_{t-1}=:\boldsymbol{\Psi}^{-1}_t
-\end{equation}
-\_form#333=714x63:\begin{eqnarray} \label{eq:eq-Bayes-prediction12}
-\Leftrightarrow\qquad&\boldsymbol{\Psi}^{-1}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
-\Leftrightarrow\qquad&\boldsymbol{x}_{t-1}=\boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
-\end{eqnarray}
-\_form#334=978x37:\begin{equation} \label{eq:eq-Bayes-prediction13}
-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t) =\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
-\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
-\end{equation}
-\_form#335=564x46:\begin{equation} \label{eq:eq-LCKF_e-correction-position-velocity}
+\_form#292=564x46:\begin{equation} \label{eq:eq-LCKF_e-correction-position-velocity}
 \begin{aligned}
   \boldsymbol{r}^{e,+} &= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
   \boldsymbol{v}^{e,+} &= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
 \end{aligned}
 \end{equation}
-\_form#336=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
-\_form#337=1687x56:\begin{equation} \label{eq:eq-Bayes-prediction14}
-L_t(\boldsymbol{x}_t)=L_t-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)
-=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
-+\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
--\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
-\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
-\end{equation}
-\_form#338=590x25:\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
+\_form#293=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
+\_form#294=590x25:\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
   \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
 \end{equation}
-\_form#339=2392x63:\begin{equation} \label{eq:eq-Bayes-prediction15}
-L_t(\boldsymbol{x}_t)=\underline{\underline{\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)}
-+\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
-\underline{\underline{+\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}}+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
-\underline{\underline{-\frac{1}{2}\boldsymbol{x}^T_{t-1}(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}}}
-\underline{+\boldsymbol{x}^T_{t-1}\left(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\right)}
--\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
-\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
-\end{equation}
-\_form#340=585x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro-accumulate}
+\_form#295=585x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro-accumulate}
 \begin{aligned}
   \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
   \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#341=1183x56:\begin{equation} \label{eq:eq-Bayes-prediction16}
-L_t(\boldsymbol{x}_t)=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}-\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
-\end{equation}
-\_form#342=590x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro}
+\_form#296=590x53:\begin{equation} \label{eq:eq-LCKF_e-correction-accel-gyro}
 \begin{aligned}
   \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
   \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
 \end{aligned}
 \end{equation}
-\_form#343=875x40:\begin{equation} \label{eq:eq-Bayes-prediction17}
-\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}= \boldsymbol{0} = \boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
-\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
-\end{equation}
-\_form#344=739x33:\begin{equation} \label{eq:eq-Bayes-prediction18}
-\boldsymbol{0}=\left(\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\right)(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
-\end{equation}
-\_form#345=754x23:\begin{equation} \label{eq:eq-Bayes-prediction19}
-\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\\[6mm]
-\end{equation}
-\_form#346=840x40:\begin{equation} \label{eq:eq-Bayes-prediction20}
-\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}=\boldsymbol{0}=
-(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
--\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
-\end{equation}
-\_form#347=529x19:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-timeDerivative}
+\_form#297=529x19:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-timeDerivative}
   \mathbf{\dotup{r}}_{eb}^e = \mathbf{v}_{eb}^e
 \end{equation}
-\_form#348=781x23:\begin{equation} \label{eq:eq-Bayes-prediction21}
-(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
-\end{equation}
-\_form#349=551x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-differential}
+\_form#298=551x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-differential}
   \boldsymbol{\delta}\mathbf{\dotup{r}}_{eb}^e = \highlight[cyan!20]{\mathbf{I}_3} \cdot \mathbf{v}_{eb}^e
 \end{equation}
-\_form#350=21x23:$ \mathbf{\hat{C}}_b^e $
-\_form#351=21x18:$ \mathbf{C}_b^e $
-\_form#352=796x133:\begin{eqnarray} \label{eq:eq-Bayes-prediction22}
-\boldsymbol{x}_t&=\boldsymbol{B}_t\boldsymbol{u}_t+\underset{\boldsymbol{\Phi}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}{\underbrace{(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}}\cdot              \underset{(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}{\underbrace{(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}}}\boldsymbol{\mu}_{t-1}\notag\\
-&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\cdot\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{I}+\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t)(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}}\cdot\boldsymbol{\mu}_{t-1}\notag\\
-&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}
-\end{eqnarray}
-\_form#353=534x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
+\_form#299=21x23:$ \mathbf{\hat{C}}_b^e $
+\_form#300=21x18:$ \mathbf{C}_b^e $
+\_form#301=534x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
   \mathbf{\hat{C}}_b^e = \mathbf{B} \mathbf{C}_b^e
 \end{equation}
-\_form#354=14x14:$ \mathbf{B} $
-\_form#355=758x46:\begin{equation} \label{eq:eq-Bayes-prediction23}
-\frac{\partial^2 L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}^2_t}=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1} \quad \Rightarrow \quad \bar{\boldsymbol{\Sigma}}_t^{-1} = (\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}
-\end{equation}
-\_form#356=625x63:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-transformation}
+\_form#302=14x14:$ \mathbf{B} $
+\_form#303=625x63:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-transformation}
   \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
 \end{equation}
-\_form#357=16x14:$ \mathbf{\Psi} $
-\_form#358=597x47:\begin{eqnarray} \label{eq:eq-Bayes-prediction_final}
-\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t\\
-\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
-\end{eqnarray}
-\_form#359=12x2:$-$
-\_form#360=74x19:$ \delta\alpha, \delta\beta, \delta\gamma $
-\_form#361=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}
-\_form#362=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
-\_form#363=553x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
+\_form#304=16x14:$ \mathbf{\Psi} $
+\_form#305=74x19:$ \delta\alpha, \delta\beta, \delta\gamma $
+\_form#306=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}
+\_form#307=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
+\_form#308=553x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
   \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e
 \end{equation}
-\_form#364=655x51:\begin{equation} \label{eq:eq-Bayes-update01}
-bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot\underset{\sim\mathcal{N}(\boldsymbol{z}_t;\boldsymbol{H}_t\boldsymbol{x}_t,\boldsymbol{R}_t)}{\underbrace{p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)}}\cdot \underset{\sim\mathcal{N}(\boldsymbol{x}_t;\boldsymbol{\mu}_t^{-},\boldsymbol{\Sigma}_t^{-})}{\underbrace{\overline{bel}(\boldsymbol{x}_t)}}
-\end{equation}
-\_form#365=11x14:$\boldsymbol{\eta}$
-\_form#366=555x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat}
+\_form#309=555x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat}
   \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
 \end{equation}
-\_form#367=581x19:\begin{equation} \label{eq:eq-Bayes-update02}
-bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
-\end{equation}
-\_form#368=583x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+\_form#310=583x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
   \mathbf{\dotup{\Psi}} = -\mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} {\mathbf{C}_b^e}^T - \mathbf{\hat{C}}_b^e {\mathbf{\dotup{C}}_b^e}\raise1.25ex\hbox{$\scriptstyle T$}
 \end{equation}
-\_form#369=765x39:\begin{equation} \label{eq:eq-Bayes-update03}
-\boldsymbol{J}_t=\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})^T(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
-\end{equation}
-\_form#370=19x16:$\boldsymbol{J}_t$
-\_form#371=135x23:$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $
-\_form#372=700x42:\begin{equation} \label{eq:eq-Bayes-update04}
-\frac{\partial\boldsymbol{J}_t}{\partial \boldsymbol{x}_t}=\boldsymbol{0} = -\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
-\end{equation}
-\_form#373=135x25:$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $
-\_form#374=658x23:\begin{equation} \label{eq:eq-Bayes-update05}
-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})=(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
-\end{equation}
-\_form#375=576x51:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
+\_form#311=135x23:$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $
+\_form#312=135x25:$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $
+\_form#313=576x51:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
 \begin{aligned}
   \mathbf{\dotup{C}}_b^e &= \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b \\
                        &= \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
 \end{aligned}
 \end{equation}
-\_form#376=625x46:\begin{equation} \label{eq:eq-Bayes-update06}
-\frac{\partial^2 \boldsymbol{J}_t}{\partial \boldsymbol{x}^2_t}=\boldsymbol{\Sigma}_t^{-1}
-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1}
-\end{equation}
-\_form#377=614x23:\begin{equation} \label{eq:eq-Bayes-update07}
-\boldsymbol{\Sigma}_t=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\[2mm] % 3.37
-\end{equation}
-\_form#378=26x21:$ \mathbf{\Omega}_{ib}^b $
-\_form#379=26x18:$ \mathbf{\Omega}_{ie}^e $
-\_form#380=21x26:$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $
-\_form#381=681x75:\begin{eqnarray} \label{eq:eq-Bayes-update08}
-&\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})\\
-&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+}+\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})\\
-&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
-\end{eqnarray}
-\_form#382=576x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
+\_form#314=26x21:$ \mathbf{\Omega}_{ib}^b $
+\_form#315=26x18:$ \mathbf{\Omega}_{ie}^e $
+\_form#316=21x26:$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $
+\_form#317=576x26:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
   \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} = \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e
 \end{equation}
-\_form#383=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
-\_form#384=719x53:\begin{equation} \label{eq:eq-Bayes-update09}
-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
-\end{equation}
-\_form#385=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
-\_form#386=628x23:\begin{equation} \label{eq:eq-Bayes-update10}
-\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\boldsymbol{\mu}_t-\boldsymbol{\mu}_t^{-}
-\end{equation}
-\_form#387=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
-\_form#388=560x23:\begin{equation} \label{eq:eq-Bayes-update11}
-\boldsymbol{K}_t=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t
-\end{equation}
-\_form#389=602x21:\begin{equation} \label{eq:eq-Bayes-update12}
-\boldsymbol{\mu}_t^{+}=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) %3.
-\end{equation}
-\_form#390=714x91:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#318=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}
+\_form#319=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
+\_form#320=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
+\_form#321=714x91:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &= -(\mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e) {\mathbf{C}_b^e}^T
                          - \mathbf{\hat{C}}_b^e (\mathbf{C}_b^e \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{ie}^e \mathbf{C}_b^e)^T \\
@@ -1785,21 +1605,8 @@ bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
                          - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e
 \end{aligned}
 \end{equation}
-\_form#391=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
-\_form#392=767x347:\begin{eqnarray} \label{eq:eq-Bayes-update13}
-\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\\
-&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}}}\\
-&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{R}^{-1}_t\boldsymbol{R}_t}})(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{\Sigma}_t^{-})^{-1}\boldsymbol{\Sigma}_t^{-}}}\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-&=\boldsymbol{\Sigma}_t\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-&=\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{\Sigma}_t\boldsymbol{\Sigma}^{-1}_t}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}
-\end{eqnarray}
-\_form#393=761x23:\begin{equation} \label{eq:eq-Bayes-update14}
-((\boldsymbol{\Sigma}_t^{-})^{-1}+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t)^{-1}=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}^T_t\boldsymbol{\Sigma}_t^{-}
-\end{equation}
-\_form#394=779x109:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
+\_form#322=44x19:\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#323=779x109:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
                          + \mathbf{\hat{\Omega}}_{ie}^e [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e {\mathbf{C}_b^e}^T
@@ -1812,40 +1619,20 @@ bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
                             - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e
 \end{aligned}
 \end{equation}
-\_form#395=684x130:\begin{eqnarray} \label{eq:eq-Bayes-update15}
-\boldsymbol{\Sigma}_t&=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\
-&=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\\
-&=[\boldsymbol{I}-\underset{=\boldsymbol{K}_t}{\underbrace{\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}}}\boldsymbol{H}_t]\boldsymbol{\Sigma}_t^{-}\\
-&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
-\end{eqnarray}
-\_form#396=135x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $
-\_form#397=637x75:\begin{eqnarray} \label{eq:eq-Bayes-update-final}
-\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
-\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
-\end{eqnarray}
-\_form#398=133x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $
-\_form#399=597x51:\begin{eqnarray} \label{eq:eq-Bayes-summary01}
-\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}^{+}+\boldsymbol{B}_t\boldsymbol{u}_t\\
-\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^{+}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
-\end{eqnarray}
-\_form#400=649x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
+\_form#324=135x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $
+\_form#325=133x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $
+\_form#326=649x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dotup{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
                               + \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e
                               - \mathbf{C}_b^e \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
 \end{equation}
-\_form#401=637x75:\begin{eqnarray} \label{eq:eq-Bayes-summary02}
-\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
-\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
-\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
-\end{eqnarray}
-\_form#402=758x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-element-comp}
+\_form#327=758x23:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-element-comp}
   \boldsymbol{\psi} \times = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{ie}^e \times = \mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ie}^e \times = \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
 \end{equation}
-\_form#403=639x130:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-differential}
+\_form#328=639x130:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-differential}
 \begin{aligned}
   \boldsymbol{\dotup{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\psi}
                                    + \overbrace{\boldsymbol{\delta \omega}_{ie}^e}^{= 0}
@@ -1854,62 +1641,26 @@ bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
                              \highlight[orange!20]{- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
 \end{aligned}
 \end{equation}
-\_form#404=16x16:$\boldsymbol{A}$
-\_form#405=607x67:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
+\_form#329=607x67:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
   \boldsymbol{\dotup{v}}^e
       = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
         +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravity}\hidewidth}
 \end{equation}
-\_form#406=627x26:\begin{equation} \label{eq:eq-SQR01}
-\boldsymbol{A} = \sqrt{\boldsymbol{A}}^T \sqrt{\boldsymbol{A}} \quad \text{resp.} \quad \boldsymbol{A^2} = \boldsymbol{A}^T \boldsymbol{A}
-\end{equation}
-\_form#407=19x19:$ \boldsymbol{f}^e $
-\_form#408=537x23:\begin{equation} \label{eq:eq-SQR02}
-\boldsymbol{A} = \boldsymbol{\Gamma}_{\boldsymbol{A}}^T \boldsymbol{\Gamma}_{\boldsymbol{A}}
-\end{equation}
-\_form#409=607x72:\begin{eqnarray} \label{eq:eq-SQR03}
-\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{R} \\
-\boldsymbol{A}^2 =  \boldsymbol{R}^T \boldsymbol{Q}^T  \boldsymbol{Q}\boldsymbol{R}  = \boldsymbol{R}^T \boldsymbol{R} \\
-\boldsymbol{R} = \boldsymbol{\Gamma}_{\boldsymbol{A}^2}
-\end{eqnarray}
-\_form#410=25x18:$ \boldsymbol{\omega}_{ie}^e $
-\_form#411=18x18:$ \mathbf{g}^e $
-\_form#412=590x79:\begin{eqnarray} \label{eq:eq-SQR04}
-\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{\Lambda}\boldsymbol{Q}^T   \\
-\boldsymbol{A}^2 =  \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2} \boldsymbol{\Lambda}^{1/2} \boldsymbol{Q}^T  \\
- \sqrt{\boldsymbol{A}}  = \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2}
-\end{eqnarray}
-\_form#413=23x18:$ \boldsymbol{\gamma}_{ib}^e $
-\_form#414=131x19:$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $
-\_form#415=571x44:\begin{equation} \label{eq:eq-SQR05}
-\boldsymbol{Q}, \boldsymbol{R} = qr\left(
-\begin{bmatrix}
- \sqrt{\boldsymbol{A}} \\
-  \sqrt{\boldsymbol{B}}
-\end{bmatrix}
- \right)
-\end{equation}
-\_form#416=58x19:$qr_R (\cdot,\cdot)$
-\_form#417=592x25:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
+\_form#330=19x19:$ \boldsymbol{f}^e $
+\_form#331=25x18:$ \boldsymbol{\omega}_{ie}^e $
+\_form#332=18x18:$ \mathbf{g}^e $
+\_form#333=23x18:$ \boldsymbol{\gamma}_{ib}^e $
+\_form#334=131x19:$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $
+\_form#335=592x25:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
   \boldsymbol{\dotup{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}}
       = \boldsymbol{\hat{f}}^e
       - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}_e^e
       + \mathbf{\hat{g}}^e
 \end{equation}
-\_form#418=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
-\_form#419=16x14:$\boldsymbol{R}$
-\_form#420=567x23:\begin{equation} \label{eq:eq-SQR06}
-\boldsymbol{R} = qr_R ( \sqrt{\boldsymbol{A}},\sqrt{\boldsymbol{B}})
-\end{equation}
-\_form#421=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
-\_form#422=546x21:\begin{equation} \label{eq:eq-SQR07}
-\boldsymbol{R} = \sqrt{\boldsymbol{A} +\boldsymbol{B}}
-\end{equation}
-\_form#423=581x23:\begin{equation} \label{eq:eq-SQR08}
-\boldsymbol{\Sigma}_t^- =\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^+\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
-\end{equation}
-\_form#424=704x56:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
+\_form#336=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}
+\_form#337=44x19:\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}
+\_form#338=704x56:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
 \begin{aligned}
   \boldsymbol{\delta} \boldsymbol{\dotup{v}}^e &= \boldsymbol{\dotup{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}} - \boldsymbol{\dotup{v}}^e \\
                                 &= \mathbf{\hat{C}}_b^e \boldsymbol{\hat{f}}^b
@@ -1920,34 +1671,12 @@ bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
                                        - \mathbf{g}^e
 \end{aligned}
 \end{equation}
-\_form#425=649x30:\begin{equation} \label{eq:eq-SQR09}
-\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
-=\boldsymbol{\Phi}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}  \boldsymbol{\Phi}^T_t+
-\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
-\end{equation}
-\_form#426=121x23:$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $
-\_form#427=653x53:\begin{equation} \label{eq:eq-SQR10}
-\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-} =
-\begin{bmatrix}
-  \boldsymbol{\Phi}_t\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} & \boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t}
-\end{bmatrix}
-\begin{bmatrix}
-  \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Phi}_t^T  \\
-   \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
-\end{bmatrix}
-\end{equation}
-\_form#428=110x25:$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
-\_form#429=109x16:$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $
-\_form#430=163x19:$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $
-\_form#431=107x19:$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $
-\_form#432=600x28:\begin{equation} \label{eq:eq-SQR11}
-\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} ,  \boldsymbol{\Gamma}_{\boldsymbol{Q}_t})
-\end{equation}
-\_form#433=592x28:\begin{equation} \label{eq:eq-SQR12}
-\boldsymbol{\Gamma}_{\boldsymbol{S}_t}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t}^-}\boldsymbol{H}_t^T ,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t})
-\end{equation}
-\_form#434=30x18:$\boldsymbol{\Gamma}_{\boldsymbol{R}_t}$
-\_form#435=728x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation}
+\_form#339=121x23:$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $
+\_form#340=110x25:$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
+\_form#341=109x16:$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $
+\_form#342=163x19:$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $
+\_form#343=107x19:$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $
+\_form#344=728x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation}
 \begin{aligned}
   \boldsymbol{\delta \dotup{v}}^e &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \boldsymbol{\hat{f}}^b
                                        - \mathbf{C}_b^e \boldsymbol{f}^b
@@ -1969,28 +1698,15 @@ bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
                                    + \boldsymbol{\delta} \mathbf{g}^e \\
 \end{aligned}
 \end{equation}
-\_form#436=96x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $
-\_form#437=623x37:\begin{equation} \label{eq:eq-SQR13}
-\boldsymbol{K}_t   =
-\left(
-\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1} (\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1})^T
-\boldsymbol{H}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
-\right)^T
-\end{equation}
-\_form#438=663x30:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
+\_form#345=96x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $
+\_form#346=663x30:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
 \renewcommand*{\arraystretch}{1.9}
   \boldsymbol{\delta \dotup{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
                                    \highlight[blue!20]{- 2 \boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\delta v}^e
                                    + \boldsymbol{\delta} \mathbf{g}^e
 \end{equation}
-\_form#439=646x28:\begin{equation} \label{eq:eq-SQR14}
-\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^+}  =
-qr_R (
-\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}(\boldsymbol{I} -\boldsymbol{K}_t \boldsymbol{H}_t)^T,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t} \boldsymbol{K}_t^T
-)
-\end{equation}
-\_form#440=730x70:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
+\_form#347=730x70:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{g}^e = \overbrace{\boldsymbol{\hat{\gamma}}_{ib}^e - \boldsymbol{\gamma}_{ib}^e}^{\hidewidth\text{gravitation error}\hidewidth}
                                       - \underbrace{\boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e}_{\hidewidth\text{centrifugal acceleration error}\hidewidth}
@@ -1998,14 +1714,298 @@ qr_R (
                                            - \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e
 \end{aligned}
 \end{equation}
-\_form#441=72x18:$ h << r_{eS}^e $
-\_form#442=810x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
+\_form#348=72x18:$ h << r_{eS}^e $
+\_form#349=810x133:\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
 \renewcommand*{\arraystretch}{1.9}
   \boldsymbol{\delta \dotup{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
                                    + \highlight[blue!20]{\begin{pmatrix} 0 & 2 \omega_{ie} & \\ -2 \omega_{ie} & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix}} \boldsymbol{\delta v}^e
                                    \highlight[violet!20]{- \left(  \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|}
                                                                  + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)} \boldsymbol{\delta} \mathbf{r}_{eb}^e
+\end{equation}
+\_form#350=11x11:$n$
+\_form#351=709x42:\begin{equation} \label{eq:eq-Gaussian}
+p(\boldsymbol{x})=\det((2\pi)^n\boldsymbol{\Sigma})^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right)
+\end{equation}
+\_form#352=592x42:\begin{equation} \label{eq:eq-predictation_and_observation_model}
+\begin{aligned}
+\boldsymbol{x}_t&=\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\varepsilon}_t\\
+\boldsymbol{z}_t&=\boldsymbol{H}_t\boldsymbol{x}_t+\boldsymbol{\upsilon}_t
+\end{aligned}
+\end{equation}
+\_form#353=19x16:$\boldsymbol{\Phi}_t$
+\_form#354=54x19:$(n\times n)$
+\_form#355=49x19:$(t-1)$
+\_form#356=7x14:$t$
+\_form#357=21x16:$\boldsymbol{B}_t$
+\_form#358=18x12:$ \boldsymbol{u}_t$
+\_form#359=25x16:$\boldsymbol{H}_t$
+\_form#360=14x12:$\boldsymbol{\varepsilon}_t$
+\_form#361=21x18:$ \boldsymbol{Q}_t $
+\_form#362=107x19:$ \boldsymbol{\varepsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{Q}_t )$
+\_form#363=18x12:$\boldsymbol{\upsilon}_t$
+\_form#364=21x16:$ \boldsymbol{R}_t $
+\_form#365=110x19:$ \boldsymbol{\upsilon}_t \sim \mathcal{N}( \boldsymbol{0},\boldsymbol{R}_t )$
+\_form#366=868x42:\begin{equation} \label{eq:eq-prediction}
+    p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})=\det((2\pi)^n\boldsymbol{Q}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right).
+\end{equation}
+\_form#367=767x42:\begin{equation} \label{eq:eq-measurement}
+    p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)=\det((2\pi)^m\boldsymbol{R}_t)^{-\frac{1}{2}}\cdot \exp\left(-\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)\right)
+\end{equation}
+\_form#368=51x19:$ bel(\boldsymbol{x}_t)$
+\_form#369=674x42:\begin{equation} \label{eq:eq-Bayes-prediction}
+bel^-(\boldsymbol{x}_t)=\int {p(\boldsymbol{x}_t\, |\,\boldsymbol{u}_t,\boldsymbol{x}_{t-1})}\cdot {bel(\boldsymbol{x}_{t-1})}\cdot d\boldsymbol{x}_{t-1}
+\end{equation}
+\_form#370=11x2:${\,}^{-}$
+\_form#371=620x21:\begin{equation} \label{eq:eq-Bayes-update}
+bel(\boldsymbol{x}_t)^+=\eta\cdot p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)\cdot bel^-(\boldsymbol{x}_t)
+\end{equation}
+\_form#372=11x11:${\,}^{+}$
+\_form#373=9x14:$\eta$
+\_form#374=23x14:$1.0$
+\_form#375=987x61:\begin{equation} \label{eq:eq-Bayes-prediction01}
+bel^-(\boldsymbol{x}_t) =\eta\int \exp\left(-\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)\right) \exp\left(-\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\right)\cdot d\boldsymbol{x}_{t-1}
+\end{equation}
+\_form#376=35x14:$ \boldsymbol{\mu}_{t-1}$
+\_form#377=618x42:\begin{equation} \label{eq:eq-Bayes-prediction02}
+bel^-(\boldsymbol{x}_t)=\eta\int \exp(-L_t)\cdot d\boldsymbol{x}_{t-1}
+\end{equation}
+\_form#378=865x39:\begin{equation} \label{eq:eq-Bayes-prediction03}
+L_t=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
++\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1}).
+\end{equation}
+\_form#379=18x16:$ L_t$
+\_form#380=18x12:$\boldsymbol{x}_t$
+\_form#381=599x19:\begin{equation} \label{eq:eq-Bayes-prediction04}
+L_t=L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)+L_t(\boldsymbol{x}_t).
+\end{equation}
+\_form#382=693x42:\begin{equation} \label{eq:eq-Bayes-prediction05}
+bel^-(\boldsymbol{x}_t)=\eta\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)-L_t(\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
+\end{equation}
+\_form#383=719x42:\begin{equation} \label{eq:eq-Bayes-prediction06}
+bel^-(\boldsymbol{x}_t)=\eta\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}\int \exp\left \{-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)\right\}\cdot d\boldsymbol{x}_{t-1}
+\end{equation}
+\_form#384=49x19:$ L_t(\boldsymbol{x}_t)$
+\_form#385=35x12:$ \boldsymbol{x}_{t-1}$
+\_form#386=606x21:\begin{equation} \label{eq:eq-Bayes-prediction07}
+bel^-(\boldsymbol{x}_t)=\eta'\cdot \exp\left \{-L_t(\boldsymbol{x}_t)\right\}
+\end{equation}
+\_form#387=751x42:\begin{equation} \label{eq:eq-Bayes-prediction08}
+\frac{\partial L_t}{\partial \boldsymbol{x}_{t-1}} = \boldsymbol{0} =-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
+\end{equation}
+\_form#388=691x23:\begin{equation} \label{eq:eq-Bayes-prediction09}
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})\\[2mm]
+\end{equation}
+\_form#389=751x81:\begin{eqnarray} \label{eq:eq-Bayes-prediction10}
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}-\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\end{eqnarray}
+\_form#390=632x46:\begin{equation} \label{eq:eq-Bayes-prediction11}
+\frac{\partial^2 L_t}{\partial \boldsymbol{x}^2_{t-1}}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}^T_t+\boldsymbol{\Sigma}^{-1}_{t-1}=:\boldsymbol{\Psi}^{-1}_t
+\end{equation}
+\_form#391=714x63:\begin{eqnarray} \label{eq:eq-Bayes-prediction12}
+\Leftrightarrow\qquad&\boldsymbol{\Psi}^{-1}_t\boldsymbol{x}_{t-1}=\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\\
+\Leftrightarrow\qquad&\boldsymbol{x}_{t-1}=\boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\end{eqnarray}
+\_form#392=978x37:\begin{equation} \label{eq:eq-Bayes-prediction13}
+L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t) =\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
+\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
+\end{equation}
+\_form#393=1687x56:\begin{equation} \label{eq:eq-Bayes-prediction14}
+L_t(\boldsymbol{x}_t)=L_t-L_t(\boldsymbol{x}_{t-1},\boldsymbol{x}_t)
+=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}-\boldsymbol{B}_t\boldsymbol{u}_t)
++\frac{1}{2}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})^T\boldsymbol{\Sigma}^{-1}_{t-1}(\boldsymbol{x}_{t-1}-\boldsymbol{\mu}_{t-1})
+-\frac{1}{2}\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}^T\boldsymbol{\Psi}^{-1}_t
+\left \{\boldsymbol{x}_{t-1}- \boldsymbol{\Psi}_t\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right) \right\}
+\end{equation}
+\_form#394=2392x63:\begin{equation} \label{eq:eq-Bayes-prediction15}
+L_t(\boldsymbol{x}_t)=\underline{\underline{\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)}
++\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+\underline{\underline{+\frac{1}{2}\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{x}_{t-1}}}\underline{-\boldsymbol{x}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}}+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\underline{\underline{-\frac{1}{2}\boldsymbol{x}^T_{t-1}(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})\boldsymbol{x}_{t-1}}}
+\underline{+\boldsymbol{x}^T_{t-1}\left(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}\right)}
+-\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
+\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\end{equation}
+\_form#395=1183x56:\begin{equation} \label{eq:eq-Bayes-prediction16}
+L_t(\boldsymbol{x}_t)=\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)^T\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\frac{1}{2}\boldsymbol{\mu}^T_{t-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}-\frac{1}{2}\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)^T(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\end{equation}
+\_form#396=875x40:\begin{equation} \label{eq:eq-Bayes-prediction17}
+\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}= \boldsymbol{0} = \boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}
+\left( \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)+\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1} \right)
+\end{equation}
+\_form#397=739x33:\begin{equation} \label{eq:eq-Bayes-prediction18}
+\boldsymbol{0}=\left(\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\right)(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+\end{equation}
+\_form#398=754x23:\begin{equation} \label{eq:eq-Bayes-prediction19}
+\boldsymbol{Q}^{-1}_t-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1} \boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\\[6mm]
+\end{equation}
+\_form#399=840x40:\begin{equation} \label{eq:eq-Bayes-prediction20}
+\frac{\partial L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}_t}=\boldsymbol{0}=
+(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)
+-\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\end{equation}
+\_form#400=781x23:\begin{equation} \label{eq:eq-Bayes-prediction21}
+(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}(\boldsymbol{x}_t-\boldsymbol{B}_t\boldsymbol{u}_t)=\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}\boldsymbol{\mu}_{t-1}
+\end{equation}
+\_form#401=796x133:\begin{eqnarray} \label{eq:eq-Bayes-prediction22}
+\boldsymbol{x}_t&=\boldsymbol{B}_t\boldsymbol{u}_t+\underset{\boldsymbol{\Phi}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}{\underbrace{(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t}}\cdot              \underset{(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}{\underbrace{(\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{\Sigma}^{-1}_{t-1})^{-1}\boldsymbol{\Sigma}^{-1}_{t-1}}}\boldsymbol{\mu}_{t-1}\notag\\
+&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\cdot\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{I}+\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t)(\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t\boldsymbol{Q}^{-1}_t\boldsymbol{\Phi}_t+\boldsymbol{I})^{-1}}}\cdot\boldsymbol{\mu}_{t-1}\notag\\
+&=\boldsymbol{B}_t\boldsymbol{u}_t+\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}
+\end{eqnarray}
+\_form#402=758x46:\begin{equation} \label{eq:eq-Bayes-prediction23}
+\frac{\partial^2 L_t(\boldsymbol{x}_t)}{\partial \boldsymbol{x}^2_t}=(\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1} \quad \Rightarrow \quad \bar{\boldsymbol{\Sigma}}_t^{-1} = (\boldsymbol{Q}_t+\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t)^{-1}
+\end{equation}
+\_form#403=597x47:\begin{eqnarray} \label{eq:eq-Bayes-prediction_final}
+\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}+\boldsymbol{B}_t\boldsymbol{u}_t\\
+\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\end{eqnarray}
+\_form#404=12x2:$-$
+\_form#405=655x51:\begin{equation} \label{eq:eq-Bayes-update01}
+bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot\underset{\sim\mathcal{N}(\boldsymbol{z}_t;\boldsymbol{H}_t\boldsymbol{x}_t,\boldsymbol{R}_t)}{\underbrace{p(\boldsymbol{z}_t\, |\,\boldsymbol{x}_t)}}\cdot \underset{\sim\mathcal{N}(\boldsymbol{x}_t;\boldsymbol{\mu}_t^{-},\boldsymbol{\Sigma}_t^{-})}{\underbrace{\overline{bel}(\boldsymbol{x}_t)}}
+\end{equation}
+\_form#406=11x14:$\boldsymbol{\eta}$
+\_form#407=581x19:\begin{equation} \label{eq:eq-Bayes-update02}
+bel(\boldsymbol{x}_t)=\boldsymbol{\eta}\cdot exp\{-\boldsymbol{J}_t\}
+\end{equation}
+\_form#408=765x39:\begin{equation} \label{eq:eq-Bayes-update03}
+\boldsymbol{J}_t=\frac{1}{2}(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)^T\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+\frac{1}{2}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})^T(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
+\end{equation}
+\_form#409=19x16:$\boldsymbol{J}_t$
+\_form#410=700x42:\begin{equation} \label{eq:eq-Bayes-update04}
+\frac{\partial\boldsymbol{J}_t}{\partial \boldsymbol{x}_t}=\boldsymbol{0} = -\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{x}_t)+(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{x}_t-\boldsymbol{\mu}_t^{-})
+\end{equation}
+\_form#411=658x23:\begin{equation} \label{eq:eq-Bayes-update05}
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})=(\boldsymbol{\Sigma}_t^{-})^{-1}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\end{equation}
+\_form#412=625x46:\begin{equation} \label{eq:eq-Bayes-update06}
+\frac{\partial^2 \boldsymbol{J}_t}{\partial \boldsymbol{x}^2_t}=\boldsymbol{\Sigma}_t^{-1}
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1}
+\end{equation}
+\_form#413=614x23:\begin{equation} \label{eq:eq-Bayes-update07}
+\boldsymbol{\Sigma}_t=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\[2mm] % 3.37
+\end{equation}
+\_form#414=681x75:\begin{eqnarray} \label{eq:eq-Bayes-update08}
+&\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+})\\
+&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{+}+\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})\\
+&=\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})-\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\end{eqnarray}
+\_form#415=719x53:\begin{equation} \label{eq:eq-Bayes-update09}
+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}(\boldsymbol{\mu}_t^{+}-\boldsymbol{\mu}_t^{-})
+\end{equation}
+\_form#416=628x23:\begin{equation} \label{eq:eq-Bayes-update10}
+\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-})=\boldsymbol{\mu}_t-\boldsymbol{\mu}_t^{-}
+\end{equation}
+\_form#417=560x23:\begin{equation} \label{eq:eq-Bayes-update11}
+\boldsymbol{K}_t=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t
+\end{equation}
+\_form#418=602x21:\begin{equation} \label{eq:eq-Bayes-update12}
+\boldsymbol{\mu}_t^{+}=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) %3.
+\end{equation}
+\_form#419=767x347:\begin{eqnarray} \label{eq:eq-Bayes-update13}
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\\
+&=\boldsymbol{\Sigma}_t\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}}}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{R}^{-1}_t\boldsymbol{R}_t}})(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\underset{=\boldsymbol{I}}{\underbrace{(\boldsymbol{\Sigma}_t^{-})^{-1}\boldsymbol{\Sigma}_t^{-}}}\boldsymbol{H}^T_t)(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t\underset{=\boldsymbol{\Sigma}^{-1}_t}{\underbrace{(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\underset{=\boldsymbol{I}}{\underbrace{\boldsymbol{\Sigma}_t\boldsymbol{\Sigma}^{-1}_t}}\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}
+\end{eqnarray}
+\_form#420=761x23:\begin{equation} \label{eq:eq-Bayes-update14}
+((\boldsymbol{\Sigma}_t^{-})^{-1}+\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t)^{-1}=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}^T_t\boldsymbol{\Sigma}_t^{-}
+\end{equation}
+\_form#421=684x130:\begin{eqnarray} \label{eq:eq-Bayes-update15}
+\boldsymbol{\Sigma}_t&=(\boldsymbol{H}^T_t\boldsymbol{R}^{-1}_t\boldsymbol{H}_t+(\boldsymbol{\Sigma}_t^{-})^{-1})^{-1}\\
+&=\boldsymbol{\Sigma}_t^{-}-\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\\
+&=[\boldsymbol{I}-\underset{=\boldsymbol{K}_t}{\underbrace{\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{R}_t+\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t)^{-1}}}\boldsymbol{H}_t]\boldsymbol{\Sigma}_t^{-}\\
+&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\end{eqnarray}
+\_form#422=637x75:\begin{eqnarray} \label{eq:eq-Bayes-update-final}
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
+\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\end{eqnarray}
+\_form#423=597x51:\begin{eqnarray} \label{eq:eq-Bayes-summary01}
+\boldsymbol{\mu}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\mu}_{t-1}^{+}+\boldsymbol{B}_t\boldsymbol{u}_t\\
+\boldsymbol{\Sigma}_t^-&=\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^{+}\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\end{eqnarray}
+\_form#424=637x75:\begin{eqnarray} \label{eq:eq-Bayes-summary02}
+\boldsymbol{K}_t&=\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t(\boldsymbol{H}_t\boldsymbol{\Sigma}_t^{-}\boldsymbol{H}^T_t+\boldsymbol{R}_t)^{-1}\\
+\boldsymbol{\mu}_t^{+}&=\boldsymbol{\mu}_t^{-}+\boldsymbol{K}_t(\boldsymbol{z}_t-\boldsymbol{H}_t\boldsymbol{\mu}_t^{-}) \\
+\boldsymbol{\Sigma}_t&=(\boldsymbol{I}-\boldsymbol{K}_t\boldsymbol{H}_t)\boldsymbol{\Sigma}_t^{-}
+\end{eqnarray}
+\_form#425=16x16:$\boldsymbol{A}$
+\_form#426=627x26:\begin{equation} \label{eq:eq-SQR01}
+\boldsymbol{A} = \sqrt{\boldsymbol{A}}^T \sqrt{\boldsymbol{A}} \quad \text{resp.} \quad \boldsymbol{A^2} = \boldsymbol{A}^T \boldsymbol{A}
+\end{equation}
+\_form#427=537x23:\begin{equation} \label{eq:eq-SQR02}
+\boldsymbol{A} = \boldsymbol{\Gamma}_{\boldsymbol{A}}^T \boldsymbol{\Gamma}_{\boldsymbol{A}}
+\end{equation}
+\_form#428=607x72:\begin{eqnarray} \label{eq:eq-SQR03}
+\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{R} \\
+\boldsymbol{A}^2 =  \boldsymbol{R}^T \boldsymbol{Q}^T  \boldsymbol{Q}\boldsymbol{R}  = \boldsymbol{R}^T \boldsymbol{R} \\
+\boldsymbol{R} = \boldsymbol{\Gamma}_{\boldsymbol{A}^2}
+\end{eqnarray}
+\_form#429=590x79:\begin{eqnarray} \label{eq:eq-SQR04}
+\boldsymbol{A} = \boldsymbol{Q} \boldsymbol{\Lambda}\boldsymbol{Q}^T   \\
+\boldsymbol{A}^2 =  \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2} \boldsymbol{\Lambda}^{1/2} \boldsymbol{Q}^T  \\
+ \sqrt{\boldsymbol{A}}  = \boldsymbol{Q} \boldsymbol{\Lambda}^{1/2}
+\end{eqnarray}
+\_form#430=571x44:\begin{equation} \label{eq:eq-SQR05}
+\boldsymbol{Q}, \boldsymbol{R} = qr\left(
+\begin{bmatrix}
+ \sqrt{\boldsymbol{A}} \\
+  \sqrt{\boldsymbol{B}}
+\end{bmatrix}
+ \right)
+\end{equation}
+\_form#431=58x19:$qr_R (\cdot,\cdot)$
+\_form#432=16x14:$\boldsymbol{R}$
+\_form#433=567x23:\begin{equation} \label{eq:eq-SQR06}
+\boldsymbol{R} = qr_R ( \sqrt{\boldsymbol{A}},\sqrt{\boldsymbol{B}})
+\end{equation}
+\_form#434=546x21:\begin{equation} \label{eq:eq-SQR07}
+\boldsymbol{R} = \sqrt{\boldsymbol{A} +\boldsymbol{B}}
+\end{equation}
+\_form#435=581x23:\begin{equation} \label{eq:eq-SQR08}
+\boldsymbol{\Sigma}_t^- =\boldsymbol{\Phi}_t\boldsymbol{\Sigma}_{t-1}^+\boldsymbol{\Phi}^T_t+\boldsymbol{Q}_t
+\end{equation}
+\_form#436=649x30:\begin{equation} \label{eq:eq-SQR09}
+\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
+=\boldsymbol{\Phi}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}  \boldsymbol{\Phi}^T_t+
+\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
+\end{equation}
+\_form#437=653x53:\begin{equation} \label{eq:eq-SQR10}
+\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-} =
+\begin{bmatrix}
+  \boldsymbol{\Phi}_t\boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_{t-1}^+} & \boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t}
+\end{bmatrix}
+\begin{bmatrix}
+  \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Phi}_t^T  \\
+   \boldsymbol{\Gamma}_{\boldsymbol{Q}_t}
+\end{bmatrix}
+\end{equation}
+\_form#438=600x28:\begin{equation} \label{eq:eq-SQR11}
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t-1}^+}\boldsymbol{\Gamma}^T_{\boldsymbol{Q}_t} ,  \boldsymbol{\Gamma}_{\boldsymbol{Q}_t})
+\end{equation}
+\_form#439=592x28:\begin{equation} \label{eq:eq-SQR12}
+\boldsymbol{\Gamma}_{\boldsymbol{S}_t}  =  qr_R ( \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_{t}^-}\boldsymbol{H}_t^T ,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t})
+\end{equation}
+\_form#440=30x18:$\boldsymbol{\Gamma}_{\boldsymbol{R}_t}$
+\_form#441=623x37:\begin{equation} \label{eq:eq-SQR13}
+\boldsymbol{K}_t   =
+\left(
+\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1} (\boldsymbol{\Gamma}_{\boldsymbol{S}_t}^{-1})^T
+\boldsymbol{H}_t \boldsymbol{\Gamma}^T_{\boldsymbol{\Sigma}_t^-} \boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}
+\right)^T
+\end{equation}
+\_form#442=646x28:\begin{equation} \label{eq:eq-SQR14}
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^+}  =
+qr_R (
+\boldsymbol{\Gamma}_{\boldsymbol{\Sigma}_t^-}(\boldsymbol{I} -\boldsymbol{K}_t \boldsymbol{H}_t)^T,  \boldsymbol{\Gamma}_{\boldsymbol{R}_t} \boldsymbol{K}_t^T
+)
 \end{equation}
 \_form#443=628x44:\begin{equation} \label{eq:eq-ImuSimulator-VelocityNav-equation-pre}
   \boldsymbol{\dotup{v}}^n = \boldsymbol{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}} +\ \mathbf{g}_l^n
@@ -2204,10 +2204,7 @@ qr_R (
 \_form#492=12x19:$ \textcolor{green}{\text{[I]}} $
 \_form#493=25x19:$ \textcolor{orange}{\text{[W]}} $
 \_form#494=19x19:$ \textcolor{red}{\text{[E]}} $
-\_form#495=254x16:$ \textcolor{red}{\text{IMAGE TO BE ADDED SOON.}} $
-\_form#496=96x19:$\underline{X}_b = \underline{\underline{R}} \cdot \underline{X}_p$
-\_form#497=352x16:$ \textcolor{red}{\text{MORE EXAMPLES TO BE ADDED SOON.}} $
-\_form#498=772x207:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-short}
+\_form#495=772x207:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \boldsymbol{\delta \dotup{\psi}} \\
@@ -2273,7 +2270,7 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#499=1684x735:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix}
+\_form#496=1684x735:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
@@ -2368,14 +2365,14 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#500=60x33:$ \highlight[yellow!20]{\mathbf{F}_{\delta \dotup{\psi},\delta v}^n} $
-\_form#501=60x33:$ \highlight[lime!20]{\mathbf{F}_{\delta \dotup{\psi},\delta r}^n} $
-\_form#502=61x33:$ \highlight[orange!20]{\mathbf{F}_{\delta \dotup{\psi},\delta \omega}^n} $
-\_form#503=60x32:$ \highlight[purple!20]{\mathbf{F}_{\delta \dotup{v},\delta \psi}^n} $
-\_form#504=571x19:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel}
+\_form#497=60x33:$ \highlight[yellow!20]{\mathbf{F}_{\delta \dotup{\psi},\delta v}^n} $
+\_form#498=60x33:$ \highlight[lime!20]{\mathbf{F}_{\delta \dotup{\psi},\delta r}^n} $
+\_form#499=61x33:$ \highlight[orange!20]{\mathbf{F}_{\delta \dotup{\psi},\delta \omega}^n} $
+\_form#500=60x32:$ \highlight[purple!20]{\mathbf{F}_{\delta \dotup{v},\delta \psi}^n} $
+\_form#501=571x19:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel}
   \boldsymbol{\delta} \mathbf{\dotup{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
 \end{equation}
-\_form#505=943x214:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel-short}
+\_form#502=943x214:\begin{equation} \label{eq:eq-LCKF_n-dynamicModel-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \boldsymbol{\delta \dotup{\psi}} \\
@@ -2465,17 +2462,17 @@ qr_R (
   \cdot
   \mathbf{w}
 \end{equation}
-\_form#506=544x19:\begin{equation} \label{eq:eq-LCKF_n-random-walk}
+\_form#503=544x19:\begin{equation} \label{eq:eq-LCKF_n-random-walk}
   \dotup{x} = 0 + W(t)
 \end{equation}
-\_form#507=697x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise}
+\_form#504=697x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise}
   \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}, \qquad
   \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#508=557x19:\begin{equation} \label{eq:eq-LCKF_n-gauss-markov-1}
+\_form#505=557x19:\begin{equation} \label{eq:eq-LCKF_n-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
 \end{equation}
-\_form#509=697x63:\begin{equation} \label{eq:eq-LCKF_n-random-walk-beta}
+\_form#506=697x63:\begin{equation} \label{eq:eq-LCKF_n-random-walk-beta}
   \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} \beta_{f} &      0     &      0     \\
                                                                     0       & \beta_{f} &      0     \\
                                                                     0       &      0     & \beta_{f} \end{pmatrix}, \qquad
@@ -2483,11 +2480,11 @@ qr_R (
                                                                            0        & \beta_{\omega} &        0        \\
                                                                            0        &        0        & \beta_{\omega} \end{pmatrix}
 \end{equation}
-\_form#510=740x56:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias_Brown}
+\_form#507=740x56:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias_Brown}
   \highlight[pink!20]{S_{bad,j}} = \sqrt{\frac{2\sigma_{bad,j}^2}{\tau_{bad}}} , \qquad
   \highlight[lightgray!20]{S_{bgd,j}} = \sqrt{\frac{2\sigma_{bgd,j}^2}{\tau_{bgd}}}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#511=642x138:\begin{equation} \label{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
+\_form#508=642x138:\begin{equation} \label{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
   \mathbf{W} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
@@ -2507,33 +2504,33 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#512=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-noise}
-\_form#513=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias}
-\_form#514=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias_Brown}
-\_form#515=711x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise-Groves}
+\_form#509=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-noise}
+\_form#510=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias}
+\_form#511=44x19:\eqref{eq:eq-LCKF_n-random-walk-S-bias_Brown}
+\_form#512=711x28:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-noise-Groves}
   \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
   \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#516=714x47:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias}
+\_form#513=714x47:\begin{equation} \label{eq:eq-LCKF_n-random-walk-S-bias}
   \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
   \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
 \end{equation}
-\_form#517=548x19:\begin{equation} \label{eq:eq-LCKF_n-Phi-exp}
+\_form#514=548x19:\begin{equation} \label{eq:eq-LCKF_n-Phi-exp}
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
 \end{equation}
-\_form#518=679x51:\begin{equation} \label{eq:eq-LCKF_n-Phi-Taylor}
+\_form#515=679x51:\begin{equation} \label{eq:eq-LCKF_n-Phi-Taylor}
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
 \end{equation}
-\_form#519=772x47:\begin{equation} \label{eq:eq-LCKF_n-Q-exact}
+\_form#516=772x47:\begin{equation} \label{eq:eq-LCKF_n-Q-exact}
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
 \end{equation}
-\_form#520=599x21:\begin{equation} \label{eq:eq-LCKF_n-Q-approx}
+\_form#517=599x21:\begin{equation} \label{eq:eq-LCKF_n-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
 \end{equation}
-\_form#521=44x19:\eqref{eq:eq-LCKF_n-dynamicModel-short}
-\_form#522=44x19:\eqref{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
-\_form#523=44x19:\eqref{eq:eq-LCKF_n-Q-exact}
-\_form#524=1300x375:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT}
+\_form#518=44x19:\eqref{eq:eq-LCKF_n-dynamicModel-short}
+\_form#519=44x19:\eqref{eq:eq-LCKF_n-random-walk-noise-scale-matrix-W}
+\_form#520=44x19:\eqref{eq:eq-LCKF_n-Q-exact}
+\_form#521=1300x375:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT}
 \begin{aligned}
   \mathbf{Q}_{k-1} &= \int_{t_k - \tau_s}^{t_k}
                            \exp{(\mathbf{F}_{k-1} (t_k-t'))}
@@ -2598,7 +2595,7 @@ qr_R (
                       dt'
 \end{aligned}
 \end{equation}
-\_form#525=1929x212:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT-approx}
+\_form#522=1929x212:\begin{equation} \label{eq:eq-LCKF_n-Q-GWGT-approx}
 \begin{aligned}
   \mathbf{Q}_{k-1} &\approx \int_{t_k - \tau_s}^{t_k}
                                  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -2670,7 +2667,7 @@ qr_R (
                             dt'
 \end{aligned}
 \end{equation}
-\_form#526=725x44:\begin{equation} \label{eq:eq-LCKF_n-Q-final}
+\_form#523=725x44:\begin{equation} \label{eq:eq-LCKF_n-Q-final}
   \mathbf{Q} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
@@ -2680,12 +2677,12 @@ qr_R (
     };
   \end{tikzpicture}
 \end{equation}
-\_form#527=14x12:$ \tau_s $
-\_form#528=586x42:\begin{equation} \label{eq:eq-LCKF_n-Loan-A}
+\_form#524=14x12:$ \tau_s $
+\_form#525=586x42:\begin{equation} \label{eq:eq-LCKF_n-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \end{equation}
-\_form#529=683x67:\begin{equation} \label{eq:eq-LCKF_n-Loan-B}
+\_form#526=683x67:\begin{equation} \label{eq:eq-LCKF_n-Loan-B}
   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
@@ -2693,13 +2690,13 @@ qr_R (
                                        = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
 \end{equation}
-\_form#530=527x21:\begin{equation} \label{eq:eq-LCKF_n-Loan-Phi}
+\_form#527=527x21:\begin{equation} \label{eq:eq-LCKF_n-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
 \end{equation}
-\_form#531=534x19:\begin{equation} \label{eq:eq-LCKF_n-Loan-Q}
+\_form#528=534x19:\begin{equation} \label{eq:eq-LCKF_n-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \end{equation}
-\_form#532=691x233:\begin{equation} \label{eq:eq-LCKF_n-P}
+\_form#529=691x233:\begin{equation} \label{eq:eq-LCKF_n-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -2720,18 +2717,18 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#533=672x46:\begin{equation} \label{eq:eq-LCKF_n-deltaz}
+\_form#530=672x46:\begin{equation} \label{eq:eq-LCKF_n-deltaz}
   \boldsymbol{\delta} \mathbf{z}^n = \begin{pmatrix} \tilde{\mathbf{p}}_{b,G} - \hat{\mathbf{p}}_{b} - \mathbf{T}_{r(n)}^{p} \mathbf{C}_b^n \mathbf{l}_{ba}^b \\
                                       \tilde{\mathbf{v}}^n_{G} - \hat{\mathbf{v}}^n - \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix}
 \end{equation}
-\_form#534=278x67:$ \mathbf{T}_{r(n)}^{p} = \begin{pmatrix} \frac{1}{R_N + h} &               0               &  0 \\
+\_form#531=278x67:$ \mathbf{T}_{r(n)}^{p} = \begin{pmatrix} \frac{1}{R_N + h} &               0               &  0 \\
                                                        0        & \frac{1}{(R_E + h)\cos{\phi}} &  0 \\
                                                        0        &               0               & -1 \end{pmatrix} $
-\_form#535=646x49:\begin{equation} \label{eq:eq-LCKF_n-H-general}
+\_form#532=646x49:\begin{equation} \label{eq:eq-LCKF_n-H-general}
   \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
                = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
 \end{equation}
-\_form#536=693x96:\begin{equation} \label{eq:eq-LCKF_n-H}
+\_form#533=693x96:\begin{equation} \label{eq:eq-LCKF_n-H}
   \mathbf{H}^n =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -2749,14 +2746,14 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#537=658x110:\begin{equation} \label{eq:eq-LCKF_n-H-sub}
+\_form#534=658x110:\begin{equation} \label{eq:eq-LCKF_n-H-sub}
 \begin{aligned}
   \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^n}    &\approx \mathbf{T}_{r(n)}^{p} \left[ (\mathbf{C}_b^n \mathbf{l}_{ba}^b) \times \right] \\
   \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^n}    &\approx \left[ \left\{ \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^n} &\approx \mathbf{C}_b^n \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
 \end{equation}
-\_form#538=795x273:\begin{equation} \label{eq:eq-LCKF_n-R}
+\_form#535=795x273:\begin{equation} \label{eq:eq-LCKF_n-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -2779,29 +2776,29 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#539=565x46:\begin{equation} \label{eq:eq-LCKF_n-correction-position-velocity}
+\_form#536=565x46:\begin{equation} \label{eq:eq-LCKF_n-correction-position-velocity}
 \begin{aligned}
   \boldsymbol{p}_b^{+} &= \boldsymbol{p}_b^{-} - \boldsymbol{\delta p}_b \\
   \boldsymbol{v}^{n,+} &= \boldsymbol{v}^{n,-} - \boldsymbol{\delta v}^{n}
 \end{aligned}
 \end{equation}
-\_form#540=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
-\_form#541=592x25:\begin{equation} \label{eq:eq-LCKF_n-correction-attitude}
+\_form#537=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
+\_form#538=592x25:\begin{equation} \label{eq:eq-LCKF_n-correction-attitude}
   \mathbf{C}_b^{n,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{n,-}
 \end{equation}
-\_form#542=585x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro-accumulate}
+\_form#539=585x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro-accumulate}
 \begin{aligned}
   \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
   \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#543=590x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro}
+\_form#540=590x53:\begin{equation} \label{eq:eq-LCKF_n-correction-accel-gyro}
 \begin{aligned}
   \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
   \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
 \end{aligned}
 \end{equation}
-\_form#544=2055x733:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units}
+\_form#541=2055x733:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.6em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.1em,] {
@@ -2916,8 +2913,8 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#545=21x16:$ \boldsymbol{\delta} \mathbf{x} $
-\_form#546=2160x774:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units-scaled}
+\_form#542=21x16:$ \boldsymbol{\delta} \mathbf{x} $
+\_form#543=2160x774:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-units-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.1em,] {
@@ -3048,8 +3045,8 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#547=19x16:$ m' $
-\_form#548=1239x245:\begin{equation} \label{eq:eq-LCKF_n-Units-noise}
+\_form#544=19x16:$ m' $
+\_form#545=1239x245:\begin{equation} \label{eq:eq-LCKF_n-Units-noise}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
@@ -3130,8 +3127,8 @@ qr_R (
   \cdot
   \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \end{equation}
-\_form#549=11x18:$ \mathbf{\beta} $
-\_form#550=1348x266:\begin{equation} \label{eq:eq-LCKF_n-Units-noise-scaled}
+\_form#546=11x18:$ \mathbf{\beta} $
+\_form#547=1348x266:\begin{equation} \label{eq:eq-LCKF_n-Units-noise-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
@@ -3217,7 +3214,7 @@ qr_R (
   \cdot
   \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \end{equation}
-\_form#551=1615x714:\begin{equation} \label{eq:eq-LCKF_n-Units-P}
+\_form#548=1615x714:\begin{equation} \label{eq:eq-LCKF_n-Units-P}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
@@ -3259,8 +3256,8 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#552=14x14:$ \mathbf{P} $
-\_form#553=1647x756:\begin{equation} \label{eq:eq-LCKF_n-Units-P-scaled}
+\_form#549=14x14:$ \mathbf{P} $
+\_form#550=1647x756:\begin{equation} \label{eq:eq-LCKF_n-Units-P-scaled}
   \mathbf{P}_0 =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
@@ -3341,7 +3338,7 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#554=968x273:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz}
+\_form#551=968x273:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz}
   \boldsymbol{\delta} \mathbf{z} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -3383,8 +3380,8 @@ qr_R (
     };
   \end{tikzpicture}
 \end{equation}
-\_form#555=19x16:$ \boldsymbol{\delta} \mathbf{z} $
-\_form#556=987x305:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz-scaled}
+\_form#552=19x16:$ \boldsymbol{\delta} \mathbf{z} $
+\_form#553=987x305:\begin{equation} \label{eq:eq-LCKF_n-Units-deltaz-scaled}
   \boldsymbol{\delta} \mathbf{z} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -3430,7 +3427,7 @@ qr_R (
     \draw[decorate,transform canvas={xshift=-1.4em},thick,red] ($(m-1-1.south west) + (0,2.5em) $) -- node[left=2pt] {$ \times R_0 $} (m-1-1.north west);
   \end{tikzpicture}
 \end{equation}
-\_form#557=1334x733:\begin{equation} \label{eq:eq-LCKF_n-Units-H}
+\_form#554=1334x733:\begin{equation} \label{eq:eq-LCKF_n-Units-H}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
@@ -3500,8 +3497,8 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#558=16x14:$ \mathbf{H} $
-\_form#559=1388x765:\begin{equation} \label{eq:eq-LCKF_n-Units-H-scaled}
+\_form#555=16x14:$ \mathbf{H} $
+\_form#556=1388x765:\begin{equation} \label{eq:eq-LCKF_n-Units-H-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
@@ -3578,7 +3575,7 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#560=900x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R}
+\_form#557=900x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -3601,8 +3598,8 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#561=16x14:$ \mathbf{R} $
-\_form#562=933x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R-scaled}
+\_form#558=16x14:$ \mathbf{R} $
+\_form#559=933x284:\begin{equation} \label{eq:eq-LCKF_n-Units-R-scaled}
   \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
@@ -3651,47 +3648,47 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#563=567x105:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-timeDerivative}
+\_form#560=567x105:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-timeDerivative}
 \begin{aligned}
   \dotup{\phi}    &= \frac{v_N}{R_N + h}             \\
   \dotup{\lambda} &= \frac{v_E}{(R_E + h)\cos{\phi}} \\
   \dotup{h}       &= -v_D                            \\
 \end{aligned}
 \end{equation}
-\_form#564=26x16:$R_N $
-\_form#565=25x16:$R_E $
-\_form#566=89x19:$ \nicefrac{\partial R_N}{\partial p_i} = 0 $
-\_form#567=88x19:$ \quad \nicefrac{\partial R_E}{\partial p_i} = 0$
-\_form#568=863x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-differential}
+\_form#561=26x16:$R_N $
+\_form#562=25x16:$R_E $
+\_form#563=89x19:$ \nicefrac{\partial R_N}{\partial p_i} = 0 $
+\_form#564=88x19:$ \quad \nicefrac{\partial R_E}{\partial p_i} = 0$
+\_form#565=863x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Position-differential}
 \begin{aligned}
   \delta\dotup{\phi}    &= \frac{\partial \dotup{\phi}}{\partial v_N} \delta v_N + \frac{\partial \dotup{\phi}}{\partial h} \delta h = \highlight[teal!20]{\dfrac{1}{R_N + h}} \delta v_N \highlight[cyan!20]{- \dfrac{v_N}{(R_N + h)^2}} \delta h \\
   \delta\dotup{\lambda} &= \frac{\partial \dotup{\lambda}}{\partial v_E} \delta v_E + \frac{\partial \dotup{\lambda}}{\partial h} \delta h + \frac{\partial \dotup{\lambda}}{\partial \phi} \delta \phi = \highlight[teal!20]{\dfrac{1}{(R_E + h)\cos{\phi}}} \delta v_E \highlight[cyan!20]{- \dfrac{v_E}{(R_E + h)^2\cos{\phi}}} \delta h + \highlight[cyan!20]{\dfrac{v_E \tan{\phi}}{(R_E + h)\cos{\phi}}} \delta \phi \\
   \delta\dotup{h}       &= \frac{\partial \dotup{h}}{\partial v_D} \delta v_D = \highlight[teal!20]{-1} \cdot \delta v_D \\
 \end{aligned}
 \end{equation}
-\_form#569=23x23:$ \mathbf{\hat{C}}_b^n $
-\_form#570=23x18:$ \mathbf{C}_b^n $
-\_form#571=536x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
+\_form#566=23x23:$ \mathbf{\hat{C}}_b^n $
+\_form#567=23x18:$ \mathbf{C}_b^n $
+\_form#568=536x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
   \mathbf{\hat{C}}_b^n = \mathbf{B} \mathbf{C}_b^n
 \end{equation}
-\_form#572=625x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transformation}
+\_form#569=625x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transformation}
   \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
 \end{equation}
-\_form#573=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transformation}
-\_form#574=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
-\_form#575=557x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
+\_form#570=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transformation}
+\_form#571=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-estimate-true}
+\_form#572=557x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-estimate-errors}
   \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n
 \end{equation}
-\_form#576=557x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat}
+\_form#573=557x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat}
   \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T
 \end{equation}
-\_form#577=586x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
+\_form#574=586x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
   \mathbf{\dotup{\Psi}} = -\mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} {\mathbf{C}_b^n}^T - \mathbf{\hat{C}}_b^n {\mathbf{\dotup{C}}_b^n}\raise1.25ex\hbox{$\scriptstyle T$}
 \end{equation}
-\_form#578=100x23:$ \mathbf{\dotup{C}}_b^n = \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b $
-\_form#579=301x46:$ \mathbf{\dotup{C}}_\beta^\alpha(t) = \lim_{\delta t \to 0}\left(\dfrac{\mathbf{C}_\beta^\alpha(t+\delta t) - \mathbf{C}_\beta^\alpha(t)}{\delta t}\right) $
-\_form#580=446x63:$ C_\alpha^\beta \approx \begin{pmatrix} 1 & -\psi_{\beta\alpha} & \theta_{\beta\alpha} \\ \psi_{\beta\alpha} & 1 & -\phi_{\beta\alpha} \\ -\theta_{\beta\alpha} & \phi_{\beta\alpha} & 1 \end{pmatrix} = \mathbf{I}_3 + [\boldsymbol{\psi}_{\beta\alpha} \times ] = \mathbf{I}_3 + \mathbf{\Omega}_{\beta\alpha} $
-\_form#581=597x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
+\_form#575=100x23:$ \mathbf{\dotup{C}}_b^n = \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b $
+\_form#576=301x46:$ \mathbf{\dotup{C}}_\beta^\alpha(t) = \lim_{\delta t \to 0}\left(\dfrac{\mathbf{C}_\beta^\alpha(t+\delta t) - \mathbf{C}_\beta^\alpha(t)}{\delta t}\right) $
+\_form#577=446x63:$ C_\alpha^\beta \approx \begin{pmatrix} 1 & -\psi_{\beta\alpha} & \theta_{\beta\alpha} \\ \psi_{\beta\alpha} & 1 & -\phi_{\beta\alpha} \\ -\theta_{\beta\alpha} & \phi_{\beta\alpha} & 1 \end{pmatrix} = \mathbf{I}_3 + [\boldsymbol{\psi}_{\beta\alpha} \times ] = \mathbf{I}_3 + \mathbf{\Omega}_{\beta\alpha} $
+\_form#578=597x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
 \begin{aligned}
   \mathbf{\dotup{C}}_b^n &= \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b \\
                        &= \mathbf{C}_b^n (\mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^b) \\
@@ -3699,18 +3696,18 @@ qr_R (
                        &= \mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n
 \end{aligned}
 \end{equation}
-\_form#582=28x21:$ \mathbf{\Omega}_{in}^b $
-\_form#583=26x18:$ \mathbf{\Omega}_{ie}^n $
-\_form#584=30x18:$ \mathbf{\Omega}_{en}^n $
-\_form#585=23x26:$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} $
-\_form#586=579x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
+\_form#579=28x21:$ \mathbf{\Omega}_{in}^b $
+\_form#580=26x18:$ \mathbf{\Omega}_{ie}^n $
+\_form#581=30x18:$ \mathbf{\Omega}_{en}^n $
+\_form#582=23x26:$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} $
+\_form#583=579x26:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
   \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} = \mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#587=28x23:$ \mathbf{\hat{\Omega}}_{in}^b $
-\_form#588=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
-\_form#589=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
-\_form#590=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
-\_form#591=723x91:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#584=28x23:$ \mathbf{\hat{\Omega}}_{in}^b $
+\_form#585=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot}
+\_form#586=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-DCM-dot-estimated}
+\_form#587=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot}
+\_form#588=723x91:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &= -(\mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n) {\mathbf{C}_b^n}^T
                          - \mathbf{\hat{C}}_b^n (\mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n)^T \\
@@ -3723,8 +3720,8 @@ qr_R (
                          - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T \mathbf{\Omega}_{in}^n
 \end{aligned}
 \end{equation}
-\_form#592=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
-\_form#593=786x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc2}
+\_form#589=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc1}
+\_form#590=786x109:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
                          + \mathbf{\hat{\Omega}}_{in}^n [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n {\mathbf{C}_b^n}^T
@@ -3737,19 +3734,19 @@ qr_R (
                             - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{in}^n
 \end{aligned}
 \end{equation}
-\_form#594=140x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{in}^n = \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n $
-\_form#595=655x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-final}
+\_form#591=140x23:$ \boldsymbol{\delta}\mathbf{\Omega}_{in}^n = \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n $
+\_form#592=655x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dotup{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{in}^n - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi}
                               + \boldsymbol{\delta}\mathbf{\Omega}_{in}^n
                               - \mathbf{C}_b^n \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^n}^T
 \end{equation}
-\_form#596=767x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-element-comp}
+\_form#593=767x23:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-element-comp}
   \boldsymbol{\delta \psi} \times = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{in}^n \times = \mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{in}^n \times = \boldsymbol{\delta}\mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
 \end{equation}
-\_form#597=663x65:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential}
+\_form#594=663x65:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential}
 \begin{aligned}
   \boldsymbol{\delta \dotup{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
                                                 + \boldsymbol{\delta \omega}_{in}^n
@@ -3759,10 +3756,10 @@ qr_R (
                                           \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#598=660x47:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
+\_form#595=660x47:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
   \boldsymbol{\omega}_{en}^n = \begin{bmatrix} \dfrac{v_E}{R_E + h} & -\dfrac{v_N}{R_N + h} & -\dfrac{v_E \tan{\phi}}{R_E + h} \end{bmatrix}^T
 \end{equation}
-\_form#599=866x142:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
+\_form#596=866x142:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
 \begin{aligned}
   \delta \omega_{en,1}^n &= \frac{\partial \omega_{en,1}^n}{\partial v_E} \delta v_E
                               + \frac{\partial\omega_{en,1}^n}{\partial h} \delta h
@@ -3780,7 +3777,7 @@ qr_R (
                               - \frac{v_E}{(R_E + h)\cos^2{\phi}} \delta \phi
 \end{aligned}
 \end{equation}
-\_form#600=809x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
+\_form#597=809x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
   \boldsymbol{\omega}_{ie}^n = \mathbf{C}_e^n \boldsymbol{\omega}_{ie}^e
                              = \begin{pmatrix} -\sin{\phi}\cos{\lambda} & -\sin{\phi}\sin{\lambda} & \cos{\phi} \\
                                                     -\sin{\lambda}      &      \cos{\lambda}       &      0     \\
@@ -3788,16 +3785,16 @@ qr_R (
                                \cdot \begin{pmatrix} 0 \\ 0 \\ \omega_{ie} \end{pmatrix}
                              = \omega_{ie} \cdot \begin{pmatrix} \cos{\phi} \\ 0 \\ -\sin{\phi} \end{pmatrix}
 \end{equation}
-\_form#601=628x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
+\_form#598=628x63:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
 \begin{aligned}
   \boldsymbol{\delta \omega}_{ie}^n = \frac{\partial \boldsymbol{\omega}_{ie}^n}{\partial \phi} \delta \phi
                                     = \begin{pmatrix} -\omega_{ie}\sin{\phi} \\ 0 \\ -\omega_{ie}\cos{\phi} \end{pmatrix} \delta \phi
 \end{aligned}
 \end{equation}
-\_form#602=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
-\_form#603=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
-\_form#604=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-differential}
-\_form#605=1038x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential-final}
+\_form#599=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate-differential}
+\_form#600=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential}
+\_form#601=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-differential}
+\_form#602=1038x159:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Attitude-differential-final}
   \boldsymbol{\delta \dotup{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
                                          + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
                                              \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -3863,22 +3860,22 @@ qr_R (
                                            \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
                                          \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#606=642x67:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
+\_form#603=642x67:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
   \boldsymbol{\dotup{v}}^n
       = \overbrace{\boldsymbol{f}^n}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravity}\hidewidth}
 \end{equation}
-\_form#607=23x18:$ \boldsymbol{\gamma}_{ib}^n $
-\_form#608=627x25:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
+\_form#604=23x18:$ \boldsymbol{\gamma}_{ib}^n $
+\_form#605=627x25:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
   \boldsymbol{\dotup{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle n$}}
       = \boldsymbol{\hat{f}}^n
       - (2 \boldsymbol{\hat{\omega}}_{ie}^n + \boldsymbol{\hat{\omega}}_{en}^n) \times \boldsymbol{\hat{v}}_e^n
       + \mathbf{\hat{g}}^n
 \end{equation}
-\_form#609=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
-\_form#610=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
-\_form#611=775x56:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential}
+\_form#606=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative}
+\_form#607=44x19:\eqref{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-estimate}
+\_form#608=775x56:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential}
 \begin{aligned}
   \boldsymbol{\delta \dotup{v}}^n &= \boldsymbol{\dotup{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle n$}} - \boldsymbol{\dotup{v}}^n \\
                                 &= \mathbf{\hat{C}}_b^n \boldsymbol{\hat{f}}^b
@@ -3889,13 +3886,13 @@ qr_R (
                                        - \mathbf{g}^n
 \end{aligned}
 \end{equation}
-\_form#612=124x23:$ \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n $
-\_form#613=110x25:$ \boldsymbol{\delta f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
-\_form#614=114x16:$ \boldsymbol{\delta v}^n = \boldsymbol{\hat{v}}^n - \boldsymbol{v}^n $
-\_form#615=131x19:$ \boldsymbol{\delta \omega}_{ie}^n = \boldsymbol{\hat{\omega}}_{ie}^n - \boldsymbol{\omega}_{ie}^n $
-\_form#616=142x19:$ \boldsymbol{\delta \omega}_{en}^n = \boldsymbol{\hat{\omega}}_{en}^n - \boldsymbol{\omega}_{en}^n $
-\_form#617=114x19:$ \boldsymbol{\delta} \mathbf{g}^n = \mathbf{\hat{g}}^n - \mathbf{g}^n $
-\_form#618=891x138:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation}
+\_form#609=124x23:$ \mathbf{\hat{C}}_b^n \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n $
+\_form#610=110x25:$ \boldsymbol{\delta f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $
+\_form#611=114x16:$ \boldsymbol{\delta v}^n = \boldsymbol{\hat{v}}^n - \boldsymbol{v}^n $
+\_form#612=131x19:$ \boldsymbol{\delta \omega}_{ie}^n = \boldsymbol{\hat{\omega}}_{ie}^n - \boldsymbol{\omega}_{ie}^n $
+\_form#613=142x19:$ \boldsymbol{\delta \omega}_{en}^n = \boldsymbol{\hat{\omega}}_{en}^n - \boldsymbol{\omega}_{en}^n $
+\_form#614=114x19:$ \boldsymbol{\delta} \mathbf{g}^n = \mathbf{\hat{g}}^n - \mathbf{g}^n $
+\_form#615=891x138:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation}
 \begin{aligned}
   \boldsymbol{\delta \dotup{v}}^n &= [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \boldsymbol{\hat{f}}^b
                                        - \mathbf{C}_b^n \boldsymbol{f}^b
@@ -3920,18 +3917,18 @@ qr_R (
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
 \end{aligned}
 \end{equation}
-\_form#619=105x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\delta \psi} \approx 0 $
-\_form#620=201x19:$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0$
-\_form#621=798x35:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
+\_form#616=105x23:$ \boldsymbol{\delta f}^b \times \boldsymbol{\delta \psi} \approx 0 $
+\_form#617=201x19:$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0$
+\_form#618=798x35:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
   \boldsymbol{\delta \dotup{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{\delta v}^n
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{v}^n
                                    + \boldsymbol{\delta} \mathbf{g}^n
 \end{equation}
-\_form#622=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
-\_form#623=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
-\_form#624=1647x390:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final-pre}
+\_form#619=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-transport-rate}
+\_form#620=44x19:\eqref{eq:eq-LCKF_n-Derivation-Attitude-earth-rotation-n}
+\_form#621=1647x390:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final-pre}
 \renewcommand*{\arraystretch}{1.9}
 \begin{aligned}
   \boldsymbol{\delta \dotup{v}}^n &\approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
@@ -3982,13 +3979,13 @@ qr_R (
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
 \end{aligned}
 \end{equation}
-\_form#625=562x44:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-gravityError}
+\_form#622=562x44:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-gravityError}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{g}^e \approx - \frac{2 g_0}{r_{eS}^e} \delta h \mathbf{u}_D^e
 \end{aligned}
 \end{equation}
-\_form#626=23x18:$ \mathbf{u}_D^e $
-\_form#627=1572x166:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
+\_form#623=23x18:$ \mathbf{u}_D^e $
+\_form#624=1572x166:\begin{equation} \label{eq:eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
   \boldsymbol{\delta \dotup{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
@@ -4050,7 +4047,7 @@ qr_R (
                                           \end{pmatrix}
                                         + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
 \end{equation}
-\_form#628=1708x735:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Titterton}
+\_form#625=1708x735:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Titterton}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
@@ -4145,13 +4142,13 @@ qr_R (
     \end{pgfonlayer}
   \end{tikzpicture}
 \end{equation}
-\_form#629=585x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction}
+\_form#626=585x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction}
   \mathbf{C}_b^n \approx (\mathbf{I}_3 - [\boldsymbol{\delta \psi}_{nb}^n \times]) \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#630=578x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction-Titterton}
+\_form#627=578x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Groves-attitude-correction-Titterton}
   \mathbf{C}_b^n = (\mathbf{I}_3 + [\boldsymbol{\delta \psi} \times]) \mathbf{\hat{C}}_b^n
 \end{equation}
-\_form#631=845x107:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Gleason-position-error}
+\_form#628=845x107:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Gleason-position-error}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{\dotup{p}}  &= T' \boldsymbol{\delta} \mathbf{p}^n + T \boldsymbol{\delta v}^n \\
   \boldsymbol{\delta \dotup{v}}^n         &= \highlight[purple!20]{\left[ (\mathbf{C}_b^n \boldsymbol{f}^b) \times \right]} \boldsymbol{\delta \psi}_{nb}^n
@@ -4162,7 +4159,7 @@ qr_R (
   \boldsymbol{\delta \dotup{\psi}}_{nb}^n &= \highlight[green!20]{- \left[ \boldsymbol{\omega}_{in}^n \times \right]} \boldsymbol{\delta \psi}_{nb}^n + \boldsymbol{\delta \omega}_{in}^n \highlight[orange!20]{-\mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \end{equation}
-\_form#632=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position}
+\_form#629=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4172,7 +4169,7 @@ qr_R (
   \end{pmatrix}
   \begin{pmatrix} \delta v_E \\ \delta v_N \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#633=688x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity}
+\_form#630=688x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity}
   \begin{pmatrix} \delta \dotup{v}_{E} \\ \delta \dotup{v}_{N} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4183,7 +4180,7 @@ qr_R (
   \begin{pmatrix} \delta P \\ \delta R \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{enu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#634=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude}
+\_form#631=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude}
   \begin{pmatrix} \delta \dotup{P} \\ \delta \dotup{R} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4194,7 +4191,7 @@ qr_R (
   \begin{pmatrix} \delta v_E \\ \delta v_N \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{enu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#635=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-reordered}
+\_form#632=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-reordered}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4204,7 +4201,7 @@ qr_R (
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#636=688x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-reordered}
+\_form#633=688x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-reordered}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4215,7 +4212,7 @@ qr_R (
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#637=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-reordered}
+\_form#634=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-reordered}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4226,7 +4223,7 @@ qr_R (
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#638=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-yaw-sign}
+\_form#635=660x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-yaw-sign}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4236,7 +4233,7 @@ qr_R (
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
 \end{equation}
-\_form#639=686x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-yaw-sign}
+\_form#636=686x63:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-yaw-sign}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{U} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4247,7 +4244,7 @@ qr_R (
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta f}^b
 \end{equation}
-\_form#640=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-yaw-sign}
+\_form#637=695x72:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-yaw-sign}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4258,7 +4255,7 @@ qr_R (
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_U \end{pmatrix}
   + \mathbf{C}_b^{neu} \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#641=667x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-up-down}
+\_form#638=667x67:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Position-up-down}
   \begin{pmatrix} \delta \dotup{\phi} \\ \delta \dotup{\lambda} \\ \delta \dotup{h} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4268,7 +4265,7 @@ qr_R (
   \end{pmatrix}
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
 \end{equation}
-\_form#642=700x68:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-up-down}
+\_form#639=700x68:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Velocity-up-down}
   \begin{pmatrix} \delta \dotup{v}_{N} \\ \delta \dotup{v}_{E} \\ \delta \dotup{v}_{D} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4279,7 +4276,7 @@ qr_R (
   \begin{pmatrix} \delta R \\ \delta P \\ \delta Y \end{pmatrix}
   \highlight[red!60]{+} \mathbf{C}_b^n \boldsymbol{\delta f}^b
 \end{equation}
-\_form#643=704x74:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-up-down}
+\_form#640=704x74:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-up-down}
   \begin{pmatrix} \delta \dotup{R} \\ \delta \dotup{P} \\ \delta \dotup{Y} \end{pmatrix}
   =
   \begin{pmatrix}
@@ -4290,6 +4287,9 @@ qr_R (
   \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
   + \mathbf{C}_b^n \boldsymbol{\delta \omega}_{ib}^b
 \end{equation}
-\_form#644=558x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-error-definition}
+\_form#641=558x23:\begin{equation} \label{eq:eq-LCKF_n-stateMatrix-Noureldin-Attitude-error-definition}
   \mathbf{\hat{C}}_b^n = (\mathbf{I} + \mathbf{\Psi}) \mathbf{C}_b^n
 \end{equation}
+\_form#642=254x16:$ \textcolor{red}{\text{IMAGE TO BE ADDED SOON.}} $
+\_form#643=96x19:$\underline{X}_b = \underline{\underline{R}} \cdot \underline{X}_p$
+\_form#644=352x16:$ \textcolor{red}{\text{MORE EXAMPLES TO BE ADDED SOON.}} $

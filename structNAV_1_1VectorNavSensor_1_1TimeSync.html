@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1VectorNavSensor_1_1TimeSync.html',''); in
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1VectorNavSensor_1_1TimeSync-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::VectorNavSensor::TimeSync Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,19 +128,56 @@ $(function(){initNavTree('structNAV_1_1VectorNavSensor_1_1TimeSync.html',''); in
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a73ff15574a6e140c200f015f37a2111b" id="r_a73ff15574a6e140c200f015f37a2111b"><td class="memItemLeft" align="right" valign="top"><a id="a73ff15574a6e140c200f015f37a2111b" name="a73ff15574a6e140c200f015f37a2111b"></a>
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ppsTime</b></td></tr>
-<tr class="memdesc:a73ff15574a6e140c200f015f37a2111b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of the last message with GNSS Time available (or empty otherwise) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a73ff15574a6e140c200f015f37a2111b" id="r_a73ff15574a6e140c200f015f37a2111b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73ff15574a6e140c200f015f37a2111b">ppsTime</a></td></tr>
+<tr class="memdesc:a73ff15574a6e140c200f015f37a2111b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of the last message with GNSS Time available (or empty otherwise)  <br /></td></tr>
 <tr class="separator:a73ff15574a6e140c200f015f37a2111b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5f2f4b0719a39b6a692985e4fbf35ee" id="r_ad5f2f4b0719a39b6a692985e4fbf35ee"><td class="memItemLeft" align="right" valign="top"><a id="ad5f2f4b0719a39b6a692985e4fbf35ee" name="ad5f2f4b0719a39b6a692985e4fbf35ee"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>syncOutCnt</b></td></tr>
-<tr class="memdesc:ad5f2f4b0719a39b6a692985e4fbf35ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of SyncOut trigger events that have occurred. <br /></td></tr>
+<tr class="memitem:ad5f2f4b0719a39b6a692985e4fbf35ee" id="r_ad5f2f4b0719a39b6a692985e4fbf35ee"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5f2f4b0719a39b6a692985e4fbf35ee">syncOutCnt</a></td></tr>
+<tr class="memdesc:ad5f2f4b0719a39b6a692985e4fbf35ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of SyncOut trigger events that have occurred.  <br /></td></tr>
 <tr class="separator:ad5f2f4b0719a39b6a692985e4fbf35ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Information needed to sync Master/Slave sensors. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00047">47</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a73ff15574a6e140c200f015f37a2111b" name="a73ff15574a6e140c200f015f37a2111b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73ff15574a6e140c200f015f37a2111b">&#9670;&#160;</a></span>ppsTime</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::VectorNavSensor::TimeSync::ppsTime</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time of the last message with GNSS Time available (or empty otherwise) </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00049">49</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad5f2f4b0719a39b6a692985e4fbf35ee" name="ad5f2f4b0719a39b6a692985e4fbf35ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5f2f4b0719a39b6a692985e4fbf35ee">&#9670;&#160;</a></span>syncOutCnt</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::VectorNavSensor::TimeSync::syncOutCnt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The number of SyncOut trigger events that have occurred. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavSensor_8hpp_source.html#l00050">50</a> of file <a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Nodes/DataProvider/IMU/Sensors/<a class="el" href="VectorNavSensor_8hpp_source.html">VectorNavSensor.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -148,7 +185,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>syncOutCnt</b></t
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1VectorNavSensor.html">VectorNavSensor</a></li><li class="navelem"><a class="el" href="structNAV_1_1VectorNavSensor_1_1TimeSync.html">TimeSync</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1VectorNavSensor.html">VectorNavSensor</a></li><li class="navelem"><a class="el" href="structNAV_1_1VectorNavSensor_1_1TimeSync.html">TimeSync</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

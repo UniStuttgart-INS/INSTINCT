@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('PlotEventTooltip_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file PlotEventTooltip.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Tooltips for a plot events</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2024-08-15</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -136,23 +141,25 @@ $(function(){initNavTree('PlotEventTooltip_8hpp_source.html',''); initResizable(
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;<a class="code" href="InsTime_8hpp.html">Navigation/Time/InsTime.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment"></span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// Tooltip for plot events</span></div>
 <div class="foldopen" id="foldopen00025" data-start="{" data-end="};">
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structNAV_1_1PlotEventTooltip.html">   25</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structNAV_1_1PlotEventTooltip.html">PlotEventTooltip</a></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>{</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">   27</a></span>    <a class="code hl_class" href="classNAV_1_1InsTime.html">InsTime</a> <a class="code hl_variable" href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">time</a>;                   </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">   28</a></span>    std::vector&lt;std::string&gt; <a class="code hl_variable" href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">texts</a>; </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">   27</a></span>    <a class="code hl_class" href="classNAV_1_1InsTime.html">InsTime</a> <a class="code hl_variable" href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">time</a>;                   <span class="comment">///&lt; Time of the event</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">   28</a></span>    std::vector&lt;std::string&gt; <a class="code hl_variable" href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">texts</a>; <span class="comment">///&lt; List of event texts</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
 </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aInsTime_8hpp_html"><div class="ttname"><a href="InsTime_8hpp.html">InsTime.hpp</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div></div>
-<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> InsTime.hpp:710</div></div>
-<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html">NAV::PlotEventTooltip</a></div><div class="ttdoc">Tooltip for plot events.</div><div class="ttdef"><b>Definition</b> PlotEventTooltip.hpp:26</div></div>
-<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html_a078f4a7c17dd2f325031991d7184f4a0"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">NAV::PlotEventTooltip::texts</a></div><div class="ttdeci">std::vector&lt; std::string &gt; texts</div><div class="ttdoc">List of event texts.</div><div class="ttdef"><b>Definition</b> PlotEventTooltip.hpp:28</div></div>
-<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html_a65ea49ec41cf56a67411d59c3e086e9b"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">NAV::PlotEventTooltip::time</a></div><div class="ttdeci">InsTime time</div><div class="ttdoc">Time of the event.</div><div class="ttdef"><b>Definition</b> PlotEventTooltip.hpp:27</div></div>
+<div class="ttc" id="aclassNAV_1_1InsTime_html"><div class="ttname"><a href="classNAV_1_1InsTime.html">NAV::InsTime</a></div><div class="ttdoc">The class is responsible for all time-related tasks.</div><div class="ttdef"><b>Definition</b> <a href="InsTime_8hpp_source.html#l00709">InsTime.hpp:710</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html">NAV::PlotEventTooltip</a></div><div class="ttdoc">Tooltip for plot events.</div><div class="ttdef"><b>Definition</b> <a href="#l00025">PlotEventTooltip.hpp:26</a></div></div>
+<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html_a078f4a7c17dd2f325031991d7184f4a0"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html#a078f4a7c17dd2f325031991d7184f4a0">NAV::PlotEventTooltip::texts</a></div><div class="ttdeci">std::vector&lt; std::string &gt; texts</div><div class="ttdoc">List of event texts.</div><div class="ttdef"><b>Definition</b> <a href="#l00028">PlotEventTooltip.hpp:28</a></div></div>
+<div class="ttc" id="astructNAV_1_1PlotEventTooltip_html_a65ea49ec41cf56a67411d59c3e086e9b"><div class="ttname"><a href="structNAV_1_1PlotEventTooltip.html#a65ea49ec41cf56a67411d59c3e086e9b">NAV::PlotEventTooltip::time</a></div><div class="ttdeci">InsTime time</div><div class="ttdoc">Time of the event.</div><div class="ttdef"><b>Definition</b> <a href="#l00027">PlotEventTooltip.hpp:27</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

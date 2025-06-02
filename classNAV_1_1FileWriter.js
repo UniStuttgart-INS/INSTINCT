@@ -17,7 +17,7 @@ var classNAV_1_1FileWriter =
     [ "operator=", "classNAV_1_1FileWriter.html#a422e2f0322244420a2384bcd105fa606", null ],
     [ "restore", "classNAV_1_1FileWriter.html#ab84faef545608138f433cd05624ef126", null ],
     [ "save", "classNAV_1_1FileWriter.html#af2f77042986c9eb1567dd7de2a3c8176", null ],
-    [ "to_string", "classNAV_1_1FileWriter.html#a7893d9fc5eed8ef0b0f6d1e487972910", null ],
+    [ "to_string", "classNAV_1_1FileWriter.html#a48f0431284f55d361d6b3e39daed7b95", null ],
     [ "_filestream", "classNAV_1_1FileWriter.html#afc2b3c95a073b29f30baf6910b5e195b", null ],
     [ "_fileType", "classNAV_1_1FileWriter.html#a22c4953485ae1257327752a95477b8ed", null ],
     [ "_path", "classNAV_1_1FileWriter.html#a0e71040aa505bf4bcf3f29e52a6f83bd", null ]

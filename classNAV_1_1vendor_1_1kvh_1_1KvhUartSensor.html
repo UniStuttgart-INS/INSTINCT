@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -124,8 +125,7 @@ $(function(){initNavTree('classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html',''); 
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor-members.html">List of all members</a>  </div>
+<a href="#pri-static-attribs">Static Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::kvh::KvhUartSensor Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -138,63 +138,50 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35366dc277c36cc5b28d6061df3c3380" id="r_a35366dc277c36cc5b28d6061df3c3380"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; uart::protocol::Packet &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35366dc277c36cc5b28d6061df3c3380">findPacket</a> (uint8_t dataByte)</td></tr>
 <tr class="memdesc:a35366dc277c36cc5b28d6061df3c3380"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects data bytes and searches for packages inside of them.  <br /></td></tr>
 <tr class="separator:a35366dc277c36cc5b28d6061df3c3380"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8152c7c7adf1789cbe87838094b80e3" id="r_ae8152c7c7adf1789cbe87838094b80e3"><td class="memItemLeft" align="right" valign="top"><a id="ae8152c7c7adf1789cbe87838094b80e3" name="ae8152c7c7adf1789cbe87838094b80e3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>KvhUartSensor</b> ()=default</td></tr>
-<tr class="memdesc:ae8152c7c7adf1789cbe87838094b80e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:ae8152c7c7adf1789cbe87838094b80e3" id="r_ae8152c7c7adf1789cbe87838094b80e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8152c7c7adf1789cbe87838094b80e3">KvhUartSensor</a> ()=default</td></tr>
+<tr class="memdesc:ae8152c7c7adf1789cbe87838094b80e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:ae8152c7c7adf1789cbe87838094b80e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfdb13f25aeeded7abf3ce22035d2de2" id="r_adfdb13f25aeeded7abf3ce22035d2de2"><td class="memItemLeft" align="right" valign="top"><a id="adfdb13f25aeeded7abf3ce22035d2de2" name="adfdb13f25aeeded7abf3ce22035d2de2"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>KvhUartSensor</b> (const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;)=delete</td></tr>
-<tr class="memdesc:adfdb13f25aeeded7abf3ce22035d2de2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:adfdb13f25aeeded7abf3ce22035d2de2" id="r_adfdb13f25aeeded7abf3ce22035d2de2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfdb13f25aeeded7abf3ce22035d2de2">KvhUartSensor</a> (const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;)=delete</td></tr>
+<tr class="memdesc:adfdb13f25aeeded7abf3ce22035d2de2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:adfdb13f25aeeded7abf3ce22035d2de2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64f87ab9ba27b35c77afbff61ad0011e" id="r_a64f87ab9ba27b35c77afbff61ad0011e"><td class="memItemLeft" align="right" valign="top"><a id="a64f87ab9ba27b35c77afbff61ad0011e" name="a64f87ab9ba27b35c77afbff61ad0011e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>KvhUartSensor</b> (<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:a64f87ab9ba27b35c77afbff61ad0011e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a64f87ab9ba27b35c77afbff61ad0011e" id="r_a64f87ab9ba27b35c77afbff61ad0011e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64f87ab9ba27b35c77afbff61ad0011e">KvhUartSensor</a> (<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:a64f87ab9ba27b35c77afbff61ad0011e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a64f87ab9ba27b35c77afbff61ad0011e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4ba0ba80320e7f3d98a8312c684c6bc" id="r_aa4ba0ba80320e7f3d98a8312c684c6bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4ba0ba80320e7f3d98a8312c684c6bc">KvhUartSensor</a> (std::string name)</td></tr>
 <tr class="memdesc:aa4ba0ba80320e7f3d98a8312c684c6bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:aa4ba0ba80320e7f3d98a8312c684c6bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6035bdebc027968717254d7596ce613" id="r_ac6035bdebc027968717254d7596ce613"><td class="memItemLeft" align="right" valign="top"><a id="ac6035bdebc027968717254d7596ce613" name="ac6035bdebc027968717254d7596ce613"></a>
-uart::sensors::UartSensor *&#160;</td><td class="memItemRight" valign="bottom"><b>operator-&gt;</b> ()</td></tr>
-<tr class="memdesc:ac6035bdebc027968717254d7596ce613"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arrow operator overload. <br /></td></tr>
+<tr class="memitem:ac6035bdebc027968717254d7596ce613" id="r_ac6035bdebc027968717254d7596ce613"><td class="memItemLeft" align="right" valign="top">uart::sensors::UartSensor *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6035bdebc027968717254d7596ce613">operator-&gt;</a> ()</td></tr>
+<tr class="memdesc:ac6035bdebc027968717254d7596ce613"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arrow operator overload.  <br /></td></tr>
 <tr class="separator:ac6035bdebc027968717254d7596ce613"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1dab52918f6c6cef2d826ca9a61dde94" id="r_a1dab52918f6c6cef2d826ca9a61dde94"><td class="memItemLeft" align="right" valign="top"><a id="a1dab52918f6c6cef2d826ca9a61dde94" name="a1dab52918f6c6cef2d826ca9a61dde94"></a>
-<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a1dab52918f6c6cef2d826ca9a61dde94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a1dab52918f6c6cef2d826ca9a61dde94" id="r_a1dab52918f6c6cef2d826ca9a61dde94"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1dab52918f6c6cef2d826ca9a61dde94">operator=</a> (const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a1dab52918f6c6cef2d826ca9a61dde94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a1dab52918f6c6cef2d826ca9a61dde94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d1955ec4df1613f0b8a6cad499443c9" id="r_a2d1955ec4df1613f0b8a6cad499443c9"><td class="memItemLeft" align="right" valign="top"><a id="a2d1955ec4df1613f0b8a6cad499443c9" name="a2d1955ec4df1613f0b8a6cad499443c9"></a>
-<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;)=delete</td></tr>
-<tr class="memdesc:a2d1955ec4df1613f0b8a6cad499443c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a2d1955ec4df1613f0b8a6cad499443c9" id="r_a2d1955ec4df1613f0b8a6cad499443c9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d1955ec4df1613f0b8a6cad499443c9">operator=</a> (<a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;)=delete</td></tr>
+<tr class="memdesc:a2d1955ec4df1613f0b8a6cad499443c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a2d1955ec4df1613f0b8a6cad499443c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a617fba46e66e0a3a15676dd3f0078760" id="r_a617fba46e66e0a3a15676dd3f0078760"><td class="memItemLeft" align="right" valign="top"><a id="a617fba46e66e0a3a15676dd3f0078760" name="a617fba46e66e0a3a15676dd3f0078760"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~KvhUartSensor</b> ()=default</td></tr>
-<tr class="memdesc:a617fba46e66e0a3a15676dd3f0078760"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a617fba46e66e0a3a15676dd3f0078760" id="r_a617fba46e66e0a3a15676dd3f0078760"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a617fba46e66e0a3a15676dd3f0078760">~KvhUartSensor</a> ()=default</td></tr>
+<tr class="memdesc:a617fba46e66e0a3a15676dd3f0078760"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a617fba46e66e0a3a15676dd3f0078760"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a55e961b3362896f4599751787a47170f" id="r_a55e961b3362896f4599751787a47170f"><td class="memItemLeft" align="right" valign="top"><a id="a55e961b3362896f4599751787a47170f" name="a55e961b3362896f4599751787a47170f"></a>
-static constexpr uart::Endianness&#160;</td><td class="memItemRight" valign="bottom"><b>ENDIANNESS</b></td></tr>
-<tr class="memdesc:a55e961b3362896f4599751787a47170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Endianess of the sensor. <br /></td></tr>
+<tr class="memitem:a55e961b3362896f4599751787a47170f" id="r_a55e961b3362896f4599751787a47170f"><td class="memItemLeft" align="right" valign="top">static constexpr uart::Endianness&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55e961b3362896f4599751787a47170f">ENDIANNESS</a></td></tr>
+<tr class="memdesc:a55e961b3362896f4599751787a47170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Endianess of the sensor.  <br /></td></tr>
 <tr class="separator:a55e961b3362896f4599751787a47170f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ad6acd09547153d44d7e3ad0004f7bb" id="r_a2ad6acd09547153d44d7e3ad0004f7bb"><td class="memItemLeft" align="right" valign="top"><a id="a2ad6acd09547153d44d7e3ad0004f7bb" name="a2ad6acd09547153d44d7e3ad0004f7bb"></a>
-static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>HEADER_FMT_A</b></td></tr>
-<tr class="memdesc:a2ad6acd09547153d44d7e3ad0004f7bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format A. <br /></td></tr>
+<tr class="memitem:a2ad6acd09547153d44d7e3ad0004f7bb" id="r_a2ad6acd09547153d44d7e3ad0004f7bb"><td class="memItemLeft" align="right" valign="top">static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ad6acd09547153d44d7e3ad0004f7bb">HEADER_FMT_A</a></td></tr>
+<tr class="memdesc:a2ad6acd09547153d44d7e3ad0004f7bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format A.  <br /></td></tr>
 <tr class="separator:a2ad6acd09547153d44d7e3ad0004f7bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30a535ffb431686ddfdc6da4361dd89d" id="r_a30a535ffb431686ddfdc6da4361dd89d"><td class="memItemLeft" align="right" valign="top"><a id="a30a535ffb431686ddfdc6da4361dd89d" name="a30a535ffb431686ddfdc6da4361dd89d"></a>
-static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>HEADER_FMT_B</b></td></tr>
-<tr class="memdesc:a30a535ffb431686ddfdc6da4361dd89d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format B. <br /></td></tr>
+<tr class="memitem:a30a535ffb431686ddfdc6da4361dd89d" id="r_a30a535ffb431686ddfdc6da4361dd89d"><td class="memItemLeft" align="right" valign="top">static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30a535ffb431686ddfdc6da4361dd89d">HEADER_FMT_B</a></td></tr>
+<tr class="memdesc:a30a535ffb431686ddfdc6da4361dd89d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format B.  <br /></td></tr>
 <tr class="separator:a30a535ffb431686ddfdc6da4361dd89d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ac3f3a0ee43c7fbd308a2d58fa51bc7" id="r_a8ac3f3a0ee43c7fbd308a2d58fa51bc7"><td class="memItemLeft" align="right" valign="top"><a id="a8ac3f3a0ee43c7fbd308a2d58fa51bc7" name="a8ac3f3a0ee43c7fbd308a2d58fa51bc7"></a>
-static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>HEADER_FMT_C</b></td></tr>
-<tr class="memdesc:a8ac3f3a0ee43c7fbd308a2d58fa51bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format C. <br /></td></tr>
+<tr class="memitem:a8ac3f3a0ee43c7fbd308a2d58fa51bc7" id="r_a8ac3f3a0ee43c7fbd308a2d58fa51bc7"><td class="memItemLeft" align="right" valign="top">static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ac3f3a0ee43c7fbd308a2d58fa51bc7">HEADER_FMT_C</a></td></tr>
+<tr class="memdesc:a8ac3f3a0ee43c7fbd308a2d58fa51bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format C.  <br /></td></tr>
 <tr class="separator:a8ac3f3a0ee43c7fbd308a2d58fa51bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92b8b1ca4de15a125f42c3a94877f8b0" id="r_a92b8b1ca4de15a125f42c3a94877f8b0"><td class="memItemLeft" align="right" valign="top"><a id="a92b8b1ca4de15a125f42c3a94877f8b0" name="a92b8b1ca4de15a125f42c3a94877f8b0"></a>
-static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>HEADER_FMT_XBIT</b></td></tr>
-<tr class="memdesc:a92b8b1ca4de15a125f42c3a94877f8b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format X Bit. <br /></td></tr>
+<tr class="memitem:a92b8b1ca4de15a125f42c3a94877f8b0" id="r_a92b8b1ca4de15a125f42c3a94877f8b0"><td class="memItemLeft" align="right" valign="top">static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92b8b1ca4de15a125f42c3a94877f8b0">HEADER_FMT_XBIT</a></td></tr>
+<tr class="memdesc:a92b8b1ca4de15a125f42c3a94877f8b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format X Bit.  <br /></td></tr>
 <tr class="separator:a92b8b1ca4de15a125f42c3a94877f8b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a38ec8cc967aaab3694e815e45d64e8" id="r_a1a38ec8cc967aaab3694e815e45d64e8"><td class="memItemLeft" align="right" valign="top"><a id="a1a38ec8cc967aaab3694e815e45d64e8" name="a1a38ec8cc967aaab3694e815e45d64e8"></a>
-static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>HEADER_FMT_XBIT2</b></td></tr>
-<tr class="memdesc:a1a38ec8cc967aaab3694e815e45d64e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format X Bit 2. <br /></td></tr>
+<tr class="memitem:a1a38ec8cc967aaab3694e815e45d64e8" id="r_a1a38ec8cc967aaab3694e815e45d64e8"><td class="memItemLeft" align="right" valign="top">static constexpr uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a38ec8cc967aaab3694e815e45d64e8">HEADER_FMT_XBIT2</a></td></tr>
+<tr class="memdesc:a1a38ec8cc967aaab3694e815e45d64e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Header Format X Bit 2.  <br /></td></tr>
 <tr class="separator:a1a38ec8cc967aaab3694e815e45d64e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-types" name="pri-types"></a>
@@ -232,96 +219,83 @@ Private Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a17da0770ce9b1f58728a09f9f701283f" id="r_a17da0770ce9b1f58728a09f9f701283f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17da0770ce9b1f58728a09f9f701283f">bFindImuHeader</a> (uint8_t ui8Data)</td></tr>
-<tr class="memdesc:a17da0770ce9b1f58728a09f9f701283f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which finds the header from the provided data.  <br /></td></tr>
-<tr class="separator:a17da0770ce9b1f58728a09f9f701283f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5db3956d3318ababe727f4f76ad96c7b" id="r_a5db3956d3318ababe727f4f76ad96c7b"><td class="memItemLeft" align="right" valign="top"><a id="a5db3956d3318ababe727f4f76ad96c7b" name="a5db3956d3318ababe727f4f76ad96c7b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetTracking</b> ()</td></tr>
-<tr class="memdesc:a5db3956d3318ababe727f4f76ad96c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the current message tracking. <br /></td></tr>
+<tr class="memitem:ad05ed5e453d90f8401901f936936c122" id="r_ad05ed5e453d90f8401901f936936c122"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad05ed5e453d90f8401901f936936c122">bFindImuHeader</a> (uint8_t ui8Data)</td></tr>
+<tr class="memdesc:ad05ed5e453d90f8401901f936936c122"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which finds the header from the provided data.  <br /></td></tr>
+<tr class="separator:ad05ed5e453d90f8401901f936936c122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5db3956d3318ababe727f4f76ad96c7b" id="r_a5db3956d3318ababe727f4f76ad96c7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5db3956d3318ababe727f4f76ad96c7b">resetTracking</a> ()</td></tr>
+<tr class="memdesc:a5db3956d3318ababe727f4f76ad96c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the current message tracking.  <br /></td></tr>
 <tr class="separator:a5db3956d3318ababe727f4f76ad96c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a92c8c05880a4a98034ae767099c763d7" id="r_a92c8c05880a4a98034ae767099c763d7"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92c8c05880a4a98034ae767099c763d7">checksumFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
-<tr class="memdesc:a92c8c05880a4a98034ae767099c763d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to verify packet integrity.  <br /></td></tr>
-<tr class="separator:a92c8c05880a4a98034ae767099c763d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5fbf990a2f097cb4af976edcbfe5dfd" id="r_aa5fbf990a2f097cb4af976edcbfe5dfd"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5fbf990a2f097cb4af976edcbfe5dfd">isErrorFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
-<tr class="memdesc:aa5fbf990a2f097cb4af976edcbfe5dfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which determines, if the packet is an Error Packet.  <br /></td></tr>
-<tr class="separator:aa5fbf990a2f097cb4af976edcbfe5dfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7312c5b7476977863e8963dce37261fb" id="r_a7312c5b7476977863e8963dce37261fb"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7312c5b7476977863e8963dce37261fb">isResponseFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
-<tr class="memdesc:a7312c5b7476977863e8963dce37261fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which determines, if the packet is a Response.  <br /></td></tr>
-<tr class="separator:a7312c5b7476977863e8963dce37261fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adedcf5803a0c76949bade7b8ef0a4492" id="r_adedcf5803a0c76949bade7b8ef0a4492"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adedcf5803a0c76949bade7b8ef0a4492">packetFinderFunction</a> (const std::vector&lt; uint8_t &gt; &amp;data, const uart::xplat::TimeStamp &amp;timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void *dispatchPacketUserData, void *userData)</td></tr>
-<tr class="memdesc:adedcf5803a0c76949bade7b8ef0a4492"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to find packets in the provided data buffer.  <br /></td></tr>
-<tr class="separator:adedcf5803a0c76949bade7b8ef0a4492"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cd00e72bad30a0e9509b446b04db47d" id="r_a8cd00e72bad30a0e9509b446b04db47d"><td class="memItemLeft" align="right" valign="top">static uart::protocol::Packet::Type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cd00e72bad30a0e9509b446b04db47d">packetTypeFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
-<tr class="memdesc:a8cd00e72bad30a0e9509b446b04db47d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to determine the packet type (ascii/binary)  <br /></td></tr>
-<tr class="separator:a8cd00e72bad30a0e9509b446b04db47d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50115c2f745c3716d90514d3ef258807" id="r_a50115c2f745c3716d90514d3ef258807"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50115c2f745c3716d90514d3ef258807">checksumFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
+<tr class="memdesc:a50115c2f745c3716d90514d3ef258807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to verify packet integrity.  <br /></td></tr>
+<tr class="separator:a50115c2f745c3716d90514d3ef258807"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bc91e0308605ebd458d421cb3310172" id="r_a8bc91e0308605ebd458d421cb3310172"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8bc91e0308605ebd458d421cb3310172">isErrorFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
+<tr class="memdesc:a8bc91e0308605ebd458d421cb3310172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which determines, if the packet is an Error Packet.  <br /></td></tr>
+<tr class="separator:a8bc91e0308605ebd458d421cb3310172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af93eac546fbda7b29d676a10dff33109" id="r_af93eac546fbda7b29d676a10dff33109"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af93eac546fbda7b29d676a10dff33109">isResponseFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
+<tr class="memdesc:af93eac546fbda7b29d676a10dff33109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which determines, if the packet is a Response.  <br /></td></tr>
+<tr class="separator:af93eac546fbda7b29d676a10dff33109"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f394dcbbee55eacf9a831b6899fc061" id="r_a1f394dcbbee55eacf9a831b6899fc061"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f394dcbbee55eacf9a831b6899fc061">packetFinderFunction</a> (const std::vector&lt; uint8_t &gt; &amp;data, const uart::xplat::TimeStamp &amp;timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void *dispatchPacketUserData, void *userData)</td></tr>
+<tr class="memdesc:a1f394dcbbee55eacf9a831b6899fc061"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to find packets in the provided data buffer.  <br /></td></tr>
+<tr class="separator:a1f394dcbbee55eacf9a831b6899fc061"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b3b2c85b576a2a72ed1822bdcd48dc1" id="r_a7b3b2c85b576a2a72ed1822bdcd48dc1"><td class="memItemLeft" align="right" valign="top">static uart::protocol::Packet::Type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b3b2c85b576a2a72ed1822bdcd48dc1">packetTypeFunction</a> (const uart::protocol::Packet &amp;packet)</td></tr>
+<tr class="memdesc:a7b3b2c85b576a2a72ed1822bdcd48dc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function which is called to determine the packet type (ascii/binary)  <br /></td></tr>
+<tr class="separator:a7b3b2c85b576a2a72ed1822bdcd48dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a52e5679105a3981328d2c1ac032515f5" id="r_a52e5679105a3981328d2c1ac032515f5"><td class="memItemLeft" align="right" valign="top"><a id="a52e5679105a3981328d2c1ac032515f5" name="a52e5679105a3981328d2c1ac032515f5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_asciiEndChar1Found</b></td></tr>
-<tr class="memdesc:a52e5679105a3981328d2c1ac032515f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if the first ascii end character was found. <br /></td></tr>
+<tr class="memitem:a52e5679105a3981328d2c1ac032515f5" id="r_a52e5679105a3981328d2c1ac032515f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52e5679105a3981328d2c1ac032515f5">_asciiEndChar1Found</a></td></tr>
+<tr class="memdesc:a52e5679105a3981328d2c1ac032515f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if the first ascii end character was found.  <br /></td></tr>
 <tr class="separator:a52e5679105a3981328d2c1ac032515f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5edb46bddda13db89349afb1333dd2ad" id="r_a5edb46bddda13db89349afb1333dd2ad"><td class="memItemLeft" align="right" valign="top"><a id="a5edb46bddda13db89349afb1333dd2ad" name="a5edb46bddda13db89349afb1333dd2ad"></a>
-std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_buffer</b></td></tr>
-<tr class="memdesc:a5edb46bddda13db89349afb1333dd2ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer to collect messages till they are complete. <br /></td></tr>
+<tr class="memitem:a5edb46bddda13db89349afb1333dd2ad" id="r_a5edb46bddda13db89349afb1333dd2ad"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5edb46bddda13db89349afb1333dd2ad">_buffer</a></td></tr>
+<tr class="memdesc:a5edb46bddda13db89349afb1333dd2ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer to collect messages till they are complete.  <br /></td></tr>
 <tr class="separator:a5edb46bddda13db89349afb1333dd2ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbc7dfb00e75236fc9ce129d2db78d9e" id="r_adbc7dfb00e75236fc9ce129d2db78d9e"><td class="memItemLeft" align="right" valign="top"><a id="adbc7dfb00e75236fc9ce129d2db78d9e" name="adbc7dfb00e75236fc9ce129d2db78d9e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_currentlyBuildingAsciiPacket</b></td></tr>
-<tr class="memdesc:adbc7dfb00e75236fc9ce129d2db78d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if currently a ascii packet is built. <br /></td></tr>
+<tr class="memitem:adbc7dfb00e75236fc9ce129d2db78d9e" id="r_adbc7dfb00e75236fc9ce129d2db78d9e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbc7dfb00e75236fc9ce129d2db78d9e">_currentlyBuildingAsciiPacket</a></td></tr>
+<tr class="memdesc:adbc7dfb00e75236fc9ce129d2db78d9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if currently a ascii packet is built.  <br /></td></tr>
 <tr class="separator:adbc7dfb00e75236fc9ce129d2db78d9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70d7138fcd8d2e60cd5c90bff3d05ece" id="r_a70d7138fcd8d2e60cd5c90bff3d05ece"><td class="memItemLeft" align="right" valign="top"><a id="a70d7138fcd8d2e60cd5c90bff3d05ece" name="a70d7138fcd8d2e60cd5c90bff3d05ece"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_currentlyBuildingBinaryPacket</b></td></tr>
-<tr class="memdesc:a70d7138fcd8d2e60cd5c90bff3d05ece"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if currently a binary packet is built. <br /></td></tr>
+<tr class="memitem:a70d7138fcd8d2e60cd5c90bff3d05ece" id="r_a70d7138fcd8d2e60cd5c90bff3d05ece"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70d7138fcd8d2e60cd5c90bff3d05ece">_currentlyBuildingBinaryPacket</a></td></tr>
+<tr class="memdesc:a70d7138fcd8d2e60cd5c90bff3d05ece"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if currently a binary packet is built.  <br /></td></tr>
 <tr class="separator:a70d7138fcd8d2e60cd5c90bff3d05ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5e2ed77bbc7b09dba79052337b8121d" id="r_ac5e2ed77bbc7b09dba79052337b8121d"><td class="memItemLeft" align="right" valign="top"><a id="ac5e2ed77bbc7b09dba79052337b8121d" name="ac5e2ed77bbc7b09dba79052337b8121d"></a>
-<a class="el" href="#a995fd6637127cc3c737c363af8e10f13">TagState</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_eState</b></td></tr>
-<tr class="memdesc:ac5e2ed77bbc7b09dba79052337b8121d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current state of the header building process. <br /></td></tr>
+<tr class="memitem:ac5e2ed77bbc7b09dba79052337b8121d" id="r_ac5e2ed77bbc7b09dba79052337b8121d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a995fd6637127cc3c737c363af8e10f13">TagState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5e2ed77bbc7b09dba79052337b8121d">_eState</a></td></tr>
+<tr class="memdesc:ac5e2ed77bbc7b09dba79052337b8121d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current state of the header building process.  <br /></td></tr>
 <tr class="separator:ac5e2ed77bbc7b09dba79052337b8121d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53402962a4e19fdad7bd6e46186fe591" id="r_a53402962a4e19fdad7bd6e46186fe591"><td class="memItemLeft" align="right" valign="top"><a id="a53402962a4e19fdad7bd6e46186fe591" name="a53402962a4e19fdad7bd6e46186fe591"></a>
-const std::string&#160;</td><td class="memItemRight" valign="bottom"><b>_name</b></td></tr>
-<tr class="memdesc:a53402962a4e19fdad7bd6e46186fe591"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the Parent <a class="el" href="classNAV_1_1Node.html" title="Abstract parent class for all nodes.">Node</a>. <br /></td></tr>
+<tr class="memitem:a53402962a4e19fdad7bd6e46186fe591" id="r_a53402962a4e19fdad7bd6e46186fe591"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53402962a4e19fdad7bd6e46186fe591">_name</a></td></tr>
+<tr class="memdesc:a53402962a4e19fdad7bd6e46186fe591"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of the Parent <a class="el" href="classNAV_1_1Node.html" title="Abstract parent class for all nodes.">Node</a>.  <br /></td></tr>
 <tr class="separator:a53402962a4e19fdad7bd6e46186fe591"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d5218eac72e75fd00163367d8643ebb" id="r_a1d5218eac72e75fd00163367d8643ebb"><td class="memItemLeft" align="right" valign="top"><a id="a1d5218eac72e75fd00163367d8643ebb" name="a1d5218eac72e75fd00163367d8643ebb"></a>
-<a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_packetType</b></td></tr>
-<tr class="memdesc:a1d5218eac72e75fd00163367d8643ebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current packet type determined by the header. <br /></td></tr>
+<tr class="memitem:a1d5218eac72e75fd00163367d8643ebb" id="r_a1d5218eac72e75fd00163367d8643ebb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d5218eac72e75fd00163367d8643ebb">_packetType</a></td></tr>
+<tr class="memdesc:a1d5218eac72e75fd00163367d8643ebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current packet type determined by the header.  <br /></td></tr>
 <tr class="separator:a1d5218eac72e75fd00163367d8643ebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61979c8054eed5bd3340cd951aa4f39d" id="r_a61979c8054eed5bd3340cd951aa4f39d"><td class="memItemLeft" align="right" valign="top"><a id="a61979c8054eed5bd3340cd951aa4f39d" name="a61979c8054eed5bd3340cd951aa4f39d"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>_runningDataIndex</b></td></tr>
-<tr class="memdesc:a61979c8054eed5bd3340cd951aa4f39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for correlating raw data with where the packet was found for the end user. <br /></td></tr>
+<tr class="memitem:a61979c8054eed5bd3340cd951aa4f39d" id="r_a61979c8054eed5bd3340cd951aa4f39d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61979c8054eed5bd3340cd951aa4f39d">_runningDataIndex</a></td></tr>
+<tr class="memdesc:a61979c8054eed5bd3340cd951aa4f39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for correlating raw data with where the packet was found for the end user.  <br /></td></tr>
 <tr class="separator:a61979c8054eed5bd3340cd951aa4f39d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60e71a3f9a15bd2592ee1c0d622fdb5d" id="r_a60e71a3f9a15bd2592ee1c0d622fdb5d"><td class="memItemLeft" align="right" valign="top"><a id="a60e71a3f9a15bd2592ee1c0d622fdb5d" name="a60e71a3f9a15bd2592ee1c0d622fdb5d"></a>
-uart::sensors::UartSensor&#160;</td><td class="memItemRight" valign="bottom"><b>_sensor</b></td></tr>
-<tr class="memdesc:a60e71a3f9a15bd2592ee1c0d622fdb5d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class.">UartSensor</a> object which handles the UART interface. <br /></td></tr>
+<tr class="memitem:a60e71a3f9a15bd2592ee1c0d622fdb5d" id="r_a60e71a3f9a15bd2592ee1c0d622fdb5d"><td class="memItemLeft" align="right" valign="top">uart::sensors::UartSensor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e71a3f9a15bd2592ee1c0d622fdb5d">_sensor</a></td></tr>
+<tr class="memdesc:a60e71a3f9a15bd2592ee1c0d622fdb5d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class.">UartSensor</a> object which handles the UART interface.  <br /></td></tr>
 <tr class="separator:a60e71a3f9a15bd2592ee1c0d622fdb5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a68d295354cd3630ea91d11169b82ddb5" id="r_a68d295354cd3630ea91d11169b82ddb5"><td class="memItemLeft" align="right" valign="top"><a id="a68d295354cd3630ea91d11169b82ddb5" name="a68d295354cd3630ea91d11169b82ddb5"></a>
-static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>ASCII_END_CHAR_1</b></td></tr>
-<tr class="memdesc:a68d295354cd3630ea91d11169b82ddb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">First Ascii End character. <br /></td></tr>
+<tr class="memitem:a68d295354cd3630ea91d11169b82ddb5" id="r_a68d295354cd3630ea91d11169b82ddb5"><td class="memItemLeft" align="right" valign="top">static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68d295354cd3630ea91d11169b82ddb5">ASCII_END_CHAR_1</a></td></tr>
+<tr class="memdesc:a68d295354cd3630ea91d11169b82ddb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">First Ascii End character.  <br /></td></tr>
 <tr class="separator:a68d295354cd3630ea91d11169b82ddb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93143d5cd7f1368d4fe9b93883815f76" id="r_a93143d5cd7f1368d4fe9b93883815f76"><td class="memItemLeft" align="right" valign="top"><a id="a93143d5cd7f1368d4fe9b93883815f76" name="a93143d5cd7f1368d4fe9b93883815f76"></a>
-static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>ASCII_END_CHAR_2</b></td></tr>
-<tr class="memdesc:a93143d5cd7f1368d4fe9b93883815f76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Second Ascii End character. <br /></td></tr>
+<tr class="memitem:a93143d5cd7f1368d4fe9b93883815f76" id="r_a93143d5cd7f1368d4fe9b93883815f76"><td class="memItemLeft" align="right" valign="top">static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93143d5cd7f1368d4fe9b93883815f76">ASCII_END_CHAR_2</a></td></tr>
+<tr class="memdesc:a93143d5cd7f1368d4fe9b93883815f76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Second Ascii End character.  <br /></td></tr>
 <tr class="separator:a93143d5cd7f1368d4fe9b93883815f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2ec8b2a392f98f5e3874444646a948f" id="r_ab2ec8b2a392f98f5e3874444646a948f"><td class="memItemLeft" align="right" valign="top"><a id="ab2ec8b2a392f98f5e3874444646a948f" name="ab2ec8b2a392f98f5e3874444646a948f"></a>
-static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>ASCII_ESCAPE_CHAR</b></td></tr>
-<tr class="memdesc:ab2ec8b2a392f98f5e3874444646a948f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ascii Escape charater. <br /></td></tr>
+<tr class="memitem:ab2ec8b2a392f98f5e3874444646a948f" id="r_ab2ec8b2a392f98f5e3874444646a948f"><td class="memItemLeft" align="right" valign="top">static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2ec8b2a392f98f5e3874444646a948f">ASCII_ESCAPE_CHAR</a></td></tr>
+<tr class="memdesc:ab2ec8b2a392f98f5e3874444646a948f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ascii Escape charater.  <br /></td></tr>
 <tr class="separator:ab2ec8b2a392f98f5e3874444646a948f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab227af263048c2bdc45e209e780f1e49" id="r_ab227af263048c2bdc45e209e780f1e49"><td class="memItemLeft" align="right" valign="top"><a id="ab227af263048c2bdc45e209e780f1e49" name="ab227af263048c2bdc45e209e780f1e49"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_SIZE_ASCII_PACKET</b></td></tr>
-<tr class="memdesc:ab227af263048c2bdc45e209e780f1e49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum size of a ascii packet before resetting it. <br /></td></tr>
+<tr class="memitem:ab227af263048c2bdc45e209e780f1e49" id="r_ab227af263048c2bdc45e209e780f1e49"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab227af263048c2bdc45e209e780f1e49">MAX_SIZE_ASCII_PACKET</a></td></tr>
+<tr class="memdesc:ab227af263048c2bdc45e209e780f1e49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum size of a ascii packet before resetting it.  <br /></td></tr>
 <tr class="separator:ab227af263048c2bdc45e209e780f1e49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dcc99668317721960c1f5494fa067a5" id="r_a3dcc99668317721960c1f5494fa067a5"><td class="memItemLeft" align="right" valign="top"><a id="a3dcc99668317721960c1f5494fa067a5" name="a3dcc99668317721960c1f5494fa067a5"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PACKET_HEADER_LENGTH</b></td></tr>
-<tr class="memdesc:a3dcc99668317721960c1f5494fa067a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of the packet header. <br /></td></tr>
+<tr class="memitem:a3dcc99668317721960c1f5494fa067a5" id="r_a3dcc99668317721960c1f5494fa067a5"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dcc99668317721960c1f5494fa067a5">PACKET_HEADER_LENGTH</a></td></tr>
+<tr class="memdesc:a3dcc99668317721960c1f5494fa067a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of the packet header.  <br /></td></tr>
 <tr class="separator:a3dcc99668317721960c1f5494fa067a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to read out KVH Sensors. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00023">23</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a7b1f7c08d48fb9849b733ea1b8a41bb5" name="a7b1f7c08d48fb9849b733ea1b8a41bb5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">&#9670;&#160;</a></span>HeaderType</h2>
@@ -359,6 +333,8 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00127">127</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a995fd6637127cc3c737c363af8e10f13" name="a995fd6637127cc3c737c363af8e10f13"></a>
@@ -395,11 +371,13 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00114">114</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa4ba0ba80320e7f3d98a8312c684c6bc" name="aa4ba0ba80320e7f3d98a8312c684c6bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4ba0ba80320e7f3d98a8312c684c6bc">&#9670;&#160;</a></span>KvhUartSensor()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4ba0ba80320e7f3d98a8312c684c6bc">&#9670;&#160;</a></span>KvhUartSensor() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -429,11 +407,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00014">14</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a17da0770ce9b1f58728a09f9f701283f" name="a17da0770ce9b1f58728a09f9f701283f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17da0770ce9b1f58728a09f9f701283f">&#9670;&#160;</a></span>bFindImuHeader()</h2>
+<a id="ae8152c7c7adf1789cbe87838094b80e3" name="ae8152c7c7adf1789cbe87838094b80e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8152c7c7adf1789cbe87838094b80e3">&#9670;&#160;</a></span>KvhUartSensor() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -442,7 +421,116 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a> NAV::vendor::kvh::KvhUartSensor::bFindImuHeader </td>
+          <td class="memname">NAV::vendor::kvh::KvhUartSensor::KvhUartSensor </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+</div>
+</div>
+<a id="a617fba46e66e0a3a15676dd3f0078760" name="a617fba46e66e0a3a15676dd3f0078760"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a617fba46e66e0a3a15676dd3f0078760">&#9670;&#160;</a></span>~KvhUartSensor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::vendor::kvh::KvhUartSensor::~KvhUartSensor </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+</div>
+</div>
+<a id="adfdb13f25aeeded7abf3ce22035d2de2" name="adfdb13f25aeeded7abf3ce22035d2de2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfdb13f25aeeded7abf3ce22035d2de2">&#9670;&#160;</a></span>KvhUartSensor() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::vendor::kvh::KvhUartSensor::KvhUartSensor </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="a64f87ab9ba27b35c77afbff61ad0011e" name="a64f87ab9ba27b35c77afbff61ad0011e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64f87ab9ba27b35c77afbff61ad0011e">&#9670;&#160;</a></span>KvhUartSensor() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::vendor::kvh::KvhUartSensor::KvhUartSensor </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad05ed5e453d90f8401901f936936c122" name="ad05ed5e453d90f8401901f936936c122"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad05ed5e453d90f8401901f936936c122">&#9670;&#160;</a></span>bFindImuHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">NAV::vendor::kvh::KvhUartSensor::HeaderType</a> NAV::vendor::kvh::KvhUartSensor::bFindImuHeader </td>
           <td>(</td>
           <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>ui8Data</em></span></td><td>)</td>
           <td></td>
@@ -464,10 +552,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Header type if found or unkown </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00031">31</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a92c8c05880a4a98034ae767099c763d7" name="a92c8c05880a4a98034ae767099c763d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92c8c05880a4a98034ae767099c763d7">&#9670;&#160;</a></span>checksumFunction()</h2>
+<a id="a50115c2f745c3716d90514d3ef258807" name="a50115c2f745c3716d90514d3ef258807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50115c2f745c3716d90514d3ef258807">&#9670;&#160;</a></span>checksumFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -476,7 +566,7 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::vendor::kvh::KvhUartSensor::checksumFunction </td>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::checksumFunction </td>
           <td>(</td>
           <td class="paramtype">const uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
           <td></td>
@@ -497,6 +587,8 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the packet is fault free </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00275">275</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
 
 </div>
 </div>
@@ -524,10 +616,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>nullptr if no packet found yet, otherwise a pointer to the packet </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00113">113</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<a id="aa5fbf990a2f097cb4af976edcbfe5dfd" name="aa5fbf990a2f097cb4af976edcbfe5dfd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5fbf990a2f097cb4af976edcbfe5dfd">&#9670;&#160;</a></span>isErrorFunction()</h2>
+<a id="a8bc91e0308605ebd458d421cb3310172" name="a8bc91e0308605ebd458d421cb3310172"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bc91e0308605ebd458d421cb3310172">&#9670;&#160;</a></span>isErrorFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -536,7 +630,7 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::vendor::kvh::KvhUartSensor::isErrorFunction </td>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::isErrorFunction </td>
           <td>(</td>
           <td class="paramtype">const uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
           <td></td>
@@ -557,10 +651,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00304">304</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a7312c5b7476977863e8963dce37261fb" name="a7312c5b7476977863e8963dce37261fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7312c5b7476977863e8963dce37261fb">&#9670;&#160;</a></span>isResponseFunction()</h2>
+<a id="af93eac546fbda7b29d676a10dff33109" name="af93eac546fbda7b29d676a10dff33109"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af93eac546fbda7b29d676a10dff33109">&#9670;&#160;</a></span>isResponseFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -569,7 +665,7 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool NAV::vendor::kvh::KvhUartSensor::isResponseFunction </td>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::isResponseFunction </td>
           <td>(</td>
           <td class="paramtype">const uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
           <td></td>
@@ -590,10 +686,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00309">309</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<a id="adedcf5803a0c76949bade7b8ef0a4492" name="adedcf5803a0c76949bade7b8ef0a4492"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adedcf5803a0c76949bade7b8ef0a4492">&#9670;&#160;</a></span>packetFinderFunction()</h2>
+<a id="ac6035bdebc027968717254d7596ce613" name="ac6035bdebc027968717254d7596ce613"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6035bdebc027968717254d7596ce613">&#9670;&#160;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -602,7 +700,90 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void NAV::vendor::kvh::KvhUartSensor::packetFinderFunction </td>
+          <td class="memname">uart::sensors::UartSensor * NAV::vendor::kvh::KvhUartSensor::operator-&gt; </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Arrow operator overload. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00043">43</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1dab52918f6c6cef2d826ca9a61dde94" name="a1dab52918f6c6cef2d826ca9a61dde94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dab52918f6c6cef2d826ca9a61dde94">&#9670;&#160;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp; NAV::vendor::kvh::KvhUartSensor::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment operator. </p>
+
+</div>
+</div>
+<a id="a2d1955ec4df1613f0b8a6cad499443c9" name="a2d1955ec4df1613f0b8a6cad499443c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d1955ec4df1613f0b8a6cad499443c9">&#9670;&#160;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp; NAV::vendor::kvh::KvhUartSensor::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment operator. </p>
+
+</div>
+</div>
+<a id="a1f394dcbbee55eacf9a831b6899fc061" name="a1f394dcbbee55eacf9a831b6899fc061"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f394dcbbee55eacf9a831b6899fc061">&#9670;&#160;</a></span>packetFinderFunction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::vendor::kvh::KvhUartSensor::packetFinderFunction </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; uint8_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
         </tr>
@@ -646,10 +827,12 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00233">233</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<a id="a8cd00e72bad30a0e9509b446b04db47d" name="a8cd00e72bad30a0e9509b446b04db47d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8cd00e72bad30a0e9509b446b04db47d">&#9670;&#160;</a></span>packetTypeFunction()</h2>
+<a id="a7b3b2c85b576a2a72ed1822bdcd48dc1" name="a7b3b2c85b576a2a72ed1822bdcd48dc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b3b2c85b576a2a72ed1822bdcd48dc1">&#9670;&#160;</a></span>packetTypeFunction()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -658,7 +841,7 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static uart::protocol::Packet::Type NAV::vendor::kvh::KvhUartSensor::packetTypeFunction </td>
+          <td class="memname">uart::protocol::Packet::Type NAV::vendor::kvh::KvhUartSensor::packetTypeFunction </td>
           <td>(</td>
           <td class="paramtype">const uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span></td><td>)</td>
           <td></td>
@@ -680,17 +863,570 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>PA
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The type of the packet </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00249">249</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a id="a5db3956d3318ababe727f4f76ad96c7b" name="a5db3956d3318ababe727f4f76ad96c7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5db3956d3318ababe727f4f76ad96c7b">&#9670;&#160;</a></span>resetTracking()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::vendor::kvh::KvhUartSensor::resetTracking </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resets the current message tracking. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8cpp_source.html#l00020">20</a> of file <a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a52e5679105a3981328d2c1ac032515f5" name="a52e5679105a3981328d2c1ac032515f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52e5679105a3981328d2c1ac032515f5">&#9670;&#160;</a></span>_asciiEndChar1Found</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::_asciiEndChar1Found</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Flag if the first ascii end character was found. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00111">111</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5edb46bddda13db89349afb1333dd2ad" name="a5edb46bddda13db89349afb1333dd2ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5edb46bddda13db89349afb1333dd2ad">&#9670;&#160;</a></span>_buffer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;uint8_t&gt; NAV::vendor::kvh::KvhUartSensor::_buffer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Buffer to collect messages till they are complete. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00146">146</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="adbc7dfb00e75236fc9ce129d2db78d9e" name="adbc7dfb00e75236fc9ce129d2db78d9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbc7dfb00e75236fc9ce129d2db78d9e">&#9670;&#160;</a></span>_currentlyBuildingAsciiPacket</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::_currentlyBuildingAsciiPacket</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Flag if currently a ascii packet is built. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00108">108</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a70d7138fcd8d2e60cd5c90bff3d05ece" name="a70d7138fcd8d2e60cd5c90bff3d05ece"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70d7138fcd8d2e60cd5c90bff3d05ece">&#9670;&#160;</a></span>_currentlyBuildingBinaryPacket</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::vendor::kvh::KvhUartSensor::_currentlyBuildingBinaryPacket</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Flag if currently a binary packet is built. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00109">109</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac5e2ed77bbc7b09dba79052337b8121d" name="ac5e2ed77bbc7b09dba79052337b8121d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5e2ed77bbc7b09dba79052337b8121d">&#9670;&#160;</a></span>_eState</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a995fd6637127cc3c737c363af8e10f13">TagState</a> NAV::vendor::kvh::KvhUartSensor::_eState</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Current state of the header building process. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00124">124</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a53402962a4e19fdad7bd6e46186fe591" name="a53402962a4e19fdad7bd6e46186fe591"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53402962a4e19fdad7bd6e46186fe591">&#9670;&#160;</a></span>_name</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string NAV::vendor::kvh::KvhUartSensor::_name</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Name of the Parent <a class="el" href="classNAV_1_1Node.html" title="Abstract parent class for all nodes.">Node</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00060">60</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1d5218eac72e75fd00163367d8643ebb" name="a1d5218eac72e75fd00163367d8643ebb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d5218eac72e75fd00163367d8643ebb">&#9670;&#160;</a></span>_packetType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a7b1f7c08d48fb9849b733ea1b8a41bb5">HeaderType</a> NAV::vendor::kvh::KvhUartSensor::_packetType</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Current packet type determined by the header. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00138">138</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a61979c8054eed5bd3340cd951aa4f39d" name="a61979c8054eed5bd3340cd951aa4f39d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61979c8054eed5bd3340cd951aa4f39d">&#9670;&#160;</a></span>_runningDataIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::vendor::kvh::KvhUartSensor::_runningDataIndex</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Used for correlating raw data with where the packet was found for the end user. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00149">149</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a60e71a3f9a15bd2592ee1c0d622fdb5d" name="a60e71a3f9a15bd2592ee1c0d622fdb5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60e71a3f9a15bd2592ee1c0d622fdb5d">&#9670;&#160;</a></span>_sensor</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uart::sensors::UartSensor NAV::vendor::kvh::KvhUartSensor::_sensor</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1UartSensor.html" title="Abstract Uart Sensor Class.">UartSensor</a> object which handles the UART interface. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00063">63</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a68d295354cd3630ea91d11169b82ddb5" name="a68d295354cd3630ea91d11169b82ddb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68d295354cd3630ea91d11169b82ddb5">&#9670;&#160;</a></span>ASCII_END_CHAR_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::vendor::kvh::KvhUartSensor::ASCII_END_CHAR_1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>First Ascii End character. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00103">103</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a93143d5cd7f1368d4fe9b93883815f76" name="a93143d5cd7f1368d4fe9b93883815f76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93143d5cd7f1368d4fe9b93883815f76">&#9670;&#160;</a></span>ASCII_END_CHAR_2</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::vendor::kvh::KvhUartSensor::ASCII_END_CHAR_2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Second Ascii End character. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00104">104</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab2ec8b2a392f98f5e3874444646a948f" name="ab2ec8b2a392f98f5e3874444646a948f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2ec8b2a392f98f5e3874444646a948f">&#9670;&#160;</a></span>ASCII_ESCAPE_CHAR</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::vendor::kvh::KvhUartSensor::ASCII_ESCAPE_CHAR</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ascii Escape charater. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00105">105</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a55e961b3362896f4599751787a47170f" name="a55e961b3362896f4599751787a47170f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55e961b3362896f4599751787a47170f">&#9670;&#160;</a></span>ENDIANNESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uart::Endianness NAV::vendor::kvh::KvhUartSensor::ENDIANNESS</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Endianess of the sensor. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00056">56</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2ad6acd09547153d44d7e3ad0004f7bb" name="a2ad6acd09547153d44d7e3ad0004f7bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ad6acd09547153d44d7e3ad0004f7bb">&#9670;&#160;</a></span>HEADER_FMT_A</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::kvh::KvhUartSensor::HEADER_FMT_A</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Header Format A. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00050">50</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a30a535ffb431686ddfdc6da4361dd89d" name="a30a535ffb431686ddfdc6da4361dd89d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30a535ffb431686ddfdc6da4361dd89d">&#9670;&#160;</a></span>HEADER_FMT_B</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::kvh::KvhUartSensor::HEADER_FMT_B</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Header Format B. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00051">51</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a8ac3f3a0ee43c7fbd308a2d58fa51bc7" name="a8ac3f3a0ee43c7fbd308a2d58fa51bc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ac3f3a0ee43c7fbd308a2d58fa51bc7">&#9670;&#160;</a></span>HEADER_FMT_C</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::kvh::KvhUartSensor::HEADER_FMT_C</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Header Format C. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00052">52</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a92b8b1ca4de15a125f42c3a94877f8b0" name="a92b8b1ca4de15a125f42c3a94877f8b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92b8b1ca4de15a125f42c3a94877f8b0">&#9670;&#160;</a></span>HEADER_FMT_XBIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::kvh::KvhUartSensor::HEADER_FMT_XBIT</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Header Format X Bit. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00053">53</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1a38ec8cc967aaab3694e815e45d64e8" name="a1a38ec8cc967aaab3694e815e45d64e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a38ec8cc967aaab3694e815e45d64e8">&#9670;&#160;</a></span>HEADER_FMT_XBIT2</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::kvh::KvhUartSensor::HEADER_FMT_XBIT2</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Header Format X Bit 2. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00054">54</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab227af263048c2bdc45e209e780f1e49" name="ab227af263048c2bdc45e209e780f1e49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab227af263048c2bdc45e209e780f1e49">&#9670;&#160;</a></span>MAX_SIZE_ASCII_PACKET</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::vendor::kvh::KvhUartSensor::MAX_SIZE_ASCII_PACKET</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Maximum size of a ascii packet before resetting it. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00106">106</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3dcc99668317721960c1f5494fa067a5" name="a3dcc99668317721960c1f5494fa067a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dcc99668317721960c1f5494fa067a5">&#9670;&#160;</a></span>PACKET_HEADER_LENGTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t NAV::vendor::kvh::KvhUartSensor::PACKET_HEADER_LENGTH</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Length of the packet header. </p>
+
+<p class="definition">Definition at line <a class="el" href="KvhUartSensor_8hpp_source.html#l00101">101</a> of file <a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/KVH/<a class="el" href="KvhUartSensor_8hpp_source.html">KvhUartSensor.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/KVH/<a class="el" href="KvhUartSensor_8cpp_source.html">KvhUartSensor.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>kvh</b></li><li class="navelem"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1kvh.html">kvh</a></li><li class="navelem"><a class="el" href="classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html">KvhUartSensor</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

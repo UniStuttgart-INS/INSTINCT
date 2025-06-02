@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,53 +128,78 @@ $(function(){initNavTree('CMakeRC_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file CMakeRC.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Handles compiling resources into the binary</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2021-08-24</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/// @see https://caiorss.github.io/C-Cpp-Notes/resources-executable.html#org7635e6a</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;fstream&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;cmrc/cmrc.hpp&gt;</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"></span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">/// @brief Defines the namespace of the filesystem</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="CMakeRC_8hpp.html#a7877098517df689654a31bb89d25d1ce">   21</a></span><a class="code hl_function" href="CMakeRC_8hpp.html#a7877098517df689654a31bb89d25d1ce">CMRC_DECLARE</a>(instinct);</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span>cmrc</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="}">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="namespacecmrc.html">   23</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecmrc.html">cmrc</a></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// Credits: https://stackoverflow.com/a/13059195</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// https://stackoverflow.com/questions/13059091/</span></div>
 <div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html">   27</a></span><span class="keyword">struct </span><a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a> : std::streambuf</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">    /// @brief Constructor</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">    /// @param[in] base Pointer to the start of the memory block</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">    /// @param[in] size Size of the memory block</span></div>
 <div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">   32</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* base, <span class="keywordtype">size_t</span> size)</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    {</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordtype">char</span>* p{ <span class="keyword">const_cast&lt;</span><span class="keywordtype">char</span>*<span class="keyword">&gt;</span>(base) }; <span class="comment">// NOLINT(cppcoreguidelines-pro-type-const-cast)</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        this-&gt;setg(p, p, p + size);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }<span class="comment"></span></div>
 </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a48f8c31650c85ba5ea220e846025530e">   38</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a48f8c31650c85ba5ea220e846025530e">~membuf</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#aec9febdffe4f408d0c788702197d57af">   40</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#aec9febdffe4f408d0c788702197d57af">membuf</a>(<span class="keyword">const</span> <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a6a2657d53c4cb958379d8668ca98d594">   42</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a6a2657d53c4cb958379d8668ca98d594">membuf</a>(<a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#aef52db09d6fd8dda8e138ae02b751a80">   44</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp; <a class="code hl_function" href="structcmrc_1_1membuf.html#aef52db09d6fd8dda8e138ae02b751a80">operator=</a>(<span class="keyword">const</span> <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">    /// @brief Destructor</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a48f8c31650c85ba5ea220e846025530e">   38</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a48f8c31650c85ba5ea220e846025530e">~membuf</a>() <span class="keyword">override</span> = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">    /// @brief Copy constructor</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#aec9febdffe4f408d0c788702197d57af">   40</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#aec9febdffe4f408d0c788702197d57af">membuf</a>(<span class="keyword">const</span> <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;) = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">    /// @brief Move constructor</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a6a2657d53c4cb958379d8668ca98d594">   42</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a6a2657d53c4cb958379d8668ca98d594">membuf</a>(<a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;&amp;) = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">    /// @brief Copy assignment operator</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#aef52db09d6fd8dda8e138ae02b751a80">   44</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp; <a class="code hl_function" href="structcmrc_1_1membuf.html#aef52db09d6fd8dda8e138ae02b751a80">operator=</a>(<span class="keyword">const</span> <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;) = <span class="keywordflow">default</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">    /// @brief Move assignment operator</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structcmrc_1_1membuf.html#a7dcf16b359203fa608f8b2990c275fae">   46</a></span>    <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp; <a class="code hl_function" href="structcmrc_1_1membuf.html#a7dcf16b359203fa608f8b2990c275fae">operator=</a>(<a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>};</div>
 </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"></span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">/// Credits: https://stackoverflow.com/a/13059195</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">/// https://stackoverflow.com/questions/13059091/</span></div>
 <div class="foldopen" id="foldopen00051" data-start="{" data-end="};">
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structcmrc_1_1memstream.html">   51</a></span><span class="keyword">struct </span><a class="code hl_function" href="structcmrc_1_1memstream.html#a3fd9a251e189982240e3a8fb6834a8e9">memstream</a> : <span class="keyword">virtual</span> <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>, std::istream</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>{</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">    /// @brief Constructor</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">    /// @param[in] base Pointer to the start of the memory block</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">    /// @param[in] end Pointer to the end of the memory block</span></div>
 <div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structcmrc_1_1memstream.html#a3fd9a251e189982240e3a8fb6834a8e9">   56</a></span>    <a class="code hl_function" href="structcmrc_1_1memstream.html#a3fd9a251e189982240e3a8fb6834a8e9">memstream</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* base, <span class="keywordtype">char</span>* <span class="keyword">const</span> end)</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        : <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>(base, reinterpret_cast&lt;uintptr_t&gt;(end) - reinterpret_cast&lt;uintptr_t&gt;(base)),</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>          std::istream(static_cast&lt;std::streambuf*&gt;(this)) {}</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>          <a class="code hl_namespace" href="namespacestd.html">std</a>::istream(static_cast&lt;<a class="code hl_namespace" href="namespacestd.html">std</a>::streambuf*&gt;(this)) {}</div>
 </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment"></span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">    /// @brief Constructor</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">    /// @param[in] base Pointer to the start of the memory block</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">    /// @param[in] size Size of the memory block</span></div>
 <div class="foldopen" id="foldopen00063" data-start="{" data-end="}">
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="structcmrc_1_1memstream.html#ac13761d35e219eeffac3cc1266e26570">   63</a></span>    <a class="code hl_function" href="structcmrc_1_1memstream.html#ac13761d35e219eeffac3cc1266e26570">memstream</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* base, <span class="keywordtype">size_t</span> size)</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        : <a class="code hl_function" href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">membuf</a>(base, size),</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>          std::istream(static_cast&lt;std::streambuf*&gt;(this)) {}</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>          <a class="code hl_namespace" href="namespacestd.html">std</a>::istream(static_cast&lt;<a class="code hl_namespace" href="namespacestd.html">std</a>::streambuf*&gt;(this)) {}</div>
 </div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>};</div>
 </div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>} <span class="comment">// namespace cmrc</span></div>
+</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">/* Example Usage: https://caiorss.github.io/C-Cpp-Notes/resources-executable.html#org7635e6a</span></div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment"></span> </div>
@@ -237,14 +263,16 @@ $(function(){initNavTree('CMakeRC_8hpp_source.html',''); initResizable(true); })
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="comment">}</span></div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span><span class="comment">*/</span></div>
 <div class="ttc" id="aCMakeRC_8hpp_html_a7877098517df689654a31bb89d25d1ce"><div class="ttname"><a href="CMakeRC_8hpp.html#a7877098517df689654a31bb89d25d1ce">CMRC_DECLARE</a></div><div class="ttdeci">CMRC_DECLARE(instinct)</div><div class="ttdoc">Defines the namespace of the filesystem.</div></div>
+<div class="ttc" id="anamespacecmrc_html"><div class="ttname"><a href="namespacecmrc.html">cmrc</a></div><div class="ttdef"><b>Definition</b> <a href="#l00023">CMakeRC.hpp:24</a></div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> <a href="CycleSlipDetector_8hpp_source.html#l00252">CycleSlipDetector.hpp:253</a></div></div>
 <div class="ttc" id="astructcmrc_1_1membuf_html_a48f8c31650c85ba5ea220e846025530e"><div class="ttname"><a href="structcmrc_1_1membuf.html#a48f8c31650c85ba5ea220e846025530e">cmrc::membuf::~membuf</a></div><div class="ttdeci">~membuf() override=default</div><div class="ttdoc">Destructor.</div></div>
 <div class="ttc" id="astructcmrc_1_1membuf_html_a6a2657d53c4cb958379d8668ca98d594"><div class="ttname"><a href="structcmrc_1_1membuf.html#a6a2657d53c4cb958379d8668ca98d594">cmrc::membuf::membuf</a></div><div class="ttdeci">membuf(membuf &amp;&amp;)=default</div><div class="ttdoc">Move constructor.</div></div>
-<div class="ttc" id="astructcmrc_1_1membuf_html_a7996cbd72f51c1344468b2492273d7b2"><div class="ttname"><a href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">cmrc::membuf::membuf</a></div><div class="ttdeci">membuf(const char *base, size_t size)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> CMakeRC.hpp:32</div></div>
+<div class="ttc" id="astructcmrc_1_1membuf_html_a7996cbd72f51c1344468b2492273d7b2"><div class="ttname"><a href="structcmrc_1_1membuf.html#a7996cbd72f51c1344468b2492273d7b2">cmrc::membuf::membuf</a></div><div class="ttdeci">membuf(const char *base, size_t size)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00032">CMakeRC.hpp:32</a></div></div>
 <div class="ttc" id="astructcmrc_1_1membuf_html_a7dcf16b359203fa608f8b2990c275fae"><div class="ttname"><a href="structcmrc_1_1membuf.html#a7dcf16b359203fa608f8b2990c275fae">cmrc::membuf::operator=</a></div><div class="ttdeci">membuf &amp; operator=(membuf &amp;&amp;)=default</div><div class="ttdoc">Move assignment operator.</div></div>
 <div class="ttc" id="astructcmrc_1_1membuf_html_aec9febdffe4f408d0c788702197d57af"><div class="ttname"><a href="structcmrc_1_1membuf.html#aec9febdffe4f408d0c788702197d57af">cmrc::membuf::membuf</a></div><div class="ttdeci">membuf(const membuf &amp;)=default</div><div class="ttdoc">Copy constructor.</div></div>
 <div class="ttc" id="astructcmrc_1_1membuf_html_aef52db09d6fd8dda8e138ae02b751a80"><div class="ttname"><a href="structcmrc_1_1membuf.html#aef52db09d6fd8dda8e138ae02b751a80">cmrc::membuf::operator=</a></div><div class="ttdeci">membuf &amp; operator=(const membuf &amp;)=default</div><div class="ttdoc">Copy assignment operator.</div></div>
-<div class="ttc" id="astructcmrc_1_1memstream_html_a3fd9a251e189982240e3a8fb6834a8e9"><div class="ttname"><a href="structcmrc_1_1memstream.html#a3fd9a251e189982240e3a8fb6834a8e9">cmrc::memstream::memstream</a></div><div class="ttdeci">memstream(char const *base, char *const end)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> CMakeRC.hpp:56</div></div>
-<div class="ttc" id="astructcmrc_1_1memstream_html_ac13761d35e219eeffac3cc1266e26570"><div class="ttname"><a href="structcmrc_1_1memstream.html#ac13761d35e219eeffac3cc1266e26570">cmrc::memstream::memstream</a></div><div class="ttdeci">memstream(char const *base, size_t size)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> CMakeRC.hpp:63</div></div>
+<div class="ttc" id="astructcmrc_1_1memstream_html_a3fd9a251e189982240e3a8fb6834a8e9"><div class="ttname"><a href="structcmrc_1_1memstream.html#a3fd9a251e189982240e3a8fb6834a8e9">cmrc::memstream::memstream</a></div><div class="ttdeci">memstream(char const *base, char *const end)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00056">CMakeRC.hpp:56</a></div></div>
+<div class="ttc" id="astructcmrc_1_1memstream_html_ac13761d35e219eeffac3cc1266e26570"><div class="ttname"><a href="structcmrc_1_1memstream.html#ac13761d35e219eeffac3cc1266e26570">cmrc::memstream::memstream</a></div><div class="ttdeci">memstream(char const *base, size_t size)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00063">CMakeRC.hpp:63</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

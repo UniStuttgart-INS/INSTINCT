@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -120,8 +121,7 @@ $(function(){initNavTree('classNAV_1_1ImuObsSimulated.html',''); initResizable(t
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="classNAV_1_1ImuObsSimulated-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::ImuObsSimulated Class Reference<span class="mlabels"><span class="mlabel final">final</span></span></div></div>
 </div><!--header-->
 <div class="contents">
@@ -179,9 +179,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData" id="r_a161795af3a587da1332cc9d513fe4c0b"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a161795af3a587da1332cc9d513fe4c0b">dynamicDataDescriptors</a> () const</td></tr>
 <tr class="memdesc:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors for the dynamic data.  <br /></td></tr>
 <tr class="separator:a161795af3a587da1332cc9d513fe4c0b inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">
-const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>events</b> () const</td></tr>
-<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data. <br /></td></tr>
+<tr class="memitem:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData" id="r_ad0e7133f203fcd49cb3d48451564ebd7"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ad0e7133f203fcd49cb3d48451564ebd7">events</a> () const</td></tr>
+<tr class="memdesc:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of string events associated with this data.  <br /></td></tr>
 <tr class="separator:ad0e7133f203fcd49cb3d48451564ebd7 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a613b6fa87e8d772747843a94c989d835 inherit pub_methods_classNAV_1_1NodeData" id="r_a613b6fa87e8d772747843a94c989d835"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::pair&lt; std::string, double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a613b6fa87e8d772747843a94c989d835">getDynamicData</a> () const</td></tr>
 <tr class="memdesc:a613b6fa87e8d772747843a94c989d835 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors and values for the dynamic data.  <br /></td></tr>
@@ -198,43 +197,35 @@ const std::vector&lt; std::string &gt; &amp;&#160;</td><td class="memItemRight" 
 <tr class="memitem:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData" id="r_a7951ae5f522e7aa323a092d5711f3411"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7951ae5f522e7aa323a092d5711f3411">hasTooltip</a> () const</td></tr>
 <tr class="memdesc:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return whether this data has a tooltip.  <br /></td></tr>
 <tr class="separator:a7951ae5f522e7aa323a092d5711f3411 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData" id="r_a2ab4a332f7eea07ee1a7b822c4ded638"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:a2ab4a332f7eea07ee1a7b822c4ded638 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData" id="r_af9414f343aaa7409bc80d9e2d5e28d84"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#af9414f343aaa7409bc80d9e2d5e28d84">NodeData</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:af9414f343aaa7409bc80d9e2d5e28d84 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">
-&#160;</td><td class="memItemRight" valign="bottom"><b>NodeData</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData" id="r_a2b4534799a985d276eb16ad818429534"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a2b4534799a985d276eb16ad818429534">NodeData</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a2b4534799a985d276eb16ad818429534 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
-<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData" id="r_a8ec5d8a06e6cffc6bc0af9e1849ac9d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a8ec5d8a06e6cffc6bc0af9e1849ac9d0">operator=</a> (const <a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;)=default</td></tr>
+<tr class="memdesc:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a8ec5d8a06e6cffc6bc0af9e1849ac9d0 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData" id="r_a29303ca7cba8da7d2bd773c3186ea774"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a29303ca7cba8da7d2bd773c3186ea774">operator=</a> (<a class="el" href="classNAV_1_1NodeData.html">NodeData</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a29303ca7cba8da7d2bd773c3186ea774 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData" id="r_a4ccba55ef2a96c8abaa7104001338531"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a4ccba55ef2a96c8abaa7104001338531">setDynamicDataAt</a> (const std::string &amp;, double)</td></tr>
 <tr class="memdesc:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the value for the descriptor.  <br /></td></tr>
 <tr class="separator:a4ccba55ef2a96c8abaa7104001338531 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">
-virtual&#160;</td><td class="memItemRight" valign="bottom"><b>~NodeData</b> ()=default</td></tr>
-<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData" id="r_a17e16ddb7f8969ed7b0fd6960735c1a1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a17e16ddb7f8969ed7b0fd6960735c1a1">~NodeData</a> ()=default</td></tr>
+<tr class="memdesc:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a17e16ddb7f8969ed7b0fd6960735c1a1 inherit pub_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a308160b36c6a7d04cfe789a6c606ee85" id="r_a308160b36c6a7d04cfe789a6c606ee85"><td class="memItemLeft" align="right" valign="top"><a id="a308160b36c6a7d04cfe789a6c606ee85" name="a308160b36c6a7d04cfe789a6c606ee85"></a>
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a308160b36c6a7d04cfe789a6c606ee85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a308160b36c6a7d04cfe789a6c606ee85" id="r_a308160b36c6a7d04cfe789a6c606ee85"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a308160b36c6a7d04cfe789a6c606ee85">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a308160b36c6a7d04cfe789a6c606ee85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a308160b36c6a7d04cfe789a6c606ee85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30dace76ac58bf82848b4157cad7d1bf" id="r_a30dace76ac58bf82848b4157cad7d1bf"><td class="memItemLeft" align="right" valign="top"><a id="a30dace76ac58bf82848b4157cad7d1bf" name="a30dace76ac58bf82848b4157cad7d1bf"></a>
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:a30dace76ac58bf82848b4157cad7d1bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:a30dace76ac58bf82848b4157cad7d1bf" id="r_a30dace76ac58bf82848b4157cad7d1bf"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30dace76ac58bf82848b4157cad7d1bf">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:a30dace76ac58bf82848b4157cad7d1bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:a30dace76ac58bf82848b4157cad7d1bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92954f64b00bca21f89d3725aff3d6c2" id="r_a92954f64b00bca21f89d3725aff3d6c2"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92954f64b00bca21f89d3725aff3d6c2">parentTypes</a> ()</td></tr>
 <tr class="memdesc:a92954f64b00bca21f89d3725aff3d6c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -243,13 +234,11 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="memdesc:a8ad9884e44841bd96e549d2ca5788840"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a8ad9884e44841bd96e549d2ca5788840"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classNAV_1_1ImuObsWDelta"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_methods_classNAV_1_1ImuObsWDelta')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td></tr>
-<tr class="memitem:a69cbae9d88941f31c7ad9c31b8b3ea51 inherit pub_static_methods_classNAV_1_1ImuObsWDelta" id="r_a69cbae9d88941f31c7ad9c31b8b3ea51"><td class="memItemLeft" align="right" valign="top">
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a69cbae9d88941f31c7ad9c31b8b3ea51 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a69cbae9d88941f31c7ad9c31b8b3ea51 inherit pub_static_methods_classNAV_1_1ImuObsWDelta" id="r_a69cbae9d88941f31c7ad9c31b8b3ea51"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a69cbae9d88941f31c7ad9c31b8b3ea51">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a69cbae9d88941f31c7ad9c31b8b3ea51 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a69cbae9d88941f31c7ad9c31b8b3ea51 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4171a58a790275a7fa9e02bc1b2593af inherit pub_static_methods_classNAV_1_1ImuObsWDelta" id="r_a4171a58a790275a7fa9e02bc1b2593af"><td class="memItemLeft" align="right" valign="top">
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:a4171a58a790275a7fa9e02bc1b2593af inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:a4171a58a790275a7fa9e02bc1b2593af inherit pub_static_methods_classNAV_1_1ImuObsWDelta" id="r_a4171a58a790275a7fa9e02bc1b2593af"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a4171a58a790275a7fa9e02bc1b2593af">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:a4171a58a790275a7fa9e02bc1b2593af inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:a4171a58a790275a7fa9e02bc1b2593af inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac74f8dbbd1e10f8d9b4c779e95e97de2 inherit pub_static_methods_classNAV_1_1ImuObsWDelta" id="r_ac74f8dbbd1e10f8d9b4c779e95e97de2"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#ac74f8dbbd1e10f8d9b4c779e95e97de2">parentTypes</a> ()</td></tr>
 <tr class="memdesc:ac74f8dbbd1e10f8d9b4c779e95e97de2 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -258,13 +247,11 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="memdesc:a5b04a2aaf16f05741e189b3aabe5f907 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a5b04a2aaf16f05741e189b3aabe5f907 inherit pub_static_methods_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classNAV_1_1ImuObs"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_methods_classNAV_1_1ImuObs')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td></tr>
-<tr class="memitem:aaf121e1efaecaf3008e09755a00f457a inherit pub_static_methods_classNAV_1_1ImuObs" id="r_aaf121e1efaecaf3008e09755a00f457a"><td class="memItemLeft" align="right" valign="top">
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:aaf121e1efaecaf3008e09755a00f457a inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:aaf121e1efaecaf3008e09755a00f457a inherit pub_static_methods_classNAV_1_1ImuObs" id="r_aaf121e1efaecaf3008e09755a00f457a"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#aaf121e1efaecaf3008e09755a00f457a">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:aaf121e1efaecaf3008e09755a00f457a inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:aaf121e1efaecaf3008e09755a00f457a inherit pub_static_methods_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab40bb6e7071d0cf3f09e8ce0fe62a0c5 inherit pub_static_methods_classNAV_1_1ImuObs" id="r_ab40bb6e7071d0cf3f09e8ce0fe62a0c5"><td class="memItemLeft" align="right" valign="top">
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:ab40bb6e7071d0cf3f09e8ce0fe62a0c5 inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:ab40bb6e7071d0cf3f09e8ce0fe62a0c5 inherit pub_static_methods_classNAV_1_1ImuObs" id="r_ab40bb6e7071d0cf3f09e8ce0fe62a0c5"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#ab40bb6e7071d0cf3f09e8ce0fe62a0c5">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:ab40bb6e7071d0cf3f09e8ce0fe62a0c5 inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:ab40bb6e7071d0cf3f09e8ce0fe62a0c5 inherit pub_static_methods_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ec374868aef6bc6c7d5c7eb3eb0e557 inherit pub_static_methods_classNAV_1_1ImuObs" id="r_a9ec374868aef6bc6c7d5c7eb3eb0e557"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#a9ec374868aef6bc6c7d5c7eb3eb0e557">parentTypes</a> ()</td></tr>
 <tr class="memdesc:a9ec374868aef6bc6c7d5c7eb3eb0e557 inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -273,13 +260,11 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="memdesc:a23c32b23405b8196f8387d30c1b39dbf inherit pub_static_methods_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the type of the data class.  <br /></td></tr>
 <tr class="separator:a23c32b23405b8196f8387d30c1b39dbf inherit pub_static_methods_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_static_methods_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">
-static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDataDescriptors</b> ()</td></tr>
-<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors. <br /></td></tr>
+<tr class="memitem:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData" id="r_a74c5f9a3be5207ef0c62acd233be3664"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a74c5f9a3be5207ef0c62acd233be3664">GetStaticDataDescriptors</a> ()</td></tr>
+<tr class="memdesc:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector of data descriptors.  <br /></td></tr>
 <tr class="separator:a74c5f9a3be5207ef0c62acd233be3664 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">
-static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetStaticDescriptorCount</b> ()</td></tr>
-<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors. <br /></td></tr>
+<tr class="memitem:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ae312b7542fc8dc22c23516b1941ab560"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ae312b7542fc8dc22c23516b1941ab560">GetStaticDescriptorCount</a> ()</td></tr>
+<tr class="memdesc:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of descriptors.  <br /></td></tr>
 <tr class="separator:ae312b7542fc8dc22c23516b1941ab560 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData" id="r_ab097672ac2646837e26f9be73b7a98b7"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#ab097672ac2646837e26f9be73b7a98b7">parentTypes</a> ()</td></tr>
 <tr class="memdesc:ab097672ac2646837e26f9be73b7a98b7 inherit pub_static_methods_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the parent types of the data class.  <br /></td></tr>
@@ -289,69 +274,59 @@ static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>Ge
 <tr class="separator:a957391e1adfd8edb28c8ccced8b0dde3 inherit pub_static_methods_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a1956b42eb99ddde364731656472d8b80" id="r_a1956b42eb99ddde364731656472d8b80"><td class="memItemLeft" align="right" valign="top"><a id="a1956b42eb99ddde364731656472d8b80" name="a1956b42eb99ddde364731656472d8b80"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_accelDynamics</b></td></tr>
-<tr class="memdesc:a1956b42eb99ddde364731656472d8b80"><td class="mdescLeft">&#160;</td><td class="mdescRight">The acceleration derived from the trajectory in [m/s^2], given in the ECEF frame. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a1956b42eb99ddde364731656472d8b80" id="r_a1956b42eb99ddde364731656472d8b80"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1956b42eb99ddde364731656472d8b80">e_accelDynamics</a></td></tr>
+<tr class="memdesc:a1956b42eb99ddde364731656472d8b80"><td class="mdescLeft">&#160;</td><td class="mdescRight">The acceleration derived from the trajectory in [m/s^2], given in the ECEF frame.  <br /></td></tr>
 <tr class="separator:a1956b42eb99ddde364731656472d8b80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a315ea7549a15747772b2fcfe70862b0c" id="r_a315ea7549a15747772b2fcfe70862b0c"><td class="memItemLeft" align="right" valign="top"><a id="a315ea7549a15747772b2fcfe70862b0c" name="a315ea7549a15747772b2fcfe70862b0c"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>e_angularRateDynamics</b></td></tr>
-<tr class="memdesc:a315ea7549a15747772b2fcfe70862b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The angular rate ω_nb_e derived from the trajectory in [rad/s], given in the ECEF frame. <br /></td></tr>
+<tr class="memitem:a315ea7549a15747772b2fcfe70862b0c" id="r_a315ea7549a15747772b2fcfe70862b0c"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a315ea7549a15747772b2fcfe70862b0c">e_angularRateDynamics</a></td></tr>
+<tr class="memdesc:a315ea7549a15747772b2fcfe70862b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The angular rate ω_nb_e derived from the trajectory in [rad/s], given in the ECEF frame.  <br /></td></tr>
 <tr class="separator:a315ea7549a15747772b2fcfe70862b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adca10e607336d3f2134459f2326d1b9a" id="r_adca10e607336d3f2134459f2326d1b9a"><td class="memItemLeft" align="right" valign="top"><a id="adca10e607336d3f2134459f2326d1b9a" name="adca10e607336d3f2134459f2326d1b9a"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>n_accelDynamics</b></td></tr>
-<tr class="memdesc:adca10e607336d3f2134459f2326d1b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The acceleration derived from the trajectory in [m/s^2], given in the NED frame. <br /></td></tr>
+<tr class="memitem:adca10e607336d3f2134459f2326d1b9a" id="r_adca10e607336d3f2134459f2326d1b9a"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adca10e607336d3f2134459f2326d1b9a">n_accelDynamics</a></td></tr>
+<tr class="memdesc:adca10e607336d3f2134459f2326d1b9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The acceleration derived from the trajectory in [m/s^2], given in the NED frame.  <br /></td></tr>
 <tr class="separator:adca10e607336d3f2134459f2326d1b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a717566badf4e4f59fe0bb98ff4ad278f" id="r_a717566badf4e4f59fe0bb98ff4ad278f"><td class="memItemLeft" align="right" valign="top"><a id="a717566badf4e4f59fe0bb98ff4ad278f" name="a717566badf4e4f59fe0bb98ff4ad278f"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>n_angularRateDynamics</b></td></tr>
-<tr class="memdesc:a717566badf4e4f59fe0bb98ff4ad278f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The angular rate ω_nb_n derived from the trajectory in [rad/s], given in the NED frame. <br /></td></tr>
+<tr class="memitem:a717566badf4e4f59fe0bb98ff4ad278f" id="r_a717566badf4e4f59fe0bb98ff4ad278f"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a717566badf4e4f59fe0bb98ff4ad278f">n_angularRateDynamics</a></td></tr>
+<tr class="memdesc:a717566badf4e4f59fe0bb98ff4ad278f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The angular rate ω_nb_n derived from the trajectory in [rad/s], given in the NED frame.  <br /></td></tr>
 <tr class="separator:a717566badf4e4f59fe0bb98ff4ad278f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1ImuObsWDelta"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1ImuObsWDelta')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1ImuObsWDelta"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1ImuObsWDelta')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1ImuObsWDelta.html">NAV::ImuObsWDelta</a></td></tr>
 <tr class="memitem:a5e8148eb6a8d6395d4c1d4fdee8168af inherit pub_attribs_classNAV_1_1ImuObsWDelta" id="r_a5e8148eb6a8d6395d4c1d4fdee8168af"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a5e8148eb6a8d6395d4c1d4fdee8168af">dtheta</a></td></tr>
 <tr class="separator:a5e8148eb6a8d6395d4c1d4fdee8168af inherit pub_attribs_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cb95e46a54bf2da8dd7358fef9c88cd inherit pub_attribs_classNAV_1_1ImuObsWDelta" id="r_a4cb95e46a54bf2da8dd7358fef9c88cd"><td class="memItemLeft" align="right" valign="top">
-double&#160;</td><td class="memItemRight" valign="bottom"><b>dtime</b></td></tr>
-<tr class="memdesc:a4cb95e46a54bf2da8dd7358fef9c88cd inherit pub_attribs_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time interval that the delta angle and velocities are integrated over in [seconds]. <br /></td></tr>
+<tr class="memitem:a4cb95e46a54bf2da8dd7358fef9c88cd inherit pub_attribs_classNAV_1_1ImuObsWDelta" id="r_a4cb95e46a54bf2da8dd7358fef9c88cd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a4cb95e46a54bf2da8dd7358fef9c88cd">dtime</a></td></tr>
+<tr class="memdesc:a4cb95e46a54bf2da8dd7358fef9c88cd inherit pub_attribs_classNAV_1_1ImuObsWDelta"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time interval that the delta angle and velocities are integrated over in [seconds].  <br /></td></tr>
 <tr class="separator:a4cb95e46a54bf2da8dd7358fef9c88cd inherit pub_attribs_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a803cceaccd12dabe573d3e38160d567b inherit pub_attribs_classNAV_1_1ImuObsWDelta" id="r_a803cceaccd12dabe573d3e38160d567b"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObsWDelta.html#a803cceaccd12dabe573d3e38160d567b">dvel</a></td></tr>
 <tr class="separator:a803cceaccd12dabe573d3e38160d567b inherit pub_attribs_classNAV_1_1ImuObsWDelta"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1ImuObs"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1ImuObs')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td></tr>
-<tr class="memitem:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs" id="r_aeebb869562cb3544a976278a576f0fc4"><td class="memItemLeft" align="right" valign="top">
-const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>imuPos</b></td></tr>
-<tr class="memdesc:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame. <br /></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1ImuObs"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1ImuObs')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1ImuObs.html">NAV::ImuObs</a></td></tr>
+<tr class="memitem:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs" id="r_aeebb869562cb3544a976278a576f0fc4"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#aeebb869562cb3544a976278a576f0fc4">imuPos</a></td></tr>
+<tr class="memdesc:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position and rotation information for conversion from platform to body frame.  <br /></td></tr>
 <tr class="separator:aeebb869562cb3544a976278a576f0fc4 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="memItemLeft" align="right" valign="top">
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_acceleration</b></td></tr>
-<tr class="memdesc:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame. <br /></td></tr>
+<tr class="memitem:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09e8e22c0068bf2f3c1fc36f16ff5da1"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#a09e8e22c0068bf2f3c1fc36f16ff5da1">p_acceleration</a></td></tr>
+<tr class="memdesc:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU acceleration measured in units of [m/s^2], given in the platform frame.  <br /></td></tr>
 <tr class="separator:a09e8e22c0068bf2f3c1fc36f16ff5da1 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs" id="r_a65aefc8dbbba7614004555315fcec16e"><td class="memItemLeft" align="right" valign="top">
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_angularRate</b></td></tr>
-<tr class="memdesc:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame. <br /></td></tr>
+<tr class="memitem:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs" id="r_a65aefc8dbbba7614004555315fcec16e"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#a65aefc8dbbba7614004555315fcec16e">p_angularRate</a></td></tr>
+<tr class="memdesc:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU angular rate measured in units of [rad/s], given in the platform frame.  <br /></td></tr>
 <tr class="separator:a65aefc8dbbba7614004555315fcec16e inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs" id="r_afbf713250881369de5b453e4e9e8abfd"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>p_magneticField</b></td></tr>
-<tr class="memdesc:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame. <br /></td></tr>
+<tr class="memitem:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs" id="r_afbf713250881369de5b453e4e9e8abfd"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#afbf713250881369de5b453e4e9e8abfd">p_magneticField</a></td></tr>
+<tr class="memdesc:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU magnetic field measured in units of [Gauss], given in the platform frame.  <br /></td></tr>
 <tr class="separator:afbf713250881369de5b453e4e9e8abfd inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09fb1db7b4ffde3afccebc4c813d2792"><td class="memItemLeft" align="right" valign="top">
-std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>temperature</b></td></tr>
-<tr class="memdesc:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU temperature measured in units of [Celsius]. <br /></td></tr>
+<tr class="memitem:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs" id="r_a09fb1db7b4ffde3afccebc4c813d2792"><td class="memItemLeft" align="right" valign="top">std::optional&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1ImuObs.html#a09fb1db7b4ffde3afccebc4c813d2792">temperature</a></td></tr>
+<tr class="memdesc:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IMU temperature measured in units of [Celsius].  <br /></td></tr>
 <tr class="separator:a09fb1db7b4ffde3afccebc4c813d2792 inherit pub_attribs_classNAV_1_1ImuObs"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top">
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>insTime</b></td></tr>
-<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received. <br /></td></tr>
+<tr class="inherit_header pub_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Data Fields inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
+<tr class="memitem:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData" id="r_aebad1de5b5b7dffcf7a5aaeb7b4f3f62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#aebad1de5b5b7dffcf7a5aaeb7b4f3f62">insTime</a></td></tr>
+<tr class="memdesc:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which the message was received.  <br /></td></tr>
 <tr class="separator:aebad1de5b5b7dffcf7a5aaeb7b4f3f62 inherit pub_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_classNAV_1_1NodeData"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classNAV_1_1NodeData')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classNAV_1_1NodeData.html">NAV::NodeData</a></td></tr>
-<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_events</b></td></tr>
-<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events. <br /></td></tr>
+<tr class="memitem:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData" id="r_a7e3d71ea9991be6289c3ccc02d6b5825"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1NodeData.html#a7e3d71ea9991be6289c3ccc02d6b5825">_events</a></td></tr>
+<tr class="memdesc:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of events.  <br /></td></tr>
 <tr class="separator:a7e3d71ea9991be6289c3ccc02d6b5825 inherit pro_attribs_classNAV_1_1NodeData"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>VectorNav Observation storage Class. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00021">21</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae4463748541428937f500b96d1151172" name="ae4463748541428937f500b96d1151172"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae4463748541428937f500b96d1151172">&#9670;&#160;</a></span>ImuObsSimulated()</h2>
@@ -384,9 +359,69 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00026">26</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a308160b36c6a7d04cfe789a6c606ee85" name="a308160b36c6a7d04cfe789a6c606ee85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a308160b36c6a7d04cfe789a6c606ee85">&#9670;&#160;</a></span>GetStaticDataDescriptors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static std::vector&lt; std::string &gt; NAV::ImuObsSimulated::GetStaticDataDescriptors </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a vector of data descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00050">50</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a30dace76ac58bf82848b4157cad7d1bf" name="a30dace76ac58bf82848b4157cad7d1bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30dace76ac58bf82848b4157cad7d1bf">&#9670;&#160;</a></span>GetStaticDescriptorCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t NAV::ImuObsSimulated::GetStaticDescriptorCount </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the amount of descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00069">69</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ab3cf4e83887f989cd0d420d9825af690" name="ab3cf4e83887f989cd0d420d9825af690"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab3cf4e83887f989cd0d420d9825af690">&#9670;&#160;</a></span>getType()</h2>
 
@@ -414,6 +449,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <dl class="section return"><dt>Returns</dt><dd>The data type </dd></dl>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1ImuObs.html#ab3e37a0b2c0b3680e807d564dd940d45">NAV::ImuObs</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00038">38</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
 
 </div>
 </div>
@@ -451,6 +488,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1ImuObs.html#abbd8d95b53c89985efe24d85689260b3">NAV::ImuObs</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00080">80</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a92954f64b00bca21f89d3725aff3d6c2" name="a92954f64b00bca21f89d3725aff3d6c2"></a>
@@ -478,6 +517,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Returns the parent types of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The parent data types </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00042">42</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
 
 </div>
 </div>
@@ -520,6 +561,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1ImuObs.html#a2372163c6852691177636d3eaeccc227">NAV::ImuObs</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00119">119</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a617b82e44c9eadbcb7dc35f66c503507" name="a617b82e44c9eadbcb7dc35f66c503507"></a>
@@ -548,6 +591,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <p>Returns a vector of data descriptors. </p>
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1ImuObs.html#a97efa56f0b3af79629be1a8731db047d">NAV::ImuObs</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00072">72</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
 
 </div>
 </div>
@@ -578,6 +623,8 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 
 <p>Reimplemented from <a class="el" href="classNAV_1_1ImuObs.html#aeeacd09377124681880dbba0103ba42f">NAV::ImuObs</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00075">75</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a8ad9884e44841bd96e549d2ca5788840" name="a8ad9884e44841bd96e549d2ca5788840"></a>
@@ -606,6 +653,81 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <p>Returns the type of the data class. </p>
 <dl class="section return"><dt>Returns</dt><dd>The data type </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00031">31</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a1956b42eb99ddde364731656472d8b80" name="a1956b42eb99ddde364731656472d8b80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1956b42eb99ddde364731656472d8b80">&#9670;&#160;</a></span>e_accelDynamics</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsSimulated::e_accelDynamics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The acceleration derived from the trajectory in [m/s^2], given in the ECEF frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00174">174</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a315ea7549a15747772b2fcfe70862b0c" name="a315ea7549a15747772b2fcfe70862b0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a315ea7549a15747772b2fcfe70862b0c">&#9670;&#160;</a></span>e_angularRateDynamics</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsSimulated::e_angularRateDynamics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The angular rate ω_nb_e derived from the trajectory in [rad/s], given in the ECEF frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00176">176</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
+<a id="adca10e607336d3f2134459f2326d1b9a" name="adca10e607336d3f2134459f2326d1b9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adca10e607336d3f2134459f2326d1b9a">&#9670;&#160;</a></span>n_accelDynamics</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsSimulated::n_accelDynamics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The acceleration derived from the trajectory in [m/s^2], given in the NED frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00169">169</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a717566badf4e4f59fe0bb98ff4ad278f" name="a717566badf4e4f59fe0bb98ff4ad278f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a717566badf4e4f59fe0bb98ff4ad278f">&#9670;&#160;</a></span>n_angularRateDynamics</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::ImuObsSimulated::n_angularRateDynamics</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The angular rate ω_nb_n derived from the trajectory in [rad/s], given in the NED frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="ImuObsSimulated_8hpp_source.html#l00171">171</a> of file <a class="el" href="ImuObsSimulated_8hpp_source.html">ImuObsSimulated.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -616,7 +738,7 @@ std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bott
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1ImuObsSimulated.html">ImuObsSimulated</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1ImuObsSimulated.html">ImuObsSimulated</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

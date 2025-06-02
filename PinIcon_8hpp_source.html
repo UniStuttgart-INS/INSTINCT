@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -120,41 +121,62 @@ $(function(){initNavTree('PinIcon_8hpp_source.html',''); initResizable(true); })
   <div class="headertitle"><div class="title">PinIcon.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></div>
+<a href="PinIcon_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// This file is part of INSTINCT, the INS Toolkit for Integrated</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// Navigation Concepts and Training by the Institute of Navigation of</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">// the University of Stuttgart, Germany.</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">//</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file HelpMarker.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Icon Widget</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2020-12-14</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;imgui.h&quot;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span>NAV::gui::widgets::PinIcon</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html">NAV::gui::widgets::PinIcon</a></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">enum class</span> Type : uint8_t</div>
+<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39">   21</a></span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39">Type</a> : uint8_t</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    Flow,</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    Circle,</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    Square,</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    Grid,</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    RoundSquare,</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    Diamond</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39af1a76f66cca677c6e628d9ca58a6c8fc">   23</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39af1a76f66cca677c6e628d9ca58a6c8fc">Flow</a>,</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a30954d90085f6eaaf5817917fc5fecb3">   24</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a30954d90085f6eaaf5817917fc5fecb3">Circle</a>,</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304">   25</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304">Square</a>,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a5174d1309f275ba6f275db3af9eb3e18">   26</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a5174d1309f275ba6f275db3af9eb3e18">Grid</a>,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8d0b97f599498054e5e7a84b1d5c2140">   27</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8d0b97f599498054e5e7a84b1d5c2140">RoundSquare</a>,</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8f7671185d590914ac21c7511767b699">   28</a></span>    <a class="code hl_enumvalue" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8f7671185d590914ac21c7511767b699">Diamond</a></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keywordtype">void</span> Draw(<span class="keyword">const</span> ImVec2&amp; size, Type type, <span class="keywordtype">bool</span> filled, <span class="keyword">const</span> ImVec4&amp; color = ImVec4(1, 1, 1, 1), <span class="keyword">const</span> ImVec4&amp; innerColor = ImVec4(0, 0, 0, 0));</div>
+</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment"></span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">/// @brief Draws an Icon for a Pin with the specified settings</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">/// @param[in] size Size of the Icons</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">/// @param[in] type Type of the Icon (Flow, Circle, Square, Grid, ...)</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/// @param[in] filled Specifies if the icons should be filled</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">/// @param[in] color Color of the Icon</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">/// @param[in] innerColor Color to fill the Icon with</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#af51e106f15008fe467a7b4bbfa268e24">Draw</a>(<span class="keyword">const</span> ImVec2&amp; size, <a class="code hl_enumeration" href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39">Type</a> type, <span class="keywordtype">bool</span> filled, <span class="keyword">const</span> ImVec4&amp; color = ImVec4(1, 1, 1, 1), <span class="keyword">const</span> ImVec4&amp; innerColor = ImVec4(0, 0, 0, 0));</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>} <span class="comment">// namespace NAV::gui::widgets::PinIcon</span></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html">NAV::gui::widgets::PinIcon</a></div><div class="ttdef"><b>Definition</b> <a href="PinIcon_8cpp_source.html#l00012">PinIcon.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39">NAV::gui::widgets::PinIcon::Type</a></div><div class="ttdeci">Type</div><div class="ttdef"><b>Definition</b> <a href="#l00021">PinIcon.hpp:22</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39a30954d90085f6eaaf5817917fc5fecb3"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a30954d90085f6eaaf5817917fc5fecb3">NAV::gui::widgets::PinIcon::Type::Circle</a></div><div class="ttdeci">@ Circle</div><div class="ttdef"><b>Definition</b> <a href="#l00024">PinIcon.hpp:24</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39a5174d1309f275ba6f275db3af9eb3e18"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a5174d1309f275ba6f275db3af9eb3e18">NAV::gui::widgets::PinIcon::Type::Grid</a></div><div class="ttdeci">@ Grid</div><div class="ttdef"><b>Definition</b> <a href="#l00026">PinIcon.hpp:26</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39a8d0b97f599498054e5e7a84b1d5c2140"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8d0b97f599498054e5e7a84b1d5c2140">NAV::gui::widgets::PinIcon::Type::RoundSquare</a></div><div class="ttdeci">@ RoundSquare</div><div class="ttdef"><b>Definition</b> <a href="#l00027">PinIcon.hpp:27</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39a8f7671185d590914ac21c7511767b699"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39a8f7671185d590914ac21c7511767b699">NAV::gui::widgets::PinIcon::Type::Diamond</a></div><div class="ttdeci">@ Diamond</div><div class="ttdef"><b>Definition</b> <a href="#l00028">PinIcon.hpp:28</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39aceb46ca115d05c51aa5a16a8867c3304">NAV::gui::widgets::PinIcon::Type::Square</a></div><div class="ttdeci">@ Square</div><div class="ttdef"><b>Definition</b> <a href="#l00025">PinIcon.hpp:25</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_a1eafe3f84238235e70a18218b9fa4d39af1a76f66cca677c6e628d9ca58a6c8fc"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#a1eafe3f84238235e70a18218b9fa4d39af1a76f66cca677c6e628d9ca58a6c8fc">NAV::gui::widgets::PinIcon::Type::Flow</a></div><div class="ttdeci">@ Flow</div><div class="ttdef"><b>Definition</b> <a href="#l00023">PinIcon.hpp:23</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_1_1PinIcon_html_af51e106f15008fe467a7b4bbfa268e24"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets_1_1PinIcon.html#af51e106f15008fe467a7b4bbfa268e24">NAV::gui::widgets::PinIcon::Draw</a></div><div class="ttdeci">void Draw(const ImVec2 &amp;size, Type type, bool filled, const ImVec4 &amp;color=ImVec4(1, 1, 1, 1), const ImVec4 &amp;innerColor=ImVec4(0, 0, 0, 0))</div><div class="ttdoc">Draws an Icon for a Pin with the specified settings.</div><div class="ttdef"><b>Definition</b> <a href="PinIcon_8cpp_source.html#l00253">PinIcon.cpp:253</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3756d50f4003bc63fa3fe49460f9c79d.html">internal</a></li><li class="navelem"><a class="el" href="dir_1f384820253d9d9bd4bc61d8aaa7d7a3.html">gui</a></li><li class="navelem"><a class="el" href="dir_bd9f63ec09004c6356979e66d86b0769.html">widgets</a></li><li class="navelem"><b>PinIcon.hpp</b></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_3756d50f4003bc63fa3fe49460f9c79d.html">internal</a></li><li class="navelem"><a class="el" href="dir_1f384820253d9d9bd4bc61d8aaa7d7a3.html">gui</a></li><li class="navelem"><a class="el" href="dir_bd9f63ec09004c6356979e66d86b0769.html">widgets</a></li><li class="navelem"><a class="el" href="PinIcon_8hpp.html">PinIcon.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

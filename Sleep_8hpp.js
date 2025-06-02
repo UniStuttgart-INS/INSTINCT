@@ -1,5 +1,5 @@
 var Sleep_8hpp =
 [
-    [ "NAV::Sleep::countDownSeconds", "Sleep_8hpp.html#a3d23401ab02bc8a8477b552ee7c609b1", null ],
-    [ "NAV::Sleep::waitForSignal", "Sleep_8hpp.html#a4e8aa38bfa84207d7a6de9f0f08b0d5e", null ]
+    [ "NAV::Sleep::countDownSeconds", "namespaceNAV_1_1Sleep.html#a3d23401ab02bc8a8477b552ee7c609b1", null ],
+    [ "NAV::Sleep::waitForSignal", "namespaceNAV_1_1Sleep.html#a4e8aa38bfa84207d7a6de9f0f08b0d5e", null ]
 ];

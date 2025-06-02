@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('Pair_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file Pair.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Utility functions for std::pair</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2022-12-19</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -135,12 +140,15 @@ $(function(){initNavTree('Pair_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;functional&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>std</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacestd.html">std</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @brief A hash function used to hash a pair of any kind (needed for unordered_map)</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> T1, <span class="keyword">class</span> T2&gt;</div>
 <div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html">   24</a></span><span class="keyword">struct </span>hash&lt;std::pair&lt;T1, T2&gt;&gt;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html">   24</a></span><span class="keyword">struct </span>hash&lt;<a class="code hl_namespace" href="namespacestd.html">std</a>::pair&lt;T1, T2&gt;&gt;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">    /// @brief Hash function for std::pair</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">    /// @param[in] f Pair</span></div>
 <div class="foldopen" id="foldopen00028" data-start="{" data-end="}">
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html#a7597727adb4e6838a76578fa6fcbf4c8">   28</a></span>    std::size_t <a class="code hl_function" href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html#a7597727adb4e6838a76578fa6fcbf4c8">operator()</a>(<span class="keyword">const</span> std::pair&lt;T1, T2&gt;&amp; f)<span class="keyword"> const</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">    </span>{</div>
@@ -159,7 +167,8 @@ $(function(){initNavTree('Pair_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>};</div>
 </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>} <span class="comment">// namespace std</span></div>
-<div class="ttc" id="astructstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4_html_a7597727adb4e6838a76578fa6fcbf4c8"><div class="ttname"><a href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html#a7597727adb4e6838a76578fa6fcbf4c8">std::hash&lt; std::pair&lt; T1, T2 &gt; &gt;::operator()</a></div><div class="ttdeci">std::size_t operator()(const std::pair&lt; T1, T2 &gt; &amp;f) const</div><div class="ttdoc">Hash function for std::pair.</div><div class="ttdef"><b>Definition</b> Pair.hpp:28</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> <a href="CycleSlipDetector_8hpp_source.html#l00252">CycleSlipDetector.hpp:253</a></div></div>
+<div class="ttc" id="astructstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4_html_a7597727adb4e6838a76578fa6fcbf4c8"><div class="ttname"><a href="structstd_1_1hash_3_01std_1_1pair_3_01T1_00_01T2_01_4_01_4.html#a7597727adb4e6838a76578fa6fcbf4c8">std::hash&lt; std::pair&lt; T1, T2 &gt; &gt;::operator()</a></div><div class="ttdeci">std::size_t operator()(const std::pair&lt; T1, T2 &gt; &amp;f) const</div><div class="ttdoc">Hash function for std::pair.</div><div class="ttdef"><b>Definition</b> <a href="#l00028">Pair.hpp:28</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

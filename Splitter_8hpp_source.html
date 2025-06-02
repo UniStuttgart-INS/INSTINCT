@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,19 +128,34 @@ $(function(){initNavTree('Splitter_8hpp_source.html',''); initResizable(true); }
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file Splitter.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Screen Divider</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2020-12-14</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>NAV::gui::widgets</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="Splitter_8hpp.html#aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08">   28</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="Splitter_8hpp.html#aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08">Splitter</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* str_id, <span class="keywordtype">bool</span> split_vertically, <span class="keywordtype">float</span> thickness,</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">/// @brief Vertical or horizontal Screen Divider</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">/// @param[in] str_id Unique Id for splitter creation</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">/// @param[in] split_vertically Vertical or horizontal splitter</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/// @param[in] thickness Thickness in Pixels</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @param[in, out] size1 Size left or above the splitter</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in, out] size2 Size right or below the splitter</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] min_size1 Minimum size left or above the splitter</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @param[in] min_size2 Minimum size right or below the spliter</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @param[in] splitter_long_axis_size Length of the splitter</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @return True when the splitter is moved</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1widgets.html#aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08">Splitter</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* str_id, <span class="keywordtype">bool</span> split_vertically, <span class="keywordtype">float</span> thickness,</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>              <span class="keywordtype">float</span>* size1, <span class="keywordtype">float</span>* size2,</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>              <span class="keywordtype">float</span> min_size1, <span class="keywordtype">float</span> min_size2,</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>              <span class="keywordtype">float</span> splitter_long_axis_size = -1.0F);</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <span class="comment">// namespace NAV::gui::widgets</span></div>
-<div class="ttc" id="aSplitter_8hpp_html_aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08"><div class="ttname"><a href="Splitter_8hpp.html#aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08">NAV::gui::widgets::Splitter</a></div><div class="ttdeci">bool Splitter(const char *str_id, bool split_vertically, float thickness, float *size1, float *size2, float min_size1, float min_size2, float splitter_long_axis_size=-1.0F)</div><div class="ttdoc">Vertical or horizontal Screen Divider.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></div><div class="ttdef"><b>Definition</b> <a href="DynamicInputPins_8cpp_source.html#l00022">DynamicInputPins.cpp:23</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1widgets_html_aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1widgets.html#aa0ba0d12cc5d1ff3eb9d12fbc4c4ba08">NAV::gui::widgets::Splitter</a></div><div class="ttdeci">bool Splitter(const char *str_id, bool split_vertically, float thickness, float *size1, float *size2, float min_size1, float min_size2, float splitter_long_axis_size=-1.0F)</div><div class="ttdoc">Vertical or horizontal Screen Divider.</div><div class="ttdef"><b>Definition</b> <a href="Splitter_8cpp_source.html#l00016">Splitter.cpp:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

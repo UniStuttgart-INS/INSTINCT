@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('QuadraticBsplines_8hpp_source.html',''); initResizable
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file QuadraticBsplines.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Constructs four overlapping qaudratic B-splines</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2024-03-28</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -135,12 +140,17 @@ $(function(){initNavTree('QuadraticBsplines_8hpp_source.html',''); initResizable
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>NAV::BsplineKF</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="QuadraticBsplines_8hpp.html#a32329b7d4c3a30b82bf76e2f3ebb571d">   26</a></span>std::array&lt;double, 3&gt; <a class="code hl_function" href="QuadraticBsplines_8hpp.html#a32329b7d4c3a30b82bf76e2f3ebb571d">quadraticBsplines</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; ti, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; splineSpacing = 1.0);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1BsplineKF.html">NAV::BsplineKF</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @brief Set the points/knots of the four B-splines</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">/// @param[in] ti time i to evaluate the spline at in [s]</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">/// @param[in] splineSpacing time difference between one and another B-spline in [s]</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @return Vector that contains the values of each quadratic B-spline at time ti, from the stacked B-spline</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>std::array&lt;double, 3&gt; <a class="code hl_function" href="namespaceNAV_1_1BsplineKF.html#a32329b7d4c3a30b82bf76e2f3ebb571d">quadraticBsplines</a>(<span class="keyword">const</span> <span class="keywordtype">double</span>&amp; ti, <span class="keyword">const</span> <span class="keywordtype">double</span>&amp; splineSpacing = 1.0);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>} <span class="comment">// namespace NAV::BsplineKF</span></div>
 <div class="ttc" id="aEigen_8hpp_html"><div class="ttname"><a href="Eigen_8hpp.html">Eigen.hpp</a></div><div class="ttdoc">Vector space operations.</div></div>
-<div class="ttc" id="aQuadraticBsplines_8hpp_html_a32329b7d4c3a30b82bf76e2f3ebb571d"><div class="ttname"><a href="QuadraticBsplines_8hpp.html#a32329b7d4c3a30b82bf76e2f3ebb571d">NAV::BsplineKF::quadraticBsplines</a></div><div class="ttdeci">std::array&lt; double, 3 &gt; quadraticBsplines(const double &amp;ti, const double &amp;splineSpacing=1.0)</div><div class="ttdoc">Set the points/knots of the four B-splines.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1BsplineKF_html"><div class="ttname"><a href="namespaceNAV_1_1BsplineKF.html">NAV::BsplineKF</a></div><div class="ttdef"><b>Definition</b> <a href="BsplineKF_8hpp_source.html#l00022">BsplineKF.hpp:23</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1BsplineKF_html_a32329b7d4c3a30b82bf76e2f3ebb571d"><div class="ttname"><a href="namespaceNAV_1_1BsplineKF.html#a32329b7d4c3a30b82bf76e2f3ebb571d">NAV::BsplineKF::quadraticBsplines</a></div><div class="ttdeci">std::array&lt; double, 3 &gt; quadraticBsplines(const double &amp;ti, const double &amp;splineSpacing=1.0)</div><div class="ttdoc">Set the points/knots of the four B-splines.</div><div class="ttdef"><b>Definition</b> <a href="QuadraticBsplines_8cpp_source.html#l00016">QuadraticBsplines.cpp:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

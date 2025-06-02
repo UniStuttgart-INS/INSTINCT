@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1pixhawk_1_1message__header__s.h
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1pixhawk_1_1message__header__s-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::pixhawk::message_header_s Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,19 +128,56 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1pixhawk_1_1message__header__s.h
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a92da3ae8150a6856f5722d7f67ada66a" id="r_a92da3ae8150a6856f5722d7f67ada66a"><td class="memItemLeft" align="right" valign="top"><a id="a92da3ae8150a6856f5722d7f67ada66a" name="a92da3ae8150a6856f5722d7f67ada66a"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>msg_size</b></td></tr>
-<tr class="memdesc:a92da3ae8150a6856f5722d7f67ada66a"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of the message in bytes without the header (hdr_size= 3 bytes) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a92da3ae8150a6856f5722d7f67ada66a" id="r_a92da3ae8150a6856f5722d7f67ada66a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92da3ae8150a6856f5722d7f67ada66a">msg_size</a></td></tr>
+<tr class="memdesc:a92da3ae8150a6856f5722d7f67ada66a"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of the message in bytes without the header (hdr_size= 3 bytes)  <br /></td></tr>
 <tr class="separator:a92da3ae8150a6856f5722d7f67ada66a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc8acccf5a1ccd2efb7e29c5e3d6535a" id="r_afc8acccf5a1ccd2efb7e29c5e3d6535a"><td class="memItemLeft" align="right" valign="top"><a id="afc8acccf5a1ccd2efb7e29c5e3d6535a" name="afc8acccf5a1ccd2efb7e29c5e3d6535a"></a>
-char&#160;</td><td class="memItemRight" valign="bottom"><b>msg_type</b></td></tr>
-<tr class="memdesc:afc8acccf5a1ccd2efb7e29c5e3d6535a"><td class="mdescLeft">&#160;</td><td class="mdescRight">defines the content and is one of the following <br /></td></tr>
+<tr class="memitem:afc8acccf5a1ccd2efb7e29c5e3d6535a" id="r_afc8acccf5a1ccd2efb7e29c5e3d6535a"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc8acccf5a1ccd2efb7e29c5e3d6535a">msg_type</a></td></tr>
+<tr class="memdesc:afc8acccf5a1ccd2efb7e29c5e3d6535a"><td class="mdescLeft">&#160;</td><td class="mdescRight">defines the content and is one of the following  <br /></td></tr>
 <tr class="separator:afc8acccf5a1ccd2efb7e29c5e3d6535a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The Definitions and Data sections consist of a stream of messages. Each starts with this header. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="UlogFileFormat_8hpp_source.html#l00036">36</a> of file <a class="el" href="UlogFileFormat_8hpp_source.html">UlogFileFormat.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a92da3ae8150a6856f5722d7f67ada66a" name="a92da3ae8150a6856f5722d7f67ada66a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92da3ae8150a6856f5722d7f67ada66a">&#9670;&#160;</a></span>msg_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t NAV::vendor::pixhawk::message_header_s::msg_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>size of the message in bytes without the header (hdr_size= 3 bytes) </p>
+
+<p class="definition">Definition at line <a class="el" href="UlogFileFormat_8hpp_source.html#l00038">38</a> of file <a class="el" href="UlogFileFormat_8hpp_source.html">UlogFileFormat.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afc8acccf5a1ccd2efb7e29c5e3d6535a" name="afc8acccf5a1ccd2efb7e29c5e3d6535a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc8acccf5a1ccd2efb7e29c5e3d6535a">&#9670;&#160;</a></span>msg_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char NAV::vendor::pixhawk::message_header_s::msg_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>defines the content and is one of the following </p>
+
+<p class="definition">Definition at line <a class="el" href="UlogFileFormat_8hpp_source.html#l00039">39</a> of file <a class="el" href="UlogFileFormat_8hpp_source.html">UlogFileFormat.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/Pixhawk/<a class="el" href="UlogFileFormat_8hpp_source.html">UlogFileFormat.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -148,7 +185,7 @@ char&#160;</td><td class="memItemRight" valign="bottom"><b>msg_type</b></td></tr
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>pixhawk</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__header__s.html">message_header_s</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1pixhawk.html">pixhawk</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1pixhawk_1_1message__header__s.html">message_header_s</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

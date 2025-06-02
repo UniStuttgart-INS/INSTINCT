@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('KeyedLeastSquares_8hpp.html',''); initResizable(true);
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">KeyedLeastSquares.hpp File Reference</div></div>
 </div><!--header-->
@@ -130,27 +132,32 @@ $(function(){initNavTree('KeyedLeastSquares_8hpp.html',''); initResizable(true);
 <p><a href="KeyedLeastSquares_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">NAV::KeyedLeastSquaresResult&lt; Scalar, StateKeyType &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Least Squares Uncertainties return value.  <a href="structNAV_1_1KeyedLeastSquaresResult.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4011f18afaee03aecfe164949504e055" id="r_a4011f18afaee03aecfe164949504e055"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </td></tr>
-<tr class="memitem:a4011f18afaee03aecfe164949504e055"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4011f18afaee03aecfe164949504e055">NAV::solveLinearLeastSquares</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
+<tr class="memitem:a4011f18afaee03aecfe164949504e055"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a4011f18afaee03aecfe164949504e055">NAV::solveLinearLeastSquares</a> (const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
 <tr class="memdesc:a4011f18afaee03aecfe164949504e055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="103" height="14"/>.  <br /></td></tr>
 <tr class="separator:a4011f18afaee03aecfe164949504e055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a190e124963aafc9ee781de628ad56b" id="r_a1a190e124963aafc9ee781de628ad56b"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </td></tr>
-<tr class="memitem:a1a190e124963aafc9ee781de628ad56b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">KeyedLeastSquaresResult</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a1a190e124963aafc9ee781de628ad56b">NAV::solveLinearLeastSquaresUncertainties</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
+<tr class="memitem:a1a190e124963aafc9ee781de628ad56b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">KeyedLeastSquaresResult</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a1a190e124963aafc9ee781de628ad56b">NAV::solveLinearLeastSquaresUncertainties</a> (const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
 <tr class="memdesc:a1a190e124963aafc9ee781de628ad56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="103" height="14"/>.  <br /></td></tr>
 <tr class="separator:a1a190e124963aafc9ee781de628ad56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87eb8b9771ec9abdc03cff04bbf846a1" id="r_a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </td></tr>
-<tr class="memitem:a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a87eb8b9771ec9abdc03cff04bbf846a1">NAV::solveWeightedLinearLeastSquares</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;W, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
+<tr class="memitem:a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a87eb8b9771ec9abdc03cff04bbf846a1">NAV::solveWeightedLinearLeastSquares</a> (const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;W, const <a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
 <tr class="memdesc:a87eb8b9771ec9abdc03cff04bbf846a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "weighted least squares" solution (see LeastSquares.hpp)  <br /></td></tr>
 <tr class="separator:a87eb8b9771ec9abdc03cff04bbf846a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a941a60ab2cc902900e24745ff018b02a" id="r_a941a60ab2cc902900e24745ff018b02a"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </td></tr>
-<tr class="memitem:a941a60ab2cc902900e24745ff018b02a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">KeyedLeastSquaresResult</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a941a60ab2cc902900e24745ff018b02a">NAV::solveWeightedLinearLeastSquaresUncertainties</a> (const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;W, const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
+<tr class="memitem:a941a60ab2cc902900e24745ff018b02a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedLeastSquaresResult.html">KeyedLeastSquaresResult</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a941a60ab2cc902900e24745ff018b02a">NAV::solveWeightedLinearLeastSquaresUncertainties</a> (const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;H, const <a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;W, const <a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;dz)</td></tr>
 <tr class="memdesc:a941a60ab2cc902900e24745ff018b02a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the "weighted least squares" solution.  <br /></td></tr>
 <tr class="separator:a941a60ab2cc902900e24745ff018b02a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -160,152 +167,9 @@ Functions</h2></td></tr>
 <dd>
 T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-09-26 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a4011f18afaee03aecfe164949504e055" name="a4011f18afaee03aecfe164949504e055"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4011f18afaee03aecfe164949504e055">&#9670;&#160;</a></span>solveLinearLeastSquares()</h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">KeyedVectorX&lt; Scalar, StateKeyType &gt; NAV::solveLinearLeastSquares </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dz</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="103" height="14"/>. </p>
-<p>Minimizes the functional (see LeastSquares.hpp) </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dz</td><td>Residual vector </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Least squares solution </dd></dl>
-
-</div>
-</div>
-<a id="a1a190e124963aafc9ee781de628ad56b" name="a1a190e124963aafc9ee781de628ad56b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a190e124963aafc9ee781de628ad56b">&#9670;&#160;</a></span>solveLinearLeastSquaresUncertainties()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">KeyedLeastSquaresResult&lt; Scalar, StateKeyType &gt; NAV::solveLinearLeastSquaresUncertainties </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dz</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Finds the "least squares" solution for the equation <img class="formulaInl" alt="$ \mathbf{v} = \mathbf{dz} - \mathbf{H} \mathbf{x} $" src="form_60.svg" width="103" height="14"/>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dz</td><td>Residual vector </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Least squares solution and variance </dd></dl>
-
-</div>
-</div>
-<a id="a87eb8b9771ec9abdc03cff04bbf846a1" name="a87eb8b9771ec9abdc03cff04bbf846a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87eb8b9771ec9abdc03cff04bbf846a1">&#9670;&#160;</a></span>solveWeightedLinearLeastSquares()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">KeyedVectorX&lt; Scalar, StateKeyType &gt; NAV::solveWeightedLinearLeastSquares </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>W</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dz</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Finds the "weighted least squares" solution (see LeastSquares.hpp) </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">W</td><td>Weight matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dz</td><td>Residual vector </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Least squares solution </dd></dl>
-
-</div>
-</div>
-<a id="a941a60ab2cc902900e24745ff018b02a" name="a941a60ab2cc902900e24745ff018b02a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a941a60ab2cc902900e24745ff018b02a">&#9670;&#160;</a></span>solveWeightedLinearLeastSquaresUncertainties()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">KeyedLeastSquaresResult&lt; Scalar, StateKeyType &gt; NAV::solveWeightedLinearLeastSquaresUncertainties </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>H</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>W</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>dz</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Finds the "weighted least squares" solution. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">H</td><td>Design Matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">W</td><td>Weight matrix </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dz</td><td>Residual vector </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Weighted least squares solution and variance </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="KeyedLeastSquares_8hpp_source.html">KeyedLeastSquares.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

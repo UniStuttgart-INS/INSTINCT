@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,12 +119,11 @@ $(function(){initNavTree('classNAV_1_1KeyedKalmanFilter.html',''); initResizable
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-attribs">Data Fields</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1KeyedKalmanFilter-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,7 +132,7 @@ $(function(){initNavTree('classNAV_1_1KeyedKalmanFilter.html',''); initResizable
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html">NISResult</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalized Innovation Squared (NIS) test results.  <a href="structNAV_1_1KeyedKalmanFilter_1_1NISResult.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,9 +172,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abe99cd42eeea71cb137f56cbf051a676" id="r_abe99cd42eeea71cb137f56cbf051a676"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe99cd42eeea71cb137f56cbf051a676">correctWithMeasurementInnovation</a> ()</td></tr>
 <tr class="memdesc:abe99cd42eeea71cb137f56cbf051a676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a Measurement Update with a Measurement Innovation 𝜹𝐳  <br /></td></tr>
 <tr class="separator:abe99cd42eeea71cb137f56cbf051a676"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43e1082ef52282e0e340cbda0c881a55" id="r_a43e1082ef52282e0e340cbda0c881a55"><td class="memItemLeft" align="right" valign="top"><a id="a43e1082ef52282e0e340cbda0c881a55" name="a43e1082ef52282e0e340cbda0c881a55"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>discardPreUpdate</b> ()</td></tr>
-<tr class="memdesc:a43e1082ef52282e0e340cbda0c881a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discards the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="memitem:a43e1082ef52282e0e340cbda0c881a55" id="r_a43e1082ef52282e0e340cbda0c881a55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43e1082ef52282e0e340cbda0c881a55">discardPreUpdate</a> ()</td></tr>
+<tr class="memdesc:a43e1082ef52282e0e340cbda0c881a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Discards the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update)  <br /></td></tr>
 <tr class="separator:a43e1082ef52282e0e340cbda0c881a55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb09ffe62600a2aa1b8056b0d4a16ef3" id="r_abb09ffe62600a2aa1b8056b0d4a16ef3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb09ffe62600a2aa1b8056b0d4a16ef3">hasAnyStates</a> (std::span&lt; const StateKeyType &gt; stateKeys) const</td></tr>
 <tr class="memdesc:abb09ffe62600a2aa1b8056b0d4a16ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the filter has any of the provided keys.  <br /></td></tr>
@@ -185,17 +184,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>discardPreUpdate</b> 
 <tr class="memitem:ab8bf7b31ffa5dae53f0963450be74225" id="r_ab8bf7b31ffa5dae53f0963450be74225"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8bf7b31ffa5dae53f0963450be74225">hasStates</a> (std::span&lt; const StateKeyType &gt; stateKeys) const</td></tr>
 <tr class="memdesc:ab8bf7b31ffa5dae53f0963450be74225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the filter has the keys.  <br /></td></tr>
 <tr class="separator:ab8bf7b31ffa5dae53f0963450be74225"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6e45ab05460bbb66f87f4746b7be41a" id="r_ac6e45ab05460bbb66f87f4746b7be41a"><td class="memItemLeft" align="right" valign="top"><a id="ac6e45ab05460bbb66f87f4746b7be41a" name="ac6e45ab05460bbb66f87f4746b7be41a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isNISenabled</b> () const</td></tr>
-<tr class="memdesc:ac6e45ab05460bbb66f87f4746b7be41a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the NIS check should be performed. <br /></td></tr>
+<tr class="memitem:ac6e45ab05460bbb66f87f4746b7be41a" id="r_ac6e45ab05460bbb66f87f4746b7be41a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6e45ab05460bbb66f87f4746b7be41a">isNISenabled</a> () const</td></tr>
+<tr class="memdesc:ac6e45ab05460bbb66f87f4746b7be41a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the NIS check should be performed.  <br /></td></tr>
 <tr class="separator:ac6e45ab05460bbb66f87f4746b7be41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49e8b832ab029c0b140106e12efefd87" id="r_a49e8b832ab029c0b140106e12efefd87"><td class="memItemLeft" align="right" valign="top"><a id="a49e8b832ab029c0b140106e12efefd87" name="a49e8b832ab029c0b140106e12efefd87"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPreUpdateSaved</b> () const</td></tr>
-<tr class="memdesc:a49e8b832ab029c0b140106e12efefd87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a pre-update was saved. <br /></td></tr>
+<tr class="memitem:a49e8b832ab029c0b140106e12efefd87" id="r_a49e8b832ab029c0b140106e12efefd87"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49e8b832ab029c0b140106e12efefd87">isPreUpdateSaved</a> () const</td></tr>
+<tr class="memdesc:a49e8b832ab029c0b140106e12efefd87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a pre-update was saved.  <br /></td></tr>
 <tr class="separator:a49e8b832ab029c0b140106e12efefd87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae13032a68928c47806870241e3e35869" id="r_ae13032a68928c47806870241e3e35869"><td class="memItemLeft" align="right" valign="top"><a id="ae13032a68928c47806870241e3e35869" name="ae13032a68928c47806870241e3e35869"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>KeyedKalmanFilter</b> ()=default</td></tr>
-<tr class="memdesc:ae13032a68928c47806870241e3e35869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:ae13032a68928c47806870241e3e35869" id="r_ae13032a68928c47806870241e3e35869"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae13032a68928c47806870241e3e35869">KeyedKalmanFilter</a> ()=default</td></tr>
+<tr class="memdesc:ae13032a68928c47806870241e3e35869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:ae13032a68928c47806870241e3e35869"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a840bb4ab7734f3d4de9a5f93ad7c580d" id="r_a840bb4ab7734f3d4de9a5f93ad7c580d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a840bb4ab7734f3d4de9a5f93ad7c580d">KeyedKalmanFilter</a> (std::span&lt; const StateKeyType &gt; stateKeys, std::span&lt; const MeasKeyType &gt; measKeys)</td></tr>
 <tr class="memdesc:a840bb4ab7734f3d4de9a5f93ad7c580d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
@@ -218,100 +214,80 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPreUpdateSaved</b> 
 <tr class="memitem:a2794b5e0b095d44672d0a767ca931c26" id="r_a2794b5e0b095d44672d0a767ca931c26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2794b5e0b095d44672d0a767ca931c26">replaceState</a> (const StateKeyType &amp;oldKey, const StateKeyType &amp;newKey)</td></tr>
 <tr class="memdesc:a2794b5e0b095d44672d0a767ca931c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the old with the new key.  <br /></td></tr>
 <tr class="separator:a2794b5e0b095d44672d0a767ca931c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3f70fa23df0e081f57b818e2ebf37c8" id="r_ab3f70fa23df0e081f57b818e2ebf37c8"><td class="memItemLeft" align="right" valign="top"><a id="ab3f70fa23df0e081f57b818e2ebf37c8" name="ab3f70fa23df0e081f57b818e2ebf37c8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>restorePreUpdate</b> ()</td></tr>
-<tr class="memdesc:ab3f70fa23df0e081f57b818e2ebf37c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="memitem:ab3f70fa23df0e081f57b818e2ebf37c8" id="r_ab3f70fa23df0e081f57b818e2ebf37c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3f70fa23df0e081f57b818e2ebf37c8">restorePreUpdate</a> ()</td></tr>
+<tr class="memdesc:ab3f70fa23df0e081f57b818e2ebf37c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restores the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update)  <br /></td></tr>
 <tr class="separator:ab3f70fa23df0e081f57b818e2ebf37c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8d3d8a65b5b28815eb8ae7acda0305a" id="r_af8d3d8a65b5b28815eb8ae7acda0305a"><td class="memItemLeft" align="right" valign="top"><a id="af8d3d8a65b5b28815eb8ae7acda0305a" name="af8d3d8a65b5b28815eb8ae7acda0305a"></a>
-const <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>savedPreUpdate</b> () const</td></tr>
-<tr class="memdesc:af8d3d8a65b5b28815eb8ae7acda0305a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the saved pre-update matrices. <br /></td></tr>
+<tr class="memitem:af8d3d8a65b5b28815eb8ae7acda0305a" id="r_af8d3d8a65b5b28815eb8ae7acda0305a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8d3d8a65b5b28815eb8ae7acda0305a">savedPreUpdate</a> () const</td></tr>
+<tr class="memdesc:af8d3d8a65b5b28815eb8ae7acda0305a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accesses the saved pre-update matrices.  <br /></td></tr>
 <tr class="separator:af8d3d8a65b5b28815eb8ae7acda0305a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada564393acb2210371aa3a383aaf8a85" id="r_ada564393acb2210371aa3a383aaf8a85"><td class="memItemLeft" align="right" valign="top"><a id="ada564393acb2210371aa3a383aaf8a85" name="ada564393acb2210371aa3a383aaf8a85"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>savePreUpdate</b> ()</td></tr>
-<tr class="memdesc:ada564393acb2210371aa3a383aaf8a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) <br /></td></tr>
+<tr class="memitem:ada564393acb2210371aa3a383aaf8a85" id="r_ada564393acb2210371aa3a383aaf8a85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada564393acb2210371aa3a383aaf8a85">savePreUpdate</a> ()</td></tr>
+<tr class="memdesc:ada564393acb2210371aa3a383aaf8a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update)  <br /></td></tr>
 <tr class="separator:ada564393acb2210371aa3a383aaf8a85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeccb62bf73abd496bd69f8b93fe3e216" id="r_aeccb62bf73abd496bd69f8b93fe3e216"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeccb62bf73abd496bd69f8b93fe3e216">setMeasurements</a> (std::span&lt; const MeasKeyType &gt; measKeys)</td></tr>
 <tr class="memdesc:aeccb62bf73abd496bd69f8b93fe3e216"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the measurement keys and initializes matrices z, H, R, S, K with Zero.  <br /></td></tr>
 <tr class="separator:aeccb62bf73abd496bd69f8b93fe3e216"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8507cad862fdb498dc0ac9c844d7f35" id="r_ab8507cad862fdb498dc0ac9c844d7f35"><td class="memItemLeft" align="right" valign="top"><a id="ab8507cad862fdb498dc0ac9c844d7f35" name="ab8507cad862fdb498dc0ac9c844d7f35"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setZero</b> ()</td></tr>
-<tr class="memdesc:ab8507cad862fdb498dc0ac9c844d7f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all Vectors and matrices to 0. <br /></td></tr>
+<tr class="memitem:ab8507cad862fdb498dc0ac9c844d7f35" id="r_ab8507cad862fdb498dc0ac9c844d7f35"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8507cad862fdb498dc0ac9c844d7f35">setZero</a> ()</td></tr>
+<tr class="memdesc:ab8507cad862fdb498dc0ac9c844d7f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets all Vectors and matrices to 0.  <br /></td></tr>
 <tr class="separator:ab8507cad862fdb498dc0ac9c844d7f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1485e152828c151cbc0f82dedfc324d1" id="r_a1485e152828c151cbc0f82dedfc324d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1485e152828c151cbc0f82dedfc324d1">showKalmanFilterGUI</a> (const char *id, float width=0.0F)</td></tr>
 <tr class="memdesc:a1485e152828c151cbc0f82dedfc324d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements for the Kalman Filter.  <br /></td></tr>
 <tr class="separator:a1485e152828c151cbc0f82dedfc324d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e8b0986ee8bd808c21c25b8eb5d89d0" id="r_a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e8b0986ee8bd808c21c25b8eb5d89d0">showKalmanFilterMatrixViews</a> (const char *id, int nRows=-2)</td></tr>
-<tr class="memdesc:a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows ImGui Tree nodes for all matrices.  <br /></td></tr>
+<tr class="memdesc:a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows <a class="el" href="namespaceImGui.html">ImGui</a> Tree nodes for all matrices.  <br /></td></tr>
 <tr class="separator:a9e8b0986ee8bd808c21c25b8eb5d89d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a94fb5d33ccef28e1bad65099e16e3fbe" id="r_a94fb5d33ccef28e1bad65099e16e3fbe"><td class="memItemLeft" align="right" valign="top"><a id="a94fb5d33ccef28e1bad65099e16e3fbe" name="a94fb5d33ccef28e1bad65099e16e3fbe"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>F</b></td></tr>
-<tr class="memdesc:a94fb5d33ccef28e1bad65099e16e3fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐅 System model matrix (n x n) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a94fb5d33ccef28e1bad65099e16e3fbe" id="r_a94fb5d33ccef28e1bad65099e16e3fbe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94fb5d33ccef28e1bad65099e16e3fbe">F</a></td></tr>
+<tr class="memdesc:a94fb5d33ccef28e1bad65099e16e3fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐅 System model matrix (n x n)  <br /></td></tr>
 <tr class="separator:a94fb5d33ccef28e1bad65099e16e3fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff9b6598acaaa6e376259b3a99a93af1" id="r_aff9b6598acaaa6e376259b3a99a93af1"><td class="memItemLeft" align="right" valign="top"><a id="aff9b6598acaaa6e376259b3a99a93af1" name="aff9b6598acaaa6e376259b3a99a93af1"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>G</b></td></tr>
-<tr class="memdesc:aff9b6598acaaa6e376259b3a99a93af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐆 Noise input matrix (n x o) <br /></td></tr>
+<tr class="memitem:aff9b6598acaaa6e376259b3a99a93af1" id="r_aff9b6598acaaa6e376259b3a99a93af1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff9b6598acaaa6e376259b3a99a93af1">G</a></td></tr>
+<tr class="memdesc:aff9b6598acaaa6e376259b3a99a93af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐆 Noise input matrix (n x o)  <br /></td></tr>
 <tr class="separator:aff9b6598acaaa6e376259b3a99a93af1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09342276a94986eae122db2314a35b0c" id="r_a09342276a94986eae122db2314a35b0c"><td class="memItemLeft" align="right" valign="top"><a id="a09342276a94986eae122db2314a35b0c" name="a09342276a94986eae122db2314a35b0c"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>H</b></td></tr>
-<tr class="memdesc:a09342276a94986eae122db2314a35b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐇 Measurement sensitivity matrix (m x n) <br /></td></tr>
+<tr class="memitem:a09342276a94986eae122db2314a35b0c" id="r_a09342276a94986eae122db2314a35b0c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09342276a94986eae122db2314a35b0c">H</a></td></tr>
+<tr class="memdesc:a09342276a94986eae122db2314a35b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐇 Measurement sensitivity matrix (m x n)  <br /></td></tr>
 <tr class="separator:a09342276a94986eae122db2314a35b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80d2d56bab21a718c06e7afd0b9d8349" id="r_a80d2d56bab21a718c06e7afd0b9d8349"><td class="memItemLeft" align="right" valign="top"><a id="a80d2d56bab21a718c06e7afd0b9d8349" name="a80d2d56bab21a718c06e7afd0b9d8349"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>K</b></td></tr>
-<tr class="memdesc:a80d2d56bab21a718c06e7afd0b9d8349"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐊 Kalman gain matrix (n x m) <br /></td></tr>
+<tr class="memitem:a80d2d56bab21a718c06e7afd0b9d8349" id="r_a80d2d56bab21a718c06e7afd0b9d8349"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80d2d56bab21a718c06e7afd0b9d8349">K</a></td></tr>
+<tr class="memdesc:a80d2d56bab21a718c06e7afd0b9d8349"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐊 Kalman gain matrix (n x m)  <br /></td></tr>
 <tr class="separator:a80d2d56bab21a718c06e7afd0b9d8349"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3dfa3b07adcc32c13f377c4e07d55a9" id="r_af3dfa3b07adcc32c13f377c4e07d55a9"><td class="memItemLeft" align="right" valign="top"><a id="af3dfa3b07adcc32c13f377c4e07d55a9" name="af3dfa3b07adcc32c13f377c4e07d55a9"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>P</b></td></tr>
-<tr class="memdesc:af3dfa3b07adcc32c13f377c4e07d55a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐏 Error covariance matrix (n x n) <br /></td></tr>
+<tr class="memitem:af3dfa3b07adcc32c13f377c4e07d55a9" id="r_af3dfa3b07adcc32c13f377c4e07d55a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3dfa3b07adcc32c13f377c4e07d55a9">P</a></td></tr>
+<tr class="memdesc:af3dfa3b07adcc32c13f377c4e07d55a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐏 Error covariance matrix (n x n)  <br /></td></tr>
 <tr class="separator:af3dfa3b07adcc32c13f377c4e07d55a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adea9db7fcd1a6f505109c5997d73b134" id="r_adea9db7fcd1a6f505109c5997d73b134"><td class="memItemLeft" align="right" valign="top"><a id="adea9db7fcd1a6f505109c5997d73b134" name="adea9db7fcd1a6f505109c5997d73b134"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Phi</b></td></tr>
-<tr class="memdesc:adea9db7fcd1a6f505109c5997d73b134"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝚽 State transition matrix (n x n) <br /></td></tr>
+<tr class="memitem:adea9db7fcd1a6f505109c5997d73b134" id="r_adea9db7fcd1a6f505109c5997d73b134"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adea9db7fcd1a6f505109c5997d73b134">Phi</a></td></tr>
+<tr class="memdesc:adea9db7fcd1a6f505109c5997d73b134"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝚽 State transition matrix (n x n)  <br /></td></tr>
 <tr class="separator:adea9db7fcd1a6f505109c5997d73b134"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa36b1f206f5e7cac21f53a0c79565b40" id="r_aa36b1f206f5e7cac21f53a0c79565b40"><td class="memItemLeft" align="right" valign="top"><a id="aa36b1f206f5e7cac21f53a0c79565b40" name="aa36b1f206f5e7cac21f53a0c79565b40"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Q</b></td></tr>
-<tr class="memdesc:aa36b1f206f5e7cac21f53a0c79565b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐐 System/Process noise covariance matrix (n x n) <br /></td></tr>
+<tr class="memitem:aa36b1f206f5e7cac21f53a0c79565b40" id="r_aa36b1f206f5e7cac21f53a0c79565b40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa36b1f206f5e7cac21f53a0c79565b40">Q</a></td></tr>
+<tr class="memdesc:aa36b1f206f5e7cac21f53a0c79565b40"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐐 System/Process noise covariance matrix (n x n)  <br /></td></tr>
 <tr class="separator:aa36b1f206f5e7cac21f53a0c79565b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae62ceae71096894c8c9035d1e45c89f7" id="r_ae62ceae71096894c8c9035d1e45c89f7"><td class="memItemLeft" align="right" valign="top"><a id="ae62ceae71096894c8c9035d1e45c89f7" name="ae62ceae71096894c8c9035d1e45c89f7"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>R</b></td></tr>
-<tr class="memdesc:ae62ceae71096894c8c9035d1e45c89f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m) <br /></td></tr>
+<tr class="memitem:ae62ceae71096894c8c9035d1e45c89f7" id="r_ae62ceae71096894c8c9035d1e45c89f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae62ceae71096894c8c9035d1e45c89f7">R</a></td></tr>
+<tr class="memdesc:ae62ceae71096894c8c9035d1e45c89f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m)  <br /></td></tr>
 <tr class="separator:ae62ceae71096894c8c9035d1e45c89f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fae3208857cf91f67457e09b4e5ae9e" id="r_a7fae3208857cf91f67457e09b4e5ae9e"><td class="memItemLeft" align="right" valign="top"><a id="a7fae3208857cf91f67457e09b4e5ae9e" name="a7fae3208857cf91f67457e09b4e5ae9e"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>S</b></td></tr>
-<tr class="memdesc:a7fae3208857cf91f67457e09b4e5ae9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝗦 Measurement prediction covariance matrix (m x m) <br /></td></tr>
+<tr class="memitem:a7fae3208857cf91f67457e09b4e5ae9e" id="r_a7fae3208857cf91f67457e09b4e5ae9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, MeasKeyType, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fae3208857cf91f67457e09b4e5ae9e">S</a></td></tr>
+<tr class="memdesc:a7fae3208857cf91f67457e09b4e5ae9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝗦 Measurement prediction covariance matrix (m x m)  <br /></td></tr>
 <tr class="separator:a7fae3208857cf91f67457e09b4e5ae9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a898673dec1ea625c8fb53d0e4197d352" id="r_a898673dec1ea625c8fb53d0e4197d352"><td class="memItemLeft" align="right" valign="top"><a id="a898673dec1ea625c8fb53d0e4197d352" name="a898673dec1ea625c8fb53d0e4197d352"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>W</b></td></tr>
-<tr class="memdesc:a898673dec1ea625c8fb53d0e4197d352"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐖 Noise scale matrix (o x o) <br /></td></tr>
+<tr class="memitem:a898673dec1ea625c8fb53d0e4197d352" id="r_a898673dec1ea625c8fb53d0e4197d352"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt; Scalar, StateKeyType, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a898673dec1ea625c8fb53d0e4197d352">W</a></td></tr>
+<tr class="memdesc:a898673dec1ea625c8fb53d0e4197d352"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐖 Noise scale matrix (o x o)  <br /></td></tr>
 <tr class="separator:a898673dec1ea625c8fb53d0e4197d352"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8629c6e5a1fde3860e2fb21db1902975" id="r_a8629c6e5a1fde3860e2fb21db1902975"><td class="memItemLeft" align="right" valign="top"><a id="a8629c6e5a1fde3860e2fb21db1902975" name="a8629c6e5a1fde3860e2fb21db1902975"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>x</b></td></tr>
-<tr class="memdesc:a8629c6e5a1fde3860e2fb21db1902975"><td class="mdescLeft">&#160;</td><td class="mdescRight">x̂ State vector (n x 1) <br /></td></tr>
+<tr class="memitem:a8629c6e5a1fde3860e2fb21db1902975" id="r_a8629c6e5a1fde3860e2fb21db1902975"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8629c6e5a1fde3860e2fb21db1902975">x</a></td></tr>
+<tr class="memdesc:a8629c6e5a1fde3860e2fb21db1902975"><td class="mdescLeft">&#160;</td><td class="mdescRight">x̂ State vector (n x 1)  <br /></td></tr>
 <tr class="separator:a8629c6e5a1fde3860e2fb21db1902975"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a323262892d410b725ea33355bdfe7b46" id="r_a323262892d410b725ea33355bdfe7b46"><td class="memItemLeft" align="right" valign="top"><a id="a323262892d410b725ea33355bdfe7b46" name="a323262892d410b725ea33355bdfe7b46"></a>
-<a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>z</b></td></tr>
-<tr class="memdesc:a323262892d410b725ea33355bdfe7b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐳 Measurement vector (m x 1) <br /></td></tr>
+<tr class="memitem:a323262892d410b725ea33355bdfe7b46" id="r_a323262892d410b725ea33355bdfe7b46"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt; Scalar, MeasKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a323262892d410b725ea33355bdfe7b46">z</a></td></tr>
+<tr class="memdesc:a323262892d410b725ea33355bdfe7b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝐳 Measurement vector (m x 1)  <br /></td></tr>
 <tr class="separator:a323262892d410b725ea33355bdfe7b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a456af3424f7e0d0ae58fe2c4ff10b7b8" id="r_a456af3424f7e0d0ae58fe2c4ff10b7b8"><td class="memItemLeft" align="right" valign="top"><a id="a456af3424f7e0d0ae58fe2c4ff10b7b8" name="a456af3424f7e0d0ae58fe2c4ff10b7b8"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>_alphaNIS</b></td></tr>
-<tr class="memdesc:a456af3424f7e0d0ae58fe2c4ff10b7b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">NIS Test Hypothesis testing failure rate (probability that H_0 is accepted is (1 - alpha)) <br /></td></tr>
+<tr class="memitem:a456af3424f7e0d0ae58fe2c4ff10b7b8" id="r_a456af3424f7e0d0ae58fe2c4ff10b7b8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a456af3424f7e0d0ae58fe2c4ff10b7b8">_alphaNIS</a></td></tr>
+<tr class="memdesc:a456af3424f7e0d0ae58fe2c4ff10b7b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">NIS Test Hypothesis testing failure rate (probability that H_0 is accepted is (1 - alpha))  <br /></td></tr>
 <tr class="separator:a456af3424f7e0d0ae58fe2c4ff10b7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fb1215fccdcc971b00e6f03f71a9fdc" id="r_a2fb1215fccdcc971b00e6f03f71a9fdc"><td class="memItemLeft" align="right" valign="top"><a id="a2fb1215fccdcc971b00e6f03f71a9fdc" name="a2fb1215fccdcc971b00e6f03f71a9fdc"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_checkNIS</b></td></tr>
-<tr class="memdesc:a2fb1215fccdcc971b00e6f03f71a9fdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalized Innovation Squared (NIS) test. <br /></td></tr>
+<tr class="memitem:a2fb1215fccdcc971b00e6f03f71a9fdc" id="r_a2fb1215fccdcc971b00e6f03f71a9fdc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fb1215fccdcc971b00e6f03f71a9fdc">_checkNIS</a></td></tr>
+<tr class="memdesc:a2fb1215fccdcc971b00e6f03f71a9fdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalized Innovation Squared (NIS) test.  <br /></td></tr>
 <tr class="separator:a2fb1215fccdcc971b00e6f03f71a9fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afce5a67fc52593c9bf5cedc3982b4968" id="r_afce5a67fc52593c9bf5cedc3982b4968"><td class="memItemLeft" align="right" valign="top"><a id="afce5a67fc52593c9bf5cedc3982b4968" name="afce5a67fc52593c9bf5cedc3982b4968"></a>
-<a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_savedPreUpdate</b></td></tr>
-<tr class="memdesc:afce5a67fc52593c9bf5cedc3982b4968"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saved pre-update state and measurement. <br /></td></tr>
+<tr class="memitem:afce5a67fc52593c9bf5cedc3982b4968" id="r_afce5a67fc52593c9bf5cedc3982b4968"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afce5a67fc52593c9bf5cedc3982b4968">_savedPreUpdate</a></td></tr>
+<tr class="memdesc:afce5a67fc52593c9bf5cedc3982b4968"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saved pre-update state and measurement.  <br /></td></tr>
 <tr class="separator:afce5a67fc52593c9bf5cedc3982b4968"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00bb48328a73de29caf62f8ccefd54d7" id="r_a00bb48328a73de29caf62f8ccefd54d7"><td class="memItemLeft" align="right" valign="top"><a id="a00bb48328a73de29caf62f8ccefd54d7" name="a00bb48328a73de29caf62f8ccefd54d7"></a>
-Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><b>I</b></td></tr>
-<tr class="memdesc:a00bb48328a73de29caf62f8ccefd54d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝑰 Identity matrix (n x n) <br /></td></tr>
+<tr class="memitem:a00bb48328a73de29caf62f8ccefd54d7" id="r_a00bb48328a73de29caf62f8ccefd54d7"><td class="memItemLeft" align="right" valign="top">Eigen::MatrixXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00bb48328a73de29caf62f8ccefd54d7">I</a></td></tr>
+<tr class="memdesc:a00bb48328a73de29caf62f8ccefd54d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">𝑰 Identity matrix (n x n)  <br /></td></tr>
 <tr class="separator:a00bb48328a73de29caf62f8ccefd54d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -334,9 +310,40 @@ class NAV::KeyedKalmanFilter&lt; Scalar, StateKeyType, MeasKeyType &gt;</div><p>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00038">38</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ae13032a68928c47806870241e3e35869" name="ae13032a68928c47806870241e3e35869"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae13032a68928c47806870241e3e35869">&#9670;&#160;</a></span>KeyedKalmanFilter() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::KeyedKalmanFilter </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Constructor. </p>
+
+</div>
+</div>
 <a id="a840bb4ab7734f3d4de9a5f93ad7c580d" name="a840bb4ab7734f3d4de9a5f93ad7c580d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a840bb4ab7734f3d4de9a5f93ad7c580d">&#9670;&#160;</a></span>KeyedKalmanFilter()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a840bb4ab7734f3d4de9a5f93ad7c580d">&#9670;&#160;</a></span>KeyedKalmanFilter() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,6 +379,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00047">47</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -409,6 +418,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00247">247</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aea3da0ffdf6c7e898087f3308ce80b73" name="aea3da0ffdf6c7e898087f3308ce80b73"></a>
@@ -443,6 +454,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00251">251</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -479,6 +492,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00154">154</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a2bf29e03a3558110e0ba66fefa2979e5" name="a2bf29e03a3558110e0ba66fefa2979e5"></a>
@@ -513,6 +528,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00158">158</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -550,6 +567,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential <a class="el" href="citelist.html#CITEREF_loan1978">[48]</a> </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00322">322</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="acd7da26c5d84e505adb68b1f7eb9d8e9" name="acd7da26c5d84e505adb68b1f7eb9d8e9"></a>
@@ -586,6 +605,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97 </dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>The cost of the computation is approximately 20n^3 for matrices of size n. The number 20 depends weakly on the norm of the matrix. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00312">312</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -628,6 +649,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98 </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00301">301</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a6603631bf7e4ebe45ee7a5d944c9b030" name="a6603631bf7e4ebe45ee7a5d944c9b030"></a>
@@ -665,6 +688,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <p>H_0: The measurement residual 𝜹𝐳 is consistent with the innovation covariance matrix 𝗦 The acceptance interval is chosen such that the probability that H_0 is accepted is (1 - alpha) </p><dl class="section return"><dt>Returns</dt><dd>The hypothesis test result if it failed, otherwise nothing. </dd></dl>
 <dl class="section attention"><dt>Attention</dt><dd>Needs to be called before the update </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00402">402</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="adc2979c77f9b713fdc05775cbb03185b" name="adc2979c77f9b713fdc05775cbb03185b"></a>
@@ -695,6 +720,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <p>Do a Measurement Update with a Measurement 𝐳 </p>
 <dl class="section attention"><dt>Attention</dt><dd>Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑) and the Measurement vector (𝐳) before calling this </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2) </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00106">106</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -728,6 +755,39 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <dl class="section note"><dt>Note</dt><dd>See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2) </dd>
 <dd>
 See Brown &amp; Hwang (2012) - Introduction to Random Signals and Applied Kalman Filtering (ch. 5.5 - figure 5.5) </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00125">125</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a43e1082ef52282e0e340cbda0c881a55" name="a43e1082ef52282e0e340cbda0c881a55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43e1082ef52282e0e340cbda0c881a55">&#9670;&#160;</a></span>discardPreUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::discardPreUpdate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Discards the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00378">378</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -764,6 +824,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00150">150</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a580665306f2a4105d59c41e3cf98e86d" name="a580665306f2a4105d59c41e3cf98e86d"></a>
@@ -798,6 +860,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00144">144</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -834,6 +898,70 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00147">147</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ac6e45ab05460bbb66f87f4746b7be41a" name="ac6e45ab05460bbb66f87f4746b7be41a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6e45ab05460bbb66f87f4746b7be41a">&#9670;&#160;</a></span>isNISenabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::isNISenabled </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the NIS check should be performed. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00385">385</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a49e8b832ab029c0b140106e12efefd87" name="a49e8b832ab029c0b140106e12efefd87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49e8b832ab029c0b140106e12efefd87">&#9670;&#160;</a></span>isPreUpdateSaved()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::isPreUpdateSaved </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a pre-update was saved. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00334">334</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ac35040a50530c57db76c21706ffce400" name="ac35040a50530c57db76c21706ffce400"></a>
@@ -864,6 +992,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <p>Do a Time Update. </p>
 <dl class="section attention"><dt>Attention</dt><dd>Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐) before calling this </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2) </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00093">93</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -900,6 +1030,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00266">266</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a68f84184dbbd0779bc3b6b64773ed281" name="a68f84184dbbd0779bc3b6b64773ed281"></a>
@@ -934,6 +1066,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00270">270</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -970,6 +1104,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00180">180</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a8f95360418d58e86c4b66ebee2762c2d" name="a8f95360418d58e86c4b66ebee2762c2d"></a>
@@ -1004,6 +1140,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00184">184</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -1045,6 +1183,101 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00207">207</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab3f70fa23df0e081f57b818e2ebf37c8" name="ab3f70fa23df0e081f57b818e2ebf37c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3f70fa23df0e081f57b818e2ebf37c8">&#9670;&#160;</a></span>restorePreUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::restorePreUpdate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Restores the saved x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00358">358</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af8d3d8a65b5b28815eb8ae7acda0305a" name="af8d3d8a65b5b28815eb8ae7acda0305a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8d3d8a65b5b28815eb8ae7acda0305a">&#9670;&#160;</a></span>savedPreUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a> &amp; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::savedPreUpdate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Accesses the saved pre-update matrices. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00547">547</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ada564393acb2210371aa3a383aaf8a85" name="ada564393acb2210371aa3a383aaf8a85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada564393acb2210371aa3a383aaf8a85">&#9670;&#160;</a></span>savePreUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::savePreUpdate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Saves x̂, 𝐏, 𝐳, 𝐇, 𝐑 a-priori (pre-update) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00337">337</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aeccb62bf73abd496bd69f8b93fe3e216" name="aeccb62bf73abd496bd69f8b93fe3e216"></a>
@@ -1080,6 +1313,39 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00228">228</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab8507cad862fdb498dc0ac9c844d7f35" name="ab8507cad862fdb498dc0ac9c844d7f35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8507cad862fdb498dc0ac9c844d7f35">&#9670;&#160;</a></span>setZero()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::setZero </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets all Vectors and matrices to 0. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00074">74</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a1485e152828c151cbc0f82dedfc324d1" name="a1485e152828c151cbc0f82dedfc324d1"></a>
@@ -1114,12 +1380,14 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <p>Shows GUI elements for the Kalman Filter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Width of the widget </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if something was changed </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00432">432</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -1152,14 +1420,16 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 </table>
 </div><div class="memdoc">
 
-<p>Shows ImGui Tree nodes for all matrices. </p>
+<p>Shows <a class="el" href="namespaceImGui.html">ImGui</a> Tree nodes for all matrices. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nRows</td><td>Amount of rows to show </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00457">457</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
 
 </div>
 </div>
@@ -1202,6 +1472,8 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00573">573</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a8189974c13501f264a5a37d7ec3058b4" name="a8189974c13501f264a5a37d7ec3058b4"></a>
@@ -1242,6 +1514,361 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00563">563</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a456af3424f7e0d0ae58fe2c4ff10b7b8" name="a456af3424f7e0d0ae58fe2c4ff10b7b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a456af3424f7e0d0ae58fe2c4ff10b7b8">&#9670;&#160;</a></span>_alphaNIS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::_alphaNIS</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>NIS Test Hypothesis testing failure rate (probability that H_0 is accepted is (1 - alpha)) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00558">558</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2fb1215fccdcc971b00e6f03f71a9fdc" name="a2fb1215fccdcc971b00e6f03f71a9fdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fb1215fccdcc971b00e6f03f71a9fdc">&#9670;&#160;</a></span>_checkNIS</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::_checkNIS</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Normalized Innovation Squared (NIS) test. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00555">555</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afce5a67fc52593c9bf5cedc3982b4968" name="afce5a67fc52593c9bf5cedc3982b4968"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afce5a67fc52593c9bf5cedc3982b4968">&#9670;&#160;</a></span>_savedPreUpdate</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1KeyedKalmanFilter_1_1SavedPreUpdate.html">SavedPreUpdate</a> <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::_savedPreUpdate</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Saved pre-update state and measurement. </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00552">552</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a94fb5d33ccef28e1bad65099e16e3fbe" name="a94fb5d33ccef28e1bad65099e16e3fbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94fb5d33ccef28e1bad65099e16e3fbe">&#9670;&#160;</a></span>F</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::F</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐅 System model matrix (n x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00293">293</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aff9b6598acaaa6e376259b3a99a93af1" name="aff9b6598acaaa6e376259b3a99a93af1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff9b6598acaaa6e376259b3a99a93af1">&#9670;&#160;</a></span>G</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::G</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐆 Noise input matrix (n x o) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00294">294</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a09342276a94986eae122db2314a35b0c" name="a09342276a94986eae122db2314a35b0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09342276a94986eae122db2314a35b0c">&#9670;&#160;</a></span>H</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, MeasKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::H</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐇 Measurement sensitivity matrix (m x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00288">288</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a00bb48328a73de29caf62f8ccefd54d7" name="a00bb48328a73de29caf62f8ccefd54d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00bb48328a73de29caf62f8ccefd54d7">&#9670;&#160;</a></span>I</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::MatrixXd <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::I</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>𝑰 Identity matrix (n x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00550">550</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a80d2d56bab21a718c06e7afd0b9d8349" name="a80d2d56bab21a718c06e7afd0b9d8349"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80d2d56bab21a718c06e7afd0b9d8349">&#9670;&#160;</a></span>K</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, MeasKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::K</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐊 Kalman gain matrix (n x m) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00291">291</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af3dfa3b07adcc32c13f377c4e07d55a9" name="af3dfa3b07adcc32c13f377c4e07d55a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3dfa3b07adcc32c13f377c4e07d55a9">&#9670;&#160;</a></span>P</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::P</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐏 Error covariance matrix (n x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00284">284</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="adea9db7fcd1a6f505109c5997d73b134" name="adea9db7fcd1a6f505109c5997d73b134"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adea9db7fcd1a6f505109c5997d73b134">&#9670;&#160;</a></span>Phi</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::Phi</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝚽 State transition matrix (n x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00285">285</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa36b1f206f5e7cac21f53a0c79565b40" name="aa36b1f206f5e7cac21f53a0c79565b40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa36b1f206f5e7cac21f53a0c79565b40">&#9670;&#160;</a></span>Q</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::Q</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐐 System/Process noise covariance matrix (n x n) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00286">286</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae62ceae71096894c8c9035d1e45c89f7" name="ae62ceae71096894c8c9035d1e45c89f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae62ceae71096894c8c9035d1e45c89f7">&#9670;&#160;</a></span>R</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, MeasKeyType, MeasKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::R</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (m x m) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00289">289</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7fae3208857cf91f67457e09b4e5ae9e" name="a7fae3208857cf91f67457e09b4e5ae9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fae3208857cf91f67457e09b4e5ae9e">&#9670;&#160;</a></span>S</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, MeasKeyType, MeasKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::S</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝗦 Measurement prediction covariance matrix (m x m) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00290">290</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a898673dec1ea625c8fb53d0e4197d352" name="a898673dec1ea625c8fb53d0e4197d352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a898673dec1ea625c8fb53d0e4197d352">&#9670;&#160;</a></span>W</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#a38baa4438244b8e4cbb98f4cd82d2bc6">KeyedMatrixX</a>&lt;Scalar, StateKeyType, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::W</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐖 Noise scale matrix (o x o) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00295">295</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a8629c6e5a1fde3860e2fb21db1902975" name="a8629c6e5a1fde3860e2fb21db1902975"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8629c6e5a1fde3860e2fb21db1902975">&#9670;&#160;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt;Scalar, StateKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>x̂ State vector (n x 1) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00283">283</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a323262892d410b725ea33355bdfe7b46" name="a323262892d410b725ea33355bdfe7b46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a323262892d410b725ea33355bdfe7b46">&#9670;&#160;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV.html#aa217ae466230082108aa5f5e2302e8d0">KeyedVectorX</a>&lt;Scalar, MeasKeyType&gt; <a class="el" href="classNAV_1_1KeyedKalmanFilter.html">NAV::KeyedKalmanFilter</a>&lt; Scalar, StateKeyType, MeasKeyType &gt;::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>𝐳 Measurement vector (m x 1) </p>
+
+<p class="definition">Definition at line <a class="el" href="KeyedKalmanFilter_8hpp_source.html#l00287">287</a> of file <a class="el" href="KeyedKalmanFilter_8hpp_source.html">KeyedKalmanFilter.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -1252,7 +1879,7 @@ template&lt;typename Scalar, typename StateKeyType, typename MeasKeyType&gt; </d
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1KeyedKalmanFilter.html">KeyedKalmanFilter</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1KeyedKalmanFilter.html">KeyedKalmanFilter</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

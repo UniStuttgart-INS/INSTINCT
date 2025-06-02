@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Matrix_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -130,11 +132,19 @@ $(function(){initNavTree('Matrix_8hpp.html',''); initResizable(true); });
 
 <p><a href="Matrix_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui.html">NAV::gui</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a0853b94c22ac5efef6a408e09bb7c277" id="r_a0853b94c22ac5efef6a408e09bb7c277"><td class="memItemLeft" align="right" valign="top"><a id="a0853b94c22ac5efef6a408e09bb7c277" name="a0853b94c22ac5efef6a408e09bb7c277"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>GuiMatrixViewFlags</b></td></tr>
-<tr class="memdesc:a0853b94c22ac5efef6a408e09bb7c277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags for MatrixView GUI elements <a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321db">GuiMatrixViewFlags_</a>. <br /></td></tr>
+<tr class="memitem:a0853b94c22ac5efef6a408e09bb7c277" id="r_a0853b94c22ac5efef6a408e09bb7c277"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a></td></tr>
+<tr class="memdesc:a0853b94c22ac5efef6a408e09bb7c277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags for MatrixView GUI elements <a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321db">GuiMatrixViewFlags_</a>.  <br /></td></tr>
 <tr class="separator:a0853b94c22ac5efef6a408e09bb7c277"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -155,11 +165,11 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a748970074f803c84af9d6621186b8111" id="r_a748970074f803c84af9d6621186b8111"><td class="memTemplParams" colspan="2">template&lt;typename _Scalar, int _Rows, int _Cols&gt; </td></tr>
-<tr class="memitem:a748970074f803c84af9d6621186b8111"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a748970074f803c84af9d6621186b8111">NAV::gui::widgets::InputMatrix</a> (const char *label, Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *matrix, <a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a> flags=<a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a>, ImGuiTableFlags tableFlags=ImGuiTableFlags_None, float inputTextWidth=50.0F, double step=0.0, double step_fast=0.0, const char *format=&quot;%.6f&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
+<tr class="memitem:a748970074f803c84af9d6621186b8111"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a748970074f803c84af9d6621186b8111">NAV::gui::widgets::InputMatrix</a> (const char *label, Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *matrix, <a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a> flags=<a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a>, ImGuiTableFlags tableFlags=ImGuiTableFlags_None, float inputTextWidth=50.0F, double step=0.0, double step_fast=0.0, const char *format=&quot;%.6f&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
 <tr class="memdesc:a748970074f803c84af9d6621186b8111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to modify the coefficients of a matrix with.  <br /></td></tr>
 <tr class="separator:a748970074f803c84af9d6621186b8111"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b326228c12a08b6c6f72e5ddd923f88" id="r_a6b326228c12a08b6c6f72e5ddd923f88"><td class="memTemplParams" colspan="2">template&lt;typename _Scalar, int _Rows, int _Cols&gt; </td></tr>
-<tr class="memitem:a6b326228c12a08b6c6f72e5ddd923f88"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6b326228c12a08b6c6f72e5ddd923f88">NAV::gui::widgets::MatrixView</a> (const char *label, const Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *matrix, <a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a> flags=<a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a>, ImGuiTableFlags tableFlags=ImGuiTableFlags_None, const char *format=&quot;%.6f&quot;)</td></tr>
+<tr class="memitem:a6b326228c12a08b6c6f72e5ddd923f88"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a6b326228c12a08b6c6f72e5ddd923f88">NAV::gui::widgets::MatrixView</a> (const char *label, const Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *matrix, <a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a> flags=<a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a>, ImGuiTableFlags tableFlags=ImGuiTableFlags_None, const char *format=&quot;%.6f&quot;)</td></tr>
 <tr class="memdesc:a6b326228c12a08b6c6f72e5ddd923f88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to display the coefficients of a matrix.  <br /></td></tr>
 <tr class="separator:a6b326228c12a08b6c6f72e5ddd923f88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -167,7 +177,28 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Widgets related to Matrices. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2021-10-04 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+
+<p class="definition">Definition in file <a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>.</p>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a0853b94c22ac5efef6a408e09bb7c277" name="a0853b94c22ac5efef6a408e09bb7c277"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0853b94c22ac5efef6a408e09bb7c277">&#9670;&#160;</a></span>GuiMatrixViewFlags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flags for MatrixView GUI elements <a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321db">GuiMatrixViewFlags_</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="Matrix_8hpp_source.html#l00021">21</a> of file <a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ae1afc03625e8c9f54d77ad7b57c321db" name="ae1afc03625e8c9f54d77ad7b57c321db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae1afc03625e8c9f54d77ad7b57c321db">&#9670;&#160;</a></span>GuiMatrixViewFlags_</h2>
 
@@ -192,147 +223,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a748970074f803c84af9d6621186b8111" name="a748970074f803c84af9d6621186b8111"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a748970074f803c84af9d6621186b8111">&#9670;&#160;</a></span>InputMatrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename _Scalar, int _Rows, int _Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::InputMatrix </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_None</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>inputTextWidth</em></span><span class="paramdefsep"> = </span><span class="paramdefval">50.0F</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step_fast</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;%.6f&quot;</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiInputTextFlags</td>          <td class="paramname"><span class="paramname"><em>inputTextFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiInputTextFlags_None</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to modify the coefficients of a matrix with. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">_Scalar</td><td>Data Type of the matrix </td></tr>
-    <tr><td class="paramname">_Rows</td><td>Amount of rows of the matrix </td></tr>
-    <tr><td class="paramname">_Cols</td><td>Amount of cols of the matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">matrix</td><td>Pointer to the matrix to modify </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Flags to modify the behavior of the whole element </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inputTextWidth</td><td>With in px of each InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step_fast</td><td>Fast step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Printf format to display the value with </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inputTextFlags</td><td>InputText flags to modify the behavior of the input fields </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value was changed </dd></dl>
-
-</div>
-</div>
-<a id="a6b326228c12a08b6c6f72e5ddd923f88" name="a6b326228c12a08b6c6f72e5ddd923f88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b326228c12a08b6c6f72e5ddd923f88">&#9670;&#160;</a></span>MatrixView()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename _Scalar, int _Rows, int _Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::gui::widgets::MatrixView </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Matrix&lt; _Scalar, _Rows, _Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="#a0853b94c22ac5efef6a408e09bb7c277">GuiMatrixViewFlags</a></td>          <td class="paramname"><span class="paramname"><em>flags</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="#ae1afc03625e8c9f54d77ad7b57c321dbab2a7679e12c8238d6db7552227efb7c1">GuiMatrixViewFlags_None</a></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_None</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;%.6f&quot;</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to display the coefficients of a matrix. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">_Scalar</td><td>Data Type of the matrix </td></tr>
-    <tr><td class="paramname">_Rows</td><td>Amount of rows of the matrix </td></tr>
-    <tr><td class="paramname">_Cols</td><td>Amount of cols of the matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">matrix</td><td>Pointer to the matrix to display </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Flags to modify the behavior of the whole element </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Printf format to display the value with </td></tr>
-  </table>
-  </dd>
-</dl>
+<p class="definition">Definition at line <a class="el" href="Matrix_8hpp_source.html#l00024">24</a> of file <a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>.</p>
 
 </div>
 </div>

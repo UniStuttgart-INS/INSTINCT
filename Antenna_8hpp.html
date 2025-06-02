@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Antenna_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Antenna.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,22 +130,29 @@ $(function(){initNavTree('Antenna_8hpp.html',''); initResizable(true); });
 
 <p><a href="Antenna_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1trafo.html">NAV::trafo</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:adf7d9fe7170bfaf06fabdce928a38acf" id="r_adf7d9fe7170bfaf06fabdce928a38acf"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:adf7d9fe7170bfaf06fabdce928a38acf"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adf7d9fe7170bfaf06fabdce928a38acf">NAV::trafo::e_posARP2APC</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_posARP, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:adf7d9fe7170bfaf06fabdce928a38acf"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1trafo.html#adf7d9fe7170bfaf06fabdce928a38acf">NAV::trafo::e_posARP2APC</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_posARP, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:adf7d9fe7170bfaf06fabdce928a38acf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a antenna reference point position position to the antenna phase center position.  <br /></td></tr>
 <tr class="separator:adf7d9fe7170bfaf06fabdce928a38acf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06037b850de14d2cf91ae9465937e47d" id="r_a06037b850de14d2cf91ae9465937e47d"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:a06037b850de14d2cf91ae9465937e47d"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a06037b850de14d2cf91ae9465937e47d">NAV::trafo::e_posMarker2ARP</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_posMarker, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, const Eigen::Vector3d &amp;hen_delta=Eigen::Vector3d::Zero())</td></tr>
+<tr class="memitem:a06037b850de14d2cf91ae9465937e47d"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1trafo.html#a06037b850de14d2cf91ae9465937e47d">NAV::trafo::e_posMarker2ARP</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;e_posMarker, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, const Eigen::Vector3d &amp;hen_delta=Eigen::Vector3d::Zero())</td></tr>
 <tr class="memdesc:a06037b850de14d2cf91ae9465937e47d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a marker position to the antenna reference point position.  <br /></td></tr>
 <tr class="separator:a06037b850de14d2cf91ae9465937e47d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a925fabc02a9352a86cb4cd56e51b0740" id="r_a925fabc02a9352a86cb4cd56e51b0740"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:a925fabc02a9352a86cb4cd56e51b0740"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a925fabc02a9352a86cb4cd56e51b0740">NAV::trafo::lla_posARP2APC</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;lla_posARP, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:a925fabc02a9352a86cb4cd56e51b0740"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1trafo.html#a925fabc02a9352a86cb4cd56e51b0740">NAV::trafo::lla_posARP2APC</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;lla_posARP, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, const std::string &amp;antennaType, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:a925fabc02a9352a86cb4cd56e51b0740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a antenna reference point position to the antenna phase center position.  <br /></td></tr>
 <tr class="separator:a925fabc02a9352a86cb4cd56e51b0740"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4da11a2118a104aa0bce538998977be" id="r_af4da11a2118a104aa0bce538998977be"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:af4da11a2118a104aa0bce538998977be"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af4da11a2118a104aa0bce538998977be">NAV::trafo::lla_posMarker2ARP</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;lla_posMarker, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, const Eigen::Vector3d &amp;hen_delta=Eigen::Vector3d::Zero())</td></tr>
+<tr class="memitem:af4da11a2118a104aa0bce538998977be"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename Derived::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1trafo.html#af4da11a2118a104aa0bce538998977be">NAV::trafo::lla_posMarker2ARP</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;lla_posMarker, const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;gnssObs, const Eigen::Vector3d &amp;hen_delta=Eigen::Vector3d::Zero())</td></tr>
 <tr class="memdesc:af4da11a2118a104aa0bce538998977be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a marker position to the antenna reference point position.  <br /></td></tr>
 <tr class="separator:af4da11a2118a104aa0bce538998977be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -151,220 +160,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>GNSS Antenna related transformations. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2024-08-01 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="adf7d9fe7170bfaf06fabdce928a38acf" name="adf7d9fe7170bfaf06fabdce928a38acf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf7d9fe7170bfaf06fabdce928a38acf">&#9670;&#160;</a></span>e_posARP2APC()</h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Eigen::Vector3&lt; typename Derived::Scalar &gt; NAV::trafo::e_posARP2APC </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_posARP</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gnssObs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>antennaType</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a antenna reference point position position to the antenna phase center position. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_posARP</td><td>Antenna reference point position in ECEF coordinates [m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">gnssObs</td><td>GNSS observation with antenna info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency of the observation </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">antennaType</td><td>Antenna type </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId of the calling node for Log output </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Antenna phase center position in ECEF frame [m] (ARP + antenna phase center) </dd></dl>
-
-</div>
-</div>
-<a id="a06037b850de14d2cf91ae9465937e47d" name="a06037b850de14d2cf91ae9465937e47d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06037b850de14d2cf91ae9465937e47d">&#9670;&#160;</a></span>e_posMarker2ARP()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Eigen::Vector3&lt; typename Derived::Scalar &gt; NAV::trafo::e_posMarker2ARP </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_posMarker</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gnssObs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>hen_delta</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::Vector3d::Zero()</span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a marker position to the antenna reference point position. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_posMarker</td><td>Marker position in ECEF coordinates [m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">gnssObs</td><td>GNSS observation with antenna info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">hen_delta</td><td>Additional height, east, north in [m] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Antenna Reference Point position in ECEF frame [m] (Marker + antennaDeltaNEU) </dd></dl>
-
-</div>
-</div>
-<a id="a925fabc02a9352a86cb4cd56e51b0740" name="a925fabc02a9352a86cb4cd56e51b0740"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a925fabc02a9352a86cb4cd56e51b0740">&#9670;&#160;</a></span>lla_posARP2APC()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Eigen::Vector3&lt; typename Derived::Scalar &gt; NAV::trafo::lla_posARP2APC </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_posARP</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gnssObs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>antennaType</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a antenna reference point position to the antenna phase center position. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_posARP</td><td>Antenna reference point position in LLA coordinates [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">gnssObs</td><td>GNSS observation with antenna info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency of the observation </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">antennaType</td><td>Antenna type </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId of the calling node for Log output </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Antenna phase center position in LLA coordinates [rad, rad, m] (ARP + antenna phase center) </dd></dl>
-
-</div>
-</div>
-<a id="af4da11a2118a104aa0bce538998977be" name="af4da11a2118a104aa0bce538998977be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4da11a2118a104aa0bce538998977be">&#9670;&#160;</a></span>lla_posMarker2ARP()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Eigen::Vector3&lt; typename Derived::Scalar &gt; NAV::trafo::lla_posMarker2ARP </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>lla_posMarker</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; const <a class="el" href="classNAV_1_1GnssObs.html">GnssObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gnssObs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::Vector3d &amp;</td>          <td class="paramname"><span class="paramname"><em>hen_delta</em></span><span class="paramdefsep"> = </span><span class="paramdefval">Eigen::Vector3d::Zero()</span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a marker position to the antenna reference point position. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lla_posMarker</td><td>Marker position in LLA coordinates [rad, rad, m] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">gnssObs</td><td>GNSS observation with antenna info </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">hen_delta</td><td>Additional height, east, north in [m] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Antenna Reference Point position in LLA coordinates [rad, rad, m] (Marker + antennaDeltaNEU) </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Antenna_8hpp_source.html">Antenna.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

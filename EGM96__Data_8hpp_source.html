@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -120,7 +121,7 @@ $(function(){initNavTree('EGM96__Data_8hpp_source.html',''); initResizable(true)
   <div class="headertitle"><div class="title">EGM96_Data.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
+<a href="EGM96__Data_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * Copyright (c) 2006 D.Ineiev &lt;ineiev@yahoo.co.uk&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> * Copyright (c) 2020 Emeric Grange &lt;emeric.grange@gmail.com&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> *</span></div>
@@ -143,13 +144,16 @@ $(function(){initNavTree('EGM96__Data_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">namespace </span>NAV::Geoid::EGM96::internal</div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="}">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1Geoid.html">   24</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1Geoid_1_1EGM96_1_1internal.html">NAV::Geoid::EGM96::internal</a></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// clang-format off</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">// NOLINTBEGIN</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">double</span> egm96_data[65342][4] = <span class="comment">// NOLINT</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment"></span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">//! Precomputed EGM96 correction and harmonic coefficients</span></div>
+<div class="foldopen" id="foldopen00031" data-start="{" data-end="};">
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="namespaceNAV_1_1Geoid_1_1EGM96_1_1internal.html#a56452b62d7c715c958e8c247d0de937a">   31</a></span><span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code hl_variable" href="namespaceNAV_1_1Geoid_1_1EGM96_1_1internal.html#a56452b62d7c715c958e8c247d0de937a">egm96_data</a>[65342][4] = <span class="comment">// NOLINT</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>{</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>{0,0,0,0},</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{-5.02745,0,0,0},</div>
@@ -65494,16 +65498,20 @@ $(function(){initNavTree('EGM96__Data_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l65373" name="l65373"></a><span class="lineno">65373</span>{-0.00738649,0.000547504,1.83972e-11,-3.10124e-11},</div>
 <div class="line"><a id="l65374" name="l65374"></a><span class="lineno">65374</span>{2.05446e-18,0.00725247,-4.47516e-25,-8.30225e-11},</div>
 <div class="line"><a id="l65375" name="l65375"></a><span class="lineno">65375</span>};</div>
+</div>
 <div class="line"><a id="l65376" name="l65376"></a><span class="lineno">65376</span><span class="comment">// NOLINTEND</span></div>
 <div class="line"><a id="l65377" name="l65377"></a><span class="lineno">65377</span><span class="comment">// clang-format off</span></div>
 <div class="line"><a id="l65378" name="l65378"></a><span class="lineno">65378</span> </div>
 <div class="line"><a id="l65379" name="l65379"></a><span class="lineno">65379</span>} <span class="comment">// namespace NAV::Geoid::EGM96::internal</span></div>
+</div>
+<div class="ttc" id="anamespaceNAV_1_1Geoid_1_1EGM96_1_1internal_html"><div class="ttname"><a href="namespaceNAV_1_1Geoid_1_1EGM96_1_1internal.html">NAV::Geoid::EGM96::internal</a></div><div class="ttdef"><b>Definition</b> <a href="#l00024">EGM96_Data.hpp:25</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1Geoid_1_1EGM96_1_1internal_html_a56452b62d7c715c958e8c247d0de937a"><div class="ttname"><a href="namespaceNAV_1_1Geoid_1_1EGM96_1_1internal.html#a56452b62d7c715c958e8c247d0de937a">NAV::Geoid::EGM96::internal::egm96_data</a></div><div class="ttdeci">static const double egm96_data[65342][4]</div><div class="ttdoc">Precomputed EGM96 correction and harmonic coefficients.</div><div class="ttdef"><b>Definition</b> <a href="#l00031">EGM96_Data.hpp:31</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_c22418dcd8fc294e4f92a6ae20e5b9eb.html">Geoid</a></li><li class="navelem"><a class="el" href="dir_b561d482edc8157ff6cb6a9a1f30ff6b.html">internal</a></li><li class="navelem"><b>EGM96_Data.hpp</b></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_d02623c45f6ab1c9bbaef247468873ab.html">Navigation</a></li><li class="navelem"><a class="el" href="dir_c22418dcd8fc294e4f92a6ae20e5b9eb.html">Geoid</a></li><li class="navelem"><a class="el" href="dir_b561d482edc8157ff6cb6a9a1f30ff6b.html">internal</a></li><li class="navelem"><a class="el" href="EGM96__Data_8hpp.html">EGM96_Data.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

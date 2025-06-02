@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('classNAV_1_1SNRMask.html',''); initResizable(true); })
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1SNRMask-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::SNRMask Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -135,38 +135,32 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a30048af5277a6c83c7a7a7b063a60cca" id="r_a30048af5277a6c83c7a7a7b063a60cca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30048af5277a6c83c7a7a7b063a60cca">checkSNRMask</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, double elevation, double SNR) const</td></tr>
 <tr class="memdesc:a30048af5277a6c83c7a7a7b063a60cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks wether the SNR values passes the SNR mask.  <br /></td></tr>
 <tr class="separator:a30048af5277a6c83c7a7a7b063a60cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef4fe500744a873a63903c24cc2b3f04" id="r_aef4fe500744a873a63903c24cc2b3f04"><td class="memItemLeft" align="right" valign="top"><a id="aef4fe500744a873a63903c24cc2b3f04" name="aef4fe500744a873a63903c24cc2b3f04"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>disable</b> ()</td></tr>
-<tr class="memdesc:aef4fe500744a873a63903c24cc2b3f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disables the SNR mask by setting all values to 0. <br /></td></tr>
+<tr class="memitem:aef4fe500744a873a63903c24cc2b3f04" id="r_aef4fe500744a873a63903c24cc2b3f04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef4fe500744a873a63903c24cc2b3f04">disable</a> ()</td></tr>
+<tr class="memdesc:aef4fe500744a873a63903c24cc2b3f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disables the SNR mask by setting all values to 0.  <br /></td></tr>
 <tr class="separator:aef4fe500744a873a63903c24cc2b3f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af44e950655e5bd513fc8d9dd91d89c85" id="r_af44e950655e5bd513fc8d9dd91d89c85"><td class="memItemLeft" align="right" valign="top"><a id="af44e950655e5bd513fc8d9dd91d89c85" name="af44e950655e5bd513fc8d9dd91d89c85"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isInactive</b> () const</td></tr>
-<tr class="memdesc:af44e950655e5bd513fc8d9dd91d89c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks wether all SNR values are 0. <br /></td></tr>
+<tr class="memitem:af44e950655e5bd513fc8d9dd91d89c85" id="r_af44e950655e5bd513fc8d9dd91d89c85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af44e950655e5bd513fc8d9dd91d89c85">isInactive</a> () const</td></tr>
+<tr class="memdesc:af44e950655e5bd513fc8d9dd91d89c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks wether all SNR values are 0.  <br /></td></tr>
 <tr class="separator:af44e950655e5bd513fc8d9dd91d89c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c765f58b35e80199fb8632077a335b7" id="r_a5c765f58b35e80199fb8632077a335b7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5c765f58b35e80199fb8632077a335b7">ShowGuiWidgets</a> (const char *label=nullptr)</td></tr>
 <tr class="memdesc:a5c765f58b35e80199fb8632077a335b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a button to select the SNR Mask.  <br /></td></tr>
 <tr class="separator:a5c765f58b35e80199fb8632077a335b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87f31e03acd41e263373ea0d7b739cb9" id="r_a87f31e03acd41e263373ea0d7b739cb9"><td class="memItemLeft" align="right" valign="top"><a id="a87f31e03acd41e263373ea0d7b739cb9" name="a87f31e03acd41e263373ea0d7b739cb9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SNRMask</b> ()</td></tr>
-<tr class="memdesc:a87f31e03acd41e263373ea0d7b739cb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:a87f31e03acd41e263373ea0d7b739cb9" id="r_a87f31e03acd41e263373ea0d7b739cb9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87f31e03acd41e263373ea0d7b739cb9">SNRMask</a> ()</td></tr>
+<tr class="memdesc:a87f31e03acd41e263373ea0d7b739cb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:a87f31e03acd41e263373ea0d7b739cb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a832ae343be3d83345f13cab4c16b519b" id="r_a832ae343be3d83345f13cab4c16b519b"><td class="memItemLeft" align="right" valign="top"><a id="a832ae343be3d83345f13cab4c16b519b" name="a832ae343be3d83345f13cab4c16b519b"></a>
-std::pair&lt; std::array&lt; double, elevations.size()&gt;, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>allOverride</b></td></tr>
-<tr class="memdesc:a832ae343be3d83345f13cab4c16b519b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Values when changed override all others. <br /></td></tr>
+<tr class="memitem:a832ae343be3d83345f13cab4c16b519b" id="r_a832ae343be3d83345f13cab4c16b519b"><td class="memItemLeft" align="right" valign="top">std::pair&lt; std::array&lt; double, elevations.size()&gt;, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a832ae343be3d83345f13cab4c16b519b">allOverride</a></td></tr>
+<tr class="memdesc:a832ae343be3d83345f13cab4c16b519b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Values when changed override all others.  <br /></td></tr>
 <tr class="separator:a832ae343be3d83345f13cab4c16b519b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f219fd07a16e8cfd4e8dff0a5659be6" id="r_a9f219fd07a16e8cfd4e8dff0a5659be6"><td class="memItemLeft" align="right" valign="top"><a id="a9f219fd07a16e8cfd4e8dff0a5659be6" name="a9f219fd07a16e8cfd4e8dff0a5659be6"></a>
-std::array&lt; std::pair&lt; <a class="el" href="classNAV_1_1Frequency.html">Frequency</a>, std::pair&lt; std::array&lt; double, elevations.size()&gt;, bool &gt; &gt;, <a class="el" href="classNAV_1_1Frequency.html#a197ae06592ee170f6babfbaad894bb4a">Frequency::GetAll</a>().size()&gt;&#160;</td><td class="memItemRight" valign="bottom"><b>mask</b></td></tr>
-<tr class="memdesc:a9f219fd07a16e8cfd4e8dff0a5659be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Masks for all frequencies and SNR [dbHz] values + lock together boolean. <br /></td></tr>
+<tr class="memitem:a9f219fd07a16e8cfd4e8dff0a5659be6" id="r_a9f219fd07a16e8cfd4e8dff0a5659be6"><td class="memItemLeft" align="right" valign="top">std::array&lt; std::pair&lt; <a class="el" href="classNAV_1_1Frequency.html">Frequency</a>, std::pair&lt; std::array&lt; double, elevations.size()&gt;, bool &gt; &gt;, <a class="el" href="classNAV_1_1Frequency.html#a197ae06592ee170f6babfbaad894bb4a">Frequency::GetAll</a>().size()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f219fd07a16e8cfd4e8dff0a5659be6">mask</a></td></tr>
+<tr class="memdesc:a9f219fd07a16e8cfd4e8dff0a5659be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Masks for all frequencies and SNR [dbHz] values + lock together boolean.  <br /></td></tr>
 <tr class="separator:a9f219fd07a16e8cfd4e8dff0a5659be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a91ecf939f61f02b36b4df7368e9198d3" id="r_a91ecf939f61f02b36b4df7368e9198d3"><td class="memItemLeft" align="right" valign="top"><a id="a91ecf939f61f02b36b4df7368e9198d3" name="a91ecf939f61f02b36b4df7368e9198d3"></a>
-static constexpr std::array&lt; double, 10 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>elevations</b></td></tr>
-<tr class="memdesc:a91ecf939f61f02b36b4df7368e9198d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevations [rad]. Checks to smaller or equal than the value. <br /></td></tr>
+<tr class="memitem:a91ecf939f61f02b36b4df7368e9198d3" id="r_a91ecf939f61f02b36b4df7368e9198d3"><td class="memItemLeft" align="right" valign="top">static constexpr std::array&lt; double, 10 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91ecf939f61f02b36b4df7368e9198d3">elevations</a></td></tr>
+<tr class="memdesc:a91ecf939f61f02b36b4df7368e9198d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elevations [rad]. Checks to smaller or equal than the value.  <br /></td></tr>
 <tr class="separator:a91ecf939f61f02b36b4df7368e9198d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -180,7 +174,31 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Signal to Noise Ratio Mask. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8hpp_source.html#l00025">25</a> of file <a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a87f31e03acd41e263373ea0d7b739cb9" name="a87f31e03acd41e263373ea0d7b739cb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87f31e03acd41e263373ea0d7b739cb9">&#9670;&#160;</a></span>SNRMask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::SNRMask::SNRMask </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default Constructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00025">25</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a30048af5277a6c83c7a7a7b063a60cca" name="a30048af5277a6c83c7a7a7b063a60cca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a30048af5277a6c83c7a7a7b063a60cca">&#9670;&#160;</a></span>checkSNRMask()</h2>
 
@@ -224,6 +242,66 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the value passed the mask </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00181">181</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aef4fe500744a873a63903c24cc2b3f04" name="aef4fe500744a873a63903c24cc2b3f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef4fe500744a873a63903c24cc2b3f04">&#9670;&#160;</a></span>disable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::SNRMask::disable </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Disables the SNR mask by setting all values to 0. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8hpp_source.html#l00046">46</a> of file <a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af44e950655e5bd513fc8d9dd91d89c85" name="af44e950655e5bd513fc8d9dd91d89c85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af44e950655e5bd513fc8d9dd91d89c85">&#9670;&#160;</a></span>isInactive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::SNRMask::isInactive </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks wether all SNR values are 0. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00172">172</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a5c765f58b35e80199fb8632077a335b7" name="a5c765f58b35e80199fb8632077a335b7"></a>
@@ -248,6 +326,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00035">35</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,6 +368,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00208">208</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a5482365fe855cd3b9c53cf4f0f5ac634" name="a5482365fe855cd3b9c53cf4f0f5ac634"></a>
@@ -326,17 +408,99 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="SNRMask_8cpp_source.html#l00200">200</a> of file <a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a832ae343be3d83345f13cab4c16b519b" name="a832ae343be3d83345f13cab4c16b519b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a832ae343be3d83345f13cab4c16b519b">&#9670;&#160;</a></span>allOverride</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::pair&lt;std::array&lt;double, elevations.size()&gt;, bool&gt; NAV::SNRMask::allOverride</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Values when changed override all others. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8hpp_source.html#l00073">73</a> of file <a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a91ecf939f61f02b36b4df7368e9198d3" name="a91ecf939f61f02b36b4df7368e9198d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91ecf939f61f02b36b4df7368e9198d3">&#9670;&#160;</a></span>elevations</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, 10&gt; NAV::SNRMask::elevations</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Elevations [rad]. Checks to smaller or equal than the value. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8hpp_source.html#l00059">59</a> of file <a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9f219fd07a16e8cfd4e8dff0a5659be6" name="a9f219fd07a16e8cfd4e8dff0a5659be6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f219fd07a16e8cfd4e8dff0a5659be6">&#9670;&#160;</a></span>mask</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;std::pair&lt;<a class="el" href="classNAV_1_1Frequency.html">Frequency</a>, std::pair&lt;std::array&lt;double, elevations.size()&gt;, bool&gt; &gt;, <a class="el" href="classNAV_1_1Frequency.html#a197ae06592ee170f6babfbaad894bb4a">Frequency::GetAll</a>().size()&gt; NAV::SNRMask::mask</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Masks for all frequencies and SNR [dbHz] values + lock together boolean. </p>
+
+<p class="definition">Definition at line <a class="el" href="SNRMask_8hpp_source.html#l00076">76</a> of file <a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/<a class="el" href="SNRMask_8hpp_source.html">SNRMask.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/<a class="el" href="SNRMask_8cpp_source.html">SNRMask.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1SNRMask.html">SNRMask</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1SNRMask.html">SNRMask</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

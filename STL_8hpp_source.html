@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('STL_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file STL.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Algorithms concerning the STL containers</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2024-01-11</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -137,12 +142,16 @@ $(function(){initNavTree('STL_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;bitset&gt;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;functional&gt;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span>NAV</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment"></span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @brief Joins the container to a string</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">/// @param[in] container Container to join</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">/// @param[in] delimiter Delimiter to use to concatenate the elements</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">/// @param[in] elementFormat fmt format string, which gets places inside &#39;{}&#39; to format the elements</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00030" data-start="{" data-end="}">
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="STL_8hpp.html#a00abdc3773016ac516231674be60bf77">   30</a></span>std::string <a class="code hl_function" href="STL_8hpp.html#a00abdc3773016ac516231674be60bf77">joinToString</a>(<span class="keyword">const</span> T&amp; container, <span class="keyword">const</span> <span class="keywordtype">char</span>* delimiter = <span class="stringliteral">&quot;, &quot;</span>, <span class="keyword">const</span> std::string&amp; elementFormat = <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a00abdc3773016ac516231674be60bf77">   30</a></span>std::string <a class="code hl_function" href="namespaceNAV.html#a00abdc3773016ac516231674be60bf77">joinToString</a>(<span class="keyword">const</span> T&amp; container, <span class="keyword">const</span> <span class="keywordtype">char</span>* delimiter = <span class="stringliteral">&quot;, &quot;</span>, <span class="keyword">const</span> std::string&amp; elementFormat = <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>{</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    std::string text;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    std::for_each(container.begin(), container.end(), [&amp;](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; element) {</div>
@@ -151,10 +160,14 @@ $(function(){initNavTree('STL_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> text.substr(0, text.length() - strlen(delimiter));</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
 </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment"></span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">/// @brief Joins the container to a string</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">/// @param[in] container Container to join</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">/// @param[in] formatFunc Function to evaluate for each element to get the string representation</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/// @param[in] delimiter Delimiter to use to concatenate the elements</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</div>
 <div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="STL_8hpp.html#ae56b8de9d380ef2d8147a6951ec1904f">   44</a></span>std::string <a class="code hl_function" href="STL_8hpp.html#ae56b8de9d380ef2d8147a6951ec1904f">joinToStringCustom</a>(<span class="keyword">const</span> T&amp; container, U&amp;&amp; formatFunc, <span class="keyword">const</span> <span class="keywordtype">char</span>* delimiter = <span class="stringliteral">&quot;, &quot;</span>)</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="namespaceNAV.html#ae56b8de9d380ef2d8147a6951ec1904f">   44</a></span>std::string <a class="code hl_function" href="namespaceNAV.html#ae56b8de9d380ef2d8147a6951ec1904f">joinToStringCustom</a>(<span class="keyword">const</span> T&amp; container, U&amp;&amp; formatFunc, <span class="keyword">const</span> <span class="keywordtype">char</span>* delimiter = <span class="stringliteral">&quot;, &quot;</span>)</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    std::string text;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::for_each(container.begin(), container.end(), [&amp;](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; element) {</div>
@@ -163,10 +176,15 @@ $(function(){initNavTree('STL_8hpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> text.substr(0, text.length() - strlen(delimiter));</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>}</div>
 </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment"></span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">/// @brief Comparison operator for bitsets</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="comment">/// @tparam N Amount of bits</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">/// @param[in] lhs Left-hand side</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">/// @param[in] rhs Right-hand side</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">/// @return True when lhs &lt; rhs</span></div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">template</span>&lt;std::<span class="keywordtype">size_t</span> N&gt;</div>
 <div class="foldopen" id="foldopen00059" data-start="{" data-end="}">
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="STL_8hpp.html#a8d5cc361e437cf90df9841b0907d1ce0">   59</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="STL_8hpp.html#a8d5cc361e437cf90df9841b0907d1ce0">operator&lt;</a>(<span class="keyword">const</span> std::bitset&lt;N&gt;&amp; lhs, <span class="keyword">const</span> std::bitset&lt;N&gt;&amp; rhs)</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="namespaceNAV.html#a8d5cc361e437cf90df9841b0907d1ce0">   59</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV.html#a84a1350b191a8f5799cc65dfcba24c5f">operator&lt;</a>(<span class="keyword">const</span> std::bitset&lt;N&gt;&amp; lhs, <span class="keyword">const</span> std::bitset&lt;N&gt;&amp; rhs)</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = N - 1;; i--)</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    {</div>
@@ -178,9 +196,10 @@ $(function(){initNavTree('STL_8hpp_source.html',''); initResizable(true); });
 </div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>} <span class="comment">// namespace NAV</span></div>
-<div class="ttc" id="aSTL_8hpp_html_a00abdc3773016ac516231674be60bf77"><div class="ttname"><a href="STL_8hpp.html#a00abdc3773016ac516231674be60bf77">NAV::joinToString</a></div><div class="ttdeci">std::string joinToString(const T &amp;container, const char *delimiter=&quot;, &quot;, const std::string &amp;elementFormat=&quot;&quot;)</div><div class="ttdoc">Joins the container to a string.</div><div class="ttdef"><b>Definition</b> STL.hpp:30</div></div>
-<div class="ttc" id="aSTL_8hpp_html_a8d5cc361e437cf90df9841b0907d1ce0"><div class="ttname"><a href="STL_8hpp.html#a8d5cc361e437cf90df9841b0907d1ce0">NAV::operator&lt;</a></div><div class="ttdeci">bool operator&lt;(const std::bitset&lt; N &gt; &amp;lhs, const std::bitset&lt; N &gt; &amp;rhs)</div><div class="ttdoc">Comparison operator for bitsets.</div><div class="ttdef"><b>Definition</b> STL.hpp:59</div></div>
-<div class="ttc" id="aSTL_8hpp_html_ae56b8de9d380ef2d8147a6951ec1904f"><div class="ttname"><a href="STL_8hpp.html#ae56b8de9d380ef2d8147a6951ec1904f">NAV::joinToStringCustom</a></div><div class="ttdeci">std::string joinToStringCustom(const T &amp;container, U &amp;&amp;formatFunc, const char *delimiter=&quot;, &quot;)</div><div class="ttdoc">Joins the container to a string.</div><div class="ttdef"><b>Definition</b> STL.hpp:44</div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a00abdc3773016ac516231674be60bf77"><div class="ttname"><a href="namespaceNAV.html#a00abdc3773016ac516231674be60bf77">NAV::joinToString</a></div><div class="ttdeci">std::string joinToString(const T &amp;container, const char *delimiter=&quot;, &quot;, const std::string &amp;elementFormat=&quot;&quot;)</div><div class="ttdoc">Joins the container to a string.</div><div class="ttdef"><b>Definition</b> <a href="#l00030">STL.hpp:30</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a84a1350b191a8f5799cc65dfcba24c5f"><div class="ttname"><a href="namespaceNAV.html#a84a1350b191a8f5799cc65dfcba24c5f">NAV::operator&lt;</a></div><div class="ttdeci">bool operator&lt;(const Code &amp;lhs, const Code &amp;rhs)</div><div class="ttdef"><b>Definition</b> <a href="Code_8cpp_source.html#l00767">Code.cpp:767</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_ae56b8de9d380ef2d8147a6951ec1904f"><div class="ttname"><a href="namespaceNAV.html#ae56b8de9d380ef2d8147a6951ec1904f">NAV::joinToStringCustom</a></div><div class="ttdeci">std::string joinToStringCustom(const T &amp;container, U &amp;&amp;formatFunc, const char *delimiter=&quot;, &quot;)</div><div class="ttdoc">Joins the container to a string.</div><div class="ttdef"><b>Definition</b> <a href="#l00044">STL.hpp:44</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

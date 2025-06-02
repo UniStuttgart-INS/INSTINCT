@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('EnumCombo_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">EnumCombo.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,14 +130,23 @@ $(function(){initNavTree('EnumCombo_8hpp.html',''); initResizable(true); });
 
 <p><a href="EnumCombo_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui.html">NAV::gui</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a9fc0a5d2122d92d4e70bba251ee9f51d" id="r_a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9fc0a5d2122d92d4e70bba251ee9f51d">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration, size_t startIdx=0)</td></tr>
+<tr class="memitem:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a9fc0a5d2122d92d4e70bba251ee9f51d">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration, size_t startIdx=0)</td></tr>
 <tr class="memdesc:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combo representing an enumeration.  <br /></td></tr>
 <tr class="separator:a9fc0a5d2122d92d4e70bba251ee9f51d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b5392c6420fb1c608a31673fc4d97de" id="r_a9b5392c6420fb1c608a31673fc4d97de"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
-<tr class="memitem:a9b5392c6420fb1c608a31673fc4d97de"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9b5392c6420fb1c608a31673fc4d97de">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration1, T &amp;enumeration2, const char *previewAppendix=&quot;&quot;)</td></tr>
+<tr class="memitem:a9b5392c6420fb1c608a31673fc4d97de"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a9b5392c6420fb1c608a31673fc4d97de">NAV::gui::widgets::EnumCombo</a> (const char *label, T &amp;enumeration1, T &amp;enumeration2, const char *previewAppendix=&quot;&quot;)</td></tr>
 <tr class="memdesc:a9b5392c6420fb1c608a31673fc4d97de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combo representing two enumerations. Values will be displayed appended and set to the same value.  <br /></td></tr>
 <tr class="separator:a9b5392c6420fb1c608a31673fc4d97de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -143,106 +154,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Combo representing an enumeration. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-01-31 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a9fc0a5d2122d92d4e70bba251ee9f51d" name="a9fc0a5d2122d92d4e70bba251ee9f51d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fc0a5d2122d92d4e70bba251ee9f51d">&#9670;&#160;</a></span>EnumCombo() <span class="overload">[1/2]</span></h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::EnumCombo </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>enumeration</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>startIdx</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Combo representing an enumeration. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Enumeration Type </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show beside the combo box. This has to be a unique id for ImGui. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">enumeration</td><td>Reference to the enumeration variable to select </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">startIdx</td><td>Start Index in the enum (so skip first items) </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value changed </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>The Enum type needs a last element called 'COUNT' </dd></dl>
-
-</div>
-</div>
-<a id="a9b5392c6420fb1c608a31673fc4d97de" name="a9b5392c6420fb1c608a31673fc4d97de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b5392c6420fb1c608a31673fc4d97de">&#9670;&#160;</a></span>EnumCombo() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::EnumCombo </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>enumeration1</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>enumeration2</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>previewAppendix</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Combo representing two enumerations. Values will be displayed appended and set to the same value. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Enumeration Type </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show beside the combo box. This has to be a unique id for ImGui. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">enumeration1</td><td>Reference to the first enumeration variable to select </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">enumeration2</td><td>Reference to the second enumeration variable to set to the same value as the first one </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">previewAppendix</td><td>Additional text to show in the combo preview </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value changed </dd></dl>
-<dl class="section attention"><dt>Attention</dt><dd>The Enum type needs a last element called 'COUNT' </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="EnumCombo_8hpp_source.html">EnumCombo.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

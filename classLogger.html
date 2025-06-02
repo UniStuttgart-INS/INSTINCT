@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('classLogger.html',''); initResizable(true); });
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
-<a href="#pri-static-attribs">Static Private Attributes</a> &#124;
-<a href="classLogger-members.html">List of all members</a>  </div>
+<a href="#pri-static-attribs">Static Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">Logger Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,61 +132,50 @@ $(function(){initNavTree('classLogger.html',''); initResizable(true); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abc41bfb031d896170c7675fa96a6b30c" id="r_abc41bfb031d896170c7675fa96a6b30c"><td class="memItemLeft" align="right" valign="top"><a id="abc41bfb031d896170c7675fa96a6b30c" name="abc41bfb031d896170c7675fa96a6b30c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b> ()</td></tr>
-<tr class="memdesc:abc41bfb031d896170c7675fa96a6b30c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="memitem:abc41bfb031d896170c7675fa96a6b30c" id="r_abc41bfb031d896170c7675fa96a6b30c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc41bfb031d896170c7675fa96a6b30c">Logger</a> ()</td></tr>
+<tr class="memdesc:abc41bfb031d896170c7675fa96a6b30c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:abc41bfb031d896170c7675fa96a6b30c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add0f34d4c753c86af8074840a72366b3" id="r_add0f34d4c753c86af8074840a72366b3"><td class="memItemLeft" align="right" valign="top"><a id="add0f34d4c753c86af8074840a72366b3" name="add0f34d4c753c86af8074840a72366b3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b> (const <a class="el" href="classLogger.html">Logger</a> &amp;)=delete</td></tr>
-<tr class="memdesc:add0f34d4c753c86af8074840a72366b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor. <br /></td></tr>
+<tr class="memitem:add0f34d4c753c86af8074840a72366b3" id="r_add0f34d4c753c86af8074840a72366b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add0f34d4c753c86af8074840a72366b3">Logger</a> (const <a class="el" href="classLogger.html">Logger</a> &amp;)=delete</td></tr>
+<tr class="memdesc:add0f34d4c753c86af8074840a72366b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:add0f34d4c753c86af8074840a72366b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a181eb297dcbb771b4ae02856364b5b79" id="r_a181eb297dcbb771b4ae02856364b5b79"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a181eb297dcbb771b4ae02856364b5b79">Logger</a> (const std::string &amp;logpath)</td></tr>
 <tr class="memdesc:a181eb297dcbb771b4ae02856364b5b79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a181eb297dcbb771b4ae02856364b5b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99a912d497c8163e1ff8c75d1a72cd7a" id="r_a99a912d497c8163e1ff8c75d1a72cd7a"><td class="memItemLeft" align="right" valign="top"><a id="a99a912d497c8163e1ff8c75d1a72cd7a" name="a99a912d497c8163e1ff8c75d1a72cd7a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b> (<a class="el" href="classLogger.html">Logger</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a99a912d497c8163e1ff8c75d1a72cd7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="memitem:a99a912d497c8163e1ff8c75d1a72cd7a" id="r_a99a912d497c8163e1ff8c75d1a72cd7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99a912d497c8163e1ff8c75d1a72cd7a">Logger</a> (<a class="el" href="classLogger.html">Logger</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a99a912d497c8163e1ff8c75d1a72cd7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <br /></td></tr>
 <tr class="separator:a99a912d497c8163e1ff8c75d1a72cd7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c0ca770cdc91ca9fc3015286568e1ea" id="r_a8c0ca770cdc91ca9fc3015286568e1ea"><td class="memItemLeft" align="right" valign="top"><a id="a8c0ca770cdc91ca9fc3015286568e1ea" name="a8c0ca770cdc91ca9fc3015286568e1ea"></a>
-<a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classLogger.html">Logger</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a8c0ca770cdc91ca9fc3015286568e1ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:a8c0ca770cdc91ca9fc3015286568e1ea" id="r_a8c0ca770cdc91ca9fc3015286568e1ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c0ca770cdc91ca9fc3015286568e1ea">operator=</a> (const <a class="el" href="classLogger.html">Logger</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a8c0ca770cdc91ca9fc3015286568e1ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:a8c0ca770cdc91ca9fc3015286568e1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a7824e1b9a6a5ffc2f32ee4848fa078" id="r_a4a7824e1b9a6a5ffc2f32ee4848fa078"><td class="memItemLeft" align="right" valign="top"><a id="a4a7824e1b9a6a5ffc2f32ee4848fa078" name="a4a7824e1b9a6a5ffc2f32ee4848fa078"></a>
-<a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classLogger.html">Logger</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a4a7824e1b9a6a5ffc2f32ee4848fa078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a4a7824e1b9a6a5ffc2f32ee4848fa078" id="r_a4a7824e1b9a6a5ffc2f32ee4848fa078"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classLogger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a7824e1b9a6a5ffc2f32ee4848fa078">operator=</a> (<a class="el" href="classLogger.html">Logger</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a4a7824e1b9a6a5ffc2f32ee4848fa078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a4a7824e1b9a6a5ffc2f32ee4848fa078"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb668a9e186a25fbaad2e4af6d1ed00a" id="r_acb668a9e186a25fbaad2e4af6d1ed00a"><td class="memItemLeft" align="right" valign="top"><a id="acb668a9e186a25fbaad2e4af6d1ed00a" name="acb668a9e186a25fbaad2e4af6d1ed00a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~Logger</b> ()</td></tr>
-<tr class="memdesc:acb668a9e186a25fbaad2e4af6d1ed00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:acb668a9e186a25fbaad2e4af6d1ed00a" id="r_acb668a9e186a25fbaad2e4af6d1ed00a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb668a9e186a25fbaad2e4af6d1ed00a">~Logger</a> ()</td></tr>
+<tr class="memdesc:acb668a9e186a25fbaad2e4af6d1ed00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:acb668a9e186a25fbaad2e4af6d1ed00a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:abe3498ac1b0dbae5bec7f2557fe6d0b8" id="r_abe3498ac1b0dbae5bec7f2557fe6d0b8"><td class="memItemLeft" align="right" valign="top"><a id="abe3498ac1b0dbae5bec7f2557fe6d0b8" name="abe3498ac1b0dbae5bec7f2557fe6d0b8"></a>
-static const std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetRingBufferSink</b> ()</td></tr>
-<tr class="memdesc:abe3498ac1b0dbae5bec7f2557fe6d0b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the ring buffer sink. <br /></td></tr>
-<tr class="separator:abe3498ac1b0dbae5bec7f2557fe6d0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1542095697362d14430351340efa7962" id="r_a1542095697362d14430351340efa7962"><td class="memItemLeft" align="right" valign="top">static const std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1542095697362d14430351340efa7962">GetRingBufferSink</a> ()</td></tr>
+<tr class="memdesc:a1542095697362d14430351340efa7962"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the ring buffer sink.  <br /></td></tr>
+<tr class="separator:a1542095697362d14430351340efa7962"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:a17409c771bcbc0f233d7a78f515acada" id="r_a17409c771bcbc0f233d7a78f515acada"><td class="memItemLeft" align="right" valign="top"><a id="a17409c771bcbc0f233d7a78f515acada" name="a17409c771bcbc0f233d7a78f515acada"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>writeFooter</b> () noexcept</td></tr>
-<tr class="memdesc:a17409c771bcbc0f233d7a78f515acada"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the logging footer. <br /></td></tr>
-<tr class="separator:a17409c771bcbc0f233d7a78f515acada"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af950ffa9e0f12b57709b643ba1c983e6" id="r_af950ffa9e0f12b57709b643ba1c983e6"><td class="memItemLeft" align="right" valign="top"><a id="af950ffa9e0f12b57709b643ba1c983e6" name="af950ffa9e0f12b57709b643ba1c983e6"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>writeHeader</b> () noexcept</td></tr>
-<tr class="memdesc:af950ffa9e0f12b57709b643ba1c983e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the logging header. <br /></td></tr>
-<tr class="separator:af950ffa9e0f12b57709b643ba1c983e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a491ce099d7098f43eb4e7b38caf108e6" id="r_a491ce099d7098f43eb4e7b38caf108e6"><td class="memItemLeft" align="right" valign="top"><a id="a491ce099d7098f43eb4e7b38caf108e6" name="a491ce099d7098f43eb4e7b38caf108e6"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>writeSeparator</b> () noexcept</td></tr>
-<tr class="memdesc:a491ce099d7098f43eb4e7b38caf108e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a separation line to the console only. <br /></td></tr>
-<tr class="separator:a491ce099d7098f43eb4e7b38caf108e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a224849c3071090942d03c5423ed7559b" id="r_a224849c3071090942d03c5423ed7559b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a224849c3071090942d03c5423ed7559b">writeFooter</a> () noexcept</td></tr>
+<tr class="memdesc:a224849c3071090942d03c5423ed7559b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the logging footer.  <br /></td></tr>
+<tr class="separator:a224849c3071090942d03c5423ed7559b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b7064b90a8540302c6db663609c688e" id="r_a4b7064b90a8540302c6db663609c688e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b7064b90a8540302c6db663609c688e">writeHeader</a> () noexcept</td></tr>
+<tr class="memdesc:a4b7064b90a8540302c6db663609c688e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the logging header.  <br /></td></tr>
+<tr class="separator:a4b7064b90a8540302c6db663609c688e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade74c99fe480429a9c3a6af176a66579" id="r_ade74c99fe480429a9c3a6af176a66579"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade74c99fe480429a9c3a6af176a66579">writeSeparator</a> () noexcept</td></tr>
+<tr class="memdesc:ade74c99fe480429a9c3a6af176a66579"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a separation line to the console only.  <br /></td></tr>
+<tr class="separator:ade74c99fe480429a9c3a6af176a66579"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-attribs" name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a9842568d62edb2bb90e23f7c5e22dd58" id="r_a9842568d62edb2bb90e23f7c5e22dd58"><td class="memItemLeft" align="right" valign="top"><a id="a9842568d62edb2bb90e23f7c5e22dd58" name="a9842568d62edb2bb90e23f7c5e22dd58"></a>
-static std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_ringBufferSink</b></td></tr>
-<tr class="memdesc:a9842568d62edb2bb90e23f7c5e22dd58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ring buffer sink. <br /></td></tr>
+<tr class="memitem:a9842568d62edb2bb90e23f7c5e22dd58" id="r_a9842568d62edb2bb90e23f7c5e22dd58"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9842568d62edb2bb90e23f7c5e22dd58">_ringBufferSink</a></td></tr>
+<tr class="memdesc:a9842568d62edb2bb90e23f7c5e22dd58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ring buffer sink.  <br /></td></tr>
 <tr class="separator:a9842568d62edb2bb90e23f7c5e22dd58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -200,9 +189,11 @@ static std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt;&#160;</td><td 
 <li>LOG_ERROR("Message {} {}", variable1, variable 2);</li>
 <li>LOG_CRITICAL("Message {} {}", variable1, variable 2); </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8hpp_source.html#l00087">87</a> of file <a class="el" href="Logger_8hpp_source.html">Logger.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a181eb297dcbb771b4ae02856364b5b79" name="a181eb297dcbb771b4ae02856364b5b79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a181eb297dcbb771b4ae02856364b5b79">&#9670;&#160;</a></span>Logger()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a181eb297dcbb771b4ae02856364b5b79">&#9670;&#160;</a></span>Logger() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -232,10 +223,307 @@ static std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt;&#160;</td><td 
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00056">56</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a id="abc41bfb031d896170c7675fa96a6b30c" name="abc41bfb031d896170c7675fa96a6b30c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc41bfb031d896170c7675fa96a6b30c">&#9670;&#160;</a></span>Logger() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Logger::Logger </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default constructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00149">149</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="acb668a9e186a25fbaad2e4af6d1ed00a" name="acb668a9e186a25fbaad2e4af6d1ed00a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb668a9e186a25fbaad2e4af6d1ed00a">&#9670;&#160;</a></span>~Logger()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Logger::~Logger </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00174">174</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="add0f34d4c753c86af8074840a72366b3" name="add0f34d4c753c86af8074840a72366b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add0f34d4c753c86af8074840a72366b3">&#9670;&#160;</a></span>Logger() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Logger::Logger </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classLogger.html">Logger</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="a99a912d497c8163e1ff8c75d1a72cd7a" name="a99a912d497c8163e1ff8c75d1a72cd7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99a912d497c8163e1ff8c75d1a72cd7a">&#9670;&#160;</a></span>Logger() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Logger::Logger </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classLogger.html">Logger</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move constructor. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1542095697362d14430351340efa7962" name="a1542095697362d14430351340efa7962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1542095697362d14430351340efa7962">&#9670;&#160;</a></span>GetRingBufferSink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::shared_ptr&lt; spdlog::sinks::ringbuffer_sink_mt &gt; &amp; Logger::GetRingBufferSink </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the ring buffer sink. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00181">181</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a8c0ca770cdc91ca9fc3015286568e1ea" name="a8c0ca770cdc91ca9fc3015286568e1ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c0ca770cdc91ca9fc3015286568e1ea">&#9670;&#160;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classLogger.html">Logger</a> &amp; Logger::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classLogger.html">Logger</a> &amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel delete">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment operator. </p>
+
+</div>
+</div>
+<a id="a4a7824e1b9a6a5ffc2f32ee4848fa078" name="a4a7824e1b9a6a5ffc2f32ee4848fa078"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a7824e1b9a6a5ffc2f32ee4848fa078">&#9670;&#160;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classLogger.html">Logger</a> &amp; Logger::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classLogger.html">Logger</a> &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment operator. </p>
+
+</div>
+</div>
+<a id="a224849c3071090942d03c5423ed7559b" name="a224849c3071090942d03c5423ed7559b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a224849c3071090942d03c5423ed7559b">&#9670;&#160;</a></span>writeFooter()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Logger::writeFooter </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes the logging footer. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00206">206</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4b7064b90a8540302c6db663609c688e" name="a4b7064b90a8540302c6db663609c688e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b7064b90a8540302c6db663609c688e">&#9670;&#160;</a></span>writeHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Logger::writeHeader </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes the logging header. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00191">191</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ade74c99fe480429a9c3a6af176a66579" name="ade74c99fe480429a9c3a6af176a66579"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade74c99fe480429a9c3a6af176a66579">&#9670;&#160;</a></span>writeSeparator()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Logger::writeSeparator </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel private">private</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Writes a separation line to the console only. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8cpp_source.html#l00186">186</a> of file <a class="el" href="Logger_8cpp_source.html">Logger.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a9842568d62edb2bb90e23f7c5e22dd58" name="a9842568d62edb2bb90e23f7c5e22dd58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9842568d62edb2bb90e23f7c5e22dd58">&#9670;&#160;</a></span>_ringBufferSink</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;spdlog::sinks::ringbuffer_sink_mt&gt; Logger::_ringBufferSink</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ring buffer sink. </p>
+
+<p class="definition">Definition at line <a class="el" href="Logger_8hpp_source.html#l00112">112</a> of file <a class="el" href="Logger_8hpp_source.html">Logger.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/<a class="el" href="Logger_8hpp_source.html">Logger.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/util/<a class="el" href="Logger_8cpp_source.html">Logger.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

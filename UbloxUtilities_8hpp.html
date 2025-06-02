@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('UbloxUtilities_8hpp.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">UbloxUtilities.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,15 +130,24 @@ $(function(){initNavTree('UbloxUtilities_8hpp.html',''); initResizable(true); })
 
 <p><a href="UbloxUtilities_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1ublox.html">NAV::vendor::ublox</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a093f62b523ef9865856ef4bb0fa76703" id="r_a093f62b523ef9865856ef4bb0fa76703"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a093f62b523ef9865856ef4bb0fa76703">NAV::vendor::ublox::checksumNMEA</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
+<tr class="memitem:a093f62b523ef9865856ef4bb0fa76703" id="r_a093f62b523ef9865856ef4bb0fa76703"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1ublox.html#a093f62b523ef9865856ef4bb0fa76703">NAV::vendor::ublox::checksumNMEA</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
 <tr class="memdesc:a093f62b523ef9865856ef4bb0fa76703"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the NMEA checksum for the provided data vector.  <br /></td></tr>
 <tr class="separator:a093f62b523ef9865856ef4bb0fa76703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f7f51956878e976b105affd6debee19" id="r_a5f7f51956878e976b105affd6debee19"><td class="memItemLeft" align="right" valign="top">std::pair&lt; uint8_t, uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f7f51956878e976b105affd6debee19">NAV::vendor::ublox::checksumUBX</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
+<tr class="memitem:a5f7f51956878e976b105affd6debee19" id="r_a5f7f51956878e976b105affd6debee19"><td class="memItemLeft" align="right" valign="top">std::pair&lt; uint8_t, uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1ublox.html#a5f7f51956878e976b105affd6debee19">NAV::vendor::ublox::checksumUBX</a> (const std::vector&lt; uint8_t &gt; &amp;data)</td></tr>
 <tr class="memdesc:a5f7f51956878e976b105affd6debee19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the two UBX checksums for the provided data vector.  <br /></td></tr>
 <tr class="separator:a5f7f51956878e976b105affd6debee19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ddf6ffe451330164bcdacae0674440" id="r_a51ddf6ffe451330164bcdacae0674440"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51ddf6ffe451330164bcdacae0674440">NAV::vendor::ublox::decryptUbloxObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1UbloxObs.html">NAV::UbloxObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:a51ddf6ffe451330164bcdacae0674440" id="r_a51ddf6ffe451330164bcdacae0674440"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1ublox.html#a51ddf6ffe451330164bcdacae0674440">NAV::vendor::ublox::decryptUbloxObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1UbloxObs.html">NAV::UbloxObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:a51ddf6ffe451330164bcdacae0674440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypts the provided Ublox observation.  <br /></td></tr>
 <tr class="separator:a51ddf6ffe451330164bcdacae0674440"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -144,105 +155,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Helper Functions to work with Ublox Sensors. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2020-07-22 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a093f62b523ef9865856ef4bb0fa76703" name="a093f62b523ef9865856ef4bb0fa76703"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a093f62b523ef9865856ef4bb0fa76703">&#9670;&#160;</a></span>checksumNMEA()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t NAV::vendor::ublox::checksumNMEA </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; uint8_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the NMEA checksum for the provided data vector. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Data Vector for which the checksum should be calculated </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The calculated checksum </dd></dl>
-
-</div>
-</div>
-<a id="a5f7f51956878e976b105affd6debee19" name="a5f7f51956878e976b105affd6debee19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f7f51956878e976b105affd6debee19">&#9670;&#160;</a></span>checksumUBX()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::pair&lt; uint8_t, uint8_t &gt; NAV::vendor::ublox::checksumUBX </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; uint8_t &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calculates the two UBX checksums for the provided data vector. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Data Vector for which the checksum should be calculated </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The checksums CK_A and CK_B </dd></dl>
-
-</div>
-</div>
-<a id="a51ddf6ffe451330164bcdacae0674440" name="a51ddf6ffe451330164bcdacae0674440"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51ddf6ffe451330164bcdacae0674440">&#9670;&#160;</a></span>decryptUbloxObs()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::vendor::ublox::decryptUbloxObs </td>
-          <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classNAV_1_1UbloxObs.html">NAV::UbloxObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>obs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Decrypts the provided Ublox observation. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">obs</td><td>Ublox Observation to decrypt </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">packet</td><td>Uart packet with the data (content gets changed because data gets extracted) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId for printing log messages </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>False if the message should be discarded </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="UbloxUtilities_8hpp_source.html">UbloxUtilities.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

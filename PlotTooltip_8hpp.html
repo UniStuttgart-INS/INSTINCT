@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('PlotTooltip_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">PlotTooltip.hpp File Reference</div></div>
 </div><!--header-->
@@ -130,17 +132,22 @@ $(function(){initNavTree('PlotTooltip_8hpp.html',''); initResizable(true); });
 <p><a href="PlotTooltip_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1PlotTooltip.html">NAV::PlotTooltip</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Plot.html" title="Plot node which plots all kind of observations.">Plot</a> Tooltip windows to show.  <a href="structNAV_1_1PlotTooltip.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afbc37ec066c177df24d45398b169cb0b" id="r_afbc37ec066c177df24d45398b169cb0b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afbc37ec066c177df24d45398b169cb0b">NAV::ShowPlotTooltip</a> (std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;tooltips, size_t plotItemIdx, const std::string &amp;plotName, ImAxis axis, const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;xData, const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;yData, bool otherHoverTooltipsShown, const std::function&lt; void(size_t)&gt; &amp;showTooltipCallback)</td></tr>
+<tr class="memitem:afbc37ec066c177df24d45398b169cb0b" id="r_afbc37ec066c177df24d45398b169cb0b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#afbc37ec066c177df24d45398b169cb0b">NAV::ShowPlotTooltip</a> (std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;tooltips, size_t plotItemIdx, const std::string &amp;plotName, ImAxis axis, const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;xData, const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;yData, bool otherHoverTooltipsShown, const std::function&lt; void(size_t)&gt; &amp;showTooltipCallback)</td></tr>
 <tr class="memdesc:afbc37ec066c177df24d45398b169cb0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a tooltip if the plot is hovered.  <br /></td></tr>
 <tr class="separator:afbc37ec066c177df24d45398b169cb0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4ee0d765b6aa64d8de8439e3dc38f81" id="r_aa4ee0d765b6aa64d8de8439e3dc38f81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4ee0d765b6aa64d8de8439e3dc38f81">NAV::ShowPlotTooltipWindows</a> (std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;tooltips, size_t plotItemIdx, const std::string &amp;plotName, const std::string &amp;uid, const std::vector&lt; int * &gt; &amp;parentWindows, const std::function&lt; <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>(size_t)&gt; &amp;getInsTime, const std::function&lt; void(size_t, const char *)&gt; &amp;showTooltipCallback)</td></tr>
+<tr class="memitem:aa4ee0d765b6aa64d8de8439e3dc38f81" id="r_aa4ee0d765b6aa64d8de8439e3dc38f81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#aa4ee0d765b6aa64d8de8439e3dc38f81">NAV::ShowPlotTooltipWindows</a> (std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;tooltips, size_t plotItemIdx, const std::string &amp;plotName, const std::string &amp;uid, const std::vector&lt; int * &gt; &amp;parentWindows, const std::function&lt; <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>(size_t)&gt; &amp;getInsTime, const std::function&lt; void(size_t, const char *)&gt; &amp;showTooltipCallback)</td></tr>
 <tr class="memdesc:aa4ee0d765b6aa64d8de8439e3dc38f81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows all tooltip windows in the vector.  <br /></td></tr>
 <tr class="separator:aa4ee0d765b6aa64d8de8439e3dc38f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -148,135 +155,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Plot Tooltips on hover. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2024-08-16 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="afbc37ec066c177df24d45398b169cb0b" name="afbc37ec066c177df24d45398b169cb0b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afbc37ec066c177df24d45398b169cb0b">&#9670;&#160;</a></span>ShowPlotTooltip()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::ShowPlotTooltip </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>tooltips</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plotItemIdx</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>plotName</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImAxis</td>          <td class="paramname"><span class="paramname"><em>axis</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>xData</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; double &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>yData</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>otherHoverTooltipsShown</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::function&lt; void(size_t)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>showTooltipCallback</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows a tooltip if the plot is hovered. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">tooltips</td><td>Tooltip vector to show </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">plotItemIdx</td><td>Plot item index </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">plotName</td><td>Name of the plot item </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">axis</td><td>Axis to check for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">xData</td><td>X axis data </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">yData</td><td>Y axis data </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">otherHoverTooltipsShown</td><td>Whether other hover tooltips are already shown </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">showTooltipCallback</td><td>Called inside the tooltip. Argument is the data index for which the tooltip is shown </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if a tooltip is shown </dd></dl>
-
-</div>
-</div>
-<a id="aa4ee0d765b6aa64d8de8439e3dc38f81" name="aa4ee0d765b6aa64d8de8439e3dc38f81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4ee0d765b6aa64d8de8439e3dc38f81">&#9670;&#160;</a></span>ShowPlotTooltipWindows()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::ShowPlotTooltipWindows </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="structNAV_1_1PlotTooltip.html">PlotTooltip</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>tooltips</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>plotItemIdx</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>plotName</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>uid</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; int * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>parentWindows</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::function&lt; <a class="el" href="classNAV_1_1InsTime.html">InsTime</a>(size_t)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>getInsTime</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::function&lt; void(size_t, const char *)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>showTooltipCallback</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows all tooltip windows in the vector. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">tooltips</td><td>Tooltip vector to show </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">plotItemIdx</td><td>Plot item index </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">plotName</td><td>Name of the plot item </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">uid</td><td>Unique id for the window </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">parentWindows</td><td>Parent windows to stay on top of </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">getInsTime</td><td>Callback to get the time associated with the tooltip </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">showTooltipCallback</td><td>Called inside the tooltip. Argument is the data index and the unique id for which the tooltip is shown </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="PlotTooltip_8hpp_source.html">PlotTooltip.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

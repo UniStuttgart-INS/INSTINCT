@@ -6,9 +6,11 @@ var dir_d31a4cc0cc26047226591ac3ae77143d =
     [ "KeyedKalmanFilter.hpp", "KeyedKalmanFilter_8hpp.html", "KeyedKalmanFilter_8hpp" ],
     [ "KeyedLeastSquares.hpp", "KeyedLeastSquares_8hpp.html", "KeyedLeastSquares_8hpp" ],
     [ "LeastSquares.hpp", "LeastSquares_8hpp.html", "LeastSquares_8hpp" ],
+    [ "Math.cpp", "Math_8cpp.html", "Math_8cpp" ],
     [ "Math.hpp", "Math_8hpp.html", "Math_8hpp" ],
     [ "NumericalIntegration.hpp", "NumericalIntegration_8hpp.html", "NumericalIntegration_8hpp" ],
     [ "Polynomial.hpp", "Polynomial_8hpp.html", "Polynomial_8hpp" ],
+    [ "PolynomialRegressor.cpp", "PolynomialRegressor_8cpp.html", "PolynomialRegressor_8cpp" ],
     [ "PolynomialRegressor.hpp", "PolynomialRegressor_8hpp.html", "PolynomialRegressor_8hpp" ],
     [ "Sort.hpp", "Sort_8hpp.html", "Sort_8hpp" ],
     [ "VanLoan.hpp", "VanLoan_8hpp.html", "VanLoan_8hpp" ]

@@ -13,7 +13,7 @@ var classNAV_1_1SPP_1_1KalmanFilter =
     [ "addInterFrequencyBias", "classNAV_1_1SPP_1_1KalmanFilter.html#a7550e3de55f50fe5abc0dbaf9797d377", null ],
     [ "deinitialize", "classNAV_1_1SPP_1_1KalmanFilter.html#a1b88dd5881ba46c3a8cd6061783fcdaf", null ],
     [ "getErrorCovarianceMatrix", "classNAV_1_1SPP_1_1KalmanFilter.html#af8f41a487f148a930ac52ac2e2d6327f", null ],
-    [ "getState", "classNAV_1_1SPP_1_1KalmanFilter.html#a99b871469b9db6f86673e3e4ba49a1b9", null ],
+    [ "getState", "classNAV_1_1SPP_1_1KalmanFilter.html#a4aa594463b6ca1d96bf5ca7731fed2be", null ],
     [ "getStateKeys", "classNAV_1_1SPP_1_1KalmanFilter.html#a219aaee92f03c74db9c9f6e5d0171bfb", null ],
     [ "initialize", "classNAV_1_1SPP_1_1KalmanFilter.html#a58037035e1c157222a9a764825cff73a", null ],
     [ "isInitialized", "classNAV_1_1SPP_1_1KalmanFilter.html#aebaa1c3199a9f1be470ff43825c38fe4", null ],

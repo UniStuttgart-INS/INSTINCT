@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('classNAV_1_1MotionModel.html',''); initResizable(true)
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1MotionModel-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::MotionModel&lt; StateKeyType &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -132,12 +132,11 @@ $(function(){initNavTree('classNAV_1_1MotionModel.html',''); initResizable(true)
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac2f8bbacf683b774b8776511406a4703" id="r_ac2f8bbacf683b774b8776511406a4703"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;, <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2f8bbacf683b774b8776511406a4703">calcPhiAndQ</a> (double dt, const double &amp;latitude, const double &amp;longitude, <a class="el" href="SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> algorithm)</td></tr>
+<tr class="memitem:ac2f8bbacf683b774b8776511406a4703" id="r_ac2f8bbacf683b774b8776511406a4703"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;, <a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2f8bbacf683b774b8776511406a4703">calcPhiAndQ</a> (double dt, const double &amp;latitude, const double &amp;longitude, <a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> algorithm)</td></tr>
 <tr class="memdesc:ac2f8bbacf683b774b8776511406a4703"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the state transition matrix (𝚽) and the process noise covariance matrix (𝐐)  <br /></td></tr>
 <tr class="separator:ac2f8bbacf683b774b8776511406a4703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a637046b53b029b2a3ca3d2d96a944063" id="r_a637046b53b029b2a3ca3d2d96a944063"><td class="memItemLeft" align="right" valign="top"><a id="a637046b53b029b2a3ca3d2d96a944063" name="a637046b53b029b2a3ca3d2d96a944063"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td></tr>
-<tr class="memdesc:a637046b53b029b2a3ca3d2d96a944063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the motion model. <br /></td></tr>
+<tr class="memitem:a637046b53b029b2a3ca3d2d96a944063" id="r_a637046b53b029b2a3ca3d2d96a944063"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a637046b53b029b2a3ca3d2d96a944063">initialize</a> ()</td></tr>
+<tr class="memdesc:a637046b53b029b2a3ca3d2d96a944063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the motion model.  <br /></td></tr>
 <tr class="separator:a637046b53b029b2a3ca3d2d96a944063"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a686bb4de8b4eb8123e4cc600722a59be" id="r_a686bb4de8b4eb8123e4cc600722a59be"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, int Size&gt; </td></tr>
 <tr class="memitem:a686bb4de8b4eb8123e4cc600722a59be"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a686bb4de8b4eb8123e4cc600722a59be">initialize</a> (<a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;F, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;W)</td></tr>
@@ -147,40 +146,35 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>initialize</b> ()</td
 <tr class="memdesc:a7b9de176e4d152934caa51c34520d9f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows a GUI.  <br /></td></tr>
 <tr class="separator:a7b9de176e4d152934caa51c34520d9f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e2973249353dd42dc0ee778c66f9cc0" id="r_a2e2973249353dd42dc0ee778c66f9cc0"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, int Size&gt; </td></tr>
-<tr class="memitem:a2e2973249353dd42dc0ee778c66f9cc0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2e2973249353dd42dc0ee778c66f9cc0">updatePhiAndQ</a> (<a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;Phi, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;Q, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;G, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;F, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;W, double dt, const double &amp;latitude, const double &amp;longitude, <a class="el" href="SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> algorithm)</td></tr>
+<tr class="memitem:a2e2973249353dd42dc0ee778c66f9cc0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a2e2973249353dd42dc0ee778c66f9cc0">updatePhiAndQ</a> (<a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;Phi, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;Q, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;G, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;F, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, StateKeyType, StateKeyType, Size, Size &gt; &amp;W, double dt, const double &amp;latitude, const double &amp;longitude, <a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a> algorithm)</td></tr>
 <tr class="memdesc:a2e2973249353dd42dc0ee778c66f9cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the provided Phi, Q and G matrix.  <br /></td></tr>
 <tr class="separator:a2e2973249353dd42dc0ee778c66f9cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ab2fc8cf682408d3935daaa6c6445da48" id="r_ab2fc8cf682408d3935daaa6c6445da48"><td class="memItemLeft" align="right" valign="top"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2fc8cf682408d3935daaa6c6445da48">calcProcessNoiseMatrixTaylor</a> (double dt, double latitude, double longitude) const</td></tr>
+<tr class="memitem:ab2fc8cf682408d3935daaa6c6445da48" id="r_ab2fc8cf682408d3935daaa6c6445da48"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2fc8cf682408d3935daaa6c6445da48">calcProcessNoiseMatrixTaylor</a> (double dt, double latitude, double longitude) const</td></tr>
 <tr class="memdesc:ab2fc8cf682408d3935daaa6c6445da48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the process noise matrix Q.  <br /></td></tr>
 <tr class="separator:ab2fc8cf682408d3935daaa6c6445da48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2fe6a3884082de237bf69337ce4ab754" id="r_a2fe6a3884082de237bf69337ce4ab754"><td class="memItemLeft" align="right" valign="top"><a id="a2fe6a3884082de237bf69337ce4ab754" name="a2fe6a3884082de237bf69337ce4ab754"></a>
-std::array&lt; double, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_covarianceAccel</b></td></tr>
-<tr class="memdesc:a2fe6a3884082de237bf69337ce4ab754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]. <br /></td></tr>
+<tr class="memitem:a2fe6a3884082de237bf69337ce4ab754" id="r_a2fe6a3884082de237bf69337ce4ab754"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fe6a3884082de237bf69337ce4ab754">_covarianceAccel</a></td></tr>
+<tr class="memdesc:a2fe6a3884082de237bf69337ce4ab754"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³].  <br /></td></tr>
 <tr class="separator:a2fe6a3884082de237bf69337ce4ab754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37c77b1e19004c98dcf141493efb338f" id="r_a37c77b1e19004c98dcf141493efb338f"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37c77b1e19004c98dcf141493efb338f">_gui_covarianceAccel</a></td></tr>
 <tr class="memdesc:a37c77b1e19004c98dcf141493efb338f"><td class="mdescLeft">&#160;</td><td class="mdescRight">GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component.  <br /></td></tr>
 <tr class="separator:a37c77b1e19004c98dcf141493efb338f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85905bab84efbfd998d5aa7cb2636232" id="r_a85905bab84efbfd998d5aa7cb2636232"><td class="memItemLeft" align="right" valign="top"><a id="a85905bab84efbfd998d5aa7cb2636232" name="a85905bab84efbfd998d5aa7cb2636232"></a>
-<a class="el" href="GNSS_2SystemModel_2Units_8hpp.html#a3b54d26978435d0c5953f83869ca4205">Units::CovarianceAccelUnits</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_gui_covarianceAccelUnit</b></td></tr>
-<tr class="memdesc:a85905bab84efbfd998d5aa7cb2636232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gui selection for the Unit of the input covarianceAccel parameter for the StDev due to acceleration due to user motion. <br /></td></tr>
+<tr class="memitem:a85905bab84efbfd998d5aa7cb2636232" id="r_a85905bab84efbfd998d5aa7cb2636232"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV_1_1Units.html#a3b54d26978435d0c5953f83869ca4205">Units::CovarianceAccelUnits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85905bab84efbfd998d5aa7cb2636232">_gui_covarianceAccelUnit</a></td></tr>
+<tr class="memdesc:a85905bab84efbfd998d5aa7cb2636232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gui selection for the Unit of the input covarianceAccel parameter for the StDev due to acceleration due to user motion.  <br /></td></tr>
 <tr class="separator:a85905bab84efbfd998d5aa7cb2636232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ae3be71eaa919eebf7f3a521b86871b" id="r_a9ae3be71eaa919eebf7f3a521b86871b"><td class="memItemLeft" align="right" valign="top"><a id="a9ae3be71eaa919eebf7f3a521b86871b" name="a9ae3be71eaa919eebf7f3a521b86871b"></a>
-const std::array&lt; StateKeyType, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Pos</b></td></tr>
-<tr class="memdesc:a9ae3be71eaa919eebf7f3a521b86871b"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position keys. <br /></td></tr>
+<tr class="memitem:a9ae3be71eaa919eebf7f3a521b86871b" id="r_a9ae3be71eaa919eebf7f3a521b86871b"><td class="memItemLeft" align="right" valign="top">const std::array&lt; StateKeyType, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ae3be71eaa919eebf7f3a521b86871b">Pos</a></td></tr>
+<tr class="memdesc:a9ae3be71eaa919eebf7f3a521b86871b"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position keys.  <br /></td></tr>
 <tr class="separator:a9ae3be71eaa919eebf7f3a521b86871b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15088cb9844c05bbb7cbe1438590c9dd" id="r_a15088cb9844c05bbb7cbe1438590c9dd"><td class="memItemLeft" align="right" valign="top"><a id="a15088cb9844c05bbb7cbe1438590c9dd" name="a15088cb9844c05bbb7cbe1438590c9dd"></a>
-const std::array&lt; StateKeyType, 6 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>PosVel</b></td></tr>
-<tr class="memdesc:a15088cb9844c05bbb7cbe1438590c9dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position and velocity keys. <br /></td></tr>
+<tr class="memitem:a15088cb9844c05bbb7cbe1438590c9dd" id="r_a15088cb9844c05bbb7cbe1438590c9dd"><td class="memItemLeft" align="right" valign="top">const std::array&lt; StateKeyType, 6 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15088cb9844c05bbb7cbe1438590c9dd">PosVel</a></td></tr>
+<tr class="memdesc:a15088cb9844c05bbb7cbe1438590c9dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">All position and velocity keys.  <br /></td></tr>
 <tr class="separator:a15088cb9844c05bbb7cbe1438590c9dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67ef4608ceaa511cd9c487f9cdf83c2b" id="r_a67ef4608ceaa511cd9c487f9cdf83c2b"><td class="memItemLeft" align="right" valign="top"><a id="a67ef4608ceaa511cd9c487f9cdf83c2b" name="a67ef4608ceaa511cd9c487f9cdf83c2b"></a>
-const std::array&lt; StateKeyType, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Vel</b></td></tr>
-<tr class="memdesc:a67ef4608ceaa511cd9c487f9cdf83c2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">All velocity keys. <br /></td></tr>
+<tr class="memitem:a67ef4608ceaa511cd9c487f9cdf83c2b" id="r_a67ef4608ceaa511cd9c487f9cdf83c2b"><td class="memItemLeft" align="right" valign="top">const std::array&lt; StateKeyType, 3 &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67ef4608ceaa511cd9c487f9cdf83c2b">Vel</a></td></tr>
+<tr class="memdesc:a67ef4608ceaa511cd9c487f9cdf83c2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">All velocity keys.  <br /></td></tr>
 <tr class="separator:a67ef4608ceaa511cd9c487f9cdf83c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -195,6 +189,8 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename StateKeyType&gt;<br />
 class NAV::MotionModel&lt; StateKeyType &gt;</div><p>Motion System Model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00078">78</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac2f8bbacf683b774b8776511406a4703" name="ac2f8bbacf683b774b8776511406a4703"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2f8bbacf683b774b8776511406a4703">&#9670;&#160;</a></span>calcPhiAndQ()</h2>
@@ -208,7 +204,7 @@ template&lt;typename StateKeyType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;, <a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; &gt; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::calcPhiAndQ </td>
+          <td class="memname">std::pair&lt; <a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt;, <a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; &gt; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::calcPhiAndQ </td>
           <td>(</td>
           <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>, </td>
         </tr>
@@ -225,7 +221,7 @@ template&lt;typename StateKeyType&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a></td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a></td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -247,6 +243,8 @@ template&lt;typename StateKeyType&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Phi and Q matrix </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00150">150</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ab2fc8cf682408d3935daaa6c6445da48" name="ab2fc8cf682408d3935daaa6c6445da48"></a>
@@ -261,7 +259,7 @@ template&lt;typename StateKeyType&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="util_2Container_2KeyedMatrix_8hpp.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::calcProcessNoiseMatrixTaylor </td>
+          <td class="memname"><a class="el" href="namespaceNAV.html#afd1132d4e5c21e38e6b69dfbfa38ad08">KeyedMatrix6d</a>&lt; StateKeyType &gt; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::calcProcessNoiseMatrixTaylor </td>
           <td>(</td>
           <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>dt</em></span>, </td>
         </tr>
@@ -294,10 +292,43 @@ template&lt;typename StateKeyType&gt; </div>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 9.4.2.2, eq. 9.152, p. 417 </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00217">217</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a637046b53b029b2a3ca3d2d96a944063" name="a637046b53b029b2a3ca3d2d96a944063"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a637046b53b029b2a3ca3d2d96a944063">&#9670;&#160;</a></span>initialize() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::initialize </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initializes the motion model. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00082">82</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a686bb4de8b4eb8123e4cc600722a59be" name="a686bb4de8b4eb8123e4cc600722a59be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a686bb4de8b4eb8123e4cc600722a59be">&#9670;&#160;</a></span>initialize()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a686bb4de8b4eb8123e4cc600722a59be">&#9670;&#160;</a></span>initialize() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -335,6 +366,8 @@ template&lt;typename Scalar, int Size&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00095">95</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -377,11 +410,13 @@ template&lt;typename StateKeyType&gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">itemWidth</td><td>Width of the space for the config items </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">unitWidth</td><td>Width of the units </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for ImGui </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for <a class="el" href="namespaceImGui.html">ImGui</a> </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if something was changed </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00169">169</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -441,7 +476,7 @@ template&lt;typename Scalar, int Size&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a></td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespaceNAV.html#af9dfa55265a2621969573da06b1576d6">SystemModelCalcAlgorithm</a></td>          <td class="paramname"><span class="paramname"><em>algorithm</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -466,6 +501,8 @@ template&lt;typename Scalar, int Size&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00115">115</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
 
 </div>
 </div>
@@ -508,6 +545,8 @@ template&lt;typename StateKeyType&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00262">262</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a0cdda3c8d4a22599affac49ed4bac831" name="a0cdda3c8d4a22599affac49ed4bac831"></a>
@@ -548,9 +587,39 @@ template&lt;typename StateKeyType&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00252">252</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a2fe6a3884082de237bf69337ce4ab754" name="a2fe6a3884082de237bf69337ce4ab754"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fe6a3884082de237bf69337ce4ab754">&#9670;&#160;</a></span>_covarianceAccel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, 2&gt; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::_covarianceAccel</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Covariance of the acceleration 𝜎_a due to user motion in horizontal and vertical component [m²/s³]. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00247">247</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a37c77b1e19004c98dcf141493efb338f" name="a37c77b1e19004c98dcf141493efb338f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a37c77b1e19004c98dcf141493efb338f">&#9670;&#160;</a></span>_gui_covarianceAccel</h2>
 
@@ -576,6 +645,120 @@ template&lt;typename StateKeyType&gt; </div>
 <p>GUI selection for the Standard deviation of the acceleration 𝜎_a due to user motion in horizontal and vertical component. </p>
 <dl class="section note"><dt>Note</dt><dd>See Groves (2013) eq. (9.156) </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00244">244</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a85905bab84efbfd998d5aa7cb2636232" name="a85905bab84efbfd998d5aa7cb2636232"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85905bab84efbfd998d5aa7cb2636232">&#9670;&#160;</a></span>_gui_covarianceAccelUnit</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceNAV_1_1Units.html#a3b54d26978435d0c5953f83869ca4205">Units::CovarianceAccelUnits</a> <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::_gui_covarianceAccelUnit</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gui selection for the Unit of the input covarianceAccel parameter for the StDev due to acceleration due to user motion. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00241">241</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9ae3be71eaa919eebf7f3a521b86871b" name="a9ae3be71eaa919eebf7f3a521b86871b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ae3be71eaa919eebf7f3a521b86871b">&#9670;&#160;</a></span>Pos</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;StateKeyType, 3&gt;&amp; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::Pos</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All position keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00205">205</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a15088cb9844c05bbb7cbe1438590c9dd" name="a15088cb9844c05bbb7cbe1438590c9dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15088cb9844c05bbb7cbe1438590c9dd">&#9670;&#160;</a></span>PosVel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;StateKeyType, 6&gt;&amp; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::PosVel</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All position and velocity keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00209">209</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a67ef4608ceaa511cd9c487f9cdf83c2b" name="a67ef4608ceaa511cd9c487f9cdf83c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67ef4608ceaa511cd9c487f9cdf83c2b">&#9670;&#160;</a></span>Vel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename StateKeyType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::array&lt;StateKeyType, 3&gt;&amp; <a class="el" href="classNAV_1_1MotionModel.html">NAV::MotionModel</a>&lt; StateKeyType &gt;::Vel</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All velocity keys. </p>
+
+<p class="definition">Definition at line <a class="el" href="MotionModel_8hpp_source.html#l00207">207</a> of file <a class="el" href="MotionModel_8hpp_source.html">MotionModel.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -586,7 +769,7 @@ template&lt;typename StateKeyType&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1MotionModel.html">MotionModel</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1MotionModel.html">MotionModel</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

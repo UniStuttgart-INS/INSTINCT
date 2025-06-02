@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1InertialIntegrator_1_1Measurement.html','
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1InertialIntegrator_1_1Measurement-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::InertialIntegrator::Measurement Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,27 +128,98 @@ $(function(){initNavTree('structNAV_1_1InertialIntegrator_1_1Measurement.html','
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a2fe5ef7c22a47401a248cdda0ac6d791" id="r_a2fe5ef7c22a47401a248cdda0ac6d791"><td class="memItemLeft" align="right" valign="top"><a id="a2fe5ef7c22a47401a248cdda0ac6d791" name="a2fe5ef7c22a47401a248cdda0ac6d791"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>averagedMeasurement</b></td></tr>
-<tr class="memdesc:a2fe5ef7c22a47401a248cdda0ac6d791"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether the acceleration is averaged over the last epoch. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a2fe5ef7c22a47401a248cdda0ac6d791" id="r_a2fe5ef7c22a47401a248cdda0ac6d791"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fe5ef7c22a47401a248cdda0ac6d791">averagedMeasurement</a></td></tr>
+<tr class="memdesc:a2fe5ef7c22a47401a248cdda0ac6d791"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether the acceleration is averaged over the last epoch.  <br /></td></tr>
 <tr class="separator:a2fe5ef7c22a47401a248cdda0ac6d791"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedda1933417ce16bdf3c92a30aaf1774" id="r_aedda1933417ce16bdf3c92a30aaf1774"><td class="memItemLeft" align="right" valign="top"><a id="aedda1933417ce16bdf3c92a30aaf1774" name="aedda1933417ce16bdf3c92a30aaf1774"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>dt</b></td></tr>
-<tr class="memdesc:aedda1933417ce16bdf3c92a30aaf1774"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time since previous observation in [s]. <br /></td></tr>
+<tr class="memitem:aedda1933417ce16bdf3c92a30aaf1774" id="r_aedda1933417ce16bdf3c92a30aaf1774"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedda1933417ce16bdf3c92a30aaf1774">dt</a></td></tr>
+<tr class="memdesc:aedda1933417ce16bdf3c92a30aaf1774"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time since previous observation in [s].  <br /></td></tr>
 <tr class="separator:aedda1933417ce16bdf3c92a30aaf1774"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96a0478348bb100eb2ac1e1530153d0e" id="r_a96a0478348bb100eb2ac1e1530153d0e"><td class="memItemLeft" align="right" valign="top"><a id="a96a0478348bb100eb2ac1e1530153d0e" name="a96a0478348bb100eb2ac1e1530153d0e"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_acceleration</b></td></tr>
-<tr class="memdesc:a96a0478348bb100eb2ac1e1530153d0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acceleration in platform frame coordinates in [m/s^2]. <br /></td></tr>
+<tr class="memitem:a96a0478348bb100eb2ac1e1530153d0e" id="r_a96a0478348bb100eb2ac1e1530153d0e"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96a0478348bb100eb2ac1e1530153d0e">p_acceleration</a></td></tr>
+<tr class="memdesc:a96a0478348bb100eb2ac1e1530153d0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acceleration in platform frame coordinates in [m/s^2].  <br /></td></tr>
 <tr class="separator:a96a0478348bb100eb2ac1e1530153d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54383137aae2989a8c9b72816933c0a3" id="r_a54383137aae2989a8c9b72816933c0a3"><td class="memItemLeft" align="right" valign="top"><a id="a54383137aae2989a8c9b72816933c0a3" name="a54383137aae2989a8c9b72816933c0a3"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_angularRate</b></td></tr>
-<tr class="memdesc:a54383137aae2989a8c9b72816933c0a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angular rate in platform frame coordinates in [rad/s]. <br /></td></tr>
+<tr class="memitem:a54383137aae2989a8c9b72816933c0a3" id="r_a54383137aae2989a8c9b72816933c0a3"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54383137aae2989a8c9b72816933c0a3">p_angularRate</a></td></tr>
+<tr class="memdesc:a54383137aae2989a8c9b72816933c0a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angular rate in platform frame coordinates in [rad/s].  <br /></td></tr>
 <tr class="separator:a54383137aae2989a8c9b72816933c0a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Inertial <a class="el" href="structNAV_1_1InertialIntegrator_1_1Measurement.html" title="Inertial Measurement.">Measurement</a>. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00064">64</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a2fe5ef7c22a47401a248cdda0ac6d791" name="a2fe5ef7c22a47401a248cdda0ac6d791"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fe5ef7c22a47401a248cdda0ac6d791">&#9670;&#160;</a></span>averagedMeasurement</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::InertialIntegrator::Measurement::averagedMeasurement</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wether the acceleration is averaged over the last epoch. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00066">66</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aedda1933417ce16bdf3c92a30aaf1774" name="aedda1933417ce16bdf3c92a30aaf1774"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedda1933417ce16bdf3c92a30aaf1774">&#9670;&#160;</a></span>dt</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::InertialIntegrator::Measurement::dt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time since previous observation in [s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00067">67</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a96a0478348bb100eb2ac1e1530153d0e" name="a96a0478348bb100eb2ac1e1530153d0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96a0478348bb100eb2ac1e1530153d0e">&#9670;&#160;</a></span>p_acceleration</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::InertialIntegrator::Measurement::p_acceleration</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acceleration in platform frame coordinates in [m/s^2]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00068">68</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a54383137aae2989a8c9b72816933c0a3" name="a54383137aae2989a8c9b72816933c0a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54383137aae2989a8c9b72816933c0a3">&#9670;&#160;</a></span>p_angularRate</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::InertialIntegrator::Measurement::p_angularRate</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Angular rate in platform frame coordinates in [rad/s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00069">69</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/INS/<a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -156,7 +227,7 @@ Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>p_angularR
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1InertialIntegrator.html">InertialIntegrator</a></li><li class="navelem"><a class="el" href="structNAV_1_1InertialIntegrator_1_1Measurement.html">Measurement</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1InertialIntegrator.html">InertialIntegrator</a></li><li class="navelem"><a class="el" href="structNAV_1_1InertialIntegrator_1_1Measurement.html">Measurement</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

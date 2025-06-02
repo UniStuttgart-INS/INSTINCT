@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,13 +119,12 @@ $(function(){initNavTree('classNAV_1_1InertialIntegrator.html',''); initResizabl
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
-<a href="classNAV_1_1InertialIntegrator-members.html">List of all members</a>  </div>
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle"><div class="title">NAV::InertialIntegrator Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -133,7 +133,7 @@ $(function(){initNavTree('classNAV_1_1InertialIntegrator.html',''); initResizabl
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1InertialIntegrator_1_1GenericState.html">GenericState</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inertial state and measurements.  <a href="structNAV_1_1InertialIntegrator_1_1GenericState.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,9 +173,8 @@ Public Types</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:abeff56dbebc53fbd89cdbd070948e8e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Available Integration Frames.  <a href="#abeff56dbebc53fbd89cdbd070948e8e1">More...</a><br /></td></tr>
 <tr class="separator:abeff56dbebc53fbd89cdbd070948e8e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9440c4f0babe2cba3de0efa9ef48040" id="r_af9440c4f0babe2cba3de0efa9ef48040"><td class="memItemLeft" align="right" valign="top"><a id="af9440c4f0babe2cba3de0efa9ef48040" name="af9440c4f0babe2cba3de0efa9ef48040"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>State</b></td></tr>
-<tr class="memdesc:af9440c4f0babe2cba3de0efa9ef48040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inertial state and measurements. <br /></td></tr>
+<tr class="memitem:af9440c4f0babe2cba3de0efa9ef48040" id="r_af9440c4f0babe2cba3de0efa9ef48040"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a></td></tr>
+<tr class="memdesc:af9440c4f0babe2cba3de0efa9ef48040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inertial state and measurements.  <br /></td></tr>
 <tr class="separator:af9440c4f0babe2cba3de0efa9ef48040"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -192,9 +191,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3fb393a7586dd8c25ac6b960a322b170" id="r_a3fb393a7586dd8c25ac6b960a322b170"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fb393a7586dd8c25ac6b960a322b170">applyStateErrors_n</a> (const Eigen::Vector3d &amp;lla_positionError, const Eigen::Vector3d &amp;n_velocityError, const Eigen::Vector3d &amp;n_attitudeError_b)</td></tr>
 <tr class="memdesc:a3fb393a7586dd8c25ac6b960a322b170"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the errors to the latest state.  <br /></td></tr>
 <tr class="separator:a3fb393a7586dd8c25ac6b960a322b170"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf9c6feaeb7c30b579502075352ee52b" id="r_aaf9c6feaeb7c30b579502075352ee52b"><td class="memItemLeft" align="right" valign="top"><a id="aaf9c6feaeb7c30b579502075352ee52b" name="aaf9c6feaeb7c30b579502075352ee52b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>areAccelerationsAveragedMeasurements</b> () const</td></tr>
-<tr class="memdesc:aaf9c6feaeb7c30b579502075352ee52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect) <br /></td></tr>
+<tr class="memitem:aaf9c6feaeb7c30b579502075352ee52b" id="r_aaf9c6feaeb7c30b579502075352ee52b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf9c6feaeb7c30b579502075352ee52b">areAccelerationsAveragedMeasurements</a> () const</td></tr>
+<tr class="memdesc:aaf9c6feaeb7c30b579502075352ee52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect)  <br /></td></tr>
 <tr class="separator:aaf9c6feaeb7c30b579502075352ee52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a125b33a0e8da3d98b8e20d1127a77a6e" id="r_a125b33a0e8da3d98b8e20d1127a77a6e"><td class="memTemplParams" colspan="2">template&lt;typename T&gt; </td></tr>
 <tr class="memitem:a125b33a0e8da3d98b8e20d1127a77a6e"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector&lt; T, 10 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a125b33a0e8da3d98b8e20d1127a77a6e">calcInertialSolution</a> (const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;imuPos, const <a class="el" href="structNAV_1_1InertialIntegrator_1_1GenericState.html">GenericState</a>&lt; T &gt; &amp;state__t0, const <a class="el" href="structNAV_1_1InertialIntegrator_1_1GenericState.html">GenericState</a>&lt; T &gt; &amp;state__t1, const char *nameId) const</td></tr>
@@ -206,48 +204,38 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>areAccelerationsAvera
 <tr class="memitem:aa4291b21edbd4c53b8327d3186a374af" id="r_aa4291b21edbd4c53b8327d3186a374af"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4291b21edbd4c53b8327d3186a374af">calcInertialSolutionDelta</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;obsTime, double deltaTime, const Eigen::Vector3d &amp;p_deltaVelocity, const Eigen::Vector3d &amp;p_deltaTheta, const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;imuPos, const char *nameId)</td></tr>
 <tr class="memdesc:aa4291b21edbd4c53b8327d3186a374af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the inertial navigation solution.  <br /></td></tr>
 <tr class="separator:aa4291b21edbd4c53b8327d3186a374af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd62a3a5b380dadaa4e7b3e16959ef5a" id="r_afd62a3a5b380dadaa4e7b3e16959ef5a"><td class="memItemLeft" align="right" valign="top"><a id="afd62a3a5b380dadaa4e7b3e16959ef5a" name="afd62a3a5b380dadaa4e7b3e16959ef5a"></a>
-const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getConstants</b> () const</td></tr>
-<tr class="memdesc:afd62a3a5b380dadaa4e7b3e16959ef5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the selected compensation models. <br /></td></tr>
+<tr class="memitem:afd62a3a5b380dadaa4e7b3e16959ef5a" id="r_afd62a3a5b380dadaa4e7b3e16959ef5a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd62a3a5b380dadaa4e7b3e16959ef5a">getConstants</a> () const</td></tr>
+<tr class="memdesc:afd62a3a5b380dadaa4e7b3e16959ef5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the selected compensation models.  <br /></td></tr>
 <tr class="separator:afd62a3a5b380dadaa4e7b3e16959ef5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bbd94d48b6659980aecc49ccd5be379" id="r_a2bbd94d48b6659980aecc49ccd5be379"><td class="memItemLeft" align="right" valign="top"><a id="a2bbd94d48b6659980aecc49ccd5be379" name="a2bbd94d48b6659980aecc49ccd5be379"></a>
-<a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getIntegrationFrame</b> () const</td></tr>
-<tr class="memdesc:a2bbd94d48b6659980aecc49ccd5be379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the selected integration frame. <br /></td></tr>
-<tr class="separator:a2bbd94d48b6659980aecc49ccd5be379"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7228d05527b1d4f318dda4b4a678fa36" id="r_a7228d05527b1d4f318dda4b4a678fa36"><td class="memItemLeft" align="right" valign="top"><a id="a7228d05527b1d4f318dda4b4a678fa36" name="a7228d05527b1d4f318dda4b4a678fa36"></a>
-std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getLatestState</b> () const</td></tr>
-<tr class="memdesc:a7228d05527b1d4f318dda4b4a678fa36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the latest state if it exists. <br /></td></tr>
-<tr class="separator:a7228d05527b1d4f318dda4b4a678fa36"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a102324df198c6e0dac27327db2d5d826" id="r_a102324df198c6e0dac27327db2d5d826"><td class="memItemLeft" align="right" valign="top"><a id="a102324df198c6e0dac27327db2d5d826" name="a102324df198c6e0dac27327db2d5d826"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasInitialPosition</b> () const</td></tr>
-<tr class="memdesc:a102324df198c6e0dac27327db2d5d826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an initial position is set. <br /></td></tr>
+<tr class="memitem:ae42dabb5a94ad880cb9e7cd073234023" id="r_ae42dabb5a94ad880cb9e7cd073234023"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae42dabb5a94ad880cb9e7cd073234023">getIntegrationFrame</a> () const</td></tr>
+<tr class="memdesc:ae42dabb5a94ad880cb9e7cd073234023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the selected integration frame.  <br /></td></tr>
+<tr class="separator:ae42dabb5a94ad880cb9e7cd073234023"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab352f11ed7c6cdcffbc67a8b16d29829" id="r_ab352f11ed7c6cdcffbc67a8b16d29829"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab352f11ed7c6cdcffbc67a8b16d29829">getLatestState</a> () const</td></tr>
+<tr class="memdesc:ab352f11ed7c6cdcffbc67a8b16d29829"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the latest state if it exists.  <br /></td></tr>
+<tr class="separator:ab352f11ed7c6cdcffbc67a8b16d29829"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a102324df198c6e0dac27327db2d5d826" id="r_a102324df198c6e0dac27327db2d5d826"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a102324df198c6e0dac27327db2d5d826">hasInitialPosition</a> () const</td></tr>
+<tr class="memdesc:a102324df198c6e0dac27327db2d5d826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an initial position is set.  <br /></td></tr>
 <tr class="separator:a102324df198c6e0dac27327db2d5d826"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cb3b744d866d14e4e794e872f446d3f" id="r_a9cb3b744d866d14e4e794e872f446d3f"><td class="memItemLeft" align="right" valign="top"><a id="a9cb3b744d866d14e4e794e872f446d3f" name="a9cb3b744d866d14e4e794e872f446d3f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>InertialIntegrator</b> ()=default</td></tr>
-<tr class="memdesc:a9cb3b744d866d14e4e794e872f446d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:a9cb3b744d866d14e4e794e872f446d3f" id="r_a9cb3b744d866d14e4e794e872f446d3f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cb3b744d866d14e4e794e872f446d3f">InertialIntegrator</a> ()=default</td></tr>
+<tr class="memdesc:a9cb3b744d866d14e4e794e872f446d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:a9cb3b744d866d14e4e794e872f446d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28bdb5b72a31a1974b6baafe1c65de59" id="r_a28bdb5b72a31a1974b6baafe1c65de59"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28bdb5b72a31a1974b6baafe1c65de59">InertialIntegrator</a> (<a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a> integrationFrame)</td></tr>
 <tr class="memdesc:a28bdb5b72a31a1974b6baafe1c65de59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="separator:a28bdb5b72a31a1974b6baafe1c65de59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a096ee7d4db016b54c54797ea69e2beb5" id="r_a096ee7d4db016b54c54797ea69e2beb5"><td class="memItemLeft" align="right" valign="top"><a id="a096ee7d4db016b54c54797ea69e2beb5" name="a096ee7d4db016b54c54797ea69e2beb5"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>p_calcCurrentAcceleration</b> () const</td></tr>
-<tr class="memdesc:a096ee7d4db016b54c54797ea69e2beb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the current acceleration, if measurements area available. <br /></td></tr>
+<tr class="memitem:a096ee7d4db016b54c54797ea69e2beb5" id="r_a096ee7d4db016b54c54797ea69e2beb5"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a096ee7d4db016b54c54797ea69e2beb5">p_calcCurrentAcceleration</a> () const</td></tr>
+<tr class="memdesc:a096ee7d4db016b54c54797ea69e2beb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the current acceleration, if measurements area available.  <br /></td></tr>
 <tr class="separator:a096ee7d4db016b54c54797ea69e2beb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3865fd4a54d4a97590c1345be2d47353" id="r_a3865fd4a54d4a97590c1345be2d47353"><td class="memItemLeft" align="right" valign="top"><a id="a3865fd4a54d4a97590c1345be2d47353" name="a3865fd4a54d4a97590c1345be2d47353"></a>
-std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>p_calcCurrentAngularRate</b> () const</td></tr>
-<tr class="memdesc:a3865fd4a54d4a97590c1345be2d47353"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the current angular rate, if measurements area available. <br /></td></tr>
+<tr class="memitem:a3865fd4a54d4a97590c1345be2d47353" id="r_a3865fd4a54d4a97590c1345be2d47353"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Eigen::Vector3d &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3865fd4a54d4a97590c1345be2d47353">p_calcCurrentAngularRate</a> () const</td></tr>
+<tr class="memdesc:a3865fd4a54d4a97590c1345be2d47353"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the current angular rate, if measurements area available.  <br /></td></tr>
 <tr class="separator:a3865fd4a54d4a97590c1345be2d47353"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58ab49c9bb5c34e73b97da4da5eae347" id="r_a58ab49c9bb5c34e73b97da4da5eae347"><td class="memItemLeft" align="right" valign="top"><a id="a58ab49c9bb5c34e73b97da4da5eae347" name="a58ab49c9bb5c34e73b97da4da5eae347"></a>
-const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>p_getLastAccelerationBias</b> () const</td></tr>
-<tr class="memdesc:a58ab49c9bb5c34e73b97da4da5eae347"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last acceleration bias in platform frame coordinates in [m/s^2]. <br /></td></tr>
+<tr class="memitem:a58ab49c9bb5c34e73b97da4da5eae347" id="r_a58ab49c9bb5c34e73b97da4da5eae347"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58ab49c9bb5c34e73b97da4da5eae347">p_getLastAccelerationBias</a> () const</td></tr>
+<tr class="memdesc:a58ab49c9bb5c34e73b97da4da5eae347"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last acceleration bias in platform frame coordinates in [m/s^2].  <br /></td></tr>
 <tr class="separator:a58ab49c9bb5c34e73b97da4da5eae347"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af27ab86da2cf7297a485d8a86e933562" id="r_af27ab86da2cf7297a485d8a86e933562"><td class="memItemLeft" align="right" valign="top"><a id="af27ab86da2cf7297a485d8a86e933562" name="af27ab86da2cf7297a485d8a86e933562"></a>
-const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>p_getLastAngularRateBias</b> () const</td></tr>
-<tr class="memdesc:af27ab86da2cf7297a485d8a86e933562"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last angular rate bias in platform frame coordinates in [rad/s]. <br /></td></tr>
+<tr class="memitem:af27ab86da2cf7297a485d8a86e933562" id="r_af27ab86da2cf7297a485d8a86e933562"><td class="memItemLeft" align="right" valign="top">const Eigen::Vector3d &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af27ab86da2cf7297a485d8a86e933562">p_getLastAngularRateBias</a> () const</td></tr>
+<tr class="memdesc:af27ab86da2cf7297a485d8a86e933562"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last angular rate bias in platform frame coordinates in [rad/s].  <br /></td></tr>
 <tr class="separator:af27ab86da2cf7297a485d8a86e933562"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc" id="r_ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"><td class="memItemLeft" align="right" valign="top"><a id="ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc" name="ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-<tr class="memdesc:ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all internal data. <br /></td></tr>
+<tr class="memitem:ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc" id="r_ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc">reset</a> ()</td></tr>
+<tr class="memdesc:ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all internal data.  <br /></td></tr>
 <tr class="separator:ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad528df5ca274edb39c0ace963749c481" id="r_ad528df5ca274edb39c0ace963749c481"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad528df5ca274edb39c0ace963749c481">setInitialState</a> (const <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &amp;state, const char *nameId)</td></tr>
 <tr class="memdesc:ad528df5ca274edb39c0ace963749c481"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the initial state.  <br /></td></tr>
@@ -267,48 +255,38 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a835264a609cf2a093fea36960c37b29c" id="r_a835264a609cf2a093fea36960c37b29c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a835264a609cf2a093fea36960c37b29c">calcInertialSolutionFromMeasurementBuffer</a> (const <a class="el" href="classNAV_1_1ImuPos.html">ImuPos</a> &amp;imuPos, const char *nameId)</td></tr>
 <tr class="memdesc:a835264a609cf2a093fea36960c37b29c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the inertial navigation solution.  <br /></td></tr>
 <tr class="separator:a835264a609cf2a093fea36960c37b29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee1b0c6ee1c7bd4b30cf61f34434d772" id="r_aee1b0c6ee1c7bd4b30cf61f34434d772"><td class="memItemLeft" align="right" valign="top"><a id="aee1b0c6ee1c7bd4b30cf61f34434d772" name="aee1b0c6ee1c7bd4b30cf61f34434d772"></a>
-std::shared_ptr&lt; <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lastStateAsPosVelAtt</b> () const</td></tr>
-<tr class="memdesc:aee1b0c6ee1c7bd4b30cf61f34434d772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the last state as <a class="el" href="classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class.">PosVelAtt</a>. <br /></td></tr>
+<tr class="memitem:aee1b0c6ee1c7bd4b30cf61f34434d772" id="r_aee1b0c6ee1c7bd4b30cf61f34434d772"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee1b0c6ee1c7bd4b30cf61f34434d772">lastStateAsPosVelAtt</a> () const</td></tr>
+<tr class="memdesc:aee1b0c6ee1c7bd4b30cf61f34434d772"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the last state as <a class="el" href="classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class.">PosVelAtt</a>.  <br /></td></tr>
 <tr class="separator:aee1b0c6ee1c7bd4b30cf61f34434d772"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68d94fbdecd1132d10e097313dc2c4a8" id="r_a68d94fbdecd1132d10e097313dc2c4a8"><td class="memItemLeft" align="right" valign="top"><a id="a68d94fbdecd1132d10e097313dc2c4a8" name="a68d94fbdecd1132d10e097313dc2c4a8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setBufferSizes</b> ()</td></tr>
-<tr class="memdesc:a68d94fbdecd1132d10e097313dc2c4a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the measurement and state buffers depending on the integration algorithm. <br /></td></tr>
+<tr class="memitem:a68d94fbdecd1132d10e097313dc2c4a8" id="r_a68d94fbdecd1132d10e097313dc2c4a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a68d94fbdecd1132d10e097313dc2c4a8">setBufferSizes</a> ()</td></tr>
+<tr class="memdesc:a68d94fbdecd1132d10e097313dc2c4a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the measurement and state buffers depending on the integration algorithm.  <br /></td></tr>
 <tr class="separator:a68d94fbdecd1132d10e097313dc2c4a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a4f2ffe537436d0ef85f6a72faa448f62" id="r_a4f2ffe537436d0ef85f6a72faa448f62"><td class="memItemLeft" align="right" valign="top"><a id="a4f2ffe537436d0ef85f6a72faa448f62" name="a4f2ffe537436d0ef85f6a72faa448f62"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_accelerationsAreAveragedMeasurements</b></td></tr>
-<tr class="memdesc:a4f2ffe537436d0ef85f6a72faa448f62"><td class="mdescLeft">&#160;</td><td class="mdescRight">If true, then the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect) <br /></td></tr>
+<tr class="memitem:a4f2ffe537436d0ef85f6a72faa448f62" id="r_a4f2ffe537436d0ef85f6a72faa448f62"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f2ffe537436d0ef85f6a72faa448f62">_accelerationsAreAveragedMeasurements</a></td></tr>
+<tr class="memdesc:a4f2ffe537436d0ef85f6a72faa448f62"><td class="mdescLeft">&#160;</td><td class="mdescRight">If true, then the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect)  <br /></td></tr>
 <tr class="separator:a4f2ffe537436d0ef85f6a72faa448f62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0130189567a4e41f28d045c0628341af" id="r_a0130189567a4e41f28d045c0628341af"><td class="memItemLeft" align="right" valign="top"><a id="a0130189567a4e41f28d045c0628341af" name="a0130189567a4e41f28d045c0628341af"></a>
-<a class="el" href="#a467717a9c1e1fb82f892fba30ea04e52">IntegrationAlgorithm</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_integrationAlgorithm</b></td></tr>
-<tr class="memdesc:a0130189567a4e41f28d045c0628341af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration algorithm used for the update. <br /></td></tr>
+<tr class="memitem:a0130189567a4e41f28d045c0628341af" id="r_a0130189567a4e41f28d045c0628341af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a467717a9c1e1fb82f892fba30ea04e52">IntegrationAlgorithm</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0130189567a4e41f28d045c0628341af">_integrationAlgorithm</a></td></tr>
+<tr class="memdesc:a0130189567a4e41f28d045c0628341af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration algorithm used for the update.  <br /></td></tr>
 <tr class="separator:a0130189567a4e41f28d045c0628341af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8e04bf0864388673ac7fef414c0dc9f" id="r_ad8e04bf0864388673ac7fef414c0dc9f"><td class="memItemLeft" align="right" valign="top"><a id="ad8e04bf0864388673ac7fef414c0dc9f" name="ad8e04bf0864388673ac7fef414c0dc9f"></a>
-<a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_integrationFrame</b></td></tr>
-<tr class="memdesc:ad8e04bf0864388673ac7fef414c0dc9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frame to integrate the observations in. <br /></td></tr>
+<tr class="memitem:ad8e04bf0864388673ac7fef414c0dc9f" id="r_ad8e04bf0864388673ac7fef414c0dc9f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8e04bf0864388673ac7fef414c0dc9f">_integrationFrame</a></td></tr>
+<tr class="memdesc:ad8e04bf0864388673ac7fef414c0dc9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frame to integrate the observations in.  <br /></td></tr>
 <tr class="separator:ad8e04bf0864388673ac7fef414c0dc9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6b108d80f39c1500a82d9eb11559019" id="r_ae6b108d80f39c1500a82d9eb11559019"><td class="memItemLeft" align="right" valign="top"><a id="ae6b108d80f39c1500a82d9eb11559019" name="ae6b108d80f39c1500a82d9eb11559019"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_lockIntegrationFrame</b></td></tr>
-<tr class="memdesc:ae6b108d80f39c1500a82d9eb11559019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether to lock the integration frame. <br /></td></tr>
+<tr class="memitem:ae6b108d80f39c1500a82d9eb11559019" id="r_ae6b108d80f39c1500a82d9eb11559019"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6b108d80f39c1500a82d9eb11559019">_lockIntegrationFrame</a></td></tr>
+<tr class="memdesc:ae6b108d80f39c1500a82d9eb11559019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wether to lock the integration frame.  <br /></td></tr>
 <tr class="separator:ae6b108d80f39c1500a82d9eb11559019"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fe402683f89eabe0005f44df5d25858" id="r_a1fe402683f89eabe0005f44df5d25858"><td class="memItemLeft" align="right" valign="top"><a id="a1fe402683f89eabe0005f44df5d25858" name="a1fe402683f89eabe0005f44df5d25858"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_p_lastBiasAcceleration</b></td></tr>
-<tr class="memdesc:a1fe402683f89eabe0005f44df5d25858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial values for the acceleration bias [m/s^2]. <br /></td></tr>
+<tr class="memitem:a1fe402683f89eabe0005f44df5d25858" id="r_a1fe402683f89eabe0005f44df5d25858"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1fe402683f89eabe0005f44df5d25858">_p_lastBiasAcceleration</a></td></tr>
+<tr class="memdesc:a1fe402683f89eabe0005f44df5d25858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial values for the acceleration bias [m/s^2].  <br /></td></tr>
 <tr class="separator:a1fe402683f89eabe0005f44df5d25858"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae455a4b9457ed56295b9ba514113fb72" id="r_ae455a4b9457ed56295b9ba514113fb72"><td class="memItemLeft" align="right" valign="top"><a id="ae455a4b9457ed56295b9ba514113fb72" name="ae455a4b9457ed56295b9ba514113fb72"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>_p_lastBiasAngularRate</b></td></tr>
-<tr class="memdesc:ae455a4b9457ed56295b9ba514113fb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial values for the angular rate bias [rad/s]. <br /></td></tr>
+<tr class="memitem:ae455a4b9457ed56295b9ba514113fb72" id="r_ae455a4b9457ed56295b9ba514113fb72"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae455a4b9457ed56295b9ba514113fb72">_p_lastBiasAngularRate</a></td></tr>
+<tr class="memdesc:ae455a4b9457ed56295b9ba514113fb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial values for the angular rate bias [rad/s].  <br /></td></tr>
 <tr class="separator:ae455a4b9457ed56295b9ba514113fb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae28b28ee6d45e8eb5153b9792f3127b7" id="r_ae28b28ee6d45e8eb5153b9792f3127b7"><td class="memItemLeft" align="right" valign="top"><a id="ae28b28ee6d45e8eb5153b9792f3127b7" name="ae28b28ee6d45e8eb5153b9792f3127b7"></a>
-<a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_posVelAttDerivativeConstants</b></td></tr>
-<tr class="memdesc:ae28b28ee6d45e8eb5153b9792f3127b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Settings for the models to use. <br /></td></tr>
+<tr class="memitem:ae28b28ee6d45e8eb5153b9792f3127b7" id="r_ae28b28ee6d45e8eb5153b9792f3127b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae28b28ee6d45e8eb5153b9792f3127b7">_posVelAttDerivativeConstants</a></td></tr>
+<tr class="memdesc:ae28b28ee6d45e8eb5153b9792f3127b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Settings for the models to use.  <br /></td></tr>
 <tr class="separator:ae28b28ee6d45e8eb5153b9792f3127b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4ddf2164fe9636823a1a236f62515d5" id="r_ae4ddf2164fe9636823a1a236f62515d5"><td class="memItemLeft" align="right" valign="top"><a id="ae4ddf2164fe9636823a1a236f62515d5" name="ae4ddf2164fe9636823a1a236f62515d5"></a>
-<a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_states</b></td></tr>
-<tr class="memdesc:ae4ddf2164fe9636823a1a236f62515d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of states. Length depends on algorithm used. <br /></td></tr>
+<tr class="memitem:ae4ddf2164fe9636823a1a236f62515d5" id="r_ae4ddf2164fe9636823a1a236f62515d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt; <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4ddf2164fe9636823a1a236f62515d5">_states</a></td></tr>
+<tr class="memdesc:ae4ddf2164fe9636823a1a236f62515d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of states. Length depends on algorithm used.  <br /></td></tr>
 <tr class="separator:ae4ddf2164fe9636823a1a236f62515d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
@@ -331,7 +309,28 @@ Friends</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Inertial <a class="el" href="structNAV_1_1InertialIntegrator_1_1Measurement.html" title="Inertial Measurement.">Measurement</a> Integrator. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00039">39</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="af9440c4f0babe2cba3de0efa9ef48040" name="af9440c4f0babe2cba3de0efa9ef48040"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9440c4f0babe2cba3de0efa9ef48040">&#9670;&#160;</a></span>State</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">NAV::InertialIntegrator::State</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inertial state and measurements. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00095">95</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a467717a9c1e1fb82f892fba30ea04e52" name="a467717a9c1e1fb82f892fba30ea04e52"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a467717a9c1e1fb82f892fba30ea04e52">&#9670;&#160;</a></span>IntegrationAlgorithm</h2>
 
@@ -374,6 +373,8 @@ Friends</h2></td></tr>
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00043">43</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
 </div>
 </div>
 <a id="abeff56dbebc53fbd89cdbd070948e8e1" name="abeff56dbebc53fbd89cdbd070948e8e1"></a>
@@ -404,11 +405,40 @@ Friends</h2></td></tr>
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00057">57</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a9cb3b744d866d14e4e794e872f446d3f" name="a9cb3b744d866d14e4e794e872f446d3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cb3b744d866d14e4e794e872f446d3f">&#9670;&#160;</a></span>InertialIntegrator() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NAV::InertialIntegrator::InertialIntegrator </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Constructor. </p>
+
+</div>
+</div>
 <a id="a28bdb5b72a31a1974b6baafe1c65de59" name="a28bdb5b72a31a1974b6baafe1c65de59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28bdb5b72a31a1974b6baafe1c65de59">&#9670;&#160;</a></span>InertialIntegrator()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a28bdb5b72a31a1974b6baafe1c65de59">&#9670;&#160;</a></span>InertialIntegrator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -437,6 +467,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00026">26</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -501,6 +533,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00196">196</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a869b9b7f0cb79416de69c77075f77773" name="a869b9b7f0cb79416de69c77075f77773"></a>
@@ -557,6 +591,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00162">162</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a3b7558f03af6d8777e1177a01784df6e" name="a3b7558f03af6d8777e1177a01784df6e"></a>
@@ -587,6 +623,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00048">48</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="af78342cbcf720805e11fbdf0f68382ee" name="af78342cbcf720805e11fbdf0f68382ee"></a>
@@ -616,6 +654,8 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00070">70</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -653,6 +693,8 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00105">105</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a3fb393a7586dd8c25ac6b960a322b170" name="a3fb393a7586dd8c25ac6b960a322b170"></a>
@@ -688,6 +730,37 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00076">76</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aaf9c6feaeb7c30b579502075352ee52b" name="aaf9c6feaeb7c30b579502075352ee52b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf9c6feaeb7c30b579502075352ee52b">&#9670;&#160;</a></span>areAccelerationsAveragedMeasurements()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::InertialIntegrator::areAccelerationsAveragedMeasurements </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wether the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect) </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00143">143</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -742,6 +815,8 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Position, velocity and attitude from the integration step </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00200">200</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a381d7bc41dd56866d898bc4ef09a3787" name="a381d7bc41dd56866d898bc4ef09a3787"></a>
@@ -790,6 +865,8 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The new state at the observation time </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00237">237</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -846,6 +923,8 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The new state at the observation time </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00255">255</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a835264a609cf2a093fea36960c37b29c" name="a835264a609cf2a093fea36960c37b29c"></a>
@@ -885,6 +964,319 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The new state at the observation time </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00273">273</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afd62a3a5b380dadaa4e7b3e16959ef5a" name="afd62a3a5b380dadaa4e7b3e16959ef5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd62a3a5b380dadaa4e7b3e16959ef5a">&#9670;&#160;</a></span>getConstants()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a> &amp; NAV::InertialIntegrator::getConstants </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the selected compensation models. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00138">138</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae42dabb5a94ad880cb9e7cd073234023" name="ae42dabb5a94ad880cb9e7cd073234023"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae42dabb5a94ad880cb9e7cd073234023">&#9670;&#160;</a></span>getIntegrationFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">InertialIntegrator::IntegrationFrame</a> NAV::InertialIntegrator::getIntegrationFrame </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the selected integration frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00133">133</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab352f11ed7c6cdcffbc67a8b16d29829" name="ab352f11ed7c6cdcffbc67a8b16d29829"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab352f11ed7c6cdcffbc67a8b16d29829">&#9670;&#160;</a></span>getLatestState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">InertialIntegrator::State</a> &gt; &gt; NAV::InertialIntegrator::getLatestState </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the latest state if it exists. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00117">117</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a102324df198c6e0dac27327db2d5d826" name="a102324df198c6e0dac27327db2d5d826"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a102324df198c6e0dac27327db2d5d826">&#9670;&#160;</a></span>hasInitialPosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::InertialIntegrator::hasInitialPosition </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if an initial position is set. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00037">37</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aee1b0c6ee1c7bd4b30cf61f34434d772" name="aee1b0c6ee1c7bd4b30cf61f34434d772"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee1b0c6ee1c7bd4b30cf61f34434d772">&#9670;&#160;</a></span>lastStateAsPosVelAtt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classNAV_1_1PosVelAtt.html">PosVelAtt</a> &gt; NAV::InertialIntegrator::lastStateAsPosVelAtt </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the last state as <a class="el" href="classNAV_1_1PosVelAtt.html" title="Position, Velocity and Attitude Storage Class.">PosVelAtt</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00218">218</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a096ee7d4db016b54c54797ea69e2beb5" name="a096ee7d4db016b54c54797ea69e2beb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a096ee7d4db016b54c54797ea69e2beb5">&#9670;&#160;</a></span>p_calcCurrentAcceleration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Eigen::Vector3d &gt; NAV::InertialIntegrator::p_calcCurrentAcceleration </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the current acceleration, if measurements area available. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00148">148</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3865fd4a54d4a97590c1345be2d47353" name="a3865fd4a54d4a97590c1345be2d47353"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3865fd4a54d4a97590c1345be2d47353">&#9670;&#160;</a></span>p_calcCurrentAngularRate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Eigen::Vector3d &gt; NAV::InertialIntegrator::p_calcCurrentAngularRate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate the current angular rate, if measurements area available. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00155">155</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a58ab49c9bb5c34e73b97da4da5eae347" name="a58ab49c9bb5c34e73b97da4da5eae347"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58ab49c9bb5c34e73b97da4da5eae347">&#9670;&#160;</a></span>p_getLastAccelerationBias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d &amp; NAV::InertialIntegrator::p_getLastAccelerationBias </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the last acceleration bias in platform frame coordinates in [m/s^2]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00123">123</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af27ab86da2cf7297a485d8a86e933562" name="af27ab86da2cf7297a485d8a86e933562"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af27ab86da2cf7297a485d8a86e933562">&#9670;&#160;</a></span>p_getLastAngularRateBias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Eigen::Vector3d &amp; NAV::InertialIntegrator::p_getLastAngularRateBias </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Return the last angular rate bias in platform frame coordinates in [rad/s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00128">128</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc" name="ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8bb3e7cfef2b654c6ebd3e7c7a6a6bc">&#9670;&#160;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::InertialIntegrator::reset </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears all internal data. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00029">29</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a68d94fbdecd1132d10e097313dc2c4a8" name="a68d94fbdecd1132d10e097313dc2c4a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68d94fbdecd1132d10e097313dc2c4a8">&#9670;&#160;</a></span>setBufferSizes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::InertialIntegrator::setBufferSizes </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resizes the measurement and state buffers depending on the integration algorithm. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00312">312</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="ad528df5ca274edb39c0ace963749c481" name="ad528df5ca274edb39c0ace963749c481"></a>
@@ -915,6 +1307,8 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00042">42</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a57cf5af87a9ac4f936ee2a940db927f7" name="a57cf5af87a9ac4f936ee2a940db927f7"></a>
@@ -944,6 +1338,8 @@ template&lt;typename T&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00064">64</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -983,6 +1379,8 @@ template&lt;typename T&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00444">444</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -1026,13 +1424,15 @@ template&lt;typename T&gt; </div>
 <p>Shows a GUI for advanced configuration of the <a class="el" href="classNAV_1_1InertialIntegrator.html" title="Inertial Measurement Integrator.">InertialIntegrator</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show. This has to be a unique id for ImGui. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to show. This has to be a unique id for <a class="el" href="namespaceImGui.html">ImGui</a>. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">integrator</td><td>Reference to the integrator to configure </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">preferAccelerationOverDeltaMeasurements</td><td>Wether to prefer accelerations over delta measurements </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">width</td><td>Width of the widget </td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00333">333</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -1072,6 +1472,8 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00433">433</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
 <a id="a0a8fb4a6fbfd58eb83c545356e3411da" name="a0a8fb4a6fbfd58eb83c545356e3411da"></a>
@@ -1105,6 +1507,8 @@ template&lt;typename T&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00457">457</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
 
 </div>
 </div>
@@ -1140,17 +1544,229 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>String representation of the enum </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8cpp_source.html#l00483">483</a> of file <a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a4f2ffe537436d0ef85f6a72faa448f62" name="a4f2ffe537436d0ef85f6a72faa448f62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f2ffe537436d0ef85f6a72faa448f62">&#9670;&#160;</a></span>_accelerationsAreAveragedMeasurements</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::InertialIntegrator::_accelerationsAreAveragedMeasurements</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>If true, then the measurements are accumulated values over the last epoch. (always true when using delta measurements, so GUI has no effect) </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00490">490</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0130189567a4e41f28d045c0628341af" name="a0130189567a4e41f28d045c0628341af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0130189567a4e41f28d045c0628341af">&#9670;&#160;</a></span>_integrationAlgorithm</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a467717a9c1e1fb82f892fba30ea04e52">IntegrationAlgorithm</a> NAV::InertialIntegrator::_integrationAlgorithm</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Integration algorithm used for the update. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00487">487</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad8e04bf0864388673ac7fef414c0dc9f" name="ad8e04bf0864388673ac7fef414c0dc9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8e04bf0864388673ac7fef414c0dc9f">&#9670;&#160;</a></span>_integrationFrame</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#abeff56dbebc53fbd89cdbd070948e8e1">IntegrationFrame</a> NAV::InertialIntegrator::_integrationFrame</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Frame to integrate the observations in. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00481">481</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae6b108d80f39c1500a82d9eb11559019" name="ae6b108d80f39c1500a82d9eb11559019"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6b108d80f39c1500a82d9eb11559019">&#9670;&#160;</a></span>_lockIntegrationFrame</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::InertialIntegrator::_lockIntegrationFrame</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wether to lock the integration frame. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00484">484</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1fe402683f89eabe0005f44df5d25858" name="a1fe402683f89eabe0005f44df5d25858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fe402683f89eabe0005f44df5d25858">&#9670;&#160;</a></span>_p_lastBiasAcceleration</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::InertialIntegrator::_p_lastBiasAcceleration</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initial values for the acceleration bias [m/s^2]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00475">475</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae455a4b9457ed56295b9ba514113fb72" name="ae455a4b9457ed56295b9ba514113fb72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae455a4b9457ed56295b9ba514113fb72">&#9670;&#160;</a></span>_p_lastBiasAngularRate</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::InertialIntegrator::_p_lastBiasAngularRate</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initial values for the angular rate bias [rad/s]. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00476">476</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae28b28ee6d45e8eb5153b9792f3127b7" name="ae28b28ee6d45e8eb5153b9792f3127b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae28b28ee6d45e8eb5153b9792f3127b7">&#9670;&#160;</a></span>_posVelAttDerivativeConstants</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1PosVelAttDerivativeConstants.html">PosVelAttDerivativeConstants</a> NAV::InertialIntegrator::_posVelAttDerivativeConstants</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Settings for the models to use. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00495">495</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae4ddf2164fe9636823a1a236f62515d5" name="ae4ddf2164fe9636823a1a236f62515d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ddf2164fe9636823a1a236f62515d5">&#9670;&#160;</a></span>_states</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1ScrollingBuffer.html">ScrollingBuffer</a>&lt;<a class="el" href="#af9440c4f0babe2cba3de0efa9ef48040">State</a>&gt; NAV::InertialIntegrator::_states</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>List of states. Length depends on algorithm used. </p>
+
+<p class="definition">Definition at line <a class="el" href="InertialIntegrator_8hpp_source.html#l00473">473</a> of file <a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/INS/<a class="el" href="InertialIntegrator_8hpp_source.html">InertialIntegrator.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/INS/<a class="el" href="InertialIntegrator_8cpp_source.html">InertialIntegrator.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1InertialIntegrator.html">InertialIntegrator</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1InertialIntegrator.html">InertialIntegrator</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -20,6 +20,8 @@ var classNAV_1_1InputPin =
     [ "operator=", "classNAV_1_1InputPin.html#ab9c4b9ee23add8ba02c5672bd49b24a1", null ],
     [ "operator=", "classNAV_1_1InputPin.html#adda7ca8b9859db0c5eb6adffe96c18dc", null ],
     [ "recreateLink", "classNAV_1_1InputPin.html#a591041dffbd681f3da6f08fd6980b918", null ],
+    [ "OutputPin", "classNAV_1_1InputPin.html#a201a4c9eab3be28aaf69bd2d16591986", null ],
+    [ "Pin", "classNAV_1_1InputPin.html#a1195cddd885fda459b6c5e265505a8c0", null ],
     [ "callback", "classNAV_1_1InputPin.html#a668ea1f0e986be713d716712b63a7f39", null ],
     [ "dropQueueIfNotFirable", "classNAV_1_1InputPin.html#afdd16fcf2dae5ee6e46694322f69ba34", null ],
     [ "firable", "classNAV_1_1InputPin.html#a7bee1c8d5f504ebf7f085e2912bf31ed", null ],

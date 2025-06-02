@@ -15,7 +15,7 @@ var classNAV_1_1TimeSystem =
     [ "TimeSystem", "classNAV_1_1TimeSystem.html#ab38cc67287d687841c044b1da522ff2d", null ],
     [ "TimeSystem", "classNAV_1_1TimeSystem.html#a7559375f1e572824fe827d8d2e55b2bb", null ],
     [ "fromString", "classNAV_1_1TimeSystem.html#a5e39e4e53095dcbcbfb0947ae4c46710", null ],
-    [ "getEnumValue", "classNAV_1_1TimeSystem.html#ab761b222585c94f1a251d4f078e802f8", null ],
+    [ "getEnumValue", "classNAV_1_1TimeSystem.html#a8ba7b1f49066065c78df2124f1387398", null ],
     [ "GetTimeSystemEnumValue", "classNAV_1_1TimeSystem.html#add51390e2491bb63e762fe8a14d5850c", null ],
     [ "operator bool", "classNAV_1_1TimeSystem.html#a5377b723126a666d10aa5dbd3aaf404e", null ],
     [ "operator int", "classNAV_1_1TimeSystem.html#a2b5c5cf30d696b2f1c6c700105075b3d", null ],

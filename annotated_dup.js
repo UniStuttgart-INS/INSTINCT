@@ -1,37 +1,38 @@
 var annotated_dup =
 [
-    [ "ax", null, [
-      [ "NodeEditor", null, [
-        [ "Utilities", null, [
+    [ "ax", "namespaceax.html", [
+      [ "NodeEditor", "namespaceax_1_1NodeEditor.html", [
+        [ "Utilities", "namespaceax_1_1NodeEditor_1_1Utilities.html", [
           [ "BlueprintNodeBuilder", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder.html", "classax_1_1NodeEditor_1_1Utilities_1_1BlueprintNodeBuilder" ]
         ] ]
       ] ]
     ] ],
-    [ "cmrc", null, [
+    [ "cmrc", "namespacecmrc.html", [
       [ "membuf", "structcmrc_1_1membuf.html", "structcmrc_1_1membuf" ],
       [ "memstream", "structcmrc_1_1memstream.html", "structcmrc_1_1memstream" ]
     ] ],
-    [ "detail", null, [
+    [ "detail", "namespacedetail.html", [
       [ "variant_switch", "structdetail_1_1variant__switch.html", "structdetail_1_1variant__switch" ],
       [ "variant_switch< 0 >", "structdetail_1_1variant__switch_3_010_01_4.html", "structdetail_1_1variant__switch_3_010_01_4" ]
     ] ],
-    [ "NAV", null, [
-      [ "CartesianProduct", null, [
+    [ "NAV", "namespaceNAV.html", [
+      [ "CartesianProduct", "namespaceNAV_1_1CartesianProduct.html", [
         [ "increment_iterator", "structNAV_1_1CartesianProduct_1_1increment__iterator.html", "structNAV_1_1CartesianProduct_1_1increment__iterator" ],
         [ "increment_iterator< 0 >", "structNAV_1_1CartesianProduct_1_1increment__iterator_3_010_01_4.html", "structNAV_1_1CartesianProduct_1_1increment__iterator_3_010_01_4" ]
       ] ],
-      [ "experimental", null, [
+      [ "experimental", "namespaceNAV_1_1experimental.html", [
         [ "ARMA", "classNAV_1_1experimental_1_1ARMA.html", "classNAV_1_1experimental_1_1ARMA" ],
         [ "Delay", "classNAV_1_1experimental_1_1Delay.html", "classNAV_1_1experimental_1_1Delay" ],
         [ "SkydelNetworkStream", "classNAV_1_1experimental_1_1SkydelNetworkStream.html", "classNAV_1_1experimental_1_1SkydelNetworkStream" ]
       ] ],
-      [ "gui", null, [
-        [ "widgets", null, [
+      [ "gui", "namespaceNAV_1_1gui.html", [
+        [ "widgets", "namespaceNAV_1_1gui_1_1widgets.html", [
           [ "DynamicInputPins", "structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html", "structNAV_1_1gui_1_1widgets_1_1DynamicInputPins" ],
           [ "PositionWithFrame", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame.html", "structNAV_1_1gui_1_1widgets_1_1PositionWithFrame" ],
           [ "TimeEditFormat", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html", "structNAV_1_1gui_1_1widgets_1_1TimeEditFormat" ]
         ] ],
-        [ "NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html", "classNAV_1_1gui_1_1NodeEditorApplication" ]
+        [ "NodeEditorApplication", "classNAV_1_1gui_1_1NodeEditorApplication.html", "classNAV_1_1gui_1_1NodeEditorApplication" ],
+        [ "NodeIdLess", "structNAV_1_1gui_1_1NodeIdLess.html", "structNAV_1_1gui_1_1NodeIdLess" ]
       ] ],
       [ "internal", "namespaceNAV_1_1internal.html", [
         [ "all_t", "structNAV_1_1internal_1_1all__t.html", "structNAV_1_1internal_1_1all__t" ],
@@ -48,28 +49,28 @@ var annotated_dup =
         [ "KeyedRowVectorBase", "classNAV_1_1internal_1_1KeyedRowVectorBase.html", "classNAV_1_1internal_1_1KeyedRowVectorBase" ],
         [ "KeyedVectorBase", "classNAV_1_1internal_1_1KeyedVectorBase.html", "classNAV_1_1internal_1_1KeyedVectorBase" ]
       ] ],
-      [ "Keys", null, [
+      [ "Keys", "namespaceNAV_1_1Keys.html", [
         [ "InterFreqBias", "structNAV_1_1Keys_1_1InterFreqBias.html", "structNAV_1_1Keys_1_1InterFreqBias" ],
         [ "RecvClkBias", "structNAV_1_1Keys_1_1RecvClkBias.html", "structNAV_1_1Keys_1_1RecvClkBias" ],
         [ "RecvClkDrift", "structNAV_1_1Keys_1_1RecvClkDrift.html", "structNAV_1_1Keys_1_1RecvClkDrift" ]
       ] ],
-      [ "math", null, [
+      [ "math", "namespaceNAV_1_1math.html", [
         [ "LerpSearchResult", "structNAV_1_1math_1_1LerpSearchResult.html", "structNAV_1_1math_1_1LerpSearchResult" ]
       ] ],
-      [ "NodeRegistry", null, [
+      [ "NodeRegistry", "namespaceNAV_1_1NodeRegistry.html", [
         [ "NodeInfo", "structNAV_1_1NodeRegistry_1_1NodeInfo.html", "structNAV_1_1NodeRegistry_1_1NodeInfo" ],
         [ "PinInfo", "structNAV_1_1NodeRegistry_1_1PinInfo.html", "structNAV_1_1NodeRegistry_1_1PinInfo" ]
       ] ],
-      [ "SPP", null, [
-        [ "Meas", null, [
+      [ "SPP", "namespaceNAV_1_1SPP.html", [
+        [ "Meas", "namespaceNAV_1_1SPP_1_1Meas.html", [
           [ "Doppler", "structNAV_1_1SPP_1_1Meas_1_1Doppler.html", "structNAV_1_1SPP_1_1Meas_1_1Doppler" ],
           [ "Psr", "structNAV_1_1SPP_1_1Meas_1_1Psr.html", "structNAV_1_1SPP_1_1Meas_1_1Psr" ]
         ] ],
         [ "Algorithm", "classNAV_1_1SPP_1_1Algorithm.html", "classNAV_1_1SPP_1_1Algorithm" ],
         [ "KalmanFilter", "classNAV_1_1SPP_1_1KalmanFilter.html", "classNAV_1_1SPP_1_1KalmanFilter" ]
       ] ],
-      [ "vendor", null, [
-        [ "emlid", null, [
+      [ "vendor", "namespaceNAV_1_1vendor.html", [
+        [ "emlid", "namespaceNAV_1_1vendor_1_1emlid.html", [
           [ "EmlidUartSensor", "classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor.html", "classNAV_1_1vendor_1_1emlid_1_1EmlidUartSensor" ],
           [ "ErbDops", "structNAV_1_1vendor_1_1emlid_1_1ErbDops.html", "structNAV_1_1vendor_1_1emlid_1_1ErbDops" ],
           [ "ErbPos", "structNAV_1_1vendor_1_1emlid_1_1ErbPos.html", "structNAV_1_1vendor_1_1emlid_1_1ErbPos" ],
@@ -79,13 +80,13 @@ var annotated_dup =
           [ "ErbVel", "structNAV_1_1vendor_1_1emlid_1_1ErbVel.html", "structNAV_1_1vendor_1_1emlid_1_1ErbVel" ],
           [ "ErbVer", "structNAV_1_1vendor_1_1emlid_1_1ErbVer.html", "structNAV_1_1vendor_1_1emlid_1_1ErbVer" ]
         ] ],
-        [ "espressif", null, [
+        [ "espressif", "namespaceNAV_1_1vendor_1_1espressif.html", [
           [ "EspressifUartSensor", "classNAV_1_1vendor_1_1espressif_1_1EspressifUartSensor.html", "classNAV_1_1vendor_1_1espressif_1_1EspressifUartSensor" ]
         ] ],
-        [ "kvh", null, [
+        [ "kvh", "namespaceNAV_1_1vendor_1_1kvh.html", [
           [ "KvhUartSensor", "classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor.html", "classNAV_1_1vendor_1_1kvh_1_1KvhUartSensor" ]
         ] ],
-        [ "pixhawk", null, [
+        [ "pixhawk", "namespaceNAV_1_1vendor_1_1pixhawk.html", [
           [ "message_add_logged_s", "structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1message__add__logged__s" ],
           [ "message_data_s", "structNAV_1_1vendor_1_1pixhawk_1_1message__data__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1message__data__s" ],
           [ "message_dropout_s", "structNAV_1_1vendor_1_1pixhawk_1_1message__dropout__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1message__dropout__s" ],
@@ -101,11 +102,11 @@ var annotated_dup =
           [ "ulog_message_info_multiple_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__info__multiple__header__s" ],
           [ "ulog_message_parameter_default_header_s", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s.html", "structNAV_1_1vendor_1_1pixhawk_1_1ulog__message__parameter__default__header__s" ]
         ] ],
-        [ "RINEX", null, [
+        [ "RINEX", "namespaceNAV_1_1vendor_1_1RINEX.html", [
           [ "ObservationDescription", "structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html", "structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription" ],
           [ "ObsHeader", "structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html", "structNAV_1_1vendor_1_1RINEX_1_1ObsHeader" ]
         ] ],
-        [ "ublox", null, [
+        [ "ublox", "namespaceNAV_1_1vendor_1_1ublox.html", [
           [ "UbloxUartSensor", "classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor.html", "classNAV_1_1vendor_1_1ublox_1_1UbloxUartSensor" ],
           [ "UbxAckAck", "structNAV_1_1vendor_1_1ublox_1_1UbxAckAck.html", "structNAV_1_1vendor_1_1ublox_1_1UbxAckAck" ],
           [ "UbxAckNak", "structNAV_1_1vendor_1_1ublox_1_1UbxAckNak.html", "structNAV_1_1vendor_1_1ublox_1_1UbxAckNak" ],
@@ -120,7 +121,7 @@ var annotated_dup =
           [ "UbxRxmRawx", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx.html", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmRawx" ],
           [ "UbxRxmSfrbx", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx.html", "structNAV_1_1vendor_1_1ublox_1_1UbxRxmSfrbx" ]
         ] ],
-        [ "vectornav", null, [
+        [ "vectornav", "namespaceNAV_1_1vendor_1_1vectornav.html", [
           [ "AttitudeOutputs", "structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html", "structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs" ],
           [ "DOP", "structNAV_1_1vendor_1_1vectornav_1_1DOP.html", "structNAV_1_1vendor_1_1vectornav_1_1DOP" ],
           [ "GnssOutputs", "structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs.html", "structNAV_1_1vendor_1_1vectornav_1_1GnssOutputs" ],
@@ -301,15 +302,15 @@ var annotated_dup =
       [ "WiFiPositioningSolution", "classNAV_1_1WiFiPositioningSolution.html", "classNAV_1_1WiFiPositioningSolution" ],
       [ "ZenithDelay", "structNAV_1_1ZenithDelay.html", "structNAV_1_1ZenithDelay" ]
     ] ],
-    [ "nlohmann", null, [
+    [ "nlohmann", "namespacenlohmann.html", [
       [ "adl_serializer< std::variant< Args... > >", "structnlohmann_1_1adl__serializer_3_01std_1_1variant_3_01Args_8_8_8_01_4_01_4.html", "structnlohmann_1_1adl__serializer_3_01std_1_1variant_3_01Args_8_8_8_01_4_01_4" ]
     ] ],
-    [ "spdlog", null, [
-      [ "sinks", null, [
+    [ "spdlog", "namespacespdlog.html", [
+      [ "sinks", "namespacespdlog_1_1sinks.html", [
         [ "dist_filter_sink", "classspdlog_1_1sinks_1_1dist__filter__sink.html", "classspdlog_1_1sinks_1_1dist__filter__sink" ]
       ] ]
     ] ],
-    [ "std", null, [
+    [ "std", "namespacestd.html", [
       [ "hash< NAV::Code >", "structstd_1_1hash_3_01NAV_1_1Code_01_4.html", "structstd_1_1hash_3_01NAV_1_1Code_01_4" ],
       [ "hash< NAV::CycleSlipDetector::DualFrequencyCombination >", "structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4.html", "structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4" ],
       [ "hash< NAV::Frequency >", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4" ],

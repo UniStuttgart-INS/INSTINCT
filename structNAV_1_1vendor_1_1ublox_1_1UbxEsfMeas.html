@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas.html',''); 
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::ublox::UbxEsfMeas Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,32 +128,120 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas.html',''); 
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a3f584573295fe68d739b6db01bead695" id="r_a3f584573295fe68d739b6db01bead695"><td class="memItemLeft" align="right" valign="top"><a id="a3f584573295fe68d739b6db01bead695" name="a3f584573295fe68d739b6db01bead695"></a>
-std::optional&lt; std::vector&lt; uint32_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>calibTtag</b></td></tr>
-<tr class="memdesc:a3f584573295fe68d739b6db01bead695"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> local time calibrated. This field must not be supplied when calibTtagValid is set to 0. [ms]. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a3f584573295fe68d739b6db01bead695" id="r_a3f584573295fe68d739b6db01bead695"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::vector&lt; uint32_t &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f584573295fe68d739b6db01bead695">calibTtag</a></td></tr>
+<tr class="memdesc:a3f584573295fe68d739b6db01bead695"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> local time calibrated. This field must not be supplied when calibTtagValid is set to 0. [ms].  <br /></td></tr>
 <tr class="separator:a3f584573295fe68d739b6db01bead695"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90804ea4e48e20722b6bac703029de35" id="r_a90804ea4e48e20722b6bac703029de35"><td class="memItemLeft" align="right" valign="top"><a id="a90804ea4e48e20722b6bac703029de35" name="a90804ea4e48e20722b6bac703029de35"></a>
-std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>data</b></td></tr>
-<tr class="memdesc:a90804ea4e48e20722b6bac703029de35"><td class="mdescLeft">&#160;</td><td class="mdescRight">data (see graphic below) <br /></td></tr>
+<tr class="memitem:a90804ea4e48e20722b6bac703029de35" id="r_a90804ea4e48e20722b6bac703029de35"><td class="memItemLeft" align="right" valign="top">std::vector&lt; uint32_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90804ea4e48e20722b6bac703029de35">data</a></td></tr>
+<tr class="memdesc:a90804ea4e48e20722b6bac703029de35"><td class="mdescLeft">&#160;</td><td class="mdescRight">data (see graphic below)  <br /></td></tr>
 <tr class="separator:a90804ea4e48e20722b6bac703029de35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57ce93bdaf38f4e3d2cac93a6729ec2a" id="r_a57ce93bdaf38f4e3d2cac93a6729ec2a"><td class="memItemLeft" align="right" valign="top"><a id="a57ce93bdaf38f4e3d2cac93a6729ec2a" name="a57ce93bdaf38f4e3d2cac93a6729ec2a"></a>
-std::bitset&lt; 2UL *8UL &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>flags</b></td></tr>
-<tr class="memdesc:a57ce93bdaf38f4e3d2cac93a6729ec2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags. Set all unused bits to zero (timeMarkSent, timeMarkEdge, calibTtagValid, numMeas) <br /></td></tr>
+<tr class="memitem:a57ce93bdaf38f4e3d2cac93a6729ec2a" id="r_a57ce93bdaf38f4e3d2cac93a6729ec2a"><td class="memItemLeft" align="right" valign="top">std::bitset&lt; 2UL *8UL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57ce93bdaf38f4e3d2cac93a6729ec2a">flags</a></td></tr>
+<tr class="memdesc:a57ce93bdaf38f4e3d2cac93a6729ec2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags. Set all unused bits to zero (timeMarkSent, timeMarkEdge, calibTtagValid, numMeas)  <br /></td></tr>
 <tr class="separator:a57ce93bdaf38f4e3d2cac93a6729ec2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e81f2081b90e6b689d93eb942edf614" id="r_a4e81f2081b90e6b689d93eb942edf614"><td class="memItemLeft" align="right" valign="top"><a id="a4e81f2081b90e6b689d93eb942edf614" name="a4e81f2081b90e6b689d93eb942edf614"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>id</b></td></tr>
-<tr class="memdesc:a4e81f2081b90e6b689d93eb942edf614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identification number of data provider. <br /></td></tr>
+<tr class="memitem:a4e81f2081b90e6b689d93eb942edf614" id="r_a4e81f2081b90e6b689d93eb942edf614"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e81f2081b90e6b689d93eb942edf614">id</a></td></tr>
+<tr class="memdesc:a4e81f2081b90e6b689d93eb942edf614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identification number of data provider.  <br /></td></tr>
 <tr class="separator:a4e81f2081b90e6b689d93eb942edf614"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d0bbd8d7ba6f4e8d51c1791c01abdb9" id="r_a9d0bbd8d7ba6f4e8d51c1791c01abdb9"><td class="memItemLeft" align="right" valign="top"><a id="a9d0bbd8d7ba6f4e8d51c1791c01abdb9" name="a9d0bbd8d7ba6f4e8d51c1791c01abdb9"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>timeTag</b></td></tr>
-<tr class="memdesc:a9d0bbd8d7ba6f4e8d51c1791c01abdb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time tag of measurement generated by external sensor. <br /></td></tr>
+<tr class="memitem:a9d0bbd8d7ba6f4e8d51c1791c01abdb9" id="r_a9d0bbd8d7ba6f4e8d51c1791c01abdb9"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d0bbd8d7ba6f4e8d51c1791c01abdb9">timeTag</a></td></tr>
+<tr class="memdesc:a9d0bbd8d7ba6f4e8d51c1791c01abdb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time tag of measurement generated by external sensor.  <br /></td></tr>
 <tr class="separator:a9d0bbd8d7ba6f4e8d51c1791c01abdb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>External Sensor Fusion Measurements. </p>
 <p>Possible data types for the data field are described in the ESF Measurement Data section. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00268">268</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a3f584573295fe68d739b6db01bead695" name="a3f584573295fe68d739b6db01bead695"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f584573295fe68d739b6db01bead695">&#9670;&#160;</a></span>calibTtag</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;std::vector&lt;uint32_t&gt; &gt; NAV::vendor::ublox::UbxEsfMeas::calibTtag</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> local time calibrated. This field must not be supplied when calibTtagValid is set to 0. [ms]. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00274">274</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a90804ea4e48e20722b6bac703029de35" name="a90804ea4e48e20722b6bac703029de35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90804ea4e48e20722b6bac703029de35">&#9670;&#160;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;uint32_t&gt; NAV::vendor::ublox::UbxEsfMeas::data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>data (see graphic below) </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00273">273</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a57ce93bdaf38f4e3d2cac93a6729ec2a" name="a57ce93bdaf38f4e3d2cac93a6729ec2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57ce93bdaf38f4e3d2cac93a6729ec2a">&#9670;&#160;</a></span>flags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::bitset&lt;2UL * 8UL&gt; NAV::vendor::ublox::UbxEsfMeas::flags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flags. Set all unused bits to zero (timeMarkSent, timeMarkEdge, calibTtagValid, numMeas) </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00271">271</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a4e81f2081b90e6b689d93eb942edf614" name="a4e81f2081b90e6b689d93eb942edf614"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e81f2081b90e6b689d93eb942edf614">&#9670;&#160;</a></span>id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t NAV::vendor::ublox::UbxEsfMeas::id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Identification number of data provider. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00272">272</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9d0bbd8d7ba6f4e8d51c1791c01abdb9" name="a9d0bbd8d7ba6f4e8d51c1791c01abdb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d0bbd8d7ba6f4e8d51c1791c01abdb9">&#9670;&#160;</a></span>timeTag</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::ublox::UbxEsfMeas::timeTag</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time tag of measurement generated by external sensor. </p>
+
+<p class="definition">Definition at line <a class="el" href="UbloxTypes_8hpp_source.html#l00270">270</a> of file <a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/Ublox/<a class="el" href="UbloxTypes_8hpp_source.html">UbloxTypes.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -161,7 +249,7 @@ uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>timeTag</b></td><
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>ublox</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas.html">UbxEsfMeas</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1ublox.html">ublox</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1ublox_1_1UbxEsfMeas.html">UbxEsfMeas</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

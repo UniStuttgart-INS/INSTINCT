@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('mavlinkSend_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file mavlinkSend.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Sends a navigation solution via the MAVLink protocol</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2023-11-20</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -143,108 +148,158 @@ $(function(){initNavTree('mavlinkSend_8hpp_source.html',''); initResizable(true)
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">    #include &quot;<a class="code" href="serial__port_8hpp.html">util/Vendor/MavLink/serial_port.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">    #include &quot;<a class="code" href="udp__port_8hpp.html">util/Vendor/MavLink/udp_port.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">namespace </span>NAV</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>{</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment">/// @brief MavLink Send node</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">class </span>MavlinkSend : <span class="keyword">public</span> <a class="code hl_class" href="classNAV_1_1Node.html">Node</a></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>{</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    MavlinkSend();</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    ~MavlinkSend() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    MavlinkSend(<span class="keyword">const</span> MavlinkSend&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    MavlinkSend(MavlinkSend&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    MavlinkSend&amp; operator=(<span class="keyword">const</span> MavlinkSend&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">    /// @brief Default constructor</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    MavlinkSend();<span class="comment"></span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="comment">    /// @brief Destructor</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    ~MavlinkSend() <span class="keyword">override</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">    /// @brief Copy constructor</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    MavlinkSend(<span class="keyword">const</span> MavlinkSend&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">    /// @brief Move constructor</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    MavlinkSend(MavlinkSend&amp;&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">    /// @brief Copy assignment operator</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    MavlinkSend&amp; operator=(<span class="keyword">const</span> MavlinkSend&amp;) = <span class="keyword">delete</span>;<span class="comment"></span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">    /// @brief Move assignment operator</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    MavlinkSend&amp; operator=(MavlinkSend&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="comment"></span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment">    /// @brief String representation of the Class Type</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    [[nodiscard]] <span class="keyword">static</span> std::string typeStatic();</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"></span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment">    /// @brief String representation of the Class Type</span></div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    [[nodiscard]] std::string type() <span class="keyword">const override</span>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment"></span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">    /// @brief String representation of the Class Category</span></div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    [[nodiscard]] <span class="keyword">static</span> std::string category();</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment"></span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">    /// @brief ImGui config window which is shown on double click</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">    /// @attention Don&#39;t forget to set _hasConfig to true in the constructor of the node</span></div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">void</span> guiConfig() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment"></span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">    /// @brief Saves the node into a json object</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    [[nodiscard]] <a class="code hl_typedef" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> save() <span class="keyword">const override</span>;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment"></span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">    /// @brief Restores the node from a json object</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">    /// @param[in] j Json object with the node state</span></div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">void</span> restore(<span class="keyword">const</span> <a class="code hl_typedef" href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a>&amp; j) <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment"></span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">    /// @brief Resets the node. Moves the read cursor to the start</span></div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordtype">bool</span> resetNode() <span class="keyword">override</span>;</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> INPUT_PORT_INDEX_NODE_DATA = 0; </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="ConfigManager_8hpp.html#a4b48ed480395e8dfcc46863b8c53671f">initialize</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="ConfigManager_8hpp.html#a923445583a4061e97b824d579426c81c">deinitialize</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keywordtype">size_t</span> INPUT_PORT_INDEX_NODE_DATA = 0; <span class="comment">///&lt; @brief Object (NodeData)</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment"></span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">    /// @brief Initialize the node</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a4b48ed480395e8dfcc46863b8c53671f">initialize</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment"></span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">    /// @brief Deinitialize the node</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1ConfigManager.html#a923445583a4061e97b824d579426c81c">deinitialize</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment"></span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">    /// @brief Callback when receiving data on a port</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">    /// @param[in] queue Queue with all the received data messages</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="comment">    /// @param[in] pinIdx Index of the pin the data is received on</span></div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordtype">void</span> receivePosVelAtt(InputPin::NodeDataQueue&amp; queue, <span class="keywordtype">size_t</span> pinIdx);</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment"></span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="comment">    /// Available PortTypes</span></div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="keyword">enum class</span> PortType : uint8_t</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        Serial_Port, </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        UDP_Port,    </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        Serial_Port, <span class="comment">///&lt; Serial_Port</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        UDP_Port,    <span class="comment">///&lt; UDP_Port</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    };</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="comment"></span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="comment">    /// Serial or UDP port</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    std::shared_ptr&lt;Generic_Port&gt; port;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="comment"></span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="comment">    /// Autopilot interface</span></div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    Autopilot_Interface autopilot_interface;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="comment"></span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="comment">    /// Port type</span></div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    PortType _portType = PortType::Serial_Port;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="comment"></span> </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="comment">    /// IPv4 address</span></div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    std::array&lt;int, 4&gt; _ip{ 127, 0, 0, 1 };</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="comment"></span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="comment">    /// @brief Helper function</span></div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keyword">static</span> std::string convertArrayToIPAddress(<span class="keyword">const</span> std::array&lt;int, 4&gt;&amp; ipArray);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="comment"></span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="comment">    /// UDP port number</span></div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">int</span> _portNumber = 14540;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span></div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::array&lt;int, 2&gt; IP_LIMITS = { 0, 255 };</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="comment"></span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="comment">    /// Range an IPv4 address can be in [0, 2^8-1]</span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::array&lt;int, 2&gt; IP_LIMITS = { 0, 255 };<span class="comment"></span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="comment">    /// Range a port can be in [0, 2^16-1]</span></div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> std::array&lt;int, 2&gt; PORT_LIMITS = { 0, 65535 };</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span></div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="comment"></span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="comment">    /// COM port where the MavLink device is attached to</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="comment">    ///</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="comment">    /// - &quot;COM1&quot; (Windows format for physical and virtual (USB) serial port)</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="comment">    /// - &quot;/dev/ttyS1&quot; (Linux format for physical serial port)</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="comment">    /// - &quot;/dev/ttyUSB0&quot; (Linux format for virtual (USB) serial port)</span></div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span><span class="comment">    /// - &quot;/dev/tty.usbserial-FTXXXXXX&quot; (Mac OS X format for virtual (USB) serial port)</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="comment">    /// - &quot;/dev/ttyS0&quot; (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)</span></div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    std::string _serialPort;</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span></div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span><span class="comment"></span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="comment">    /// Available Baudrates</span></div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="keyword">enum class</span> Baudrate : uint8_t</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    {</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        BAUDRATE_1200,    </div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        BAUDRATE_2400,    </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        BAUDRATE_4800,    </div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        BAUDRATE_9600,    </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        BAUDRATE_19200,   </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        BAUDRATE_38400,   </div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        BAUDRATE_57600,   </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        BAUDRATE_111100,  </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        BAUDRATE_115200,  </div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        BAUDRATE_230400,  </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>        BAUDRATE_256000,  </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        BAUDRATE_460800,  </div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        BAUDRATE_500000,  </div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        BAUDRATE_921600,  </div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        BAUDRATE_1500000, </div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        <a class="code hl_enumvalue" href="Ionosphere_8hpp.html#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>             </div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    };</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="PositionInput_8hpp.html#a3d14f9ab23729fbccba05a42f8615989">to_string</a>(Baudrate value);</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span></div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        BAUDRATE_1200,    <span class="comment">///&lt; Baudrate with    1200 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        BAUDRATE_2400,    <span class="comment">///&lt; Baudrate with    2400 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        BAUDRATE_4800,    <span class="comment">///&lt; Baudrate with    4800 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        BAUDRATE_9600,    <span class="comment">///&lt; Baudrate with    9600 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        BAUDRATE_19200,   <span class="comment">///&lt; Baudrate with   19200 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        BAUDRATE_38400,   <span class="comment">///&lt; Baudrate with   38400 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        BAUDRATE_57600,   <span class="comment">///&lt; Baudrate with   57600 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        BAUDRATE_111100,  <span class="comment">///&lt; Baudrate with  111100 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        BAUDRATE_115200,  <span class="comment">///&lt; Baudrate with  115200 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>        BAUDRATE_230400,  <span class="comment">///&lt; Baudrate with  230400 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>        BAUDRATE_256000,  <span class="comment">///&lt; Baudrate with  256000 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        BAUDRATE_460800,  <span class="comment">///&lt; Baudrate with  460800 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        BAUDRATE_500000,  <span class="comment">///&lt; Baudrate with  500000 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        BAUDRATE_921600,  <span class="comment">///&lt; Baudrate with  921600 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        BAUDRATE_1500000, <span class="comment">///&lt; Baudrate with 1500000 symbols per second [Baud]</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        <a class="code hl_enumvalue" href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">COUNT</a>             <span class="comment">/// Count Variable</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>    };<span class="comment"></span></div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="comment">    /// @brief Converts the enum to a string</span></div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="comment">    /// @param[in] value Enum value to convert into text</span></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="comment">    /// @return String representation of the enum</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_function" href="namespaceNAV.html#a3d14f9ab23729fbccba05a42f8615989">to_string</a>(Baudrate value);</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span><span class="comment"></span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="comment">    /// @brief Converts the enum to int</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="comment">    /// @param[in] value Enum value to convert into int</span></div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span><span class="comment">    /// @return int representation of the enum</span></div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    <span class="keyword">static</span> <span class="keywordtype">int</span> getBaudrateValue(Baudrate value);</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span></div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="comment"></span> </div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="comment">    /// Selected Baudrate for the Serialport in the GUI</span></div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    Baudrate _baudrate = Baudrate::BAUDRATE_57600;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="comment"></span> </div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="comment">    /// Determines whether the Mavlink message &quot;GPS_INPUT (#232)&quot; is sent</span></div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    <span class="keywordtype">bool</span> _GPS_INPUT_Active = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span></div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span><span class="comment"></span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="comment">    /// Determines how often the Mavlink message &quot;GPS_INPUT (#232)&quot; is sent</span></div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordtype">double</span> _GPS_INPUT_Frequency = 10;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span><span class="comment"></span> </div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span><span class="comment">    /// Determines whether the Mavlink message &quot;ATT_POS_MOCAP (#138)&quot; is sent</span></div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordtype">bool</span> _ATT_POS_MOCAP_Active = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span></div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span><span class="comment"></span> </div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="comment">    /// Determines how often the Mavlink message &quot;ATT_POS_MOCAP (#138)&quot; is sent</span></div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordtype">double</span> _ATT_POS_MOCAP_Frequency = 10;</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>};</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>} <span class="comment">// namespace NAV</span></div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aConfigManager_8hpp_html_a4b48ed480395e8dfcc46863b8c53671f"><div class="ttname"><a href="ConfigManager_8hpp.html#a4b48ed480395e8dfcc46863b8c53671f">NAV::ConfigManager::initialize</a></div><div class="ttdeci">void initialize()</div><div class="ttdoc">Initializes the config manager. Call this function before using other functions.</div></div>
-<div class="ttc" id="aConfigManager_8hpp_html_a923445583a4061e97b824d579426c81c"><div class="ttname"><a href="ConfigManager_8hpp.html#a923445583a4061e97b824d579426c81c">NAV::ConfigManager::deinitialize</a></div><div class="ttdeci">void deinitialize()</div><div class="ttdoc">Deinitializes the config manager. Call this if you want to Fetch config again.</div></div>
-<div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> FlowManager.hpp:21</div></div>
-<div class="ttc" id="aIonosphere_8hpp_html_a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d"><div class="ttname"><a href="Ionosphere_8hpp.html#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">NAV::IonosphereModel::COUNT</a></div><div class="ttdeci">@ COUNT</div><div class="ttdoc">Amount of items in the enum.</div><div class="ttdef"><b>Definition</b> Ionosphere.hpp:31</div></div>
+<div class="ttc" id="aFlowManager_8hpp_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="FlowManager_8hpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">json namespace</div><div class="ttdef"><b>Definition</b> <a href="FlowManager_8hpp_source.html#l00021">FlowManager.hpp:21</a></div></div>
 <div class="ttc" id="aNode_8hpp_html"><div class="ttname"><a href="Node_8hpp.html">Node.hpp</a></div><div class="ttdoc">Node Class.</div></div>
 <div class="ttc" id="aPosVelAtt_8hpp_html"><div class="ttname"><a href="PosVelAtt_8hpp.html">PosVelAtt.hpp</a></div><div class="ttdoc">Position, Velocity and Attitude Storage Class.</div></div>
-<div class="ttc" id="aPositionInput_8hpp_html_a3d14f9ab23729fbccba05a42f8615989"><div class="ttname"><a href="PositionInput_8hpp.html#a3d14f9ab23729fbccba05a42f8615989">NAV::to_string</a></div><div class="ttdeci">const char * to_string(gui::widgets::PositionWithFrame::ReferenceFrame refFrame)</div><div class="ttdoc">Converts the enum to a string.</div></div>
 <div class="ttc" id="aautopilot__interface_8hpp_html"><div class="ttname"><a href="autopilot__interface_8hpp.html">autopilot_interface.hpp</a></div><div class="ttdoc">Autopilot interface definition.</div></div>
-<div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> Node.hpp:92</div></div>
+<div class="ttc" id="aclassNAV_1_1Node_html"><div class="ttname"><a href="classNAV_1_1Node.html">NAV::Node</a></div><div class="ttdoc">Abstract parent class for all nodes.</div><div class="ttdef"><b>Definition</b> <a href="Node_8hpp_source.html#l00091">Node.hpp:92</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a4b48ed480395e8dfcc46863b8c53671f"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a4b48ed480395e8dfcc46863b8c53671f">NAV::ConfigManager::initialize</a></div><div class="ttdeci">void initialize()</div><div class="ttdoc">Initializes the config manager. Call this function before using other functions.</div><div class="ttdef"><b>Definition</b> <a href="ConfigManager_8cpp_source.html#l00036">ConfigManager.cpp:36</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1ConfigManager_html_a923445583a4061e97b824d579426c81c"><div class="ttname"><a href="namespaceNAV_1_1ConfigManager.html#a923445583a4061e97b824d579426c81c">NAV::ConfigManager::deinitialize</a></div><div class="ttdeci">void deinitialize()</div><div class="ttdoc">Deinitializes the config manager. Call this if you want to Fetch config again.</div><div class="ttdef"><b>Definition</b> <a href="ConfigManager_8cpp_source.html#l00068">ConfigManager.cpp:68</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d"><div class="ttname"><a href="namespaceNAV.html#a3c6a3f17c27803840eecce1fb73f21e2a4905ac9d6a22bdfc1ae096094ce6248d">NAV::IonosphereModel::COUNT</a></div><div class="ttdeci">@ COUNT</div><div class="ttdoc">Amount of items in the enum.</div><div class="ttdef"><b>Definition</b> <a href="Ionosphere_8hpp_source.html#l00031">Ionosphere.hpp:31</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a3d14f9ab23729fbccba05a42f8615989"><div class="ttname"><a href="namespaceNAV.html#a3d14f9ab23729fbccba05a42f8615989">NAV::to_string</a></div><div class="ttdeci">const char * to_string(gui::widgets::PositionWithFrame::ReferenceFrame refFrame)</div><div class="ttdoc">Converts the enum to a string.</div><div class="ttdef"><b>Definition</b> <a href="PositionInput_8cpp_source.html#l00025">PositionInput.cpp:25</a></div></div>
 <div class="ttc" id="aserial__port_8hpp_html"><div class="ttname"><a href="serial__port_8hpp.html">serial_port.hpp</a></div><div class="ttdoc">Serial interface definition.</div></div>
 <div class="ttc" id="audp__port_8hpp_html"><div class="ttname"><a href="udp__port_8hpp.html">udp_port.hpp</a></div><div class="ttdoc">UDP interface definition.</div></div>
 </div><!-- fragment --></div><!-- contents -->

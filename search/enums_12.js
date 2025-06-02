@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['satellitesystem_5f_0',['SatelliteSystem_',['../SatelliteSystem_8hpp.html#af01e645814479c1179804a8d5ffb411e',1,'NAV']]],
-  ['satsys_1',['SatSys',['../VectorNavTypes_8hpp.html#a62e32a1bad2112cd23a8beddf30bd9c5',1,'NAV::vendor::vectornav']]],
+  ['satellitesystem_5f_0',['SatelliteSystem_',['../namespaceNAV.html#af01e645814479c1179804a8d5ffb411e',1,'NAV']]],
+  ['satsys_1',['SatSys',['../namespaceNAV_1_1vendor_1_1vectornav.html#a62e32a1bad2112cd23a8beddf30bd9c5',1,'NAV::vendor::vectornav']]],
   ['sensortype_2',['SensorType',['../classNAV_1_1AllanDeviation.html#aad221b715ae6582afe8fe4c0abe17b68',1,'NAV::AllanDeviation']]],
   ['signalhealthstatus_3',['SignalHealthStatus',['../structNAV_1_1GalileoEphemeris_1_1SvHealth.html#a78d3aec16547ae72e56f374f6ad91bd3',1,'NAV::GalileoEphemeris::SvHealth']]],
   ['solutionmode_4',['SolutionMode',['../classNAV_1_1WiFiPositioning.html#a049a94ddc43eb9a25033aa717bb84e57',1,'NAV::WiFiPositioning']]],
@@ -12,5 +12,5 @@ var searchData=
   ['stdevbaroheightscaleunits_9',['StdevBaroHeightScaleUnits',['../classNAV_1_1LooselyCoupledKF.html#aa79fa3a4b66481739941cfa4d69613d9',1,'NAV::LooselyCoupledKF']]],
   ['stopcondition_10',['StopCondition',['../classNAV_1_1ImuSimulator.html#a9e642a13fa4566d2e97c6d428b9a01e1',1,'NAV::ImuSimulator']]],
   ['strategy_11',['Strategy',['../classNAV_1_1PolynomialRegressor.html#a8aa78507e36f374ba2d370ceffbaa8fc',1,'NAV::PolynomialRegressor']]],
-  ['systemmodelcalcalgorithm_12',['SystemModelCalcAlgorithm',['../SystemModel_8hpp.html#af9dfa55265a2621969573da06b1576d6',1,'NAV']]]
+  ['systemmodelcalcalgorithm_12',['SystemModelCalcAlgorithm',['../namespaceNAV.html#af9dfa55265a2621969573da06b1576d6',1,'NAV']]]
 ];

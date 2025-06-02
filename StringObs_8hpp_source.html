@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,7 +128,11 @@ $(function(){initNavTree('StringObs_8hpp_source.html',''); initResizable(true); 
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file StringObs.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief Wrapper for String Messages</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2021-07-01</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
@@ -135,47 +140,60 @@ $(function(){initNavTree('StringObs_8hpp_source.html',''); initResizable(true); 
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="NodeData_8hpp.html">NodeData/NodeData.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>NAV</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV.html">NAV</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// IMU Observation storage class</span></div>
 <div class="foldopen" id="foldopen00023" data-start="{" data-end="};">
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html">   23</a></span><span class="keyword">class </span><a class="code hl_function" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">StringObs</a> : <span class="keyword">public</span> <a class="code hl_function" href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NodeData</a></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keyword">public</span>:<span class="comment"></span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">    /// @brief Constructor</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">    /// @param[in] str String to store in the observation</span></div>
 <div class="foldopen" id="foldopen00028" data-start="{" data-end="}">
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">   28</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">StringObs</a>(std::string str)</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        : <a class="code hl_variable" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">data</a>(std::<a class="code hl_function" href="Vector_8hpp.html#a851a8e7d0ad9d873eee9667ab88c5abf">move</a>(str)) {}</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">   28</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">StringObs</a>(std::string <a class="code hl_namespace" href="namespaceNAV_1_1str.html">str</a>)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        : <a class="code hl_variable" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">data</a>(<a class="code hl_namespace" href="namespacestd.html">std</a>::<a class="code hl_function" href="namespaceNAV.html#a851a8e7d0ad9d873eee9667ab88c5abf">move</a>(<a class="code hl_namespace" href="namespaceNAV_1_1str.html">str</a>)) {}</div>
 </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="comment"></span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="comment">    /// @brief Returns the type of the data class</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="comment">    /// @return The data type</span></div>
 <div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">   33</a></span>    [[nodiscard]] <span class="keyword">static</span> std::string <a class="code hl_function" href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">type</a>()</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">return</span> <span class="stringliteral">&quot;StringObs&quot;</span>;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
 </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment"></span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">    /// @brief Returns the type of the data class</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">    /// @return The data type</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a3a6e2a5e6c47a170f72fb68b2558bc67">   40</a></span>    [[nodiscard]] std::string <a class="code hl_function" href="classNAV_1_1StringObs.html#a3a6e2a5e6c47a170f72fb68b2558bc67">getType</a>()<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> <a class="code hl_function" href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">type</a>(); }</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment"></span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">    /// @brief Returns the parent types of the data class</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">    /// @return The parent data types</span></div>
 <div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">   44</a></span>    [[nodiscard]] <span class="keyword">static</span> std::vector&lt;std::string&gt; <a class="code hl_function" href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">parentTypes</a>()</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">return</span> { <a class="code hl_function" href="classNAV_1_1NodeData.html#a957391e1adfd8edb28c8ccced8b0dde3">NodeData::type</a>() };</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    }</div>
 </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"></span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment">    /// @brief The string to transport</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">   50</a></span>    std::string <a class="code hl_variable" href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">data</a>;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>};</div>
 </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>} <span class="comment">// namespace NAV</span></div>
 <div class="ttc" id="aNodeData_8hpp_html"><div class="ttname"><a href="NodeData_8hpp.html">NodeData.hpp</a></div><div class="ttdoc">Abstract NodeData Class.</div></div>
-<div class="ttc" id="aVector_8hpp_html_a851a8e7d0ad9d873eee9667ab88c5abf"><div class="ttname"><a href="Vector_8hpp.html#a851a8e7d0ad9d873eee9667ab88c5abf">NAV::move</a></div><div class="ttdeci">void move(std::vector&lt; T &gt; &amp;v, size_t sourceIdx, size_t targetIdx)</div><div class="ttdoc">Moves an element within a vector to a new position.</div><div class="ttdef"><b>Definition</b> Vector.hpp:27</div></div>
 <div class="ttc" id="aclassNAV_1_1NodeData_html_a2ab4a332f7eea07ee1a7b822c4ded638"><div class="ttname"><a href="classNAV_1_1NodeData.html#a2ab4a332f7eea07ee1a7b822c4ded638">NAV::NodeData::NodeData</a></div><div class="ttdeci">NodeData()=default</div><div class="ttdoc">Default constructor.</div></div>
-<div class="ttc" id="aclassNAV_1_1NodeData_html_a957391e1adfd8edb28c8ccced8b0dde3"><div class="ttname"><a href="classNAV_1_1NodeData.html#a957391e1adfd8edb28c8ccced8b0dde3">NAV::NodeData::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> NodeData.hpp:45</div></div>
-<div class="ttc" id="aclassNAV_1_1StringObs_html_a1e1d635fc728676b55446a4c6c36cacd"><div class="ttname"><a href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">NAV::StringObs::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> StringObs.hpp:33</div></div>
-<div class="ttc" id="aclassNAV_1_1StringObs_html_a3a6e2a5e6c47a170f72fb68b2558bc67"><div class="ttname"><a href="classNAV_1_1StringObs.html#a3a6e2a5e6c47a170f72fb68b2558bc67">NAV::StringObs::getType</a></div><div class="ttdeci">std::string getType() const override</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> StringObs.hpp:40</div></div>
-<div class="ttc" id="aclassNAV_1_1StringObs_html_a50e37cf0bf9ad58f02f2fe46ebc4bfa6"><div class="ttname"><a href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">NAV::StringObs::StringObs</a></div><div class="ttdeci">StringObs(std::string str)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> StringObs.hpp:28</div></div>
-<div class="ttc" id="aclassNAV_1_1StringObs_html_a53e5579914926269dec89fc8104b1cd0"><div class="ttname"><a href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">NAV::StringObs::parentTypes</a></div><div class="ttdeci">static std::vector&lt; std::string &gt; parentTypes()</div><div class="ttdoc">Returns the parent types of the data class.</div><div class="ttdef"><b>Definition</b> StringObs.hpp:44</div></div>
-<div class="ttc" id="aclassNAV_1_1StringObs_html_a8b3c3b57587e4d30251b888db6069b46"><div class="ttname"><a href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">NAV::StringObs::data</a></div><div class="ttdeci">std::string data</div><div class="ttdoc">The string to transport.</div><div class="ttdef"><b>Definition</b> StringObs.hpp:50</div></div>
+<div class="ttc" id="aclassNAV_1_1NodeData_html_a957391e1adfd8edb28c8ccced8b0dde3"><div class="ttname"><a href="classNAV_1_1NodeData.html#a957391e1adfd8edb28c8ccced8b0dde3">NAV::NodeData::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> <a href="NodeData_8hpp_source.html#l00045">NodeData.hpp:45</a></div></div>
+<div class="ttc" id="aclassNAV_1_1StringObs_html_a1e1d635fc728676b55446a4c6c36cacd"><div class="ttname"><a href="classNAV_1_1StringObs.html#a1e1d635fc728676b55446a4c6c36cacd">NAV::StringObs::type</a></div><div class="ttdeci">static std::string type()</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> <a href="#l00033">StringObs.hpp:33</a></div></div>
+<div class="ttc" id="aclassNAV_1_1StringObs_html_a3a6e2a5e6c47a170f72fb68b2558bc67"><div class="ttname"><a href="classNAV_1_1StringObs.html#a3a6e2a5e6c47a170f72fb68b2558bc67">NAV::StringObs::getType</a></div><div class="ttdeci">std::string getType() const override</div><div class="ttdoc">Returns the type of the data class.</div><div class="ttdef"><b>Definition</b> <a href="#l00040">StringObs.hpp:40</a></div></div>
+<div class="ttc" id="aclassNAV_1_1StringObs_html_a50e37cf0bf9ad58f02f2fe46ebc4bfa6"><div class="ttname"><a href="classNAV_1_1StringObs.html#a50e37cf0bf9ad58f02f2fe46ebc4bfa6">NAV::StringObs::StringObs</a></div><div class="ttdeci">StringObs(std::string str)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00028">StringObs.hpp:28</a></div></div>
+<div class="ttc" id="aclassNAV_1_1StringObs_html_a53e5579914926269dec89fc8104b1cd0"><div class="ttname"><a href="classNAV_1_1StringObs.html#a53e5579914926269dec89fc8104b1cd0">NAV::StringObs::parentTypes</a></div><div class="ttdeci">static std::vector&lt; std::string &gt; parentTypes()</div><div class="ttdoc">Returns the parent types of the data class.</div><div class="ttdef"><b>Definition</b> <a href="#l00044">StringObs.hpp:44</a></div></div>
+<div class="ttc" id="aclassNAV_1_1StringObs_html_a8b3c3b57587e4d30251b888db6069b46"><div class="ttname"><a href="classNAV_1_1StringObs.html#a8b3c3b57587e4d30251b888db6069b46">NAV::StringObs::data</a></div><div class="ttdeci">std::string data</div><div class="ttdoc">The string to transport.</div><div class="ttdef"><b>Definition</b> <a href="#l00050">StringObs.hpp:50</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1str_html"><div class="ttname"><a href="namespaceNAV_1_1str.html">NAV::str</a></div><div class="ttdef"><b>Definition</b> <a href="StringUtil_8hpp_source.html#l00024">StringUtil.hpp:25</a></div></div>
+<div class="ttc" id="anamespaceNAV_html"><div class="ttname"><a href="namespaceNAV.html">NAV</a></div><div class="ttdef"><b>Definition</b> <a href="AppLogic_8hpp_source.html#l00016">AppLogic.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_html_a851a8e7d0ad9d873eee9667ab88c5abf"><div class="ttname"><a href="namespaceNAV.html#a851a8e7d0ad9d873eee9667ab88c5abf">NAV::move</a></div><div class="ttdeci">void move(std::vector&lt; T &gt; &amp;v, size_t sourceIdx, size_t targetIdx)</div><div class="ttdoc">Moves an element within a vector to a new position.</div><div class="ttdef"><b>Definition</b> <a href="Vector_8hpp_source.html#l00027">Vector.hpp:27</a></div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition</b> <a href="CycleSlipDetector_8hpp_source.html#l00252">CycleSlipDetector.hpp:253</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

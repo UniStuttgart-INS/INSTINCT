@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -127,22 +128,31 @@ $(function(){initNavTree('ImPlotStyleEditor_8hpp_source.html',''); initResizable
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">// This Source Code Form is subject to the terms of the Mozilla Public</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// License, v. 2.0. If a copy of the MPL was not distributed with this</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// file, You can obtain one at https://mozilla.org/MPL/2.0/.</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"></span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/// @file ImPlotStyleEditor.hpp</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">/// @brief ImPlot style editor window</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/// @author T. Topp (topp@ins.uni-stuttgart.de)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">/// @date 2022-03-22</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>NAV::gui::windows</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="ImPlotStyleEditor_8hpp.html#a68ad3eb5e0cb6c6e577ccce6786f700c">   20</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="ImPlotStyleEditor_8hpp.html#a68ad3eb5e0cb6c6e577ccce6786f700c">ShowImPlotStyleEditor</a>(<span class="keywordtype">bool</span>* show = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="ImPlotStyleEditor_8hpp.html#a7e43bfdd77fc433af76625ca4b0194b2">saveConfigInFlow</a>;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="ImPlotStyleEditor_8hpp.html#a1d34391bc33392770f379e051bf2883a">prefereFlowOverGlobal</a>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceNAV_1_1gui_1_1windows.html">NAV::gui::windows</a></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{<span class="comment"></span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">/// @brief Shows a window for editing the style of the ImPlot windows</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">/// @param[in, out] show Flag which indicates whether the window is shown</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceNAV_1_1gui_1_1windows.html#a68ad3eb5e0cb6c6e577ccce6786f700c">ShowImPlotStyleEditor</a>(<span class="keywordtype">bool</span>* show = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"></span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/// @brief If true, the ImPlot config will be saved into the flow file</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a7e43bfdd77fc433af76625ca4b0194b2">saveConfigInFlow</a>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment"></span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">/// @brief If true, the ImPlot config from the flow file will be preferred over the global settings file</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">extern</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespaceNAV_1_1gui_1_1windows.html#a1d34391bc33392770f379e051bf2883a">prefereFlowOverGlobal</a>;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace NAV::gui::windows</span></div>
-<div class="ttc" id="aImPlotStyleEditor_8hpp_html_a1d34391bc33392770f379e051bf2883a"><div class="ttname"><a href="ImPlotStyleEditor_8hpp.html#a1d34391bc33392770f379e051bf2883a">NAV::gui::windows::prefereFlowOverGlobal</a></div><div class="ttdeci">bool prefereFlowOverGlobal</div><div class="ttdoc">If true, the ImPlot config from the flow file will be preferred over the global settings file.</div></div>
-<div class="ttc" id="aImPlotStyleEditor_8hpp_html_a68ad3eb5e0cb6c6e577ccce6786f700c"><div class="ttname"><a href="ImPlotStyleEditor_8hpp.html#a68ad3eb5e0cb6c6e577ccce6786f700c">NAV::gui::windows::ShowImPlotStyleEditor</a></div><div class="ttdeci">void ShowImPlotStyleEditor(bool *show=nullptr)</div><div class="ttdoc">Shows a window for editing the style of the ImPlot windows.</div></div>
-<div class="ttc" id="aImPlotStyleEditor_8hpp_html_a7e43bfdd77fc433af76625ca4b0194b2"><div class="ttname"><a href="ImPlotStyleEditor_8hpp.html#a7e43bfdd77fc433af76625ca4b0194b2">NAV::gui::windows::saveConfigInFlow</a></div><div class="ttdeci">bool saveConfigInFlow</div><div class="ttdoc">If true, the ImPlot config will be saved into the flow file.</div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html">NAV::gui::windows</a></div><div class="ttdef"><b>Definition</b> <a href="ColormapEditor_8hpp_source.html#l00016">ColormapEditor.hpp:17</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a1d34391bc33392770f379e051bf2883a"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a1d34391bc33392770f379e051bf2883a">NAV::gui::windows::prefereFlowOverGlobal</a></div><div class="ttdeci">bool prefereFlowOverGlobal</div><div class="ttdoc">If true, the ImPlot config from the flow file will be preferred over the global settings file.</div><div class="ttdef"><b>Definition</b> <a href="ImPlotStyleEditor_8cpp_source.html#l00038">ImPlotStyleEditor.cpp:38</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a68ad3eb5e0cb6c6e577ccce6786f700c"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a68ad3eb5e0cb6c6e577ccce6786f700c">NAV::gui::windows::ShowImPlotStyleEditor</a></div><div class="ttdeci">void ShowImPlotStyleEditor(bool *show=nullptr)</div><div class="ttdoc">Shows a window for editing the style of the ImPlot windows.</div><div class="ttdef"><b>Definition</b> <a href="ImPlotStyleEditor_8cpp_source.html#l00042">ImPlotStyleEditor.cpp:42</a></div></div>
+<div class="ttc" id="anamespaceNAV_1_1gui_1_1windows_html_a7e43bfdd77fc433af76625ca4b0194b2"><div class="ttname"><a href="namespaceNAV_1_1gui_1_1windows.html#a7e43bfdd77fc433af76625ca4b0194b2">NAV::gui::windows::saveConfigInFlow</a></div><div class="ttdeci">bool saveConfigInFlow</div><div class="ttdoc">If true, the ImPlot config will be saved into the flow file.</div><div class="ttdef"><b>Definition</b> <a href="ImPlotStyleEditor_8cpp_source.html#l00037">ImPlotStyleEditor.cpp:37</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

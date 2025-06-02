@@ -6,5 +6,6 @@ var searchData=
   ['node_3',['Node',['../classNAV_1_1Node.html',1,'NAV']]],
   ['nodedata_4',['NodeData',['../classNAV_1_1NodeData.html',1,'NAV']]],
   ['nodeeditorapplication_5',['NodeEditorApplication',['../classNAV_1_1gui_1_1NodeEditorApplication.html',1,'NAV::gui']]],
-  ['nodeinfo_6',['NodeInfo',['../structNAV_1_1NodeRegistry_1_1NodeInfo.html',1,'NAV::NodeRegistry']]]
+  ['nodeidless_6',['NodeIdLess',['../structNAV_1_1gui_1_1NodeIdLess.html',1,'NAV::gui']]],
+  ['nodeinfo_7',['NodeInfo',['../structNAV_1_1NodeRegistry_1_1NodeInfo.html',1,'NAV::NodeRegistry']]]
 ];

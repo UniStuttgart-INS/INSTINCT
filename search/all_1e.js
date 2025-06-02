@@ -14,6 +14,7 @@ var searchData=
   ['yaxisflags_11',['yAxisFlags',['../structNAV_1_1Plot_1_1PlotInfo.html#ae59cbe800ffe13effeb11a107ac8e7b5',1,'NAV::Plot::PlotInfo']]],
   ['year_12',['year',['../structNAV_1_1InsTime__YMDHMS.html#a1d85ecd317c2ce318b2b7c513eed2966',1,'NAV::InsTime_YMDHMS::year'],['../structNAV_1_1InsTime__YDoySod.html#a1df1c8214445ebe687067b3733d68219',1,'NAV::InsTime_YDoySod::year'],['../classNAV_1_1NmeaFile.html#aa58cccbd8bde0c79342c380101bde70d',1,'NAV::NmeaFile::year'],['../structNAV_1_1vendor_1_1vectornav_1_1UTC.html#a9d9ce01664a7c4ab68b6a0c72abeb49f',1,'NAV::vendor::vectornav::UTC::year']]],
   ['ymdhms_13',['YMDHMS',['../structNAV_1_1gui_1_1widgets_1_1TimeEditFormat.html#a2ce9eb37d802140047ee3c88c897fa8ea96d2f8fdedd730a72df5cab92ae148a0',1,'NAV::gui::widgets::TimeEditFormat']]],
-  ['ypr_14',['ypr',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#a7a2e72b8ba907d4e952ac2f8291c2834',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
-  ['ypru_15',['yprU',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#afe328913b41918e25cd306dbb7516f06',1,'NAV::vendor::vectornav::AttitudeOutputs']]]
+  ['your_20first_20node_14',['Creating your first node',['../Dev_Getting_Started.html#Dev_Getting_Started_Create_Node',1,'']]],
+  ['ypr_15',['ypr',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#a7a2e72b8ba907d4e952ac2f8291c2834',1,'NAV::vendor::vectornav::AttitudeOutputs']]],
+  ['ypru_16',['yprU',['../structNAV_1_1vendor_1_1vectornav_1_1AttitudeOutputs.html#afe328913b41918e25cd306dbb7516f06',1,'NAV::vendor::vectornav::AttitudeOutputs']]]
 ];

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('EspressifUtilities_8hpp.html',''); initResizable(true)
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">EspressifUtilities.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,9 +130,18 @@ $(function(){initNavTree('EspressifUtilities_8hpp.html',''); initResizable(true)
 
 <p><a href="EspressifUtilities_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1espressif.html">NAV::vendor::espressif</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab98960c9ebcfe6af6c74847306cb9d66" id="r_ab98960c9ebcfe6af6c74847306cb9d66"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab98960c9ebcfe6af6c74847306cb9d66">NAV::vendor::espressif::decryptWiFiObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1WiFiObs.html">NAV::WiFiObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet, const std::string &amp;nameId)</td></tr>
+<tr class="memitem:ab98960c9ebcfe6af6c74847306cb9d66" id="r_ab98960c9ebcfe6af6c74847306cb9d66"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1espressif.html#ab98960c9ebcfe6af6c74847306cb9d66">NAV::vendor::espressif::decryptWiFiObs</a> (const std::shared_ptr&lt; <a class="el" href="classNAV_1_1WiFiObs.html">NAV::WiFiObs</a> &gt; &amp;obs, uart::protocol::Packet &amp;packet, const std::string &amp;nameId)</td></tr>
 <tr class="memdesc:ab98960c9ebcfe6af6c74847306cb9d66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypts the provided Espressif observation.  <br /></td></tr>
 <tr class="separator:ab98960c9ebcfe6af6c74847306cb9d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -140,44 +151,9 @@ Functions</h2></td></tr>
 <dd>
 T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2024-01-08 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="ab98960c9ebcfe6af6c74847306cb9d66" name="ab98960c9ebcfe6af6c74847306cb9d66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab98960c9ebcfe6af6c74847306cb9d66">&#9670;&#160;</a></span>decryptWiFiObs()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::vendor::espressif::decryptWiFiObs </td>
-          <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classNAV_1_1WiFiObs.html">NAV::WiFiObs</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>obs</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uart::protocol::Packet &amp;</td>          <td class="paramname"><span class="paramname"><em>packet</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Decrypts the provided Espressif observation. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">obs</td><td>Espressif Observation to decrypt </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">packet</td><td>Uart packet with the data (content gets changed because data gets extracted) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>NameId of the calling node for Log output </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="EspressifUtilities_8hpp_source.html">EspressifUtilities.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

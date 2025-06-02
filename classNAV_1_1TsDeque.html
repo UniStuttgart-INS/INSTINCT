@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,8 +120,7 @@ $(function(){initNavTree('classNAV_1_1TsDeque.html',''); initResizable(true); })
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classNAV_1_1TsDeque-members.html">List of all members</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::TsDeque&lt; T, Alloc &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -230,16 +230,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aea171afc682e3a08588161e2a0843867" id="r_aea171afc682e3a08588161e2a0843867"><td class="memItemLeft" align="right" valign="top">std::deque&lt; T, Alloc &gt;::size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea171afc682e3a08588161e2a0843867">max_size</a> () const noexcept</td></tr>
 <tr class="memdesc:aea171afc682e3a08588161e2a0843867"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the maximum number of elements the container is able to hold due to system or library implementation limitations, i.e. std::distance(<a class="el" href="#a3ebc66a0d8b5b36af158f638e7ae005d" title="Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator w...">begin()</a>, <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>) for the largest container.  <br /></td></tr>
 <tr class="separator:aea171afc682e3a08588161e2a0843867"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae050b36a19f7c0abfe47e08a6c8e6400" id="r_ae050b36a19f7c0abfe47e08a6c8e6400"><td class="memItemLeft" align="right" valign="top"><a id="ae050b36a19f7c0abfe47e08a6c8e6400" name="ae050b36a19f7c0abfe47e08a6c8e6400"></a>
-<a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;other)</td></tr>
-<tr class="memdesc:ae050b36a19f7c0abfe47e08a6c8e6400"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator. <br /></td></tr>
+<tr class="memitem:ae050b36a19f7c0abfe47e08a6c8e6400" id="r_ae050b36a19f7c0abfe47e08a6c8e6400"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae050b36a19f7c0abfe47e08a6c8e6400">operator=</a> (const <a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;other)</td></tr>
+<tr class="memdesc:ae050b36a19f7c0abfe47e08a6c8e6400"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <br /></td></tr>
 <tr class="separator:ae050b36a19f7c0abfe47e08a6c8e6400"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43fbf6fe3a38fa6a792e3f0f39edfa90" id="r_a43fbf6fe3a38fa6a792e3f0f39edfa90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43fbf6fe3a38fa6a792e3f0f39edfa90">operator=</a> (std::initializer_list&lt; T &gt; ilist)</td></tr>
 <tr class="memdesc:a43fbf6fe3a38fa6a792e3f0f39edfa90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the contents with those identified by initializer list ilist.  <br /></td></tr>
 <tr class="separator:a43fbf6fe3a38fa6a792e3f0f39edfa90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d7e8bec34c18dc84af0ccbd1e771066" id="r_a4d7e8bec34c18dc84af0ccbd1e771066"><td class="memItemLeft" align="right" valign="top"><a id="a4d7e8bec34c18dc84af0ccbd1e771066" name="a4d7e8bec34c18dc84af0ccbd1e771066"></a>
-<a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&amp;other) noexcept</td></tr>
-<tr class="memdesc:a4d7e8bec34c18dc84af0ccbd1e771066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="memitem:a4d7e8bec34c18dc84af0ccbd1e771066" id="r_a4d7e8bec34c18dc84af0ccbd1e771066"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d7e8bec34c18dc84af0ccbd1e771066">operator=</a> (<a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="memdesc:a4d7e8bec34c18dc84af0ccbd1e771066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:a4d7e8bec34c18dc84af0ccbd1e771066"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6914fc1ff4b396561a3592460783b1b" id="r_ac6914fc1ff4b396561a3592460783b1b"><td class="memItemLeft" align="right" valign="top">auto &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6914fc1ff4b396561a3592460783b1b">operator[]</a> (typename std::deque&lt; T, Alloc &gt;::size_type pos)</td></tr>
 <tr class="memdesc:ac6914fc1ff4b396561a3592460783b1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the element at specified location pos. No bounds checking is performed.  <br /></td></tr>
@@ -247,13 +245,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a300be1eff93c23155acb254723923267" id="r_a300be1eff93c23155acb254723923267"><td class="memItemLeft" align="right" valign="top">const auto &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a300be1eff93c23155acb254723923267">operator[]</a> (typename std::deque&lt; T, Alloc &gt;::size_type pos) const</td></tr>
 <tr class="memdesc:a300be1eff93c23155acb254723923267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the element at specified location pos. No bounds checking is performed.  <br /></td></tr>
 <tr class="separator:a300be1eff93c23155acb254723923267"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a962c3cbb94e25d44b4b3b7a9ca8f202a" id="r_a962c3cbb94e25d44b4b3b7a9ca8f202a"><td class="memItemLeft" align="right" valign="top"><a id="a962c3cbb94e25d44b4b3b7a9ca8f202a" name="a962c3cbb94e25d44b4b3b7a9ca8f202a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>pop_back</b> ()</td></tr>
-<tr class="memdesc:a962c3cbb94e25d44b4b3b7a9ca8f202a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the last element of the container. <br /></td></tr>
+<tr class="memitem:a962c3cbb94e25d44b4b3b7a9ca8f202a" id="r_a962c3cbb94e25d44b4b3b7a9ca8f202a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a962c3cbb94e25d44b4b3b7a9ca8f202a">pop_back</a> ()</td></tr>
+<tr class="memdesc:a962c3cbb94e25d44b4b3b7a9ca8f202a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the last element of the container.  <br /></td></tr>
 <tr class="separator:a962c3cbb94e25d44b4b3b7a9ca8f202a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aede28acd1d2e912285c208d18ba93e59" id="r_aede28acd1d2e912285c208d18ba93e59"><td class="memItemLeft" align="right" valign="top"><a id="aede28acd1d2e912285c208d18ba93e59" name="aede28acd1d2e912285c208d18ba93e59"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>pop_front</b> ()</td></tr>
-<tr class="memdesc:aede28acd1d2e912285c208d18ba93e59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the first element of the container. If there are no elements in the container, the behavior is undefined. <br /></td></tr>
+<tr class="memitem:aede28acd1d2e912285c208d18ba93e59" id="r_aede28acd1d2e912285c208d18ba93e59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aede28acd1d2e912285c208d18ba93e59">pop_front</a> ()</td></tr>
+<tr class="memdesc:aede28acd1d2e912285c208d18ba93e59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the first element of the container. If there are no elements in the container, the behavior is undefined.  <br /></td></tr>
 <tr class="separator:aede28acd1d2e912285c208d18ba93e59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a778844411c23c3d73076378e3109dc30" id="r_a778844411c23c3d73076378e3109dc30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a778844411c23c3d73076378e3109dc30">push_back</a> (const T &amp;value)</td></tr>
 <tr class="memdesc:a778844411c23c3d73076378e3109dc30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends the given element value to the end of the container. The new element is initialized as a copy of value.  <br /></td></tr>
@@ -285,9 +281,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>pop_front</b> ()</td>
 <tr class="memitem:a4515d81a5c7f996d3526f8469b70346e" id="r_a4515d81a5c7f996d3526f8469b70346e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4515d81a5c7f996d3526f8469b70346e">resize</a> (typename std::deque&lt; T, Alloc &gt;::size_type count, const T &amp;value)</td></tr>
 <tr class="memdesc:a4515d81a5c7f996d3526f8469b70346e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the container to contain count elements.  <br /></td></tr>
 <tr class="separator:a4515d81a5c7f996d3526f8469b70346e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6262cc399ed9641264ea8f7cd7877ae6" id="r_a6262cc399ed9641264ea8f7cd7877ae6"><td class="memItemLeft" align="right" valign="top"><a id="a6262cc399ed9641264ea8f7cd7877ae6" name="a6262cc399ed9641264ea8f7cd7877ae6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>shrink_to_fit</b> ()</td></tr>
-<tr class="memdesc:a6262cc399ed9641264ea8f7cd7877ae6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests the removal of unused capacity. <br /></td></tr>
+<tr class="memitem:a6262cc399ed9641264ea8f7cd7877ae6" id="r_a6262cc399ed9641264ea8f7cd7877ae6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6262cc399ed9641264ea8f7cd7877ae6">shrink_to_fit</a> ()</td></tr>
+<tr class="memdesc:a6262cc399ed9641264ea8f7cd7877ae6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests the removal of unused capacity.  <br /></td></tr>
 <tr class="separator:a6262cc399ed9641264ea8f7cd7877ae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fe145d9a286457bea3825b0ce34d722" id="r_a6fe145d9a286457bea3825b0ce34d722"><td class="memItemLeft" align="right" valign="top">std::deque&lt; T, Alloc &gt;::size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fe145d9a286457bea3825b0ce34d722">size</a> () const noexcept</td></tr>
 <tr class="memdesc:a6fe145d9a286457bea3825b0ce34d722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the container, i.e. std::distance(<a class="el" href="#a3ebc66a0d8b5b36af158f638e7ae005d" title="Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator w...">begin()</a>, <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>).  <br /></td></tr>
@@ -295,9 +290,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>shrink_to_fit</b> ()<
 <tr class="memitem:a6b04a5077600e9355e35e5b40f025241" id="r_a6b04a5077600e9355e35e5b40f025241"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6b04a5077600e9355e35e5b40f025241">swap</a> (std::deque&lt; T &gt; &amp;other) noexcept</td></tr>
 <tr class="memdesc:a6b04a5077600e9355e35e5b40f025241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges the contents of the container with those of other. Does not invoke any move, copy, or swap operations on individual elements. All iterators and references remain valid. The past-the-end iterator is invalidated.  <br /></td></tr>
 <tr class="separator:a6b04a5077600e9355e35e5b40f025241"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5a318a3806101bfa078d54244dcd9ee" id="r_ad5a318a3806101bfa078d54244dcd9ee"><td class="memItemLeft" align="right" valign="top"><a id="ad5a318a3806101bfa078d54244dcd9ee" name="ad5a318a3806101bfa078d54244dcd9ee"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TsDeque</b> ()=default</td></tr>
-<tr class="memdesc:ad5a318a3806101bfa078d54244dcd9ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. Constructs an empty container with a default-constructed allocator. <br /></td></tr>
+<tr class="memitem:ad5a318a3806101bfa078d54244dcd9ee" id="r_ad5a318a3806101bfa078d54244dcd9ee"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5a318a3806101bfa078d54244dcd9ee">TsDeque</a> ()=default</td></tr>
+<tr class="memdesc:ad5a318a3806101bfa078d54244dcd9ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. Constructs an empty container with a default-constructed allocator.  <br /></td></tr>
 <tr class="separator:ad5a318a3806101bfa078d54244dcd9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5324786b181c7f8db0b0a816c895e59a" id="r_a5324786b181c7f8db0b0a816c895e59a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5324786b181c7f8db0b0a816c895e59a">TsDeque</a> (const Alloc &amp;alloc)</td></tr>
 <tr class="memdesc:a5324786b181c7f8db0b0a816c895e59a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty container with the given allocator alloc.  <br /></td></tr>
@@ -327,20 +321,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>shrink_to_fit</b> ()<
 <tr class="memitem:aae1b585a2b49400bf926518b65ba6504" id="r_aae1b585a2b49400bf926518b65ba6504"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae1b585a2b49400bf926518b65ba6504">TsDeque</a> (typename std::deque&lt; T, Alloc &gt;::size_type count, const T &amp;value, const Alloc &amp;alloc=Alloc())</td></tr>
 <tr class="memdesc:aae1b585a2b49400bf926518b65ba6504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the container with count copies of elements with value value.  <br /></td></tr>
 <tr class="separator:aae1b585a2b49400bf926518b65ba6504"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a2b1fdc687c81f4aa7196d3c4c7fa0d" id="r_a8a2b1fdc687c81f4aa7196d3c4c7fa0d"><td class="memItemLeft" align="right" valign="top"><a id="a8a2b1fdc687c81f4aa7196d3c4c7fa0d" name="a8a2b1fdc687c81f4aa7196d3c4c7fa0d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>~TsDeque</b> ()=default</td></tr>
-<tr class="memdesc:a8a2b1fdc687c81f4aa7196d3c4c7fa0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="memitem:a8a2b1fdc687c81f4aa7196d3c4c7fa0d" id="r_a8a2b1fdc687c81f4aa7196d3c4c7fa0d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a2b1fdc687c81f4aa7196d3c4c7fa0d">~TsDeque</a> ()=default</td></tr>
+<tr class="memdesc:a8a2b1fdc687c81f4aa7196d3c4c7fa0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
 <tr class="separator:a8a2b1fdc687c81f4aa7196d3c4c7fa0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a0df79cbb657049bdcc8bdef5fa96a6d8" id="r_a0df79cbb657049bdcc8bdef5fa96a6d8"><td class="memItemLeft" align="right" valign="top"><a id="a0df79cbb657049bdcc8bdef5fa96a6d8" name="a0df79cbb657049bdcc8bdef5fa96a6d8"></a>
-std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>_mutex</b></td></tr>
-<tr class="memdesc:a0df79cbb657049bdcc8bdef5fa96a6d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex to interact with the queue object. <br /></td></tr>
+<tr class="memitem:a0df79cbb657049bdcc8bdef5fa96a6d8" id="r_a0df79cbb657049bdcc8bdef5fa96a6d8"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0df79cbb657049bdcc8bdef5fa96a6d8">_mutex</a></td></tr>
+<tr class="memdesc:a0df79cbb657049bdcc8bdef5fa96a6d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutex to interact with the queue object.  <br /></td></tr>
 <tr class="separator:a0df79cbb657049bdcc8bdef5fa96a6d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab78fecbd59fe420301e458f97435446a" id="r_ab78fecbd59fe420301e458f97435446a"><td class="memItemLeft" align="right" valign="top"><a id="ab78fecbd59fe420301e458f97435446a" name="ab78fecbd59fe420301e458f97435446a"></a>
-std::deque&lt; T, Alloc &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_queue</b></td></tr>
-<tr class="memdesc:ab78fecbd59fe420301e458f97435446a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue with received data. <br /></td></tr>
+<tr class="memitem:ab78fecbd59fe420301e458f97435446a" id="r_ab78fecbd59fe420301e458f97435446a"><td class="memItemLeft" align="right" valign="top">std::deque&lt; T, Alloc &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab78fecbd59fe420301e458f97435446a">_queue</a></td></tr>
+<tr class="memdesc:ab78fecbd59fe420301e458f97435446a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue with received data.  <br /></td></tr>
 <tr class="separator:ab78fecbd59fe420301e458f97435446a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -353,9 +344,69 @@ class NAV::TsDeque&lt; T, Alloc &gt;</div><p>Thread-safe deque. </p>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00026">26</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ad5a318a3806101bfa078d54244dcd9ee" name="ad5a318a3806101bfa078d54244dcd9ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a318a3806101bfa078d54244dcd9ee">&#9670;&#160;</a></span>TsDeque() <span class="overload">[1/10]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::TsDeque </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Constructor. Constructs an empty container with a default-constructed allocator. </p>
+
+</div>
+</div>
+<a id="a8a2b1fdc687c81f4aa7196d3c4c7fa0d" name="a8a2b1fdc687c81f4aa7196d3c4c7fa0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a2b1fdc687c81f4aa7196d3c4c7fa0d">&#9670;&#160;</a></span>~TsDeque()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::~<a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destructor. </p>
+
+</div>
+</div>
 <a id="a5324786b181c7f8db0b0a816c895e59a" name="a5324786b181c7f8db0b0a816c895e59a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5324786b181c7f8db0b0a816c895e59a">&#9670;&#160;</a></span>TsDeque() <span class="overload">[1/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5324786b181c7f8db0b0a816c895e59a">&#9670;&#160;</a></span>TsDeque() <span class="overload">[2/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,10 +438,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00041">41</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aae1b585a2b49400bf926518b65ba6504" name="aae1b585a2b49400bf926518b65ba6504"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae1b585a2b49400bf926518b65ba6504">&#9670;&#160;</a></span>TsDeque() <span class="overload">[2/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aae1b585a2b49400bf926518b65ba6504">&#9670;&#160;</a></span>TsDeque() <span class="overload">[3/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -433,10 +486,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00048">48</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a2f5075bb909fff6e5cfde4c0363e424d" name="a2f5075bb909fff6e5cfde4c0363e424d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f5075bb909fff6e5cfde4c0363e424d">&#9670;&#160;</a></span>TsDeque() <span class="overload">[3/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f5075bb909fff6e5cfde4c0363e424d">&#9670;&#160;</a></span>TsDeque() <span class="overload">[4/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -473,10 +528,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00054">54</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a3e872dcdffd1a50359560e307bfc8b17" name="a3e872dcdffd1a50359560e307bfc8b17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e872dcdffd1a50359560e307bfc8b17">&#9670;&#160;</a></span>TsDeque() <span class="overload">[4/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e872dcdffd1a50359560e307bfc8b17">&#9670;&#160;</a></span>TsDeque() <span class="overload">[5/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -521,10 +578,12 @@ template&lt;class InputIt&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00062">62</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a97b6963c159351c19f7203039c5d6e10" name="a97b6963c159351c19f7203039c5d6e10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97b6963c159351c19f7203039c5d6e10">&#9670;&#160;</a></span>TsDeque() <span class="overload">[5/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a97b6963c159351c19f7203039c5d6e10">&#9670;&#160;</a></span>TsDeque() <span class="overload">[6/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -556,10 +615,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00068">68</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ae8950dff21608d63ea80b95de1a200bf" name="ae8950dff21608d63ea80b95de1a200bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8950dff21608d63ea80b95de1a200bf">&#9670;&#160;</a></span>TsDeque() <span class="overload">[6/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8950dff21608d63ea80b95de1a200bf">&#9670;&#160;</a></span>TsDeque() <span class="overload">[7/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -596,10 +657,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00076">76</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a4021abfe15b74be29f747fcb6206aee3" name="a4021abfe15b74be29f747fcb6206aee3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4021abfe15b74be29f747fcb6206aee3">&#9670;&#160;</a></span>TsDeque() <span class="overload">[7/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4021abfe15b74be29f747fcb6206aee3">&#9670;&#160;</a></span>TsDeque() <span class="overload">[8/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -631,10 +694,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00084">84</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aac6c63aef2a6f9eab3021d4680c8c6e4" name="aac6c63aef2a6f9eab3021d4680c8c6e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac6c63aef2a6f9eab3021d4680c8c6e4">&#9670;&#160;</a></span>TsDeque() <span class="overload">[8/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aac6c63aef2a6f9eab3021d4680c8c6e4">&#9670;&#160;</a></span>TsDeque() <span class="overload">[9/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -671,10 +736,12 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00093">93</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ab2fff7e0c8999e1b500e24027c57556f" name="ab2fff7e0c8999e1b500e24027c57556f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2fff7e0c8999e1b500e24027c57556f">&#9670;&#160;</a></span>TsDeque() <span class="overload">[9/9]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2fff7e0c8999e1b500e24027c57556f">&#9670;&#160;</a></span>TsDeque() <span class="overload">[10/10]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -710,6 +777,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00101">101</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -754,6 +823,8 @@ template&lt;class InputIt&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00150">150</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a5b64f1d43706fc6b6cca3473a332d1e8" name="a5b64f1d43706fc6b6cca3473a332d1e8"></a>
@@ -788,6 +859,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00159">159</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -829,6 +902,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00138">138</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a5047f3cbaa74c124ad57763d12dd926a" name="a5047f3cbaa74c124ad57763d12dd926a"></a>
@@ -864,6 +939,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the requested element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00180">180</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -901,6 +978,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the requested element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00185">185</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a1b839d7218998c9be19292a8ae6d7418" name="a1b839d7218998c9be19292a8ae6d7418"></a>
@@ -930,6 +1009,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns a reference to the last element in the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the last element </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00205">205</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -961,6 +1042,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reference to the last element in the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the last element </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00208">208</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a0a20f23f8b306b628c1a9fbf1854167f" name="a0a20f23f8b306b628c1a9fbf1854167f"></a>
@@ -990,6 +1073,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator will be equal to <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the first element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00221">221</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1021,6 +1106,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator will be equal to <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the first element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00217">217</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aeb65257d718177770c6e984ae1e5536d" name="aeb65257d718177770c6e984ae1e5536d"></a>
@@ -1050,6 +1137,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator will be equal to <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the first element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00225">225</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1081,6 +1170,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns an iterator to the element following the last element of the deque. This element acts as a placeholder; attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the element following the last element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00238">238</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a848429f5c9243e7ba1e8c0754d100baf" name="a848429f5c9243e7ba1e8c0754d100baf"></a>
@@ -1108,6 +1199,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Erases all elements from the container. After this call, <a class="el" href="#a6fe145d9a286457bea3825b0ce34d722" title="Returns the number of elements in the container, i.e. std::distance(begin(), end()).">size()</a> returns zero. Invalidates any references, pointers, or iterators referring to contained elements. Any past-the-end iterators are also invalidated. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00310">310</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1139,6 +1232,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque. If the deque is empty, the returned iterator is equal to <a class="el" href="#a18418e08e214ac9ccabe7ee0a59411dd" title="Returns a reverse iterator to the element following the last element of the reversed deque....">rend()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the first element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00251">251</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="af56c0c4299bf1c5424ff0218dc303117" name="af56c0c4299bf1c5424ff0218dc303117"></a>
@@ -1168,6 +1263,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns a reverse iterator to the element following the last element of the reversed deque. It corresponds to the element preceding the first element of the non-reversed deque. This element acts as a placeholder, attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the element following the last element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00267">267</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1212,6 +1309,8 @@ template&lt;class... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the emplaced element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00375">375</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a1543910d3ec0189473a7143a65b5d55c" name="a1543910d3ec0189473a7143a65b5d55c"></a>
@@ -1249,6 +1348,8 @@ template&lt;class... Args&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A reference to the inserted element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00420">420</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1288,6 +1389,8 @@ template&lt;class... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A reference to the inserted element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00454">454</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ae3a05e1a6943bb88e7546be8e4695606" name="ae3a05e1a6943bb88e7546be8e4695606"></a>
@@ -1317,6 +1420,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Checks if the container has no elements, i.e. whether '<a class="el" href="#a3ebc66a0d8b5b36af158f638e7ae005d" title="Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator w...">begin()</a> == <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>'. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the container is empty, false otherwise </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00275">275</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1348,6 +1453,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns an iterator to the element following the last element of the deque. This element acts as a placeholder; attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the element following the last element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00234">234</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ad5fb879559cb663986f4aab58e4d8a13" name="ad5fb879559cb663986f4aab58e4d8a13"></a>
@@ -1377,6 +1484,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns an iterator to the element following the last element of the deque. This element acts as a placeholder; attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to the element following the last element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00230">230</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1419,6 +1528,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator following the last removed element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00395">395</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ae43754c6e04ad136086d50b2ba0611c1" name="ae43754c6e04ad136086d50b2ba0611c1"></a>
@@ -1455,6 +1566,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator following the last removed element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00384">384</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="ad79acf8736f97723df0081a8610a376f" name="ad79acf8736f97723df0081a8610a376f"></a>
@@ -1484,6 +1597,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns a copy of the first element in the container and removes it from the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Copy of the first element </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00494">494</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1515,6 +1630,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reference to the first element in the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the first element </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00198">198</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a178dc03c9f4c0e95855e59bec49475f8" name="a178dc03c9f4c0e95855e59bec49475f8"></a>
@@ -1545,6 +1662,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reference to the first element in the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the first element </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00201">201</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="af6a1c1f027480466bf15561937943683" name="af6a1c1f027480466bf15561937943683"></a>
@@ -1574,6 +1693,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns the allocator associated with the container. </p>
 <dl class="section return"><dt>Returns</dt><dd>The associated allocator. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00167">167</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1615,6 +1736,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the inserted value </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00320">320</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1671,6 +1794,8 @@ template&lt;class InputIt&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element inserted, or pos if first==last. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00354">354</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a3364ffb541afb2a223c986f82989a08e" name="a3364ffb541afb2a223c986f82989a08e"></a>
@@ -1712,6 +1837,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element inserted, or pos if ilist is empty. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00364">364</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a7eaa60b369f88913334fee7216c2bed7" name="a7eaa60b369f88913334fee7216c2bed7"></a>
@@ -1752,6 +1879,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the inserted value </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00330">330</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1800,6 +1929,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Linear in count plus linear in the lesser of the distances between pos and either of the ends of the container. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00341">341</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aea171afc682e3a08588161e2a0843867" name="aea171afc682e3a08588161e2a0843867"></a>
@@ -1830,10 +1961,43 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns the maximum number of elements the container is able to hold due to system or library implementation limitations, i.e. std::distance(<a class="el" href="#a3ebc66a0d8b5b36af158f638e7ae005d" title="Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator w...">begin()</a>, <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>) for the largest container. </p>
 <dl class="section return"><dt>Returns</dt><dd>Maximum number of elements. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00291">291</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae050b36a19f7c0abfe47e08a6c8e6400" name="ae050b36a19f7c0abfe47e08a6c8e6400"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae050b36a19f7c0abfe47e08a6c8e6400">&#9670;&#160;</a></span>operator=() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp; <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a>&lt; T, Alloc &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy assignment operator. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00105">105</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a43fbf6fe3a38fa6a792e3f0f39edfa90" name="a43fbf6fe3a38fa6a792e3f0f39edfa90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43fbf6fe3a38fa6a792e3f0f39edfa90">&#9670;&#160;</a></span>operator=()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a43fbf6fe3a38fa6a792e3f0f39edfa90">&#9670;&#160;</a></span>operator=() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1864,6 +2028,39 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00128">128</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a4d7e8bec34c18dc84af0ccbd1e771066" name="a4d7e8bec34c18dc84af0ccbd1e771066"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d7e8bec34c18dc84af0ccbd1e771066">&#9670;&#160;</a></span>operator=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a> &amp; <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a>&lt; T, Alloc &gt; &amp;&amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move assignment operator. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00116">116</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -1901,6 +2098,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the requested element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00190">190</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a300be1eff93c23155acb254723923267" name="a300be1eff93c23155acb254723923267"></a>
@@ -1937,6 +2136,70 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the requested element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00194">194</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a962c3cbb94e25d44b4b3b7a9ca8f202a" name="a962c3cbb94e25d44b4b3b7a9ca8f202a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a962c3cbb94e25d44b4b3b7a9ca8f202a">&#9670;&#160;</a></span>pop_back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::pop_back </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Removes the last element of the container. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00427">427</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aede28acd1d2e912285c208d18ba93e59" name="aede28acd1d2e912285c208d18ba93e59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aede28acd1d2e912285c208d18ba93e59">&#9670;&#160;</a></span>pop_front()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::pop_front </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Removes the first element of the container. If there are no elements in the container, the behavior is undefined. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00461">461</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a778844411c23c3d73076378e3109dc30" name="a778844411c23c3d73076378e3109dc30"></a>
@@ -1971,6 +2234,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00403">403</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2007,6 +2272,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00410">410</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a007912678085d5fb1ee75f6e7555770d" name="a007912678085d5fb1ee75f6e7555770d"></a>
@@ -2041,6 +2308,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00436">436</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2077,6 +2346,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00444">444</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a4cacc4eaa6e8fa6ccd58429c5126e40d" name="a4cacc4eaa6e8fa6ccd58429c5126e40d"></a>
@@ -2106,6 +2377,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque. If the deque is empty, the returned iterator is equal to <a class="el" href="#a18418e08e214ac9ccabe7ee0a59411dd" title="Returns a reverse iterator to the element following the last element of the reversed deque....">rend()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the first element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00247">247</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2137,6 +2410,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reverse iterator to the first element of the reversed deque. It corresponds to the last element of the non-reversed deque. If the deque is empty, the returned iterator is equal to <a class="el" href="#a18418e08e214ac9ccabe7ee0a59411dd" title="Returns a reverse iterator to the element following the last element of the reversed deque....">rend()</a>. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the first element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00243">243</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a7c83700b495b7512b8a059647d3e2847" name="a7c83700b495b7512b8a059647d3e2847"></a>
@@ -2167,6 +2442,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <p>Returns a reverse iterator to the element following the last element of the reversed deque. It corresponds to the element preceding the first element of the non-reversed deque. This element acts as a placeholder, attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the element following the last element. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00262">262</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a18418e08e214ac9ccabe7ee0a59411dd" name="a18418e08e214ac9ccabe7ee0a59411dd"></a>
@@ -2196,6 +2473,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns a reverse iterator to the element following the last element of the reversed deque. It corresponds to the element preceding the first element of the non-reversed deque. This element acts as a placeholder, attempting to access it results in undefined behavior. </p>
 <dl class="section return"><dt>Returns</dt><dd>Reverse iterator to the element following the last element. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00257">257</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2231,6 +2510,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00469">469</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2272,6 +2553,39 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00477">477</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a6262cc399ed9641264ea8f7cd7877ae6" name="a6262cc399ed9641264ea8f7cd7877ae6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6262cc399ed9641264ea8f7cd7877ae6">&#9670;&#160;</a></span>shrink_to_fit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::shrink_to_fit </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Requests the removal of unused capacity. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00298">298</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a6fe145d9a286457bea3825b0ce34d722" name="a6fe145d9a286457bea3825b0ce34d722"></a>
@@ -2301,6 +2615,8 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 
 <p>Returns the number of elements in the container, i.e. std::distance(<a class="el" href="#a3ebc66a0d8b5b36af158f638e7ae005d" title="Returns an iterator to the first element of the deque. If the deque is empty, the returned iterator w...">begin()</a>, <a class="el" href="#ad5fb879559cb663986f4aab58e4d8a13" title="Returns an iterator to the element following the last element of the deque. This element acts as a pl...">end()</a>). </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of elements in the container. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00283">283</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
 
 </div>
 </div>
@@ -2337,6 +2653,65 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00486">486</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a0df79cbb657049bdcc8bdef5fa96a6d8" name="a0df79cbb657049bdcc8bdef5fa96a6d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0df79cbb657049bdcc8bdef5fa96a6d8">&#9670;&#160;</a></span>_mutex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mutex <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::_mutex</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel mutable">mutable</span><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Mutex to interact with the queue object. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00510">510</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab78fecbd59fe420301e458f97435446a" name="ab78fecbd59fe420301e458f97435446a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab78fecbd59fe420301e458f97435446a">&#9670;&#160;</a></span>_queue</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::deque&lt;T, Alloc&gt; <a class="el" href="classNAV_1_1TsDeque.html">NAV::TsDeque</a>&lt; T, Alloc &gt;::_queue</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Queue with received data. </p>
+
+<p class="definition">Definition at line <a class="el" href="TsDeque_8hpp_source.html#l00507">507</a> of file <a class="el" href="TsDeque_8hpp_source.html">TsDeque.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -2347,7 +2722,7 @@ template&lt;class T, class Alloc = std::allocator&lt;T&gt;&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1TsDeque.html">TsDeque</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

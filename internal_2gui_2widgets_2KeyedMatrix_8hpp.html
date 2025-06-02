@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('internal_2gui_2widgets_2KeyedMatrix_8hpp.html',''); in
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">KeyedMatrix.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,30 +130,39 @@ $(function(){initNavTree('internal_2gui_2widgets_2KeyedMatrix_8hpp.html',''); in
 
 <p><a href="internal_2gui_2widgets_2KeyedMatrix_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui.html">NAV::gui</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a4c9ef0b684e293bc972579a5f8a18670" id="r_a4c9ef0b684e293bc972579a5f8a18670"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols&gt; </td></tr>
-<tr class="memitem:a4c9ef0b684e293bc972579a5f8a18670"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4c9ef0b684e293bc972579a5f8a18670">NAV::gui::widgets::InputKeyedMatrix</a> (const char *label, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX|ImGuiTableFlags_ScrollY, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
+<tr class="memitem:a4c9ef0b684e293bc972579a5f8a18670"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a4c9ef0b684e293bc972579a5f8a18670">NAV::gui::widgets::InputKeyedMatrix</a> (const char *label, <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX|ImGuiTableFlags_ScrollY, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
 <tr class="memdesc:a4c9ef0b684e293bc972579a5f8a18670"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to modify the coefficients of a matrix with.  <br /></td></tr>
 <tr class="separator:a4c9ef0b684e293bc972579a5f8a18670"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87189f75a1947b2360fd5fd0922b6fcd" id="r_a87189f75a1947b2360fd5fd0922b6fcd"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename ColKeyType, int Cols&gt; </td></tr>
-<tr class="memitem:a87189f75a1947b2360fd5fd0922b6fcd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a87189f75a1947b2360fd5fd0922b6fcd">NAV::gui::widgets::InputKeyedRowVector</a> (const char *label, <a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *matrix, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
+<tr class="memitem:a87189f75a1947b2360fd5fd0922b6fcd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a87189f75a1947b2360fd5fd0922b6fcd">NAV::gui::widgets::InputKeyedRowVector</a> (const char *label, <a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *matrix, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
 <tr class="memdesc:a87189f75a1947b2360fd5fd0922b6fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to modify the coefficients of a matrix with.  <br /></td></tr>
 <tr class="separator:a87189f75a1947b2360fd5fd0922b6fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae443e40917eea435b8f15197d2e18591" id="r_ae443e40917eea435b8f15197d2e18591"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename RowKeyType, int Rows&gt; </td></tr>
-<tr class="memitem:ae443e40917eea435b8f15197d2e18591"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ae443e40917eea435b8f15197d2e18591">NAV::gui::widgets::InputKeyedVector</a> (const char *label, <a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollY, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
+<tr class="memitem:ae443e40917eea435b8f15197d2e18591"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#ae443e40917eea435b8f15197d2e18591">NAV::gui::widgets::InputKeyedVector</a> (const char *label, <a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollY, double step=0.0, double step_fast=0.0, const char *format=&quot;%.4g&quot;, ImGuiInputTextFlags inputTextFlags=ImGuiInputTextFlags_None)</td></tr>
 <tr class="memdesc:ae443e40917eea435b8f15197d2e18591"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to modify the coefficients of a matrix with.  <br /></td></tr>
 <tr class="separator:ae443e40917eea435b8f15197d2e18591"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62dd353989d89cecac1371e0a4405fe5" id="r_a62dd353989d89cecac1371e0a4405fe5"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols&gt; </td></tr>
-<tr class="memitem:a62dd353989d89cecac1371e0a4405fe5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a62dd353989d89cecac1371e0a4405fe5">NAV::gui::widgets::KeyedMatrixView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX|ImGuiTableFlags_ScrollY)</td></tr>
+<tr class="memitem:a62dd353989d89cecac1371e0a4405fe5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a62dd353989d89cecac1371e0a4405fe5">NAV::gui::widgets::KeyedMatrixView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX|ImGuiTableFlags_ScrollY)</td></tr>
 <tr class="memdesc:a62dd353989d89cecac1371e0a4405fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to display the coefficients of a matrix.  <br /></td></tr>
 <tr class="separator:a62dd353989d89cecac1371e0a4405fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b526bb4c0e287ce72239869f948de5c" id="r_a7b526bb4c0e287ce72239869f948de5c"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename ColKeyType, int Cols&gt; </td></tr>
-<tr class="memitem:a7b526bb4c0e287ce72239869f948de5c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7b526bb4c0e287ce72239869f948de5c">NAV::gui::widgets::KeyedRowVectorView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *matrix, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX)</td></tr>
+<tr class="memitem:a7b526bb4c0e287ce72239869f948de5c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a7b526bb4c0e287ce72239869f948de5c">NAV::gui::widgets::KeyedRowVectorView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *matrix, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollX)</td></tr>
 <tr class="memdesc:a7b526bb4c0e287ce72239869f948de5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to display the coefficients of a matrix.  <br /></td></tr>
 <tr class="separator:a7b526bb4c0e287ce72239869f948de5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a5ae1e10fba276676c9a705d4d40e2e" id="r_a5a5ae1e10fba276676c9a705d4d40e2e"><td class="memTemplParams" colspan="2">template&lt;typename Scalar, typename RowKeyType, int Rows&gt; </td></tr>
-<tr class="memitem:a5a5ae1e10fba276676c9a705d4d40e2e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5a5ae1e10fba276676c9a705d4d40e2e">NAV::gui::widgets::KeyedVectorView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollY)</td></tr>
+<tr class="memitem:a5a5ae1e10fba276676c9a705d4d40e2e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a5a5ae1e10fba276676c9a705d4d40e2e">NAV::gui::widgets::KeyedVectorView</a> (const char *label, const <a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *matrix, float tableHeight=-1.0F, ImGuiTableFlags tableFlags=ImGuiTableFlags_Borders|ImGuiTableFlags_NoHostExtendX|ImGuiTableFlags_SizingFixedFit|ImGuiTableFlags_ScrollY)</td></tr>
 <tr class="memdesc:a5a5ae1e10fba276676c9a705d4d40e2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows GUI elements to display the coefficients of a matrix.  <br /></td></tr>
 <tr class="separator:a5a5ae1e10fba276676c9a705d4d40e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -159,387 +170,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Widgets related to KeyedMatrices. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-08-04 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a4c9ef0b684e293bc972579a5f8a18670" name="a4c9ef0b684e293bc972579a5f8a18670"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c9ef0b684e293bc972579a5f8a18670">&#9670;&#160;</a></span>InputKeyedMatrix()</h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::InputKeyedMatrix </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>tableHeight</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1.0F</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollX&#160;|&#160;ImGuiTableFlags_ScrollY</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step_fast</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;%.4g&quot;</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiInputTextFlags</td>          <td class="paramname"><span class="paramname"><em>inputTextFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiInputTextFlags_None</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to modify the coefficients of a matrix with. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">RowKeyType</td><td>Type of the key used for row lookup </td></tr>
-    <tr><td class="paramname">ColKeyType</td><td>Type of the key used for col lookup </td></tr>
-    <tr><td class="paramname">Rows</td><td>Number of rows, or <b>Dynamic</b> </td></tr>
-    <tr><td class="paramname">Cols</td><td>Number of columns, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">matrix</td><td>Pointer to the matrix to modify </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableHeight</td><td>Height of the Table to show scrollbar afterwards (-1 means no scrollbar) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step_fast</td><td>Fast step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Printf format to display the value with </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inputTextFlags</td><td>InputText flags to modify the behavior of the input fields </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value was changed </dd></dl>
-
-</div>
-</div>
-<a id="a87189f75a1947b2360fd5fd0922b6fcd" name="a87189f75a1947b2360fd5fd0922b6fcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87189f75a1947b2360fd5fd0922b6fcd">&#9670;&#160;</a></span>InputKeyedRowVector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename ColKeyType, int Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::InputKeyedRowVector </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollX</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step_fast</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;%.4g&quot;</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiInputTextFlags</td>          <td class="paramname"><span class="paramname"><em>inputTextFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiInputTextFlags_None</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to modify the coefficients of a matrix with. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">ColKeyType</td><td>Type of the key used for col lookup </td></tr>
-    <tr><td class="paramname">Cols</td><td>Number of columns, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">matrix</td><td>Pointer to the matrix to modify </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step_fast</td><td>Fast step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Printf format to display the value with </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inputTextFlags</td><td>InputText flags to modify the behavior of the input fields </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value was changed </dd></dl>
-
-</div>
-</div>
-<a id="ae443e40917eea435b8f15197d2e18591" name="ae443e40917eea435b8f15197d2e18591"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae443e40917eea435b8f15197d2e18591">&#9670;&#160;</a></span>InputKeyedVector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename RowKeyType, int Rows&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::InputKeyedVector </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>tableHeight</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1.0F</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollY</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>step_fast</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0.0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>format</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;%.4g&quot;</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiInputTextFlags</td>          <td class="paramname"><span class="paramname"><em>inputTextFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiInputTextFlags_None</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to modify the coefficients of a matrix with. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">RowKeyType</td><td>Type of the key used for row lookup </td></tr>
-    <tr><td class="paramname">Rows</td><td>Number of rows, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">matrix</td><td>Pointer to the matrix to modify </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableHeight</td><td>Height of the Table to show scrollbar afterwards (-1 means no scrollbar) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step</td><td>Step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">step_fast</td><td>Fast step size of the InputText </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Printf format to display the value with </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">inputTextFlags</td><td>InputText flags to modify the behavior of the input fields </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the value was changed </dd></dl>
-
-</div>
-</div>
-<a id="a62dd353989d89cecac1371e0a4405fe5" name="a62dd353989d89cecac1371e0a4405fe5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62dd353989d89cecac1371e0a4405fe5">&#9670;&#160;</a></span>KeyedMatrixView()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename RowKeyType, typename ColKeyType, int Rows, int Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::gui::widgets::KeyedMatrixView </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1KeyedMatrix.html">KeyedMatrix</a>&lt; Scalar, RowKeyType, ColKeyType, Rows, Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>tableHeight</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1.0F</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollX&#160;|&#160;ImGuiTableFlags_ScrollY</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to display the coefficients of a matrix. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">RowKeyType</td><td>Type of the key used for row lookup </td></tr>
-    <tr><td class="paramname">ColKeyType</td><td>Type of the key used for col lookup </td></tr>
-    <tr><td class="paramname">Rows</td><td>Number of rows, or <b>Dynamic</b> </td></tr>
-    <tr><td class="paramname">Cols</td><td>Number of columns, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">matrix</td><td>Pointer to the matrix to display </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableHeight</td><td>Height of the Table to show scrollbar afterwards (-1 means no scrollbar) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a7b526bb4c0e287ce72239869f948de5c" name="a7b526bb4c0e287ce72239869f948de5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b526bb4c0e287ce72239869f948de5c">&#9670;&#160;</a></span>KeyedRowVectorView()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename ColKeyType, int Cols&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::gui::widgets::KeyedRowVectorView </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1KeyedRowVector.html">KeyedRowVector</a>&lt; Scalar, ColKeyType, Cols &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollX</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to display the coefficients of a matrix. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">ColKeyType</td><td>Type of the key used for col lookup </td></tr>
-    <tr><td class="paramname">Cols</td><td>Number of columns, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">matrix</td><td>Pointer to the matrix to display </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a5a5ae1e10fba276676c9a705d4d40e2e" name="a5a5ae1e10fba276676c9a705d4d40e2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a5ae1e10fba276676c9a705d4d40e2e">&#9670;&#160;</a></span>KeyedVectorView()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Scalar, typename RowKeyType, int Rows&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::gui::widgets::KeyedVectorView </td>
-          <td>(</td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>label</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classNAV_1_1KeyedVector.html">KeyedVector</a>&lt; Scalar, RowKeyType, Rows &gt; *</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>tableHeight</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1.0F</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ImGuiTableFlags</td>          <td class="paramname"><span class="paramname"><em>tableFlags</em></span><span class="paramdefsep"> = </span><span class="paramdefval">ImGuiTableFlags_Borders&#160;|&#160;ImGuiTableFlags_NoHostExtendX&#160;|&#160;ImGuiTableFlags_SizingFixedFit&#160;|&#160;ImGuiTableFlags_ScrollY</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows GUI elements to display the coefficients of a matrix. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Scalar</td><td>Numeric type, e.g. float, double, int or std::complex&lt;float&gt;. </td></tr>
-    <tr><td class="paramname">RowKeyType</td><td>Type of the key used for row lookup </td></tr>
-    <tr><td class="paramname">Rows</td><td>Number of rows, or <b>Dynamic</b> </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">label</td><td>Label to display beside. Has to be unique (use # to hide text afterwards to append an uid) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">matrix</td><td>Pointer to the matrix to display </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableHeight</td><td>Height of the Table to show scrollbar afterwards (-1 means no scrollbar) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">tableFlags</td><td>Flags to modify the Table behaviour </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="internal_2gui_2widgets_2KeyedMatrix_8hpp_source.html">KeyedMatrix.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

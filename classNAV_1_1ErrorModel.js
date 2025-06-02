@@ -25,13 +25,6 @@ var classNAV_1_1ErrorModel =
     [ "DopplerNoiseUnits", "classNAV_1_1ErrorModel.html#a8c17650208e99b7f7bf0fbb2b08959a5", [
       [ "m_s", "classNAV_1_1ErrorModel.html#a8c17650208e99b7f7bf0fbb2b08959a5a0b731d2ebd143daed5111a68cffef1b3", null ]
     ] ],
-    [ "InputType", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16", [
-      [ "None", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16a6adf97f83acf6453d4a6a4b1070f3754", null ],
-      [ "ImuObs", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16ae1ae4321732ea2406f0422bf1b4bb9c1", null ],
-      [ "ImuObsWDelta", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16a032553d6ba6a1921a71763a1ee1b5726", null ],
-      [ "PosVelAtt", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16a950841c99d24c4239f5c5634ea17c0df", null ],
-      [ "GnssObs", "classNAV_1_1ErrorModel.html#a589d5d05c52da2bf6dea450908a83c16a465c896bb511593ec0a9fed5f8ffcd76", null ]
-    ] ],
     [ "PositionBiasUnits", "classNAV_1_1ErrorModel.html#a12d450f6da7a033779c423f08dd42a7c", [
       [ "meter", "classNAV_1_1ErrorModel.html#a12d450f6da7a033779c423f08dd42a7ca558ddfdd3620c111fe112b4671b77c6d", null ]
     ] ],
@@ -55,20 +48,22 @@ var classNAV_1_1ErrorModel =
     [ "ErrorModel", "classNAV_1_1ErrorModel.html#abff2b5db623f241505350a2b0db72ddd", null ],
     [ "afterCreateLink", "classNAV_1_1ErrorModel.html#aa239fb570a520df31910379956a26545", null ],
     [ "afterDeleteLink", "classNAV_1_1ErrorModel.html#a46d0ef40c8202e4787051946cb56c37a", null ],
-    [ "category", "classNAV_1_1ErrorModel.html#ababeefe04e2eae6cef3287ec2ec7738e", null ],
+    [ "category", "classNAV_1_1ErrorModel.html#a99a3fe2cf07448cef928894da6e71224", null ],
     [ "guiConfig", "classNAV_1_1ErrorModel.html#aca986173668b4ec594ab99fd2df8241d", null ],
     [ "operator=", "classNAV_1_1ErrorModel.html#a5f5fb5b120c38455126943330f147077", null ],
     [ "operator=", "classNAV_1_1ErrorModel.html#aed67eb2004ce18a532bb2a96127387b3", null ],
-    [ "receiveGnssObs", "classNAV_1_1ErrorModel.html#ad786f3698d671b0cbe3f38401f0db6d9", null ],
-    [ "receiveImuObs", "classNAV_1_1ErrorModel.html#a5bcf5df9098e2cf399c1954c0a42c4ed", null ],
-    [ "receiveImuObsWDelta", "classNAV_1_1ErrorModel.html#a990720b8c02c507dd7f502545e102baf", null ],
+    [ "receiveGnssObs", "classNAV_1_1ErrorModel.html#a4f63a2633a1a68bba5bf1f731ceb860f", null ],
+    [ "receiveImuObs", "classNAV_1_1ErrorModel.html#a1bf13076a6eb528d576d0d112bdc3ad0", null ],
+    [ "receiveImuObsWDelta", "classNAV_1_1ErrorModel.html#ae3e1a71b523b8864ca9f0badb208e271", null ],
     [ "receiveObs", "classNAV_1_1ErrorModel.html#a9696ec2c9f1c6621d960d0b81050c59e", null ],
-    [ "receivePosVelAtt", "classNAV_1_1ErrorModel.html#a27e506302e1aa79a347d7ea4ee113e41", null ],
+    [ "receivePos", "classNAV_1_1ErrorModel.html#a76fef93becf0353d1ee6b94a63222ef9", null ],
+    [ "receivePosVel", "classNAV_1_1ErrorModel.html#a06f3f0e9a6047a7373dc1f19d93bbb24", null ],
+    [ "receivePosVelAtt", "classNAV_1_1ErrorModel.html#a87580a7a2420f30bef928760bf04ce6d", null ],
     [ "resetNode", "classNAV_1_1ErrorModel.html#afcbcc5516b23ad7795f864c863f4a3cc", null ],
     [ "restore", "classNAV_1_1ErrorModel.html#a4699c452147299b29cee149a06f92319", null ],
     [ "save", "classNAV_1_1ErrorModel.html#a578222df0f118c0d334bd01d4829b628", null ],
     [ "type", "classNAV_1_1ErrorModel.html#a594dc4836e4f0dfcc4aa1c64c2ca6d02", null ],
-    [ "typeStatic", "classNAV_1_1ErrorModel.html#ab853bf205b31fb6ae025ec9f949c959b", null ],
+    [ "typeStatic", "classNAV_1_1ErrorModel.html#a3fe4a6e7d92cec6e87a3e8eb6b3e06d5", null ],
     [ "_ambiguities", "classNAV_1_1ErrorModel.html#af36c9ea3e2f3814dde49171b491696da", null ],
     [ "_ambiguityRng", "classNAV_1_1ErrorModel.html#a89a27d25ca2f0fab201ae44047e226a1", null ],
     [ "_attitudeBias", "classNAV_1_1ErrorModel.html#ac5d5e4d805b75ab257c68c53523898c3", null ],
@@ -118,7 +113,6 @@ var classNAV_1_1ErrorModel =
     [ "_imuGyroscopeRW", "classNAV_1_1ErrorModel.html#ace18bfd2942f449872b49d906368432c", null ],
     [ "_imuGyroscopeRWRng", "classNAV_1_1ErrorModel.html#a30b9e09c94133f15a9101c710e2e75d8", null ],
     [ "_imuGyroscopeRWUnit", "classNAV_1_1ErrorModel.html#a882815973cf786b3a202c2494c5aac34", null ],
-    [ "_inputType", "classNAV_1_1ErrorModel.html#a911e8168037802c8f1b0fc0993007118", null ],
     [ "_integratedRandomWalkAccelerometer", "classNAV_1_1ErrorModel.html#a84ac17fdcc4bf6922b92c4e59246b609", null ],
     [ "_integratedRandomWalkAccelerometer_velocity", "classNAV_1_1ErrorModel.html#add0698971677db76b8d24210a3019660", null ],
     [ "_integratedRandomWalkGyroscope", "classNAV_1_1ErrorModel.html#a47a8e849fa4ddf38795a316882fbb0b3", null ],
@@ -137,6 +131,5 @@ var classNAV_1_1ErrorModel =
     [ "_velocityNoise", "classNAV_1_1ErrorModel.html#a685346120a6427ac820dc644515cee25", null ],
     [ "_velocityNoiseUnit", "classNAV_1_1ErrorModel.html#a465561887795617a419e7adf470a00c7", null ],
     [ "_velocityRng", "classNAV_1_1ErrorModel.html#ae561f411f4ff9e0a6e72e61239723378", null ],
-    [ "INPUT_PORT_INDEX_FLOW", "classNAV_1_1ErrorModel.html#ad40e1b4c83a704b94c384ffb58a694e4", null ],
     [ "OUTPUT_PORT_INDEX_FLOW", "classNAV_1_1ErrorModel.html#a437d8ee17639b2558710051bb2f66132", null ]
 ];

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('Sleep_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Sleep.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,47 +130,29 @@ $(function(){initNavTree('Sleep_8hpp.html',''); initResizable(true); });
 
 <p><a href="Sleep_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1Sleep.html">NAV::Sleep</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3d23401ab02bc8a8477b552ee7c609b1" id="r_a3d23401ab02bc8a8477b552ee7c609b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d23401ab02bc8a8477b552ee7c609b1">NAV::Sleep::countDownSeconds</a> (size_t seconds)</td></tr>
+<tr class="memitem:a3d23401ab02bc8a8477b552ee7c609b1" id="r_a3d23401ab02bc8a8477b552ee7c609b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1Sleep.html#a3d23401ab02bc8a8477b552ee7c609b1">NAV::Sleep::countDownSeconds</a> (size_t seconds)</td></tr>
 <tr class="memdesc:a3d23401ab02bc8a8477b552ee7c609b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait the thread till time passes.  <br /></td></tr>
 <tr class="separator:a3d23401ab02bc8a8477b552ee7c609b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e8aa38bfa84207d7a6de9f0f08b0d5e" id="r_a4e8aa38bfa84207d7a6de9f0f08b0d5e"><td class="memItemLeft" align="right" valign="top"><a id="a4e8aa38bfa84207d7a6de9f0f08b0d5e" name="a4e8aa38bfa84207d7a6de9f0f08b0d5e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>NAV::Sleep::waitForSignal</b> (bool showText=false)</td></tr>
-<tr class="memdesc:a4e8aa38bfa84207d7a6de9f0f08b0d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait the thread till sigusr signal is send. <br /></td></tr>
+<tr class="memitem:a4e8aa38bfa84207d7a6de9f0f08b0d5e" id="r_a4e8aa38bfa84207d7a6de9f0f08b0d5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1Sleep.html#a4e8aa38bfa84207d7a6de9f0f08b0d5e">NAV::Sleep::waitForSignal</a> (bool showText=false)</td></tr>
+<tr class="memdesc:a4e8aa38bfa84207d7a6de9f0f08b0d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait the thread till sigusr signal is send.  <br /></td></tr>
 <tr class="separator:a4e8aa38bfa84207d7a6de9f0f08b0d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to catch system signals and sleep. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2020-03-10 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a3d23401ab02bc8a8477b552ee7c609b1" name="a3d23401ab02bc8a8477b552ee7c609b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d23401ab02bc8a8477b552ee7c609b1">&#9670;&#160;</a></span>countDownSeconds()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void NAV::Sleep::countDownSeconds </td>
-          <td>(</td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Wait the thread till time passes. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">seconds</td><td>Time to sleep in seconds </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="Sleep_8hpp_source.html">Sleep.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -121,8 +122,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html',''); i
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::RINEX::ObsHeader Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -171,209 +171,164 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afacb9d3b78c2a9e9a68af7da5b52e930" id="r_afacb9d3b78c2a9e9a68af7da5b52e930"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afacb9d3b78c2a9e9a68af7da5b52e930">addObsType</a> (const <a class="el" href="classNAV_1_1Code.html">Code</a> &amp;code, <a class="el" href="RINEXUtilities_8hpp.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a> type)</td></tr>
+<tr class="memitem:afacb9d3b78c2a9e9a68af7da5b52e930" id="r_afacb9d3b78c2a9e9a68af7da5b52e930"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afacb9d3b78c2a9e9a68af7da5b52e930">addObsType</a> (const <a class="el" href="classNAV_1_1Code.html">Code</a> &amp;code, <a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a> type)</td></tr>
 <tr class="memdesc:afacb9d3b78c2a9e9a68af7da5b52e930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the obs type if not existing already.  <br /></td></tr>
 <tr class="separator:afacb9d3b78c2a9e9a68af7da5b52e930"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab416f83c3b40d13940a1453d86caf4a0" id="r_ab416f83c3b40d13940a1453d86caf4a0"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab416f83c3b40d13940a1453d86caf4a0">epochRecordLine</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;epochTime, size_t nSatellites) const</td></tr>
 <tr class="memdesc:ab416f83c3b40d13940a1453d86caf4a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the epoch line.  <br /></td></tr>
 <tr class="separator:ab416f83c3b40d13940a1453d86caf4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac647fb372615d5f5bb0b30cf4b524446" id="r_ac647fb372615d5f5bb0b30cf4b524446"><td class="memItemLeft" align="right" valign="top"><a id="ac647fb372615d5f5bb0b30cf4b524446" name="ac647fb372615d5f5bb0b30cf4b524446"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>generateHeader</b> () const</td></tr>
-<tr class="memdesc:ac647fb372615d5f5bb0b30cf4b524446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the RINEX observation header. <br /></td></tr>
+<tr class="memitem:ac647fb372615d5f5bb0b30cf4b524446" id="r_ac647fb372615d5f5bb0b30cf4b524446"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac647fb372615d5f5bb0b30cf4b524446">generateHeader</a> () const</td></tr>
+<tr class="memdesc:ac647fb372615d5f5bb0b30cf4b524446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the <a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a> observation header.  <br /></td></tr>
 <tr class="separator:ac647fb372615d5f5bb0b30cf4b524446"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab35555f5868e261d48d73beafcf93b3" id="r_aab35555f5868e261d48d73beafcf93b3"><td class="memItemLeft" align="right" valign="top"><a id="aab35555f5868e261d48d73beafcf93b3" name="aab35555f5868e261d48d73beafcf93b3"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineAntennaDeltaHEN</b> () const</td></tr>
-<tr class="memdesc:aab35555f5868e261d48d73beafcf93b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'ANTENNA: DELTA H/E/N'. <br /></td></tr>
+<tr class="memitem:aab35555f5868e261d48d73beafcf93b3" id="r_aab35555f5868e261d48d73beafcf93b3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab35555f5868e261d48d73beafcf93b3">headerLineAntennaDeltaHEN</a> () const</td></tr>
+<tr class="memdesc:aab35555f5868e261d48d73beafcf93b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'ANTENNA: DELTA H/E/N'.  <br /></td></tr>
 <tr class="separator:aab35555f5868e261d48d73beafcf93b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fbcc2acd11e8a6b149ed32f5387b335" id="r_a7fbcc2acd11e8a6b149ed32f5387b335"><td class="memItemLeft" align="right" valign="top"><a id="a7fbcc2acd11e8a6b149ed32f5387b335" name="a7fbcc2acd11e8a6b149ed32f5387b335"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineAntNumType</b> () const</td></tr>
-<tr class="memdesc:a7fbcc2acd11e8a6b149ed32f5387b335"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'ANT # / TYPE'. <br /></td></tr>
+<tr class="memitem:a7fbcc2acd11e8a6b149ed32f5387b335" id="r_a7fbcc2acd11e8a6b149ed32f5387b335"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fbcc2acd11e8a6b149ed32f5387b335">headerLineAntNumType</a> () const</td></tr>
+<tr class="memdesc:a7fbcc2acd11e8a6b149ed32f5387b335"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'ANT # / TYPE'.  <br /></td></tr>
 <tr class="separator:a7fbcc2acd11e8a6b149ed32f5387b335"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02d1352fd793b0e1eb4c992779de4f43" id="r_a02d1352fd793b0e1eb4c992779de4f43"><td class="memItemLeft" align="right" valign="top"><a id="a02d1352fd793b0e1eb4c992779de4f43" name="a02d1352fd793b0e1eb4c992779de4f43"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineApproxPositionXYZ</b> () const</td></tr>
-<tr class="memdesc:a02d1352fd793b0e1eb4c992779de4f43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'APPROX POSITION XYZ'. <br /></td></tr>
+<tr class="memitem:a02d1352fd793b0e1eb4c992779de4f43" id="r_a02d1352fd793b0e1eb4c992779de4f43"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02d1352fd793b0e1eb4c992779de4f43">headerLineApproxPositionXYZ</a> () const</td></tr>
+<tr class="memdesc:a02d1352fd793b0e1eb4c992779de4f43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'APPROX POSITION XYZ'.  <br /></td></tr>
 <tr class="separator:a02d1352fd793b0e1eb4c992779de4f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b5918fbbff24444dd4ad5e66e5f386a" id="r_a1b5918fbbff24444dd4ad5e66e5f386a"><td class="memItemLeft" align="right" valign="top"><a id="a1b5918fbbff24444dd4ad5e66e5f386a" name="a1b5918fbbff24444dd4ad5e66e5f386a"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineComments</b> () const</td></tr>
-<tr class="memdesc:a1b5918fbbff24444dd4ad5e66e5f386a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'COMMENT'. <br /></td></tr>
+<tr class="memitem:a1b5918fbbff24444dd4ad5e66e5f386a" id="r_a1b5918fbbff24444dd4ad5e66e5f386a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b5918fbbff24444dd4ad5e66e5f386a">headerLineComments</a> () const</td></tr>
+<tr class="memdesc:a1b5918fbbff24444dd4ad5e66e5f386a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'COMMENT'.  <br /></td></tr>
 <tr class="separator:a1b5918fbbff24444dd4ad5e66e5f386a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91db1540984b182c26726bec05123d6a" id="r_a91db1540984b182c26726bec05123d6a"><td class="memItemLeft" align="right" valign="top"><a id="a91db1540984b182c26726bec05123d6a" name="a91db1540984b182c26726bec05123d6a"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineInterval</b> () const</td></tr>
-<tr class="memdesc:a91db1540984b182c26726bec05123d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'INTERVAL'. <br /></td></tr>
+<tr class="memitem:a91db1540984b182c26726bec05123d6a" id="r_a91db1540984b182c26726bec05123d6a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91db1540984b182c26726bec05123d6a">headerLineInterval</a> () const</td></tr>
+<tr class="memdesc:a91db1540984b182c26726bec05123d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'INTERVAL'.  <br /></td></tr>
 <tr class="separator:a91db1540984b182c26726bec05123d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5df8c844a124db07c18bf6a7f5666493" id="r_a5df8c844a124db07c18bf6a7f5666493"><td class="memItemLeft" align="right" valign="top"><a id="a5df8c844a124db07c18bf6a7f5666493" name="a5df8c844a124db07c18bf6a7f5666493"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineLeapSeconds</b> () const</td></tr>
-<tr class="memdesc:a5df8c844a124db07c18bf6a7f5666493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'LEAP SECONDS'. <br /></td></tr>
+<tr class="memitem:a5df8c844a124db07c18bf6a7f5666493" id="r_a5df8c844a124db07c18bf6a7f5666493"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5df8c844a124db07c18bf6a7f5666493">headerLineLeapSeconds</a> () const</td></tr>
+<tr class="memdesc:a5df8c844a124db07c18bf6a7f5666493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'LEAP SECONDS'.  <br /></td></tr>
 <tr class="separator:a5df8c844a124db07c18bf6a7f5666493"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe5983a4325e102156c98d27f422bfa5" id="r_afe5983a4325e102156c98d27f422bfa5"><td class="memItemLeft" align="right" valign="top"><a id="afe5983a4325e102156c98d27f422bfa5" name="afe5983a4325e102156c98d27f422bfa5"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineMarkerName</b> () const</td></tr>
-<tr class="memdesc:afe5983a4325e102156c98d27f422bfa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER NAME'. <br /></td></tr>
+<tr class="memitem:afe5983a4325e102156c98d27f422bfa5" id="r_afe5983a4325e102156c98d27f422bfa5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe5983a4325e102156c98d27f422bfa5">headerLineMarkerName</a> () const</td></tr>
+<tr class="memdesc:afe5983a4325e102156c98d27f422bfa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER NAME'.  <br /></td></tr>
 <tr class="separator:afe5983a4325e102156c98d27f422bfa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28a07d7398d7bdda81a8e7a014c730c6" id="r_a28a07d7398d7bdda81a8e7a014c730c6"><td class="memItemLeft" align="right" valign="top"><a id="a28a07d7398d7bdda81a8e7a014c730c6" name="a28a07d7398d7bdda81a8e7a014c730c6"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineMarkerNumber</b> () const</td></tr>
-<tr class="memdesc:a28a07d7398d7bdda81a8e7a014c730c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER NUMBER'. <br /></td></tr>
+<tr class="memitem:a28a07d7398d7bdda81a8e7a014c730c6" id="r_a28a07d7398d7bdda81a8e7a014c730c6"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28a07d7398d7bdda81a8e7a014c730c6">headerLineMarkerNumber</a> () const</td></tr>
+<tr class="memdesc:a28a07d7398d7bdda81a8e7a014c730c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER NUMBER'.  <br /></td></tr>
 <tr class="separator:a28a07d7398d7bdda81a8e7a014c730c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b72a205212b6aa48ab7f5b970381b5c" id="r_a5b72a205212b6aa48ab7f5b970381b5c"><td class="memItemLeft" align="right" valign="top"><a id="a5b72a205212b6aa48ab7f5b970381b5c" name="a5b72a205212b6aa48ab7f5b970381b5c"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineMarkerType</b> () const</td></tr>
-<tr class="memdesc:a5b72a205212b6aa48ab7f5b970381b5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER TYPE'. <br /></td></tr>
+<tr class="memitem:a5b72a205212b6aa48ab7f5b970381b5c" id="r_a5b72a205212b6aa48ab7f5b970381b5c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b72a205212b6aa48ab7f5b970381b5c">headerLineMarkerType</a> () const</td></tr>
+<tr class="memdesc:a5b72a205212b6aa48ab7f5b970381b5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'MARKER TYPE'.  <br /></td></tr>
 <tr class="separator:a5b72a205212b6aa48ab7f5b970381b5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35a65fb8391528db3ba65378b1958e33" id="r_a35a65fb8391528db3ba65378b1958e33"><td class="memItemLeft" align="right" valign="top"><a id="a35a65fb8391528db3ba65378b1958e33" name="a35a65fb8391528db3ba65378b1958e33"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineNumSatellites</b> () const</td></tr>
-<tr class="memdesc:a35a65fb8391528db3ba65378b1958e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line '# OF SATELLITES'. <br /></td></tr>
+<tr class="memitem:a35a65fb8391528db3ba65378b1958e33" id="r_a35a65fb8391528db3ba65378b1958e33"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35a65fb8391528db3ba65378b1958e33">headerLineNumSatellites</a> () const</td></tr>
+<tr class="memdesc:a35a65fb8391528db3ba65378b1958e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line '# OF SATELLITES'.  <br /></td></tr>
 <tr class="separator:a35a65fb8391528db3ba65378b1958e33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4e429f0cf1a0c8ea432b4c59bb0bd59" id="r_ab4e429f0cf1a0c8ea432b4c59bb0bd59"><td class="memItemLeft" align="right" valign="top"><a id="ab4e429f0cf1a0c8ea432b4c59bb0bd59" name="ab4e429f0cf1a0c8ea432b4c59bb0bd59"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineObserverAgency</b> () const</td></tr>
-<tr class="memdesc:ab4e429f0cf1a0c8ea432b4c59bb0bd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'OBSERVER / AGENCY'. <br /></td></tr>
+<tr class="memitem:ab4e429f0cf1a0c8ea432b4c59bb0bd59" id="r_ab4e429f0cf1a0c8ea432b4c59bb0bd59"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4e429f0cf1a0c8ea432b4c59bb0bd59">headerLineObserverAgency</a> () const</td></tr>
+<tr class="memdesc:ab4e429f0cf1a0c8ea432b4c59bb0bd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'OBSERVER / AGENCY'.  <br /></td></tr>
 <tr class="separator:ab4e429f0cf1a0c8ea432b4c59bb0bd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0abb3a0107a78506fe664304d5b7b94" id="r_ad0abb3a0107a78506fe664304d5b7b94"><td class="memItemLeft" align="right" valign="top"><a id="ad0abb3a0107a78506fe664304d5b7b94" name="ad0abb3a0107a78506fe664304d5b7b94"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLinePgmRunByDate</b> () const</td></tr>
-<tr class="memdesc:ad0abb3a0107a78506fe664304d5b7b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'PGM / RUN BY / DATE'. <br /></td></tr>
+<tr class="memitem:ad0abb3a0107a78506fe664304d5b7b94" id="r_ad0abb3a0107a78506fe664304d5b7b94"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad0abb3a0107a78506fe664304d5b7b94">headerLinePgmRunByDate</a> () const</td></tr>
+<tr class="memdesc:ad0abb3a0107a78506fe664304d5b7b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'PGM / RUN BY / DATE'.  <br /></td></tr>
 <tr class="separator:ad0abb3a0107a78506fe664304d5b7b94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0e7643cc7ea087ea2e82a03e866c5da" id="r_aa0e7643cc7ea087ea2e82a03e866c5da"><td class="memItemLeft" align="right" valign="top"><a id="aa0e7643cc7ea087ea2e82a03e866c5da" name="aa0e7643cc7ea087ea2e82a03e866c5da"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineRecNumTypeVers</b> () const</td></tr>
-<tr class="memdesc:aa0e7643cc7ea087ea2e82a03e866c5da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'REC # / TYPE / VERS'. <br /></td></tr>
+<tr class="memitem:aa0e7643cc7ea087ea2e82a03e866c5da" id="r_aa0e7643cc7ea087ea2e82a03e866c5da"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0e7643cc7ea087ea2e82a03e866c5da">headerLineRecNumTypeVers</a> () const</td></tr>
+<tr class="memdesc:aa0e7643cc7ea087ea2e82a03e866c5da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'REC # / TYPE / VERS'.  <br /></td></tr>
 <tr class="separator:aa0e7643cc7ea087ea2e82a03e866c5da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a246c1b2f717042ff4e60ad9f2c7ca0a5" id="r_a246c1b2f717042ff4e60ad9f2c7ca0a5"><td class="memItemLeft" align="right" valign="top"><a id="a246c1b2f717042ff4e60ad9f2c7ca0a5" name="a246c1b2f717042ff4e60ad9f2c7ca0a5"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineRinexVersionType</b> () const</td></tr>
-<tr class="memdesc:a246c1b2f717042ff4e60ad9f2c7ca0a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'RINEX VERSION / TYPE'. <br /></td></tr>
+<tr class="memitem:a246c1b2f717042ff4e60ad9f2c7ca0a5" id="r_a246c1b2f717042ff4e60ad9f2c7ca0a5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a246c1b2f717042ff4e60ad9f2c7ca0a5">headerLineRinexVersionType</a> () const</td></tr>
+<tr class="memdesc:a246c1b2f717042ff4e60ad9f2c7ca0a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line '<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a> VERSION / TYPE'.  <br /></td></tr>
 <tr class="separator:a246c1b2f717042ff4e60ad9f2c7ca0a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f71eb79bc54dad43637608e0d9c432c" id="r_a9f71eb79bc54dad43637608e0d9c432c"><td class="memItemLeft" align="right" valign="top"><a id="a9f71eb79bc54dad43637608e0d9c432c" name="a9f71eb79bc54dad43637608e0d9c432c"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineSysNumObsType</b> () const</td></tr>
-<tr class="memdesc:a9f71eb79bc54dad43637608e0d9c432c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SYS / # / OBS TYPES'. <br /></td></tr>
+<tr class="memitem:a9f71eb79bc54dad43637608e0d9c432c" id="r_a9f71eb79bc54dad43637608e0d9c432c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f71eb79bc54dad43637608e0d9c432c">headerLineSysNumObsType</a> () const</td></tr>
+<tr class="memdesc:a9f71eb79bc54dad43637608e0d9c432c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SYS / # / OBS TYPES'.  <br /></td></tr>
 <tr class="separator:a9f71eb79bc54dad43637608e0d9c432c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26976bf3ee22e6d15f1a1e64c398431c" id="r_a26976bf3ee22e6d15f1a1e64c398431c"><td class="memItemLeft" align="right" valign="top"><a id="a26976bf3ee22e6d15f1a1e64c398431c" name="a26976bf3ee22e6d15f1a1e64c398431c"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineTimeOfFirstObs</b> () const</td></tr>
-<tr class="memdesc:a26976bf3ee22e6d15f1a1e64c398431c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'TIME OF FIRST OBS'. <br /></td></tr>
+<tr class="memitem:a26976bf3ee22e6d15f1a1e64c398431c" id="r_a26976bf3ee22e6d15f1a1e64c398431c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26976bf3ee22e6d15f1a1e64c398431c">headerLineTimeOfFirstObs</a> () const</td></tr>
+<tr class="memdesc:a26976bf3ee22e6d15f1a1e64c398431c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'TIME OF FIRST OBS'.  <br /></td></tr>
 <tr class="separator:a26976bf3ee22e6d15f1a1e64c398431c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63a0eb7ec59ac8f7f71f899b490abf82" id="r_a63a0eb7ec59ac8f7f71f899b490abf82"><td class="memItemLeft" align="right" valign="top"><a id="a63a0eb7ec59ac8f7f71f899b490abf82" name="a63a0eb7ec59ac8f7f71f899b490abf82"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineTimeOfLastObs</b> () const</td></tr>
-<tr class="memdesc:a63a0eb7ec59ac8f7f71f899b490abf82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'TIME OF LAST OBS'. <br /></td></tr>
+<tr class="memitem:a63a0eb7ec59ac8f7f71f899b490abf82" id="r_a63a0eb7ec59ac8f7f71f899b490abf82"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63a0eb7ec59ac8f7f71f899b490abf82">headerLineTimeOfLastObs</a> () const</td></tr>
+<tr class="memdesc:a63a0eb7ec59ac8f7f71f899b490abf82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'TIME OF LAST OBS'.  <br /></td></tr>
 <tr class="separator:a63a0eb7ec59ac8f7f71f899b490abf82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0b1b600d2f5f75c5dccc2b42918064e" id="r_aa0b1b600d2f5f75c5dccc2b42918064e"><td class="memItemLeft" align="right" valign="top"><a id="aa0b1b600d2f5f75c5dccc2b42918064e" name="aa0b1b600d2f5f75c5dccc2b42918064e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>reset</b> ()</td></tr>
-<tr class="memdesc:aa0b1b600d2f5f75c5dccc2b42918064e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all dynamic data. <br /></td></tr>
+<tr class="memitem:aa0b1b600d2f5f75c5dccc2b42918064e" id="r_aa0b1b600d2f5f75c5dccc2b42918064e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0b1b600d2f5f75c5dccc2b42918064e">reset</a> ()</td></tr>
+<tr class="memdesc:aa0b1b600d2f5f75c5dccc2b42918064e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all dynamic data.  <br /></td></tr>
 <tr class="separator:aa0b1b600d2f5f75c5dccc2b42918064e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a1c1581543f0c327748d3df7bbeea4496" id="r_a1c1581543f0c327748d3df7bbeea4496"><td class="memItemLeft" align="right" valign="top"><a id="a1c1581543f0c327748d3df7bbeea4496" name="a1c1581543f0c327748d3df7bbeea4496"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineEndOfHeader</b> ()</td></tr>
-<tr class="memdesc:a1c1581543f0c327748d3df7bbeea4496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'END OF HEADER'. <br /></td></tr>
-<tr class="separator:a1c1581543f0c327748d3df7bbeea4496"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a713959cd57e554d4d412b22b8b6424cd" id="r_a713959cd57e554d4d412b22b8b6424cd"><td class="memItemLeft" align="right" valign="top"><a id="a713959cd57e554d4d412b22b8b6424cd" name="a713959cd57e554d4d412b22b8b6424cd"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineGlonassCodPhsBis</b> ()</td></tr>
-<tr class="memdesc:a713959cd57e554d4d412b22b8b6424cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'GLONASS COD/PHS/BIS'. <br /></td></tr>
-<tr class="separator:a713959cd57e554d4d412b22b8b6424cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6c8e87a339b1cd87c535d58d7ac23cc" id="r_ab6c8e87a339b1cd87c535d58d7ac23cc"><td class="memItemLeft" align="right" valign="top"><a id="ab6c8e87a339b1cd87c535d58d7ac23cc" name="ab6c8e87a339b1cd87c535d58d7ac23cc"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineSignalStrengthUnit</b> ()</td></tr>
-<tr class="memdesc:ab6c8e87a339b1cd87c535d58d7ac23cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SIGNAL STRENGTH UNIT'. <br /></td></tr>
-<tr class="separator:ab6c8e87a339b1cd87c535d58d7ac23cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab51d38c3aaad5232f904d189b6a7c9cf" id="r_ab51d38c3aaad5232f904d189b6a7c9cf"><td class="memItemLeft" align="right" valign="top"><a id="ab51d38c3aaad5232f904d189b6a7c9cf" name="ab51d38c3aaad5232f904d189b6a7c9cf"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>headerLineSysPhaseShift</b> ()</td></tr>
-<tr class="memdesc:ab51d38c3aaad5232f904d189b6a7c9cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SYS / PHASE SHIFT'. <br /></td></tr>
-<tr class="separator:ab51d38c3aaad5232f904d189b6a7c9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f70e58f262f78d36725bc9bb5da118" id="r_af0f70e58f262f78d36725bc9bb5da118"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0f70e58f262f78d36725bc9bb5da118">headerLineEndOfHeader</a> ()</td></tr>
+<tr class="memdesc:af0f70e58f262f78d36725bc9bb5da118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'END OF HEADER'.  <br /></td></tr>
+<tr class="separator:af0f70e58f262f78d36725bc9bb5da118"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89a5f8850ee925efb7c05d12b0c22116" id="r_a89a5f8850ee925efb7c05d12b0c22116"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89a5f8850ee925efb7c05d12b0c22116">headerLineGlonassCodPhsBis</a> ()</td></tr>
+<tr class="memdesc:a89a5f8850ee925efb7c05d12b0c22116"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'GLONASS COD/PHS/BIS'.  <br /></td></tr>
+<tr class="separator:a89a5f8850ee925efb7c05d12b0c22116"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2c60dc3571a12b4c98b401b9faa6b8" id="r_afa2c60dc3571a12b4c98b401b9faa6b8"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa2c60dc3571a12b4c98b401b9faa6b8">headerLineSignalStrengthUnit</a> ()</td></tr>
+<tr class="memdesc:afa2c60dc3571a12b4c98b401b9faa6b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SIGNAL STRENGTH UNIT'.  <br /></td></tr>
+<tr class="separator:afa2c60dc3571a12b4c98b401b9faa6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af080940770b415a4dbdba365cfe7d9d0" id="r_af080940770b415a4dbdba365cfe7d9d0"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af080940770b415a4dbdba365cfe7d9d0">headerLineSysPhaseShift</a> ()</td></tr>
+<tr class="memdesc:af080940770b415a4dbdba365cfe7d9d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the Header line 'SYS / PHASE SHIFT'.  <br /></td></tr>
+<tr class="separator:af080940770b415a4dbdba365cfe7d9d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a610949d92543d5eaa382aab11ef380ce" id="r_a610949d92543d5eaa382aab11ef380ce"><td class="memItemLeft" align="right" valign="top"><a id="a610949d92543d5eaa382aab11ef380ce" name="a610949d92543d5eaa382aab11ef380ce"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>agency</b></td></tr>
-<tr class="memdesc:a610949d92543d5eaa382aab11ef380ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of agency [A40]. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a610949d92543d5eaa382aab11ef380ce" id="r_a610949d92543d5eaa382aab11ef380ce"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a610949d92543d5eaa382aab11ef380ce">agency</a></td></tr>
+<tr class="memdesc:a610949d92543d5eaa382aab11ef380ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of agency [A40].  <br /></td></tr>
 <tr class="separator:a610949d92543d5eaa382aab11ef380ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4efacde8ea059f6c9dd4ec35ad337d7" id="r_aa4efacde8ea059f6c9dd4ec35ad337d7"><td class="memItemLeft" align="right" valign="top"><a id="aa4efacde8ea059f6c9dd4ec35ad337d7" name="aa4efacde8ea059f6c9dd4ec35ad337d7"></a>
-std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>antennaDeltaHeightEastNorth</b></td></tr>
-<tr class="memdesc:aa4efacde8ea059f6c9dd4ec35ad337d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna height and horizontal eccentricity of ARP relative to the marker (east/north) in (meters) [F14.4]. <br /></td></tr>
+<tr class="memitem:aa4efacde8ea059f6c9dd4ec35ad337d7" id="r_aa4efacde8ea059f6c9dd4ec35ad337d7"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4efacde8ea059f6c9dd4ec35ad337d7">antennaDeltaHeightEastNorth</a></td></tr>
+<tr class="memdesc:aa4efacde8ea059f6c9dd4ec35ad337d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna height and horizontal eccentricity of ARP relative to the marker (east/north) in (meters) [F14.4].  <br /></td></tr>
 <tr class="separator:aa4efacde8ea059f6c9dd4ec35ad337d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64ee239777a5307b6cbf3c325fb3dad8" id="r_a64ee239777a5307b6cbf3c325fb3dad8"><td class="memItemLeft" align="right" valign="top"><a id="a64ee239777a5307b6cbf3c325fb3dad8" name="a64ee239777a5307b6cbf3c325fb3dad8"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>antennaNumber</b></td></tr>
-<tr class="memdesc:a64ee239777a5307b6cbf3c325fb3dad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna number [A20]. <br /></td></tr>
+<tr class="memitem:a64ee239777a5307b6cbf3c325fb3dad8" id="r_a64ee239777a5307b6cbf3c325fb3dad8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64ee239777a5307b6cbf3c325fb3dad8">antennaNumber</a></td></tr>
+<tr class="memdesc:a64ee239777a5307b6cbf3c325fb3dad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna number [A20].  <br /></td></tr>
 <tr class="separator:a64ee239777a5307b6cbf3c325fb3dad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8ffc8f4c40653815c4e8e7119e263fe" id="r_af8ffc8f4c40653815c4e8e7119e263fe"><td class="memItemLeft" align="right" valign="top"><a id="af8ffc8f4c40653815c4e8e7119e263fe" name="af8ffc8f4c40653815c4e8e7119e263fe"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>antennaType</b></td></tr>
-<tr class="memdesc:af8ffc8f4c40653815c4e8e7119e263fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna type [A20]. <br /></td></tr>
+<tr class="memitem:af8ffc8f4c40653815c4e8e7119e263fe" id="r_af8ffc8f4c40653815c4e8e7119e263fe"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8ffc8f4c40653815c4e8e7119e263fe">antennaType</a></td></tr>
+<tr class="memdesc:af8ffc8f4c40653815c4e8e7119e263fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Antenna type [A20].  <br /></td></tr>
 <tr class="separator:af8ffc8f4c40653815c4e8e7119e263fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a889515943c5cde0d4fbdd76b51371368" id="r_a889515943c5cde0d4fbdd76b51371368"><td class="memItemLeft" align="right" valign="top"><a id="a889515943c5cde0d4fbdd76b51371368" name="a889515943c5cde0d4fbdd76b51371368"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>approxPositionEnabled</b></td></tr>
-<tr class="memdesc:a889515943c5cde0d4fbdd76b51371368"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the approx position should be written. <br /></td></tr>
+<tr class="memitem:a889515943c5cde0d4fbdd76b51371368" id="r_a889515943c5cde0d4fbdd76b51371368"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a889515943c5cde0d4fbdd76b51371368">approxPositionEnabled</a></td></tr>
+<tr class="memdesc:a889515943c5cde0d4fbdd76b51371368"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the approx position should be written.  <br /></td></tr>
 <tr class="separator:a889515943c5cde0d4fbdd76b51371368"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c9cb939329bde994e3c90773e6c50e5" id="r_a0c9cb939329bde994e3c90773e6c50e5"><td class="memItemLeft" align="right" valign="top"><a id="a0c9cb939329bde994e3c90773e6c50e5" name="a0c9cb939329bde994e3c90773e6c50e5"></a>
-Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><b>approxPositionXYZ</b></td></tr>
-<tr class="memdesc:a0c9cb939329bde994e3c90773e6c50e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geocentric approximate marker position (Units: Meters, System: ITRS recommended) Optional for moving platforms [F14.4]. <br /></td></tr>
+<tr class="memitem:a0c9cb939329bde994e3c90773e6c50e5" id="r_a0c9cb939329bde994e3c90773e6c50e5"><td class="memItemLeft" align="right" valign="top">Eigen::Vector3d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c9cb939329bde994e3c90773e6c50e5">approxPositionXYZ</a></td></tr>
+<tr class="memdesc:a0c9cb939329bde994e3c90773e6c50e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geocentric approximate marker position (<a class="el" href="namespaceNAV_1_1Units.html">Units</a>: Meters, System: ITRS recommended) Optional for moving platforms [F14.4].  <br /></td></tr>
 <tr class="separator:a0c9cb939329bde994e3c90773e6c50e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a499f5b028d87dc5c08de88c48d5efc5d" id="r_a499f5b028d87dc5c08de88c48d5efc5d"><td class="memItemLeft" align="right" valign="top"><a id="a499f5b028d87dc5c08de88c48d5efc5d" name="a499f5b028d87dc5c08de88c48d5efc5d"></a>
-std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>comments</b></td></tr>
-<tr class="memdesc:a499f5b028d87dc5c08de88c48d5efc5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comment line(s) [A60] (Optional) <br /></td></tr>
+<tr class="memitem:a499f5b028d87dc5c08de88c48d5efc5d" id="r_a499f5b028d87dc5c08de88c48d5efc5d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a499f5b028d87dc5c08de88c48d5efc5d">comments</a></td></tr>
+<tr class="memdesc:a499f5b028d87dc5c08de88c48d5efc5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comment line(s) [A60] (Optional)  <br /></td></tr>
 <tr class="separator:a499f5b028d87dc5c08de88c48d5efc5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb829f757b8da59ad2882750a425d633" id="r_abb829f757b8da59ad2882750a425d633"><td class="memItemLeft" align="right" valign="top"><a id="abb829f757b8da59ad2882750a425d633" name="abb829f757b8da59ad2882750a425d633"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>interval</b></td></tr>
-<tr class="memdesc:abb829f757b8da59ad2882750a425d633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation interval in seconds. <br /></td></tr>
+<tr class="memitem:abb829f757b8da59ad2882750a425d633" id="r_abb829f757b8da59ad2882750a425d633"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb829f757b8da59ad2882750a425d633">interval</a></td></tr>
+<tr class="memdesc:abb829f757b8da59ad2882750a425d633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation interval in seconds.  <br /></td></tr>
 <tr class="separator:abb829f757b8da59ad2882750a425d633"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a647c24f966068acf0fa2c63e8896e52b" id="r_a647c24f966068acf0fa2c63e8896e52b"><td class="memItemLeft" align="right" valign="top"><a id="a647c24f966068acf0fa2c63e8896e52b" name="a647c24f966068acf0fa2c63e8896e52b"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>markerName</b></td></tr>
-<tr class="memdesc:a647c24f966068acf0fa2c63e8896e52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of antenna marker [A60]. <br /></td></tr>
+<tr class="memitem:a647c24f966068acf0fa2c63e8896e52b" id="r_a647c24f966068acf0fa2c63e8896e52b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a647c24f966068acf0fa2c63e8896e52b">markerName</a></td></tr>
+<tr class="memdesc:a647c24f966068acf0fa2c63e8896e52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of antenna marker [A60].  <br /></td></tr>
 <tr class="separator:a647c24f966068acf0fa2c63e8896e52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dc73cd8f177b079a1bcc1dfd44dcee3" id="r_a5dc73cd8f177b079a1bcc1dfd44dcee3"><td class="memItemLeft" align="right" valign="top"><a id="a5dc73cd8f177b079a1bcc1dfd44dcee3" name="a5dc73cd8f177b079a1bcc1dfd44dcee3"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>markerNumber</b></td></tr>
-<tr class="memdesc:a5dc73cd8f177b079a1bcc1dfd44dcee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of antenna marker [A20] (Optional) <br /></td></tr>
+<tr class="memitem:a5dc73cd8f177b079a1bcc1dfd44dcee3" id="r_a5dc73cd8f177b079a1bcc1dfd44dcee3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dc73cd8f177b079a1bcc1dfd44dcee3">markerNumber</a></td></tr>
+<tr class="memdesc:a5dc73cd8f177b079a1bcc1dfd44dcee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of antenna marker [A20] (Optional)  <br /></td></tr>
 <tr class="separator:a5dc73cd8f177b079a1bcc1dfd44dcee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12a041a7426c2d6370a387d8e570211f" id="r_a12a041a7426c2d6370a387d8e570211f"><td class="memItemLeft" align="right" valign="top"><a id="a12a041a7426c2d6370a387d8e570211f" name="a12a041a7426c2d6370a387d8e570211f"></a>
-<a class="el" href="#a84b392d54932436e79da84fd1872e6ba">MarkerTypes</a>&#160;</td><td class="memItemRight" valign="bottom"><b>markerType</b></td></tr>
-<tr class="memdesc:a12a041a7426c2d6370a387d8e570211f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the marker. <br /></td></tr>
+<tr class="memitem:a12a041a7426c2d6370a387d8e570211f" id="r_a12a041a7426c2d6370a387d8e570211f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a84b392d54932436e79da84fd1872e6ba">MarkerTypes</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12a041a7426c2d6370a387d8e570211f">markerType</a></td></tr>
+<tr class="memdesc:a12a041a7426c2d6370a387d8e570211f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the marker.  <br /></td></tr>
 <tr class="separator:a12a041a7426c2d6370a387d8e570211f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a275d400a0ebaa4a3c2e74b1845ad2fe5" id="r_a275d400a0ebaa4a3c2e74b1845ad2fe5"><td class="memItemLeft" align="right" valign="top"><a id="a275d400a0ebaa4a3c2e74b1845ad2fe5" name="a275d400a0ebaa4a3c2e74b1845ad2fe5"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>markerTypeUser</b></td></tr>
-<tr class="memdesc:a275d400a0ebaa4a3c2e74b1845ad2fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-defined Marker Type [A20]. <br /></td></tr>
+<tr class="memitem:a275d400a0ebaa4a3c2e74b1845ad2fe5" id="r_a275d400a0ebaa4a3c2e74b1845ad2fe5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a275d400a0ebaa4a3c2e74b1845ad2fe5">markerTypeUser</a></td></tr>
+<tr class="memdesc:a275d400a0ebaa4a3c2e74b1845ad2fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">User-defined Marker Type [A20].  <br /></td></tr>
 <tr class="separator:a275d400a0ebaa4a3c2e74b1845ad2fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e5ccb44031f2988aab72fad9aa2d9b3" id="r_a3e5ccb44031f2988aab72fad9aa2d9b3"><td class="memItemLeft" align="right" valign="top"><a id="a3e5ccb44031f2988aab72fad9aa2d9b3" name="a3e5ccb44031f2988aab72fad9aa2d9b3"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>observer</b></td></tr>
-<tr class="memdesc:a3e5ccb44031f2988aab72fad9aa2d9b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of observer [A20]. <br /></td></tr>
+<tr class="memitem:a3e5ccb44031f2988aab72fad9aa2d9b3" id="r_a3e5ccb44031f2988aab72fad9aa2d9b3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e5ccb44031f2988aab72fad9aa2d9b3">observer</a></td></tr>
+<tr class="memdesc:a3e5ccb44031f2988aab72fad9aa2d9b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of observer [A20].  <br /></td></tr>
 <tr class="separator:a3e5ccb44031f2988aab72fad9aa2d9b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7f427cf832ff5941222f830abb489b5" id="r_ae7f427cf832ff5941222f830abb489b5"><td class="memItemLeft" align="right" valign="top"><a id="ae7f427cf832ff5941222f830abb489b5" name="ae7f427cf832ff5941222f830abb489b5"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>receiverNumber</b></td></tr>
-<tr class="memdesc:ae7f427cf832ff5941222f830abb489b5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> number [A20]. <br /></td></tr>
+<tr class="memitem:ae7f427cf832ff5941222f830abb489b5" id="r_ae7f427cf832ff5941222f830abb489b5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7f427cf832ff5941222f830abb489b5">receiverNumber</a></td></tr>
+<tr class="memdesc:ae7f427cf832ff5941222f830abb489b5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> number [A20].  <br /></td></tr>
 <tr class="separator:ae7f427cf832ff5941222f830abb489b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea6ac3dc31a1e420d6812f51c71fc75b" id="r_aea6ac3dc31a1e420d6812f51c71fc75b"><td class="memItemLeft" align="right" valign="top"><a id="aea6ac3dc31a1e420d6812f51c71fc75b" name="aea6ac3dc31a1e420d6812f51c71fc75b"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>receiverType</b></td></tr>
-<tr class="memdesc:aea6ac3dc31a1e420d6812f51c71fc75b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> type [A20]. <br /></td></tr>
+<tr class="memitem:aea6ac3dc31a1e420d6812f51c71fc75b" id="r_aea6ac3dc31a1e420d6812f51c71fc75b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea6ac3dc31a1e420d6812f51c71fc75b">receiverType</a></td></tr>
+<tr class="memdesc:aea6ac3dc31a1e420d6812f51c71fc75b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> type [A20].  <br /></td></tr>
 <tr class="separator:aea6ac3dc31a1e420d6812f51c71fc75b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a856d017572382573abc7c22a58844fd2" id="r_a856d017572382573abc7c22a58844fd2"><td class="memItemLeft" align="right" valign="top"><a id="a856d017572382573abc7c22a58844fd2" name="a856d017572382573abc7c22a58844fd2"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>receiverVersion</b></td></tr>
-<tr class="memdesc:a856d017572382573abc7c22a58844fd2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> version (e.g. Internal Software Version) [A20]. <br /></td></tr>
+<tr class="memitem:a856d017572382573abc7c22a58844fd2" id="r_a856d017572382573abc7c22a58844fd2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a856d017572382573abc7c22a58844fd2">receiverVersion</a></td></tr>
+<tr class="memdesc:a856d017572382573abc7c22a58844fd2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> version (e.g. Internal Software Version) [A20].  <br /></td></tr>
 <tr class="separator:a856d017572382573abc7c22a58844fd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44a09646a467f750ebf3424299f5984b" id="r_a44a09646a467f750ebf3424299f5984b"><td class="memItemLeft" align="right" valign="top"><a id="a44a09646a467f750ebf3424299f5984b" name="a44a09646a467f750ebf3424299f5984b"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>runBy</b></td></tr>
-<tr class="memdesc:a44a09646a467f750ebf3424299f5984b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of agency creating current file [A20]. <br /></td></tr>
+<tr class="memitem:a44a09646a467f750ebf3424299f5984b" id="r_a44a09646a467f750ebf3424299f5984b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44a09646a467f750ebf3424299f5984b">runBy</a></td></tr>
+<tr class="memdesc:a44a09646a467f750ebf3424299f5984b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name of agency creating current file [A20].  <br /></td></tr>
 <tr class="separator:a44a09646a467f750ebf3424299f5984b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5433d96dd6ac111ac15f9c129a4304c" id="r_aa5433d96dd6ac111ac15f9c129a4304c"><td class="memItemLeft" align="right" valign="top"><a id="aa5433d96dd6ac111ac15f9c129a4304c" name="aa5433d96dd6ac111ac15f9c129a4304c"></a>
-std::unordered_set&lt; <a class="el" href="structNAV_1_1SatId.html">SatId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>satellites</b></td></tr>
-<tr class="memdesc:aa5433d96dd6ac111ac15f9c129a4304c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Satellites observed. <br /></td></tr>
+<tr class="memitem:aa5433d96dd6ac111ac15f9c129a4304c" id="r_aa5433d96dd6ac111ac15f9c129a4304c"><td class="memItemLeft" align="right" valign="top">std::unordered_set&lt; <a class="el" href="structNAV_1_1SatId.html">SatId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5433d96dd6ac111ac15f9c129a4304c">satellites</a></td></tr>
+<tr class="memdesc:aa5433d96dd6ac111ac15f9c129a4304c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Satellites observed.  <br /></td></tr>
 <tr class="separator:aa5433d96dd6ac111ac15f9c129a4304c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47802987d98087dd131dd8ab5a05e40a" id="r_a47802987d98087dd131dd8ab5a05e40a"><td class="memItemLeft" align="right" valign="top"><a id="a47802987d98087dd131dd8ab5a05e40a" name="a47802987d98087dd131dd8ab5a05e40a"></a>
-<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><b>satSys</b></td></tr>
-<tr class="memdesc:a47802987d98087dd131dd8ab5a05e40a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> System. <br /></td></tr>
+<tr class="memitem:a47802987d98087dd131dd8ab5a05e40a" id="r_a47802987d98087dd131dd8ab5a05e40a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47802987d98087dd131dd8ab5a05e40a">satSys</a></td></tr>
+<tr class="memdesc:a47802987d98087dd131dd8ab5a05e40a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> System.  <br /></td></tr>
 <tr class="separator:a47802987d98087dd131dd8ab5a05e40a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ab874be42a7e601645e660a9ee347c3" id="r_a1ab874be42a7e601645e660a9ee347c3"><td class="memItemLeft" align="right" valign="top"><a id="a1ab874be42a7e601645e660a9ee347c3" name="a1ab874be42a7e601645e660a9ee347c3"></a>
-std::map&lt; <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>, std::vector&lt; <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html">ObservationDescription</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>systemObsTypes</b></td></tr>
-<tr class="memdesc:a1ab874be42a7e601645e660a9ee347c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation types for each satellite system. <br /></td></tr>
+<tr class="memitem:a1ab874be42a7e601645e660a9ee347c3" id="r_a1ab874be42a7e601645e660a9ee347c3"><td class="memItemLeft" align="right" valign="top">std::map&lt; <a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>, std::vector&lt; <a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html">ObservationDescription</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1ab874be42a7e601645e660a9ee347c3">systemObsTypes</a></td></tr>
+<tr class="memdesc:a1ab874be42a7e601645e660a9ee347c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Observation types for each satellite system.  <br /></td></tr>
 <tr class="separator:a1ab874be42a7e601645e660a9ee347c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1acc690ab2547aa9d186528e6c6ce30e" id="r_a1acc690ab2547aa9d186528e6c6ce30e"><td class="memItemLeft" align="right" valign="top"><a id="a1acc690ab2547aa9d186528e6c6ce30e" name="a1acc690ab2547aa9d186528e6c6ce30e"></a>
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>timeFirstObs</b></td></tr>
-<tr class="memdesc:a1acc690ab2547aa9d186528e6c6ce30e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of first observation record. <br /></td></tr>
+<tr class="memitem:a1acc690ab2547aa9d186528e6c6ce30e" id="r_a1acc690ab2547aa9d186528e6c6ce30e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1acc690ab2547aa9d186528e6c6ce30e">timeFirstObs</a></td></tr>
+<tr class="memdesc:a1acc690ab2547aa9d186528e6c6ce30e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of first observation record.  <br /></td></tr>
 <tr class="separator:a1acc690ab2547aa9d186528e6c6ce30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af56f7952f775b01db40ac93ffb1ab68b" id="r_af56f7952f775b01db40ac93ffb1ab68b"><td class="memItemLeft" align="right" valign="top"><a id="af56f7952f775b01db40ac93ffb1ab68b" name="af56f7952f775b01db40ac93ffb1ab68b"></a>
-<a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><b>timeLastObs</b></td></tr>
-<tr class="memdesc:af56f7952f775b01db40ac93ffb1ab68b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of last observation record. <br /></td></tr>
+<tr class="memitem:af56f7952f775b01db40ac93ffb1ab68b" id="r_af56f7952f775b01db40ac93ffb1ab68b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af56f7952f775b01db40ac93ffb1ab68b">timeLastObs</a></td></tr>
+<tr class="memdesc:af56f7952f775b01db40ac93ffb1ab68b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time of last observation record.  <br /></td></tr>
 <tr class="separator:af56f7952f775b01db40ac93ffb1ab68b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab18d98ce88f94d6918fa1f4934cd91b2" id="r_ab18d98ce88f94d6918fa1f4934cd91b2"><td class="memItemLeft" align="right" valign="top"><a id="ab18d98ce88f94d6918fa1f4934cd91b2" name="ab18d98ce88f94d6918fa1f4934cd91b2"></a>
-<a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><b>timeSys</b></td></tr>
-<tr class="memdesc:ab18d98ce88f94d6918fa1f4934cd91b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time system used. <br /></td></tr>
+<tr class="memitem:ab18d98ce88f94d6918fa1f4934cd91b2" id="r_ab18d98ce88f94d6918fa1f4934cd91b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab18d98ce88f94d6918fa1f4934cd91b2">timeSys</a></td></tr>
+<tr class="memdesc:ab18d98ce88f94d6918fa1f4934cd91b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time system used.  <br /></td></tr>
 <tr class="separator:ab18d98ce88f94d6918fa1f4934cd91b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29e10e88c6eedf826ab32aa7c2d9140f" id="r_a29e10e88c6eedf826ab32aa7c2d9140f"><td class="memItemLeft" align="right" valign="top"><a id="a29e10e88c6eedf826ab32aa7c2d9140f" name="a29e10e88c6eedf826ab32aa7c2d9140f"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>version</b></td></tr>
-<tr class="memdesc:a29e10e88c6eedf826ab32aa7c2d9140f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format version. <br /></td></tr>
+<tr class="memitem:a29e10e88c6eedf826ab32aa7c2d9140f" id="r_a29e10e88c6eedf826ab32aa7c2d9140f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29e10e88c6eedf826ab32aa7c2d9140f">version</a></td></tr>
+<tr class="memdesc:a29e10e88c6eedf826ab32aa7c2d9140f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format version.  <br /></td></tr>
 <tr class="separator:a29e10e88c6eedf826ab32aa7c2d9140f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Rinex Observation File Header information. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00062">62</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a84b392d54932436e79da84fd1872e6ba" name="a84b392d54932436e79da84fd1872e6ba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a84b392d54932436e79da84fd1872e6ba">&#9670;&#160;</a></span>MarkerTypes</h2>
@@ -431,6 +386,8 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>version</b></td></t
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00071">71</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -448,7 +405,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>version</b></td></t
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="RINEXUtilities_8hpp.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html#a3af6b14d1a0cbe84768bffd15ff83bcd">ObsType</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -457,11 +414,13 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>version</b></td></t
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">code</td><td>Signal <a class="el" href="classNAV_1_1Code.html" title="Enumerate for GNSS Codes.">Code</a> </td></tr>
-    <tr><td class="paramname">type</td><td>RINEX obs type </td></tr>
+    <tr><td class="paramname">type</td><td><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a> obs type </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the type was not present yet </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00039">39</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
 
 </div>
 </div>
@@ -501,17 +460,1112 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>version</b></td></t
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00297">297</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a id="ac647fb372615d5f5bb0b30cf4b524446" name="ac647fb372615d5f5bb0b30cf4b524446"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac647fb372615d5f5bb0b30cf4b524446">&#9670;&#160;</a></span>generateHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::generateHeader </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the <a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a> observation header. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00053">53</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aab35555f5868e261d48d73beafcf93b3" name="aab35555f5868e261d48d73beafcf93b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab35555f5868e261d48d73beafcf93b3">&#9670;&#160;</a></span>headerLineAntennaDeltaHEN()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineAntennaDeltaHEN </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'ANTENNA: DELTA H/E/N'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00198">198</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a7fbcc2acd11e8a6b149ed32f5387b335" name="a7fbcc2acd11e8a6b149ed32f5387b335"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fbcc2acd11e8a6b149ed32f5387b335">&#9670;&#160;</a></span>headerLineAntNumType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineAntNumType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'ANT # / TYPE'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00181">181</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a02d1352fd793b0e1eb4c992779de4f43" name="a02d1352fd793b0e1eb4c992779de4f43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02d1352fd793b0e1eb4c992779de4f43">&#9670;&#160;</a></span>headerLineApproxPositionXYZ()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineApproxPositionXYZ </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'APPROX POSITION XYZ'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00187">187</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a1b5918fbbff24444dd4ad5e66e5f386a" name="a1b5918fbbff24444dd4ad5e66e5f386a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b5918fbbff24444dd4ad5e66e5f386a">&#9670;&#160;</a></span>headerLineComments()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineComments </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'COMMENT'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00137">137</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af0f70e58f262f78d36725bc9bb5da118" name="af0f70e58f262f78d36725bc9bb5da118"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0f70e58f262f78d36725bc9bb5da118">&#9670;&#160;</a></span>headerLineEndOfHeader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineEndOfHeader </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'END OF HEADER'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00292">292</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a89a5f8850ee925efb7c05d12b0c22116" name="a89a5f8850ee925efb7c05d12b0c22116"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89a5f8850ee925efb7c05d12b0c22116">&#9670;&#160;</a></span>headerLineGlonassCodPhsBis()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineGlonassCodPhsBis </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'GLONASS COD/PHS/BIS'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00278">278</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a91db1540984b182c26726bec05123d6a" name="a91db1540984b182c26726bec05123d6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91db1540984b182c26726bec05123d6a">&#9670;&#160;</a></span>headerLineInterval()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineInterval </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'INTERVAL'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00244">244</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5df8c844a124db07c18bf6a7f5666493" name="a5df8c844a124db07c18bf6a7f5666493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5df8c844a124db07c18bf6a7f5666493">&#9670;&#160;</a></span>headerLineLeapSeconds()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineLeapSeconds </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'LEAP SECONDS'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00282">282</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afe5983a4325e102156c98d27f422bfa5" name="afe5983a4325e102156c98d27f422bfa5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe5983a4325e102156c98d27f422bfa5">&#9670;&#160;</a></span>headerLineMarkerName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineMarkerName </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'MARKER NAME'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00147">147</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a28a07d7398d7bdda81a8e7a014c730c6" name="a28a07d7398d7bdda81a8e7a014c730c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28a07d7398d7bdda81a8e7a014c730c6">&#9670;&#160;</a></span>headerLineMarkerNumber()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineMarkerNumber </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'MARKER NUMBER'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00152">152</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a5b72a205212b6aa48ab7f5b970381b5c" name="a5b72a205212b6aa48ab7f5b970381b5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b72a205212b6aa48ab7f5b970381b5c">&#9670;&#160;</a></span>headerLineMarkerType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineMarkerType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'MARKER TYPE'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00161">161</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a35a65fb8391528db3ba65378b1958e33" name="a35a65fb8391528db3ba65378b1958e33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35a65fb8391528db3ba65378b1958e33">&#9670;&#160;</a></span>headerLineNumSatellites()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineNumSatellites </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line '# OF SATELLITES'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00287">287</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ab4e429f0cf1a0c8ea432b4c59bb0bd59" name="ab4e429f0cf1a0c8ea432b4c59bb0bd59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4e429f0cf1a0c8ea432b4c59bb0bd59">&#9670;&#160;</a></span>headerLineObserverAgency()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineObserverAgency </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'OBSERVER / AGENCY'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00168">168</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ad0abb3a0107a78506fe664304d5b7b94" name="ad0abb3a0107a78506fe664304d5b7b94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0abb3a0107a78506fe664304d5b7b94">&#9670;&#160;</a></span>headerLinePgmRunByDate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLinePgmRunByDate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'PGM / RUN BY / DATE'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00127">127</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa0e7643cc7ea087ea2e82a03e866c5da" name="aa0e7643cc7ea087ea2e82a03e866c5da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0e7643cc7ea087ea2e82a03e866c5da">&#9670;&#160;</a></span>headerLineRecNumTypeVers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineRecNumTypeVers </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'REC # / TYPE / VERS'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00174">174</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a246c1b2f717042ff4e60ad9f2c7ca0a5" name="a246c1b2f717042ff4e60ad9f2c7ca0a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a246c1b2f717042ff4e60ad9f2c7ca0a5">&#9670;&#160;</a></span>headerLineRinexVersionType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineRinexVersionType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line '<a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a> VERSION / TYPE'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00093">93</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afa2c60dc3571a12b4c98b401b9faa6b8" name="afa2c60dc3571a12b4c98b401b9faa6b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa2c60dc3571a12b4c98b401b9faa6b8">&#9670;&#160;</a></span>headerLineSignalStrengthUnit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineSignalStrengthUnit </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'SIGNAL STRENGTH UNIT'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00239">239</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9f71eb79bc54dad43637608e0d9c432c" name="a9f71eb79bc54dad43637608e0d9c432c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f71eb79bc54dad43637608e0d9c432c">&#9670;&#160;</a></span>headerLineSysNumObsType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineSysNumObsType </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'SYS / # / OBS TYPES'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00205">205</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="af080940770b415a4dbdba365cfe7d9d0" name="af080940770b415a4dbdba365cfe7d9d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af080940770b415a4dbdba365cfe7d9d0">&#9670;&#160;</a></span>headerLineSysPhaseShift()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineSysPhaseShift </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'SYS / PHASE SHIFT'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00274">274</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a26976bf3ee22e6d15f1a1e64c398431c" name="a26976bf3ee22e6d15f1a1e64c398431c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26976bf3ee22e6d15f1a1e64c398431c">&#9670;&#160;</a></span>headerLineTimeOfFirstObs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineTimeOfFirstObs </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'TIME OF FIRST OBS'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00250">250</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a63a0eb7ec59ac8f7f71f899b490abf82" name="a63a0eb7ec59ac8f7f71f899b490abf82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63a0eb7ec59ac8f7f71f899b490abf82">&#9670;&#160;</a></span>headerLineTimeOfLastObs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::headerLineTimeOfLastObs </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the Header line 'TIME OF LAST OBS'. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00262">262</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aa0b1b600d2f5f75c5dccc2b42918064e" name="aa0b1b600d2f5f75c5dccc2b42918064e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0b1b600d2f5f75c5dccc2b42918064e">&#9670;&#160;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void NAV::vendor::RINEX::ObsHeader::reset </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset all dynamic data. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8cpp_source.html#l00028">28</a> of file <a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="a610949d92543d5eaa382aab11ef380ce" name="a610949d92543d5eaa382aab11ef380ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a610949d92543d5eaa382aab11ef380ce">&#9670;&#160;</a></span>agency</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::agency</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of agency [A40]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00093">93</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa4efacde8ea059f6c9dd4ec35ad337d7" name="aa4efacde8ea059f6c9dd4ec35ad337d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4efacde8ea059f6c9dd4ec35ad337d7">&#9670;&#160;</a></span>antennaDeltaHeightEastNorth</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;double, 3&gt; NAV::vendor::RINEX::ObsHeader::antennaDeltaHeightEastNorth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Antenna height and horizontal eccentricity of ARP relative to the marker (east/north) in (meters) [F14.4]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00101">101</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a64ee239777a5307b6cbf3c325fb3dad8" name="a64ee239777a5307b6cbf3c325fb3dad8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64ee239777a5307b6cbf3c325fb3dad8">&#9670;&#160;</a></span>antennaNumber</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::antennaNumber</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Antenna number [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00097">97</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af8ffc8f4c40653815c4e8e7119e263fe" name="af8ffc8f4c40653815c4e8e7119e263fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8ffc8f4c40653815c4e8e7119e263fe">&#9670;&#160;</a></span>antennaType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::antennaType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Antenna type [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00098">98</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a889515943c5cde0d4fbdd76b51371368" name="a889515943c5cde0d4fbdd76b51371368"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a889515943c5cde0d4fbdd76b51371368">&#9670;&#160;</a></span>approxPositionEnabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool NAV::vendor::RINEX::ObsHeader::approxPositionEnabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the approx position should be written. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00099">99</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a0c9cb939329bde994e3c90773e6c50e5" name="a0c9cb939329bde994e3c90773e6c50e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c9cb939329bde994e3c90773e6c50e5">&#9670;&#160;</a></span>approxPositionXYZ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Eigen::Vector3d NAV::vendor::RINEX::ObsHeader::approxPositionXYZ</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Geocentric approximate marker position (<a class="el" href="namespaceNAV_1_1Units.html">Units</a>: Meters, System: ITRS recommended) Optional for moving platforms [F14.4]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00100">100</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a499f5b028d87dc5c08de88c48d5efc5d" name="a499f5b028d87dc5c08de88c48d5efc5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a499f5b028d87dc5c08de88c48d5efc5d">&#9670;&#160;</a></span>comments</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::string&gt; NAV::vendor::RINEX::ObsHeader::comments</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comment line(s) [A60] (Optional) </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00066">66</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abb829f757b8da59ad2882750a425d633" name="abb829f757b8da59ad2882750a425d633"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb829f757b8da59ad2882750a425d633">&#9670;&#160;</a></span>interval</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::vendor::RINEX::ObsHeader::interval</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Observation interval in seconds. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00107">107</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a647c24f966068acf0fa2c63e8896e52b" name="a647c24f966068acf0fa2c63e8896e52b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a647c24f966068acf0fa2c63e8896e52b">&#9670;&#160;</a></span>markerName</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::markerName</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of antenna marker [A60]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00067">67</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5dc73cd8f177b079a1bcc1dfd44dcee3" name="a5dc73cd8f177b079a1bcc1dfd44dcee3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dc73cd8f177b079a1bcc1dfd44dcee3">&#9670;&#160;</a></span>markerNumber</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::markerNumber</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of antenna marker [A20] (Optional) </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00068">68</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a12a041a7426c2d6370a387d8e570211f" name="a12a041a7426c2d6370a387d8e570211f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a041a7426c2d6370a387d8e570211f">&#9670;&#160;</a></span>markerType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a84b392d54932436e79da84fd1872e6ba">MarkerTypes</a> NAV::vendor::RINEX::ObsHeader::markerType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Type of the marker. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00090">90</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a275d400a0ebaa4a3c2e74b1845ad2fe5" name="a275d400a0ebaa4a3c2e74b1845ad2fe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a275d400a0ebaa4a3c2e74b1845ad2fe5">&#9670;&#160;</a></span>markerTypeUser</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::markerTypeUser</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>User-defined Marker Type [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00091">91</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a3e5ccb44031f2988aab72fad9aa2d9b3" name="a3e5ccb44031f2988aab72fad9aa2d9b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e5ccb44031f2988aab72fad9aa2d9b3">&#9670;&#160;</a></span>observer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::observer</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of observer [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00092">92</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae7f427cf832ff5941222f830abb489b5" name="ae7f427cf832ff5941222f830abb489b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7f427cf832ff5941222f830abb489b5">&#9670;&#160;</a></span>receiverNumber</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::receiverNumber</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> number [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00094">94</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aea6ac3dc31a1e420d6812f51c71fc75b" name="aea6ac3dc31a1e420d6812f51c71fc75b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea6ac3dc31a1e420d6812f51c71fc75b">&#9670;&#160;</a></span>receiverType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::receiverType</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> type [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00095">95</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a856d017572382573abc7c22a58844fd2" name="a856d017572382573abc7c22a58844fd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a856d017572382573abc7c22a58844fd2">&#9670;&#160;</a></span>receiverVersion</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::receiverVersion</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> version (e.g. Internal Software Version) [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00096">96</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a44a09646a467f750ebf3424299f5984b" name="a44a09646a467f750ebf3424299f5984b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44a09646a467f750ebf3424299f5984b">&#9670;&#160;</a></span>runBy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string NAV::vendor::RINEX::ObsHeader::runBy</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Name of agency creating current file [A20]. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00065">65</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa5433d96dd6ac111ac15f9c129a4304c" name="aa5433d96dd6ac111ac15f9c129a4304c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5433d96dd6ac111ac15f9c129a4304c">&#9670;&#160;</a></span>satellites</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_set&lt;<a class="el" href="structNAV_1_1SatId.html">SatId</a>&gt; NAV::vendor::RINEX::ObsHeader::satellites</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Satellites observed. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00110">110</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a47802987d98087dd131dd8ab5a05e40a" name="a47802987d98087dd131dd8ab5a05e40a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47802987d98087dd131dd8ab5a05e40a">&#9670;&#160;</a></span>satSys</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a> NAV::vendor::RINEX::ObsHeader::satSys</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> System. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00105">105</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1ab874be42a7e601645e660a9ee347c3" name="a1ab874be42a7e601645e660a9ee347c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab874be42a7e601645e660a9ee347c3">&#9670;&#160;</a></span>systemObsTypes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;<a class="el" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>, std::vector&lt;<a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObservationDescription.html">ObservationDescription</a>&gt; &gt; NAV::vendor::RINEX::ObsHeader::systemObsTypes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Observation types for each satellite system. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00106">106</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1acc690ab2547aa9d186528e6c6ce30e" name="a1acc690ab2547aa9d186528e6c6ce30e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1acc690ab2547aa9d186528e6c6ce30e">&#9670;&#160;</a></span>timeFirstObs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::vendor::RINEX::ObsHeader::timeFirstObs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time of first observation record. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00108">108</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af56f7952f775b01db40ac93ffb1ab68b" name="af56f7952f775b01db40ac93ffb1ab68b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af56f7952f775b01db40ac93ffb1ab68b">&#9670;&#160;</a></span>timeLastObs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1InsTime.html">InsTime</a> NAV::vendor::RINEX::ObsHeader::timeLastObs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time of last observation record. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00109">109</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab18d98ce88f94d6918fa1f4934cd91b2" name="ab18d98ce88f94d6918fa1f4934cd91b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab18d98ce88f94d6918fa1f4934cd91b2">&#9670;&#160;</a></span>timeSys</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1TimeSystem.html">TimeSystem</a> NAV::vendor::RINEX::ObsHeader::timeSys</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time system used. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00111">111</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a29e10e88c6eedf826ab32aa7c2d9140f" name="a29e10e88c6eedf826ab32aa7c2d9140f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29e10e88c6eedf826ab32aa7c2d9140f">&#9670;&#160;</a></span>version</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double NAV::vendor::RINEX::ObsHeader::version</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format version. </p>
+
+<p class="definition">Definition at line <a class="el" href="RINEXUtilities_8hpp_source.html#l00064">64</a> of file <a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/RINEX/<a class="el" href="RINEXUtilities_8hpp_source.html">RINEXUtilities.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/RINEX/<a class="el" href="RINEXUtilities_8cpp_source.html">RINEXUtilities.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>RINEX</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1RINEX.html">RINEX</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1RINEX_1_1ObsHeader.html">ObsHeader</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

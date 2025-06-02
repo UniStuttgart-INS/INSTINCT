@@ -9,6 +9,6 @@ var searchData=
   ['spp_20node_6',['SPP Node',['../single_point_positioning_node.html',1,'node_guide_landing_page']]],
   ['sppsolutionlogger_20node_7',['SppSolutionLogger Node',['../spp_solution_logger_node.html',1,'node_guide_landing_page']]],
   ['squares_20estimation_8',['Single Point Positioning using (Weighed) Least Squares Estimation',['../SppLSE.html',1,'algorithms_landing_page']]],
-  ['started_9',['Getting Started',['../getting_started.html',1,'user_manual_landing_page']]],
+  ['started_9',['Started',['../Dev_Getting_Started.html',1,'Getting Started'],['../getting_started.html',1,'Getting Started']]],
   ['style_10',['Style',['../bar_edit_implot_style.html',1,'ImPlot Style'],['../bar_edit_node_editor_style.html',1,'Node Editor Style']]]
 ];

@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['ins_5fassert_0',['INS_ASSERT',['../Assert_8h.html#a0a57fbe0ff187d7d46f3448c15ed88da',1,'Assert.h']]],
-  ['ins_5fassert_5fuser_5ferror_1',['INS_ASSERT_USER_ERROR',['../Assert_8h.html#a45532da602b4922a478b7d7eef4a8b3e',1,'Assert.h']]]
+  ['_5f361_0',['_361',['../EGM96_8cpp.html#a082fe4211f251d2f95879ae1f33164b8',1,'EGM96.cpp']]],
+  ['_5fcoeffs_1',['_coeffs',['../EGM96_8cpp.html#a01e8a1aa3b6b91979d046f207a3470b5',1,'EGM96.cpp']]],
+  ['_5fnmax_2',['_nmax',['../EGM96_8cpp.html#aada603c56378902ea0f841b3e897663f',1,'EGM96.cpp']]]
 ];

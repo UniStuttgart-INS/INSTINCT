@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,7 +119,8 @@ $(function(){initNavTree('EmlidTypes_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">EmlidTypes.hpp File Reference</div></div>
@@ -131,7 +133,7 @@ $(function(){initNavTree('EmlidTypes_8hpp.html',''); initResizable(true); });
 <p><a href="EmlidTypes_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbDops.html">NAV::vendor::emlid::ErbDops</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dilution of Precision This message outputs dimensionless values of DOP. These values are scaled by factor 100.  <a href="structNAV_1_1vendor_1_1emlid_1_1ErbDops.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,140 +156,59 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Version of Protocol.  <a href="structNAV_1_1vendor_1_1emlid_1_1ErbVer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor.html">NAV::vendor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html">NAV::vendor::emlid</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a506b52db4c5865fadba1c7c0a77e139a" id="r_a506b52db4c5865fadba1c7c0a77e139a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a506b52db4c5865fadba1c7c0a77e139a">NAV::vendor::emlid::ErbMessageID</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aaa2971015ef4d5d38f08a9ae03928fb0d">NAV::vendor::emlid::ERB_MessageId_NONE</a>
+<tr class="memitem:a506b52db4c5865fadba1c7c0a77e139a" id="r_a506b52db4c5865fadba1c7c0a77e139a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139a">NAV::vendor::emlid::ErbMessageID</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aaa2971015ef4d5d38f08a9ae03928fb0d">NAV::vendor::emlid::ERB_MessageId_NONE</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aadfa78b85e7b24909322c11a9fa9ba5b0">NAV::vendor::emlid::ERB_MessageId_VER</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aadfa78b85e7b24909322c11a9fa9ba5b0">NAV::vendor::emlid::ERB_MessageId_VER</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aa595576af71d52dd4d7de6ccc43b62cb5">NAV::vendor::emlid::ERB_MessageId_POS</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aa595576af71d52dd4d7de6ccc43b62cb5">NAV::vendor::emlid::ERB_MessageId_POS</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aabe2a53df634df9e74eeac0bbe4c1a2ce">NAV::vendor::emlid::ERB_MessageId_STAT</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aabe2a53df634df9e74eeac0bbe4c1a2ce">NAV::vendor::emlid::ERB_MessageId_STAT</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aaff6ce833ae9cdba778d28aea65b9bcc8">NAV::vendor::emlid::ERB_MessageId_DPOS</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aaff6ce833ae9cdba778d28aea65b9bcc8">NAV::vendor::emlid::ERB_MessageId_DPOS</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aab69276d093c9f0076394bfe7096ba546">NAV::vendor::emlid::ERB_MessageId_VEL</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aab69276d093c9f0076394bfe7096ba546">NAV::vendor::emlid::ERB_MessageId_VEL</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aae8388e1b6fe3acd4c21ba055539eb670">NAV::vendor::emlid::ERB_MessageId_SVI</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aae8388e1b6fe3acd4c21ba055539eb670">NAV::vendor::emlid::ERB_MessageId_SVI</a>
 , <br />
-&#160;&#160;<a class="el" href="#a506b52db4c5865fadba1c7c0a77e139aa3627c50481e892ecce9271103209d71f">NAV::vendor::emlid::ERB_MessageId_RTK</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139aa3627c50481e892ecce9271103209d71f">NAV::vendor::emlid::ERB_MessageId_RTK</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a506b52db4c5865fadba1c7c0a77e139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The available ERB Message IDs.  <a href="#a506b52db4c5865fadba1c7c0a77e139a">More...</a><br /></td></tr>
+<tr class="memdesc:a506b52db4c5865fadba1c7c0a77e139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The available ERB Message IDs.  <a href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139a">More...</a><br /></td></tr>
 <tr class="separator:a506b52db4c5865fadba1c7c0a77e139a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7ab106677e310e845685e676eab781d" id="r_aa7ab106677e310e845685e676eab781d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7ab106677e310e845685e676eab781d">NAV::vendor::emlid::ErrorDetectionMode</a> : uint8_t { <br />
-&#160;&#160;<a class="el" href="#aa7ab106677e310e845685e676eab781dadc325dfd3832fbd9c0b787ea92c5c8dd">NAV::vendor::emlid::ERRORDETECTIONMODE_NONE</a>
+<tr class="memitem:aa7ab106677e310e845685e676eab781d" id="r_aa7ab106677e310e845685e676eab781d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#aa7ab106677e310e845685e676eab781d">NAV::vendor::emlid::ErrorDetectionMode</a> : uint8_t { <br />
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#aa7ab106677e310e845685e676eab781dadc325dfd3832fbd9c0b787ea92c5c8dd">NAV::vendor::emlid::ERRORDETECTIONMODE_NONE</a>
 , <br />
-&#160;&#160;<a class="el" href="#aa7ab106677e310e845685e676eab781da93dd270b3e48874cc622d1f2ff3183eb">NAV::vendor::emlid::ERRORDETECTIONMODE_CHECKSUM</a>
+&#160;&#160;<a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#aa7ab106677e310e845685e676eab781da93dd270b3e48874cc622d1f2ff3183eb">NAV::vendor::emlid::ERRORDETECTIONMODE_CHECKSUM</a>
 <br />
  }</td></tr>
-<tr class="memdesc:aa7ab106677e310e845685e676eab781d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error detection modes available.  <a href="#aa7ab106677e310e845685e676eab781d">More...</a><br /></td></tr>
+<tr class="memdesc:aa7ab106677e310e845685e676eab781d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error detection modes available.  <a href="namespaceNAV_1_1vendor_1_1emlid.html#aa7ab106677e310e845685e676eab781d">More...</a><br /></td></tr>
 <tr class="separator:aa7ab106677e310e845685e676eab781d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a10fefd4790fcf58c1a6335ffa1bc345e" id="r_a10fefd4790fcf58c1a6335ffa1bc345e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a506b52db4c5865fadba1c7c0a77e139a">ErbMessageID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10fefd4790fcf58c1a6335ffa1bc345e">NAV::vendor::emlid::getMsgIdFromString</a> (const std::string &amp;idName)</td></tr>
-<tr class="memdesc:a10fefd4790fcf58c1a6335ffa1bc345e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ERB Msg ID From String object.  <br /></td></tr>
-<tr class="separator:a10fefd4790fcf58c1a6335ffa1bc345e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90c6e606981c7dab11c8357ba7fe5949" id="r_a90c6e606981c7dab11c8357ba7fe5949"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a506b52db4c5865fadba1c7c0a77e139a">ErbMessageID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html#a90c6e606981c7dab11c8357ba7fe5949">NAV::vendor::emlid::getMsgIdFromString</a> (const std::string &amp;idName)</td></tr>
+<tr class="memdesc:a90c6e606981c7dab11c8357ba7fe5949"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ERB Msg ID From String object.  <br /></td></tr>
+<tr class="separator:a90c6e606981c7dab11c8357ba7fe5949"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Type Definitions for Emlid messages for Emlid Reach M2 ER Protocol. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2020-06-23 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a506b52db4c5865fadba1c7c0a77e139a" name="a506b52db4c5865fadba1c7c0a77e139a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a506b52db4c5865fadba1c7c0a77e139a">&#9670;&#160;</a></span>ErbMessageID</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="#a506b52db4c5865fadba1c7c0a77e139a">NAV::vendor::emlid::ErbMessageID</a> : uint8_t</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The available ERB Message IDs. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aaa2971015ef4d5d38f08a9ae03928fb0d" name="a506b52db4c5865fadba1c7c0a77e139aaa2971015ef4d5d38f08a9ae03928fb0d"></a>ERB_MessageId_NONE&#160;</td><td class="fielddoc"><p>No Message Class specified. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aadfa78b85e7b24909322c11a9fa9ba5b0" name="a506b52db4c5865fadba1c7c0a77e139aadfa78b85e7b24909322c11a9fa9ba5b0"></a>ERB_MessageId_VER&#160;</td><td class="fielddoc"><p>Version of protocol. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aa595576af71d52dd4d7de6ccc43b62cb5" name="a506b52db4c5865fadba1c7c0a77e139aa595576af71d52dd4d7de6ccc43b62cb5"></a>ERB_MessageId_POS&#160;</td><td class="fielddoc"><p>Geodetic position solution. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aabe2a53df634df9e74eeac0bbe4c1a2ce" name="a506b52db4c5865fadba1c7c0a77e139aabe2a53df634df9e74eeac0bbe4c1a2ce"></a>ERB_MessageId_STAT&#160;</td><td class="fielddoc"><p><a class="el" href="structNAV_1_1Receiver.html" title="Receiver information.">Receiver</a> navigation status. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aaff6ce833ae9cdba778d28aea65b9bcc8" name="a506b52db4c5865fadba1c7c0a77e139aaff6ce833ae9cdba778d28aea65b9bcc8"></a>ERB_MessageId_DPOS&#160;</td><td class="fielddoc"><p>Dilution of precision. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aab69276d093c9f0076394bfe7096ba546" name="a506b52db4c5865fadba1c7c0a77e139aab69276d093c9f0076394bfe7096ba546"></a>ERB_MessageId_VEL&#160;</td><td class="fielddoc"><p>Velocity solution in NED. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aae8388e1b6fe3acd4c21ba055539eb670" name="a506b52db4c5865fadba1c7c0a77e139aae8388e1b6fe3acd4c21ba055539eb670"></a>ERB_MessageId_SVI&#160;</td><td class="fielddoc"><p>Space vehicle information. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a506b52db4c5865fadba1c7c0a77e139aa3627c50481e892ecce9271103209d71f" name="a506b52db4c5865fadba1c7c0a77e139aa3627c50481e892ecce9271103209d71f"></a>ERB_MessageId_RTK&#160;</td><td class="fielddoc"><p>RTK information. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<a id="aa7ab106677e310e845685e676eab781d" name="aa7ab106677e310e845685e676eab781d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7ab106677e310e845685e676eab781d">&#9670;&#160;</a></span>ErrorDetectionMode</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="#aa7ab106677e310e845685e676eab781d">NAV::vendor::emlid::ErrorDetectionMode</a> : uint8_t</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Error detection modes available. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa7ab106677e310e845685e676eab781dadc325dfd3832fbd9c0b787ea92c5c8dd" name="aa7ab106677e310e845685e676eab781dadc325dfd3832fbd9c0b787ea92c5c8dd"></a>ERRORDETECTIONMODE_NONE&#160;</td><td class="fielddoc"><p>No error detection is used. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="aa7ab106677e310e845685e676eab781da93dd270b3e48874cc622d1f2ff3183eb" name="aa7ab106677e310e845685e676eab781da93dd270b3e48874cc622d1f2ff3183eb"></a>ERRORDETECTIONMODE_CHECKSUM&#160;</td><td class="fielddoc"><p>16-bit checksum is used </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a10fefd4790fcf58c1a6335ffa1bc345e" name="a10fefd4790fcf58c1a6335ffa1bc345e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10fefd4790fcf58c1a6335ffa1bc345e">&#9670;&#160;</a></span>getMsgIdFromString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">ErbMessageID NAV::vendor::emlid::getMsgIdFromString </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>idName</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the ERB Msg ID From String object. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idName</td><td>String of the ERB Class </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The ERB ID </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

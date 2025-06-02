@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,11 +119,10 @@ $(function(){initNavTree('classNAV_1_1CubicSpline.html',''); initResizable(true)
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
+<a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classNAV_1_1CubicSpline-members.html">List of all members</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::CubicSpline&lt; Scalar &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -131,7 +131,7 @@ $(function(){initNavTree('classNAV_1_1CubicSpline.html',''); initResizable(true)
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNAV_1_1CubicSpline_1_1BandMatrix.html">BandMatrix</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse matrix whose non-zero entries are confined to a diagonal band, comprising the main diagonal and zero or more diagonals on either side.  <a href="classNAV_1_1CubicSpline_1_1BandMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,9 +141,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a690c66f1655991a4e5df499b182f504a" id="r_a690c66f1655991a4e5df499b182f504a"><td class="memItemLeft" align="right" valign="top"><a id="a690c66f1655991a4e5df499b182f504a" name="a690c66f1655991a4e5df499b182f504a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CubicSpline</b> ()=default</td></tr>
-<tr class="memdesc:a690c66f1655991a4e5df499b182f504a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br /></td></tr>
+<tr class="memitem:a690c66f1655991a4e5df499b182f504a" id="r_a690c66f1655991a4e5df499b182f504a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a690c66f1655991a4e5df499b182f504a">CubicSpline</a> ()=default</td></tr>
+<tr class="memdesc:a690c66f1655991a4e5df499b182f504a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <br /></td></tr>
 <tr class="separator:a690c66f1655991a4e5df499b182f504a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48d095ea5ae549c52c0d9ae9f1250a07" id="r_a48d095ea5ae549c52c0d9ae9f1250a07"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48d095ea5ae549c52c0d9ae9f1250a07">CubicSpline</a> (const std::vector&lt; Scalar &gt; &amp;X, const std::vector&lt; Scalar &gt; &amp;Y, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> leftBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#afb47d78bec49ad428c2bd1649cbbdefeaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>, 0.0 }, <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> rightBoundaryCondition={ <a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html#afb47d78bec49ad428c2bd1649cbbdefeaee6b37b4389945f4f4627f670e34e557">BoundaryCondition::SecondDerivative</a>, 0.0 })</td></tr>
 <tr class="memdesc:a48d095ea5ae549c52c0d9ae9f1250a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
@@ -160,9 +159,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0834b6dfbd7cca484e3f1555c7cbeb42" id="r_a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0834b6dfbd7cca484e3f1555c7cbeb42">setPoints</a> (const std::vector&lt; Scalar &gt; &amp;x, const std::vector&lt; Scalar &gt; &amp;y)</td></tr>
 <tr class="memdesc:a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the points/knots of the spline and calculate the spline coefficients.  <br /></td></tr>
 <tr class="separator:a0834b6dfbd7cca484e3f1555c7cbeb42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81679de4194ab901a4fd4238e7a53b7b" id="r_a81679de4194ab901a4fd4238e7a53b7b"><td class="memItemLeft" align="right" valign="top"><a id="a81679de4194ab901a4fd4238e7a53b7b" name="a81679de4194ab901a4fd4238e7a53b7b"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const noexcept</td></tr>
-<tr class="memdesc:a81679de4194ab901a4fd4238e7a53b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the spline vector. <br /></td></tr>
+<tr class="memitem:a81679de4194ab901a4fd4238e7a53b7b" id="r_a81679de4194ab901a4fd4238e7a53b7b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81679de4194ab901a4fd4238e7a53b7b">size</a> () const noexcept</td></tr>
+<tr class="memdesc:a81679de4194ab901a4fd4238e7a53b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the spline vector.  <br /></td></tr>
 <tr class="separator:a81679de4194ab901a4fd4238e7a53b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
@@ -173,45 +171,68 @@ Private Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ae509f9be3d8a2509d816fed6ce9f1f93" id="r_ae509f9be3d8a2509d816fed6ce9f1f93"><td class="memItemLeft" align="right" valign="top"><a id="ae509f9be3d8a2509d816fed6ce9f1f93" name="ae509f9be3d8a2509d816fed6ce9f1f93"></a>
-<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a>&#160;</td><td class="memItemRight" valign="bottom"><b>boundaryConditionLeft</b></td></tr>
-<tr class="memdesc:ae509f9be3d8a2509d816fed6ce9f1f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boundary condition for the left knot. <br /></td></tr>
+<tr class="memitem:ae509f9be3d8a2509d816fed6ce9f1f93" id="r_ae509f9be3d8a2509d816fed6ce9f1f93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae509f9be3d8a2509d816fed6ce9f1f93">boundaryConditionLeft</a></td></tr>
+<tr class="memdesc:ae509f9be3d8a2509d816fed6ce9f1f93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boundary condition for the left knot.  <br /></td></tr>
 <tr class="separator:ae509f9be3d8a2509d816fed6ce9f1f93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c4b03ec008cd51b5dc72725efa992c6" id="r_a8c4b03ec008cd51b5dc72725efa992c6"><td class="memItemLeft" align="right" valign="top"><a id="a8c4b03ec008cd51b5dc72725efa992c6" name="a8c4b03ec008cd51b5dc72725efa992c6"></a>
-<a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a>&#160;</td><td class="memItemRight" valign="bottom"><b>boundaryConditionRight</b></td></tr>
-<tr class="memdesc:a8c4b03ec008cd51b5dc72725efa992c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boundary condition for the right knot. <br /></td></tr>
+<tr class="memitem:a8c4b03ec008cd51b5dc72725efa992c6" id="r_a8c4b03ec008cd51b5dc72725efa992c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c4b03ec008cd51b5dc72725efa992c6">boundaryConditionRight</a></td></tr>
+<tr class="memdesc:a8c4b03ec008cd51b5dc72725efa992c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boundary condition for the right knot.  <br /></td></tr>
 <tr class="separator:a8c4b03ec008cd51b5dc72725efa992c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5421ffbefe9066376e81637a17f514d2" id="r_a5421ffbefe9066376e81637a17f514d2"><td class="memItemLeft" align="right" valign="top"><a id="a5421ffbefe9066376e81637a17f514d2" name="a5421ffbefe9066376e81637a17f514d2"></a>
-std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>coef_b</b></td></tr>
-<tr class="memdesc:a5421ffbefe9066376e81637a17f514d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients b. <br /></td></tr>
+<tr class="memitem:a5421ffbefe9066376e81637a17f514d2" id="r_a5421ffbefe9066376e81637a17f514d2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5421ffbefe9066376e81637a17f514d2">coef_b</a></td></tr>
+<tr class="memdesc:a5421ffbefe9066376e81637a17f514d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients b.  <br /></td></tr>
 <tr class="separator:a5421ffbefe9066376e81637a17f514d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad02ad49200298c377d2bd9e7b9c9ec89" id="r_ad02ad49200298c377d2bd9e7b9c9ec89"><td class="memItemLeft" align="right" valign="top"><a id="ad02ad49200298c377d2bd9e7b9c9ec89" name="ad02ad49200298c377d2bd9e7b9c9ec89"></a>
-std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>coef_c</b></td></tr>
-<tr class="memdesc:ad02ad49200298c377d2bd9e7b9c9ec89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients c. <br /></td></tr>
+<tr class="memitem:ad02ad49200298c377d2bd9e7b9c9ec89" id="r_ad02ad49200298c377d2bd9e7b9c9ec89"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad02ad49200298c377d2bd9e7b9c9ec89">coef_c</a></td></tr>
+<tr class="memdesc:ad02ad49200298c377d2bd9e7b9c9ec89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients c.  <br /></td></tr>
 <tr class="separator:ad02ad49200298c377d2bd9e7b9c9ec89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7838aa5ebea14ab39256c5c880d3c1c5" id="r_a7838aa5ebea14ab39256c5c880d3c1c5"><td class="memItemLeft" align="right" valign="top"><a id="a7838aa5ebea14ab39256c5c880d3c1c5" name="a7838aa5ebea14ab39256c5c880d3c1c5"></a>
-Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>coef_c0</b></td></tr>
-<tr class="memdesc:a7838aa5ebea14ab39256c5c880d3c1c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficient c0 for left extrapolation. <br /></td></tr>
+<tr class="memitem:a7838aa5ebea14ab39256c5c880d3c1c5" id="r_a7838aa5ebea14ab39256c5c880d3c1c5"><td class="memItemLeft" align="right" valign="top">Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7838aa5ebea14ab39256c5c880d3c1c5">coef_c0</a></td></tr>
+<tr class="memdesc:a7838aa5ebea14ab39256c5c880d3c1c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficient c0 for left extrapolation.  <br /></td></tr>
 <tr class="separator:a7838aa5ebea14ab39256c5c880d3c1c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99d035f4abd04a06641f935877926e47" id="r_a99d035f4abd04a06641f935877926e47"><td class="memItemLeft" align="right" valign="top"><a id="a99d035f4abd04a06641f935877926e47" name="a99d035f4abd04a06641f935877926e47"></a>
-std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>coef_d</b></td></tr>
-<tr class="memdesc:a99d035f4abd04a06641f935877926e47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients d. <br /></td></tr>
+<tr class="memitem:a99d035f4abd04a06641f935877926e47" id="r_a99d035f4abd04a06641f935877926e47"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99d035f4abd04a06641f935877926e47">coef_d</a></td></tr>
+<tr class="memdesc:a99d035f4abd04a06641f935877926e47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spline coefficients d.  <br /></td></tr>
 <tr class="separator:a99d035f4abd04a06641f935877926e47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2ef5d21eff74896121d7bf2a89a5c31" id="r_af2ef5d21eff74896121d7bf2a89a5c31"><td class="memItemLeft" align="right" valign="top"><a id="af2ef5d21eff74896121d7bf2a89a5c31" name="af2ef5d21eff74896121d7bf2a89a5c31"></a>
-std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vals_x</b></td></tr>
-<tr class="memdesc:af2ef5d21eff74896121d7bf2a89a5c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">x coordinates of the knots <br /></td></tr>
+<tr class="memitem:af2ef5d21eff74896121d7bf2a89a5c31" id="r_af2ef5d21eff74896121d7bf2a89a5c31"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2ef5d21eff74896121d7bf2a89a5c31">vals_x</a></td></tr>
+<tr class="memdesc:af2ef5d21eff74896121d7bf2a89a5c31"><td class="mdescLeft">&#160;</td><td class="mdescRight">x coordinates of the knots  <br /></td></tr>
 <tr class="separator:af2ef5d21eff74896121d7bf2a89a5c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1749a04936f605fb0096f7d55f2d26a2" id="r_a1749a04936f605fb0096f7d55f2d26a2"><td class="memItemLeft" align="right" valign="top"><a id="a1749a04936f605fb0096f7d55f2d26a2" name="a1749a04936f605fb0096f7d55f2d26a2"></a>
-std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vals_y</b></td></tr>
-<tr class="memdesc:a1749a04936f605fb0096f7d55f2d26a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">y coordinates of the knots <br /></td></tr>
+<tr class="memitem:a1749a04936f605fb0096f7d55f2d26a2" id="r_a1749a04936f605fb0096f7d55f2d26a2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Scalar &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1749a04936f605fb0096f7d55f2d26a2">vals_y</a></td></tr>
+<tr class="memdesc:a1749a04936f605fb0096f7d55f2d26a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">y coordinates of the knots  <br /></td></tr>
 <tr class="separator:a1749a04936f605fb0096f7d55f2d26a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Scalar&gt;<br />
 class NAV::CubicSpline&lt; Scalar &gt;</div><p>Cubic Spline class. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00034">34</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a690c66f1655991a4e5df499b182f504a" name="a690c66f1655991a4e5df499b182f504a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a690c66f1655991a4e5df499b182f504a">&#9670;&#160;</a></span>CubicSpline() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::CubicSpline </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel default">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Constructor. </p>
+
+</div>
+</div>
 <a id="a48d095ea5ae549c52c0d9ae9f1250a07" name="a48d095ea5ae549c52c0d9ae9f1250a07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48d095ea5ae549c52c0d9ae9f1250a07">&#9670;&#160;</a></span>CubicSpline()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a48d095ea5ae549c52c0d9ae9f1250a07">&#9670;&#160;</a></span>CubicSpline() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -260,6 +281,8 @@ template&lt;typename Scalar&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00059">59</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -302,6 +325,8 @@ template&lt;typename Scalar&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The derivative of y up to the given order </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00205">205</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a141033cb8a487abdd1258d034df592e3" name="a141033cb8a487abdd1258d034df592e3"></a>
@@ -338,6 +363,8 @@ template&lt;typename Scalar&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Index of a knot closest to the x coordinate given </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00265">265</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
 </div>
 </div>
 <a id="aae41c48c80e18cec72fe4c9e861579cf" name="aae41c48c80e18cec72fe4c9e861579cf"></a>
@@ -373,6 +400,8 @@ template&lt;typename Scalar&gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The y coordinate </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00182">182</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
 
 </div>
 </div>
@@ -414,6 +443,8 @@ template&lt;typename Scalar&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00070">70</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
 </div>
 </div>
 <a id="a0834b6dfbd7cca484e3f1555c7cbeb42" name="a0834b6dfbd7cca484e3f1555c7cbeb42"></a>
@@ -454,6 +485,264 @@ template&lt;typename Scalar&gt; </div>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00079">79</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a81679de4194ab901a4fd4238e7a53b7b" name="a81679de4194ab901a4fd4238e7a53b7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81679de4194ab901a4fd4238e7a53b7b">&#9670;&#160;</a></span>size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::size </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the size of the spline vector. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00174">174</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="ae509f9be3d8a2509d816fed6ce9f1f93" name="ae509f9be3d8a2509d816fed6ce9f1f93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae509f9be3d8a2509d816fed6ce9f1f93">&#9670;&#160;</a></span>boundaryConditionLeft</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::boundaryConditionLeft</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Boundary condition for the left knot. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00259">259</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a8c4b03ec008cd51b5dc72725efa992c6" name="a8c4b03ec008cd51b5dc72725efa992c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c4b03ec008cd51b5dc72725efa992c6">&#9670;&#160;</a></span>boundaryConditionRight</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structNAV_1_1CubicSpline_1_1BoundaryCondition.html">BoundaryCondition</a> <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::boundaryConditionRight</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Boundary condition for the right knot. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00260">260</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5421ffbefe9066376e81637a17f514d2" name="a5421ffbefe9066376e81637a17f514d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5421ffbefe9066376e81637a17f514d2">&#9670;&#160;</a></span>coef_b</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Scalar&gt; <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::coef_b</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Spline coefficients b. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00254">254</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad02ad49200298c377d2bd9e7b9c9ec89" name="ad02ad49200298c377d2bd9e7b9c9ec89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad02ad49200298c377d2bd9e7b9c9ec89">&#9670;&#160;</a></span>coef_c</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Scalar&gt; <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::coef_c</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Spline coefficients c. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00255">255</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a7838aa5ebea14ab39256c5c880d3c1c5" name="a7838aa5ebea14ab39256c5c880d3c1c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7838aa5ebea14ab39256c5c880d3c1c5">&#9670;&#160;</a></span>coef_c0</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Scalar <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::coef_c0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Spline coefficient c0 for left extrapolation. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00257">257</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a99d035f4abd04a06641f935877926e47" name="a99d035f4abd04a06641f935877926e47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99d035f4abd04a06641f935877926e47">&#9670;&#160;</a></span>coef_d</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Scalar&gt; <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::coef_d</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Spline coefficients d. </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00256">256</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af2ef5d21eff74896121d7bf2a89a5c31" name="af2ef5d21eff74896121d7bf2a89a5c31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2ef5d21eff74896121d7bf2a89a5c31">&#9670;&#160;</a></span>vals_x</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Scalar&gt; <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::vals_x</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>x coordinates of the knots </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00252">252</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1749a04936f605fb0096f7d55f2d26a2" name="a1749a04936f605fb0096f7d55f2d26a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1749a04936f605fb0096f7d55f2d26a2">&#9670;&#160;</a></span>vals_y</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Scalar&gt; <a class="el" href="classNAV_1_1CubicSpline.html">NAV::CubicSpline</a>&lt; Scalar &gt;::vals_y</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>y coordinates of the knots </p>
+
+<p class="definition">Definition at line <a class="el" href="CubicSpline_8hpp_source.html#l00253">253</a> of file <a class="el" href="CubicSpline_8hpp_source.html">CubicSpline.hpp</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -464,7 +753,7 @@ template&lt;typename Scalar&gt; </div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1CubicSpline.html">CubicSpline</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1CubicSpline.html">CubicSpline</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

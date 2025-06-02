@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('GNSS_2Functions_8hpp.html',''); initResizable(true); }
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Functions.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,47 +130,52 @@ $(function(){initNavTree('GNSS_2Functions_8hpp.html',''); initResizable(true); }
 
 <p><a href="GNSS_2Functions_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a502350bf508bb54f28f63d8801021124" id="r_a502350bf508bb54f28f63d8801021124"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA, typename DerivedB&gt; </td></tr>
-<tr class="memitem:a502350bf508bb54f28f63d8801021124"><td class="memTemplItemLeft" align="right" valign="top">DerivedA::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a502350bf508bb54f28f63d8801021124">NAV::calcSagnacCorrection</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_posAnt, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_satPos)</td></tr>
+<tr class="memitem:a502350bf508bb54f28f63d8801021124"><td class="memTemplItemLeft" align="right" valign="top">DerivedA::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a502350bf508bb54f28f63d8801021124">NAV::calcSagnacCorrection</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_posAnt, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_satPos)</td></tr>
 <tr class="memdesc:a502350bf508bb54f28f63d8801021124"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Earth rotation/Sagnac correction.  <br /></td></tr>
 <tr class="separator:a502350bf508bb54f28f63d8801021124"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e3edcb99fd4bc8649705fb2d139fd85" id="r_a9e3edcb99fd4bc8649705fb2d139fd85"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA, typename DerivedB, typename DerivedC, typename DerivedD&gt; </td></tr>
-<tr class="memitem:a9e3edcb99fd4bc8649705fb2d139fd85"><td class="memTemplItemLeft" align="right" valign="top">DerivedA::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9e3edcb99fd4bc8649705fb2d139fd85">NAV::calcSagnacRateCorrection</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_recvPos, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_satPos, const Eigen::MatrixBase&lt; DerivedC &gt; &amp;e_recvVel, const Eigen::MatrixBase&lt; DerivedD &gt; &amp;e_satVel)</td></tr>
+<tr class="memitem:a9e3edcb99fd4bc8649705fb2d139fd85"><td class="memTemplItemLeft" align="right" valign="top">DerivedA::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a9e3edcb99fd4bc8649705fb2d139fd85">NAV::calcSagnacRateCorrection</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_recvPos, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_satPos, const Eigen::MatrixBase&lt; DerivedC &gt; &amp;e_recvVel, const Eigen::MatrixBase&lt; DerivedD &gt; &amp;e_satVel)</td></tr>
 <tr class="memdesc:a9e3edcb99fd4bc8649705fb2d139fd85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Range-rate Earth rotation/Sagnac correction.  <br /></td></tr>
 <tr class="separator:a9e3edcb99fd4bc8649705fb2d139fd85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5dd4ea949d0c9e10ddf81b44f2d5087" id="r_ab5dd4ea949d0c9e10ddf81b44f2d5087"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:ab5dd4ea949d0c9e10ddf81b44f2d5087"><td class="memTemplItemLeft" align="right" valign="top">Derived::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab5dd4ea949d0c9e10ddf81b44f2d5087">NAV::calcSatAzimuth</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_lineOfSightUnitVector)</td></tr>
+<tr class="memitem:ab5dd4ea949d0c9e10ddf81b44f2d5087"><td class="memTemplItemLeft" align="right" valign="top">Derived::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ab5dd4ea949d0c9e10ddf81b44f2d5087">NAV::calcSatAzimuth</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_lineOfSightUnitVector)</td></tr>
 <tr class="memdesc:ab5dd4ea949d0c9e10ddf81b44f2d5087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the azimuth of the satellite from the antenna.  <br /></td></tr>
 <tr class="separator:ab5dd4ea949d0c9e10ddf81b44f2d5087"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a340978bb119a6707226d3bbff9c16eac" id="r_a340978bb119a6707226d3bbff9c16eac"><td class="memTemplParams" colspan="2">template&lt;typename Derived&gt; </td></tr>
-<tr class="memitem:a340978bb119a6707226d3bbff9c16eac"><td class="memTemplItemLeft" align="right" valign="top">Derived::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a340978bb119a6707226d3bbff9c16eac">NAV::calcSatElevation</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_lineOfSightUnitVector)</td></tr>
+<tr class="memitem:a340978bb119a6707226d3bbff9c16eac"><td class="memTemplItemLeft" align="right" valign="top">Derived::Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a340978bb119a6707226d3bbff9c16eac">NAV::calcSatElevation</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;n_lineOfSightUnitVector)</td></tr>
 <tr class="memdesc:a340978bb119a6707226d3bbff9c16eac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the elevation of the satellite from the antenna.  <br /></td></tr>
 <tr class="separator:a340978bb119a6707226d3bbff9c16eac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93a83dcecd4166ab406cc0a6ad5d1fa" id="r_ae93a83dcecd4166ab406cc0a6ad5d1fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae93a83dcecd4166ab406cc0a6ad5d1fa">NAV::doppler2rangeRate</a> (double doppler, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
+<tr class="memitem:ae93a83dcecd4166ab406cc0a6ad5d1fa" id="r_ae93a83dcecd4166ab406cc0a6ad5d1fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ae93a83dcecd4166ab406cc0a6ad5d1fa">NAV::doppler2rangeRate</a> (double doppler, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
 <tr class="memdesc:ae93a83dcecd4166ab406cc0a6ad5d1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transforms a doppler-shift into a range-rate.  <br /></td></tr>
 <tr class="separator:ae93a83dcecd4166ab406cc0a6ad5d1fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd47cd4222b0cd8a1d96d05f0b07f072" id="r_afd47cd4222b0cd8a1d96d05f0b07f072"><td class="memTemplParams" colspan="2">template&lt;typename DerivedA, typename DerivedB&gt; </td></tr>
-<tr class="memitem:afd47cd4222b0cd8a1d96d05f0b07f072"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename DerivedA::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afd47cd4222b0cd8a1d96d05f0b07f072">NAV::e_calcLineOfSightUnitVector</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_posAnt, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_posSat)</td></tr>
+<tr class="memitem:afd47cd4222b0cd8a1d96d05f0b07f072"><td class="memTemplItemLeft" align="right" valign="top">Eigen::Vector3&lt; typename DerivedA::Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#afd47cd4222b0cd8a1d96d05f0b07f072">NAV::e_calcLineOfSightUnitVector</a> (const Eigen::MatrixBase&lt; DerivedA &gt; &amp;e_posAnt, const Eigen::MatrixBase&lt; DerivedB &gt; &amp;e_posSat)</td></tr>
 <tr class="memdesc:afd47cd4222b0cd8a1d96d05f0b07f072"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the line-of-sight unit vector from the user antenna to the satellite.  <br /></td></tr>
 <tr class="separator:afd47cd4222b0cd8a1d96d05f0b07f072"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0666bab7d9afd1b58895c2f22e312299" id="r_a0666bab7d9afd1b58895c2f22e312299"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0666bab7d9afd1b58895c2f22e312299">NAV::galSisaIdx2Val</a> (uint8_t idx)</td></tr>
+<tr class="memitem:a0666bab7d9afd1b58895c2f22e312299" id="r_a0666bab7d9afd1b58895c2f22e312299"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a0666bab7d9afd1b58895c2f22e312299">NAV::galSisaIdx2Val</a> (uint8_t idx)</td></tr>
 <tr class="memdesc:a0666bab7d9afd1b58895c2f22e312299"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GALILEO SISA (Signal in space accuracy) index to it's value.  <br /></td></tr>
 <tr class="separator:a0666bab7d9afd1b58895c2f22e312299"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76f2418126f43272f93590cee31a9cc1" id="r_a76f2418126f43272f93590cee31a9cc1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76f2418126f43272f93590cee31a9cc1">NAV::galSisaVal2Idx</a> (double val)</td></tr>
+<tr class="memitem:a76f2418126f43272f93590cee31a9cc1" id="r_a76f2418126f43272f93590cee31a9cc1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a76f2418126f43272f93590cee31a9cc1">NAV::galSisaVal2Idx</a> (double val)</td></tr>
 <tr class="memdesc:a76f2418126f43272f93590cee31a9cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GALILEO SISA (Signal in space accuracy) value to it's index.  <br /></td></tr>
 <tr class="separator:a76f2418126f43272f93590cee31a9cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ba9ce832bb774ccdb7bf5b0ce666c05" id="r_a2ba9ce832bb774ccdb7bf5b0ce666c05"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ba9ce832bb774ccdb7bf5b0ce666c05">NAV::gpsUraIdx2Val</a> (uint8_t idx)</td></tr>
+<tr class="memitem:a2ba9ce832bb774ccdb7bf5b0ce666c05" id="r_a2ba9ce832bb774ccdb7bf5b0ce666c05"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a2ba9ce832bb774ccdb7bf5b0ce666c05">NAV::gpsUraIdx2Val</a> (uint8_t idx)</td></tr>
 <tr class="memdesc:a2ba9ce832bb774ccdb7bf5b0ce666c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GPS URA (user range accuracy) index to it's value.  <br /></td></tr>
 <tr class="separator:a2ba9ce832bb774ccdb7bf5b0ce666c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6385e3fa379958be1ffb275122cba39" id="r_ac6385e3fa379958be1ffb275122cba39"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6385e3fa379958be1ffb275122cba39">NAV::gpsUraVal2Idx</a> (double val)</td></tr>
+<tr class="memitem:ac6385e3fa379958be1ffb275122cba39" id="r_ac6385e3fa379958be1ffb275122cba39"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#ac6385e3fa379958be1ffb275122cba39">NAV::gpsUraVal2Idx</a> (double val)</td></tr>
 <tr class="memdesc:ac6385e3fa379958be1ffb275122cba39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a GPS URA (user range accuracy) value to it's index.  <br /></td></tr>
 <tr class="separator:ac6385e3fa379958be1ffb275122cba39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3d5db2e897cc10c5c5728b57480d5ca" id="r_af3d5db2e897cc10c5c5728b57480d5ca"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3d5db2e897cc10c5c5728b57480d5ca">NAV::rangeRate2doppler</a> (double rangeRate, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
+<tr class="memitem:af3d5db2e897cc10c5c5728b57480d5ca" id="r_af3d5db2e897cc10c5c5728b57480d5ca"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#af3d5db2e897cc10c5c5728b57480d5ca">NAV::rangeRate2doppler</a> (double rangeRate, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> freq, int8_t num)</td></tr>
 <tr class="memdesc:af3d5db2e897cc10c5c5728b57480d5ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transforms a range-rate into a doppler-shift.  <br /></td></tr>
 <tr class="separator:af3d5db2e897cc10c5c5728b57480d5ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12fc17dba8bf514b08d8e01325b013b8" id="r_a12fc17dba8bf514b08d8e01325b013b8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12fc17dba8bf514b08d8e01325b013b8">NAV::ratioFreqSquared</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> f1, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> f2, int8_t num1, int8_t num2)</td></tr>
+<tr class="memitem:a12fc17dba8bf514b08d8e01325b013b8" id="r_a12fc17dba8bf514b08d8e01325b013b8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html#a12fc17dba8bf514b08d8e01325b013b8">NAV::ratioFreqSquared</a> (<a class="el" href="classNAV_1_1Frequency.html">Frequency</a> f1, <a class="el" href="classNAV_1_1Frequency.html">Frequency</a> f2, int8_t num1, int8_t num2)</td></tr>
 <tr class="memdesc:a12fc17dba8bf514b08d8e01325b013b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the ration of the frequencies squared γ  <br /></td></tr>
 <tr class="separator:a12fc17dba8bf514b08d8e01325b013b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -176,509 +183,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>GNSS helper functions. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2022-05-19 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a502350bf508bb54f28f63d8801021124" name="a502350bf508bb54f28f63d8801021124"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a502350bf508bb54f28f63d8801021124">&#9670;&#160;</a></span>calcSagnacCorrection()</h2>
 
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DerivedA, typename DerivedB&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DerivedA::Scalar NAV::calcSagnacCorrection </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedA &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_posAnt</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedB &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_satPos</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the Earth rotation/Sagnac correction. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_posAnt</td><td>Position of the user antenna in ECEF frame coordinates </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_satPos</td><td>Position of the satellite in ECEF frame coordinates </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Earth rotation/Sagnac correction [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_springerhandbookgnss2017">[45]</a> Springer Handbook ch. 19.1.1, eq. 19.7, p. 562 </dd></dl>
-
-</div>
-</div>
-<a id="a9e3edcb99fd4bc8649705fb2d139fd85" name="a9e3edcb99fd4bc8649705fb2d139fd85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e3edcb99fd4bc8649705fb2d139fd85">&#9670;&#160;</a></span>calcSagnacRateCorrection()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DerivedA, typename DerivedB, typename DerivedC, typename DerivedD&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">DerivedA::Scalar NAV::calcSagnacRateCorrection </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedA &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_recvPos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedB &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_satPos</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedC &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_recvVel</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedD &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_satVel</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the Range-rate Earth rotation/Sagnac correction. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_recvPos</td><td>Position of the user antenna in ECEF frame coordinates </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_satPos</td><td>Position of the satellite in ECEF frame coordinates </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_recvVel</td><td>Velocity of the user antenna in ECEF frame coordinates </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_satVel</td><td>Velocity of the satellite in ECEF frame coordinates </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Range-rate Earth rotation/Sagnac correction [m/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves ch. 8.5.3, eq. 8.46, p. 342 </dd></dl>
-
-</div>
-</div>
-<a id="ab5dd4ea949d0c9e10ddf81b44f2d5087" name="ab5dd4ea949d0c9e10ddf81b44f2d5087"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5dd4ea949d0c9e10ddf81b44f2d5087">&#9670;&#160;</a></span>calcSatAzimuth()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Derived::Scalar NAV::calcSatAzimuth </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>n_lineOfSightUnitVector</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the azimuth of the satellite from the antenna. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_lineOfSightUnitVector</td><td>Line-of-sight unit vector from the antenna to the satellite in NED frame coordinates </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Azimuth [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
-
-</div>
-</div>
-<a id="a340978bb119a6707226d3bbff9c16eac" name="a340978bb119a6707226d3bbff9c16eac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a340978bb119a6707226d3bbff9c16eac">&#9670;&#160;</a></span>calcSatElevation()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Derived&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Derived::Scalar NAV::calcSatElevation </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>n_lineOfSightUnitVector</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the elevation of the satellite from the antenna. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">n_lineOfSightUnitVector</td><td>Line-of-sight unit vector from the antenna to the satellite in NED frame coordinates </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Elevation [rad]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 8.5.4, eq. 8.57, p. 344 </dd></dl>
-
-</div>
-</div>
-<a id="ae93a83dcecd4166ab406cc0a6ad5d1fa" name="ae93a83dcecd4166ab406cc0a6ad5d1fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae93a83dcecd4166ab406cc0a6ad5d1fa">&#9670;&#160;</a></span>doppler2rangeRate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::doppler2rangeRate </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>doppler</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>num</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Transforms a doppler-shift into a range-rate. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">doppler</td><td>The doppler-shift to transform [Hz] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Frequency number. Only used for GLONASS G1 and G2 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The corresponding range-rate [m/s]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
-
-</div>
-</div>
-<a id="afd47cd4222b0cd8a1d96d05f0b07f072" name="afd47cd4222b0cd8a1d96d05f0b07f072"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd47cd4222b0cd8a1d96d05f0b07f072">&#9670;&#160;</a></span>e_calcLineOfSightUnitVector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename DerivedA, typename DerivedB&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Eigen::Vector3&lt; typename DerivedA::Scalar &gt; NAV::e_calcLineOfSightUnitVector </td>
-          <td>(</td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedA &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_posAnt</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Eigen::MatrixBase&lt; DerivedB &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>e_posSat</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the line-of-sight unit vector from the user antenna to the satellite. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_posAnt</td><td>Position of the user antenna in ECEF frame coordinates </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">e_posSat</td><td>Position of the satellite in ECEF frame coordinates </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The line-of-sight unit vector in ECEF frame coordinates</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 8.5.3, eq. 8.41, p. 341 </dd></dl>
-
-</div>
-</div>
-<a id="a0666bab7d9afd1b58895c2f22e312299" name="a0666bab7d9afd1b58895c2f22e312299"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0666bab7d9afd1b58895c2f22e312299">&#9670;&#160;</a></span>galSisaIdx2Val()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::galSisaIdx2Val </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>idx</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a GALILEO SISA (Signal in space accuracy) index to it's value. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>The SISA index </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>SISA value in [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_gal-icd-2.0">[13]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
-
-</div>
-</div>
-<a id="a76f2418126f43272f93590cee31a9cc1" name="a76f2418126f43272f93590cee31a9cc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76f2418126f43272f93590cee31a9cc1">&#9670;&#160;</a></span>galSisaVal2Idx()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t NAV::galSisaVal2Idx </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a GALILEO SISA (Signal in space accuracy) value to it's index. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>SISA value in [m] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The SISA index</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_gal-icd-2.0">[13]</a> GAL ICD ch. 5.1.12, p.58 </dd></dl>
-
-</div>
-</div>
-<a id="a2ba9ce832bb774ccdb7bf5b0ce666c05" name="a2ba9ce832bb774ccdb7bf5b0ce666c05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ba9ce832bb774ccdb7bf5b0ce666c05">&#9670;&#160;</a></span>gpsUraIdx2Val()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::gpsUraIdx2Val </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>idx</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a GPS URA (user range accuracy) index to it's value. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>The URA index </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>URA value in [m]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_is-gps-200m">[21]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
-
-</div>
-</div>
-<a id="ac6385e3fa379958be1ffb275122cba39" name="ac6385e3fa379958be1ffb275122cba39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6385e3fa379958be1ffb275122cba39">&#9670;&#160;</a></span>gpsUraVal2Idx()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t NAV::gpsUraVal2Idx </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>val</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Converts a GPS URA (user range accuracy) value to it's index. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>URA value in [m] </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The URA index</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_is-gps-200m">[21]</a> GPS ICD ch. 20.3.3.3.1.3, p.92ff </dd></dl>
-
-</div>
-</div>
-<a id="af3d5db2e897cc10c5c5728b57480d5ca" name="af3d5db2e897cc10c5c5728b57480d5ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3d5db2e897cc10c5c5728b57480d5ca">&#9670;&#160;</a></span>rangeRate2doppler()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::rangeRate2doppler </td>
-          <td>(</td>
-          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>rangeRate</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>freq</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>num</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Transforms a range-rate into a doppler-shift. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">rangeRate</td><td>The range-rate to transform [m/s] </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freq</td><td>Frequency </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>Frequency number. Only used for GLONASS G1 and G2 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The corresponding doppler-shift [Hz]</dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 9.2.7, eq. 9.70, p. 388 </dd></dl>
-
-</div>
-</div>
-<a id="a12fc17dba8bf514b08d8e01325b013b8" name="a12fc17dba8bf514b08d8e01325b013b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12fc17dba8bf514b08d8e01325b013b8">&#9670;&#160;</a></span>ratioFreqSquared()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double NAV::ratioFreqSquared </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>f1</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classNAV_1_1Frequency.html">Frequency</a></td>          <td class="paramname"><span class="paramname"><em>f2</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>num1</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>num2</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Calculates the ration of the frequencies squared γ </p>
-<p><a class="anchor" id="eq-GNSS-freqRatio"></a>  </p><p class="formulaDsp">
-<img class="formulaDsp" alt="\begin{equation} \label{eq:eq-GNSS-freqRatio}
-  \gamma = (f_1 / f_2)^2
-\end{equation}" src="form_41.svg" width="543" height="21"/>
-</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">f1</td><td>First frequency (usually L1) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">f2</td><td>Second frequency (usually L2) </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num1</td><td>First frequency number. Only used for GLONASS G1 and G2 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">num2</td><td>Second frequency number. Only used for GLONASS G1 and G2 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The ratio (f1/f2)^2 [-] </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>See <a class="el" href="citelist.html#CITEREF_is-gps-200m">[21]</a> IS-GPS-200 ch. 20.3.3.3.3.2 p.99 </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="GNSS_2Functions_8hpp_source.html">Functions.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

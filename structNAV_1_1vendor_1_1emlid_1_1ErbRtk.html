@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,8 +119,7 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html',''); init
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1emlid_1_1ErbRtk-members.html">List of all members</a>  </div>
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::emlid::ErbRtk Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -128,43 +128,182 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html',''); init
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a36ed9623860dfeac37bbccbed493e9ef" id="r_a36ed9623860dfeac37bbccbed493e9ef"><td class="memItemLeft" align="right" valign="top"><a id="a36ed9623860dfeac37bbccbed493e9ef" name="a36ed9623860dfeac37bbccbed493e9ef"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>age</b></td></tr>
-<tr class="memdesc:a36ed9623860dfeac37bbccbed493e9ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Age of differential [s/// 1e-2] (0 when no corrections, 0xFFFF indicates overflow) <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:a36ed9623860dfeac37bbccbed493e9ef" id="r_a36ed9623860dfeac37bbccbed493e9ef"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36ed9623860dfeac37bbccbed493e9ef">age</a></td></tr>
+<tr class="memdesc:a36ed9623860dfeac37bbccbed493e9ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Age of differential [s/// 1e-2] (0 when no corrections, 0xFFFF indicates overflow)  <br /></td></tr>
 <tr class="separator:a36ed9623860dfeac37bbccbed493e9ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a464813985360b350cd5a561e5ab92ec4" id="r_a464813985360b350cd5a561e5ab92ec4"><td class="memItemLeft" align="right" valign="top"><a id="a464813985360b350cd5a561e5ab92ec4" name="a464813985360b350cd5a561e5ab92ec4"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>arRatio</b></td></tr>
-<tr class="memdesc:a464813985360b350cd5a561e5ab92ec4"><td class="mdescLeft">&#160;</td><td class="mdescRight">AR Ratio [*1e-1]. <br /></td></tr>
+<tr class="memitem:a464813985360b350cd5a561e5ab92ec4" id="r_a464813985360b350cd5a561e5ab92ec4"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a464813985360b350cd5a561e5ab92ec4">arRatio</a></td></tr>
+<tr class="memdesc:a464813985360b350cd5a561e5ab92ec4"><td class="mdescLeft">&#160;</td><td class="mdescRight">AR Ratio [*1e-1].  <br /></td></tr>
 <tr class="separator:a464813985360b350cd5a561e5ab92ec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a546b70ca39da131bdbff121272718e7f" id="r_a546b70ca39da131bdbff121272718e7f"><td class="memItemLeft" align="right" valign="top"><a id="a546b70ca39da131bdbff121272718e7f" name="a546b70ca39da131bdbff121272718e7f"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>baselineD</b></td></tr>
-<tr class="memdesc:a546b70ca39da131bdbff121272718e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the down axis [mm]. <br /></td></tr>
+<tr class="memitem:a546b70ca39da131bdbff121272718e7f" id="r_a546b70ca39da131bdbff121272718e7f"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a546b70ca39da131bdbff121272718e7f">baselineD</a></td></tr>
+<tr class="memdesc:a546b70ca39da131bdbff121272718e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the down axis [mm].  <br /></td></tr>
 <tr class="separator:a546b70ca39da131bdbff121272718e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91af9c579d5e30ff0f6256651867b441" id="r_a91af9c579d5e30ff0f6256651867b441"><td class="memItemLeft" align="right" valign="top"><a id="a91af9c579d5e30ff0f6256651867b441" name="a91af9c579d5e30ff0f6256651867b441"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>baselineE</b></td></tr>
-<tr class="memdesc:a91af9c579d5e30ff0f6256651867b441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the east axis [mm]. <br /></td></tr>
+<tr class="memitem:a91af9c579d5e30ff0f6256651867b441" id="r_a91af9c579d5e30ff0f6256651867b441"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91af9c579d5e30ff0f6256651867b441">baselineE</a></td></tr>
+<tr class="memdesc:a91af9c579d5e30ff0f6256651867b441"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the east axis [mm].  <br /></td></tr>
 <tr class="separator:a91af9c579d5e30ff0f6256651867b441"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a077a4d985c0e5cbbf5f9747732fb8880" id="r_a077a4d985c0e5cbbf5f9747732fb8880"><td class="memItemLeft" align="right" valign="top"><a id="a077a4d985c0e5cbbf5f9747732fb8880" name="a077a4d985c0e5cbbf5f9747732fb8880"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>baselineN</b></td></tr>
-<tr class="memdesc:a077a4d985c0e5cbbf5f9747732fb8880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the north axis [mm]. <br /></td></tr>
+<tr class="memitem:a077a4d985c0e5cbbf5f9747732fb8880" id="r_a077a4d985c0e5cbbf5f9747732fb8880"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a077a4d985c0e5cbbf5f9747732fb8880">baselineN</a></td></tr>
+<tr class="memdesc:a077a4d985c0e5cbbf5f9747732fb8880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between base and rover along the north axis [mm].  <br /></td></tr>
 <tr class="separator:a077a4d985c0e5cbbf5f9747732fb8880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbdd49c32b32487cb2fb9f4c1c091bd1" id="r_afbdd49c32b32487cb2fb9f4c1c091bd1"><td class="memItemLeft" align="right" valign="top"><a id="afbdd49c32b32487cb2fb9f4c1c091bd1" name="afbdd49c32b32487cb2fb9f4c1c091bd1"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>numSV</b></td></tr>
-<tr class="memdesc:afbdd49c32b32487cb2fb9f4c1c091bd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of satellites used for RTK calculation. <br /></td></tr>
+<tr class="memitem:afbdd49c32b32487cb2fb9f4c1c091bd1" id="r_afbdd49c32b32487cb2fb9f4c1c091bd1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afbdd49c32b32487cb2fb9f4c1c091bd1">numSV</a></td></tr>
+<tr class="memdesc:afbdd49c32b32487cb2fb9f4c1c091bd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of satellites used for RTK calculation.  <br /></td></tr>
 <tr class="separator:afbdd49c32b32487cb2fb9f4c1c091bd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae75bfd230c768408c541ec7c0bf2327" id="r_aae75bfd230c768408c541ec7c0bf2327"><td class="memItemLeft" align="right" valign="top"><a id="aae75bfd230c768408c541ec7c0bf2327" name="aae75bfd230c768408c541ec7c0bf2327"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>timeGPS</b></td></tr>
-<tr class="memdesc:aae75bfd230c768408c541ec7c0bf2327"><td class="mdescLeft">&#160;</td><td class="mdescRight">GPS Time of Week of last baseline [ms]. <br /></td></tr>
+<tr class="memitem:aae75bfd230c768408c541ec7c0bf2327" id="r_aae75bfd230c768408c541ec7c0bf2327"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae75bfd230c768408c541ec7c0bf2327">timeGPS</a></td></tr>
+<tr class="memdesc:aae75bfd230c768408c541ec7c0bf2327"><td class="mdescLeft">&#160;</td><td class="mdescRight">GPS Time of Week of last baseline [ms].  <br /></td></tr>
 <tr class="separator:aae75bfd230c768408c541ec7c0bf2327"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59e757c82f844dc1727cfc6b58d13094" id="r_a59e757c82f844dc1727cfc6b58d13094"><td class="memItemLeft" align="right" valign="top"><a id="a59e757c82f844dc1727cfc6b58d13094" name="a59e757c82f844dc1727cfc6b58d13094"></a>
-uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>weekGPS</b></td></tr>
-<tr class="memdesc:a59e757c82f844dc1727cfc6b58d13094"><td class="mdescLeft">&#160;</td><td class="mdescRight">GPS Week Number of last baseline [weeks]. <br /></td></tr>
+<tr class="memitem:a59e757c82f844dc1727cfc6b58d13094" id="r_a59e757c82f844dc1727cfc6b58d13094"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59e757c82f844dc1727cfc6b58d13094">weekGPS</a></td></tr>
+<tr class="memdesc:a59e757c82f844dc1727cfc6b58d13094"><td class="mdescLeft">&#160;</td><td class="mdescRight">GPS Week Number of last baseline [weeks].  <br /></td></tr>
 <tr class="separator:a59e757c82f844dc1727cfc6b58d13094"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>RTK Information This message output information about RTK. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00132">132</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="a36ed9623860dfeac37bbccbed493e9ef" name="a36ed9623860dfeac37bbccbed493e9ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36ed9623860dfeac37bbccbed493e9ef">&#9670;&#160;</a></span>age</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t NAV::vendor::emlid::ErbRtk::age</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Age of differential [s/// 1e-2] (0 when no corrections, 0xFFFF indicates overflow) </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00135">135</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a464813985360b350cd5a561e5ab92ec4" name="a464813985360b350cd5a561e5ab92ec4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a464813985360b350cd5a561e5ab92ec4">&#9670;&#160;</a></span>arRatio</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t NAV::vendor::emlid::ErbRtk::arRatio</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>AR Ratio [*1e-1]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00139">139</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a546b70ca39da131bdbff121272718e7f" name="a546b70ca39da131bdbff121272718e7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a546b70ca39da131bdbff121272718e7f">&#9670;&#160;</a></span>baselineD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t NAV::vendor::emlid::ErbRtk::baselineD</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Distance between base and rover along the down axis [mm]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00138">138</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a91af9c579d5e30ff0f6256651867b441" name="a91af9c579d5e30ff0f6256651867b441"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91af9c579d5e30ff0f6256651867b441">&#9670;&#160;</a></span>baselineE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t NAV::vendor::emlid::ErbRtk::baselineE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Distance between base and rover along the east axis [mm]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00137">137</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a077a4d985c0e5cbbf5f9747732fb8880" name="a077a4d985c0e5cbbf5f9747732fb8880"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a077a4d985c0e5cbbf5f9747732fb8880">&#9670;&#160;</a></span>baselineN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t NAV::vendor::emlid::ErbRtk::baselineN</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Distance between base and rover along the north axis [mm]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00136">136</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="afbdd49c32b32487cb2fb9f4c1c091bd1" name="afbdd49c32b32487cb2fb9f4c1c091bd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbdd49c32b32487cb2fb9f4c1c091bd1">&#9670;&#160;</a></span>numSV</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::vendor::emlid::ErbRtk::numSV</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of satellites used for RTK calculation. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00134">134</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aae75bfd230c768408c541ec7c0bf2327" name="aae75bfd230c768408c541ec7c0bf2327"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae75bfd230c768408c541ec7c0bf2327">&#9670;&#160;</a></span>timeGPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t NAV::vendor::emlid::ErbRtk::timeGPS</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>GPS Time of Week of last baseline [ms]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00141">141</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a59e757c82f844dc1727cfc6b58d13094" name="a59e757c82f844dc1727cfc6b58d13094"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59e757c82f844dc1727cfc6b58d13094">&#9670;&#160;</a></span>weekGPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t NAV::vendor::emlid::ErbRtk::weekGPS</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>GPS Week Number of last baseline [weeks]. </p>
+
+<p class="definition">Definition at line <a class="el" href="EmlidTypes_8hpp_source.html#l00140">140</a> of file <a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/Emlid/<a class="el" href="EmlidTypes_8hpp_source.html">EmlidTypes.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -172,7 +311,7 @@ uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>weekGPS</b></td><
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>emlid</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html">ErbRtk</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1emlid.html">emlid</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1emlid_1_1ErbRtk.html">ErbRtk</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

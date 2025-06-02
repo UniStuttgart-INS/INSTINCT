@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,6 +119,7 @@ $(function(){initNavTree('FileDialog_8hpp.html',''); initResizable(true); });
 
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">FileDialog.hpp File Reference</div></div>
 </div><!--header-->
@@ -128,12 +130,21 @@ $(function(){initNavTree('FileDialog_8hpp.html',''); initResizable(true); });
 
 <p><a href="FileDialog_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV.html">NAV</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui.html">NAV::gui</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html">NAV::gui::widgets</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a448004a3f95ce212f258ccebe38aaf99" id="r_a448004a3f95ce212f258ccebe38aaf99"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a448004a3f95ce212f258ccebe38aaf99">NAV::gui::widgets::FileDialogLoad</a> (std::string &amp;path, const char *vName, const char *vFilters, const std::vector&lt; std::string &gt; &amp;extensions, const std::filesystem::path &amp;startPath, size_t id, const std::string &amp;nameId, const char *buttonText=&quot;Choose&quot;)</td></tr>
+<tr class="memitem:a448004a3f95ce212f258ccebe38aaf99" id="r_a448004a3f95ce212f258ccebe38aaf99"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a448004a3f95ce212f258ccebe38aaf99">NAV::gui::widgets::FileDialogLoad</a> (std::string &amp;path, const char *vName, const char *vFilters, const std::vector&lt; std::string &gt; &amp;extensions, const std::filesystem::path &amp;startPath, size_t id, const std::string &amp;nameId, const char *buttonText=&quot;Choose&quot;)</td></tr>
 <tr class="memdesc:a448004a3f95ce212f258ccebe38aaf99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows an InputText and a button which opens a file dialog to select a path to load a file to.  <br /></td></tr>
 <tr class="separator:a448004a3f95ce212f258ccebe38aaf99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07507ff01b4c5e6374fe424e5bddb244" id="r_a07507ff01b4c5e6374fe424e5bddb244"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07507ff01b4c5e6374fe424e5bddb244">NAV::gui::widgets::FileDialogSave</a> (std::string &amp;path, const char *vName, const char *vFilters, const std::vector&lt; std::string &gt; &amp;extensions, const std::filesystem::path &amp;startPath, size_t id, const std::string &amp;nameId, const char *buttonText=&quot;Choose&quot;)</td></tr>
+<tr class="memitem:a07507ff01b4c5e6374fe424e5bddb244" id="r_a07507ff01b4c5e6374fe424e5bddb244"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceNAV_1_1gui_1_1widgets.html#a07507ff01b4c5e6374fe424e5bddb244">NAV::gui::widgets::FileDialogSave</a> (std::string &amp;path, const char *vName, const char *vFilters, const std::vector&lt; std::string &gt; &amp;extensions, const std::filesystem::path &amp;startPath, size_t id, const std::string &amp;nameId, const char *buttonText=&quot;Choose&quot;)</td></tr>
 <tr class="memdesc:a07507ff01b4c5e6374fe424e5bddb244"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows an InputText and a button which opens a file dialog to select a path to save a file to.  <br /></td></tr>
 <tr class="separator:a07507ff01b4c5e6374fe424e5bddb244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -141,142 +152,9 @@ Functions</h2></td></tr>
 <div class="textblock"><p>File Chooser. </p>
 <dl class="section author"><dt>Author</dt><dd>T. Topp (<a href="#" onclick="location.href='mai'+'lto:'+'top'+'p@'+'ins'+'.u'+'ni-'+'st'+'utt'+'ga'+'rt.'+'de'; return false;">topp@<span class="obfuscator">.nosp@m.</span>ins.<span class="obfuscator">.nosp@m.</span>uni-s<span class="obfuscator">.nosp@m.</span>tutt<span class="obfuscator">.nosp@m.</span>gart.<span class="obfuscator">.nosp@m.</span>de</a>) </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2021-01-18 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a448004a3f95ce212f258ccebe38aaf99" name="a448004a3f95ce212f258ccebe38aaf99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a448004a3f95ce212f258ccebe38aaf99">&#9670;&#160;</a></span>FileDialogLoad()</h2>
 
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::FileDialogLoad </td>
-          <td>(</td>
-          <td class="paramtype">std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>vName</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>vFilters</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>extensions</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;</td>          <td class="paramname"><span class="paramname"><em>startPath</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>buttonText</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;Choose&quot;</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows an InputText and a button which opens a file dialog to select a path to load a file to. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">path</td><td>String to store the path in </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vName</td><td>Window title </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vFilters</td><td>Filter to apply for file names </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">extensions</td><td>Extensions to filter </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">startPath</td><td>Path to the directory to display initially </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for creating the dialog uid </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name of the node triggering the window used for logging </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">buttonText</td><td>Text to display on the button </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the filepath was changed </dd></dl>
-
-</div>
-</div>
-<a id="a07507ff01b4c5e6374fe424e5bddb244" name="a07507ff01b4c5e6374fe424e5bddb244"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07507ff01b4c5e6374fe424e5bddb244">&#9670;&#160;</a></span>FileDialogSave()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool NAV::gui::widgets::FileDialogSave </td>
-          <td>(</td>
-          <td class="paramtype">std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>vName</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>vFilters</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>extensions</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::filesystem::path &amp;</td>          <td class="paramname"><span class="paramname"><em>startPath</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>nameId</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>buttonText</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;Choose&quot;</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shows an InputText and a button which opens a file dialog to select a path to save a file to. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">path</td><td>String to store the path in </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vName</td><td>Window title </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vFilters</td><td>Filter to apply for file names </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">extensions</td><td>Extensions to filter </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">startPath</td><td>Path to the directory to display initially </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Unique id for creating the dialog uid </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nameId</td><td>Name of the node triggering the window used for logging </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">buttonText</td><td>Text to display on the button </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True if the filepath was changed </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition in file <a class="el" href="FileDialog_8hpp_source.html">FileDialog.hpp</a>.</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

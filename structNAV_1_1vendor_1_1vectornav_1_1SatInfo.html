@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -118,9 +119,8 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html','');
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo-members.html">List of all members</a>  </div>
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">NAV::vendor::vectornav::SatInfo Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -129,26 +129,63 @@ $(function(){initNavTree('structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html','');
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
+Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html">SatInfoElement</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information for a certain satellite.  <a href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:aad473b9b5db4dd9ec18ed2f8d9feba3c" id="r_aad473b9b5db4dd9ec18ed2f8d9feba3c"><td class="memItemLeft" align="right" valign="top"><a id="aad473b9b5db4dd9ec18ed2f8d9feba3c" name="aad473b9b5db4dd9ec18ed2f8d9feba3c"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>numSats</b></td></tr>
-<tr class="memdesc:aad473b9b5db4dd9ec18ed2f8d9feba3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of measurements to follow. <br /></td></tr>
+Data Fields</h2></td></tr>
+<tr class="memitem:aad473b9b5db4dd9ec18ed2f8d9feba3c" id="r_aad473b9b5db4dd9ec18ed2f8d9feba3c"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aad473b9b5db4dd9ec18ed2f8d9feba3c">numSats</a></td></tr>
+<tr class="memdesc:aad473b9b5db4dd9ec18ed2f8d9feba3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of measurements to follow.  <br /></td></tr>
 <tr class="separator:aad473b9b5db4dd9ec18ed2f8d9feba3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5717705f3209dead0ee21c511338716f" id="r_a5717705f3209dead0ee21c511338716f"><td class="memItemLeft" align="right" valign="top"><a id="a5717705f3209dead0ee21c511338716f" name="a5717705f3209dead0ee21c511338716f"></a>
-std::vector&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html">SatInfoElement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>satellites</b></td></tr>
-<tr class="memdesc:a5717705f3209dead0ee21c511338716f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html" title="Information and measurements pertaining to each GNSS satellite in view.">SatInfo</a> container. <br /></td></tr>
+<tr class="memitem:a5717705f3209dead0ee21c511338716f" id="r_a5717705f3209dead0ee21c511338716f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html">SatInfoElement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5717705f3209dead0ee21c511338716f">satellites</a></td></tr>
+<tr class="memdesc:a5717705f3209dead0ee21c511338716f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html" title="Information and measurements pertaining to each GNSS satellite in view.">SatInfo</a> container.  <br /></td></tr>
 <tr class="separator:a5717705f3209dead0ee21c511338716f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Information and measurements pertaining to each GNSS satellite in view. </p>
 <p>The size of this packet will vary depending upon the number of satellites in view. To parse this packet you will first need to read the number of satellites (numSats) in the beginning of the packet to determine the packets overall length. The total length of the packet payload will be 2 + N*8 bytes where N is the number of satellites (numSats). </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavTypes_8hpp_source.html#l00164">164</a> of file <a class="el" href="VectorNavTypes_8hpp_source.html">VectorNavTypes.hpp</a>.</p>
+</div><h2 class="groupheader">Field Documentation</h2>
+<a id="aad473b9b5db4dd9ec18ed2f8d9feba3c" name="aad473b9b5db4dd9ec18ed2f8d9feba3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad473b9b5db4dd9ec18ed2f8d9feba3c">&#9670;&#160;</a></span>numSats</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t NAV::vendor::vectornav::SatInfo::numSats</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of measurements to follow. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavTypes_8hpp_source.html#l00247">247</a> of file <a class="el" href="VectorNavTypes_8hpp_source.html">VectorNavTypes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a5717705f3209dead0ee21c511338716f" name="a5717705f3209dead0ee21c511338716f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5717705f3209dead0ee21c511338716f">&#9670;&#160;</a></span>satellites</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_1_1SatInfoElement.html">SatInfoElement</a>&gt; NAV::vendor::vectornav::SatInfo::satellites</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html" title="Information and measurements pertaining to each GNSS satellite in view.">SatInfo</a> container. </p>
+
+<p class="definition">Definition at line <a class="el" href="VectorNavTypes_8hpp_source.html#l00249">249</a> of file <a class="el" href="VectorNavTypes_8hpp_source.html">VectorNavTypes.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/util/Vendor/VectorNav/<a class="el" href="VectorNavTypes_8hpp_source.html">VectorNavTypes.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -156,7 +193,7 @@ std::vector&lt; <a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo_
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><b>vendor</b></li><li class="navelem"><b>vectornav</b></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html">SatInfo</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor.html">vendor</a></li><li class="navelem"><a class="el" href="namespaceNAV_1_1vendor_1_1vectornav.html">vectornav</a></li><li class="navelem"><a class="el" href="structNAV_1_1vendor_1_1vectornav_1_1SatInfo.html">SatInfo</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

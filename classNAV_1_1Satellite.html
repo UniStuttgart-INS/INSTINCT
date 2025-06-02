@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -119,8 +120,7 @@ $(function(){initNavTree('classNAV_1_1Satellite.html',''); initResizable(true); 
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classNAV_1_1Satellite-members.html">List of all members</a>  </div>
+<a href="#pri-attribs">Private Attributes</a>  </div>
   <div class="headertitle"><div class="title">NAV::Satellite Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -148,9 +148,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a283c591730ef27559be5ff5d21f98815" id="r_a283c591730ef27559be5ff5d21f98815"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structNAV_1_1Orbit_1_1PosVelAccel.html">Orbit::PosVelAccel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a283c591730ef27559be5ff5d21f98815">calcSatellitePosVelAccel</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;transTime) const</td></tr>
 <tr class="memdesc:a283c591730ef27559be5ff5d21f98815"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates position, velocity and acceleration of the satellite at transmission time.  <br /></td></tr>
 <tr class="separator:a283c591730ef27559be5ff5d21f98815"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b516aed2368eff98acf5c7b20d618cc" id="r_a4b516aed2368eff98acf5c7b20d618cc"><td class="memItemLeft" align="right" valign="top"><a id="a4b516aed2368eff98acf5c7b20d618cc" name="a4b516aed2368eff98acf5c7b20d618cc"></a>
-const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>getNavigationData</b> () const</td></tr>
-<tr class="memdesc:a4b516aed2368eff98acf5c7b20d618cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the navigation data list. <br /></td></tr>
+<tr class="memitem:a4b516aed2368eff98acf5c7b20d618cc" id="r_a4b516aed2368eff98acf5c7b20d618cc"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b516aed2368eff98acf5c7b20d618cc">getNavigationData</a> () const</td></tr>
+<tr class="memdesc:a4b516aed2368eff98acf5c7b20d618cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the navigation data list.  <br /></td></tr>
 <tr class="separator:a4b516aed2368eff98acf5c7b20d618cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5a531ac27f597c4542fa5a557668264" id="r_ad5a531ac27f597c4542fa5a557668264"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5a531ac27f597c4542fa5a557668264">isHealthy</a> (const <a class="el" href="classNAV_1_1InsTime.html">InsTime</a> &amp;recvTime) const</td></tr>
 <tr class="memdesc:ad5a531ac27f597c4542fa5a557668264"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the signal is healthy.  <br /></td></tr>
@@ -161,13 +160,14 @@ const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNav
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ae61f71c59efc3be2a8c39fbb918621df" id="r_ae61f71c59efc3be2a8c39fbb918621df"><td class="memItemLeft" align="right" valign="top"><a id="ae61f71c59efc3be2a8c39fbb918621df" name="ae61f71c59efc3be2a8c39fbb918621df"></a>
-std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_navigationData</b></td></tr>
-<tr class="memdesc:ae61f71c59efc3be2a8c39fbb918621df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time sorted list of orbit and clock information of the satellite. <br /></td></tr>
+<tr class="memitem:ae61f71c59efc3be2a8c39fbb918621df" id="r_ae61f71c59efc3be2a8c39fbb918621df"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61f71c59efc3be2a8c39fbb918621df">m_navigationData</a></td></tr>
+<tr class="memdesc:ae61f71c59efc3be2a8c39fbb918621df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time sorted list of orbit and clock information of the satellite.  <br /></td></tr>
 <tr class="separator:ae61f71c59efc3be2a8c39fbb918621df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classNAV_1_1Satellite.html" title="Satellite class.">Satellite</a> class. </p>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8hpp_source.html#l00029">29</a> of file <a class="el" href="Satellite_8hpp_source.html">Satellite.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ac2ee991b049e26960bbdfdad6b546922" name="ac2ee991b049e26960bbdfdad6b546922"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2ee991b049e26960bbdfdad6b546922">&#9670;&#160;</a></span>addSatNavData()</h2>
@@ -191,6 +191,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00046">46</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
 
 </div>
 </div>
@@ -236,6 +238,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00036">36</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
+
 </div>
 </div>
 <a id="acb2c6352781ed0b4953db3acfcd8cbe5" name="acb2c6352781ed0b4953db3acfcd8cbe5"></a>
@@ -268,6 +272,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00016">16</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
 
 </div>
 </div>
@@ -302,6 +308,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00031">31</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
+
 </div>
 </div>
 <a id="afb97f8909e3dfbf3ed3668721a162ee1" name="afb97f8909e3dfbf3ed3668721a162ee1"></a>
@@ -334,6 +342,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00021">21</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
 
 </div>
 </div>
@@ -368,6 +378,37 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00026">26</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4b516aed2368eff98acf5c7b20d618cc" name="a4b516aed2368eff98acf5c7b20d618cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b516aed2368eff98acf5c7b20d618cc">&#9670;&#160;</a></span>getNavigationData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a> &gt; &gt; &amp; NAV::Satellite::getNavigationData </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the navigation data list. </p>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00066">66</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
+
 </div>
 </div>
 <a id="ad5a531ac27f597c4542fa5a557668264" name="ad5a531ac27f597c4542fa5a557668264"></a>
@@ -400,6 +441,8 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00041">41</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
 
 </div>
 </div>
@@ -434,17 +477,47 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="classNAV_1_1SatNavData.h
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="Satellite_8cpp_source.html#l00071">71</a> of file <a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<h2 class="groupheader">Field Documentation</h2>
+<a id="ae61f71c59efc3be2a8c39fbb918621df" name="ae61f71c59efc3be2a8c39fbb918621df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae61f71c59efc3be2a8c39fbb918621df">&#9670;&#160;</a></span>m_navigationData</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classNAV_1_1SatNavData.html">SatNavData</a>&gt; &gt; NAV::Satellite::m_navigationData</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Time sorted list of orbit and clock information of the satellite. </p>
+
+<p class="definition">Definition at line <a class="el" href="Satellite_8hpp_source.html#l00069">69</a> of file <a class="el" href="Satellite_8hpp_source.html">Satellite.hpp</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Satellite/<a class="el" href="Satellite_8hpp_source.html">Satellite.hpp</a></li>
+<li>/home/runner/work/INSTINCT/INSTINCT/src/Navigation/GNSS/Satellite/<a class="el" href="Satellite_8cpp_source.html">Satellite.cpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>NAV</b></li><li class="navelem"><a class="el" href="classNAV_1_1Satellite.html">Satellite</a></li>
+    <li class="navelem"><a class="el" href="namespaceNAV.html">NAV</a></li><li class="navelem"><a class="el" href="classNAV_1_1Satellite.html">Satellite</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>

@@ -20,6 +20,8 @@ var classNAV_1_1OutputPin =
     [ "operator=", "classNAV_1_1OutputPin.html#a4ef619b7975bf2ecd573d200b6cb40b2", null ],
     [ "operator=", "classNAV_1_1OutputPin.html#a7fdc613f50cb218e37a5d1ed98346ad8", null ],
     [ "recreateLink", "classNAV_1_1OutputPin.html#a0d6aed9dd5de175b94fd106c32b3dd31", null ],
+    [ "InputPin", "classNAV_1_1OutputPin.html#ab0d849738cf354a13785207c8355212f", null ],
+    [ "Pin", "classNAV_1_1OutputPin.html#a1195cddd885fda459b6c5e265505a8c0", null ],
     [ "blocksConnectedNodeFromFinishing", "classNAV_1_1OutputPin.html#acee5fdaa70ee5261b91cb3952de54f5a", null ],
     [ "data", "classNAV_1_1OutputPin.html#a7fecdbbc7997dbda36faa9780906158d", null ],
     [ "dataAccessConditionVariable", "classNAV_1_1OutputPin.html#a52a39a12bae4e4d48541ac08ec2f6ef5", null ],

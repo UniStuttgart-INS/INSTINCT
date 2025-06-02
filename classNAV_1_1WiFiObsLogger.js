@@ -4,7 +4,7 @@ var classNAV_1_1WiFiObsLogger =
     [ "~WiFiObsLogger", "classNAV_1_1WiFiObsLogger.html#a9974491a67bcd36e121eda9b390353b4", null ],
     [ "WiFiObsLogger", "classNAV_1_1WiFiObsLogger.html#a82d0493180a07d0d2c46074f739e4848", null ],
     [ "WiFiObsLogger", "classNAV_1_1WiFiObsLogger.html#a49d03688bc4617e9c22a2ad564ae8886", null ],
-    [ "category", "classNAV_1_1WiFiObsLogger.html#aab24644e218c677a33098031b4c058fd", null ],
+    [ "category", "classNAV_1_1WiFiObsLogger.html#a236cac7b8a5a985cad16f416707ea203", null ],
     [ "deinitialize", "classNAV_1_1WiFiObsLogger.html#a4c05e96ce2cdbc8a8689822eedf5a129", null ],
     [ "flush", "classNAV_1_1WiFiObsLogger.html#ab2b0a4a961eb8cb323acfbdc6fcbc234", null ],
     [ "guiConfig", "classNAV_1_1WiFiObsLogger.html#a110ecf596657987df0385350e40a6afc", null ],
@@ -14,6 +14,6 @@ var classNAV_1_1WiFiObsLogger =
     [ "restore", "classNAV_1_1WiFiObsLogger.html#a872c898e1b90ca67bac90b57ec09e580", null ],
     [ "save", "classNAV_1_1WiFiObsLogger.html#ad4493990b197a87379cac870780c71ea", null ],
     [ "type", "classNAV_1_1WiFiObsLogger.html#a8b828317781d763ec25112b1d0e1364b", null ],
-    [ "typeStatic", "classNAV_1_1WiFiObsLogger.html#a5aee0106eb5eafe200d655d54e6572f0", null ],
+    [ "typeStatic", "classNAV_1_1WiFiObsLogger.html#a7d806391408de5ae5fefd14bcfb1d7a5", null ],
     [ "writeObservation", "classNAV_1_1WiFiObsLogger.html#a8f09d86dba82d25fe59a0836fd18433e", null ]
 ];

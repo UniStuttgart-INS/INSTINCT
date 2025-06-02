@@ -21,6 +21,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
   <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen-awesome-sidebar-only-darkmode-toggle.css" rel="stylesheet" type="text/css"/>
@@ -599,7 +600,7 @@ Exponential Matrix</h4>
 <p><a class="anchor" id="eq-LCKF_e-Phi-exp"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Phi-exp}
   \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
-\end{equation}" src="form_278.svg" width="548" height="19"/>
+\end{equation}" src="form_276.svg" width="548" height="19"/>
 </p>
 <p>see <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.33, p. 97</p>
 <h4><a class="anchor" id="autotoc_md28"></a>
@@ -608,7 +609,7 @@ Taylor series</h4>
 <p><a class="anchor" id="eq-LCKF_e-Phi-Taylor"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Phi-Taylor}
   \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
-\end{equation}" src="form_279.svg" width="679" height="51"/>
+\end{equation}" src="form_277.svg" width="679" height="51"/>
 </p>
 <p>see <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 3.2.3, eq. 3.34, p. 98</p>
 <h3><a class="anchor" id="LooselyCoupledKF_e-KF-Q"></a>
@@ -617,13 +618,13 @@ Process noise covariance matrix Q</h3>
 <p><a class="anchor" id="eq-LCKF_e-Q-exact"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Q-exact}
   \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
-\end{equation}" src="form_280.svg" width="772" height="47"/>
+\end{equation}" src="form_278.svg" width="772" height="47"/>
 </p>
 <p>In Groves <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a>, this matrix is approximated as (see ch. 3.2.3, eq. 3.43/3.45, p. 99):</p>
 <p><a class="anchor" id="eq-LCKF_e-Q-approx"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Q-approx}
   \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
-\end{equation}" src="form_282.svg" width="599" height="21"/>
+\end{equation}" src="form_279.svg" width="599" height="21"/>
 </p>
 <p>This method resembles a Taylor expansion up to 1. order. Since Groves <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> models the IMU measurements and their biases as random walk processes (see section <a class="el" href="#LooselyCoupledKF_e-Groves-process-noise-definition">Groves' process noise definition</a>), only the van-Loan-method can be configured to model biases as Gauss-Markov 1. order processes.</p>
 <h3><a class="anchor" id="LooselyCoupledKF_e-KF-Phi-Q-Van-Loan"></a>
@@ -634,7 +635,7 @@ Van Loan method</h3>
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Loan-A}
   \mathbf{A} = \begin{bmatrix} -\mathbf{F} &amp; \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &amp;            \mathbf{F}^T          \end{bmatrix} \Delta t
-\end{equation}" src="form_296.svg" width="586" height="42"/>
+\end{equation}" src="form_280.svg" width="586" height="42"/>
 </p>
 </li>
 <li>Calculate the exponential of <img class="formulaInl" alt="$ \mathbf{A} $" src="form_85.svg" width="16" height="14"/> <a class="anchor" id="eq-LCKF_e-Loan-B"></a>       <p class="formulaDsp">
@@ -645,19 +646,19 @@ Van Loan method</h3>
                                             \mathbf{0}          &amp; \mathbf{\Phi}^T                     \end{array} \right]
                                        = \begin{bmatrix} \mathbf{B}_{11} &amp; \mathbf{B}_{12} \\
                                                          \mathbf{B}_{21} &amp; \mathbf{B}_{22} \end{bmatrix}
-\end{equation}" src="form_298.svg" width="683" height="67"/>
+\end{equation}" src="form_281.svg" width="683" height="67"/>
 </p>
 </li>
 <li>Calculate the state transition matrix <img class="formulaInl" alt="$ \mathbf{\Phi} $" src="form_92.svg" width="14" height="14"/> as <a class="anchor" id="eq-LCKF_e-Loan-Phi"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Loan-Phi}
   \mathbf{\Phi} = \mathbf{B}_{22}^T
-\end{equation}" src="form_300.svg" width="527" height="21"/>
+\end{equation}" src="form_282.svg" width="527" height="21"/>
 </p>
 </li>
 <li>Calculate the process noise covariance matrix <img class="formulaInl" alt="$ \mathbf{Q} $" src="form_94.svg" width="16" height="16"/> as <a class="anchor" id="eq-LCKF_e-Loan-Q"></a>  <p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Loan-Q}
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
-\end{equation}" src="form_301.svg" width="534" height="19"/>
+\end{equation}" src="form_283.svg" width="534" height="19"/>
 </p>
 </li>
 </ol>
@@ -685,7 +686,7 @@ Error covariance matrix P</h2>
       \fhighlight[orange!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
   \end{tikzpicture}
-\end{equation}" src="form_309.svg" width="691" height="233"/>
+\end{equation}" src="form_284.svg" width="691" height="233"/>
 </p>
 <h2><a class="anchor" id="LooselyCoupledKF_e-deltaz"></a>
 Measurement innovation 𝛿z</h2>
@@ -693,11 +694,11 @@ Measurement innovation 𝛿z</h2>
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-deltaz}
   \boldsymbol{\delta} \mathbf{z}^e = \begin{pmatrix} \tilde{\mathbf{r}}_{b,G}^e - \hat{\mathbf{r}}_{b}^e - \mathbf{C}_b^e \mathbf{l}_{ba}^b \\
                                       \tilde{\mathbf{v}}^e_{G} - \hat{\mathbf{v}}^e - \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \end{pmatrix}
-\end{equation}" src="form_313.svg" width="669" height="44"/>
+\end{equation}" src="form_285.svg" width="669" height="44"/>
 </p>
 <p>where</p><ul>
-<li><img class="formulaInl" alt="$ G $" src="form_314.svg" width="14" height="16"/> denotes GNSS indicated measurements</li>
-<li><img class="formulaInl" alt="$ \mathbf{l}_{ba}^b $" src="form_315.svg" width="19" height="21"/> is the lever arm from the INS to the GNSS antenna in [m]</li>
+<li><img class="formulaInl" alt="$ G $" src="form_286.svg" width="14" height="16"/> denotes GNSS indicated measurements</li>
+<li><img class="formulaInl" alt="$ \mathbf{l}_{ba}^b $" src="form_287.svg" width="19" height="21"/> is the lever arm from the INS to the GNSS antenna in [m]</li>
 </ul>
 <p>This form corresponds to</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.3.1, eq. 14.102, p. 598</li>
@@ -708,7 +709,7 @@ Measurement sensitivity Matrix H</h2>
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-H-general}
   \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
                = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
-\end{equation}" src="form_320.svg" width="646" height="49"/>
+\end{equation}" src="form_288.svg" width="646" height="49"/>
 </p>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 3.4.1, eq. 3.90, p. 119</li>
@@ -731,7 +732,7 @@ Measurement sensitivity Matrix H</h2>
       \fhighlight[orange!20]{m-2-5}{m-2-5}
     \end{pgfonlayer}
   \end{tikzpicture}
-\end{equation}" src="form_325.svg" width="693" height="96"/>
+\end{equation}" src="form_289.svg" width="693" height="96"/>
 </p>
 <p>where <a class="anchor" id="eq-LCKF_e-H-sub"></a>      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-H-sub}
@@ -740,7 +741,7 @@ Measurement sensitivity Matrix H</h2>
   \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^e}    &amp;\approx \left[ \left\{ \mathbf{C}_b^e (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^e} &amp;\approx \mathbf{C}_b^e \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
-\end{equation}" src="form_327.svg" width="656" height="110"/>
+\end{equation}" src="form_290.svg" width="656" height="110"/>
 </p>
 <p>See</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.3.1, eq. 14.111/14.112, p. 600</li>
@@ -763,7 +764,7 @@ Measurement noise covariance matrix R</h2>
       \fhighlight[blue!20]{m-2-2}{m-2-2}
     \end{pgfonlayer}
   \end{tikzpicture}
-\end{equation}" src="form_331.svg" width="691" height="96"/>
+\end{equation}" src="form_291.svg" width="691" height="96"/>
 </p>
 <p>This variances can be set static or ideally come from the GNSS receiver.</p>
 <h1><a class="anchor" id="LooselyCoupledKF_e-Corrections"></a>
@@ -778,12 +779,12 @@ Position, Velocity, Attitude</h2>
   \boldsymbol{r}^{e,+} &amp;= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
   \boldsymbol{v}^{e,+} &amp;= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
 \end{aligned}
-\end{equation}" src="form_335.svg" width="564" height="46"/>
+\end{equation}" src="form_292.svg" width="564" height="46"/>
 </p>
-<p>The attitude correction can be derived from equation <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_336.svg" width="44" height="19"/> </a> (see <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.1.1, eq. 14.7, p. 564) <a class="anchor" id="eq-LCKF_e-correction-attitude"></a>  </p><p class="formulaDsp">
+<p>The attitude correction can be derived from equation <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_293.svg" width="44" height="19"/> </a> (see <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.1.1, eq. 14.7, p. 564) <a class="anchor" id="eq-LCKF_e-correction-attitude"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-correction-attitude}
   \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
-\end{equation}" src="form_338.svg" width="590" height="25"/>
+\end{equation}" src="form_294.svg" width="590" height="25"/>
 </p>
 <p>After applying the errors to the total state, the errors have to be reset to zero (closed-loop).</p>
 <h2><a class="anchor" id="LooselyCoupledKF_e-Corrections-Bias"></a>
@@ -795,7 +796,7 @@ Biases</h2>
   \boldsymbol{\Delta f}^{b,+}           &amp;= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
   \boldsymbol{\Delta \omega}_{ib}^{b,+} &amp;= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
-\end{equation}" src="form_340.svg" width="585" height="53"/>
+\end{equation}" src="form_295.svg" width="585" height="53"/>
 </p>
 <p>Afterwards this accumulated value can be applied to the measurements by subtracting it</p>
 <p><a class="anchor" id="eq-LCKF_e-correction-accel-gyro"></a>     </p><p class="formulaDsp">
@@ -804,7 +805,7 @@ Biases</h2>
   \boldsymbol{f}^{p,+}           &amp;= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
   \boldsymbol{\omega}_{ib}^{p,+} &amp;= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
 \end{aligned}
-\end{equation}" src="form_342.svg" width="590" height="53"/>
+\end{equation}" src="form_296.svg" width="590" height="53"/>
 </p>
 <p>Afterwards the bias in the error state gets reset to zero, as it is accounted for in the accumulated value.</p>
 <h1><a class="anchor" id="LooselyCoupledKF_e-Appendix"></a>
@@ -817,7 +818,7 @@ Position Equations</h3>
 <p><a class="anchor" id="eq-LCKF_e-Derivation-Position-timeDerivative"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-timeDerivative}
   \mathbf{\dotup{r}}_{eb}^e = \mathbf{v}_{eb}^e
-\end{equation}" src="form_347.svg" width="529" height="19"/>
+\end{equation}" src="form_297.svg" width="529" height="19"/>
 </p>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 5.3.4, eq. 5.37, p. 175</li>
@@ -827,42 +828,42 @@ Position Equations</h3>
 <p><a class="anchor" id="eq-LCKF_e-Derivation-Position-differential"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Position-differential}
   \boldsymbol{\delta}\mathbf{\dotup{r}}_{eb}^e = \highlight[cyan!20]{\mathbf{I}_3} \cdot \mathbf{v}_{eb}^e
-\end{equation}" src="form_349.svg" width="551" height="26"/>
+\end{equation}" src="form_298.svg" width="551" height="26"/>
 </p>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.47, p. 583</li>
 </ul>
 <h3><a class="anchor" id="LooselyCoupledKF_e-ErrorStateEquations-Derivation-Attitude"></a>
 Attitude Equations</h3>
-<p>The estimated attitude <img class="formulaInl" alt="$ \mathbf{\hat{C}}_b^e $" src="form_350.svg" width="21" height="23"/> can be written in terms of true direction cosine matrix <img class="formulaInl" alt="$ \mathbf{C}_b^e $" src="form_351.svg" width="21" height="18"/> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-estimate-true"></a>  </p><p class="formulaDsp">
+<p>The estimated attitude <img class="formulaInl" alt="$ \mathbf{\hat{C}}_b^e $" src="form_299.svg" width="21" height="23"/> can be written in terms of true direction cosine matrix <img class="formulaInl" alt="$ \mathbf{C}_b^e $" src="form_300.svg" width="21" height="18"/> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-estimate-true"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}
   \mathbf{\hat{C}}_b^e = \mathbf{B} \mathbf{C}_b^e
-\end{equation}" src="form_353.svg" width="534" height="23"/>
+\end{equation}" src="form_301.svg" width="534" height="23"/>
 </p>
-<p> where <img class="formulaInl" alt="$ \mathbf{B} $" src="form_354.svg" width="14" height="14"/> is the transformation from true reference axes to estimated reference axes and it can be approximated for small angle misalignments as <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-transformation"></a>  </p><p class="formulaDsp">
+<p> where <img class="formulaInl" alt="$ \mathbf{B} $" src="form_302.svg" width="14" height="14"/> is the transformation from true reference axes to estimated reference axes and it can be approximated for small angle misalignments as <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-transformation"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-transformation}
   \mathbf{B} = [\mathbf{I} - \mathbf{\Psi}], \quad \text{with}~ \mathbf{\Psi} = \begin{pmatrix} \delta\alpha \\ \delta\beta \\ \delta\gamma \end{pmatrix} \times
-\end{equation}" src="form_356.svg" width="625" height="63"/>
+\end{equation}" src="form_303.svg" width="625" height="63"/>
 </p>
-<p> with <img class="formulaInl" alt="$ \mathbf{\Psi} $" src="form_357.svg" width="16" height="14"/> being a skew symmetric matrix and <img class="formulaInl" alt="$ \delta\alpha, \delta\beta, \delta\gamma $" src="form_360.svg" width="74" height="19"/> being the attitude errors.</p>
-<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-transformation"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}" src="form_361.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-true"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}" src="form_362.svg" width="44" height="19"/> </a> gives <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-estimate-errors"></a>  </p><p class="formulaDsp">
+<p> with <img class="formulaInl" alt="$ \mathbf{\Psi} $" src="form_304.svg" width="16" height="14"/> being a skew symmetric matrix and <img class="formulaInl" alt="$ \delta\alpha, \delta\beta, \delta\gamma $" src="form_305.svg" width="74" height="19"/> being the attitude errors.</p>
+<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-transformation"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-transformation}" src="form_306.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-true"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-true}" src="form_307.svg" width="44" height="19"/> </a> gives <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-estimate-errors"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}
   \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e
-\end{equation}" src="form_363.svg" width="553" height="23"/>
+\end{equation}" src="form_308.svg" width="553" height="23"/>
 </p>
-<p>and solving for <img class="formulaInl" alt="$ \mathbf{\Psi} $" src="form_357.svg" width="16" height="14"/> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat"></a>  </p><p class="formulaDsp">
+<p>and solving for <img class="formulaInl" alt="$ \mathbf{\Psi} $" src="form_304.svg" width="16" height="14"/> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat}
   \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
-\end{equation}" src="form_366.svg" width="555" height="23"/>
+\end{equation}" src="form_309.svg" width="555" height="23"/>
 </p>
 <p>Differentiating this equation yields: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}
   \mathbf{\dotup{\Psi}} = -\mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} {\mathbf{C}_b^e}^T - \mathbf{\hat{C}}_b^e {\mathbf{\dotup{C}}_b^e}\raise1.25ex\hbox{$\scriptstyle T$}
-\end{equation}" src="form_368.svg" width="583" height="26"/>
+\end{equation}" src="form_310.svg" width="583" height="26"/>
 </p>
 <p>Using the following equations for the transformation</p><ul>
-<li>Angular rate splitting <img class="formulaInl" alt="$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $" src="form_371.svg" width="135" height="23"/> &emsp;<a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 2.3.1, eq. 2.48, p. 45</li>
-<li>Skew-symmetric matrix transformation <img class="formulaInl" alt="$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $" src="form_373.svg" width="135" height="25"/> &emsp;<a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 2.3.1, eq. 2.51, p. 45</li>
+<li>Angular rate splitting <img class="formulaInl" alt="$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma $" src="form_311.svg" width="135" height="23"/> &emsp;<a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 2.3.1, eq. 2.48, p. 45</li>
+<li>Skew-symmetric matrix transformation <img class="formulaInl" alt="$ \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma $" src="form_312.svg" width="135" height="25"/> &emsp;<a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 2.3.1, eq. 2.51, p. 45</li>
 </ul>
 <p>the time derivative of the DCM matrix is</p>
 <p><a class="anchor" id="eq-LCKF_e-Derivation-Attitude-DCM-dot"></a>     </p><p class="formulaDsp">
@@ -871,7 +872,7 @@ Attitude Equations</h3>
   \mathbf{\dotup{C}}_b^e &amp;= \mathbf{C}_b^e \boldsymbol{\Omega}_{eb}^b \\
                        &amp;= \mathbf{C}_b^e \boldsymbol{\Omega}_{ib}^b - \boldsymbol{\Omega}_{ie}^e \mathbf{C}_b^e
 \end{aligned}
-\end{equation}" src="form_375.svg" width="576" height="51"/>
+\end{equation}" src="form_313.svg" width="576" height="51"/>
 </p>
 <p>see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 5.3.1, eq. 5.24, p. 173</li>
@@ -879,15 +880,15 @@ Attitude Equations</h3>
 <li><a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.5.2, eq. 3.22, p. 29</li>
 </ul>
 <p>where</p><ul>
-<li><img class="formulaInl" alt="$ \mathbf{\Omega}_{ib}^b $" src="form_378.svg" width="26" height="21"/> is the skew-symmetric matrix of the absolute body rate,</li>
-<li><img class="formulaInl" alt="$ \mathbf{\Omega}_{ie}^e $" src="form_379.svg" width="26" height="18"/> is the skew-symmetric matrix of the Earth rotation in Earth frame coordinates</li>
+<li><img class="formulaInl" alt="$ \mathbf{\Omega}_{ib}^b $" src="form_314.svg" width="26" height="21"/> is the skew-symmetric matrix of the absolute body rate,</li>
+<li><img class="formulaInl" alt="$ \mathbf{\Omega}_{ie}^e $" src="form_315.svg" width="26" height="18"/> is the skew-symmetric matrix of the Earth rotation in Earth frame coordinates</li>
 </ul>
-<p>Similarly, the time time differential of the estimated matrix <img class="formulaInl" alt="$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $" src="form_380.svg" width="21" height="26"/> can be calculated: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated"></a>  </p><p class="formulaDsp">
+<p>Similarly, the time time differential of the estimated matrix <img class="formulaInl" alt="$ \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} $" src="form_316.svg" width="21" height="26"/> can be calculated: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated"></a>  </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}
   \mathbf{\dotup{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle e$}} = \mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e
-\end{equation}" src="form_382.svg" width="576" height="26"/>
+\end{equation}" src="form_317.svg" width="576" height="26"/>
 </p>
-<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-DCM-dot"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}" src="form_383.svg" width="44" height="19"/> </a> and <a class="el" href="#eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}" src="form_385.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-skew-mat-dot"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}" src="form_387.svg" width="44" height="19"/> </a> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1"></a>            </p><p class="formulaDsp">
+<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-DCM-dot"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot}" src="form_318.svg" width="44" height="19"/> </a> and <a class="el" href="#eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-DCM-dot-estimated}" src="form_319.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-skew-mat-dot"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot}" src="form_320.svg" width="44" height="19"/> </a> <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1"></a>            </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &amp;= -(\mathbf{\hat{C}}_b^e \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e) {\mathbf{C}_b^e}^T
@@ -900,9 +901,9 @@ Attitude Equations</h3>
                          + \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T
                          - \mathbf{\hat{C}}_b^e {\mathbf{C}_b^e}^T \mathbf{\Omega}_{ie}^e
 \end{aligned}
-\end{equation}" src="form_390.svg" width="714" height="91"/>
+\end{equation}" src="form_321.svg" width="714" height="91"/>
 </p>
-<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_336.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}" src="form_391.svg" width="44" height="19"/> </a> gives: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2"></a>            </p><p class="formulaDsp">
+<p>Substituting <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_293.svg" width="44" height="19"/> </a> into <a class="el" href="#eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc1}" src="form_322.svg" width="44" height="19"/> </a> gives: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2"></a>            </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
   \mathbf{\dotup{\Psi}} &amp;= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^e}^T
@@ -915,18 +916,18 @@ Attitude Equations</h3>
                             + \left[ \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e \right]
                             - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{ie}^e
 \end{aligned}
-\end{equation}" src="form_394.svg" width="779" height="109"/>
+\end{equation}" src="form_323.svg" width="779" height="109"/>
 </p>
 <p>Now we make the following substitutions</p><ul>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $" src="form_396.svg" width="135" height="23"/></li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $" src="form_398.svg" width="133" height="23"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e = \mathbf{\hat{\Omega}}_{ie}^e - \mathbf{\Omega}_{ie}^e $" src="form_324.svg" width="135" height="23"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b $" src="form_325.svg" width="133" height="23"/></li>
 </ul>
 <p>and neglect error product terms. This leads to <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final"></a>    </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dotup{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{ie}^e - \mathbf{\hat{\Omega}}_{ie}^e \mathbf{\Psi}
                               + \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e
                               - \mathbf{C}_b^e \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^e}^T
-\end{equation}" src="form_400.svg" width="649" height="23"/>
+\end{equation}" src="form_326.svg" width="649" height="23"/>
 </p>
 <p>Finally by performing an element by element comparison with <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-element-comp"></a>     </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-element-comp}
@@ -934,7 +935,7 @@ Attitude Equations</h3>
   \boldsymbol{\omega}_{ie}^e \times = \mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ie}^e \times = \boldsymbol{\delta}\mathbf{\Omega}_{ie}^e \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
-\end{equation}" src="form_402.svg" width="758" height="23"/>
+\end{equation}" src="form_327.svg" width="758" height="23"/>
 </p>
 <p>the equation can be expressed in vector form as: <a class="anchor" id="eq-LCKF_e-Derivation-Attitude-differential"></a>        </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Attitude-differential}
@@ -945,7 +946,7 @@ Attitude Equations</h3>
                           &amp;= \highlight[green!20]{\begin{pmatrix} 0 &amp; \omega_{ie} &amp; 0 \\ -\omega_{ie} &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 \end{pmatrix}} \cdot \boldsymbol{\psi}
                              \highlight[orange!20]{- \mathbf{C}_b^e} \boldsymbol{\delta \omega}_{ib}^b \\
 \end{aligned}
-\end{equation}" src="form_403.svg" width="639" height="130"/>
+\end{equation}" src="form_328.svg" width="639" height="130"/>
 </p>
 <h3><a class="anchor" id="LooselyCoupledKF_e-ErrorStateEquations-Derivation-Velocity"></a>
 Velocity Equations</h3>
@@ -956,7 +957,7 @@ Velocity Equations</h3>
       = \overbrace{\boldsymbol{f}^e}^{\hidewidth\text{measured}\hidewidth}
         -\ \underbrace{2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{v}^e}_{\hidewidth\text{coriolis acceleration}\hidewidth}
         +\ \overbrace{\mathbf{g}^e}^{\hidewidth\text{gravity}\hidewidth}
-\end{equation}" src="form_405.svg" width="607" height="67"/>
+\end{equation}" src="form_329.svg" width="607" height="67"/>
 </p>
 <p> see</p><ul>
 <li><a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 5.3.3, eq. 5.35, p. 175</li>
@@ -965,11 +966,11 @@ Velocity Equations</h3>
 </ul>
 <p>where</p><ul>
 <li><img class="formulaInl" alt="$ \boldsymbol{v}^e $" src="form_187.svg" width="18" height="14"/> is the velocity with respect to the Earth in Earth frame coordinates,</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{f}^e $" src="form_407.svg" width="19" height="19"/> is the specific force vector as measured by a triad of accelerometers and resolved into Earth frame coordinates</li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e $" src="form_410.svg" width="25" height="18"/> is the turn rate of the Earth expressed in Earth frame coordinates</li>
-<li><img class="formulaInl" alt="$ \mathbf{g}^e $" src="form_411.svg" width="18" height="18"/> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.5.1, eq. 3.14, p. 27)<ul>
-<li><img class="formulaInl" alt="$ \boldsymbol{\gamma}_{ib}^e $" src="form_413.svg" width="23" height="18"/> the gravitation vector (caused by effects of mass attraction)</li>
-<li><img class="formulaInl" alt="$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $" src="form_414.svg" width="131" height="19"/> the centrifugal acceleration caused by the Earth's rotation</li>
+<li><img class="formulaInl" alt="$ \boldsymbol{f}^e $" src="form_330.svg" width="19" height="19"/> is the specific force vector as measured by a triad of accelerometers and resolved into Earth frame coordinates</li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\omega}_{ie}^e $" src="form_331.svg" width="25" height="18"/> is the turn rate of the Earth expressed in Earth frame coordinates</li>
+<li><img class="formulaInl" alt="$ \mathbf{g}^e $" src="form_332.svg" width="18" height="18"/> is the local gravity vector which is a combination of (see <a class="el" href="citelist.html#CITEREF_titterton2004">[47]</a> Titterton, ch. 3.5.1, eq. 3.14, p. 27)<ul>
+<li><img class="formulaInl" alt="$ \boldsymbol{\gamma}_{ib}^e $" src="form_333.svg" width="23" height="18"/> the gravitation vector (caused by effects of mass attraction)</li>
+<li><img class="formulaInl" alt="$ -\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{r}^e ] $" src="form_334.svg" width="131" height="19"/> the centrifugal acceleration caused by the Earth's rotation</li>
 </ul>
 </li>
 </ul>
@@ -979,9 +980,9 @@ Velocity Equations</h3>
       = \boldsymbol{\hat{f}}^e
       - 2 \boldsymbol{\hat{\omega}}_{ie}^e \times \boldsymbol{\hat{v}}_e^e
       + \mathbf{\hat{g}}^e
-\end{equation}" src="form_417.svg" width="592" height="25"/>
+\end{equation}" src="form_335.svg" width="592" height="25"/>
 </p>
-<p>Differencing equation <a class="el" href="#eq-LCKF_e-Derivation-Velocity-timeDerivative"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}" src="form_418.svg" width="44" height="19"/> </a> and <a class="el" href="#eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}" src="form_421.svg" width="44" height="19"/> </a> we get <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-timeDerivative-differential"></a>          </p><p class="formulaDsp">
+<p>Differencing equation <a class="el" href="#eq-LCKF_e-Derivation-Velocity-timeDerivative"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative}" src="form_336.svg" width="44" height="19"/> </a> and <a class="el" href="#eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-estimate}" src="form_337.svg" width="44" height="19"/> </a> we get <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-timeDerivative-differential"></a>          </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential}
 \begin{aligned}
   \boldsymbol{\delta} \boldsymbol{\dotup{v}}^e &amp;= \boldsymbol{\dotup{\hat{v}}}^{\raise-0.45ex\hbox{$\scriptstyle e$}} - \boldsymbol{\dotup{v}}^e \\
@@ -992,15 +993,15 @@ Velocity Equations</h3>
                                    + \mathbf{\hat{g}}^e
                                        - \mathbf{g}^e
 \end{aligned}
-\end{equation}" src="form_424.svg" width="704" height="56"/>
+\end{equation}" src="form_338.svg" width="704" height="56"/>
 </p>
 <ul>
-<li>Substituting equation <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_336.svg" width="44" height="19"/> </a>: <img class="formulaInl" alt="$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $" src="form_426.svg" width="121" height="23"/></li>
+<li>Substituting equation <a class="el" href="#eq-LCKF_e-Derivation-Attitude-estimate-errors"><img class="formulaInl" alt="\eqref{eq:eq-LCKF_e-Derivation-Attitude-estimate-errors}" src="form_293.svg" width="44" height="19"/> </a>: <img class="formulaInl" alt="$ \mathbf{\hat{C}}_b^e \approx [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^e $" src="form_339.svg" width="121" height="23"/></li>
 <li>and writing<ul>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $" src="form_428.svg" width="110" height="25"/></li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $" src="form_429.svg" width="109" height="16"/></li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $" src="form_430.svg" width="163" height="19"/></li>
-<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $" src="form_431.svg" width="107" height="19"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b $" src="form_340.svg" width="110" height="25"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{v}^e = \boldsymbol{\hat{v}}^e - \boldsymbol{v}^e $" src="form_341.svg" width="109" height="16"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \boldsymbol{\omega}_{ie}^e = \boldsymbol{\hat{\omega}}_{ie}^e - \boldsymbol{\omega}_{ie}^e = 0 $" src="form_342.svg" width="163" height="19"/></li>
+<li><img class="formulaInl" alt="$ \boldsymbol{\delta} \mathbf{g}^e = \mathbf{\hat{g}}^e - \mathbf{g}^e $" src="form_343.svg" width="107" height="19"/></li>
 </ul>
 </li>
 </ul>
@@ -1026,16 +1027,16 @@ Velocity Equations</h3>
                                    - 2 \boldsymbol{\omega}_{ie}^e \times \boldsymbol{\delta v}^e
                                    + \boldsymbol{\delta} \mathbf{g}^e \\
 \end{aligned}
-\end{equation}" src="form_435.svg" width="728" height="133"/>
+\end{equation}" src="form_344.svg" width="728" height="133"/>
 </p>
-<p> Now neglecting error product terms ( <img class="formulaInl" alt="$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $" src="form_436.svg" width="96" height="23"/>) <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect"></a>      </p><p class="formulaDsp">
+<p> Now neglecting error product terms ( <img class="formulaInl" alt="$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 $" src="form_345.svg" width="96" height="23"/>) <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect"></a>      </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
 \renewcommand*{\arraystretch}{1.9}
   \boldsymbol{\delta \dotup{v}}^e \approx \highlight[purple!20]{\boldsymbol{f}^e \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^e} \boldsymbol{\delta f}^b
                                    \highlight[blue!20]{- 2 \boldsymbol{\omega}_{ie}^e \times} \boldsymbol{\delta v}^e
                                    + \boldsymbol{\delta} \mathbf{g}^e
-\end{equation}" src="form_438.svg" width="663" height="30"/>
+\end{equation}" src="form_346.svg" width="663" height="30"/>
 </p>
 <p>The gravity error can be expressed as (see <a class="el" href="citelist.html#CITEREF_groves2013">[17]</a> Groves, ch. 14.2.3, eq. 14.45, p. 583) <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-gravityError"></a>       </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-gravityError}
@@ -1045,10 +1046,10 @@ Velocity Equations</h3>
                                    \approx - \frac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \frac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|} \boldsymbol{\delta} \mathbf{r}_{eb}^e
                                            - \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \boldsymbol{\delta} \mathbf{r}_{eb}^e
 \end{aligned}
-\end{equation}" src="form_440.svg" width="730" height="70"/>
+\end{equation}" src="form_347.svg" width="730" height="70"/>
 </p>
 <p> where</p><ul>
-<li>the assumption <img class="formulaInl" alt="$ h &lt;&lt; r_{eS}^e $" src="form_441.svg" width="72" height="18"/> is made</li>
+<li>the assumption <img class="formulaInl" alt="$ h &lt;&lt; r_{eS}^e $" src="form_348.svg" width="72" height="18"/> is made</li>
 </ul>
 <p>This leads to the final form <a class="anchor" id="eq-LCKF_e-Derivation-Velocity-timeDerivative-final"></a>       </p><p class="formulaDsp">
 <img class="formulaDsp" alt="\begin{equation} \label{eq:eq-LCKF_e-Derivation-Velocity-timeDerivative-final}
@@ -1058,7 +1059,7 @@ Velocity Equations</h3>
                                    + \highlight[blue!20]{\begin{pmatrix} 0 &amp; 2 \omega_{ie} &amp; \\ -2 \omega_{ie} &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 \end{pmatrix}} \boldsymbol{\delta v}^e
                                    \highlight[violet!20]{- \left(  \dfrac{2 \boldsymbol{\gamma}_{ib}^e}{r_{eS}^e} \dfrac{{\mathbf{r}_{eb}^e}^T}{\left| \mathbf{r}_{eb}^e \right|}
                                                                  + \boldsymbol{\Omega}_{ie}^e \boldsymbol{\Omega}_{ie}^e \right)} \boldsymbol{\delta} \mathbf{r}_{eb}^e
-\end{equation}" src="form_442.svg" width="810" height="133"/>
+\end{equation}" src="form_349.svg" width="810" height="133"/>
 </p>
  </div></div><!-- contents -->
 </div><!-- PageDoc -->
