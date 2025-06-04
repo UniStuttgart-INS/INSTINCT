@@ -101,14 +101,14 @@ bool ShowSatelliteSelector(const char* label, std::vector<SatId>& satellites, Sa
         if (ImGui::BeginTable(fmt::format("{} Table", label).c_str(), 7, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY))
         {
             ImGui::TableSetupScrollFreeze(0, 1);
-            for (uint64_t satSys = 0xFF; satSys < 0xFFUL << (7 * 8); satSys = satSys << 8UL)
+            for (uint64_t satSys = 0xFF; satSys < static_cast<uint64_t>(0xFF) << (7 * 8); satSys = satSys << 8UL)
             {
                 ImGui::TableSetupColumn(std::string(SatelliteSystem(SatelliteSystem_(satSys))).c_str());
             }
             ImGui::TableHeadersRow();
 
             ImGui::TableNextRow();
-            for (uint64_t satSys = 0xFF; satSys < 0xFFUL << (7 * 8); satSys = satSys << 8UL)
+            for (uint64_t satSys = 0xFF; satSys < static_cast<uint64_t>(0xFF) << (7 * 8); satSys = satSys << 8UL)
             {
                 auto satSystem = SatelliteSystem(SatelliteSystem_(satSys));
 

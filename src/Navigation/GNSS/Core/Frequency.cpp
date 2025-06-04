@@ -510,7 +510,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
     {
         if (ImGui::BeginTable(fmt::format("{} Table", label).c_str(), 7, ImGuiTableFlags_BordersInnerV))
         {
-            for (uint64_t satSys = 0xFF; satSys < 0xFFUL << (7 * 8); satSys = satSys << 8UL)
+            for (uint64_t satSys = 0xFF; satSys < static_cast<uint64_t>(0xFF) << (7 * 8); satSys = satSys << 8UL)
             {
                 ImGui::TableSetupColumn(std::string(SatelliteSystem(SatelliteSystem_(satSys))).c_str());
             }
@@ -520,7 +520,7 @@ bool ShowFrequencySelector(const char* label, Frequency& frequency, bool singleS
                 ImGui::TableNextRow();
                 for (int c = 0; c < 7; c++)
                 {
-                    uint64_t flag = (1UL << (f + static_cast<uint64_t>(c) * 8));
+                    uint64_t flag = (static_cast<uint64_t>(1) << (f + static_cast<uint64_t>(c) * 8));
                     auto text = std::string(Frequency(Frequency_(flag)));
                     if (text == "None")
                     {

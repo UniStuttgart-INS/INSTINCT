@@ -1204,7 +1204,7 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
         if (ImGui::BeginTable(fmt::format("{} Table", label).c_str(), 7, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY))
         {
             ImGui::TableSetupScrollFreeze(0, 1);
-            for (uint64_t satSys = 0xFF; satSys < 0xFFUL << (7 * 8); satSys = satSys << 8UL)
+            for (uint64_t satSys = 0xFF; satSys < static_cast<uint64_t>(0xFF) << (7 * 8); satSys = satSys << 8UL)
             {
                 ImGui::TableSetupColumn(std::string(SatelliteSystem(SatelliteSystem_(satSys))).c_str());
             }
@@ -1215,7 +1215,7 @@ bool ShowCodeSelector(const char* label, Code& code, const Frequency& filterFreq
                 ImGui::TableSetColumnIndex(satSys);
                 for (uint64_t f = 0; f < 8; f++)
                 {
-                    uint64_t flag = (1UL << (f + static_cast<uint64_t>(satSys) * 8));
+                    uint64_t flag = (static_cast<uint64_t>(1) << (f + static_cast<uint64_t>(satSys) * 8));
                     auto frequency = Frequency(Frequency_(flag));
                     auto text = std::string(frequency);
                     if (text == "None")
