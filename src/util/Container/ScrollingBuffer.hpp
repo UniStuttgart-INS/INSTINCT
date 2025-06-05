@@ -17,6 +17,7 @@
 #include <string>
 #include <iostream>
 #include <fmt/ostream.h>
+#include <fmt/ranges.h>
 
 namespace NAV
 {

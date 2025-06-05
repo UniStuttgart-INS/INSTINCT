@@ -16,11 +16,11 @@
 #include <util/Logger.hpp>
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <fmt/ostream.h>
+#include <fmt/ranges.h>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace
-
-#include <fmt/ostream.h>
 
 #include "Assert.h"
 
@@ -275,23 +275,29 @@ void removeRowsAndCols(Eigen::DenseBase<Derived>& matrix, const std::vector<int>
 // clang-format off
 
 template<typename T>
-    requires std::is_base_of_v<Eigen::DenseBase<T>, T>
+    requires(std::is_base_of_v<Eigen::DenseBase<T>, T>
+             && T::RowsAtCompileTime != 1
+             && T::ColsAtCompileTime != 1)
 struct fmt::formatter<T> : ostream_formatter
 {};
 
-template<typename T>
-struct fmt::formatter<Eigen::MatrixBase<T>> : ostream_formatter
-{};
+// template<typename T>
+//     requires std::is_base_of_v<Eigen::MatrixBase<T>, T>
+// struct fmt::formatter<T> : ostream_formatter
+// {};
 
+// template<typename T>
+// struct fmt::formatter<Eigen::MatrixBase<T>> : ostream_formatter
+// {};
 
 template<typename T>
-requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
+    requires std::is_base_of_v<Eigen::QuaternionBase<T>, T>
 struct fmt::formatter<T> : ostream_formatter
 {};
 
-template<typename T>
-struct fmt::formatter<Eigen::QuaternionBase<T>> : ostream_formatter
-{};
+// template<typename T>
+// struct fmt::formatter<Eigen::QuaternionBase<T>> : ostream_formatter
+// {};
 
 // clang-format on
 

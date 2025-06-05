@@ -15,6 +15,7 @@
 #include <boost/program_options/parsers.hpp>
 #include <implot.h>
 #include <implot_internal.h>
+#include <fmt/ranges.h>
 
 #include "internal/FlowManager.hpp"
 #include "util/Logger.hpp"

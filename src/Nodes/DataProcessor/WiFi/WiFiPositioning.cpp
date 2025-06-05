@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <ranges>
 #include <regex>
+#include <fmt/ranges.h>
 
 #include "util/Logger.hpp"
 #include "util/Container/Vector.hpp"

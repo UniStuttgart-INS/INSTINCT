@@ -14,7 +14,7 @@
 #pragma once
 
 #include <cstdint>
-#include <util/Eigen.hpp>
+#include "util/Eigen.hpp"
 
 #include <vn/types.h>
 

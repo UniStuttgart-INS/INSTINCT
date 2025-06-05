@@ -29,7 +29,7 @@ TEST_CASE("[CycleSlipDetector] DualFrequencyCombination hash unique", "[CycleSli
     auto codes = Code::GetAll();
     const uint16_t MAX_SATELLITES = 200;
 
-    std::unordered_map<size_t, CycleSlipDetector::DualFrequencyCombination> unique;
+    std::unordered_map<size_t, DualFrequencyCombination> unique;
 
     size_t count = 0;
     for (const Code& code1 : codes)
@@ -42,8 +42,8 @@ TEST_CASE("[CycleSlipDetector] DualFrequencyCombination hash unique", "[CycleSli
             for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
             {
                 count++;
-                auto freqComb = CycleSlipDetector::DualFrequencyCombination{ .satId = SatId(code1.getFrequency().getSatSys(), satNum), .sig1 = code1, .sig2 = code2 };
-                size_t hash = std::hash<CycleSlipDetector::DualFrequencyCombination>()(freqComb);
+                auto freqComb = DualFrequencyCombination{ .satId = SatId(code1.getFrequency().getSatSys(), satNum), .sig1 = code1, .sig2 = code2 };
+                size_t hash = std::hash<DualFrequencyCombination>()(freqComb);
 
                 if (unique.contains(hash))
                 {
@@ -69,8 +69,8 @@ TEST_CASE("[CycleSlipDetector] DualFrequencyCombination hash unique", "[CycleSli
 
             for (uint16_t satNum = 1; satNum <= MAX_SATELLITES; satNum++)
             {
-                auto freqComb = CycleSlipDetector::DualFrequencyCombination{ .satId = SatId(code1.getFrequency().getSatSys(), satNum), .sig1 = code1, .sig2 = code2 };
-                size_t hash = std::hash<CycleSlipDetector::DualFrequencyCombination>()(freqComb);
+                auto freqComb = DualFrequencyCombination{ .satId = SatId(code1.getFrequency().getSatSys(), satNum), .sig1 = code1, .sig2 = code2 };
+                size_t hash = std::hash<DualFrequencyCombination>()(freqComb);
 
                 REQUIRE(unique.contains(hash));
                 auto other = unique.at(hash);

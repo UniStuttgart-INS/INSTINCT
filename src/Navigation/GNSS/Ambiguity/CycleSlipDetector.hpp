@@ -22,6 +22,53 @@
 namespace NAV
 {
 
+/// Dual frequency combination
+struct DualFrequencyCombination
+{
+    /// @brief Equal comparison (needed for unordered_map)
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if the elements are equal
+    constexpr bool operator==(const DualFrequencyCombination& rhs) const { return satId == rhs.satId && sig1 == rhs.sig1 && sig2 == rhs.sig2; }
+
+    /// @brief Less than comparison (needed for map)
+    /// @param[in] rhs Right hand side of the operator
+    /// @return True if lhs < rhs
+    constexpr bool operator<(const DualFrequencyCombination& rhs) const
+    {
+        return satId == rhs.satId ? (sig1 == rhs.sig1
+                                         ? sig2 < rhs.sig2
+                                         : sig1 < rhs.sig1)
+                                  : satId < rhs.satId;
+    }
+
+    SatId satId; ///< Satellite Identifier
+    Code sig1;   ///< Signal code/frequency (f(sig1) > f(sig2), e.g. L1 if L1-L2)
+    Code sig2;   ///< Signal code/frequency (f(sig2) < f(sig1), e.g. L2 if L1-L2)
+};
+} // namespace NAV
+
+namespace std
+{
+/// @brief Hash function for DualFrequencyCombination (needed for unordered_map)
+template<>
+struct hash<NAV::DualFrequencyCombination>
+{
+    /// @brief Hash function for SatId
+    /// @param[in] c Dual frequency combination
+    std::size_t operator()(const NAV::DualFrequencyCombination& c) const
+    {
+        auto hash1 = std::hash<NAV::SatId>{}(c.satId);
+        auto hash2 = std::hash<NAV::Code>{}(c.sig1);
+        auto hash3 = std::hash<NAV::Code>{}(c.sig2);
+
+        return hash1 | (hash2 << 24) | (hash3 << 48);
+    }
+};
+} // namespace std
+
+namespace NAV
+{
+
 /// @brief Cycle-slip detector
 class CycleSlipDetector
 {
@@ -179,30 +226,6 @@ class CycleSlipDetector
     /// @brief Resets all data
     void reset();
 
-    /// Dual frequency combination
-    struct DualFrequencyCombination
-    {
-        /// @brief Equal comparison (needed for unordered_map)
-        /// @param[in] rhs Right hand side of the operator
-        /// @return True if the elements are equal
-        constexpr bool operator==(const DualFrequencyCombination& rhs) const { return satId == rhs.satId && sig1 == rhs.sig1 && sig2 == rhs.sig2; }
-
-        /// @brief Less than comparison (needed for map)
-        /// @param[in] rhs Right hand side of the operator
-        /// @return True if lhs < rhs
-        constexpr bool operator<(const DualFrequencyCombination& rhs) const
-        {
-            return satId == rhs.satId ? (sig1 == rhs.sig1
-                                             ? sig2 < rhs.sig2
-                                             : sig1 < rhs.sig1)
-                                      : satId < rhs.satId;
-        }
-
-        SatId satId; ///< Satellite Identifier
-        Code sig1;   ///< Signal code/frequency (f(sig1) > f(sig2), e.g. L1 if L1-L2)
-        Code sig2;   ///< Signal code/frequency (f(sig2) < f(sig1), e.g. L2 if L1-L2)
-    };
-
   private:
     /// @brief Whether to check for LLI flag
     bool _enableLLICheck = true;
@@ -248,25 +271,6 @@ void from_json(const json& j, CycleSlipDetector& data);
 /// @param[in] obj Object to print
 /// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const NAV::CycleSlipDetector::Result& obj);
-
-namespace std
-{
-/// @brief Hash function for DualFrequencyCombination (needed for unordered_map)
-template<>
-struct hash<NAV::CycleSlipDetector::DualFrequencyCombination>
-{
-    /// @brief Hash function for SatId
-    /// @param[in] c Dual frequency combination
-    std::size_t operator()(const NAV::CycleSlipDetector::DualFrequencyCombination& c) const
-    {
-        auto hash1 = std::hash<NAV::SatId>{}(c.satId);
-        auto hash2 = std::hash<NAV::Code>{}(c.sig1);
-        auto hash3 = std::hash<NAV::Code>{}(c.sig2);
-
-        return hash1 | (hash2 << 24) | (hash3 << 48);
-    }
-};
-} // namespace std
 
 #ifndef DOXYGEN_IGNORE
 

@@ -8,6 +8,8 @@
 
 #include "RinexObsFile.hpp"
 
+#include <fmt/ranges.h>
+
 #include "util/Eigen.hpp"
 
 #include "internal/NodeManager.hpp"

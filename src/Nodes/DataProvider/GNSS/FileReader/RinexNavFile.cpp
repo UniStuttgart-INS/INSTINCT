@@ -9,6 +9,7 @@
 #include "RinexNavFile.hpp"
 
 #include <bitset>
+#include <fmt/ranges.h>
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

@@ -19,6 +19,7 @@
 #include <Eigen/Core>
 #include <cstdint>
 #include <imgui.h>
+#include <fmt/ranges.h>
 
 #include "Navigation/GNSS/SystemModel/Units.hpp"
 #include "Navigation/Math/KalmanFilter.hpp"

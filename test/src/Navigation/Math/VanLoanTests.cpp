@@ -15,8 +15,8 @@
 #include "CatchMatchers.hpp"
 
 #include "Logger.hpp"
-#include "Navigation/Math/VanLoan.hpp"
 #include "util/Eigen.hpp"
+#include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Transformations/Units.hpp"
 

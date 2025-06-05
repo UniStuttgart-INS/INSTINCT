@@ -14,6 +14,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "CatchMatchers.hpp"
 #include "Logger.hpp"
+#include "util/Eigen.hpp"
 
 // This is a small hack, which lets us change private/protected parameters
 #if defined(__clang__)
