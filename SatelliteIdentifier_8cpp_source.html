@@ -49,7 +49,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.3.0</span>
+                    id="projectnumber">&#160;0.4.1</span>
                 </div>
               </td>
             </tr>
@@ -237,14 +237,14 @@ $(function(){initNavTree('SatelliteIdentifier_8cpp_source.html',''); initResizab
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keywordflow">if</span> (ImGui::BeginTable(fmt::format(<span class="stringliteral">&quot;{} Table&quot;</span>, label).c_str(), 7, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY))</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        {</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>            ImGui::TableSetupScrollFreeze(0, 1);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; 0xFFUL &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; static_cast&lt;uint64_t&gt;(0xFF) &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            {</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                ImGui::TableSetupColumn(std::string(<a class="code hl_struct" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>(<a class="code hl_enumeration" href="namespaceNAV.html#af01e645814479c1179804a8d5ffb411e">SatelliteSystem_</a>(satSys))).c_str());</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            }</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>            ImGui::TableHeadersRow();</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            ImGui::TableNextRow();</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; 0xFFUL &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; static_cast&lt;uint64_t&gt;(0xFF) &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            {</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                <span class="keyword">auto</span> satSystem = <a class="code hl_struct" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>(<a class="code hl_enumeration" href="namespaceNAV.html#af01e645814479c1179804a8d5ffb411e">SatelliteSystem_</a>(satSys));</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>

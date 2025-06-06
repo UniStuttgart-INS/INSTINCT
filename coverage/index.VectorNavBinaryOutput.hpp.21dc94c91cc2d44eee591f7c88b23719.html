@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-02 15:19:59</td>
+      <td>2025-06-06 13:17:47</td>
     </tr>
   </table>
 </div>
@@ -53,8 +53,8 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>790</td>
-      <td>4430</td>
-      <td class="coverage-low">17.8%</td>
+      <td>4762</td>
+      <td class="coverage-low">16.6%</td>
     </tr>
   </table>
 </div>
@@ -72,9 +72,9 @@
     </tr>
     <tr><td><a href="#l65">NAV::VectorNavBinaryOutput::GetStaticDataDescriptors[abi:cxx11]() (line 65)</a></td><td>called 38 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l71">NAV::VectorNavBinaryOutput::GetStaticDescriptorCount() (line 71)</a></td><td>called 30 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l43">NAV::VectorNavBinaryOutput::VectorNavBinaryOutput(NAV::ImuPos const&amp;) (line 43)</a></td><td>called 28715 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l751">NAV::VectorNavBinaryOutput::dynamicDataDescriptors[abi:cxx11]() const (line 751)</a></td><td>called 30 times</td><td>42.0%</td></tr>
-    <tr><td><a href="#l1277">NAV::VectorNavBinaryOutput::getDynamicDataAt(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (line 1277)</a></td><td>called 2489 times</td><td>51.0%</td></tr>
+    <tr><td><a href="#l43">NAV::VectorNavBinaryOutput::VectorNavBinaryOutput(NAV::ImuPos const&amp;) (line 43)</a></td><td>called 28718 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l751">NAV::VectorNavBinaryOutput::dynamicDataDescriptors[abi:cxx11]() const (line 751)</a></td><td>called 30 times</td><td>48.0%</td></tr>
+    <tr><td><a href="#l1277">NAV::VectorNavBinaryOutput::getDynamicDataAt(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) const (line 1277)</a></td><td>called 2487 times</td><td>53.0%</td></tr>
     <tr><td><a href="#l1583">NAV::VectorNavBinaryOutput::getDynamicData[abi:cxx11]() const (line 1583)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l717">NAV::VectorNavBinaryOutput::getSatSys(NAV::vendor::vectornav::SatSys&amp;) (line 717)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l55">NAV::VectorNavBinaryOutput::getType[abi:cxx11]() const (line 55)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -394,14 +394,14 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">28715</td>
+      <td class="linecount coveredLine">28718</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">VectorNavBinaryOutput</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ImuPos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">imuPos</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">28715</td>
+      <td class="linecount coveredLine">28718</td>
       <td class="src coveredLine"><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">imuPos</span><span class="p">(</span><span class="n">imuPos</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -5530,7 +5530,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 29 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
@@ -5558,7 +5558,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">29</td>
+      <td class="linecount partialCoveredLine">30</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeField</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vn</span><span class="o">::</span><span class="n">protocol</span><span class="o">::</span><span class="n">uart</span><span class="o">::</span><span class="n">TimeGroup</span><span class="o">::</span><span class="n">TIMEGROUP_GPSWEEK</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -10876,7 +10876,7 @@
       <td class="lineno"><a id="l1277" href="#l1277">1277</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2489</td>
+      <td class="linecount coveredLine">2487</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">[[</span><span class="n">nodiscard</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getDynamicDataAt</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">descriptor</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span></td>
     </tr>
     <tr class="source-line">
@@ -10899,12 +10899,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 2490 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2487 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2489</td>
+      <td class="linecount partialCoveredLine">2487</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">timeOutputs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -10921,11 +10921,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2460 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2455 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2490</td>
+      <td class="linecount coveredLine">2487</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeStartup [ns]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeStartup</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -10935,11 +10935,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2460 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2458 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2460</td>
+      <td class="linecount partialCoveredLine">2455</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeGps [ns]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeGps</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -10949,11 +10949,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2430 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2427 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2460</td>
+      <td class="linecount coveredLine">2458</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::GpsTow [ns]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">gpsTow</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -10967,7 +10967,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2430</td>
+      <td class="linecount coveredLine">2427</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::GpsWeek&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">gpsWeek</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -10977,7 +10977,7 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2398 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2397 times.</div>
           </div>
         </details>
       </td>
@@ -10991,11 +10991,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2399 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2397 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2398</td>
+      <td class="linecount partialCoveredLine">2397</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeGpsPps [ns]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timePPS</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11009,7 +11009,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2399</td>
+      <td class="linecount coveredLine">2397</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeUTC::year&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">year</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11047,7 +11047,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2350 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2351 times.</div>
           </div>
         </details>
       </td>
@@ -11065,7 +11065,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2350</td>
+      <td class="linecount coveredLine">2351</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeUTC::min&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">min</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11075,7 +11075,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2328 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2326 times.</div>
           </div>
         </details>
       </td>
@@ -11089,11 +11089,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2316 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2314 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2328</td>
+      <td class="linecount coveredLine">2326</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeUTC::ms&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">ms</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11103,11 +11103,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2315 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2314 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2316</td>
+      <td class="linecount partialCoveredLine">2314</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::SyncInCnt&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">syncInCnt</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11117,11 +11117,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2315 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2314 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2315</td>
+      <td class="linecount partialCoveredLine">2314</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::SyncOutCnt&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">syncOutCnt</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11135,7 +11135,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2315</td>
+      <td class="linecount coveredLine">2314</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeStatus::timeOk&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeStatus</span><span class="p">.</span><span class="n">timeOk</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11145,7 +11145,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2255 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2254 times.</div>
           </div>
         </details>
       </td>
@@ -11159,11 +11159,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2225 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2226 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2255</td>
+      <td class="linecount coveredLine">2254</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Time::TimeStatus::utcTimeValid&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeOutputs</span><span class="o">-&gt;</span><span class="n">timeStatus</span><span class="p">.</span><span class="n">utcTimeValid</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11187,11 +11187,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 774 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1451 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1452 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2224</td>
+      <td class="linecount coveredLine">2226</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">imuOutputs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -11666,7 +11666,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1739</td>
+      <td class="linecount partialCoveredLine">1740</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -11683,7 +11683,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1728 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1727 times.</div>
           </div>
         </details>
       </td>
@@ -11697,11 +11697,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1716 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1715 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1728</td>
+      <td class="linecount coveredLine">1727</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::month&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">month</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11711,11 +11711,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1704 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1702 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1716</td>
+      <td class="linecount coveredLine">1715</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::day&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">day</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11725,11 +11725,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1692 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1690 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1704</td>
+      <td class="linecount coveredLine">1702</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::hour&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">hour</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11739,11 +11739,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1680 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1679 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1692</td>
+      <td class="linecount coveredLine">1690</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::min&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">min</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11753,11 +11753,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1668 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1667 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1680</td>
+      <td class="linecount coveredLine">1679</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::sec&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">sec</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11767,11 +11767,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1656 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1654 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1668</td>
+      <td class="linecount coveredLine">1667</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::UTC::ms&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeUtc</span><span class="p">.</span><span class="n">ms</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11785,7 +11785,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1656</td>
+      <td class="linecount coveredLine">1654</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::Tow [ns]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">tow</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11809,7 +11809,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1584 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1583 times.</div>
           </div>
         </details>
       </td>
@@ -11827,7 +11827,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1584</td>
+      <td class="linecount coveredLine">1583</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::Fix&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">fix</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11869,7 +11869,7 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1535 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1536 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -11885,13 +11885,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1522 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1524 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1535</td>
+      <td class="linecount partialCoveredLine">1536</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosEcef::X [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posEcef</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11901,13 +11901,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1509 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1511 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1522</td>
+      <td class="linecount partialCoveredLine">1524</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosEcef::Y [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posEcef</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11917,13 +11917,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1497 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1500 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1509</td>
+      <td class="linecount partialCoveredLine">1511</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosEcef::Z [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posEcef</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11933,13 +11933,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1486 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1487 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1497</td>
+      <td class="linecount partialCoveredLine">1500</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::VelNed::N [m/s]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">velNed</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11949,13 +11949,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1474 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1476 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1486</td>
+      <td class="linecount partialCoveredLine">1487</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::VelNed::E [m/s]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">velNed</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -11971,7 +11971,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1474</td>
+      <td class="linecount partialCoveredLine">1476</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::VelNed::D [m/s]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">velNed</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12013,7 +12013,7 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1428 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1427 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -12029,13 +12029,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1415 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1416 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1428</td>
+      <td class="linecount partialCoveredLine">1427</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosU::N [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posU</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12045,13 +12045,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1404 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1403 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 12 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1415</td>
+      <td class="linecount partialCoveredLine">1416</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosU::E [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posU</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12067,7 +12067,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1404</td>
+      <td class="linecount partialCoveredLine">1403</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::PosU::D [m]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">posU</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12105,7 +12105,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1338 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1336 times.</div>
           </div>
         </details>
       </td>
@@ -12123,7 +12123,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1338</td>
+      <td class="linecount coveredLine">1336</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::TimeInfo::Status::dateOk&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeInfo</span><span class="p">.</span><span class="n">status</span><span class="p">.</span><span class="n">dateOk</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12133,7 +12133,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1278 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1277 times.</div>
           </div>
         </details>
       </td>
@@ -12151,7 +12151,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1278</td>
+      <td class="linecount coveredLine">1277</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::TimeInfo::LeapSeconds&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">timeInfo</span><span class="p">.</span><span class="n">leapSeconds</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12175,7 +12175,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1223 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1224 times.</div>
           </div>
         </details>
       </td>
@@ -12189,11 +12189,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1211 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1212 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1223</td>
+      <td class="linecount coveredLine">1224</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::DOP::t&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">dop</span><span class="p">.</span><span class="n">tDop</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12207,7 +12207,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1211</td>
+      <td class="linecount coveredLine">1212</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::DOP::v&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">dop</span><span class="p">.</span><span class="n">vDop</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12231,7 +12231,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1175 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1176 times.</div>
           </div>
         </details>
       </td>
@@ -12245,11 +12245,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 12 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1175</td>
+      <td class="linecount coveredLine">1176</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::DOP::e&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">dop</span><span class="p">.</span><span class="n">eDop</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12259,11 +12259,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1163</td>
+      <td class="linecount partialCoveredLine">1164</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::SatInfo::NumSats&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">satInfo</span><span class="p">.</span><span class="n">numSats</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12273,11 +12273,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1163</td>
+      <td class="linecount partialCoveredLine">1164</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satellite</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">satInfo</span><span class="p">.</span><span class="n">satellites</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -12389,7 +12389,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::RawMeas::Tow [s]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">tow</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12399,7 +12399,7 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
@@ -12413,11 +12413,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;GNSS1::RawMeas::NumSats&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">numSats</span><span class="p">);</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12431,7 +12431,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">satellite</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">gnss1Outputs</span><span class="o">-&gt;</span><span class="n">raw</span><span class="p">.</span><span class="n">satellites</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -12637,7 +12637,7 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
@@ -12651,11 +12651,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::VpeStatus::MagDisturbance&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">vpeStatus</span><span class="p">.</span><span class="n">magDisturbance</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12665,11 +12665,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::VpeStatus::MagSaturation&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">vpeStatus</span><span class="p">.</span><span class="n">magSaturation</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12679,11 +12679,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::VpeStatus::AccDisturbance&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">vpeStatus</span><span class="p">.</span><span class="n">accDisturbance</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12697,7 +12697,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::VpeStatus::AccSaturation&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">vpeStatus</span><span class="p">.</span><span class="n">accSaturation</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12707,7 +12707,7 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
@@ -12721,11 +12721,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1164 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1163 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::VpeStatus::KnownAccelDisturbance&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">vpeStatus</span><span class="p">.</span><span class="n">knownAccelDisturbance</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12735,13 +12735,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1134 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1133 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1164</td>
+      <td class="linecount partialCoveredLine">1163</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::YawPitchRoll::Y [deg]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">ypr</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12751,13 +12751,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1104 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1103 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1134</td>
+      <td class="linecount partialCoveredLine">1133</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::YawPitchRoll::P [deg]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">ypr</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12767,13 +12767,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1074 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1073 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1104</td>
+      <td class="linecount partialCoveredLine">1103</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::YawPitchRoll::R [deg]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">ypr</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12783,13 +12783,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1044 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1043 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1074</td>
+      <td class="linecount partialCoveredLine">1073</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::Quaternion::w&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">qtn</span><span class="p">.</span><span class="n">w</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12805,7 +12805,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1044</td>
+      <td class="linecount partialCoveredLine">1043</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::Quaternion::x&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">qtn</span><span class="p">.</span><span class="n">x</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -12815,7 +12815,7 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 984 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 983 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -12837,7 +12837,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">984</td>
+      <td class="linecount partialCoveredLine">983</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::Quaternion::z&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">qtn</span><span class="p">.</span><span class="n">z</span><span class="p">());</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -13007,7 +13007,7 @@
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 954 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 953 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -13029,7 +13029,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">954</td>
+      <td class="linecount partialCoveredLine">953</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::MagNed::D [Gauss]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">magNed</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -13087,7 +13087,7 @@
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 954 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 953 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -13103,13 +13103,13 @@
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 954 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 953 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">954</td>
+      <td class="linecount partialCoveredLine">953</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::LinearAccelBody::Y [m/s^2]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">linearAccelBody</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -13125,7 +13125,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">954</td>
+      <td class="linecount partialCoveredLine">953</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">descriptor</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Att::LinearAccelBody::Z [m/s^2]&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">attitudeOutputs</span><span class="o">-&gt;</span><span class="n">linearAccelBody</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -13215,7 +13215,7 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 864 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 863 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 30 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
@@ -13249,7 +13249,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">864</td>
+      <td class="linecount partialCoveredLine">863</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">insOutputs</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">

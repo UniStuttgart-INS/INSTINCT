@@ -221,7 +221,7 @@ var searchData=
   ['dtheta_218',['dtheta',['../classNAV_1_1ImuObsWDelta.html#a5e8148eb6a8d6395d4c1d4fdee8168af',1,'NAV::ImuObsWDelta']]],
   ['dtime_219',['dtime',['../classNAV_1_1ImuObsWDelta.html#a4cb95e46a54bf2da8dd7358fef9c88cd',1,'NAV::ImuObsWDelta']]],
   ['dualfrequency_220',['DualFrequency',['../classNAV_1_1CycleSlipDetector.html#a87b180f16a5386e1df927dd25cd2de4dafc1f61fef9d75268bbd1ad4793b205e8',1,'NAV::CycleSlipDetector']]],
-  ['dualfrequencycombination_221',['DualFrequencyCombination',['../structNAV_1_1CycleSlipDetector_1_1DualFrequencyCombination.html',1,'NAV::CycleSlipDetector']]],
+  ['dualfrequencycombination_221',['DualFrequencyCombination',['../structNAV_1_1DualFrequencyCombination.html',1,'NAV']]],
   ['duration_222',['Duration',['../classNAV_1_1ImuSimulator.html#a9e642a13fa4566d2e97c6d428b9a01e1af13cb93aeeec6b618f00c411e3010355',1,'NAV::ImuSimulator']]],
   ['duration_223',['duration',['../structNAV_1_1vendor_1_1pixhawk_1_1message__dropout__s.html#abdef107f040be5d55125b42da517d766',1,'NAV::vendor::pixhawk::message_dropout_s']]],
   ['dvel_224',['dVel',['../classNAV_1_1LooselyCoupledKF.html#a76583da8502197e3f1984e40bfd09c72',1,'NAV::LooselyCoupledKF']]],

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['hash_3c_20nav_3a_3acode_20_3e_0',['hash&lt; NAV::Code &gt;',['../structstd_1_1hash_3_01NAV_1_1Code_01_4.html',1,'std']]],
-  ['hash_3c_20nav_3a_3acycleslipdetector_3a_3adualfrequencycombination_20_3e_1',['hash&lt; NAV::CycleSlipDetector::DualFrequencyCombination &gt;',['../structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4.html',1,'std']]],
+  ['hash_3c_20nav_3a_3adualfrequencycombination_20_3e_1',['hash&lt; NAV::DualFrequencyCombination &gt;',['../structstd_1_1hash_3_01NAV_1_1DualFrequencyCombination_01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3afrequency_20_3e_2',['hash&lt; NAV::Frequency &gt;',['../structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3afrequency_5f_20_3e_3',['hash&lt; NAV::Frequency_ &gt;',['../structstd_1_1hash_3_01NAV_1_1Frequency___01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3ainstime_20_3e_4',['hash&lt; NAV::InsTime &gt;',['../structstd_1_1hash_3_01NAV_1_1InsTime_01_4.html',1,'std']]],

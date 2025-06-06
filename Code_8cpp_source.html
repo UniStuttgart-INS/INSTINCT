@@ -49,7 +49,7 @@
               <td id="projectlogo"><img alt="Logo" src="INSTINCT_Logo_Text.png"  /></td>
               <td id="projectalign">
                 <div id="projectname"><span
-                    id="projectnumber">&#160;0.3.0</span>
+                    id="projectnumber">&#160;0.4.1</span>
                 </div>
               </td>
             </tr>
@@ -1448,7 +1448,7 @@ $(function(){initNavTree('Code_8cpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span>        <span class="keywordflow">if</span> (ImGui::BeginTable(fmt::format(<span class="stringliteral">&quot;{} Table&quot;</span>, label).c_str(), 7, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_ScrollY))</div>
 <div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span>        {</div>
 <div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span>            ImGui::TableSetupScrollFreeze(0, 1);</div>
-<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; 0xFFUL &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
+<div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span>            <span class="keywordflow">for</span> (uint64_t satSys = 0xFF; satSys &lt; static_cast&lt;uint64_t&gt;(0xFF) &lt;&lt; (7 * 8); satSys = satSys &lt;&lt; 8UL)</div>
 <div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span>            {</div>
 <div class="line"><a id="l01209" name="l01209"></a><span class="lineno"> 1209</span>                ImGui::TableSetupColumn(std::string(<a class="code hl_struct" href="structNAV_1_1SatelliteSystem.html">SatelliteSystem</a>(<a class="code hl_enumeration" href="namespaceNAV.html#af01e645814479c1179804a8d5ffb411e">SatelliteSystem_</a>(satSys))).c_str());</div>
 <div class="line"><a id="l01210" name="l01210"></a><span class="lineno"> 1210</span>            }</div>
@@ -1459,7 +1459,7 @@ $(function(){initNavTree('Code_8cpp_source.html',''); initResizable(true); });
 <div class="line"><a id="l01215" name="l01215"></a><span class="lineno"> 1215</span>                ImGui::TableSetColumnIndex(satSys);</div>
 <div class="line"><a id="l01216" name="l01216"></a><span class="lineno"> 1216</span>                <span class="keywordflow">for</span> (uint64_t f = 0; f &lt; 8; f++)</div>
 <div class="line"><a id="l01217" name="l01217"></a><span class="lineno"> 1217</span>                {</div>
-<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span>                    uint64_t flag = (1UL &lt;&lt; (f + <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(satSys) * 8));</div>
+<div class="line"><a id="l01218" name="l01218"></a><span class="lineno"> 1218</span>                    uint64_t flag = (<span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(1) &lt;&lt; (f + <span class="keyword">static_cast&lt;</span>uint64_t<span class="keyword">&gt;</span>(satSys) * 8));</div>
 <div class="line"><a id="l01219" name="l01219"></a><span class="lineno"> 1219</span>                    <span class="keyword">auto</span> frequency = <a class="code hl_class" href="classNAV_1_1Frequency.html">Frequency</a>(<a class="code hl_enumeration" href="namespaceNAV.html#a28a406c2d7f5c5c4a598301e7dab6eba">Frequency_</a>(flag));</div>
 <div class="line"><a id="l01220" name="l01220"></a><span class="lineno"> 1220</span>                    <span class="keyword">auto</span> text = std::string(frequency);</div>
 <div class="line"><a id="l01221" name="l01221"></a><span class="lineno"> 1221</span>                    <span class="keywordflow">if</span> (text == <span class="stringliteral">&quot;None&quot;</span>)</div>

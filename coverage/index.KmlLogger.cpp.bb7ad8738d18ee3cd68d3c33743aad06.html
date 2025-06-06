@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-02 15:19:59</td>
+      <td>2025-06-06 13:17:47</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>10</td>
-      <td>144</td>
-      <td class="coverage-low">6.9%</td>
+      <td>11</td>
+      <td>148</td>
+      <td class="coverage-low">7.4%</td>
     </tr>
   </table>
 </div>
@@ -76,9 +76,9 @@
     <tr><td><a href="#l101">NAV::KmlLogger::flush() (line 101)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l62">NAV::KmlLogger::guiConfig() (line 62)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l209">NAV::KmlLogger::initialize() (line 209)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l233">NAV::KmlLogger::pinAddCallback(NAV::Node*) (line 233)</a></td><td>called 112 times</td><td>50.0%</td></tr>
+    <tr><td><a href="#l233">NAV::KmlLogger::pinAddCallback(NAV::Node*) (line 233)</a></td><td>called 112 times</td><td>47.0%</td></tr>
     <tr><td><a href="#l244">NAV::KmlLogger::pinDeleteCallback(NAV::Node*, unsigned long) (line 244)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l87">NAV::KmlLogger::restore(nlohmann::json_abi_diag_v3_11_3::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_11_3::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;) (line 87)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l87">NAV::KmlLogger::restore(nlohmann::json_abi_diag_v3_12_0::basic_json&lt;std::map, std::vector, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, bool, long, unsigned long, double, std::allocator, nlohmann::json_abi_diag_v3_12_0::adl_serializer, std::vector&lt;unsigned char, std::allocator&lt;unsigned char&gt; &gt;, void&gt; const&amp;) (line 87)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l75">NAV::KmlLogger::save[abi:cxx11]() const (line 75)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l47">NAV::KmlLogger::typeStatic[abi:cxx11]() (line 47)</a></td><td>called 224 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l52">NAV::KmlLogger::type[abi:cxx11]() const (line 52)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -1780,20 +1780,22 @@
       <td class="lineno"><a id="l237" href="#l237">237</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">4/8</summary>
+          <summary class="linebranchSummary">5/10</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 112 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 8 taken 112 times.</div>
-            <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 112 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 112 times.</div>
-            <div class="notTakenBranch">&cross; Branch 17 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 18 not taken.</div>
+            <div class="takenBranch">&check; Branch 6 taken 112 times.</div>
+            <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
+            <div class="takenBranch">&check; Branch 10 taken 112 times.</div>
+            <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
+            <div class="takenBranch">&check; Branch 14 taken 112 times.</div>
+            <div class="takenBranch">&check; Branch 15 taken 112 times.</div>
+            <div class="notTakenBranch">&cross; Branch 19 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 20 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">448</td>
+      <td class="linecount partialCoveredLine">336</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">nm</span><span class="o">::</span><span class="n">CreateInputPin</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Pin {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">inputPins</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">Pin</span><span class="o">::</span><span class="n">Type</span><span class="o">::</span><span class="n">Flow</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">

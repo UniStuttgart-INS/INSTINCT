@@ -126,7 +126,7 @@ var searchData=
   ['polynomialcycleslipdetector_123',['PolynomialCycleSlipDetector',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV::PolynomialCycleSlipDetector&lt; Key &gt;'],['../classNAV_1_1PolynomialCycleSlipDetector.html#adf906eb42f8374eeccf65724ec7e84ff',1,'NAV::PolynomialCycleSlipDetector::PolynomialCycleSlipDetector()']]],
   ['polynomialcycleslipdetector_124',['polynomialCycleSlipDetector',['../structNAV_1_1GnssAnalyzer_1_1Combination.html#a3fe37391c5ee5693789a3a3d0a50b696',1,'NAV::GnssAnalyzer::Combination']]],
   ['polynomialcycleslipdetector_2ehpp_125',['PolynomialCycleSlipDetector.hpp',['../PolynomialCycleSlipDetector_8hpp.html',1,'']]],
-  ['polynomialcycleslipdetector_3c_20nav_3a_3acycleslipdetector_3a_3adualfrequencycombination_20_3e_126',['PolynomialCycleSlipDetector&lt; NAV::CycleSlipDetector::DualFrequencyCombination &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
+  ['polynomialcycleslipdetector_3c_20nav_3a_3adualfrequencycombination_20_3e_126',['PolynomialCycleSlipDetector&lt; NAV::DualFrequencyCombination &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialcycleslipdetector_3c_20nav_3a_3asatsigid_20_3e_127',['PolynomialCycleSlipDetector&lt; NAV::SatSigId &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialcycleslipdetector_3c_20std_3a_3astring_20_3e_128',['PolynomialCycleSlipDetector&lt; std::string &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialcycleslipdetectorgui_129',['PolynomialCycleSlipDetectorGui',['../namespaceNAV.html#aa148590d4b68247ca7127f79a7adfff9',1,'NAV']]],

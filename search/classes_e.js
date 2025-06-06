@@ -14,7 +14,7 @@ var searchData=
   ['plottooltip_11',['PlotTooltip',['../structNAV_1_1PlotTooltip.html',1,'NAV']]],
   ['polynomial_12',['Polynomial',['../classNAV_1_1Polynomial.html',1,'NAV']]],
   ['polynomialcycleslipdetector_13',['PolynomialCycleSlipDetector',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
-  ['polynomialcycleslipdetector_3c_20nav_3a_3acycleslipdetector_3a_3adualfrequencycombination_20_3e_14',['PolynomialCycleSlipDetector&lt; NAV::CycleSlipDetector::DualFrequencyCombination &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
+  ['polynomialcycleslipdetector_3c_20nav_3a_3adualfrequencycombination_20_3e_14',['PolynomialCycleSlipDetector&lt; NAV::DualFrequencyCombination &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialcycleslipdetector_3c_20nav_3a_3asatsigid_20_3e_15',['PolynomialCycleSlipDetector&lt; NAV::SatSigId &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialcycleslipdetector_3c_20std_3a_3astring_20_3e_16',['PolynomialCycleSlipDetector&lt; std::string &gt;',['../classNAV_1_1PolynomialCycleSlipDetector.html',1,'NAV']]],
   ['polynomialregressor_17',['PolynomialRegressor',['../classNAV_1_1PolynomialRegressor.html',1,'NAV']]],

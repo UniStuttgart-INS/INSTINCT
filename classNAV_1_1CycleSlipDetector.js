@@ -3,7 +3,6 @@ var classNAV_1_1CycleSlipDetector =
     [ "CycleSlipDualFrequency", "structNAV_1_1CycleSlipDetector_1_1CycleSlipDualFrequency.html", "structNAV_1_1CycleSlipDetector_1_1CycleSlipDualFrequency" ],
     [ "CycleSlipLossOfLockIndicator", "structNAV_1_1CycleSlipDetector_1_1CycleSlipLossOfLockIndicator.html", "structNAV_1_1CycleSlipDetector_1_1CycleSlipLossOfLockIndicator" ],
     [ "CycleSlipSingleFrequency", "structNAV_1_1CycleSlipDetector_1_1CycleSlipSingleFrequency.html", "structNAV_1_1CycleSlipDetector_1_1CycleSlipSingleFrequency" ],
-    [ "DualFrequencyCombination", "structNAV_1_1CycleSlipDetector_1_1DualFrequencyCombination.html", "structNAV_1_1CycleSlipDetector_1_1DualFrequencyCombination" ],
     [ "SatelliteObservation", "structNAV_1_1CycleSlipDetector_1_1SatelliteObservation.html", "structNAV_1_1CycleSlipDetector_1_1SatelliteObservation" ],
     [ "Result", "classNAV_1_1CycleSlipDetector.html#a1d2d858fe5255024fbc260e7578eae04", null ],
     [ "Strategy", "classNAV_1_1CycleSlipDetector.html#ae84115ae3dfae2bc0ddd305033a1793f", null ],

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2025-06-02 15:19:59</td>
+      <td>2025-06-06 13:17:47</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>23</td>
-      <td>60</td>
-      <td class="coverage-low">38.3%</td>
+      <td>24</td>
+      <td>68</td>
+      <td class="coverage-low">35.3%</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l119">NAV::Combiner::Combination::Term::description(NAV::Combiner const*, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;) const (line 119)</a></td><td>called 581304 times</td><td>33.0%</td></tr>
+    <tr><td><a href="#l119">NAV::Combiner::Combination::Term::description(NAV::Combiner const*, std::vector&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;, std::allocator&lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt; &gt; const&amp;) const (line 119)</a></td><td>called 581304 times</td><td>37.0%</td></tr>
     <tr><td><a href="#l141">NAV::Combiner::Combination::description[abi:cxx11](NAV::Combiner const*) const (line 141)</a></td><td>called 145326 times</td><td>73.0%</td></tr>
   </table>
 </details>
@@ -954,7 +954,7 @@
       <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">7/14</summary>
+          <summary class="linebranchSummary">7/16</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 1 taken 290652 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
@@ -962,14 +962,16 @@
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 6 taken 290652 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
-            <div class="takenBranch">&check; Branch 9 taken 290652 times.</div>
-            <div class="takenBranch">&check; Branch 10 taken 290652 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 290652 times.</div>
+            <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
             <div class="takenBranch">&check; Branch 12 taken 290652 times.</div>
-            <div class="notTakenBranch">&cross; Branch 14 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 15 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 16 not taken.</div>
+            <div class="takenBranch">&check; Branch 13 taken 290652 times.</div>
+            <div class="takenBranch">&check; Branch 14 taken 290652 times.</div>
+            <div class="takenBranch">&check; Branch 15 taken 290652 times.</div>
             <div class="notTakenBranch">&cross; Branch 17 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 18 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 19 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 20 not taken.</div>
           </div>
         </details>
       </td>
@@ -980,15 +982,17 @@
       <td class="lineno"><a id="l124" href="#l124">124</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 3 taken 290652 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 290652 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 581304 times.</div>
+            <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1743912</td>
-      <td class="src coveredLine"><span class="w">                                       </span><span class="n">descriptors</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dataSelection</span><span class="p">)),</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">inputPins</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">pinIndex</span><span class="p">).</span><span class="n">name</span><span class="p">);</span></td>
+      <td class="linecount partialCoveredLine">1162608</td>
+      <td class="src partialCoveredLine"><span class="w">                                       </span><span class="n">descriptors</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">dataSelection</span><span class="p">)),</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">inputPins</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">pinIndex</span><span class="p">).</span><span class="n">name</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l125" href="#l125">125</a></td>

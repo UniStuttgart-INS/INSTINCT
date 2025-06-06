@@ -159,6 +159,7 @@ var annotated_dup =
       [ "CubicSpline", "classNAV_1_1CubicSpline.html", "classNAV_1_1CubicSpline" ],
       [ "CycleSlipDetector", "classNAV_1_1CycleSlipDetector.html", "classNAV_1_1CycleSlipDetector" ],
       [ "Demo", "classNAV_1_1Demo.html", "classNAV_1_1Demo" ],
+      [ "DualFrequencyCombination", "structNAV_1_1DualFrequencyCombination.html", "structNAV_1_1DualFrequencyCombination" ],
       [ "DynamicData", "classNAV_1_1DynamicData.html", "classNAV_1_1DynamicData" ],
       [ "EmlidFile", "classNAV_1_1EmlidFile.html", "classNAV_1_1EmlidFile" ],
       [ "EmlidObs", "classNAV_1_1EmlidObs.html", "classNAV_1_1EmlidObs" ],
@@ -312,7 +313,7 @@ var annotated_dup =
     ] ],
     [ "std", "namespacestd.html", [
       [ "hash< NAV::Code >", "structstd_1_1hash_3_01NAV_1_1Code_01_4.html", "structstd_1_1hash_3_01NAV_1_1Code_01_4" ],
-      [ "hash< NAV::CycleSlipDetector::DualFrequencyCombination >", "structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4.html", "structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4" ],
+      [ "hash< NAV::DualFrequencyCombination >", "structstd_1_1hash_3_01NAV_1_1DualFrequencyCombination_01_4.html", "structstd_1_1hash_3_01NAV_1_1DualFrequencyCombination_01_4" ],
       [ "hash< NAV::Frequency >", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html", "structstd_1_1hash_3_01NAV_1_1Frequency_01_4" ],
       [ "hash< NAV::Frequency_ >", "structstd_1_1hash_3_01NAV_1_1Frequency___01_4.html", "structstd_1_1hash_3_01NAV_1_1Frequency___01_4" ],
       [ "hash< NAV::InsTime >", "structstd_1_1hash_3_01NAV_1_1InsTime_01_4.html", "structstd_1_1hash_3_01NAV_1_1InsTime_01_4" ],

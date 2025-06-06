@@ -17,7 +17,7 @@ var searchData=
   ['hascompatiblepin_14',['hasCompatiblePin',['../structNAV_1_1NodeRegistry_1_1NodeInfo.html#a876b61625115de119206276055ab38b1',1,'NAV::NodeRegistry::NodeInfo']]],
   ['hasdata_15',['hasData',['../structNAV_1_1Plot_1_1PinData_1_1PlotData.html#a42700a74683f9673a17196d37d52b2cc',1,'NAV::Plot::PinData::PlotData']]],
   ['hash_3c_20nav_3a_3acode_20_3e_16',['hash&lt; NAV::Code &gt;',['../structstd_1_1hash_3_01NAV_1_1Code_01_4.html',1,'std']]],
-  ['hash_3c_20nav_3a_3acycleslipdetector_3a_3adualfrequencycombination_20_3e_17',['hash&lt; NAV::CycleSlipDetector::DualFrequencyCombination &gt;',['../structstd_1_1hash_3_01NAV_1_1CycleSlipDetector_1_1DualFrequencyCombination_01_4.html',1,'std']]],
+  ['hash_3c_20nav_3a_3adualfrequencycombination_20_3e_17',['hash&lt; NAV::DualFrequencyCombination &gt;',['../structstd_1_1hash_3_01NAV_1_1DualFrequencyCombination_01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3afrequency_20_3e_18',['hash&lt; NAV::Frequency &gt;',['../structstd_1_1hash_3_01NAV_1_1Frequency_01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3afrequency_5f_20_3e_19',['hash&lt; NAV::Frequency_ &gt;',['../structstd_1_1hash_3_01NAV_1_1Frequency___01_4.html',1,'std']]],
   ['hash_3c_20nav_3a_3ainstime_20_3e_20',['hash&lt; NAV::InsTime &gt;',['../structstd_1_1hash_3_01NAV_1_1InsTime_01_4.html',1,'std']]],

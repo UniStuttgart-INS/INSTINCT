@@ -9,7 +9,7 @@ var searchData=
   ['dist_5ffilter_5fsink_6',['dist_filter_sink',['../classspdlog_1_1sinks_1_1dist__filter__sink.html',1,'spdlog::sinks']]],
   ['dop_7',['DOP',['../structNAV_1_1vendor_1_1vectornav_1_1DOP.html',1,'NAV::vendor::vectornav']]],
   ['doppler_8',['Doppler',['../structNAV_1_1SPP_1_1Meas_1_1Doppler.html',1,'NAV::SPP::Meas']]],
-  ['dualfrequencycombination_9',['DualFrequencyCombination',['../structNAV_1_1CycleSlipDetector_1_1DualFrequencyCombination.html',1,'NAV::CycleSlipDetector']]],
+  ['dualfrequencycombination_9',['DualFrequencyCombination',['../structNAV_1_1DualFrequencyCombination.html',1,'NAV']]],
   ['dynamicdata_10',['DynamicData',['../classNAV_1_1DynamicData.html',1,'NAV']]],
   ['dynamicinputpins_11',['DynamicInputPins',['../structNAV_1_1gui_1_1widgets_1_1DynamicInputPins.html',1,'NAV::gui::widgets']]]
 ];
