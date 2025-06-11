@@ -121,6 +121,11 @@ find_package(nlohmann_json REQUIRED)
 find_package(unordered_dense CONFIG REQUIRED)
 find_package(muparser REQUIRED)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # HACK: Inlined code triggers warnings
+    target_compile_options(nlohmann_json::nlohmann_json INTERFACE -Wno-maybe-uninitialized)
+endif()
+
 option(ENABLE_GPERFTOOLS "Enable use of Google Performance Tools (gperftools) profiler" OFF)
 if(ENABLE_GPERFTOOLS)
   find_package(Gperftools COMPONENTS profiler)
