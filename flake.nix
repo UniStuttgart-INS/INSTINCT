@@ -28,9 +28,9 @@
               lldb
               gcovr
               mold
-              llvmPackages_19.clang-tools # clang-format, clang-tidy
-              gcc13
-              gcc13Stdenv
+              clang-tools # clang-format, clang-tidy
+              gcc
+              gccStdenv
               doxygen
               texliveFull
               graphviz
@@ -41,7 +41,7 @@
 
               ccache
               ccacheStdenv
-              llvmPackages_19.libcxxClang
+              llvmPackages.libcxxClang
               gv
               valgrind
               kdePackages.kcachegrind
@@ -63,7 +63,7 @@
               + ":${glfw}/lib"
               + ":${libGLU}/lib"
               + ":${stdenv.cc.cc.lib}/lib"
-              + ":${llvmPackages_19.libcxx}/lib"
+              + ":${llvmPackages.libcxx}/lib"
               + ":${gperftools}/lib";
           };
         }
