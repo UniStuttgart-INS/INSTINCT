@@ -181,7 +181,7 @@ class ObservationFilter
             const GnssObs::ObservationData& obsData = gnssObs->data.at(obsIdx);
             SatSigId satSigId = obsData.satSigId;
             SatId satId = satSigId.toSatId();
-            LOG_DATA("{}: Considering [{}] for receiver {}", nameId, satSigId, receiverType);
+            // LOG_DATA("{}: Considering [{}] for receiver {}", nameId, satSigId, receiverType);
 
             // Decrease the temporary exclude counter
             if (firstReceiver && _temporarilyExcludedSignalsSatellites.contains(satSigId))
@@ -194,32 +194,32 @@ class ObservationFilter
 
             if (!(satSigId.freq() & _filterFreq))
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI frequency filter", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs due to GUI frequency filter", nameId, satSigId);
                 if (filtered) { filtered->frequencyFilter.push_back(satSigId); }
                 continue;
             }
             if (!(satSigId.code & _filterCode))
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI code filter", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs due to GUI code filter", nameId, satSigId);
                 if (filtered) { filtered->codeFilter.push_back(satSigId); }
                 continue;
             }
             if (std::ranges::find(_excludedSatellites, satId) != _excludedSatellites.end())
             {
-                LOG_DATA("{}:  [{}] Skipping obs due to GUI excluded satellites", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs due to GUI excluded satellites", nameId, satSigId);
                 if (filtered) { filtered->excludedSatellites.push_back(satSigId); }
                 continue;
             }
             if (_temporarilyExcludedSignalsSatellites.contains(satSigId))
             {
-                LOG_DATA("{}:  [{}] Skipping obs because temporarily excluded signal", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs because temporarily excluded signal", nameId, satSigId);
                 if (filtered) { filtered->tempExcludedSignal.push_back(satSigId); }
                 continue;
             }
 
             if (!obsData.pseudorange)
             {
-                LOG_DATA("{}:  [{}] Skipping obs because no pseudorange measurement (needed for satellite position calculation)", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs because no pseudorange measurement (needed for satellite position calculation)", nameId, satSigId);
                 if (filtered) { filtered->noPseudorangeMeasurement.push_back(satSigId); }
                 continue;
             }
@@ -232,8 +232,8 @@ class ObservationFilter
                     if (signals.first.toSatId() == satId && signals.first.freq() == satSigId.freq() // e.g. Rover has [G5Q], but Base has [G5X]
                         && signals.second.recvObs.size() != observations.receivers.size())          // But not: Rover has [G5Q], but Base has [G5Q] and [G5X]
                     {
-                        LOG_DATA("{}:  [{}] Not observed by all receivers, but other receivers have [{}]. Treating as such.",
-                                 nameId, satSigId, signals.first);
+                        // LOG_DATA("{}:  [{}] Not observed by all receivers, but other receivers have [{}]. Treating as such.",
+                        //          nameId, satSigId, signals.first);
                         satSigId = signals.first;
                         satId = satSigId.toSatId();
                         signalWithSameFrequencyFound = true;
@@ -242,7 +242,7 @@ class ObservationFilter
                 }
                 if (!signalWithSameFrequencyFound)
                 {
-                    LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
+                    // LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
                     if (filtered) { filtered->notAllReceiversObserved.push_back((satSigId)); }
                     continue;
                 }
@@ -260,7 +260,7 @@ class ObservationFilter
             }
             if (satNavData == nullptr)
             {
-                LOG_DATA("{}:  [{}] Skipping obs because no navigation data available to calculaten the satellite position", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs because no navigation data available to calculaten the satellite position", nameId, satSigId);
                 if (filtered) { filtered->navigationDataMissing.push_back(satSigId); }
                 continue;
             }
@@ -288,8 +288,8 @@ class ObservationFilter
                 const auto& satElevation = recvData->satElevation(e_posMarker, lla_posMarker);
                 if (satElevation < _elevationMask)
                 {
-                    LOG_DATA("{}: Signal {} is skipped because of elevation mask. ({} < {})", nameId, satSigId,
-                             rad2deg(satElevation), rad2deg(_elevationMask));
+                    // LOG_DATA("{}: Signal {} is skipped because of elevation mask. ({} < {})", nameId, satSigId,
+                    //          rad2deg(satElevation), rad2deg(_elevationMask));
                     if (filtered) { filtered->elevationMaskTriggered.emplace_back(satSigId, satElevation); }
                     continue;
                 }
@@ -298,8 +298,8 @@ class ObservationFilter
                             .at(_sameSnrMaskForAllReceivers ? static_cast<ReceiverType>(0) : receiverType)
                             .checkSNRMask(satSigId.freq(), satElevation, obsData.CN0.value()))
                 {
-                    LOG_DATA("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
-                             nameId, gnssObs->insTime.toYMDHMS(GPST), satSigId, receiverType, *obsData.CN0);
+                    // LOG_DATA("{}: [{}] SNR mask triggered for [{}] on receiver [{}] with CN0 {} dbHz",
+                    //          nameId, gnssObs->insTime.toYMDHMS(GPST), satSigId, receiverType, *obsData.CN0);
                     if (filtered) { filtered->snrMaskTriggered.emplace_back(satSigId, *obsData.CN0); }
                     continue;
                 }
@@ -314,7 +314,7 @@ class ObservationFilter
                                   [&](auto& r) {
                                       if (r.second->obs.contains(obsType))
                                       {
-                                          LOG_DATA("{}:  [{}] Erasing previously added obs '{}' on this signal.", nameId, satSigId, obsType);
+                                          //   LOG_DATA("{}:  [{}] Erasing previously added obs '{}' on this signal.", nameId, satSigId, obsType);
                                           r.second->obs.erase(obsType);
                                       }
                                   });
@@ -327,7 +327,7 @@ class ObservationFilter
                                        return !r.second->obs.contains(obsType);
                                    }))
                 {
-                    LOG_DATA("{}:  [{}][{}] Skipping '{}' measurement. Not all receivers have this observation.", nameId, receiverType, satSigId, obsType);
+                    // LOG_DATA("{}:  [{}][{}] Skipping '{}' measurement. Not all receivers have this observation.", nameId, receiverType, satSigId, obsType);
                     removeObsTypeIfExist();
                     continue;
                 }
@@ -337,8 +337,8 @@ class ObservationFilter
                     if (recvData->gnssObsData().pseudorange)
                     {
                         recvData->obs[obsType].measurement = recvData->gnssObsData().pseudorange->value;
-                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, satSigId,
-                                 obsType, receiverType, recvData->obs[obsType].measurement);
+                        // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m])", nameId, satSigId,
+                        //          obsType, receiverType, recvData->obs[obsType].measurement);
                     }
                     else { removeObsTypeIfExist(); }
                     break;
@@ -347,8 +347,8 @@ class ObservationFilter
                     {
                         recvData->obs[obsType].measurement = InsConst::C / satSigId.freq().getFrequency(freqNum)
                                                              * recvData->gnssObsData().carrierPhase->value;
-                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, satSigId,
-                                 obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().carrierPhase->value);
+                        // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m] = {:.3f} [cycles])", nameId, satSigId,
+                        //          obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().carrierPhase->value);
                     }
                     else { removeObsTypeIfExist(); }
                     break;
@@ -358,8 +358,8 @@ class ObservationFilter
                         recvData->obs[obsType].measurement = doppler2rangeRate(recvData->gnssObsData().doppler.value(),
                                                                                satSigId.freq(),
                                                                                freqNum);
-                        LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, satSigId,
-                                 obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().doppler.value());
+                        // LOG_DATA("{}:  [{}] Taking {:11} observation into account on {:5} receiver ({:.3f} [m/s] = {:.3f} [Hz])", nameId, satSigId,
+                        //          obsType, receiverType, recvData->obs[obsType].measurement, recvData->gnssObsData().doppler.value());
                     }
                     else { removeObsTypeIfExist(); }
                     break;
@@ -375,12 +375,12 @@ class ObservationFilter
                                    return r.second->obs.empty();
                                }))
             {
-                LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
+                // LOG_DATA("{}:  [{}] Skipping obs because not observed by all receivers", nameId, satSigId);
                 if (filtered) { filtered->notAllReceiversObserved.push_back(satSigId); }
                 observations.signals.erase(satSigId);
                 continue;
             }
-            LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, satSigId, receiverType);
+            // LOG_DATA("{}: Adding satellite [{}] for receiver {}", nameId, satSigId, receiverType);
             if (!observations.signals.contains(satSigId))
             {
                 observations.signals.insert(std::make_pair(satSigId,
@@ -398,7 +398,7 @@ class ObservationFilter
         }
         for (const auto& satSigId : sigToRemove)
         {
-            LOG_DATA("{}: [{}] Removing signal because not observed by all receivers.", nameId, satSigId);
+            // LOG_DATA("{}: [{}] Removing signal because not observed by all receivers.", nameId, satSigId);
             if (filtered) { filtered->notAllReceiversObserved.push_back(satSigId); }
             observations.signals.erase(satSigId);
         }
