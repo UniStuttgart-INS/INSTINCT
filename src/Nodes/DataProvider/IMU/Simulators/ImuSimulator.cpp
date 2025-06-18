@@ -240,13 +240,13 @@ void NAV::ImuSimulator::guiConfig()
                     ImGui::TableHeadersRow();
 
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Pos ECEF X [m]", "double");
+                    TextColoredIfExists(0, "X-ECEF [m]", "double");
                     TextColoredIfExists(3, "Latitude [deg]", "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Pos ECEF Y [m]", "double");
+                    TextColoredIfExists(0, "Y-ECEF [m]", "double");
                     TextColoredIfExists(3, "Longitude [deg]", "double");
                     ImGui::TableNextRow();
-                    TextColoredIfExists(0, "Pos ECEF Z [m]", "double");
+                    TextColoredIfExists(0, "Z-ECEF [m]", "double");
                     TextColoredIfExists(3, "Altitude [m]", "double");
 
                     ImGui::EndTable();
@@ -891,9 +891,9 @@ std::optional<NAV::InsTime> NAV::ImuSimulator::getTimeFromCsvLine(const CsvData:
 
 std::optional<Eigen::Vector3d> NAV::ImuSimulator::e_getPositionFromCsvLine(const CsvData::CsvLine& line, const std::vector<std::string>& description) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto posXIter = std::ranges::find(description, "Pos ECEF X [m]");
-    auto posYIter = std::ranges::find(description, "Pos ECEF Y [m]");
-    auto posZIter = std::ranges::find(description, "Pos ECEF Z [m]");
+    auto posXIter = std::ranges::find(description, "X-ECEF [m]");
+    auto posYIter = std::ranges::find(description, "Y-ECEF [m]");
+    auto posZIter = std::ranges::find(description, "Z-ECEF [m]");
     if (posXIter != description.end() && posYIter != description.end() && posZIter != description.end())
     {
         const auto* posX = std::get_if<double>(&line.at(static_cast<size_t>(posXIter - description.begin())));
