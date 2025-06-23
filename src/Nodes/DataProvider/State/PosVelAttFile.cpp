@@ -79,47 +79,49 @@ void NAV::PosVelAttFile::guiConfig()
         ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
-        auto TextColoredIfExists = [this](int index, const char* text) {
+        auto TextColoredIfExists = [this](int index, const std::vector<const char*>& searchTexts) {
             ImGui::TableSetColumnIndex(index);
-            if (std::ranges::find(_headerColumns, text) != _headerColumns.end())
+            for (const auto& text : searchTexts)
             {
-                ImGui::TextUnformatted(text);
+                if (std::ranges::find(_headerColumns, text) != _headerColumns.end())
+                {
+                    ImGui::TextUnformatted(text);
+                    return;
+                }
             }
-            else
-            {
-                ImGui::TextDisabled("%s", text);
-            }
+
+            ImGui::TextDisabled("%s", searchTexts.front());
         };
 
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsCycle");
-        TextColoredIfExists(1, "X-ECEF [m]");
-        TextColoredIfExists(2, "X velocity ECEF [m/s]");
-        TextColoredIfExists(3, "n_Quat_b w");
+        TextColoredIfExists(0, { "GpsCycle" });
+        TextColoredIfExists(1, { "X-ECEF [m]", "Pos ECEF X [m]" });
+        TextColoredIfExists(2, { "X velocity ECEF [m/s]", "Vel ECEF X [m/s]" });
+        TextColoredIfExists(3, { "n_Quat_b w" });
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsWeek");
-        TextColoredIfExists(1, "Y-ECEF [m]");
-        TextColoredIfExists(2, "Y velocity ECEF [m/s]");
-        TextColoredIfExists(3, "n_Quat_b x");
+        TextColoredIfExists(0, { "GpsWeek" });
+        TextColoredIfExists(1, { "Y-ECEF [m]", "Pos ECEF Y [m]" });
+        TextColoredIfExists(2, { "Y velocity ECEF [m/s]", "Vel ECEF Y [m/s]" });
+        TextColoredIfExists(3, { "n_Quat_b x" });
         ImGui::TableNextRow();
-        TextColoredIfExists(0, "GpsToW [s]");
-        TextColoredIfExists(1, "Z-ECEF [m]");
-        TextColoredIfExists(2, "Z velocity ECEF [m/s]");
-        TextColoredIfExists(3, "n_Quat_b y");
+        TextColoredIfExists(0, { "GpsToW [s]" });
+        TextColoredIfExists(1, { "Z-ECEF [m]", "Pos ECEF Z [m]" });
+        TextColoredIfExists(2, { "Z velocity ECEF [m/s]", "Vel ECEF Z [m/s]" });
+        TextColoredIfExists(3, { "n_Quat_b y" });
         ImGui::TableNextRow();
-        TextColoredIfExists(1, "Latitude [deg]");
-        TextColoredIfExists(2, "North velocity [m/s]");
-        TextColoredIfExists(3, "n_Quat_b z");
+        TextColoredIfExists(1, { "Latitude [deg]" });
+        TextColoredIfExists(2, { "North velocity [m/s]", "Vel N [m/s]" });
+        TextColoredIfExists(3, { "n_Quat_b z" });
         ImGui::TableNextRow();
-        TextColoredIfExists(1, "Longitude [deg]");
-        TextColoredIfExists(2, "East velocity [m/s]");
-        TextColoredIfExists(3, "Roll [deg]");
+        TextColoredIfExists(1, { "Longitude [deg]" });
+        TextColoredIfExists(2, { "East velocity [m/s]", "Vel E [m/s]" });
+        TextColoredIfExists(3, { "Roll [deg]" });
         ImGui::TableNextRow();
-        TextColoredIfExists(1, "Altitude [m]");
-        TextColoredIfExists(2, "Down velocity [m/s]");
-        TextColoredIfExists(3, "Pitch [deg]");
+        TextColoredIfExists(1, { "Altitude [m]" });
+        TextColoredIfExists(2, { "Down velocity [m/s]", "Vel D [m/s]" });
+        TextColoredIfExists(3, { "Pitch [deg]" });
         ImGui::TableNextRow();
-        TextColoredIfExists(3, "Yaw [deg]");
+        TextColoredIfExists(3, { "Yaw [deg]" });
 
         ImGui::EndTable();
     }
@@ -171,7 +173,9 @@ bool NAV::PosVelAttFile::initialize()
             LOG_ERROR("{}: A PosVelAtt File needs a time. Please add columns 'GpsCycle', 'GpsWeek' and 'GpsToW [s]'.", nameId());
             return false;
         }
-        if (!(hasCol("X-ECEF [m]") && hasCol("Y-ECEF [m]") && hasCol("Z-ECEF [m]"))
+        if (!((hasCol("X-ECEF [m]") || hasCol("Pos ECEF X [m]"))
+              && (hasCol("Y-ECEF [m]") || hasCol("Pos ECEF Y [m]"))
+              && (hasCol("Z-ECEF [m]") || hasCol("Pos ECEF Z [m]")))
             && !(hasCol("Latitude [deg]") && hasCol("Longitude [deg]") && hasCol("Altitude [m]")))
         {
             LOG_ERROR("{}: A PosVelAtt File needs a position. Please provide"
@@ -183,9 +187,12 @@ bool NAV::PosVelAttFile::initialize()
         _fileContent = FileContent::Pos;
         outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier = std::vector{ Pos::type() };
 
-        if ((hasCol("X velocity ECEF [m/s]") && hasCol("Y velocity ECEF [m/s]") && hasCol("Z velocity ECEF [m/s]"))
-            || (hasCol("North velocity [m/s]") && hasCol("East velocity [m/s]") && hasCol("Down velocity [m/s]"))
-            || (hasCol("X velocity ECEF [m/s]") && hasCol("Y velocity ECEF [m/s]") && hasCol("Z velocity ECEF [m/s]")))
+        if (((hasCol("X velocity ECEF [m/s]") || hasCol("Vel ECEF X [m/s]"))
+             && (hasCol("Y velocity ECEF [m/s]") || hasCol("Vel ECEF Y [m/s]"))
+             && (hasCol("Z velocity ECEF [m/s]") || hasCol("Vel ECEF Z [m/s]")))
+            || ((hasCol("North velocity [m/s]") || hasCol("Vel N [m/s]"))
+                && (hasCol("East velocity [m/s]") || hasCol("Vel E [m/s]"))
+                && (hasCol("Down velocity [m/s]") || hasCol("Vel D [m/s]"))))
         {
             _fileContent = FileContent::PosVel;
             outputPins[OUTPUT_PORT_INDEX_PVA].dataIdentifier = std::vector{ PosVel::type() };
@@ -309,9 +316,9 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
             else if (column == "GpsWeek") { gpsWeek = static_cast<uint16_t>(std::stoul(cell)); }
             else if (column == "GpsToW [s]") { gpsToW = std::stold(cell); }
 
-            else if (column == "X-ECEF [m]") { e_position_x = std::stod(cell); }
-            else if (column == "Y-ECEF [m]") { e_position_y = std::stod(cell); }
-            else if (column == "Z-ECEF [m]") { e_position_z = std::stod(cell); }
+            else if (column == "X-ECEF [m]" || column == "Pos ECEF X [m]") { e_position_x = std::stod(cell); }
+            else if (column == "Y-ECEF [m]" || column == "Pos ECEF Y [m]") { e_position_y = std::stod(cell); }
+            else if (column == "Z-ECEF [m]" || column == "Pos ECEF Z [m]") { e_position_z = std::stod(cell); }
             else if (column == "X-ECEF StDev [m]") { e_positionStdDev_x = std::stod(cell); }
             else if (column == "Y-ECEF StDev [m]") { e_positionStdDev_y = std::stod(cell); }
             else if (column == "Z-ECEF StDev [m]") { e_positionStdDev_z = std::stod(cell); }
@@ -323,16 +330,16 @@ std::shared_ptr<const NAV::NodeData> NAV::PosVelAttFile::pollData()
             else if (column == "East StDev [m]") { n_positionStdDev_e = deg2rad(std::stod(cell)); }
             else if (column == "Down StDev [m]") { n_positionStdDev_d = std::stod(cell); }
 
-            else if (column == "X velocity ECEF [m/s]") { e_velocity_x = std::stod(cell); }
-            else if (column == "Y velocity ECEF [m/s]") { e_velocity_y = std::stod(cell); }
-            else if (column == "Z velocity ECEF [m/s]") { e_velocity_z = std::stod(cell); }
+            else if (column == "X velocity ECEF [m/s]" || column == "Vel ECEF X [m/s]") { e_velocity_x = std::stod(cell); }
+            else if (column == "Y velocity ECEF [m/s]" || column == "Vel ECEF Y [m/s]") { e_velocity_y = std::stod(cell); }
+            else if (column == "Z velocity ECEF [m/s]" || column == "Vel ECEF Z [m/s]") { e_velocity_z = std::stod(cell); }
             else if (column == "X velocity ECEF StdDev [m/s]") { e_velocityStdDev_x = std::stod(cell); }
             else if (column == "Y velocity ECEF StdDev [m/s]") { e_velocityStdDev_y = std::stod(cell); }
             else if (column == "Z velocity ECEF StdDev [m/s]") { e_velocityStdDev_z = std::stod(cell); }
 
-            else if (column == "North velocity [m/s]") { n_velocity_n = std::stod(cell); }
-            else if (column == "East velocity [m/s]") { n_velocity_e = std::stod(cell); }
-            else if (column == "Down velocity [m/s]") { n_velocity_d = std::stod(cell); }
+            else if (column == "North velocity [m/s]" || column == "Vel N [m/s]") { n_velocity_n = std::stod(cell); }
+            else if (column == "East velocity [m/s]" || column == "Vel E [m/s]") { n_velocity_e = std::stod(cell); }
+            else if (column == "Down velocity [m/s]" || column == "Vel D [m/s]") { n_velocity_d = std::stod(cell); }
             else if (column == "North velocity StDev [m/s]") { n_velocityStdDev_n = std::stod(cell); }
             else if (column == "East velocity StDev [m/s]") { n_velocityStdDev_e = std::stod(cell); }
             else if (column == "Down velocity StDev [m/s]") { n_velocityStdDev_d = std::stod(cell); }
