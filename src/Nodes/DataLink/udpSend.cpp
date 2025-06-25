@@ -141,43 +141,57 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
 {
     auto data = queue.extract_front();
 
+    // std::vector<char> data2send{};
+
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type() }))
     {
-        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data)));
+        _msgType = 0;
+
+        auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data));
+
+        auto sizePosLla = 3 * sizeof(posVelAtt->lla_position().data());
+        auto sizeVelNed = 3 * sizeof(posVelAtt->n_velocity().data());
+        auto sizeQuat = 4 * sizeof(posVelAtt->n_Quat_b().x());
+
+        auto offsetTimestamp = SIZE_MSGTYPE;
+        auto offsetPosLla = offsetTimestamp + SIZE_TIMESTAMP;
+        auto offsetVelNed = offsetPosLla + sizePosLla;
+        auto offsetQuat = offsetVelNed + sizeVelNed;
+
+        auto sizeTotal = offsetQuat + sizeQuat;
+
+        std::vector<char> data2send(sizeTotal);
+        LOG_WARN("dataSize: {}", sizeTotal);
+
+        std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
+        std::memcpy(data2send.data() + offsetTimestamp, &posVelAtt->insTime, SIZE_TIMESTAMP);
+
+        std::memcpy(data2send.data() + offsetPosLla, posVelAtt->lla_position().data(), sizePosLla);
+        std::memcpy(data2send.data() + offsetVelNed, posVelAtt->n_velocity().data(), sizeVelNed);
+        std::memcpy(data2send.data() + offsetQuat, &posVelAtt->n_Quat_b().x(), sizeQuat);
+        std::memcpy(data2send.data() + offsetQuat + sizeQuat, &posVelAtt->n_Quat_b().y(), sizeQuat);
+        std::memcpy(data2send.data() + offsetQuat + 2 * sizeQuat, &posVelAtt->n_Quat_b().z(), sizeQuat);
+        std::memcpy(data2send.data() + offsetQuat + 3 * sizeQuat, &posVelAtt->n_Quat_b().w(), sizeQuat);
+
+        _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
     else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type() }))
     {
-        receiveGnssObs(std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data)));
+        _msgType = 1;
+
+        auto gnssObs = std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data));
+        const size_t gnssDataSize = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
+
+        std::vector<char> data2send(gnssDataSize + SIZE_TIMESTAMP);
+        LOG_WARN("dataSize: {}, SIZE_TIMESTAMP: {}", gnssDataSize, SIZE_TIMESTAMP);
+        std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
+        std::memcpy(data2send.data() + SIZE_MSGTYPE, &gnssObs->insTime, SIZE_TIMESTAMP);
+        std::memcpy(data2send.data() + SIZE_MSGTYPE + SIZE_TIMESTAMP, gnssObs->data.data(), gnssDataSize);
+
+        _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
     else
     {
         LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
     }
-}
-
-void NAV::UdpSend::receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs)
-{
-    const size_t gnssDataSize = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
-
-    std::vector<char> data2send(gnssDataSize + SIZE_TIMESTAMP);
-    LOG_WARN("dataSize: {}, SIZE_TIMESTAMP: {}", gnssDataSize, SIZE_TIMESTAMP);
-    std::memcpy(data2send.data(), &gnssObs->insTime, SIZE_TIMESTAMP);
-    std::memcpy(data2send.data() + SIZE_TIMESTAMP, gnssObs->data.data(), gnssDataSize);
-
-    _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
-}
-
-void NAV::UdpSend::receivePosVelAtt(const std::shared_ptr<NAV::PosVelAtt>& posVelAtt)
-{
-    Eigen::Vector3d posLLA = posVelAtt->lla_position();
-    Eigen::Vector3d vel_n = posVelAtt->n_velocity();
-    Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
-    auto timeStamp = posVelAtt->insTime.toGPSweekTow();
-    auto gpsC = timeStamp.gpsCycle;
-    auto gpsW = timeStamp.gpsWeek;
-    auto gpsT = timeStamp.tow;
-
-    std::vector<double> udp_posVelAtt{ posLLA(0), posLLA(1), posLLA(2), vel_n(0), vel_n(1), vel_n(2), n_Quat_b(0), n_Quat_b(1), n_Quat_b(2), n_Quat_b(3), static_cast<double>(gpsC), static_cast<double>(gpsW), static_cast<double>(gpsT) };
-
-    _socket.send_to(boost::asio::buffer(udp_posVelAtt), *_endpoints.begin());
 }

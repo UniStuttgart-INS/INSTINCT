@@ -13,18 +13,21 @@
 
 #pragma once
 
+#include <array>
+#include "NodeData/NodeData.hpp"
 #ifdef _WIN32
     // Set the proper SDK version before including boost/Asio
     #include <SDKDDKVer.h>
     // Note boost/ASIO includes Windows.h.
     #include <boost/asio.hpp>
-#else // _WIN32
+#else
     #include <boost/asio.hpp>
-#endif //_WIN32
+#endif
 
 #include "internal/Node/Node.hpp"
-
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
+
 #include <string>
 
 namespace NAV
@@ -105,10 +108,24 @@ class UdpRecv : public Node
     /// Time point where the first package has been received
     std::chrono::steady_clock::time_point _startPoint;
 
-    /// Network data stream maximum buffer size in [bytes]
-    constexpr static unsigned int _maxBytes = 104;
+    /// Network data stream maximum buffer size in [bytes] (Maximum payload size of a UDP package)
+    constexpr static unsigned int MAXIMUM_BYTES = 65507;
 
     /// Network data stream array
     std::array<double, 13> _data{};
+
+    std::array<char, MAXIMUM_BYTES> charArray{};
+
+    /// Message Type: 0 = posVelAtt, 1 = gnssObs
+    int _msgType = 0;
+
+    /// Size of the message type
+    constexpr static size_t SIZE_MSGTYPE = sizeof(_msgType);
+    /// Size of a timestamp
+    constexpr static size_t SIZE_TIMESTAMP = sizeof(NodeData::insTime);
+    /// Size of a Pos, Vel and Att
+    constexpr static size_t SIZE_POSVELATT = sizeof(PosVelAtt);
+    /// Size of a single GNSS observation
+    constexpr static size_t SIZE_SINGLE_OBSERVATION_DATA = sizeof(GnssObs::ObservationData);
 };
 } // namespace NAV

@@ -13,7 +13,9 @@
 
 #pragma once
 
+#include <cstddef>
 #include <memory>
+#include "NodeData/NodeData.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #ifdef _WIN32
     // Set the proper SDK version before including boost/Asio
@@ -85,27 +87,26 @@ class UdpSend : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void receiveData(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
-    /// @brief Callback when receiving PosVelAtt on a port
-    /// @param[in] posVelAtt Received PosVelAtt message
-    void receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt);
-
-    /// @brief Callback when receiving a GnssObs
-    /// @param[in] gnssObs Copied data to modify and send out again
-    void receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs);
-
     /// IPv4 address
     std::array<int, 4> _ip{};
 
     /// UDP port number
     int _port = 4567;
 
+    /// Message Type: 0 = posVelAtt, 1 = gnssObs
+    int _msgType = 0;
+
     /// Range an IPv4 address can be in [0, 2^8-1]
     static constexpr std::array<int, 2> IP_LIMITS = { 0, 255 };
     /// Range a port can be in [0, 2^16-1]
     static constexpr std::array<int, 2> PORT_LIMITS = { 0, 65535 };
 
+    /// Size of the message type
+    constexpr static size_t SIZE_MSGTYPE = sizeof(_msgType);
     /// Size of a timestamp
-    constexpr static size_t SIZE_TIMESTAMP = sizeof(GnssObs::insTime);
+    constexpr static size_t SIZE_TIMESTAMP = sizeof(NodeData::insTime);
+    /// Size of a Pos, Vel and Att
+    constexpr static size_t SIZE_POSVELATT = sizeof(PosVelAtt);
     /// Size of a single GNSS observation
     constexpr static size_t SIZE_SINGLE_OBSERVATION_DATA = sizeof(GnssObs::ObservationData);
 
