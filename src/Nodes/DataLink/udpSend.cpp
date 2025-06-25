@@ -8,15 +8,36 @@
 
 #include "udpSend.hpp"
 
+#include "NodeRegistry.hpp"
+#include <cstring>
+#include <string>
+#include <vector>
+#include "NodeData/GNSS/GnssObs.hpp"
+#include "internal/Node/Pin.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
+
 #include "util/Logger.hpp"
+
+// ---------------------------------------------------------- Private variabels ------------------------------------------------------------
+
+namespace NAV
+{
+/// List of supported data identifiers
+const std::vector<std::string> supportedDataIdentifier{
+    PosVelAtt::type(),
+    GnssObs::type()
+};
+
+} // namespace NAV
+
+// ---------------------------------------------------------- Member functions -------------------------------------------------------------
 
 NAV::UdpSend::UdpSend()
     : Node(typeStatic()), _socket(_io_context, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0)), _resolver(_io_context)
@@ -26,7 +47,7 @@ NAV::UdpSend::UdpSend()
     _hasConfig = true;
     _guiConfigDefaultWindowSize = { 202, 96 };
 
-    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &UdpSend::receivePosVelAtt);
+    nm::CreateInputPin(this, "Data", Pin::Type::Flow, supportedDataIdentifier, &UdpSend::receiveData);
 }
 
 NAV::UdpSend::~UdpSend()
@@ -116,10 +137,38 @@ void NAV::UdpSend::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::UdpSend::receivePosVelAtt(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
+void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pinIdx */)
 {
-    auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(queue.extract_front()));
+    auto data = queue.extract_front();
 
+    if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type() }))
+    {
+        receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data)));
+    }
+    else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type() }))
+    {
+        receiveGnssObs(std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data)));
+    }
+    else
+    {
+        LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
+    }
+}
+
+void NAV::UdpSend::receiveGnssObs(const std::shared_ptr<GnssObs>& gnssObs)
+{
+    const size_t gnssDataSize = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
+
+    std::vector<char> data2send(gnssDataSize + SIZE_TIMESTAMP);
+    LOG_WARN("dataSize: {}, SIZE_TIMESTAMP: {}", gnssDataSize, SIZE_TIMESTAMP);
+    std::memcpy(data2send.data(), &gnssObs->insTime, SIZE_TIMESTAMP);
+    std::memcpy(data2send.data() + SIZE_TIMESTAMP, gnssObs->data.data(), gnssDataSize);
+
+    _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
+}
+
+void NAV::UdpSend::receivePosVelAtt(const std::shared_ptr<NAV::PosVelAtt>& posVelAtt)
+{
     Eigen::Vector3d posLLA = posVelAtt->lla_position();
     Eigen::Vector3d vel_n = posVelAtt->n_velocity();
     Eigen::Vector4d n_Quat_b = { posVelAtt->n_Quat_b().x(), posVelAtt->n_Quat_b().y(), posVelAtt->n_Quat_b().z(), posVelAtt->n_Quat_b().w() };
