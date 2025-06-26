@@ -149,29 +149,17 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
 
         auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data));
 
-        auto sizePosLla = 3 * sizeof(posVelAtt->lla_position().data());
-        auto sizeVelNed = 3 * sizeof(posVelAtt->n_velocity().data());
-        auto sizeQuat = 4 * sizeof(posVelAtt->n_Quat_b().x());
-
-        auto offsetTimestamp = SIZE_MSGTYPE;
-        auto offsetPosLla = offsetTimestamp + SIZE_TIMESTAMP;
-        auto offsetVelNed = offsetPosLla + sizePosLla;
-        auto offsetQuat = offsetVelNed + sizeVelNed;
-
-        auto sizeTotal = offsetQuat + sizeQuat;
-
-        std::vector<char> data2send(sizeTotal);
-        LOG_WARN("dataSize: {}", sizeTotal);
+        std::vector<char> data2send(SIZE_TOTAL);
 
         std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + offsetTimestamp, &posVelAtt->insTime, SIZE_TIMESTAMP);
+        std::memcpy(data2send.data() + OFFSET_TIMESTAMP, &posVelAtt->insTime, SIZE_TIMESTAMP);
 
-        std::memcpy(data2send.data() + offsetPosLla, posVelAtt->lla_position().data(), sizePosLla);
-        std::memcpy(data2send.data() + offsetVelNed, posVelAtt->n_velocity().data(), sizeVelNed);
-        std::memcpy(data2send.data() + offsetQuat, &posVelAtt->n_Quat_b().x(), sizeQuat);
-        std::memcpy(data2send.data() + offsetQuat + sizeQuat, &posVelAtt->n_Quat_b().y(), sizeQuat);
-        std::memcpy(data2send.data() + offsetQuat + 2 * sizeQuat, &posVelAtt->n_Quat_b().z(), sizeQuat);
-        std::memcpy(data2send.data() + offsetQuat + 3 * sizeQuat, &posVelAtt->n_Quat_b().w(), sizeQuat);
+        std::memcpy(data2send.data() + OFFSET_POS, posVelAtt->lla_position().data(), SIZE_POS);
+        std::memcpy(data2send.data() + OFFSET_VEL, posVelAtt->n_velocity().data(), SIZE_VEL);
+        std::memcpy(data2send.data() + OFFSET_QUAT, &posVelAtt->n_Quat_b().x(), SIZE_QUAT);
+        std::memcpy(data2send.data() + OFFSET_QUAT + SIZE_QUAT, &posVelAtt->n_Quat_b().y(), SIZE_QUAT);
+        std::memcpy(data2send.data() + OFFSET_QUAT + 2 * SIZE_QUAT, &posVelAtt->n_Quat_b().z(), SIZE_QUAT);
+        std::memcpy(data2send.data() + OFFSET_QUAT + 3 * SIZE_QUAT, &posVelAtt->n_Quat_b().w(), SIZE_QUAT);
 
         _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
@@ -180,13 +168,19 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
         _msgType = 1;
 
         auto gnssObs = std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data));
-        const size_t gnssDataSize = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
+        const size_t sizeGnssData = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
 
-        std::vector<char> data2send(gnssDataSize + SIZE_TIMESTAMP);
-        LOG_WARN("dataSize: {}, SIZE_TIMESTAMP: {}", gnssDataSize, SIZE_TIMESTAMP);
+        auto sizeTotal = sizeGnssData + SIZE_MSGTYPE + SIZE_TIMESTAMP + SIZE_SIZE;
+        if (sizeTotal > MAXIMUM_BYTES)
+        {
+            LOG_ERROR("{}: gnssObs msg is bigger than the maximum size of a single UDP package: {} bytes.", nameId(), sizeTotal);
+        }
+
+        std::vector<char> data2send(sizeTotal);
         std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + SIZE_MSGTYPE, &gnssObs->insTime, SIZE_TIMESTAMP);
-        std::memcpy(data2send.data() + SIZE_MSGTYPE + SIZE_TIMESTAMP, gnssObs->data.data(), gnssDataSize);
+        std::memcpy(data2send.data() + OFFSET_TIMESTAMP, &gnssObs->insTime, SIZE_TIMESTAMP);
+        std::memcpy(data2send.data() + OFFSET_SIZE, &sizeGnssData, SIZE_SIZE);
+        std::memcpy(data2send.data() + OFFSET_GNSSDATA, gnssObs->data.data(), sizeGnssData);
 
         _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }

@@ -10,7 +10,6 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
-#include <type_traits>
 #include <boost/system/detail/error_code.hpp>
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
@@ -19,6 +18,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/widgets/EnumCombo.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
@@ -79,6 +79,30 @@ void NAV::UdpRecv::guiConfig()
     {
         flow::ApplyChanges();
     }
+    if (gui::widgets::EnumCombo(fmt::format("Output Type##{}", size_t(id)).c_str(), _outputType))
+    {
+        LOG_DEBUG("{}: Output Type changed to {}", nameId(), to_string(_outputType));
+        if (_outputType == OutputType::PosVelAtt)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).dataIdentifier = { NAV::PosVelAtt::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name = NAV::PosVelAtt::type();
+        }
+        else if (_outputType == OutputType::GnssObs)
+        {
+            outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).dataIdentifier = { NAV::GnssObs::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name = NAV::GnssObs::type();
+        }
+
+        for (auto& link : outputPins.front().links)
+        {
+            if (auto* connectedPin = link.getConnectedPin())
+            {
+                outputPins.front().recreateLink(*connectedPin);
+            }
+        }
+
+        flow::ApplyChanges();
+    }
 }
 
 bool NAV::UdpRecv::resetNode()
@@ -92,6 +116,7 @@ json NAV::UdpRecv::save() const
 
     json j;
     j["port"] = _port;
+    j["outputType"] = _outputType;
 
     return j;
 }
@@ -102,6 +127,24 @@ void NAV::UdpRecv::restore(json const& j)
     if (j.contains("port"))
     {
         j.at("port").get_to(_port);
+    }
+    if (j.contains("outputType"))
+    {
+        j.at("outputType").get_to(_outputType);
+
+        if (!outputPins.empty())
+        {
+            if (_outputType == OutputType::PosVelAtt)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).dataIdentifier = { NAV::PosVelAtt::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name = NAV::PosVelAtt::type();
+            }
+            else if (_outputType == OutputType::GnssObs)
+            {
+                outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).dataIdentifier = { NAV::GnssObs::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name = NAV::GnssObs::type();
+            }
+        }
     }
 }
 
@@ -155,62 +198,59 @@ void NAV::UdpRecv::deinitialize()
 void NAV::UdpRecv::asyncReceive()
 {
     _socket.async_receive_from(
-        boost::asio::buffer(charArray, MAXIMUM_BYTES), _sender_endpoint,
+        boost::asio::buffer(_charArray, MAXIMUM_BYTES), _sender_endpoint,
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
-                std::memcpy(&_msgType, charArray.data(), SIZE_MSGTYPE);
+                std::memcpy(&_msgType, _charArray.data(), SIZE_MSGTYPE);
                 if (_msgType == 0)
                 {
+                    if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::PosVelAtt::type())
+                    {
+                        LOG_ERROR("{}: Change output type to 'PosVelAtt'!", nameId());
+                        return;
+                    }
                     auto obs = std::make_shared<PosVelAtt>();
 
-                    auto sizePosLla = 3 * sizeof(obs->lla_position().data());
-                    auto sizeVelNed = 3 * sizeof(obs->n_velocity().data());
-                    auto sizeQuat = 4 * sizeof(obs->n_Quat_b().x());
-
-                    auto offsetTimestamp = SIZE_MSGTYPE;
-                    auto offsetPosLla = offsetTimestamp + SIZE_TIMESTAMP;
-                    auto offsetVelNed = offsetPosLla + sizePosLla;
-                    auto offsetQuat = offsetVelNed + sizeVelNed;
-
-                    // auto sizeTotal = offsetQuat + sizeQuat;
-
-                    std::memcpy(&obs->insTime, charArray.data() + offsetTimestamp, SIZE_TIMESTAMP);
+                    std::memcpy(&obs->insTime, _charArray.data() + OFFSET_TIMESTAMP, SIZE_TIMESTAMP);
 
                     // Position in LLA coordinates
                     Eigen::Vector3d posLLA{};
-                    std::memcpy(posLLA.data(), charArray.data() + offsetPosLla, sizePosLla);
+                    std::memcpy(posLLA.data(), _charArray.data() + OFFSET_POS, SIZE_POS);
 
                     // Velocity in local frame
                     Eigen::Vector3d vel_n{};
-                    std::memcpy(vel_n.data(), charArray.data() + offsetVelNed, sizeVelNed);
+                    std::memcpy(vel_n.data(), _charArray.data() + OFFSET_VEL, SIZE_VEL);
 
                     // Attitude
                     Eigen::Quaterniond n_Quat_b{};
-                    std::memcpy(&n_Quat_b.x(), charArray.data() + offsetQuat, sizeQuat);
-                    std::memcpy(&n_Quat_b.y(), charArray.data() + offsetQuat + sizeQuat, sizeQuat);
-                    std::memcpy(&n_Quat_b.z(), charArray.data() + offsetQuat + 2 * sizeQuat, sizeQuat);
-                    std::memcpy(&n_Quat_b.w(), charArray.data() + offsetQuat + 3 * sizeQuat, sizeQuat);
+                    std::memcpy(&n_Quat_b.x(), _charArray.data() + OFFSET_QUAT, SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.y(), _charArray.data() + OFFSET_QUAT + SIZE_QUAT, SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.z(), _charArray.data() + OFFSET_QUAT + 2 * SIZE_QUAT, SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.w(), _charArray.data() + OFFSET_QUAT + 3 * SIZE_QUAT, SIZE_QUAT);
 
                     obs->setPosVelAtt_n(posLLA, vel_n, n_Quat_b);
-                    // obs->insTime // TODO
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
                 }
                 else if (_msgType == 1)
                 {
+                    if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::GnssObs::type())
+                    {
+                        LOG_ERROR("{}: Change output type to 'GnssObs'!", nameId());
+                        return;
+                    }
                     auto gnssObs = std::make_shared<GnssObs>();
 
-                    uint32_t timeSize = 32;
-                    auto dataSize = (sizeof(charArray) - timeSize) / sizeof(GnssObs::ObservationData);
+                    size_t sizeGnssData{};
 
-                    gnssObs->data.resize(1, GnssObs::ObservationData(SatSigId()));
-
-                    std::memcpy(&gnssObs->insTime, charArray.data(), timeSize);
-                    std::memcpy(gnssObs->data.data(), charArray.data() + timeSize, dataSize);
+                    std::memcpy(&gnssObs->insTime, _charArray.data() + OFFSET_TIMESTAMP, SIZE_TIMESTAMP);
+                    std::memcpy(&sizeGnssData, _charArray.data() + OFFSET_SIZE, SIZE_SIZE);
+                    gnssObs->data.resize(sizeGnssData, GnssObs::ObservationData(SatSigId()));
+                    std::memcpy(gnssObs->data.data(), _charArray.data() + OFFSET_GNSSDATA, sizeGnssData);
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, gnssObs);
-                    LOG_INFO("Received bytes: {}", bytesRcvd);
+                    LOG_DATA("{}: Received bytes: {}", nameId(), bytesRcvd);
                 }
                 else
                 {
@@ -219,54 +259,26 @@ void NAV::UdpRecv::asyncReceive()
             }
             else
             {
-                LOG_ERROR("Error receiving the UDP network stream: {}, Received bytes: {}", errorRcvd.what(), bytesRcvd);
+                LOG_ERROR("{}: Error receiving the UDP network stream: {}, Received bytes: {}", nameId(), errorRcvd.what(), bytesRcvd);
             }
 
             if (_running)
             {
                 asyncReceive();
             }
-            //         }
-            //     }
-            // )
-            // {_socket.async_receive_from(
-            //     boost::asio::buffer(_data, _maxBytes), _sender_endpoint,
-            //     [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
-            //         if ((!errorRcvd) && (bytesRcvd > 0))
-            //         {
-            //             auto obs = std::make_shared<PosVelAtt>();
-
-            //             // Position in LLA coordinates
-            //             Eigen::Vector3d posLLA{ _data.at(0), _data.at(1), _data.at(2) };
-
-            //             // Velocity in local frame
-            //             Eigen::Vector3d vel_n{ _data.at(3), _data.at(4), _data.at(5) };
-
-            //             // Attitude
-            //             Eigen::Quaterniond n_Quat_b{};
-            //             n_Quat_b.x() = _data.at(6);
-            //             n_Quat_b.y() = _data.at(7);
-            //             n_Quat_b.z() = _data.at(8);
-            //             n_Quat_b.w() = _data.at(9);
-
-            //             // Time
-            //             auto gpsC = static_cast<int32_t>(_data.at(10));
-            //             auto gpsW = static_cast<int32_t>(_data.at(11));
-            //             auto gpsT = static_cast<long double>(_data.at(12));
-
-            //             obs->setPosVelAtt_n(posLLA, vel_n, n_Quat_b);
-            //             obs->insTime = InsTime(gpsC, gpsW, gpsT);
-
-            //             this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, obs);
-            //         }
-            //         else
-            //         {
-            //             LOG_ERROR("Error receiving the UDP network stream.");
-            //         }
-
-            //         if (_running)
-            //         {
-            //             asyncReceive();
-            //         }
         });
+}
+
+const char* NAV::to_string(NAV::UdpRecv::OutputType value)
+{
+    switch (value)
+    {
+    case NAV::UdpRecv::OutputType::PosVelAtt:
+        return "PosVelAtt";
+    case NAV::UdpRecv::OutputType::GnssObs:
+        return "GnssObs";
+    case NAV::UdpRecv::OutputType::COUNT:
+        return "";
+    }
+    return "";
 }
