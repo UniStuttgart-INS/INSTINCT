@@ -116,18 +116,18 @@ Eigen::Vector3<typename Derived::Scalar> e_calcTimeDerivativeForPosition(const E
 /// @param[in] y [x, y, z, v_x, v_y, v_z, e_q_bx, e_q_by, e_q_bz, e_q_bw]^T
 /// @param[in] z [fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [x, y, z, v_x, v_y, v_z, e_q_bx, e_q_by, e_q_bz, e_q_bw]^T
+/// @return The derivative ∂/∂t [x, y, z, v_x, v_y, v_z, ωx, ωy, ωz]^T
 template<typename T>
-Eigen::Vector<T, 10> e_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, const Eigen::Vector<T, 6>& z, const PosVelAttDerivativeConstants& c, double /* t */ = 0.0)
+Eigen::Vector<T, 9> e_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, const Eigen::Vector<T, 6>& z, const PosVelAttDerivativeConstants& c, double /* t */ = 0.0)
 {
-    //        0  1  2   3    4    5     6       7       8       9
-    // ∂/∂t [ x, y, z, v_x, v_y, v_z, e_q_bx, e_q_by, e_q_bz, e_q_bw]^T
-    Eigen::Vector<T, 10> y_dot = Eigen::Vector<T, 10>::Zero();
+    //        0  1  2   3    4    5   6   7   8
+    // ∂/∂t [ x, y, z, v_x, v_y, v_z, ωx, ωy, ωz]^T
+    Eigen::Vector<T, 9> y_dot = Eigen::Vector<T, 9>::Zero();
 
     Eigen::Vector3<T> lla_position = trafo::ecef2lla_WGS84(y.template segment<3>(0));
 
     Eigen::Quaternion<T> e_Quat_b{ y.template segment<4>(6) };
-    e_Quat_b.normalize();
+    // e_Quat_b.normalize(); // No need to normalize if quaternion is applied with matrix/quaternion exponential
     Eigen::Quaternion<T> n_Quat_e = trafo::n_Quat_e(lla_position(0), lla_position(1));
 
     Eigen::Quaternion<T> b_Quat_e = e_Quat_b.conjugate();
@@ -162,12 +162,11 @@ Eigen::Vector<T, 10> e_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, co
                                                                    e_gravitation,                       // Local gravitation vector (caused by effects of mass attraction) in ECEF frame coordinates [m/s^2]
                                                                    e_centrifugalAcceleration);          // Centrifugal acceleration in ECEF coordinates in [m/s^2]
 
-    y_dot.template segment<4>(6) = calcTimeDerivativeFor_e_Quat_b(b_omega_eb,                // ω_eb_b Body rate with respect to the ECEF frame, expressed in the body frame
-                                                                  y.template segment<4>(6)); // e_Quat_b_coeffs Coefficients of the quaternion e_Quat_b
+    y_dot.template segment<3>(6) = b_omega_eb; // ω_eb_b Body rate with respect to the ECEF frame, expressed in the body frame
 
     LOG_DATA("e_position_dot = {} [m/s]", y_dot.template segment<3>(0).transpose());
     LOG_DATA("e_velocity_dot = {} [m/s^2]", y_dot.template segment<3>(3).transpose());
-    LOG_DATA("e_Quat_b_dot = {} ", y_dot.template segment<4>(6).transpose());
+    LOG_DATA("ω_eb_b = {} ", y_dot.template segment<3>(6).transpose());
 
     return y_dot;
 }

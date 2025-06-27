@@ -118,6 +118,36 @@ Eigen::Matrix<typename Derived::Scalar, 3, 3> skewSymmetricMatrixSquared(const E
     return skewMat2;
 }
 
+/// @brief Calculates the matrix exponential map of the given vector.
+/// @tparam Derived Derived Eigen Type
+/// @param[in] v The vector
+/// @return The matrix exponential map
+template<typename Derived>
+Eigen::Matrix<typename Derived::Scalar, 3, 3> expMapMatrix(const Eigen::MatrixBase<Derived>& v)
+{
+    INS_ASSERT_USER_ERROR(v.cols() == 1, "Given Eigen Object must be a vector");
+    INS_ASSERT_USER_ERROR(v.rows() == 3, "Given Vector must have 3 Rows");
+
+    return math::skewSymmetricMatrix(v).exp();
+}
+
+/// @brief Calculates the quaternionic exponential map of the given vector.
+/// @tparam Derived Derived Eigen Type
+/// @param[in] v The vector
+/// @return The quaternionic exponential map
+template<typename Derived>
+Eigen::Quaternion<typename Derived::Scalar> expMapQuat(const Eigen::MatrixBase<Derived>& v)
+{
+    INS_ASSERT_USER_ERROR(v.cols() == 1, "Given Eigen Object must be a vector");
+    INS_ASSERT_USER_ERROR(v.rows() == 3, "Given Vector must have 3 Rows");
+
+    Eigen::Vector3<typename Derived::Scalar> omega = 0.5 * v;
+    auto omegaNorm = omega.norm();
+    Eigen::Vector3<typename Derived::Scalar> quatVec = omega / omegaNorm * std::sin(omegaNorm);
+
+    return { std::cos(omegaNorm), quatVec.x(), quatVec.y(), quatVec.z() };
+}
+
 /// @brief Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))
 template<std::floating_point T>
 T sec(const T& x)

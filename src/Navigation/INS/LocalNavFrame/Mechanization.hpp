@@ -136,16 +136,16 @@ Eigen::Vector3<typename Derived::Scalar> lla_calcTimeDerivativeForPosition(const
 /// @param[in] y [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
 /// @param[in] z [fx, fy, fz, ωx, ωy, ωz]^T
 /// @param[in] c Constant values needed to calculate the derivatives
-/// @return The derivative ∂/∂t [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
+/// @return The derivative ∂/∂t [ 𝜙, λ, h, v_N, v_E, v_D, ωx, ωy, ωz]^T
 template<typename T>
-Eigen::Vector<T, 10> n_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, const Eigen::Vector<T, 6>& z, const PosVelAttDerivativeConstants& c, double /* t */ = 0.0)
+Eigen::Vector<T, 9> n_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, const Eigen::Vector<T, 6>& z, const PosVelAttDerivativeConstants& c, double /* t */ = 0.0)
 {
-    //         0  1  2   3    4    5     6       7       8       9
-    // ∂/∂t  [ 𝜙, λ, h, v_N, v_E, v_D, n_q_bx, n_q_by, n_q_bz, n_q_bw]^T
-    Eigen::Vector<T, 10> y_dot = Eigen::Vector<T, 10>::Zero();
+    //         0  1  2   3    4    5   6   7   8
+    // ∂/∂t  [ 𝜙, λ, h, v_N, v_E, v_D, ωx, ωy, ωz]^T
+    Eigen::Vector<T, 9> y_dot = Eigen::Vector<T, 9>::Zero();
 
     Eigen::Quaternion<T> n_Quat_b{ y.template segment<4>(6) };
-    n_Quat_b.normalize();
+    // n_Quat_b.normalize(); // No need to normalize if quaternion is applied with matrix/quaternion exponential
     Eigen::Quaternion<T> n_Quat_e = trafo::n_Quat_e(y(0), y(1));
 
     LOG_DATA("rollPitchYaw = {} [°]", rad2deg(trafo::quat2eulerZYX(n_Quat_b)).transpose());
@@ -195,12 +195,11 @@ Eigen::Vector<T, 10> n_calcPosVelAttDerivative(const Eigen::Vector<T, 10>& y, co
                                                                    n_gravitation,                       // Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
                                                                    n_centrifugalAcceleration);          // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 
-    y_dot.template segment<4>(6) = calcTimeDerivativeFor_n_Quat_b(b_omega_nb,                // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
-                                                                  y.template segment<4>(6)); // n_Quat_b_coeffs Coefficients of the quaternion n_Quat_b
+    y_dot.template segment<3>(6) = b_omega_nb; // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
 
     LOG_DATA("lla_position_dot = {} [rad/s, rad/s, m/s]", y_dot.template segment<3>(0).transpose());
     LOG_DATA("n_velocity_dot = {} [m/s^2]", y_dot.template segment<3>(3).transpose());
-    LOG_DATA("n_Quat_b_dot = {} ", y_dot.template segment<4>(6).transpose());
+    LOG_DATA("ω_nb_b = {} ", y_dot.template segment<3>(6).transpose());
 
     return y_dot;
 }

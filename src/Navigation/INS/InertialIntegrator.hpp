@@ -265,10 +265,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = RungeKutta1(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta1Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = RungeKutta1(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta1Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;
@@ -291,10 +291,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = RungeKutta2(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta2Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = RungeKutta2(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta2Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;
@@ -317,10 +317,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = Heun2(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = Heun2Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = Heun2(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = Heun2Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;
@@ -346,10 +346,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = RungeKutta3(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta3Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = RungeKutta3(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta3Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;
@@ -375,10 +375,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = RungeKutta3(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta3Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = RungeKutta3(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta3Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;
@@ -407,10 +407,10 @@ class InertialIntegrator
             switch (_integrationFrame)
             {
             case IntegrationFrame::NED:
-                y = RungeKutta4(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta4Quat(y, z, state__t0.m.dt, n_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             case IntegrationFrame::ECEF:
-                y = RungeKutta4(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
+                y = RungeKutta4Quat(y, z, state__t0.m.dt, e_calcPosVelAttDerivative<T>, _posVelAttDerivativeConstants);
                 break;
             }
             break;

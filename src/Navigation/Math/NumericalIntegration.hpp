@@ -14,9 +14,15 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <numeric>
 #include <type_traits>
 #include <gcem.hpp>
+
+#include "util/Eigen.hpp"
+#include <unsupported/Eigen/MatrixFunctions>
+
+#include "Navigation/Math/Math.hpp"
 
 #include "util/Assert.h"
 #include "util/Logger.hpp"
@@ -102,6 +108,95 @@ inline Y RungeKuttaExplicit(const Y& y_n, const std::array<Z, s>& z, const Scala
     return y_n + h * sum_b;
 }
 
+/// @brief Calculates explicit Runge-Kutta methods. Order is defined by the Butcher tableau
+/// @param[in] y_n State vector at time t_n
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+/// @return State vector at time t_(n+1)
+template<typename Derived, typename Z, std::floating_point Scalar, size_t s, std::array<std::array<Scalar, s + 1>, s + 1> butcherTableau>
+inline typename Derived::PlainObject RungeKuttaExplicitQuat(const Eigen::MatrixBase<Derived>& y_n, const std::array<Z, s>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n)
+{
+    static_assert(gcem::abs(static_cast<Scalar>(1.0) - std::accumulate(butcherTableau[s].begin(), butcherTableau[s].end(), static_cast<Scalar>(0.0))) < 1e-8, // NOLINT(boost-use-ranges,modernize-use-ranges) // There is no ranges::accumulate
+                  "The sum of the last row in the Butcher tableau has to be 1");
+    for (size_t r = 0; r <= s; ++r)
+    {
+        for (size_t c = r + 1; c <= s; ++c)
+        {
+            INS_ASSERT_USER_ERROR(butcherTableau.at(r).at(c) == 0.0, "All terms in the upper triangle have to be 0");
+        }
+    }
+
+    // using DerivativeVector = Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>;
+    using DerivativeVector = decltype(f(y_n, z.front(), constParam, t_n));
+    Eigen::Index N = y_n.rows() - 4;
+
+    // Calculates y_n + y_delta, but treats
+    // - the last 4 entries in y_n as a quaternion
+    // - the last 3 entries in y_delta as angular rate measurements
+    auto applyDerivative = [&]<typename Derived2>(const Eigen::MatrixBase<Derived2>& y_delta) {
+        Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime> y_nh;
+        if constexpr (Derived::RowsAtCompileTime == Eigen::Dynamic) { y_nh = Eigen::Vector<typename Derived::Scalar, Derived::RowsAtCompileTime>::Zero(y_n.rows()); }
+        y_nh.head(N) = y_n.head(N) + y_delta.head(N);
+
+        Eigen::Map<Eigen::Quaternion<typename Derived::Scalar>>(y_nh.template tail<4>().data()) =
+            Eigen::Map<const Eigen::Quaternion<typename Derived::Scalar>>(y_n.template tail<4>().data())
+            // * math::expMapMatrix(y_delta.template tail<3>()); // matrix exponential (~2% faster than normal multiplication because no need for quaternion normalization afterwards)
+            * math::expMapQuat(y_delta.template tail<3>()); // quaternionic exponential (~3% faster than normal multiplication because no normalization and no exp matrix)
+        return y_nh;
+    };
+
+    // std::string result = "y_(n+1) = y_n";
+
+    // std::string sum_b_str;
+    // std::string sum_b_val;
+    DerivativeVector sum_b{};
+    std::array<DerivativeVector, s> k{};
+    for (size_t i = 1; i <= s; ++i)
+    {
+        auto b = butcherTableau[s].at(i);
+        auto c = butcherTableau.at(i - 1)[0];
+        DerivativeVector sum_a{};
+        // std::string sum_a_str;
+        // std::string sum_a_val;
+        for (size_t j = 2; j <= i; ++j)
+        {
+            auto a = butcherTableau.at(i - 1).at(j - 1);
+            if (j == 2) { sum_a = a * k.at(j - 2); }
+            else { sum_a += a * k.at(j - 2); }
+            // sum_a_str += fmt::format("a{}{} * k{}", i, j-1, j-1);
+            // sum_a_val += fmt::format("{:^3.1f} * k{}", a, j - 1);
+            // if (j < i) {
+            //     sum_a_str += " + ";
+            //     sum_a_val += " + ";
+            // }
+        }
+
+        if (i < 2) { k.at(i - 1) = f(y_n, z.at(i - 1), constParam, t_n + c * h); } // Do not add sum_a, because can have nan values
+        else { k.at(i - 1) = f(applyDerivative(sum_a * h), z.at(i - 1), constParam, t_n + c * h); }
+        // if (sum_a_str.empty()) { sum_a_str = "0"; }
+        // if (sum_a_val.empty()) { sum_a_val = "0"; }
+        // fmt::println("k{} = f(t_n +  c{} * h, y_n + ({}) * h)", i, i, sum_a_str);
+        // fmt::println("k{} = f(t_n + {:^3.1f} * h, y_n + ({:^{w}}) * h)", i, c, sum_a_val, fmt::arg("w",sum_a_str.length()));
+
+        if (i == 1) { sum_b = b * k.at(i - 1); }
+        else { sum_b += b * k.at(i - 1); }
+        // sum_b_str += fmt::format("b{} * k{}", i, i);
+        // sum_b_val += fmt::format("{:.2f} * k{}", butcherTableau[s].at(i), i);
+        // if (i < s)
+        // {
+        //     sum_b_str += " + ";
+        //     sum_b_val += " + ";
+        // }
+    }
+
+    // std::cout << result + fmt::format(" + h * ({})", sum_b_str) << std::endl;
+    // std::cout << result + fmt::format(" + h * ({})", sum_b_val) << std::endl;
+    return applyDerivative(h * sum_b);
+}
+
 #if defined(__GNUC__) && !defined(__clang__)
     #pragma GCC diagnostic pop
 #endif
@@ -177,6 +272,19 @@ Y RungeKutta1(const Y& y_n, const std::array<Z, 1>& z, const Scalar& h, const au
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 1, ButcherTableau::RK1<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
+/// @brief Runge-Kutta 1st order (explicit) / (Forward) Euler method with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta1Quat(const Y& y_n, const std::array<Z, 1>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 1, ButcherTableau::RK1<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
 /// @brief Runge-Kutta 2nd order (explicit) / Explicit midpoint method
 /// \anchor eq-RungeKutta2-explicit \f{equation}{ \label{eq:eq-RungeKutta2-explicit}
 /// \begin{aligned}
@@ -206,6 +314,19 @@ Y RungeKutta2(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const au
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 2, ButcherTableau::RK2<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
+/// @brief Runge-Kutta 2nd order (explicit) / Explicit midpoint method with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta2Quat(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 2, ButcherTableau::RK2<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
 /// @brief Heun's method (2nd order) (explicit)
 /// \anchor eq-Heun2 \f{equation}{ \label{eq:eq-Heun2}
 /// \begin{aligned}
@@ -233,6 +354,19 @@ template<typename Y, typename Z, std::floating_point Scalar>
 Y Heun2(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 2, ButcherTableau::Heun2<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
+/// @brief Heun's method (2nd order) (explicit) with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y Heun2Quat(const Y& y_n, const std::array<Z, 2>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 2, ButcherTableau::Heun2<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
 /// @brief Runge-Kutta 3rd order (explicit) / Simpson's rule
@@ -266,6 +400,19 @@ Y RungeKutta3(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const au
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 3, ButcherTableau::RK3<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
+/// @brief Runge-Kutta 3rd order (explicit) / Simpson's rule with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta3Quat(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 3, ButcherTableau::RK3<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
 /// @brief Heun's method (3nd order) (explicit)
 /// \anchor eq-Heun3 \f{equation}{ \label{eq:eq-Heun3}
 /// \begin{aligned}
@@ -295,6 +442,19 @@ template<typename Y, typename Z, std::floating_point Scalar>
 Y Heun3(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 3, ButcherTableau::Heun3<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
+/// @brief Heun's method (3nd order) (explicit) with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y Heun3Quat(const Y& y_n, const std::array<Z, 3>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 3, ButcherTableau::Heun3<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
 /// @brief Runge-Kutta 4th order (explicit)
@@ -328,6 +488,19 @@ template<typename Y, typename Z, std::floating_point Scalar>
 Y RungeKutta4(const Y& y_n, const std::array<Z, 4>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
 {
     return ButcherTableau::RungeKuttaExplicit<Y, Z, Scalar, 4, ButcherTableau::RK4<Scalar>>(y_n, z, h, f, constParam, t_n);
+}
+
+/// @brief Runge-Kutta 4th order (explicit) with Quaternion as last entry in state
+/// @param[in] y_n State vector at time t_n (last 4 entries are treated as a quaternion)
+/// @param[in] z Array of measurements, one for each evaluation point of the Runge Kutta
+/// @param[in] h Integration step in [s]
+/// @param[in] f Time derivative function
+/// @param[in] constParam Constant parameters passed to each time derivative function call
+/// @param[in] t_n Time t_n
+template<typename Y, typename Z, std::floating_point Scalar>
+Y RungeKutta4Quat(const Y& y_n, const std::array<Z, 4>& z, const Scalar& h, const auto& f, const auto& constParam, const Scalar& t_n = 0)
+{
+    return ButcherTableau::RungeKuttaExplicitQuat<Y, Z, Scalar, 4, ButcherTableau::RK4<Scalar>>(y_n, z, h, f, constParam, t_n);
 }
 
 } // namespace NAV
