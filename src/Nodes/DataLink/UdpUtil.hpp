@@ -31,8 +31,12 @@ class UdpUtil
 
     /// Size of the message type
     constexpr static size_t SIZE_MSGTYPE = sizeof(int);
-    /// Size of a timestamp
-    constexpr static size_t SIZE_TIMESTAMP = sizeof(NodeData::insTime);
+    /// Size of a GPS cycle
+    constexpr static size_t SIZE_GPSCYCLE = sizeof(int32_t);
+    /// Size of a GPS week
+    constexpr static size_t SIZE_GPSWEEK = sizeof(int32_t);
+    /// Size of a GPS TOW
+    constexpr static size_t SIZE_GPSTOW = sizeof(double);
     /// Size of a Pos (LLA)
     constexpr static size_t SIZE_POS = 3 * sizeof(double);
     /// Size of a Vel (NED)
@@ -40,10 +44,14 @@ class UdpUtil
     /// Size of a Quaternion element
     constexpr static size_t SIZE_QUAT = sizeof(double);
 
-    /// Offset of the timestamp
-    constexpr static size_t OFFSET_TIMESTAMP = SIZE_MSGTYPE;
+    /// Offset of the GPS cycle
+    constexpr static size_t OFFSET_GPSCYCLE = SIZE_MSGTYPE;
+    /// Offset of the GPS week
+    constexpr static size_t OFFSET_GPSWEEK = OFFSET_GPSCYCLE + SIZE_GPSCYCLE;
+    /// Offset of the GPS tow
+    constexpr static size_t OFFSET_GPSTOW = OFFSET_GPSWEEK + SIZE_GPSWEEK;
     /// Offset of the position
-    constexpr static size_t OFFSET_POS = OFFSET_TIMESTAMP + SIZE_TIMESTAMP;
+    constexpr static size_t OFFSET_POS = OFFSET_GPSTOW + SIZE_GPSTOW;
     /// Offset of the velocity
     constexpr static size_t OFFSET_VEL = OFFSET_POS + SIZE_POS;
     /// Offset of the quaternion
@@ -53,7 +61,7 @@ class UdpUtil
     constexpr static size_t SIZE_TOTAL = OFFSET_QUAT + 4 * SIZE_QUAT;
 
     /// Size of the size of a GNSS observation
-    constexpr static size_t SIZE_SIZE = 8;
+    constexpr static size_t SIZE_SIZE = sizeof(size_t);
     /// Size of a single GNSS observation
     constexpr static size_t SIZE_SINGLE_OBSERVATION_DATA = sizeof(GnssObs::ObservationData);
 

@@ -13,6 +13,7 @@
 #include <boost/system/detail/error_code.hpp>
 
 #include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+#include "Navigation/Time/InsTime.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -203,6 +204,15 @@ void NAV::UdpRecv::asyncReceive()
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
                 std::memcpy(&_msgType, _charArray.data(), UdpUtil::SIZE_MSGTYPE);
+
+                int32_t gpsCycle{};
+                int32_t gpsWeek{};
+                double gpsTow{};
+
+                std::memcpy(&gpsCycle, _charArray.data() + UdpUtil::OFFSET_GPSCYCLE, UdpUtil::SIZE_GPSCYCLE);
+                std::memcpy(&gpsWeek, _charArray.data() + UdpUtil::OFFSET_GPSWEEK, UdpUtil::SIZE_GPSWEEK);
+                std::memcpy(&gpsTow, _charArray.data() + UdpUtil::OFFSET_GPSTOW, UdpUtil::SIZE_GPSTOW);
+
                 if (_msgType == 0)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::PosVelAtt::type())
@@ -212,7 +222,7 @@ void NAV::UdpRecv::asyncReceive()
                     }
                     auto obs = std::make_shared<PosVelAtt>();
 
-                    std::memcpy(&obs->insTime, _charArray.data() + UdpUtil::OFFSET_TIMESTAMP, UdpUtil::SIZE_TIMESTAMP);
+                    obs->insTime = InsTime(gpsCycle, gpsWeek, gpsTow);
 
                     // Position in LLA coordinates
                     Eigen::Vector3d posLLA{};
@@ -241,10 +251,9 @@ void NAV::UdpRecv::asyncReceive()
                         return;
                     }
                     auto gnssObs = std::make_shared<GnssObs>();
+                    gnssObs->insTime = InsTime(gpsCycle, gpsWeek, gpsTow);
 
                     size_t sizeGnssData{};
-
-                    std::memcpy(&gnssObs->insTime, _charArray.data() + UdpUtil::OFFSET_TIMESTAMP, UdpUtil::SIZE_TIMESTAMP);
                     std::memcpy(&sizeGnssData, _charArray.data() + UdpUtil::OFFSET_SIZE, UdpUtil::SIZE_SIZE);
                     gnssObs->data.resize(sizeGnssData, GnssObs::ObservationData(SatSigId()));
                     std::memcpy(gnssObs->data.data(), _charArray.data() + UdpUtil::OFFSET_GNSSDATA, sizeGnssData);

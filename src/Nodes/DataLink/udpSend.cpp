@@ -142,18 +142,31 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
 {
     auto data = queue.extract_front();
 
-    // std::vector<char> data2send{};
+    if (!NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type(), PosVelAtt::type() }))
+    {
+        LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
+        return;
+    }
+
+    auto gpsCycle = data->insTime.toGPSweekTow().gpsCycle;
+    auto gpsWeek = data->insTime.toGPSweekTow().gpsWeek;
+    auto gpsTow = static_cast<double>(data->insTime.toGPSweekTow().tow);
+
+    std::vector<char> data2send{};
 
     if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { PosVelAtt::type() }))
     {
         _msgType = 0;
 
-        auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data));
+        auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(data);
 
-        std::vector<char> data2send(UdpUtil::SIZE_TOTAL);
+        data2send.resize(UdpUtil::SIZE_TOTAL);
 
         std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_TIMESTAMP, &posVelAtt->insTime, UdpUtil::SIZE_TIMESTAMP);
+
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSCYCLE, &gpsCycle, UdpUtil::SIZE_GPSCYCLE);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSWEEK, &gpsWeek, UdpUtil::SIZE_GPSWEEK);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSTOW, &gpsTow, UdpUtil::SIZE_GPSTOW);
 
         std::memcpy(data2send.data() + UdpUtil::OFFSET_POS, posVelAtt->lla_position().data(), UdpUtil::SIZE_POS);
         std::memcpy(data2send.data() + UdpUtil::OFFSET_VEL, posVelAtt->n_velocity().data(), UdpUtil::SIZE_VEL);
@@ -161,32 +174,29 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
         std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().y(), UdpUtil::SIZE_QUAT);
         std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 2 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().z(), UdpUtil::SIZE_QUAT);
         std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 3 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().w(), UdpUtil::SIZE_QUAT);
-
-        _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
     else if (NAV::NodeRegistry::NodeDataTypeAnyIsChildOf({ data->getType() }, { GnssObs::type() }))
     {
         _msgType = 1;
 
-        auto gnssObs = std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data));
+        auto gnssObs = std::static_pointer_cast<const GnssObs>(data);
         const size_t sizeGnssData = UdpUtil::SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
 
-        auto sizeTotal = sizeGnssData + UdpUtil::SIZE_MSGTYPE + UdpUtil::SIZE_TIMESTAMP + UdpUtil::SIZE_SIZE;
+        auto sizeTotal = sizeGnssData + UdpUtil::SIZE_MSGTYPE + UdpUtil::SIZE_GPSCYCLE + UdpUtil::SIZE_GPSWEEK + UdpUtil::SIZE_GPSTOW + UdpUtil::SIZE_SIZE;
         if (sizeTotal > UdpUtil::MAXIMUM_BYTES)
         {
             LOG_ERROR("{}: gnssObs msg is bigger than the maximum size of a single UDP package: {} bytes.", nameId(), sizeTotal);
         }
 
-        std::vector<char> data2send(sizeTotal);
+        data2send.resize(sizeTotal);
         std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + UdpUtil::OFFSET_TIMESTAMP, &gnssObs->insTime, UdpUtil::SIZE_TIMESTAMP);
+
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSCYCLE, &gpsCycle, UdpUtil::SIZE_GPSCYCLE);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSWEEK, &gpsWeek, UdpUtil::SIZE_GPSWEEK);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GPSTOW, &gpsTow, UdpUtil::SIZE_GPSTOW);
+
         std::memcpy(data2send.data() + UdpUtil::OFFSET_SIZE, &sizeGnssData, UdpUtil::SIZE_SIZE);
         std::memcpy(data2send.data() + UdpUtil::OFFSET_GNSSDATA, gnssObs->data.data(), sizeGnssData);
-
-        _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
-    else
-    {
-        LOG_ERROR("{}: Data type {} not sendable, yet.", nameId(), data->getType());
-    }
+    _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
 }
