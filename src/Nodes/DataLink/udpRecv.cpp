@@ -75,7 +75,7 @@ std::string NAV::UdpRecv::category()
 void NAV::UdpRecv::guiConfig()
 {
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, PORT_LIMITS[0], PORT_LIMITS[1]))
+    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, UdpUtil::PORT_LIMITS[0], UdpUtil::PORT_LIMITS[1]))
     {
         flow::ApplyChanges();
     }
@@ -198,11 +198,11 @@ void NAV::UdpRecv::deinitialize()
 void NAV::UdpRecv::asyncReceive()
 {
     _socket.async_receive_from(
-        boost::asio::buffer(_charArray, MAXIMUM_BYTES), _sender_endpoint,
+        boost::asio::buffer(_charArray, UdpUtil::MAXIMUM_BYTES), _sender_endpoint,
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
-                std::memcpy(&_msgType, _charArray.data(), SIZE_MSGTYPE);
+                std::memcpy(&_msgType, _charArray.data(), UdpUtil::SIZE_MSGTYPE);
                 if (_msgType == 0)
                 {
                     if (outputPins.at(OUTPUT_PORT_INDEX_NODE_DATA).name != NAV::PosVelAtt::type())
@@ -212,22 +212,22 @@ void NAV::UdpRecv::asyncReceive()
                     }
                     auto obs = std::make_shared<PosVelAtt>();
 
-                    std::memcpy(&obs->insTime, _charArray.data() + OFFSET_TIMESTAMP, SIZE_TIMESTAMP);
+                    std::memcpy(&obs->insTime, _charArray.data() + UdpUtil::OFFSET_TIMESTAMP, UdpUtil::SIZE_TIMESTAMP);
 
                     // Position in LLA coordinates
                     Eigen::Vector3d posLLA{};
-                    std::memcpy(posLLA.data(), _charArray.data() + OFFSET_POS, SIZE_POS);
+                    std::memcpy(posLLA.data(), _charArray.data() + UdpUtil::OFFSET_POS, UdpUtil::SIZE_POS);
 
                     // Velocity in local frame
                     Eigen::Vector3d vel_n{};
-                    std::memcpy(vel_n.data(), _charArray.data() + OFFSET_VEL, SIZE_VEL);
+                    std::memcpy(vel_n.data(), _charArray.data() + UdpUtil::OFFSET_VEL, UdpUtil::SIZE_VEL);
 
                     // Attitude
                     Eigen::Quaterniond n_Quat_b{};
-                    std::memcpy(&n_Quat_b.x(), _charArray.data() + OFFSET_QUAT, SIZE_QUAT);
-                    std::memcpy(&n_Quat_b.y(), _charArray.data() + OFFSET_QUAT + SIZE_QUAT, SIZE_QUAT);
-                    std::memcpy(&n_Quat_b.z(), _charArray.data() + OFFSET_QUAT + 2 * SIZE_QUAT, SIZE_QUAT);
-                    std::memcpy(&n_Quat_b.w(), _charArray.data() + OFFSET_QUAT + 3 * SIZE_QUAT, SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.x(), _charArray.data() + UdpUtil::OFFSET_QUAT, UdpUtil::SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.y(), _charArray.data() + UdpUtil::OFFSET_QUAT + UdpUtil::SIZE_QUAT, UdpUtil::SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.z(), _charArray.data() + UdpUtil::OFFSET_QUAT + 2 * UdpUtil::SIZE_QUAT, UdpUtil::SIZE_QUAT);
+                    std::memcpy(&n_Quat_b.w(), _charArray.data() + UdpUtil::OFFSET_QUAT + 3 * UdpUtil::SIZE_QUAT, UdpUtil::SIZE_QUAT);
 
                     obs->setPosVelAtt_n(posLLA, vel_n, n_Quat_b);
 
@@ -244,10 +244,10 @@ void NAV::UdpRecv::asyncReceive()
 
                     size_t sizeGnssData{};
 
-                    std::memcpy(&gnssObs->insTime, _charArray.data() + OFFSET_TIMESTAMP, SIZE_TIMESTAMP);
-                    std::memcpy(&sizeGnssData, _charArray.data() + OFFSET_SIZE, SIZE_SIZE);
+                    std::memcpy(&gnssObs->insTime, _charArray.data() + UdpUtil::OFFSET_TIMESTAMP, UdpUtil::SIZE_TIMESTAMP);
+                    std::memcpy(&sizeGnssData, _charArray.data() + UdpUtil::OFFSET_SIZE, UdpUtil::SIZE_SIZE);
                     gnssObs->data.resize(sizeGnssData, GnssObs::ObservationData(SatSigId()));
-                    std::memcpy(gnssObs->data.data(), _charArray.data() + OFFSET_GNSSDATA, sizeGnssData);
+                    std::memcpy(gnssObs->data.data(), _charArray.data() + UdpUtil::OFFSET_GNSSDATA, sizeGnssData);
 
                     this->invokeCallbacks(OUTPUT_PORT_INDEX_NODE_DATA, gnssObs);
                     LOG_DATA("{}: Received bytes: {}", nameId(), bytesRcvd);

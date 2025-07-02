@@ -7,6 +7,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include "udpSend.hpp"
+#include "UdpUtil.hpp"
 
 #include "NodeRegistry.hpp"
 #include <cstring>
@@ -78,7 +79,7 @@ void NAV::UdpSend::guiConfig()
         flow::ApplyChanges();
     }
     ImGui::SetNextItemWidth(150 * gui::NodeEditorApplication::windowFontRatio());
-    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, PORT_LIMITS[0], PORT_LIMITS[1]))
+    if (ImGui::InputIntL(fmt::format("Port##{}", size_t(id)).c_str(), &_port, UdpUtil::PORT_LIMITS[0], UdpUtil::PORT_LIMITS[1]))
     {
         flow::ApplyChanges();
     }
@@ -149,17 +150,17 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
 
         auto posVelAtt = std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(data));
 
-        std::vector<char> data2send(SIZE_TOTAL);
+        std::vector<char> data2send(UdpUtil::SIZE_TOTAL);
 
-        std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + OFFSET_TIMESTAMP, &posVelAtt->insTime, SIZE_TIMESTAMP);
+        std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_TIMESTAMP, &posVelAtt->insTime, UdpUtil::SIZE_TIMESTAMP);
 
-        std::memcpy(data2send.data() + OFFSET_POS, posVelAtt->lla_position().data(), SIZE_POS);
-        std::memcpy(data2send.data() + OFFSET_VEL, posVelAtt->n_velocity().data(), SIZE_VEL);
-        std::memcpy(data2send.data() + OFFSET_QUAT, &posVelAtt->n_Quat_b().x(), SIZE_QUAT);
-        std::memcpy(data2send.data() + OFFSET_QUAT + SIZE_QUAT, &posVelAtt->n_Quat_b().y(), SIZE_QUAT);
-        std::memcpy(data2send.data() + OFFSET_QUAT + 2 * SIZE_QUAT, &posVelAtt->n_Quat_b().z(), SIZE_QUAT);
-        std::memcpy(data2send.data() + OFFSET_QUAT + 3 * SIZE_QUAT, &posVelAtt->n_Quat_b().w(), SIZE_QUAT);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_POS, posVelAtt->lla_position().data(), UdpUtil::SIZE_POS);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_VEL, posVelAtt->n_velocity().data(), UdpUtil::SIZE_VEL);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT, &posVelAtt->n_Quat_b().x(), UdpUtil::SIZE_QUAT);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().y(), UdpUtil::SIZE_QUAT);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 2 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().z(), UdpUtil::SIZE_QUAT);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_QUAT + 3 * UdpUtil::SIZE_QUAT, &posVelAtt->n_Quat_b().w(), UdpUtil::SIZE_QUAT);
 
         _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
@@ -168,19 +169,19 @@ void NAV::UdpSend::receiveData(NAV::InputPin::NodeDataQueue& queue, size_t /* pi
         _msgType = 1;
 
         auto gnssObs = std::make_shared<GnssObs>(*std::static_pointer_cast<const GnssObs>(data));
-        const size_t sizeGnssData = SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
+        const size_t sizeGnssData = UdpUtil::SIZE_SINGLE_OBSERVATION_DATA * gnssObs->data.size();
 
-        auto sizeTotal = sizeGnssData + SIZE_MSGTYPE + SIZE_TIMESTAMP + SIZE_SIZE;
-        if (sizeTotal > MAXIMUM_BYTES)
+        auto sizeTotal = sizeGnssData + UdpUtil::SIZE_MSGTYPE + UdpUtil::SIZE_TIMESTAMP + UdpUtil::SIZE_SIZE;
+        if (sizeTotal > UdpUtil::MAXIMUM_BYTES)
         {
             LOG_ERROR("{}: gnssObs msg is bigger than the maximum size of a single UDP package: {} bytes.", nameId(), sizeTotal);
         }
 
         std::vector<char> data2send(sizeTotal);
-        std::memcpy(data2send.data(), &_msgType, SIZE_MSGTYPE);
-        std::memcpy(data2send.data() + OFFSET_TIMESTAMP, &gnssObs->insTime, SIZE_TIMESTAMP);
-        std::memcpy(data2send.data() + OFFSET_SIZE, &sizeGnssData, SIZE_SIZE);
-        std::memcpy(data2send.data() + OFFSET_GNSSDATA, gnssObs->data.data(), sizeGnssData);
+        std::memcpy(data2send.data(), &_msgType, UdpUtil::SIZE_MSGTYPE);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_TIMESTAMP, &gnssObs->insTime, UdpUtil::SIZE_TIMESTAMP);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_SIZE, &sizeGnssData, UdpUtil::SIZE_SIZE);
+        std::memcpy(data2send.data() + UdpUtil::OFFSET_GNSSDATA, gnssObs->data.data(), sizeGnssData);
 
         _socket.send_to(boost::asio::buffer(data2send), *_endpoints.begin());
     }
