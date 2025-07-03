@@ -29,6 +29,7 @@ namespace NAV
 enum class GravitationModel : uint8_t
 {
     None,         ///< Gravity Model turned off
+    Const,        ///< Constant gravitation
     WGS84,        ///< World Geodetic System 1984
     WGS84_Skydel, ///< World Geodetic System 1984 implemented by the Skydel Simulator // FIXME: Remove after Skydel uses the same as Instinct
     Somigliana,   ///< Somigliana gravity model
@@ -45,6 +46,14 @@ const char* to_string(GravitationModel gravitationModel);
 /// @param[in] label Label to show beside the combo box. This has to be a unique id for ImGui.
 /// @param[in] gravitationModel Reference to the gravitation model to select
 bool ComboGravitationModel(const char* label, GravitationModel& gravitationModel);
+
+/// @brief Returns a constant gravitation of 9.81 [m/s^2] in down direction
+/// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
+template<typename T>
+[[nodiscard]] Eigen::Vector3<T> n_calcGravitation_Const()
+{
+    return { T(0.0), T(0.0), T(9.81) };
+}
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
 ///        using the Somigliana model and makes corrections for altitude
@@ -196,22 +205,24 @@ template<typename Derived>
     const typename Derived::Scalar& latitude = lla_position(0);
     const typename Derived::Scalar& altitude = lla_position(2);
 
-    if (gravitationModel == GravitationModel::WGS84)
+    switch (gravitationModel)
     {
+    case NAV::GravitationModel::None:
+        return Eigen::Vector3<typename Derived::Scalar>::Zero();
+    case NAV::GravitationModel::Const:
+        return n_calcGravitation_Const<typename Derived::Scalar>();
+    case GravitationModel::WGS84:
         return n_calcGravitation_WGS84(latitude, altitude);
-    }
-    if (gravitationModel == GravitationModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
-    {
+    case GravitationModel::WGS84_Skydel:
         return n_calcGravitation_WGS84_Skydel(latitude, altitude);
-    }
-    if (gravitationModel == GravitationModel::Somigliana)
-    {
+    case GravitationModel::Somigliana:
         return n_calcGravitation_SomiglianaAltitude(latitude, altitude);
-    }
-    if (gravitationModel == GravitationModel::EGM96)
-    {
+    case GravitationModel::EGM96:
         return n_calcGravitation_EGM96(lla_position);
+    case NAV::GravitationModel::COUNT:
+        return Eigen::Vector3<typename Derived::Scalar>::Zero();
     }
+
     return Eigen::Vector3<typename Derived::Scalar>::Zero();
 }
 

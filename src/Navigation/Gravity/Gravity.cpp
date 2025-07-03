@@ -21,6 +21,8 @@ const char* to_string(GravitationModel gravitationModel)
     {
     case GravitationModel::None:
         return "None";
+    case GravitationModel::Const:
+        return "Const";
     case GravitationModel::WGS84:
         return "WGS84";
     case GravitationModel::WGS84_Skydel:

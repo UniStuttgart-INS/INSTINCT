@@ -15,7 +15,13 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
+
 #include "Navigation/INS/InertialIntegrator.hpp"
+#include "Navigation/INS/InertialPreIntegrator.hpp"
+
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 namespace NAV
 {
@@ -77,11 +83,28 @@ class ImuIntegrator : public Node
     /// @param[in] pinIdx Index of the pin the data is received on
     void recvObservation(InputPin::NodeDataQueue& queue, size_t pinIdx);
 
+    /// Wether IMU preintegration should be used
+    bool _imuPreintegration = false;
+
+    /// Resetting the preintegrator every epoch makes it behave like a normal integrator
+    bool _resetPreintegratorEveryEpoch = false;
+
     /// @brief Inertial Integrator
     InertialIntegrator _inertialIntegrator;
 
+    /// @brief Inertial Preintegrator
+    InertialPreIntegrator _inertialPreintegrator;
+
     /// @brief Prefer the raw acceleration measurements over the deltaVel & deltaTheta values
     bool _preferAccelerationOverDeltaMeasurements = false;
+
+    // ################################################################################################################
+
+    /// Last IMU measuremnt
+    std::shared_ptr<const ImuObs> _lastImuObs = nullptr;
+
+    /// Last position, velocity and attitude
+    std::shared_ptr<const PosVelAtt> _lastPosVelAtt = nullptr;
 };
 
 } // namespace NAV

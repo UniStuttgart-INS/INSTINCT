@@ -143,9 +143,27 @@ Eigen::Quaternion<typename Derived::Scalar> expMapQuat(const Eigen::MatrixBase<D
 
     Eigen::Vector3<typename Derived::Scalar> omega = 0.5 * v;
     auto omegaNorm = omega.norm();
+    if (omegaNorm < 1e-9) { return Eigen::Quaternion<typename Derived::Scalar>::Identity(); }
     Eigen::Vector3<typename Derived::Scalar> quatVec = omega / omegaNorm * std::sin(omegaNorm);
 
     return { std::cos(omegaNorm), quatVec.x(), quatVec.y(), quatVec.z() };
+}
+
+/// @brief Calculates the right Jacobian of SO(3) which relates additive increments in the tangent space to multiplicative increments applied on the right-hand side
+/// @param[in] phi Vector applied on the right side
+/// @return Right Jacobian J_r
+template<typename Derived>
+[[nodiscard]] Eigen::Matrix3<typename Derived::Scalar> J_r(const Eigen::MatrixBase<Derived>& phi)
+{
+    INS_ASSERT_USER_ERROR(phi.cols() == 1, "Given Eigen Object must be a vector");
+    INS_ASSERT_USER_ERROR(phi.rows() == 3, "Given Vector must have 3 Rows");
+
+    auto phiNorm = phi.norm();
+    auto phiNorm2 = phiNorm * phiNorm;
+    auto phiNorm3 = phiNorm2 * phiNorm;
+    return Eigen::Matrix3<typename Derived::Scalar>::Identity()
+           - (1.0 - std::cos(phiNorm)) / phiNorm2 * skewSymmetricMatrix(phi)
+           + (phiNorm - std::sin(phiNorm)) / phiNorm3 * skewSymmetricMatrixSquared(phi);
 }
 
 /// @brief Calculates the secant of a value (sec(x) = csc(pi/2 - x) = 1 / cos(x))
