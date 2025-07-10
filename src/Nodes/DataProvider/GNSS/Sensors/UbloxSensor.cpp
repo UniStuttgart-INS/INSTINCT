@@ -147,5 +147,8 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 
-    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, std::make_shared<UartPacket>(p));
+    auto packet = std::make_shared<UartPacket>(p);
+    packet->insTime = util::time::GetCurrentInsTime();
+
+    ubSensor->invokeCallbacks(OUTPUT_PORT_INDEX_UBLOX_OBS, packet);
 }
