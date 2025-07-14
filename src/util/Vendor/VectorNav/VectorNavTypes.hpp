@@ -31,6 +31,10 @@
 #include <vn/matrix.h>
 #include <vn/types.h>
 
+#include "Navigation/GNSS/Core/Code.hpp"
+#include "Navigation/GNSS/Core/SatelliteIdentifier.hpp"
+#include "Navigation/GNSS/Core/SatelliteSystem.hpp"
+
 namespace NAV::vendor::vectornav
 {
 /// @brief The VPE status bitfield
@@ -148,6 +152,14 @@ enum class SatSys : uint8_t
     QZSS = 5,    ///< QZSS
     GLONASS = 6, ///< GLONASS
 };
+
+/// @brief Converts the VectorNav satellite system to the INSTINCT representation
+/// @param[in] sys VectorNav satellite system
+SatelliteSystem toSatelliteSystem(SatSys sys);
+
+/// @brief Converts the INSTINCT satellite system to the VectorNav representation
+/// @param[in] sys INSTINCT satellite system
+SatSys fromSatelliteSystem(SatelliteSystem sys);
 
 /// @brief Stream insertion operator overload
 /// @param[in, out] os Output stream where data gets printed to
@@ -377,6 +389,15 @@ struct RawMeas
             E5b = 5,       ///< E5b(GAL), B2(BDS)
             E5a = 6,       ///< E5a+b(GAL)
         };
+
+        /// @brief Gets the satellite signal identifier
+        [[nodiscard]] SatSigId toSatSigId() const
+        {
+            return { toCode(), svId };
+        }
+
+        /// @brief Converts the sys, freq and chan into a GNSS code
+        [[nodiscard]] Code toCode() const;
 
         /// @brief Stream insertion operator overload
         /// @param[in, out] os Output stream where data gets printed to

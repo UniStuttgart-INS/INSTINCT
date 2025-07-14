@@ -41,6 +41,12 @@ struct SatId
     /// Default constructor
     SatId() = default;
 
+    /// @brief Constructor from String representation
+    /// @param[in] str SatId as string
+    explicit SatId(const std::string& str)
+        : satSys(SatelliteSystem::fromChar(str.substr(0, 1).front())),
+          satNum(static_cast<uint16_t>(std::stoul(str.substr(1)))) {}
+
     SatelliteSystem satSys = SatSys_None; ///< Satellite system (GPS, GLONASS, GALILEO, QZSS, BDS, IRNSS, SBAS)
     uint16_t satNum = 0;                  ///< Number of the satellite
 
@@ -73,6 +79,12 @@ struct SatSigId
 
     /// Default constructor
     SatSigId() = default;
+
+    /// @brief Constructor from String representation
+    /// @param[in] str SatSigId as string
+    explicit SatSigId(const std::string& str)
+        : code(str.substr(0, 3)),
+          satNum(static_cast<uint16_t>(std::stoul(str.substr(4)))) {}
 
     Code code = Code::None; ///< Code
     uint16_t satNum = 0;    ///< Number of the satellite

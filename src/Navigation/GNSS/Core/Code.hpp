@@ -295,6 +295,10 @@ class Code
     /// Default constructor for an empty code
     constexpr Code() = default;
 
+    /// @brief Constructor from String representation
+    /// @param[in] str Code as string
+    explicit Code(const std::string& str);
+
     /// @brief Constructor from a biset
     /// @param[in] set Bitset with values to construct the Code from
     constexpr explicit Code(const Set& set) : value(set) {}

@@ -716,35 +716,7 @@ class VectorNavBinaryOutput : public NodeData
     /// @return Satellite System in "INSTINCT" format
     [[nodiscard]] static SatelliteSystem getSatSys(vendor::vectornav::SatSys& sys)
     {
-        SatelliteSystem satSys = SatSys_None;
-        switch (sys)
-        {
-        case vendor::vectornav::SatSys::GPS:
-            satSys = GPS;
-            break;
-        case vendor::vectornav::SatSys::SBAS:
-            satSys = SBAS;
-            break;
-        case vendor::vectornav::SatSys::Galileo:
-            satSys = GAL;
-            break;
-        case vendor::vectornav::SatSys::BeiDou:
-            satSys = BDS;
-            break;
-        case vendor::vectornav::SatSys::IMES:
-            LOG_TRACE("VectorNav SatInfoElement satellite system '{}' is not supported yet. Skipping measurement.", sys);
-            break;
-        case vendor::vectornav::SatSys::QZSS:
-            satSys = QZSS;
-            break;
-        case vendor::vectornav::SatSys::GLONASS:
-            satSys = GLO;
-            break;
-        default: // IRNSS not in vectorNav
-            LOG_TRACE("VectorNav SatInfoElement satellite system '{}' is not supported yet. Skipping measurement.", sys);
-            break;
-        }
-        return satSys;
+        return vendor::vectornav::toSatelliteSystem(sys);
     }
 
     /// @brief Returns a vector of data descriptors for the dynamic data
@@ -979,25 +951,23 @@ class VectorNavBinaryOutput : public NodeData
                 descriptors.emplace_back("GNSS1::RawMeas::NumSats");
                 for (auto& satellite : gnss1Outputs->raw.satellites)
                 {
-                    SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - sys", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - svId", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - freq", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - chan", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - slot", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - cno", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag Searching", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag Tracking", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag TimeValid", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag CodeLock", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseLock", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfAmbiguity", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfSub", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseSlip", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PseudorangeSmoothed", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - pr", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - cp", satId));
-                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - dp", satId));
+                    SatSigId satSigId = satellite.toSatSigId();
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - freq", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - chan", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - slot", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - cno", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag Searching", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag Tracking", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag TimeValid", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag CodeLock", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseLock", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfAmbiguity", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseHalfSub", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PhaseSlip", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - flag PseudorangeSmoothed", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - pr", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - cp", satSigId));
+                    descriptors.push_back(fmt::format("GNSS1::RawMeas::{} - dp", satSigId));
                 }
             }
         }
@@ -1031,9 +1001,15 @@ class VectorNavBinaryOutput : public NodeData
             }
             if (attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
             {
-                descriptors.emplace_back("Att::DCM::0-0,Att::DCM::0-1,Att::DCM::0-2");
-                descriptors.emplace_back("Att::DCM::1-0,Att::DCM::1-1,Att::DCM::1-2");
-                descriptors.emplace_back("Att::DCM::2-0,Att::DCM::2-1,Att::DCM::2-2");
+                descriptors.emplace_back("Att::DCM::0-0,");
+                descriptors.emplace_back("Att::DCM::0-1");
+                descriptors.emplace_back("Att::DCM::0-2");
+                descriptors.emplace_back("Att::DCM::1-0");
+                descriptors.emplace_back("Att::DCM::1-1");
+                descriptors.emplace_back("Att::DCM::1-2");
+                descriptors.emplace_back("Att::DCM::2-0");
+                descriptors.emplace_back("Att::DCM::2-1");
+                descriptors.emplace_back("Att::DCM::2-2");
             }
             if (attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
             {
@@ -1246,25 +1222,23 @@ class VectorNavBinaryOutput : public NodeData
                 descriptors.emplace_back("GNSS2::RawMeas::NumSats");
                 for (auto& satellite : gnss2Outputs->raw.satellites)
                 {
-                    SatId satId(getSatSys(satellite.sys), static_cast<uint16_t>(satellite.svId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - sys", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - svId", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - freq", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - chan", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - slot", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - cno", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag Searching", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag Tracking", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag TimeValid", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag CodeLock", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseLock", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfAmbiguity", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfSub", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseSlip", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PseudorangeSmoothed", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - pr", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - cp", satId));
-                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - dp", satId));
+                    SatSigId satSigId = satellite.toSatSigId();
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - freq", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - chan", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - slot", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - cno", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag Searching", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag Tracking", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag TimeValid", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag CodeLock", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseLock", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfAmbiguity", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseHalfSub", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PhaseSlip", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - flag PseudorangeSmoothed", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - pr", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - cp", satSigId));
+                    descriptors.push_back(fmt::format("GNSS2::RawMeas::{} - dp", satSigId));
                 }
             }
         }

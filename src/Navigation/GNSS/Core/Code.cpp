@@ -17,6 +17,117 @@
 namespace NAV
 {
 
+Code::Code(const std::string& str)
+{
+    if (str == "G1C") { value.set(G1C, true); }
+    else if (str == "G1S") { value.set(G1S, true); }
+    else if (str == "G1L") { value.set(G1L, true); }
+    else if (str == "G1X") { value.set(G1X, true); }
+    else if (str == "G1P") { value.set(G1P, true); }
+    else if (str == "G1W") { value.set(G1W, true); }
+    else if (str == "G1Y") { value.set(G1Y, true); }
+    else if (str == "G1M") { value.set(G1M, true); }
+    else if (str == "G1N") { value.set(G1N, true); }
+    else if (str == "G2C") { value.set(G2C, true); }
+    else if (str == "G2D") { value.set(G2D, true); }
+    else if (str == "G2S") { value.set(G2S, true); }
+    else if (str == "G2L") { value.set(G2L, true); }
+    else if (str == "G2X") { value.set(G2X, true); }
+    else if (str == "G2P") { value.set(G2P, true); }
+    else if (str == "G2W") { value.set(G2W, true); }
+    else if (str == "G2Y") { value.set(G2Y, true); }
+    else if (str == "G2M") { value.set(G2M, true); }
+    else if (str == "G2N") { value.set(G2N, true); }
+    else if (str == "G5I") { value.set(G5I, true); }
+    else if (str == "G5Q") { value.set(G5Q, true); }
+    else if (str == "G5X") { value.set(G5X, true); }
+    else if (str == "E1A") { value.set(E1A, true); }
+    else if (str == "E1B") { value.set(E1B, true); }
+    else if (str == "E1C") { value.set(E1C, true); }
+    else if (str == "E1X") { value.set(E1X, true); }
+    else if (str == "E1Z") { value.set(E1Z, true); }
+    else if (str == "E5I") { value.set(E5I, true); }
+    else if (str == "E5Q") { value.set(E5Q, true); }
+    else if (str == "E5X") { value.set(E5X, true); }
+    else if (str == "E6A") { value.set(E6A, true); }
+    else if (str == "E6B") { value.set(E6B, true); }
+    else if (str == "E6C") { value.set(E6C, true); }
+    else if (str == "E6X") { value.set(E6X, true); }
+    else if (str == "E6Z") { value.set(E6Z, true); }
+    else if (str == "E7I") { value.set(E7I, true); }
+    else if (str == "E7Q") { value.set(E7Q, true); }
+    else if (str == "E7X") { value.set(E7X, true); }
+    else if (str == "E8I") { value.set(E8I, true); }
+    else if (str == "E8Q") { value.set(E8Q, true); }
+    else if (str == "E8X") { value.set(E8X, true); }
+    else if (str == "R1C") { value.set(R1C, true); }
+    else if (str == "R1P") { value.set(R1P, true); }
+    else if (str == "R2C") { value.set(R2C, true); }
+    else if (str == "R2P") { value.set(R2P, true); }
+    else if (str == "R3I") { value.set(R3I, true); }
+    else if (str == "R3Q") { value.set(R3Q, true); }
+    else if (str == "R3X") { value.set(R3X, true); }
+    else if (str == "R4A") { value.set(R4A, true); }
+    else if (str == "R4B") { value.set(R4B, true); }
+    else if (str == "R4X") { value.set(R4X, true); }
+    else if (str == "R6A") { value.set(R6A, true); }
+    else if (str == "R6B") { value.set(R6B, true); }
+    else if (str == "R6X") { value.set(R6X, true); }
+    else if (str == "B1D") { value.set(B1D, true); }
+    else if (str == "B1P") { value.set(B1P, true); }
+    else if (str == "B1X") { value.set(B1X, true); }
+    else if (str == "B2I") { value.set(B2I, true); }
+    else if (str == "B2Q") { value.set(B2Q, true); }
+    else if (str == "B2X") { value.set(B2X, true); }
+    else if (str == "B5D") { value.set(B5D, true); }
+    else if (str == "B5P") { value.set(B5P, true); }
+    else if (str == "B5X") { value.set(B5X, true); }
+    else if (str == "B6I") { value.set(B6I, true); }
+    else if (str == "B6Q") { value.set(B6Q, true); }
+    else if (str == "B6X") { value.set(B6X, true); }
+    else if (str == "B6A") { value.set(B6A, true); }
+    else if (str == "B7I") { value.set(B7I, true); }
+    else if (str == "B7Q") { value.set(B7Q, true); }
+    else if (str == "B7X") { value.set(B7X, true); }
+    else if (str == "B7D") { value.set(B7D, true); }
+    else if (str == "B7P") { value.set(B7P, true); }
+    else if (str == "B7Z") { value.set(B7Z, true); }
+    else if (str == "B8D") { value.set(B8D, true); }
+    else if (str == "B8P") { value.set(B8P, true); }
+    else if (str == "B8X") { value.set(B8X, true); }
+    else if (str == "J1C") { value.set(J1C, true); }
+    else if (str == "J1S") { value.set(J1S, true); }
+    else if (str == "J1L") { value.set(J1L, true); }
+    else if (str == "J1X") { value.set(J1X, true); }
+    else if (str == "J1Z") { value.set(J1Z, true); }
+    else if (str == "J2S") { value.set(J2S, true); }
+    else if (str == "J2L") { value.set(J2L, true); }
+    else if (str == "J2X") { value.set(J2X, true); }
+    else if (str == "J5I") { value.set(J5I, true); }
+    else if (str == "J5Q") { value.set(J5Q, true); }
+    else if (str == "J5X") { value.set(J5X, true); }
+    else if (str == "J5D") { value.set(J5D, true); }
+    else if (str == "J5P") { value.set(J5P, true); }
+    else if (str == "J5Z") { value.set(J5Z, true); }
+    else if (str == "J6S") { value.set(J6S, true); }
+    else if (str == "J6L") { value.set(J6L, true); }
+    else if (str == "J6X") { value.set(J6X, true); }
+    else if (str == "J6E") { value.set(J6E, true); }
+    else if (str == "J6Z") { value.set(J6Z, true); }
+    else if (str == "I5A") { value.set(I5A, true); }
+    else if (str == "I5B") { value.set(I5B, true); }
+    else if (str == "I5C") { value.set(I5C, true); }
+    else if (str == "I5X") { value.set(I5X, true); }
+    else if (str == "I9A") { value.set(I9A, true); }
+    else if (str == "I9B") { value.set(I9B, true); }
+    else if (str == "I9C") { value.set(I9C, true); }
+    else if (str == "I9X") { value.set(I9X, true); }
+    else if (str == "S1C") { value.set(S1C, true); }
+    else if (str == "S5I") { value.set(S5I, true); }
+    else if (str == "S5Q") { value.set(S5Q, true); }
+    else if (str == "S5X") { value.set(S5X, true); }
+}
+
 Code::Code(SatelliteSystem_ sys)
 {
     if (sys & GPS) { *this |= Code(G01 | G02 | G05); }
