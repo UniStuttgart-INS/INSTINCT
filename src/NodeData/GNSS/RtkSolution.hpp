@@ -16,6 +16,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include "Navigation/GNSS/Ambiguity/AmbiguityResolution.hpp"
 #include "Navigation/GNSS/Positioning/ObservationFilter.hpp"
 #include "util/Assert.h"
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -69,6 +70,8 @@ class RtkSolution : public PosVel
         desc.emplace_back("Number pseudorange observables (unique per satellite)");
         desc.emplace_back("Number carrier observables (unique per satellite)");
         desc.emplace_back("Number doppler observables (unique per satellite)");
+        desc.emplace_back("Ambiguity Resolution Failure");
+        desc.emplace_back("Ambiguity Critical Value µ ∈ (0, 1] (R1/R2 ≤ µ)");
         desc.emplace_back("Number of Ambiguities fixed");
         desc.emplace_back("NIS Triggered (Initial)");
         desc.emplace_back("NIS value (Initial)");
@@ -82,7 +85,7 @@ class RtkSolution : public PosVel
     }
 
     /// @brief Get the amount of descriptors
-    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 17; }
+    [[nodiscard]] static constexpr size_t GetStaticDescriptorCount() { return PosVel::GetStaticDescriptorCount() + 19; }
 
     /// @brief Returns a vector of data descriptors
     [[nodiscard]] std::vector<std::string> staticDataDescriptors() const override { return GetStaticDataDescriptors(); }
@@ -121,30 +124,34 @@ class RtkSolution : public PosVel
         case PosVel::GetStaticDescriptorCount() + 7: // Number doppler observables unique satellite
             if (nObservationsUniqueSatellite.contains(GnssObs::Doppler)) { return static_cast<double>(nObservationsUniqueSatellite.at(GnssObs::Doppler)); }
             break;
-        case PosVel::GetStaticDescriptorCount() + 8: // Number of Ambiguities fixed
+        case PosVel::GetStaticDescriptorCount() + 8: // Ambiguity Resolution Failure
+            return static_cast<double>(ambiguityResolutionFailure);
+        case PosVel::GetStaticDescriptorCount() + 9: // Ambiguity Critical Value µ ∈ (0, 1] (R1/R2 ≤ µ)
+            return ambiguityCriticalValueRatio;
+        case PosVel::GetStaticDescriptorCount() + 10: // Number of Ambiguities fixed
             if (nAmbiguitiesFixed) { return static_cast<double>(nAmbiguitiesFixed.value()); }
             break;
-        case PosVel::GetStaticDescriptorCount() + 9: // NIS Triggered (Initial)
+        case PosVel::GetStaticDescriptorCount() + 11: // NIS Triggered (Initial)
             if (nisResultInitial) { return static_cast<double>(nisResultInitial->triggered); }
             break;
-        case PosVel::GetStaticDescriptorCount() + 10: // NIS value (Initial)
+        case PosVel::GetStaticDescriptorCount() + 12: // NIS value (Initial)
             if (nisResultInitial) { return nisResultInitial->NIS; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 11: // NIS r2 upper boundary (Initial)
+        case PosVel::GetStaticDescriptorCount() + 13: // NIS r2 upper boundary (Initial)
             if (nisResultInitial) { return nisResultInitial->r2; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 12: // NIS removed observations
+        case PosVel::GetStaticDescriptorCount() + 14: // NIS removed observations
             return static_cast<double>(nisRemovedCnt);
-        case PosVel::GetStaticDescriptorCount() + 13: // NIS Triggered (Final)
+        case PosVel::GetStaticDescriptorCount() + 15: // NIS Triggered (Final)
             if (nisResultFinal) { return static_cast<double>(nisResultFinal->triggered); }
             break;
-        case PosVel::GetStaticDescriptorCount() + 14: // NIS value (Final)
+        case PosVel::GetStaticDescriptorCount() + 16: // NIS value (Final)
             if (nisResultFinal) { return nisResultFinal->NIS; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 15: // NIS r2 upper boundary (Final)
+        case PosVel::GetStaticDescriptorCount() + 17: // NIS r2 upper boundary (Final)
             if (nisResultFinal) { return nisResultFinal->r2; }
             break;
-        case PosVel::GetStaticDescriptorCount() + 16: // Distance Rover-Base [m]
+        case PosVel::GetStaticDescriptorCount() + 18: // Distance Rover-Base [m]
             return distanceBaseRover;
         default:
             return std::nullopt;
@@ -258,10 +265,15 @@ class RtkSolution : public PosVel
     /// Distance of Rover to base [m]
     double distanceBaseRover = 0.0;
 
+    /// Time of the base observation used
+    InsTime baseTime;
+
     std::unordered_map<GnssObs::ObservationType, size_t> nObservations;                ///< Number of utilized observations (including pivot)
     std::unordered_map<GnssObs::ObservationType, size_t> nObservationsUniqueSatellite; ///< Number of utilized observations (counted once for each satellite)
 
-    std::optional<size_t> nAmbiguitiesFixed; ///< Number of Ambiguities fixed
+    AmbiguityResolutionFailure ambiguityResolutionFailure = AmbiguityResolutionFailure::None; ///< Ambiguity resolution failure
+    double ambiguityCriticalValueRatio{};                                                     ///< Ambiguity Critical Value µ ∈ (0, 1] (R1/R2 ≤ µ)
+    std::optional<size_t> nAmbiguitiesFixed;                                                  ///< Number of Ambiguities fixed
 
     /// Cycle slip detector results and name of the receiver
     std::vector<std::pair<CycleSlipDetector::Result, std::string>> cycleSlipDetectorResult;

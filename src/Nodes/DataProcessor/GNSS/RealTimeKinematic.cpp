@@ -744,7 +744,7 @@ void RealTimeKinematic::recvBaseGnssObs(InputPin::NodeDataQueue& queue, size_t /
 {
     _receiver[Base].gnssObs = std::static_pointer_cast<const GnssObs>(queue.extract_front());
     _baseObsReceivedThisEpoch = true;
-    LOG_DATA("{}: Received Base GNSS Obs for [{}]", nameId(), _receiver[Base].gnssObs->insTime.toYMDHMS(GPST));
+    LOG_DATA("{}: Received Base  GNSS Obs for [{}]", nameId(), _receiver[Base].gnssObs->insTime.toYMDHMS(GPST));
 
     if (_receiver[Rover].gnssObs && (_receiver[Base].gnssObs->insTime - _receiver[Rover].gnssObs->insTime) > std::chrono::milliseconds(500))
     {
@@ -758,7 +758,8 @@ void RealTimeKinematic::recvBaseGnssObs(InputPin::NodeDataQueue& queue, size_t /
         }
         _receiver[Rover].gnssObs = nullptr;
     }
-    else if (!_receiver[Base].e_posMarker.isZero() && _receiver[Base].gnssObs && _receiver[Rover].gnssObs)
+    else if (!_receiver[Base].e_posMarker.isZero() && _receiver[Base].gnssObs && _receiver[Rover].gnssObs
+             && std::chrono::abs(_receiver[Base].gnssObs->insTime - _receiver[Rover].gnssObs->insTime) < std::chrono::milliseconds(100))
     {
         calcRealTimeKinematicSolution();
     }
@@ -784,7 +785,8 @@ void RealTimeKinematic::recvRoverGnssObs(InputPin::NodeDataQueue& queue, size_t 
         }
         _receiver[Rover].gnssObs = nullptr;
     }
-    else if (!_receiver[Base].e_posMarker.isZero() && _receiver[Base].gnssObs && _receiver[Rover].gnssObs)
+    else if (!_receiver[Base].e_posMarker.isZero() && _receiver[Base].gnssObs && _receiver[Rover].gnssObs
+             && std::chrono::abs(_receiver[Base].gnssObs->insTime - _receiver[Rover].gnssObs->insTime) < std::chrono::milliseconds(100))
     {
         calcRealTimeKinematicSolution();
     }
@@ -837,6 +839,7 @@ void RealTimeKinematic::calcRealTimeKinematicSolution()
     {
         auto rtkSol = std::make_shared<RtkSolution>();
         rtkSol->insTime = _receiver[Rover].gnssObs->insTime;
+        rtkSol->baseTime = _receiver[Base].gnssObs->insTime;
 
         bool startupPhase = dt == 0.0 ? true : static_cast<double>(nFixSolutions + nFloatSolutions + nSingleSolutions) * dt < 60.0;
 
@@ -2658,20 +2661,24 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
     do {
         LOG_DATA("{}: [{}] floatKeys = {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), fmt::join(floatKeys, ", "));
         LOG_DATA("{}: [{}] ambKeys   = {}", nameId(), _receiver[Rover].gnssObs->insTime.toYMDHMS(GPST), fmt::join(ambKeys, ", "));
-        if (auto fixed = ResolveAmbiguities(_kalmanFilter.x(ambKeys), _kalmanFilter.P(ambKeys, ambKeys),
-                                            _kalmanFilter.x(floatKeys), _kalmanFilter.P(floatKeys, floatKeys),
-                                            _kalmanFilter.P(ambKeys, floatKeys), _kalmanFilter.P(floatKeys, ambKeys),
-                                            _ambiguityResolutionParameters, nameId()))
-        {
-            _kalmanFilter.x(floatKeys) = fixed->b;
-            LOG_DATA("{}: x(fixed->b) =\n{}", nameId(), _kalmanFilter.x.transposed());
+        auto fixed = ResolveAmbiguities(_kalmanFilter.x(ambKeys), _kalmanFilter.P(ambKeys, ambKeys),
+                                        _kalmanFilter.x(floatKeys), _kalmanFilter.P(floatKeys, floatKeys),
+                                        _kalmanFilter.P(ambKeys, floatKeys), _kalmanFilter.P(floatKeys, ambKeys),
+                                        _ambiguityResolutionParameters, nameId());
+        rtkSol->ambiguityResolutionFailure = fixed.failure;
+        rtkSol->ambiguityCriticalValueRatio = fixed.ambiguityCriticalValueRatio;
 
-            if (_applyFixedAmbiguitiesWithUpdate) { applyFixedAmbiguities(fixed->fixedAmb.front().a, ambKeys, ambMeasKeys); }
+        if (fixed.failure == AmbiguityResolutionFailure::None)
+        {
+            _kalmanFilter.x(floatKeys) = fixed.b;
+            LOG_DATA("{}: x(fixed.b) =\n{}", nameId(), _kalmanFilter.x.transposed());
+
+            if (_applyFixedAmbiguitiesWithUpdate) { applyFixedAmbiguities(fixed.fixedAmb.front().a, ambKeys, ambMeasKeys); }
             else
             {
-                _kalmanFilter.x(ambKeys) = fixed->fixedAmb.front().a;
-                // _kalmanFilter.P(floatKeys, floatKeys) = fixed->Qb;
-                // LOG_DATA("{}: P(fixed->Qb) =\n{}", nameId(), _kalmanFilter.P);
+                _kalmanFilter.x(ambKeys) = fixed.fixedAmb.front().a;
+                // _kalmanFilter.P(floatKeys, floatKeys) = fixed.Qb;
+                // LOG_DATA("{}: P(fixed.Qb) =\n{}", nameId(), _kalmanFilter.P);
             }
 
             LOG_DATA("{}: dx_ecef (fix, update  - fix         ) = {}", nameId(), (_kalmanFilter.x.segment<3>(States::Pos) - _receiver[Rover].e_posMarker).transpose());
@@ -2680,7 +2687,8 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
             _receiver[Rover].e_vel = _kalmanFilter.x.segment<3>(States::Vel);
             _receiver[Rover].lla_posMarker = trafo::ecef2lla_WGS84(_receiver[Rover].e_posMarker);
 
-            rtkSol->nAmbiguitiesFixed = fixed->nFixed + 1; // + 1 to also count the pivot
+            rtkSol->ambiguityCriticalValueRatio = fixed.ambiguityCriticalValueRatio;
+            rtkSol->nAmbiguitiesFixed = fixed.nFixed + 1; // + 1 to also count the pivot
 
             for (const auto& key_ : ambKeys)
             {
@@ -2689,7 +2697,7 @@ bool RealTimeKinematic::resolveAmbiguities(size_t nCarrierMeasUniqueSatellite, c
                 if (_ambiguityResolutionStrategy == AmbiguityResolutionStrategy::FixAndHold
                     && _ambiguitiesHold.contains(key.satSigId)
                     && std::abs(_kalmanFilter.x(key) - _ambiguitiesHold.at(key.satSigId)) > 0.1
-                    && fixed->nFixed == nAmbs && partialFixTries == 0)
+                    && fixed.nFixed == nAmbs && partialFixTries == 0)
                 {
                     LOG_WARN("{}: Ambiguity [{}] changed from {} to {} (despite being FixAndHold)", nameId(), key.satSigId,
                              _kalmanFilter.x(key), _ambiguitiesHold.at(key.satSigId));

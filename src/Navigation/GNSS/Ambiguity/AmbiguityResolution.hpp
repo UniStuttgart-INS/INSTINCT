@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include "util/Eigen.hpp"
 #include "util/Logger.hpp"
@@ -152,6 +153,16 @@ const char* to_string(AmbiguityResolutionParameters::ValidationAlgorithm validat
 /// @param[in] width GUI item width
 bool GuiAmbiguityResolution(const char* id, AmbiguityResolutionParameters& params, float width = 310.0F);
 
+/// @brief Possible failures
+enum class AmbiguityResolutionFailure : uint8_t
+{
+    None,              ///< No failure
+    NoSearchAlgorithm, ///< No Search algorithm selected
+    Decorrelation,     ///< Decorrelation failed
+    NoCandidatesFound, ///< No candidates were found with the search
+    ValidationFailed,  ///< Validation rejected the result
+};
+
 /// @brief Ambiguity resolution result
 template<typename Scalar, int nAmb, int nReal>
 struct AmbiguityResolutionResult
@@ -171,6 +182,9 @@ struct AmbiguityResolutionResult
         Eigen::Vector<Scalar, nAmb> a; ///< Fixed ambiguity vector [cycles]
     };
 
+    AmbiguityResolutionFailure failure = AmbiguityResolutionFailure::None; ///< Failure mode
+    double ambiguityCriticalValueRatio{};                                  ///< Ambiguity Critical Value µ ∈ (0, 1] (R1/R2 ≤ µ)
+
     size_t nFixed = 0;                      ///< Number of fixed ambiguities (differs from vector size in case of partial fixing)
     std::vector<FixedAmbiguity> fixedAmb;   ///< Sorted vector of fixed ambiguities and their norms
     Eigen::Vector<Scalar, nReal> b;         ///< Fixed non-integer float states (e.g. Pos, Vel, ...)
@@ -186,9 +200,9 @@ struct AmbiguityResolutionResult
 /// @param Qba Lower left part of the variance/covariance matrix (correlation between ambiguities and other states)
 /// @param params Ambiguity resolution algorithm and parameters
 /// @param nameId NameId for debugging
-/// @return The result struct if the ambiguities could be fixed and validated, otherwise std::nullopt
+/// @return The result struct if the ambiguities could be fixed and validated
 template<typename DerivedA, typename DerivedQa, typename DerivedB, typename DerivedQb, typename DerivedQab, typename DerivedQba>
-std::optional<AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime, DerivedB::RowsAtCompileTime>>
+AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime, DerivedB::RowsAtCompileTime>
     ResolveAmbiguities(const Eigen::MatrixBase<DerivedA>& a, const Eigen::MatrixBase<DerivedQa>& Qa,
                        const Eigen::MatrixBase<DerivedB>& b, const Eigen::MatrixBase<DerivedQb>& Qb,
                        const Eigen::MatrixBase<DerivedQab>& Qab, const Eigen::MatrixBase<DerivedQba>& Qba,
@@ -201,7 +215,13 @@ std::optional<AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::Row
 
     using Eigen::seq, Eigen::last;
 
-    if (params.searchAlgorithm == SearchAlgorithm::None) { return {}; } // If we do not search, do not do any work like decorrelation or validation
+    AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime, DerivedB::RowsAtCompileTime> result;
+
+    if (params.searchAlgorithm == SearchAlgorithm::None) // If we do not search, do not do any work like decorrelation or validation
+    {
+        result.failure = AmbiguityResolutionFailure::NoSearchAlgorithm;
+        return result;
+    }
 
     LOG_DATA("{}: Qa = \n{}", nameId, Eigen::MatrixXd(Qa));
     LOG_DATA("{}: a = {}", nameId, a.transpose());
@@ -231,7 +251,8 @@ std::optional<AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::Row
         else
         {
             LOG_DEBUG("{}: Decorrelation failed", nameId);
-            return {};
+            result.failure = AmbiguityResolutionFailure::Decorrelation;
+            return result;
         }
         break;
     case DecorrelationAlgorithm::None:
@@ -320,7 +341,8 @@ std::optional<AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::Row
     if (cands.cols() == 0)
     {
         LOG_DATA("{}: No candidates found ", nameId);
-        return std::nullopt;
+        result.failure = AmbiguityResolutionFailure::NoCandidatesFound;
+        return result;
     }
 
     // Partial fixing is done by giving a subset to this function. So not relevant here
@@ -376,30 +398,46 @@ std::optional<AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::Row
     }
 #endif
 
+    result.ambiguityCriticalValueRatio = sqnorm(0) / sqnorm(1);
     if (cands.cols() > 1) // If we found only one candidate, the second one was very unlikely. Therefore we can accept this one without testing
     {
         switch (params.validationAlgorithm)
         {
         case ValidationAlgorithm::DifferenceTest:
-            if (!Ambiguity::differenceTest(sqnorm(0), sqnorm(1), params.validationTestCriticalValueC)) { return {}; }
+            if (!Ambiguity::differenceTest(sqnorm(0), sqnorm(1), params.validationTestCriticalValueC))
+            {
+                result.failure = AmbiguityResolutionFailure::ValidationFailed;
+                return result;
+            }
             break;
         case ValidationAlgorithm::RatioTestCriticalValue:
-            if (!Ambiguity::ratioTest(sqnorm(0), sqnorm(1), params.validationTestCriticalValueMu)) { return {}; }
+            if (!Ambiguity::ratioTest(sqnorm(0), sqnorm(1), params.validationTestCriticalValueMu))
+            {
+                result.failure = AmbiguityResolutionFailure::ValidationFailed;
+                return result;
+            }
             break;
         case ValidationAlgorithm::RatioTestFailureRate:
             if (!Ambiguity::fixedFailureRateRatioTest(params.validationRatioTestFailureRate, sqnorm(0), sqnorm(1),
-                                                      static_cast<size_t>(n - k), D, params.validationBootstrappedSuccessRate)) { return {}; }
+                                                      static_cast<size_t>(n - k), D, params.validationBootstrappedSuccessRate))
+            {
+                result.failure = AmbiguityResolutionFailure::ValidationFailed;
+                return result;
+            }
             break;
         case ValidationAlgorithm::ProjectorTest:
-            if (!Ambiguity::projectorTest(cands.col(0), cands.col(1), a(seq(k, last)), Qa(seq(k, last), seq(k, last)), params.validationTestCriticalValueMu)) { return {}; }
+            if (!Ambiguity::projectorTest(cands.col(0), cands.col(1), a(seq(k, last)), Qa(seq(k, last), seq(k, last)),
+                                          params.validationTestCriticalValueMu))
+            {
+                result.failure = AmbiguityResolutionFailure::ValidationFailed;
+                return result;
+            }
             break;
         case ValidationAlgorithm::None:
         case ValidationAlgorithm::COUNT:
             break;
         }
     }
-
-    AmbiguityResolutionResult<typename DerivedA::Scalar, DerivedA::RowsAtCompileTime, DerivedB::RowsAtCompileTime> result;
 
     result.b = b - Qba * Qa.inverse() * (a - cands.col(0));
     result.Qb = Qb - Qba * Qa.inverse() * Qab;

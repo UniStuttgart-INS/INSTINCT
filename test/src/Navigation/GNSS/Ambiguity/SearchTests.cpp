@@ -242,14 +242,14 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search (init ambiguities)", "[Ambig
     };
     auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(10, 3), Eigen::MatrixXd(3, 10), params,
                                      "[Ambiguity] Integer Least-Squares Search (init ambiguities)");
-    REQUIRE(result.has_value());
+    REQUIRE(result.failure == AmbiguityResolutionFailure::None);
 
-    REQUIRE_THAT(result->fixedAmb.at(0).a - expected, Catch::Matchers::WithinAbs(Eigen::VectorXd::Zero(a.rows()), 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).a - expected, Catch::Matchers::WithinAbs(Eigen::VectorXd::Zero(a.rows()), 1e-10));
 
     // Values for comparison from Matlab code of TU Delft
-    REQUIRE_THAT(result->fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.582, 1e-3));
-    REQUIRE_THAT(result->fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(60.5788, 1e-4));
-    REQUIRE_THAT(result->fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -31).finished(), 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.582, 1e-3));
+    REQUIRE_THAT(result.fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(60.5788, 1e-4));
+    REQUIRE_THAT(result.fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -31).finished(), 1e-10));
 }
 
 TEST_CASE("[Ambiguity] Integer Least-Squares Search-and-Shrink (init ambiguities)", "[Ambiguity]")
@@ -284,14 +284,14 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search-and-Shrink (init ambiguities
     };
     auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(10, 3), Eigen::MatrixXd(3, 10), params,
                                      "[Ambiguity] Integer Least-Squares Search-and-Shrink (init ambiguities)");
-    REQUIRE(result.has_value());
+    REQUIRE(result.failure == AmbiguityResolutionFailure::None);
 
-    REQUIRE_THAT(result->fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
 
     // Values for comparison from Matlab code of TU Delft
-    REQUIRE_THAT(result->fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.582, 1e-3));
-    REQUIRE_THAT(result->fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(60.5788, 1e-4));
-    REQUIRE_THAT(result->fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -31).finished(), 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.582, 1e-3));
+    REQUIRE_THAT(result.fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(60.5788, 1e-4));
+    REQUIRE_THAT(result.fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -31).finished(), 1e-10));
 }
 
 TEST_CASE("[Ambiguity] Integer Least-Squares Search (new Ambiguity added)", "[Ambiguity]")
@@ -327,13 +327,13 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search (new Ambiguity added)", "[Am
     };
     auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(11, 3), Eigen::MatrixXd(3, 11), params,
                                      "[Ambiguity] Integer Least-Squares Search (new Ambiguity added)");
-    REQUIRE(result.has_value());
+    REQUIRE(result.failure == AmbiguityResolutionFailure::None);
 
-    REQUIRE_THAT(result->fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
 
     // Values for comparison from Matlab code of TU Delft
-    REQUIRE_THAT(result->fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(0.9018, 1e-4));
-    REQUIRE(result->fixedAmb.size() == 1);
+    REQUIRE_THAT(result.fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(0.9018, 1e-4));
+    REQUIRE(result.fixedAmb.size() == 1);
 }
 
 TEST_CASE("[Ambiguity] Integer Least-Squares Search-And-Shrink (new Ambiguity added)", "[Ambiguity]")
@@ -369,14 +369,14 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search-And-Shrink (new Ambiguity ad
     };
     auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(11, 3), Eigen::MatrixXd(3, 11), params,
                                      "[Ambiguity] Integer Least-Squares Search-And-Shrink (new Ambiguity added)");
-    REQUIRE(result.has_value());
+    REQUIRE(result.failure == AmbiguityResolutionFailure::None);
 
-    REQUIRE_THAT(result->fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).a, Catch::Matchers::WithinAbs(expected, 1e-10));
 
     // Values for comparison from Matlab code of TU Delft
-    REQUIRE_THAT(result->fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(0.9018, 1e-4));
-    REQUIRE_THAT(result->fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(814.6540, 1e-4));
-    REQUIRE_THAT(result->fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(11) << -6, -10, -18, -27, -11, -36, -33, -24, 1, -31, -27).finished(), 1e-10));
+    REQUIRE_THAT(result.fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(0.9018, 1e-4));
+    REQUIRE_THAT(result.fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(814.6540, 1e-4));
+    REQUIRE_THAT(result.fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(11) << -6, -10, -18, -27, -11, -36, -33, -24, 1, -31, -27).finished(), 1e-10));
 }
 
 // TEST_CASE("[Ambiguity] Partial AR - Integer Least-Squares Search (init ambiguities)", "[Ambiguity]")
@@ -404,13 +404,13 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search-And-Shrink (new Ambiguity ad
 //     };
 //     auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(10, 3), Eigen::MatrixXd(3, 10), params,
 //                                      "[Ambiguity] Partial AR - Integer Least-Squares Search (init ambiguities)");
-//     REQUIRE(result.has_value());
+//     REQUIRE(result.failure == AmbiguityResolutionFailure::None);
 
 //     // Values for comparison from Matlab code of TU Delft
-//     REQUIRE_THAT(result->fixedAmb.at(0).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -6, -10, -18, -27, -11, -36, -33, -24, 1, -31.0052).finished(), 1e-4));
-//     REQUIRE_THAT(result->fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -30.9681).finished(), 1e-4));
-//     REQUIRE_THAT(result->fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.5568, 1e-3));
-//     REQUIRE_THAT(result->fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(59.6311, 1e-4));
+//     REQUIRE_THAT(result.fixedAmb.at(0).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -6, -10, -18, -27, -11, -36, -33, -24, 1, -31.0052).finished(), 1e-4));
+//     REQUIRE_THAT(result.fixedAmb.at(1).a, Catch::Matchers::WithinAbs((Eigen::VectorXd(10) << -8, -8, -19, -27, -8, -36, -34, -22, 0, -30.9681).finished(), 1e-4));
+//     REQUIRE_THAT(result.fixedAmb.at(0).sqnorm, Catch::Matchers::WithinAbs(15.5568, 1e-3));
+//     REQUIRE_THAT(result.fixedAmb.at(1).sqnorm, Catch::Matchers::WithinAbs(59.6311, 1e-4));
 // }
 
 TEST_CASE("[Ambiguity] Integer Least-Squares Search/Search-And-Shrink (performance)", "[Ambiguity]")
@@ -446,7 +446,7 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search/Search-And-Shrink (performan
             auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(11, 3), Eigen::MatrixXd(3, 11), params,
                                              "[Ambiguity] Integer Least-Squares Search/Search-And-Shrink (performance)");
             const auto end{ std::chrono::steady_clock::now() };
-            REQUIRE(result.has_value());
+            REQUIRE(result.failure == AmbiguityResolutionFailure::None);
             avg += std::chrono::duration<double>(end - start).count();
         }
         avg /= static_cast<double>(N);
@@ -465,7 +465,7 @@ TEST_CASE("[Ambiguity] Integer Least-Squares Search/Search-And-Shrink (performan
             auto result = ResolveAmbiguities(a, Qa, Eigen::Vector3d::Zero(), Eigen::Matrix3d::Zero(), Eigen::MatrixXd(11, 3), Eigen::MatrixXd(3, 11), params,
                                              "[Ambiguity] Integer Least-Squares Search/Search-And-Shrink (performance)");
             const auto end{ std::chrono::steady_clock::now() };
-            REQUIRE(result.has_value());
+            REQUIRE(result.failure == AmbiguityResolutionFailure::None);
             avg += std::chrono::duration<double>(end - start).count();
         }
         avg /= static_cast<double>(N);

@@ -472,6 +472,9 @@ void NAV::RtkSolution::guiTooltip(bool detailView, bool firstOpen, const char* /
         ImGui::BulletText("%s", fmt::format("Solution Type: {}", solType).c_str());
     }
 
+    ImGui::BulletText("Rover obs time: %s", fmt::format("{}", insTime.toYMDHMS(GPST)).c_str());
+    ImGui::BulletText("Base  obs time: %s", fmt::format("{}", baseTime.toYMDHMS(GPST)).c_str());
+
     std::map<SatelliteSystem, std::unordered_set<SatId>> satsReceived;
     for (const auto& obs : observableReceived)
     {
